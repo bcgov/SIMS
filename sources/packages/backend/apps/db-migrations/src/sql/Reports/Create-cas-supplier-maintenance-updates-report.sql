@@ -5,7 +5,7 @@ VALUES
         'CAS_Supplier_Maintenance_Updates_Report',
         'WITH cas_supplier_report AS (
             SELECT
-                student_user.first_name AS student_first_name,
+                COALESCE(student_user.first_name, '''') AS student_first_name,
                 student_user.last_name AS student_last_name,
                 student_user.identity_provider_type AS student_profile_type,
                 student.updated_at AS student_updated_date,
@@ -13,7 +13,10 @@ VALUES
                 sin_validation.sin AS student_sin,
                 student.contact_info -> ''address'' ->> ''addressLine1'' AS student_address_line_1,
                 student.contact_info -> ''address'' ->> ''city'' AS student_city,
-                student.contact_info -> ''address'' ->> ''provinceState'' AS student_province,
+                COALESCE(
+                    student.contact_info -> ''address'' ->> ''provinceState'',
+                    ''''
+                ) AS student_province,
                 student.contact_info -> ''address'' ->> ''postalCode'' AS student_postal_code,
                 student.contact_info -> ''address'' ->> ''country'' AS student_country,
                 cas_supplier.supplier_number AS cas_supplier,
@@ -21,12 +24,18 @@ VALUES
                 cas_supplier.supplier_address ->> ''supplierSiteCode'' AS cas_site,
                 cas_supplier.supplier_address ->> ''siteProtected'' AS cas_site_protected,
                 cas_supplier.supplier_status_updated_on AS cas_supplier_verified_date,
-                cas_supplier.student_profile_snapshot ->> ''firstName'' AS cas_snapshot_first_name,
+                COALESCE(
+                    cas_supplier.student_profile_snapshot ->> ''firstName'',
+                    ''''
+                ) AS cas_snapshot_first_name,
                 cas_supplier.student_profile_snapshot ->> ''lastName'' AS cas_snapshot_last_name,
                 cas_supplier.student_profile_snapshot ->> ''sin'' AS cas_snapshot_sin,
                 cas_supplier.student_profile_snapshot ->> ''addressLine1'' AS cas_snapshot_address_line_1,
                 cas_supplier.student_profile_snapshot ->> ''city'' AS cas_snapshot_city,
-                cas_supplier.student_profile_snapshot ->> ''province'' AS cas_snapshot_province,
+                COALESCE(
+                    cas_supplier.student_profile_snapshot ->> ''province'',
+                    ''''
+                ) AS cas_snapshot_province,
                 cas_supplier.student_profile_snapshot ->> ''postalCode'' AS cas_snapshot_postal_code,
                 cas_supplier.student_profile_snapshot ->> ''country'' AS cas_snapshot_country
             FROM
@@ -37,72 +46,22 @@ VALUES
             WHERE
                 cas_supplier.is_valid = true
                 AND (
-                    (
-                        (
-                            cas_supplier.student_profile_snapshot ->> ''firstName''
-                        ) IS DISTINCT
-                        FROM
-                            student_user.first_name
+                    COALESCE(
+                        cas_supplier.student_profile_snapshot ->> ''firstName'',
+                        ''''
+                    ) NOT ILIKE COALESCE(student_user.first_name, '''')
+                    OR cas_supplier.student_profile_snapshot ->> ''lastName'' NOT ILIKE student_user.last_name
+                    OR cas_supplier.student_profile_snapshot ->> ''sin'' NOT ILIKE sin_validation.sin
+                    OR cas_supplier.student_profile_snapshot ->> ''addressLine1'' NOT ILIKE student.contact_info -> ''address'' ->> ''addressLine1''
+                    OR cas_supplier.student_profile_snapshot ->> ''city'' NOT ILIKE student.contact_info -> ''address'' ->> ''city''
+                    OR COALESCE(
+                        cas_supplier.student_profile_snapshot ->> ''province'',
+                        ''''
+                    ) NOT ILIKE COALESCE(
+                        student.contact_info -> ''address'' ->> ''provinceState''
                     )
-                    OR (
-                        (
-                            cas_supplier.student_profile_snapshot ->> ''lastName''
-                        ) IS DISTINCT
-                        FROM
-                            student_user.last_name
-                    )
-                    OR (
-                        (
-                            cas_supplier.student_profile_snapshot ->> ''sin''
-                        ) IS DISTINCT
-                        FROM
-                            sin_validation.sin
-                    )
-                    OR (
-                        (
-                            cas_supplier.student_profile_snapshot ->> ''addressLine1''
-                        ) IS DISTINCT
-                        FROM
-                            (
-                                student.contact_info -> ''address'' ->> ''addressLine1''
-                            )
-                    )
-                    OR (
-                        (
-                            cas_supplier.student_profile_snapshot ->> ''city''
-                        ) IS DISTINCT
-                        FROM
-                            (
-                                student.contact_info -> ''address'' ->> ''city''
-                            )
-                    )
-                    OR (
-                        (
-                            cas_supplier.student_profile_snapshot ->> ''province''
-                        ) IS DISTINCT
-                        FROM
-                            (
-                                student.contact_info -> ''address'' ->> ''provinceState''
-                            )
-                    )
-                    OR (
-                        (
-                            cas_supplier.student_profile_snapshot ->> ''postalCode''
-                        ) IS DISTINCT
-                        FROM
-                            (
-                                student.contact_info -> ''address'' ->> ''postalCode''
-                            )
-                    )
-                    OR (
-                        (
-                            cas_supplier.student_profile_snapshot ->> ''country''
-                        ) IS DISTINCT
-                        FROM
-                            (
-                                student.contact_info -> ''address'' ->> ''country''
-                            )
-                    )
+                    OR cas_supplier.student_profile_snapshot ->> ''postalCode'' NOT ILIKE student.contact_info -> ''address'' ->> ''postalCode''
+                    OR cas_supplier.student_profile_snapshot ->> ''country'' NOT ILIKE student.contact_info -> ''address'' ->> ''country''
                 )
         )
         SELECT
@@ -128,70 +87,14 @@ VALUES
                 cas_supplier_report.cas_supplier_verified_date,
                 ''YYYY - MM - DD''
             ) AS "Supplier Verified Date",
-            CASE
-                WHEN (
-                    cas_supplier_report.student_first_name IS DISTINCT
-                    FROM
-                        cas_supplier_report.cas_snapshot_first_name
-                ) THEN ''Yes''
-                ELSE ''No''
-            END "First Name Updated",
-            CASE
-                WHEN (
-                    cas_supplier_report.student_last_name IS DISTINCT
-                    FROM
-                        cas_supplier_report.cas_snapshot_last_name
-                ) THEN ''Yes''
-                ELSE ''No''
-            END "Last Name Updated",
-            CASE
-                WHEN (
-                    cas_supplier_report.student_sin IS DISTINCT
-                    FROM
-                        cas_supplier_report.cas_snapshot_sin
-                ) THEN ''Yes''
-                ELSE ''No''
-            END "SIN Updated",
-            CASE
-                WHEN (
-                    cas_supplier_report.student_address_line_1 IS DISTINCT
-                    FROM
-                        cas_supplier_report.cas_snapshot_address_line_1
-                ) THEN ''Yes''
-                ELSE ''No''
-            END "Address Line 1 Updated",
-            CASE
-                WHEN (
-                    cas_supplier_report.student_city IS DISTINCT
-                    FROM
-                        cas_supplier_report.cas_snapshot_city
-                ) THEN ''Yes''
-                ELSE ''No''
-            END "City Updated",
-            CASE
-                WHEN (
-                    cas_supplier_report.student_province IS DISTINCT
-                    FROM
-                        cas_supplier_report.cas_snapshot_province
-                ) THEN ''Yes''
-                ELSE ''No''
-            END "Province Updated",
-            CASE
-                WHEN (
-                    cas_supplier_report.student_postal_code IS DISTINCT
-                    FROM
-                        cas_supplier_report.cas_snapshot_postal_code
-                ) THEN ''Yes''
-                ELSE ''No''
-            END "Postal Code Updated",
-            CASE
-                WHEN (
-                    cas_supplier_report.student_country IS DISTINCT
-                    FROM
-                        cas_supplier_report.cas_snapshot_country
-                ) THEN ''Yes''
-                ELSE ''No''
-            END "Country Updated"
+            cas_supplier_report.student_first_name NOT ILIKE cas_supplier_report.cas_snapshot_first_name AS "First Name Updated",
+            cas_supplier_report.student_last_name NOT ILIKE cas_supplier_report.cas_snapshot_last_name AS "Last Name Updated",
+            cas_supplier_report.student_sin NOT ILIKE cas_supplier_report.cas_snapshot_sin AS "SIN Updated",
+            cas_supplier_report.student_address_line_1 NOT ILIKE cas_supplier_report.cas_snapshot_address_line_1 AS "Address Line 1 Updated",
+            cas_supplier_report.student_city NOT ILIKE cas_supplier_report.cas_snapshot_city AS "City Updated",
+            cas_supplier_report.student_province NOT ILIKE cas_supplier_report.cas_snapshot_province AS "Province Updated",
+            cas_supplier_report.student_postal_code NOT ILIKE cas_supplier_report.cas_snapshot_postal_code AS "Postal Code Updated",
+            cas_supplier_report.student_country NOT ILIKE cas_supplier_report.cas_snapshot_country AS "Country Updated"
         FROM
             cas_supplier_report
         ORDER BY
