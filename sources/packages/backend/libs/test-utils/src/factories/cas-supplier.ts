@@ -63,6 +63,7 @@ export function createFakeCASSupplier(
   casSupplier.supplierStatus =
     options?.initialValues?.supplierStatus ??
     SupplierStatus.PendingSupplierVerification;
+  casSupplier.errors = options?.initialValues?.errors ?? null;
 
   // Verified manually has a minimum of values populated.
   if (
