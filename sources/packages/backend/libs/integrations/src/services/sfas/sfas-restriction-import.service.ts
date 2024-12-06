@@ -1,10 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, In, Repository } from "typeorm";
+import { DataSource, EntityManager, In, Not, Raw, Repository } from "typeorm";
 import {
   DataModelService,
   Restriction,
   SFASRestriction,
   Student,
+  SFASRestrictionMap,
+  RestrictionType,
+  RestrictionActionType,
+  RestrictionNotificationType,
 } from "@sims/sims-db";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { getUTC, getISODateOnlyString, getSQLFileData } from "@sims/utilities";
@@ -26,7 +30,6 @@ export class SFASRestrictionImportService
   extends DataModelService<SFASRestriction>
   implements SFASDataImporter
 {
-  private readonly bulkInsertLegacyRestrictionsSQL: string;
   private readonly bulkInsertSFASMappedRestrictionsSQL: string;
   constructor(
     private readonly dataSource: DataSource,
@@ -34,12 +37,10 @@ export class SFASRestrictionImportService
     private readonly notificationActionsService: NotificationActionsService,
     @InjectRepository(Restriction)
     private readonly restrictionRepo: Repository<Restriction>,
+    @InjectRepository(SFASRestrictionMap)
+    private readonly sfasRestrictionMapRepo: Repository<SFASRestrictionMap>,
   ) {
     super(dataSource.getRepository(SFASRestriction));
-    this.bulkInsertLegacyRestrictionsSQL = getSQLFileData(
-      "Bulk-insert-legacy-restrictions.sql",
-      SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
-    );
     this.bulkInsertSFASMappedRestrictionsSQL = getSQLFileData(
       "Bulk-insert-sfas-mapped-restrictions.sql",
       SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
@@ -47,28 +48,60 @@ export class SFASRestrictionImportService
   }
 
   /**
+   * Ensures that all the legacy only restrictions that are present in the
+   * sfas_restrictions_map table are also present in the restrictions table.
+   */
+  private async ensureLegacyOnlyRestrictionsExists(): Promise<void> {
+    // Create the query to identify the missing restriction codes to be inserted.
+    const existingRestrictionCodes = this.restrictionRepo
+      .createQueryBuilder("restriction")
+      .select("restriction.code")
+      .getSql();
+    const missingLegacyOnlyRestrictions =
+      await this.sfasRestrictionMapRepo.find({
+        select: { code: true, legacyCode: true },
+        where: {
+          code: Not(In(Raw(existingRestrictionCodes))),
+          isLegacyOnly: true,
+        },
+      });
+    if (missingLegacyOnlyRestrictions.length) {
+      // Convert the missing legacy-only-restrictions to be created.
+      const restrictionsToInsert = missingLegacyOnlyRestrictions.map(
+        (missingRestriction) => {
+          const newRestriction = new Restriction();
+          newRestriction.restrictionType = RestrictionType.Provincial;
+          newRestriction.restrictionCode = missingRestriction.code;
+          newRestriction.description = `Legacy System Restriction (${missingRestriction.legacyCode})`;
+          newRestriction.restrictionCategory = "Other";
+          newRestriction.actionType = [
+            RestrictionActionType.StopFullTimeDisbursement,
+            RestrictionActionType.StopPartTimeDisbursement,
+          ];
+          newRestriction.notificationType = RestrictionNotificationType.Error;
+          newRestriction.isLegacy = true;
+          return newRestriction;
+        },
+      );
+      // Insert all missing restriction in a bulk operation.
+      await this.restrictionRepo.insert(restrictionsToInsert);
+    }
+  }
+
+  /**
    * Bulk operation to insert student restrictions from SFAS restrictions data.
    */
   async insertStudentRestrictions(): Promise<void> {
     try {
+      await this.ensureLegacyOnlyRestrictionsExists();
       const creator = this.systemUsersService.systemUser;
-      const legacyRestriction = await this.restrictionRepo.findOne({
-        select: { id: true },
-        where: { restrictionCode: "LGCY" },
-      });
       await this.dataSource.transaction(async (transactionalEntityManager) => {
-        const bulkInsertLegacyRestrictionsPromise =
-          transactionalEntityManager.query(
-            this.bulkInsertLegacyRestrictionsSQL,
-            [legacyRestriction.id, creator.id],
-          );
         const bulkInsertSFASMappedRestrictionsPromise =
           transactionalEntityManager.query(
             this.bulkInsertSFASMappedRestrictionsSQL,
             [creator.id],
           );
         const [bulkInsertLegacyRestrictions] = await Promise.all([
-          bulkInsertLegacyRestrictionsPromise,
           bulkInsertSFASMappedRestrictionsPromise,
         ]);
         await transactionalEntityManager
