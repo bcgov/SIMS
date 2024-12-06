@@ -28,7 +28,7 @@ import {
   Student,
   StudentRestriction,
 } from "@sims/sims-db";
-import { In, IsNull } from "typeorm";
+import { In, IsNull, Not } from "typeorm";
 
 // SFAS received file mocks.
 const SFAS_ALL_RESTRICTIONS_FILENAME =
@@ -95,7 +95,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     await db.sfasRestrictionMap.delete({ isLegacyOnly: true });
     // Set the current legacy restriction to a different code.
     await db.restriction.update(
-      { isLegacy: true },
+      { isLegacy: true, restrictionCode: Not(RestrictionCode.LGCY) },
       { isLegacy: false, restrictionCode: "E2E_UPDATE" },
     );
     // Set all legacy restrictions notification to sent.
@@ -114,15 +114,15 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     // Arrange
     // Create the new custom legacy restrictions.
     // Two are created to ensure only one notification is sent for the student.
-    const customRestrictionMapTD = createFakeSFASRestrictionMaps({
-      initialValues: { legacyCode: "TD", code: "LGCY_TD" },
+    const customRestrictionMapM1 = createFakeSFASRestrictionMaps({
+      initialValues: { legacyCode: "M1", code: "LGCY_M1" },
     });
-    const customRestrictionMapB5 = createFakeSFASRestrictionMaps({
-      initialValues: { legacyCode: "B5", code: "LGCY_B5" },
+    const customRestrictionMapB4 = createFakeSFASRestrictionMaps({
+      initialValues: { legacyCode: "B4", code: "LGCY_B4" },
     });
     await db.sfasRestrictionMap.save([
-      customRestrictionMapTD,
-      customRestrictionMapB5,
+      customRestrictionMapM1,
+      customRestrictionMapB4,
     ]);
     // Queued job.
     const mockedJob = mockBullJob<void>();
@@ -133,7 +133,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
 
     // Assert
 
-    // Assert new student restrictions LGCY_TD and LGCY_B5 were added to the student account.
+    // Assert new student restrictions LGCY_M1 and LGCY_B4 were added to the student account.
     const studentRestrictions = await db.studentRestriction.find({
       select: {
         id: true,
@@ -150,7 +150,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     // Check if all legacy restrictions were added to the student account as active.
     const legacyStudentRestrictions = studentRestrictions.filter(
       (restriction) =>
-        ["LGCY_TD", "LGCY_B5"].includes(
+        ["LGCY_M1", "LGCY_B4"].includes(
           restriction.restriction.restrictionCode,
         ),
     );
