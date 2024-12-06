@@ -54,7 +54,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       where: {
         birthDate: getISODateOnlyString(new Date("1998-03-24")),
         user: { lastName: "FOUR" },
-        sinValidation: { sin: "900041310" },
+        sinValidation: { sin: "428062400" },
       },
     });
     if (!sharedStudent) {
@@ -62,7 +62,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Update the student to ensure that the student imported from SFAS is the same student as the one created above.
       sharedStudent.birthDate = getISODateOnlyString(new Date("1998-03-24"));
       sharedStudent.user.lastName = "FOUR";
-      sharedStudent.sinValidation.sin = "900041310";
+      sharedStudent.sinValidation.sin = "428062400";
       await db.student.save(sharedStudent);
     }
   });

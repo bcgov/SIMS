@@ -99,28 +99,25 @@ export class SFASRestrictionImportService
       await this.ensureLegacyOnlyRestrictionsExists();
       const creator = this.systemUsersService.systemUser;
       await this.dataSource.transaction(async (transactionalEntityManager) => {
-        const bulkInsertSFASMappedRestrictionsPromise =
-          transactionalEntityManager.query(
-            this.bulkInsertSFASMappedRestrictionsSQL,
-            [creator.id],
-          );
-        const [bulkInsertLegacyRestrictions] = await Promise.all([
-          bulkInsertSFASMappedRestrictionsPromise,
-        ]);
+        await transactionalEntityManager.query(
+          this.bulkInsertSFASMappedRestrictionsSQL,
+          [creator.id],
+        );
         await transactionalEntityManager
           .getRepository(SFASRestriction)
           .update(
             { processed: false },
             { processed: true, updatedAt: new Date() },
           );
-        const bulkInsertLegacyRestrictionStudentIds =
-          bulkInsertLegacyRestrictions.map(
-            (restriction: { student_id: number }) => restriction.student_id,
-          );
-        await this.createLegacyRestrictionNotifications(
-          bulkInsertLegacyRestrictionStudentIds,
-          transactionalEntityManager,
-        );
+        // TODO: Handle notification.
+        // const bulkInsertLegacyRestrictionStudentIds =
+        //   bulkInsertLegacyRestrictions.map(
+        //     (restriction: { student_id: number }) => restriction.student_id,
+        //   );
+        // await this.createLegacyRestrictionNotifications(
+        //   bulkInsertLegacyRestrictionStudentIds,
+        //   transactionalEntityManager,
+        // );
       });
     } catch (error) {
       throw new Error(
