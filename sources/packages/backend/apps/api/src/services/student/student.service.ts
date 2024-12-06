@@ -893,7 +893,7 @@ export class StudentService extends RecordDataModelService<Student> {
         user: { id: true, firstName: true, lastName: true, email: true },
         birthDate: true,
         contactInfo: true as unknown,
-        applications: { applicationNumber: true },
+        applications: { id: true, applicationNumber: true },
       },
       relations: {
         sinValidation: true,
