@@ -455,6 +455,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
           initialValues: {
             startDate: getISODateOnlyString(new Date()),
             endDate: getISODateOnlyString(addDays(50)),
+            // The SFAS application is cancelled.
             applicationCancelDate: getISODateOnlyString(new Date()),
           },
         },
