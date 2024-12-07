@@ -84,6 +84,7 @@ export class SFASRestrictionImportService
           ];
           newRestriction.notificationType = RestrictionNotificationType.Error;
           newRestriction.isLegacy = true;
+          newRestriction.creator = this.systemUsersService.systemUser;
           return newRestriction;
         },
       );
@@ -144,11 +145,11 @@ export class SFASRestrictionImportService
       .distinct()
       .select("studentRestriction.student.id", studentIDAlias)
       .innerJoin("studentRestriction.restriction", "restriction")
-      .where("studentRestriction.createdAt >= :referenceDate", {
+      .where("studentRestriction.createdAt = :referenceDate", {
         referenceDate,
       })
       .andWhere("restriction.isLegacy = true")
-      .getRawMany<number>();
+      .getRawMany<{ [studentIDAlias]: number }>();
     if (!studentsIDsWithNewLegacyRestrictions.length) {
       return;
     }
