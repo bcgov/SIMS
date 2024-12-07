@@ -9,5 +9,6 @@ export class CleanDatabase {
     // Drops the database and all its data.It will erase all your database tables and their data.
     await this.dataSource.dropDatabase();
     await this.dataSource.query("DROP EXTENSION pg_trgm");
+    await this.dataSource.query("DROP FUNCTION sims.create_history_entry");
   }
 }

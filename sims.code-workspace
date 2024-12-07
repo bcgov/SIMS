@@ -113,6 +113,10 @@
       "golevelup",
       "Ilike",
       "lastupdated",
+      "LGCY",
+      "LGCYAAAA",
+      "LGCYBBBB",
+      "LGCYCCCC",
       "MBAL",
       "MSFAA",
       "NOAAPI",
@@ -134,9 +138,7 @@
       "timestamptz",
       "typeorm",
       "unparse",
-      "Zeebe",
-      "LGCY",
-      "SFAS"
+      "Zeebe"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"

@@ -32,6 +32,7 @@ const TEST_DB_NAME = "_TESTS";
       await app.get(CleanDatabase).cleanDatabase();
       console.info("Database cleaned.");
     }
+    await app.close();
     return;
   }
 
@@ -55,4 +56,5 @@ const TEST_DB_NAME = "_TESTS";
       .split(",");
   }
   await app.get(SeedExecutor).executeSeed(testClassList);
+  await app.close();
 })();

@@ -16,6 +16,7 @@ import {
 import { ConfigModule } from "@sims/utilities/config";
 import { CreateAESTUsers } from "./db-seeding/aest";
 import { CreateStudentUsers } from "./db-seeding/student";
+import { CreateRestrictions } from "./db-seeding/restriction";
 
 @Module({
   imports: [DatabaseModule, ConfigModule],
@@ -31,6 +32,7 @@ import { CreateStudentUsers } from "./db-seeding/student";
     CreateInstitutionsAndAuthenticationUsers,
     CreateAESTUsers,
     CreateStudentUsers,
+    CreateRestrictions,
   ],
 })
 export class TestDbSeedingModule {}

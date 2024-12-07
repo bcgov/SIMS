@@ -100,4 +100,19 @@ export enum RestrictionCode {
    * B6A restriction.
    */
   B6A = "B6A",
+  /**
+   * Legacy restriction added during DB seeding.
+   * Notification type as no effect.
+   */
+  LGCYAAAA = "LGCY_AAAA",
+  /**
+   * Legacy restriction added during DB seeding.
+   * Notification type as warning.
+   */
+  LGCYBBBB = "LGCY_BBBB",
+  /**
+   * Legacy restriction added during DB seeding.
+   * Notification type as error.
+   */
+  LGCYCCCC = "LGCY_CCCC",
 }
