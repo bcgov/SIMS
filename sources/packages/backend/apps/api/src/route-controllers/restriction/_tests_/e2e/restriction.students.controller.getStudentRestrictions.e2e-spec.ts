@@ -42,7 +42,7 @@ describe("RestrictionStudentsController(e2e)-getStudentRestrictions", () => {
       },
       where: {
         restrictionCode: In([
-          RestrictionCode.AF4,
+          RestrictionCode.B6A,
           RestrictionCode.LGCYAAAA,
           RestrictionCode.LGCYBBBB,
           RestrictionCode.LGCYCCCC,
