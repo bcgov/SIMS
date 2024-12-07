@@ -155,99 +155,6 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       });
   });
 
-  it("Should throw study dates overlap error when a full time application is submitted for a student via the SFAS system has overlapping study start or study end dates with another application.", async () => {
-    // Arrange
-    const student = await saveFakeStudent(db.dataSource);
-    const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
-      initialValues: {
-        lastName: student.user.lastName,
-        birthDate: student.birthDate,
-        sin: student.sinValidation.sin,
-      },
-    });
-
-    const sfasFullTimeApplication = createFakeSFASApplication(
-      { individual: sfasIndividual },
-      {
-        initialValues: {
-          startDate: getISODateOnlyString(new Date()),
-          endDate: getISODateOnlyString(addDays(50)),
-        },
-      },
-    );
-    await db.sfasApplication.save(sfasFullTimeApplication);
-    // Create a fake offering for the second application.
-    const auditUser = await db.user.save(createFakeUser());
-
-    // SIMS Offering having overlapping study period with SFAS.
-    const simsApplicationOfferingInitialValues = {
-      studyStartDate: getISODateOnlyString(addDays(40)),
-      studyEndDate: getISODateOnlyString(addDays(90)),
-      offeringIntensity: OfferingIntensity.partTime,
-    };
-    const fakeOffering = createFakeEducationProgramOffering(
-      {
-        auditUser,
-      },
-      {
-        initialValues: simsApplicationOfferingInitialValues,
-      },
-    );
-    const savedOffering = await db.educationProgramOffering.save(fakeOffering);
-    const simsApplication = createFakeApplication(
-      {
-        student,
-        location: fakeOffering.institutionLocation,
-      },
-      {
-        initialValue: {
-          data: {},
-          applicationStatus: ApplicationStatus.Draft,
-          applicationStatusUpdatedOn: new Date(),
-          creator: systemUsersService.systemUser,
-          createdAt: new Date(),
-        } as Application,
-      },
-    );
-    const secondDraftApplication = await db.application.save(simsApplication);
-    const applicationData = {
-      selectedOfferingDate: simsApplicationOfferingInitialValues.studyStartDate,
-      selectedOfferingEndDate:
-        simsApplicationOfferingInitialValues.studyEndDate,
-      howWillYouBeAttendingTheProgram:
-        simsApplicationOfferingInitialValues.offeringIntensity,
-      selectedProgram: savedOffering.educationProgram.id,
-      selectedOffering: savedOffering.id,
-    };
-    const payload = {
-      associatedFiles: [],
-      data: applicationData,
-      programYearId: simsApplication.programYear.id,
-    } as SaveApplicationAPIInDTO;
-    const endpoint = `/students/application/${secondDraftApplication.id}/submit`;
-    const token = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.Application,
-      data: { data: applicationData },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        message:
-          "There is an existing application already with overlapping study period or a pending PIR.",
-        errorType: "STUDY_DATE_OVERLAP_ERROR",
-      });
-  });
-
   it("Should throw study dates overlap error when a part time application submitted for a student via the SFAS system has overlapping study start or study end dates with another application.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
@@ -320,6 +227,99 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       associatedFiles: [],
       data: applicationData,
       programYearId: secondApplication.programYear.id,
+    } as SaveApplicationAPIInDTO;
+    const endpoint = `/students/application/${secondDraftApplication.id}/submit`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.Application,
+      data: { data: applicationData },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    await mockUserLoginInfo(appModule, student);
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "There is an existing application already with overlapping study period or a pending PIR.",
+        errorType: "STUDY_DATE_OVERLAP_ERROR",
+      });
+  });
+
+  it("Should throw study dates overlap error when a full time application is submitted for a student via the SFAS system has overlapping study start or study end dates with another application.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
+      initialValues: {
+        lastName: student.user.lastName,
+        birthDate: student.birthDate,
+        sin: student.sinValidation.sin,
+      },
+    });
+
+    const sfasFullTimeApplication = createFakeSFASApplication(
+      { individual: sfasIndividual },
+      {
+        initialValues: {
+          startDate: getISODateOnlyString(new Date()),
+          endDate: getISODateOnlyString(addDays(50)),
+        },
+      },
+    );
+    await db.sfasApplication.save(sfasFullTimeApplication);
+    // Create a fake offering for the second application.
+    const auditUser = await db.user.save(createFakeUser());
+
+    // SIMS Offering having overlapping study period with SFAS.
+    const simsApplicationOfferingInitialValues = {
+      studyStartDate: getISODateOnlyString(addDays(40)),
+      studyEndDate: getISODateOnlyString(addDays(90)),
+      offeringIntensity: OfferingIntensity.partTime,
+    };
+    const fakeOffering = createFakeEducationProgramOffering(
+      {
+        auditUser,
+      },
+      {
+        initialValues: simsApplicationOfferingInitialValues,
+      },
+    );
+    const savedOffering = await db.educationProgramOffering.save(fakeOffering);
+    const simsApplication = createFakeApplication(
+      {
+        student,
+        location: fakeOffering.institutionLocation,
+      },
+      {
+        initialValue: {
+          data: {},
+          applicationStatus: ApplicationStatus.Draft,
+          applicationStatusUpdatedOn: new Date(),
+          creator: systemUsersService.systemUser,
+          createdAt: new Date(),
+        } as Application,
+      },
+    );
+    const secondDraftApplication = await db.application.save(simsApplication);
+    const applicationData = {
+      selectedOfferingDate: simsApplicationOfferingInitialValues.studyStartDate,
+      selectedOfferingEndDate:
+        simsApplicationOfferingInitialValues.studyEndDate,
+      howWillYouBeAttendingTheProgram:
+        simsApplicationOfferingInitialValues.offeringIntensity,
+      selectedProgram: savedOffering.educationProgram.id,
+      selectedOffering: savedOffering.id,
+    };
+    const payload = {
+      associatedFiles: [],
+      data: applicationData,
+      programYearId: simsApplication.programYear.id,
     } as SaveApplicationAPIInDTO;
     const endpoint = `/students/application/${secondDraftApplication.id}/submit`;
     const token = await getStudentToken(
