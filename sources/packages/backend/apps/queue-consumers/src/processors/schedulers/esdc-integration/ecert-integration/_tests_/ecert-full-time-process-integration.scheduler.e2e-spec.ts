@@ -584,7 +584,7 @@ describe(
       ).toBe(true);
     });
 
-    it.only(
+    it(
       "Should disburse BC funding for a close-to-maximum disbursement and reduce BC funding to not exceed the maximum limit and apply BC Funding Stop Restriction" +
         " when a student reaches maximum BC life time loan amount ignoring the legacy SFAS applications that are cancelled. ",
       async () => {
@@ -598,7 +598,6 @@ describe(
             { msfaaState: MSFAAStates.Signed },
           ),
         );
-
         // SFAS Individual.
         const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
           initialValues: {
@@ -647,13 +646,13 @@ describe(
                 "CSGP",
                 299,
               ),
-              // Should not be disbursed due to student exceeding the maximum BC life time loan amount.
+              // Should disburse only 100 as the student will reach the maximum BC life time loan amount.
               createFakeDisbursementValue(
                 DisbursementValueType.BCLoan,
                 "BCSL",
                 399,
               ),
-              // Should not be disbursed due to student exceeding the maximum BC life time loan amount.
+              // BC Grants should still be disbursed since BCSL has some value.
               createFakeDisbursementValue(
                 DisbursementValueType.BCGrant,
                 "BCAG",
@@ -713,7 +712,7 @@ describe(
         expect(header).toContain("100BC  NEW ENTITLEMENT");
         // Validate footer.
         expect(footer.substring(0, 3)).toBe("999");
-        // Check record 1 when the maximum is about to be reached but not yet.
+        // Check record 1 values.
         const record1Parsed = new FullTimeCertRecordParser(record1);
         expect(record1Parsed.hasUser(student.user)).toBe(true);
         expect(record1Parsed.cslfAmount).toBe(199);
