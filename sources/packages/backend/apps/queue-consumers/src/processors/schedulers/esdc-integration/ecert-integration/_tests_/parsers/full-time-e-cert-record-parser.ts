@@ -24,7 +24,7 @@ export class FullTimeCertRecordParser extends ECertRecordParser {
         // Read till find an empty award.
         break;
       }
-      const awardAmount = record.substring(i + 4, i + 14);
+      const awardAmount = record.substring(i + 4, i + 10);
       this.awards[awardCode] = +awardAmount;
     }
   }
