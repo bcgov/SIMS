@@ -57,11 +57,12 @@ export class RestrictionStudentsController extends BaseController {
       const notificationOrder = Object.values(RestrictionNotificationType);
       // If any legacy restriction is present, create a generic LGCY restriction
       // with the highest notification type.
-      const [legacyRestriction] = studentRestrictions.sort(
+      studentRestrictions.sort(
         (a, b) =>
           notificationOrder.indexOf(b.restriction.notificationType) -
           notificationOrder.indexOf(a.restriction.notificationType),
       );
+      const [legacyRestriction] = studentRestrictions;
       results.push({
         code: DEFAULT_LEGACY_RESTRICTION_CODE,
         type: legacyRestriction.restriction.notificationType,
