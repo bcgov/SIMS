@@ -55,8 +55,8 @@ describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
           {
             id: savedCASSupplier2.id,
             dateCreated: savedCASSupplier2.createdAt.toISOString(),
-            supplierNumber: savedCASSupplier2.supplierNumber,
             status: savedCASSupplier2.status,
+            supplierNumber: savedCASSupplier2.supplierNumber,
             supplierProtected: true,
             supplierStatus: savedCASSupplier2.supplierStatus,
             isValid: savedCASSupplier2.isValid,
@@ -70,6 +70,7 @@ describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
           {
             id: savedCASSupplier1.id,
             dateCreated: savedCASSupplier1.createdAt.toISOString(),
+            status: savedCASSupplier1.status,
             supplierNumber: savedCASSupplier1.supplierNumber,
             supplierProtected: savedCASSupplier1.supplierProtected,
             supplierStatus: savedCASSupplier1.supplierStatus,
