@@ -44,7 +44,7 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
       });
   });
 
-  it("Should create CAS supplier when retry CAS supplier is requested for a student.", async () => {
+  it("Should create CAS supplier when retry CAS supplier is requested for a student who does not have a latest CAS supplier in Pending supplier verification status.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     // Create a CAS Supplier for the student with Manual Intervention status.
