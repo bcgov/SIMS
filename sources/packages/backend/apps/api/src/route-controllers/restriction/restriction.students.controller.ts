@@ -31,12 +31,12 @@ export class RestrictionStudentsController extends BaseController {
   async getStudentRestrictions(
     @UserToken() studentToken: StudentUserToken,
   ): Promise<StudentRestrictionAPIOutDTO[]> {
-    // TODO: check if filterNoEffectRestrictions should be passed.
     const studentRestrictions =
       await this.studentRestrictionService.getStudentRestrictionsById(
         studentToken.studentId,
         {
           onlyActive: true,
+          filterNoEffectRestrictions: true,
         },
       );
     // Separate the results between non-legacy and legacy restrictions.

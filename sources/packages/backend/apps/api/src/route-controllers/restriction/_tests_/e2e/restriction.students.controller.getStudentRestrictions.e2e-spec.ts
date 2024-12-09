@@ -32,7 +32,7 @@ describe("RestrictionStudentsController(e2e)-getStudentRestrictions", () => {
     appModule = module;
   });
 
-  it("Should get the active student restrictions including legacy restrictions when the student has active student restrictions.", async () => {
+  it(`Should get the active student restrictions including legacy restrictions and skipping '${RestrictionNotificationType.NoEffect}' when the student has active student restrictions.`, async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     // Restrictions to be associated with the student.
@@ -42,8 +42,11 @@ describe("RestrictionStudentsController(e2e)-getStudentRestrictions", () => {
       },
       where: {
         restrictionCode: In([
+          // 'No effect' restrictions.
+          // RestrictionCode.LGCYAAAA,
+          RestrictionCode.AF4,
           RestrictionCode.B6A,
-          RestrictionCode.LGCYAAAA,
+          // Notification others than 'No effect' that should be returned.
           RestrictionCode.LGCYBBBB,
           RestrictionCode.LGCYCCCC,
         ]),
