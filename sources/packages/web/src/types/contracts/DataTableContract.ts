@@ -335,7 +335,7 @@ export const CASSupplierInformationHeaders = [
     key: "supplierNumber",
   },
   {
-    title: "Supplier Active?",
+    title: "Supplier active?",
     sortable: false,
     key: "status",
   },
@@ -345,7 +345,7 @@ export const CASSupplierInformationHeaders = [
     key: "supplierSiteCode",
   },
   {
-    title: "Site Active?",
+    title: "Site active?",
     sortable: false,
     key: "siteStatus",
   },
@@ -360,7 +360,7 @@ export const CASSupplierInformationHeaders = [
     key: "siteProtected",
   },
   {
-    title: "Address line 1",
+    title: "Address line",
     sortable: false,
     key: "addressLine1",
   },
