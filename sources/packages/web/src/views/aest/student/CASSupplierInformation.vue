@@ -30,7 +30,6 @@
             :items="casSupplierInfo.items"
             :items-per-page="DEFAULT_PAGE_LIMIT"
             :items-per-page-options="ITEMS_PER_PAGE"
-            item-value="id"
             show-expand
           >
             <template #[`item.dateCreated`]="{ item }">
@@ -83,8 +82,8 @@
                 v-if="item.errors && item.errors.length > 0"
                 :icon="
                   isExpanded(internalItem)
-                    ? 'mdi-chevron-down'
-                    : 'mdi-chevron-up'
+                    ? '$expanderExpandIcon'
+                    : '$expanderCollapseIcon'
                 "
                 variant="text"
                 @click="toggleExpand(internalItem)"
