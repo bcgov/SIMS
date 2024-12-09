@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { StudentService } from "../../services";
 import {
@@ -102,5 +102,50 @@ export class CASSupplierService {
     await this.studentRepo.save(student);
 
     return student.casSupplier;
+  }
+
+  /**
+   * Retries CAS supplier info for a student.
+   * Inserts a new CAS Supplier record for the student with PendingSupplierVerification status.
+   * @param studentId student id.
+   * @param auditUserId user id for the record creation.
+   */
+  async retryCASSupplier(
+    studentId: number,
+    auditUserId: number,
+  ): Promise<CASSupplier> {
+    const student = await this.studentService.getStudentById(studentId);
+    const auditUser = { id: auditUserId } as User;
+    if (!student) {
+      throw new CustomNamedError("Student not found.", STUDENT_NOT_FOUND);
+    }
+    const studentCasSupplier: CASSupplier = await this.casSupplierRepo.findOne({
+      select: {
+        id: true,
+        createdAt: true,
+        supplierStatus: true,
+      },
+      where: {
+        student: { id: studentId },
+      },
+      order: {
+        createdAt: "DESC",
+      },
+    });
+    if (
+      studentCasSupplier?.supplierStatus ===
+      SupplierStatus.PendingSupplierVerification
+    ) {
+      throw new UnprocessableEntityException(
+        `There is already a CAS Supplier for this student in ${SupplierStatus.PendingSupplierVerification} status.`,
+      );
+    }
+    const casSupplier = new CASSupplier();
+    casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
+    casSupplier.supplierStatusUpdatedOn = new Date();
+    casSupplier.isValid = false;
+    casSupplier.creator = auditUser;
+    casSupplier.student = student;
+    return await this.casSupplierRepo.save(casSupplier);
   }
 }

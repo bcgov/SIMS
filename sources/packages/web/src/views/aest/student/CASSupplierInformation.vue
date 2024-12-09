@@ -18,6 +18,15 @@
                   prepend-icon="fa:fa fa-plus-circle"
                   >Edit info</v-btn
                 >
+                <v-btn
+                  class="mr-2 float-right"
+                  color="primary"
+                  data-cy="retryCASSupplierButton"
+                  :disabled="notAllowed || !retryButtonDisabled"
+                  @click="retryCASSupplier"
+                  prepend-icon="fa:fa fa-repeat"
+                  >Retry</v-btn
+                >
               </template>
             </check-permission-role>
           </template>
@@ -117,6 +126,7 @@ import EditCASSupplierInfoModal from "@/components/aest/students/EditCASSupplier
 import {
   AddCASSupplierAPIInDTO,
   CASSupplierInfoAPIOutDTO,
+  SupplierStatus,
 } from "@/services/http/dto";
 import { CASSupplierService } from "@/services/CASSupplierService";
 import StatusChipSupplier from "@/components/generic/StatusChipSupplier.vue";
@@ -142,6 +152,7 @@ export default defineComponent({
       {} as ModalDialog<AddCASSupplierAPIInDTO | boolean>,
     );
     const snackBar = useSnackBar();
+    const retryButtonDisabled = ref(true);
     const loadCASSuppliers = async (studentId: number) => {
       try {
         casSupplierInfo.value =
@@ -151,8 +162,23 @@ export default defineComponent({
           "Unexpected error while loading CAS supplier information.",
         );
       }
+      retryButtonDisabled.value =
+        casSupplierInfo.value.items[0]?.supplierStatus !==
+        SupplierStatus.PendingSupplierVerification;
     };
     watchEffect(() => loadCASSuppliers(props.studentId));
+
+    const retryCASSupplier = async () => {
+      try {
+        await CASSupplierService.shared.retryCASSupplier(props.studentId);
+        snackBar.success("CAS supplier information has been retried.");
+        await loadCASSuppliers(props.studentId);
+      } catch {
+        snackBar.error(
+          "Unexpected error while retrying CAS supplier information.",
+        );
+      }
+    };
 
     const addCASSupplierInfo = async () => {
       const addCASSupplierData = await addCASSupplierModal.value.showModal();
@@ -185,6 +211,8 @@ export default defineComponent({
       addCASSupplierModal,
       booleanToYesNo,
       emptyStringFiller,
+      retryCASSupplier,
+      retryButtonDisabled,
     };
   },
 });
