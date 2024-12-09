@@ -24,6 +24,14 @@ export class CASSupplierService {
   }
 
   /**
+   * Retries CAS Supplier info.
+   * @param studentId student id.
+   */
+  async retryCASSupplier(studentId: number): Promise<void> {
+    return ApiClient.CASSupplier.retryCASSupplier(studentId);
+  }
+
+  /**
    * Adds CAS Supplier info.
    * @param studentId student id.
    * @param casSupplierInfo CAS supplier info.
