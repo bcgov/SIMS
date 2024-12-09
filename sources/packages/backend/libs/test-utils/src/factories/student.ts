@@ -1,12 +1,6 @@
 import * as faker from "faker";
-import {
-  CASSupplier,
-  DisabilityStatus,
-  SINValidation,
-  Student,
-  User,
-} from "@sims/sims-db";
-import { createFakeCASSupplier, createFakeUser } from "@sims/test-utils";
+import { DisabilityStatus, SINValidation, Student, User } from "@sims/sims-db";
+import { createFakeUser } from "@sims/test-utils";
 import { DataSource } from "typeorm";
 import { createFakeSINValidation } from "./sin-validation";
 import { COUNTRY_CANADA, getISODateOnlyString } from "@sims/utilities";
@@ -47,11 +41,9 @@ export function createFakeStudent(
  * - `user` related user.
  * - `student` student to be created an associated with other relations.
  * - `sinValidation` related SIN validation.
- * - `casSupplier` related CAS supplier.
  * @param options student options.
  * - `initialValue` student initial values.
  * - `sinValidationInitialValue` sinValidation initial value.
- * - `casSupplierInitialValues` casSupplier initial values.
  * @returns persisted student with relations provided.
  */
 export async function saveFakeStudent(
@@ -59,13 +51,11 @@ export async function saveFakeStudent(
   relations?: {
     student?: Student;
     user?: User;
-    casSupplier?: CASSupplier;
     sinValidation?: SINValidation;
   },
   options?: {
     initialValue?: Partial<Student>;
     sinValidationInitialValue?: Partial<SINValidation>;
-    casSupplierInitialValues?: Partial<CASSupplier>;
   },
 ): Promise<Student> {
   const studentRepo = dataSource.getRepository(Student);
@@ -81,14 +71,6 @@ export async function saveFakeStudent(
     createFakeSINValidation(
       { student },
       { initialValue: options?.sinValidationInitialValue },
-    );
-  student.casSupplier =
-    relations?.casSupplier ??
-    createFakeCASSupplier(
-      { student, auditUser: student.user },
-      {
-        initialValues: options?.casSupplierInitialValues,
-      },
     );
   return studentRepo.save(student);
 }
