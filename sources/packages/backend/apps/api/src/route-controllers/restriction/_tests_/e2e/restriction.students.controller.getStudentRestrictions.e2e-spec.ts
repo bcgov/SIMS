@@ -43,10 +43,10 @@ describe("RestrictionStudentsController(e2e)-getStudentRestrictions", () => {
       where: {
         restrictionCode: In([
           // 'No effect' restrictions.
-          // RestrictionCode.LGCYAAAA,
+          RestrictionCode.LGCYAAAA,
           RestrictionCode.AF4,
-          RestrictionCode.B6A,
           // Notification others than 'No effect' that should be returned.
+          RestrictionCode.B6A,
           RestrictionCode.LGCYBBBB,
           RestrictionCode.LGCYCCCC,
         ]),
