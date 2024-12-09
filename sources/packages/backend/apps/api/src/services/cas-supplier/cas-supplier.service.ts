@@ -34,6 +34,7 @@ export class CASSupplierService {
       select: {
         id: true,
         createdAt: true,
+        status: true,
         supplierNumber: true,
         supplierProtected: true,
         supplierStatus: true,

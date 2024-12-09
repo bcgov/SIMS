@@ -35,6 +35,9 @@
             <template #[`item.dateCreated`]="{ item }">
               {{ dateOnlyLongString(item.dateCreated) }}
             </template>
+            <template #[`item.status`]="{ item }">
+              {{ item.status }}
+            </template>
             <template #[`item.supplierNumber`]="{ item }">
               {{ item.supplierNumber }}
             </template>

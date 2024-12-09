@@ -8,6 +8,7 @@ export class CASSupplierInfoAPIOutDTO {
 export class CASSupplierInfoItemAPIOutDTO {
   id: number;
   dateCreated: Date;
+  status: string;
   supplierNumber?: string;
   supplierProtected?: boolean;
   supplierStatus: SupplierStatus;

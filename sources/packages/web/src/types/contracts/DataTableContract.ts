@@ -320,17 +320,7 @@ export const CASSupplierInformationHeaders = [
     key: "dateCreated",
   },
   {
-    title: "Supplier number",
-    sortable: false,
-    key: "supplierNumber",
-  },
-  {
-    title: "Supplier protected",
-    sortable: false,
-    key: "supplierProtected",
-  },
-  {
-    title: "Supplier status",
+    title: "Status",
     sortable: false,
     key: "supplierStatus",
   },
@@ -340,24 +330,39 @@ export const CASSupplierInformationHeaders = [
     key: "isValid",
   },
   {
-    title: "Site code",
+    title: "Supplier",
+    sortable: false,
+    key: "supplierNumber",
+  },
+  {
+    title: "Supplier Active?",
+    sortable: false,
+    key: "status",
+  },
+  {
+    title: "Site",
     sortable: false,
     key: "supplierSiteCode",
   },
   {
-    title: "Address line 1",
-    sortable: false,
-    key: "addressLine1",
-  },
-  {
-    title: "Site status",
+    title: "Site Active?",
     sortable: false,
     key: "siteStatus",
+  },
+  {
+    title: "Supplier protected",
+    sortable: false,
+    key: "supplierProtected",
   },
   {
     title: "Site protected",
     sortable: false,
     key: "siteProtected",
+  },
+  {
+    title: "Address line 1",
+    sortable: false,
+    key: "addressLine1",
   },
   {
     title: "Details",

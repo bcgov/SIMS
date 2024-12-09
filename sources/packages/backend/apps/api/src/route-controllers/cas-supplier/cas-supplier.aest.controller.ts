@@ -63,6 +63,7 @@ export class CASSupplierAESTController extends BaseController {
     const casSupplierInfoDTOList = casSuppliers.map((casSupplier) => ({
       id: casSupplier.id,
       dateCreated: casSupplier.createdAt,
+      status: casSupplier.status,
       supplierNumber: casSupplier.supplierNumber,
       supplierProtected: casSupplier.supplierProtected,
       supplierStatus: casSupplier.supplierStatus,

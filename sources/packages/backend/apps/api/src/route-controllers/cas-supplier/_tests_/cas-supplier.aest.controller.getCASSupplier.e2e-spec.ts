@@ -33,6 +33,7 @@ describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
       {
         initialValues: {
           supplierStatus: SupplierStatus.ManualIntervention,
+          status: "ACTIVE",
           errors: [
             "[0034] SIN is already in use.",
             "[9999] Duplicate Supplier , Reason: [0065]- Possible duplicate exists, please use online form",
@@ -55,6 +56,7 @@ describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
             id: savedCASSupplier2.id,
             dateCreated: savedCASSupplier2.createdAt.toISOString(),
             supplierNumber: savedCASSupplier2.supplierNumber,
+            status: savedCASSupplier2.status,
             supplierProtected: true,
             supplierStatus: savedCASSupplier2.supplierStatus,
             isValid: savedCASSupplier2.isValid,

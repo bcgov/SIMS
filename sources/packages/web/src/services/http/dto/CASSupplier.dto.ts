@@ -5,6 +5,7 @@ export interface CASSupplierInfoAPIOutDTO {
 export interface CASSupplierInfoItemAPIOutDTO {
   id: number;
   dateCreated: Date;
+  status: string;
   supplierNumber?: string;
   supplierProtected?: boolean;
   supplierStatus: SupplierStatus;
