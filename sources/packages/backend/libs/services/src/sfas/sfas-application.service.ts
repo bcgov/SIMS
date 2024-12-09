@@ -38,7 +38,10 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
       .createQueryBuilder("sfasApplication")
       .select(["sfasApplication.id"])
       .innerJoin("sfasApplication.individual", "sfasFTstudent")
-      .where("lower(sfasFTstudent.lastName) = lower(:lastName)", { lastName })
+      .where("sfasApplication.applicationCancelDate IS NULL")
+      .andWhere("lower(sfasFTstudent.lastName) = lower(:lastName)", {
+        lastName,
+      })
       .andWhere("sfasFTstudent.sin = :sin", { sin })
       .andWhere("sfasFTstudent.birthDate = :birthDate", { birthDate })
       .andWhere(
@@ -73,8 +76,10 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
     const total = await this.repo
       .createQueryBuilder("sfasApplication")
       .select("SUM(sfasApplication.bslAward)")
-      .innerJoin("sfasApplication.individual", "sfasFTstudent")
-      .where("sfasFTstudent.id = :studentId", { studentId })
+      .innerJoin("sfasApplication.individual", "individual")
+      .innerJoin("individual.student", "student")
+      .where("sfasApplication.applicationCancelDate IS NULL")
+      .andWhere("student.id = :studentId", { studentId })
       .getRawOne<{ sum?: number }>();
     return +(total?.sum ?? 0);
   }

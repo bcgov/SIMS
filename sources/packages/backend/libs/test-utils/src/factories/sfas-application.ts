@@ -39,5 +39,7 @@ export function createFakeSFASApplication(
   sfasApplication.createdAt = faker.date.past(18);
   sfasApplication.updatedAt = faker.date.past(18);
   sfasApplication.extractedAt = faker.date.past(18);
+  sfasApplication.applicationCancelDate =
+    options?.initialValues?.applicationCancelDate ?? null;
   return sfasApplication;
 }
