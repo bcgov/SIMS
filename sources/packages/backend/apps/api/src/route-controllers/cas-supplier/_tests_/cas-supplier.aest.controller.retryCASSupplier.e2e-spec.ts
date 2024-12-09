@@ -26,8 +26,19 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
 
   it("Should throw Unprocessable Entity Error when retry CAS supplier is requested for a student who already has a CAS supplier in Pending supplier verification status.", async () => {
     // Arrange
-    //Create a student, which inturn creates a CAS Supplier for the student with Pending Supplier Verification status.
+    // Arrange
     const student = await saveFakeStudent(db.dataSource);
+    // Create a CAS Supplier for the student with Pending supplier verification status.
+    await saveFakeCASSupplier(
+      db,
+      { student },
+      {
+        initialValues: {
+          supplierStatus: SupplierStatus.PendingSupplierVerification,
+          status: "ACTIVE",
+        },
+      },
+    );
     const endpoint = `/aest/cas-supplier/retry/${student.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
