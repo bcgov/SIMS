@@ -18,6 +18,9 @@ export class CreateRestrictions {
     private readonly restrictionRepo: Repository<Restriction>,
   ) {}
 
+  /**
+   * Seeds the database with additional fake restrictions.
+   */
   @DataSeedMethod()
   async createRestrictions(): Promise<void> {
     const additionalRestrictions = RESTRICTIONS_ADDITIONAL_DATA.map(

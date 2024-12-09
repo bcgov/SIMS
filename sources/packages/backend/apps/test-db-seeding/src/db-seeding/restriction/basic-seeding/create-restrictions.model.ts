@@ -8,6 +8,10 @@ export interface FakeRestriction {
   description: string;
 }
 
+/**
+ * Additional data for restrictions created besides the ones
+ * already created by the regular DB migrations.
+ */
 export const RESTRICTIONS_ADDITIONAL_DATA: FakeRestriction[] = [
   {
     restrictionType: RestrictionType.Provincial,
