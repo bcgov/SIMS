@@ -998,7 +998,7 @@
                           "disabled": false,
                           "tableView": false,
                           "modalEdit": false,
-                          "key": "startPartnerInformationRequestButtonFulltimeNotAllowed",
+                          "key": "startPartnerInformationRequestButton",
                           "tags": [],
                           "properties": {},
                           "conditional": {
@@ -1391,7 +1391,7 @@
       "label": "isFulltimeAllowed",
       "protected": false,
       "unique": false,
-      "persistent": true,
+      "persistent": false,
       "type": "hidden",
       "tags": [],
       "conditional": {
