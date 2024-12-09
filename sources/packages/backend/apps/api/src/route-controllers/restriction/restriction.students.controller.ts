@@ -11,6 +11,15 @@ import { RestrictionNotificationType, StudentRestriction } from "@sims/sims-db";
 import { DEFAULT_LEGACY_RESTRICTION_CODE } from "@sims/services/constants";
 
 /**
+ * Restriction notifications priority order.
+ * Priority 1 indicates the most important notification.
+ */
+const NOTIFICATION_PRIORITY_ORDER_MAP = {
+  [RestrictionNotificationType.Error]: 1,
+  [RestrictionNotificationType.Warning]: 2,
+};
+
+/**
  * Controller for Student Restrictions.
  * This consists of all Rest APIs for Student restrictions.
  */
@@ -54,13 +63,12 @@ export class RestrictionStudentsController extends BaseController {
       type: studentRestriction.restriction.notificationType,
     }));
     if (legacyRestrictions.length) {
-      const notificationOrder = Object.values(RestrictionNotificationType);
       // If any legacy restriction is present, create a generic LGCY restriction
       // with the highest notification type.
       studentRestrictions.sort(
         (a, b) =>
-          notificationOrder.indexOf(b.restriction.notificationType) -
-          notificationOrder.indexOf(a.restriction.notificationType),
+          NOTIFICATION_PRIORITY_ORDER_MAP[a.restriction.notificationType] -
+          NOTIFICATION_PRIORITY_ORDER_MAP[b.restriction.notificationType],
       );
       const [legacyRestriction] = studentRestrictions;
       results.push({
