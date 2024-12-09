@@ -76,10 +76,10 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
     const total = await this.repo
       .createQueryBuilder("sfasApplication")
       .select("SUM(sfasApplication.bslAward)")
-      .innerJoin("sfasApplication.individual", "sfasFTstudent")
-      .innerJoin("sfasFTstudent.student", "simsStudent")
+      .innerJoin("sfasApplication.individual", "individual")
+      .innerJoin("individual.student", "student")
       .where("sfasApplication.applicationCancelDate IS NULL")
-      .andWhere("simsStudent.id = :studentId", { studentId })
+      .andWhere("student.id = :studentId", { studentId })
       .getRawOne<{ sum?: number }>();
     return +(total?.sum ?? 0);
   }

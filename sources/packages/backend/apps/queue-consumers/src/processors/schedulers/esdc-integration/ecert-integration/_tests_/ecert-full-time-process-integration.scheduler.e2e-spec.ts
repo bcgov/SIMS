@@ -586,7 +586,7 @@ describe(
 
     it(
       "Should disburse BC funding for a close-to-maximum disbursement and reduce BC funding to not exceed the maximum limit and apply BC Funding Stop Restriction" +
-        " when a student reaches maximum BC life time loan amount ignoring the legacy SFAS applications that are cancelled. ",
+        " when a student reaches maximum BC life time loan amount ignoring the legacy SFAS applications that are cancelled.",
       async () => {
         // Arrange
         // Student with valid SIN.

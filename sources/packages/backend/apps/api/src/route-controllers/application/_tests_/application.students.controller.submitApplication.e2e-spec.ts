@@ -155,7 +155,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       });
   });
 
-  it("Should throw study dates overlap error when a part time application submitted for a student via the SFAS system has overlapping study start or study end dates with another application.", async () => {
+  it("Should throw study dates overlap error when a part-time application submitted for a student via the SFAS system has overlapping study start or study end dates with another application.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
@@ -252,7 +252,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       });
   });
 
-  it("Should throw study dates overlap error when a full time application is submitted for a student via the SFAS system has overlapping study start or study end dates with another application.", async () => {
+  it("Should throw study dates overlap error when a full-time application is submitted for a student via the SFAS system has overlapping study start or study end dates with another application.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
@@ -436,7 +436,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   });
 
   it(
-    "Should submit an application for a student when there is a cancelled full time application in SFAS with overlapping study dates" +
+    "Should submit an application for a student when there is a cancelled full-time application in SFAS with overlapping study dates" +
       " ignoring the cancelled SFAS application.",
     async () => {
       // Arrange

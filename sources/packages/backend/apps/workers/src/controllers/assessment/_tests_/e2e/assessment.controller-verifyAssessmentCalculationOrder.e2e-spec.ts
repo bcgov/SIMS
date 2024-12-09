@@ -569,7 +569,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         sin: student.sinValidation.sin,
       },
     });
-    // Past SFAS application with the start date before the first assessment date of the current application.
+    // Past SFAS application with the start date before the first assessment date of the current application and cancelled.
     const pastFakeSFASApplication = createFakeSFASApplication(
       { individual: sfasIndividual },
       {
@@ -585,7 +585,22 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         },
       },
     );
-    await db.sfasApplication.save(pastFakeSFASApplication);
+    // Past SFAS application with the start date before the first assessment date of the current application and active.
+    const secondPastFakeSFASApplication = createFakeSFASApplication(
+      { individual: sfasIndividual },
+      {
+        initialValues: {
+          startDate: getISODateOnlyString(firstLegacyApplicationStartDate),
+          endDate: getISODateOnlyString(firstLegacyApplicationEndDate),
+          csgpAward: 100,
+          sbsdAward: 40,
+        },
+      },
+    );
+    await db.sfasApplication.save([
+      pastFakeSFASApplication,
+      secondPastFakeSFASApplication,
+    ]);
     // Act
     const result = await assessmentController.verifyAssessmentCalculationOrder(
       createFakeVerifyAssessmentCalculationOrderPayload(
@@ -596,10 +611,12 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The calculation will skip the SFAS full time awards as the SFAS application is cancelled.
+    // The calculation will skip the SFAS application that is cancelled.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       latestCSLPBalance: 0,
+      programYearTotalFullTimeCSGP: 100,
+      programYearTotalFullTimeSBSD: 40,
     });
   });
 
