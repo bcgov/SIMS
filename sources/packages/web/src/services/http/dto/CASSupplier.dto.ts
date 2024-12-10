@@ -3,7 +3,9 @@ export interface CASSupplierInfoAPIOutDTO {
 }
 
 export interface CASSupplierInfoItemAPIOutDTO {
+  id: number;
   dateCreated: Date;
+  status: string;
   supplierNumber?: string;
   supplierProtected?: boolean;
   supplierStatus: SupplierStatus;
@@ -12,6 +14,7 @@ export interface CASSupplierInfoItemAPIOutDTO {
   addressLine1?: string;
   siteStatus?: CASSupplierSiteStatus;
   siteProtected?: string;
+  errors?: string[];
 }
 
 export type CASSupplierSiteStatus = "ACTIVE" | "INACTIVE";

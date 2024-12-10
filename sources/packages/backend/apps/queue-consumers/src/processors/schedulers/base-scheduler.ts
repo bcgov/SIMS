@@ -14,21 +14,6 @@ export abstract class BaseScheduler<T> implements OnApplicationBootstrap {
   ) {}
 
   /**
-   * Clean the queue scheduler history.
-   */
-  protected async cleanSchedulerQueueHistory(): Promise<void> {
-    try {
-      const queueCleanUpPeriod = await this.queueService.getQueueCleanUpPeriod(
-        this.schedulerQueue.name as QueueNames,
-      );
-      await this.schedulerQueue.clean(queueCleanUpPeriod, "completed");
-    } catch (error: unknown) {
-      // Fail silently.
-      this.logger.error(error);
-    }
-  }
-
-  /**
    * Get queue cron configurations.
    */
   private async queueCronConfiguration(): Promise<CronRepeatOptions> {

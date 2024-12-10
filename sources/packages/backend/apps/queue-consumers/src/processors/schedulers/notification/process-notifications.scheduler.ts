@@ -47,7 +47,6 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
       `Total notifications processed ${processNotificationResponse.notificationsProcessed}`,
       `Total notifications successfully processed ${processNotificationResponse.notificationsSuccessfullyProcessed}`,
     ];
-    await this.cleanSchedulerQueueHistory();
     return { summary: processSummaryResult } as QueueProcessSummaryResult;
   }
 }

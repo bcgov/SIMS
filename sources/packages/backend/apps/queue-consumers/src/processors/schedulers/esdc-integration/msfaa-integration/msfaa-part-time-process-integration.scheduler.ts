@@ -43,7 +43,6 @@ export class PartTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
       OfferingIntensity.partTime,
     );
     await summary.info("MSFAA request file sent.");
-    await this.cleanSchedulerQueueHistory();
     await summary.info(
       `Completed MSFAA Part-time integration job ${job.id} of type ${job.name}.`,
     );

@@ -3,18 +3,27 @@
     <formio-container
       formName="supportingusersdashboard"
       @customEvent="customEventCallback"
+      :formData="formData"
     ></formio-container>
   </full-page-container>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 import { FormIOCustomEvent, FormIOCustomEventTypes } from "@/types";
 import { useRouter } from "vue-router";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
+import { AppConfigService } from "@/services/AppConfigService";
 export default defineComponent({
   setup() {
+    const formData: { isFulltimeAllowed: boolean } = {
+      isFulltimeAllowed: false,
+    };
     const router = useRouter();
+    onMounted(async () => {
+      const { isFulltimeAllowed } = await AppConfigService.shared.config();
+      formData.isFulltimeAllowed = isFulltimeAllowed;
+    });
     const customEventCallback = async (
       _form: any,
       event: FormIOCustomEvent,
@@ -33,7 +42,7 @@ export default defineComponent({
       router.push({ name: routeName });
     };
 
-    return { customEventCallback };
+    return { customEventCallback, formData };
   },
 });
 </script>

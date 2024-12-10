@@ -42,7 +42,6 @@ export class SINValidationResponseIntegrationScheduler extends BaseScheduler<voi
       auditUser.id,
     );
     await summary.info("ESDC SIN validation response files processed.");
-    await this.cleanSchedulerQueueHistory();
     await summary.info(
       `Completed SIN validation integration job ${job.id} of type ${job.name}.`,
     );
