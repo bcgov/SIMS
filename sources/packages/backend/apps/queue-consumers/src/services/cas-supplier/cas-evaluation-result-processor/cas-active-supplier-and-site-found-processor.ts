@@ -8,8 +8,8 @@ import {
   CASEvaluationStatus,
   StudentSupplierToProcess,
 } from "../cas-supplier.models";
-import { Repository } from "typeorm";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
+import { Repository } from "typeorm";
 
 /**
  * Process the active supplier and site information found on CAS.
@@ -19,10 +19,10 @@ export class CASActiveSupplierAndSiteFoundProcessor extends CASEvaluationResultP
   constructor(
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
-    private readonly casSupplierRepo: Repository<CASSupplier>,
+    casSupplierRepo: Repository<CASSupplier>,
     private readonly casSupplierSharedService: CASSupplierSharedService,
   ) {
-    super();
+    super(casSupplierRepo);
   }
 
   /**

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { CASSupplierSharedService, SystemUsersService } from "@sims/services";
+import { InjectRepository } from "@nestjs/typeorm";
 import { CASSupplier, SupplierStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
@@ -8,12 +8,14 @@ import {
   CASEvaluationStatus,
   StudentSupplierToProcess,
 } from "../cas-supplier.models";
-import { Repository } from "typeorm";
 import {
   CASService,
   CreateSupplierAndSiteResponse,
 } from "@sims/integrations/cas";
 import { CASEvaluationResultProcessor, ProcessorResult } from ".";
+import { Repository } from "typeorm";
+import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Process a student that was not found on CAS.
@@ -24,10 +26,10 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
     private readonly casService: CASService,
     private readonly systemUsersService: SystemUsersService,
     @InjectRepository(CASSupplier)
-    private readonly casSupplierRepo: Repository<CASSupplier>,
+    casSupplierRepo: Repository<CASSupplier>,
     private readonly casSupplierSharedService: CASSupplierSharedService,
   ) {
-    super();
+    super(casSupplierRepo);
   }
 
   /**
@@ -65,8 +67,21 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
       });
       summary.info("Created supplier and site on CAS.");
     } catch (error: unknown) {
-      summary.error("Error while creating supplier and site on CAS.", error);
-      return { isSupplierUpdated: false };
+      if (error instanceof CustomNamedError) {
+        if (error.name === CAS_BAD_REQUEST) {
+          summary.warn(
+            "Known CAS error while creating supplier and site on CAS.",
+          );
+          return this.processBadRequestErrors(
+            studentSupplier,
+            summary,
+            error.objectInfo as string[],
+            this.systemUsersService.systemUser.id,
+          );
+        }
+        summary.error("Error while creating supplier and site on CAS.", error);
+        return { isSupplierUpdated: false };
+      }
     }
     try {
       const [submittedAddress] = result.submittedData.SupplierAddress;
@@ -118,7 +133,6 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
         "Unexpected error while updating supplier and site for the student.",
         error,
       );
-      return { isSupplierUpdated: false };
     }
   }
 }

@@ -6,7 +6,9 @@ export class CASSupplierInfoAPIOutDTO {
 }
 
 export class CASSupplierInfoItemAPIOutDTO {
+  id: number;
   dateCreated: Date;
+  status: string;
   supplierNumber?: string;
   supplierProtected?: boolean;
   supplierStatus: SupplierStatus;
@@ -15,6 +17,7 @@ export class CASSupplierInfoItemAPIOutDTO {
   addressLine1?: string;
   siteStatus?: CASSupplierSiteStatus;
   siteProtected?: string;
+  errors?: string[];
 }
 
 export class AddCASSupplierAPIInDTO {

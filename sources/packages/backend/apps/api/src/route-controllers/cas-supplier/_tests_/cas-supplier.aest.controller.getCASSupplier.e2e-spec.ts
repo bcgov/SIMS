@@ -23,14 +23,23 @@ describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get all the CAS suppliers for a student when CAS suppliers info is requested for a student.", async () => {
+  it("Should get all the CAS suppliers with and without error for a student when CAS suppliers info is requested for a student.", async () => {
     // Arrange
     const savedCASSupplier1 = await saveFakeCASSupplier(db);
     const student = savedCASSupplier1.student;
     const savedCASSupplier2 = await saveFakeCASSupplier(
       db,
       { student },
-      { initialValues: { supplierStatus: SupplierStatus.VerifiedManually } },
+      {
+        initialValues: {
+          supplierStatus: SupplierStatus.ManualIntervention,
+          status: "ACTIVE",
+          errors: [
+            "[0034] SIN is already in use.",
+            "[9999] Duplicate Supplier , Reason: [0065]- Possible duplicate exists, please use online form",
+          ],
+        },
+      },
     );
 
     const endpoint = `/aest/cas-supplier/student/${student.id}`;
@@ -44,16 +53,24 @@ describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
       .expect({
         items: [
           {
+            id: savedCASSupplier2.id,
             dateCreated: savedCASSupplier2.createdAt.toISOString(),
+            status: savedCASSupplier2.status,
             supplierNumber: savedCASSupplier2.supplierNumber,
-            supplierProtected: null,
+            supplierProtected: true,
             supplierStatus: savedCASSupplier2.supplierStatus,
             isValid: savedCASSupplier2.isValid,
             supplierSiteCode:
               savedCASSupplier2.supplierAddress.supplierSiteCode,
+            siteStatus: savedCASSupplier2.supplierAddress.status,
+            addressLine1: savedCASSupplier2.supplierAddress.addressLine1,
+            siteProtected: savedCASSupplier2.supplierAddress.siteProtected,
+            errors: savedCASSupplier2.errors,
           },
           {
+            id: savedCASSupplier1.id,
             dateCreated: savedCASSupplier1.createdAt.toISOString(),
+            status: savedCASSupplier1.status,
             supplierNumber: savedCASSupplier1.supplierNumber,
             supplierProtected: savedCASSupplier1.supplierProtected,
             supplierStatus: savedCASSupplier1.supplierStatus,
@@ -63,6 +80,7 @@ describe("CASSupplierAESTController(e2e)-getCASSuppliers", () => {
             siteStatus: savedCASSupplier1.supplierAddress.status,
             addressLine1: savedCASSupplier1.supplierAddress.addressLine1,
             siteProtected: savedCASSupplier1.supplierAddress.siteProtected,
+            errors: null,
           },
         ],
       });
