@@ -56,7 +56,7 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
   it("Should create CAS supplier when retry CAS supplier is requested for a student who does not have a latest CAS supplier in Pending supplier verification status.", async () => {
     // Arrange
     // Create a CAS Supplier for the student with Manual Intervention status.
-    const casSupplier = await saveFakeCASSupplier(db, undefined, {
+    const fakeCASSupplier = await saveFakeCASSupplier(db, undefined, {
       initialValues: {
         supplierStatus: SupplierStatus.ManualIntervention,
         status: "ACTIVE",
@@ -64,7 +64,7 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
     });
     const student = await saveFakeStudent(db.dataSource, undefined, {
       initialValue: {
-        casSupplier: casSupplier,
+        casSupplier: fakeCASSupplier,
       },
     });
     const endpoint = `/aest/cas-supplier/student/${student.id}/retry`;
@@ -81,12 +81,7 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
         expect(responseCasSupplierId).toEqual(expect.any(Number));
       });
 
-    const casSuppliers = await db.casSupplier.findOne({
-      select: {
-        id: true,
-        supplierStatus: true,
-        isValid: true,
-      },
+    const casSupplier = await db.casSupplier.findOne({
       where: {
         id: responseCasSupplierId,
       },
@@ -95,10 +90,21 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
       },
     });
 
-    expect(casSuppliers).toEqual({
+    expect(casSupplier).toEqual({
       id: responseCasSupplierId,
       supplierStatus: SupplierStatus.PendingSupplierVerification,
       isValid: false,
+      createdAt: expect.any(Date),
+      lastUpdated: null,
+      supplierStatusUpdatedOn: expect.any(Date),
+      errors: null,
+      status: null,
+      studentProfileSnapshot: null,
+      supplierAddress: null,
+      supplierName: null,
+      supplierNumber: null,
+      supplierProtected: null,
+      updatedAt: expect.any(Date),
     });
   });
 

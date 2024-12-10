@@ -55,7 +55,6 @@ import {
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
 } from "@sims/services/constants";
 import { InjectRepository } from "@nestjs/typeorm";
-import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -930,20 +929,20 @@ export class StudentService extends RecordDataModelService<Student> {
     studentId: number,
     auditUser: User,
     options?: { entityManager?: EntityManager },
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const casSupplierRepo = options?.entityManager
-      ? options.entityManager.getRepository(CASSupplier)
-      : this.casSupplierRepo;
+  ): Promise<Student> {
+    const studentRepo = options?.entityManager
+      ? options?.entityManager.getRepository(Student)
+      : this.repo;
     const casSupplier = new CASSupplier();
     casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
     casSupplier.supplierStatusUpdatedOn = new Date();
     casSupplier.isValid = false;
     casSupplier.creator = auditUser;
     casSupplier.student = { id: studentId } as Student;
-    const savedCASSupplier = await casSupplierRepo.save(casSupplier);
-    await options?.entityManager.getRepository(Student).update(studentId, {
-      casSupplier: savedCASSupplier,
-    });
-    return casSupplier;
+    const student = new Student();
+    student.id = studentId;
+    student.casSupplier = casSupplier;
+    await studentRepo.save(student);
+    return student;
   }
 }

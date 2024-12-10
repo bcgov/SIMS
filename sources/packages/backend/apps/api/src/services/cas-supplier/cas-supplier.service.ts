@@ -144,9 +144,10 @@ export class CASSupplierService {
         CAS_SUPPLIER_ALREADY_IN_PENDING_SUPPLIER_VERIFICATION,
       );
     }
-    return await this.studentService.createPendingCASSupplier(
+    const savedStudent = await this.studentService.createPendingCASSupplier(
       studentId,
       auditUser,
     );
+    return { id: savedStudent.casSupplier.id };
   }
 }
