@@ -157,8 +157,9 @@ describe(
         },
       ]);
     });
+
     it(
-      "Should create a notification for the ministry and student for a blocked disbursement when the total assessed award is 0" +
+      "Should create a notification for the ministry and student for a blocked disbursement when it doesn't have estimated awards" +
         " and there are no previously existing notifications for the disbursement.",
       async () => {
         // Arrange
