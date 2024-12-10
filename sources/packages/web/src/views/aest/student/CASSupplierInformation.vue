@@ -25,6 +25,7 @@
                   :disabled="notAllowed || retryButtonDisabled"
                   @click="retryCASSupplier"
                   prepend-icon="fa:fa fa-repeat"
+                  :loading="loading"
                   >Retry</v-btn
                 >
               </template>
@@ -147,6 +148,7 @@ export default defineComponent({
     const { dateOnlyLongString, emptyStringFiller, booleanToYesNo } =
       useFormatters();
     const showModal = ref(false);
+    const loading = ref(false);
     const casSupplierInfo = ref({} as CASSupplierInfoAPIOutDTO);
     const addCASSupplierModal = ref(
       {} as ModalDialog<AddCASSupplierAPIInDTO | boolean>,
@@ -171,6 +173,7 @@ export default defineComponent({
 
     const retryCASSupplier = async () => {
       try {
+        loading.value = true;
         await CASSupplierService.shared.retryCASSupplier(props.studentId);
         snackBar.success(
           "A new CAS pending verification record was created. A new attempt will be made to get information from CAS.",
@@ -180,6 +183,8 @@ export default defineComponent({
         snackBar.error(
           "Unexpected error while retrying CAS supplier information.",
         );
+      } finally {
+        loading.value = false;
       }
     };
 
@@ -216,6 +221,7 @@ export default defineComponent({
       emptyStringFiller,
       retryCASSupplier,
       retryButtonDisabled,
+      loading,
     };
   },
 });
