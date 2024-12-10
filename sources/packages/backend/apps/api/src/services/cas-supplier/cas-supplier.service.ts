@@ -12,7 +12,6 @@ import { CustomNamedError } from "@sims/utilities";
 import { STUDENT_NOT_FOUND } from "../../constants";
 import { Repository } from "typeorm";
 import { CASSupplierSharedService } from "@sims/services";
-import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
 
 export const CAS_SUPPLIER_ALREADY_IN_PENDING_SUPPLIER_VERIFICATION =
   "CAS_SUPPLIER_ALREADY_IN_PENDING_SUPPLIER_VERIFICATION";
@@ -110,16 +109,15 @@ export class CASSupplierService {
 
   /**
    * Retries CAS supplier info for a student.
-   * Inserts a new CAS Supplier record for the student with  {@link SupplierStatus.PendingSupplierVerification} status.
+   * Inserts a new CAS Supplier record for the student with {@link SupplierStatus.PendingSupplierVerification} status.
    * @param studentId student id.
    * @param auditUserId user id for the record creation.
-   * @returns the created CAS Supplier id.
+   * @returns the created CAS Supplier.
    */
   async retryCASSupplier(
     studentId: number,
     auditUserId: number,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const auditUser = { id: auditUserId } as User;
+  ): Promise<CASSupplier> {
     const student = await this.studentRepo.findOne({
       select: {
         id: true,
@@ -135,6 +133,9 @@ export class CASSupplierService {
         id: studentId,
       },
     });
+    if (!student) {
+      throw new CustomNamedError("Student not found.", STUDENT_NOT_FOUND);
+    }
     if (
       student.casSupplier?.supplierStatus ===
       SupplierStatus.PendingSupplierVerification
@@ -146,8 +147,8 @@ export class CASSupplierService {
     }
     const savedStudent = await this.studentService.createPendingCASSupplier(
       studentId,
-      auditUser,
+      auditUserId,
     );
-    return { id: savedStudent.casSupplier.id };
+    return savedStudent.casSupplier;
   }
 }

@@ -25,6 +25,7 @@ export class CASSupplierApi extends HttpBaseClient {
   /**
    * Retries CAS supplier info for a student.
    * @param studentId student id.
+   * @returns the created CAS Supplier Id.
    */
   async retryCASSupplier(
     studentId: number,

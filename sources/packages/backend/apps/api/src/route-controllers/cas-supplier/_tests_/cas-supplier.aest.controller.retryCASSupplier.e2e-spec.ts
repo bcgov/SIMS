@@ -80,30 +80,26 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
         expect(responseCasSupplierId).toEqual(expect.any(Number));
       });
 
-    const casSupplier = await db.casSupplier.findOne({
+    const updatedStudent = await db.student.findOne({
+      select: {
+        id: true,
+        casSupplier: { id: true, supplierStatus: true },
+      },
+      relations: {
+        casSupplier: true,
+      },
       where: {
-        id: responseCasSupplierId,
+        id: student.id,
       },
-      order: {
-        createdAt: "DESC",
-      },
+      loadEagerRelations: false,
     });
 
-    expect(casSupplier).toEqual({
-      id: responseCasSupplierId,
-      supplierStatus: SupplierStatus.PendingSupplierVerification,
-      isValid: false,
-      createdAt: expect.any(Date),
-      lastUpdated: null,
-      supplierStatusUpdatedOn: expect.any(Date),
-      errors: null,
-      status: null,
-      studentProfileSnapshot: null,
-      supplierAddress: null,
-      supplierName: null,
-      supplierNumber: null,
-      supplierProtected: null,
-      updatedAt: expect.any(Date),
+    expect(updatedStudent).toEqual({
+      id: student.id,
+      casSupplier: {
+        id: responseCasSupplierId,
+        supplierStatus: SupplierStatus.PendingSupplierVerification,
+      },
     });
   });
 

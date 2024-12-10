@@ -223,7 +223,7 @@ export class StudentService extends RecordDataModelService<Student> {
         sinValidation.sin = studentSIN;
         sinValidation.student = student;
         student.sinValidation = sinValidation;
-        await this.createPendingCASSupplier(student.id, auditUser, {
+        await this.createPendingCASSupplier(student.id, auditUserId, {
           entityManager,
         });
       }
@@ -917,21 +917,25 @@ export class StudentService extends RecordDataModelService<Student> {
    **/
   async createPendingCASSupplier(
     studentId: number,
-    auditUser: User,
+    auditUserId: number,
     options?: { entityManager?: EntityManager },
   ): Promise<Student> {
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     const studentRepo = options?.entityManager
       ? options?.entityManager.getRepository(Student)
       : this.repo;
     const casSupplier = new CASSupplier();
     casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
-    casSupplier.supplierStatusUpdatedOn = new Date();
+    casSupplier.supplierStatusUpdatedOn = now;
     casSupplier.isValid = false;
     casSupplier.creator = auditUser;
     casSupplier.student = { id: studentId } as Student;
     const student = new Student();
     student.id = studentId;
     student.casSupplier = casSupplier;
+    student.modifier = auditUser;
+    student.updatedAt = now;
     return studentRepo.save(student);
   }
 }

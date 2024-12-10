@@ -25,7 +25,11 @@ import {
   AddCASSupplierAPIInDTO,
   CASSupplierInfoAPIOutDTO,
 } from "./models/cas-supplier.dto";
-import { CASSupplierService, StudentService } from "../../services";
+import {
+  CASSupplierService,
+  CAS_SUPPLIER_ALREADY_IN_PENDING_SUPPLIER_VERIFICATION,
+  StudentService,
+} from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { STUDENT_NOT_FOUND } from "../../constants";
@@ -134,18 +138,20 @@ export class CASSupplierAESTController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const studentExist = await this.studentService.studentExists(studentId);
-    if (!studentExist) {
-      throw new NotFoundException("Student not found.");
-    }
     try {
-      return await this.casSupplierService.retryCASSupplier(
+      const casSupplier = await this.casSupplierService.retryCASSupplier(
         studentId,
         userToken.userId,
       );
+      return { id: casSupplier.id };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        throw new UnprocessableEntityException(error.message);
+        switch (error.name) {
+          case STUDENT_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case CAS_SUPPLIER_ALREADY_IN_PENDING_SUPPLIER_VERIFICATION:
+            throw new UnprocessableEntityException(error.message);
+        }
       }
       throw error;
     }
