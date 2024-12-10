@@ -2,6 +2,7 @@ import ApiClient from "@/services/http/ApiClient";
 import {
   AddCASSupplierAPIInDTO,
   CASSupplierInfoAPIOutDTO,
+  PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
 
 export class CASSupplierService {
@@ -27,7 +28,9 @@ export class CASSupplierService {
    * Retries CAS Supplier info for a student.
    * @param studentId student id.
    */
-  async retryCASSupplier(studentId: number): Promise<void> {
+  async retryCASSupplier(
+    studentId: number,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     return ApiClient.CASSupplier.retryCASSupplier(studentId);
   }
 
