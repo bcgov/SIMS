@@ -2,13 +2,9 @@ import { InjectQueue, Processor } from "@nestjs/bull";
 import { PartTimeECertFileHandler } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { Job, Queue } from "bull";
+import { Queue } from "bull";
 import { PartTimeCalculationProcess } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { ECertProcessIntegrationBaseScheduler } from "./ecert-process-integration-base.scheduler";
 
 @Processor(QueueNames.PartTimeECertIntegration)
@@ -28,14 +24,19 @@ export class PartTimeECertProcessIntegrationScheduler extends ECertProcessIntegr
     );
   }
 
-  processQueue(job: Job<void>): Promise<string | string[]> {
+  /**
+   * To be removed once the method {@link process} is implemented.
+   * This method "hides" the {@link Process} decorator from the base class.
+   */
+  async processQueue(): Promise<string | string[]> {
     throw new Error("Method not implemented.");
   }
 
-  async process(
-    _job: Job<void>,
-    _processSummary: ProcessSummary,
-  ): Promise<string | string[]> {
+  /**
+   * When implemented in a derived class, process the queue job.
+   * To be implemented.
+   */
+  protected async process(): Promise<string | string[]> {
     throw new Error("Method not implemented.");
   }
 

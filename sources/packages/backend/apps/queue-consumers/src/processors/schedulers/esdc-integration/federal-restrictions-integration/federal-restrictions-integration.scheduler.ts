@@ -6,7 +6,6 @@ import { Job, Queue } from "bull";
 import { QueueProcessSummary } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { ESDCFileResponse } from "../models/esdc.models";
-import { ProcessSummary } from "@sims/utilities/logger";
 
 @Processor(QueueNames.FederalRestrictionsIntegration)
 export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void> {
@@ -19,14 +18,19 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
     super(schedulerQueue, queueService);
   }
 
-  processQueue(job: Job<void>): Promise<string | string[]> {
+  /**
+   * To be removed once the method {@link process} is implemented.
+   * This method "hides" the {@link Process} decorator from the base class.
+   */
+  async processQueue(): Promise<string | string[]> {
     throw new Error("Method not implemented.");
   }
 
-  async process(
-    _job: Job<void>,
-    _processSummary: ProcessSummary,
-  ): Promise<string | string[]> {
+  /**
+   * When implemented in a derived class, process the queue job.
+   * To be implemented.
+   */
+  protected async process(): Promise<string | string[]> {
     throw new Error("Method not implemented.");
   }
 

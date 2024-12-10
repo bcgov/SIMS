@@ -6,7 +6,6 @@ import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { QueueProcessSummaryResult } from "../../models/processors.models";
-import { ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Process notifications which are unsent.
@@ -22,16 +21,19 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
     super(schedulerQueue, queueService);
   }
 
-  processQueue(
-    job: Job<ProcessNotificationsQueueInDTO>,
-  ): Promise<string | string[]> {
+  /**
+   * To be removed once the method {@link process} is implemented.
+   * This method "hides" the {@link Process} decorator from the base class.
+   */
+  async processQueue(): Promise<string | string[]> {
     throw new Error("Method not implemented.");
   }
 
-  async process(
-    _job: Job<ProcessNotificationsQueueInDTO>,
-    _processSummary: ProcessSummary,
-  ): Promise<string | string[]> {
+  /**
+   * When implemented in a derived class, process the queue job.
+   * To be implemented.
+   */
+  protected async process(): Promise<string | string[]> {
     throw new Error("Method not implemented.");
   }
 

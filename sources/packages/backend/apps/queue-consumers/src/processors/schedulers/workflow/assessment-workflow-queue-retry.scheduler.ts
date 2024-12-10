@@ -30,16 +30,19 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
     super(schedulerQueue, queueService);
   }
 
-  processQueue(
-    _job: Job<AssessmentWorkflowQueueRetryInDTO>,
-  ): Promise<string | string[]> {
+  /**
+   * To be removed once the method {@link process} is implemented.
+   * This method "hides" the {@link Process} decorator from the base class.
+   */
+  async processQueue(): Promise<string | string[]> {
     throw new Error("Method not implemented.");
   }
 
-  async process(
-    _job: Job<AssessmentWorkflowQueueRetryInDTO>,
-    _processSummary: ProcessSummary,
-  ): Promise<string | string[]> {
+  /**
+   * When implemented in a derived class, process the queue job.
+   * To be implemented.
+   */
+  protected async process(): Promise<string | string[]> {
     throw new Error("Method not implemented.");
   }
 
