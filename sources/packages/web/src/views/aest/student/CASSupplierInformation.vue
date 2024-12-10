@@ -173,7 +173,7 @@ export default defineComponent({
 
     const retryCASSupplier = async () => {
       try {
-        retryLoading = true;
+        retryLoading.value = true;
         await CASSupplierService.shared.retryCASSupplier(props.studentId);
         snackBar.success(
           "A new CAS pending verification record was created. A new attempt will be made to get information from CAS.",
@@ -184,7 +184,7 @@ export default defineComponent({
           "Unexpected error while retrying CAS supplier information.",
         );
       } finally {
-        retryLoading = false;
+        retryLoading.value = false;
       }
     };
 
