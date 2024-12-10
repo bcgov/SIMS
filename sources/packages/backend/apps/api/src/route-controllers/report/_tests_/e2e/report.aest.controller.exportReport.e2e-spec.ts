@@ -39,6 +39,7 @@ import {
   OfferingIntensity,
   ProgramIntensity,
   Student,
+  SupplierStatus,
   WorkflowData,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
@@ -67,6 +68,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
       AppAESTModule,
       FormService,
     );
+    await db.casSupplier.update({ isValid: true }, { isValid: false });
     sharedCASSupplierUpdatedStudent = await saveFakeStudent(db.dataSource);
   });
 
@@ -1429,6 +1431,69 @@ describe("ReportAestController(e2e)-exportReport", () => {
       });
   });
 
+  it(
+    "Should generate CAS Supplier maintenance updates report with the student details" +
+      " when last name of the student is updated after the CAS supplier is set to be valid.",
+    async () => {
+      // Arrange
+      // Save a CASSupplier for the student.
+      await saveFakeCASSupplier(
+        db,
+        { student: sharedCASSupplierUpdatedStudent },
+        {
+          initialValues: {
+            supplierStatus: SupplierStatus.Verified,
+            isValid: true,
+          },
+        },
+      );
+      // Update the student's last name.
+      sharedCASSupplierUpdatedStudent.user.lastName = "Updated Last Name";
+      await db.student.save(sharedCASSupplierUpdatedStudent);
+
+      const casSupplierMaintenanceUpdates =
+        "CAS_Supplier_Maintenance_Updates_Report";
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      // Payload with no parameters.
+      const payload = {
+        reportName: casSupplierMaintenanceUpdates,
+        params: {},
+      };
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          const expectedReportData = buildCASSupplierMaintenanceUpdatesReport(
+            sharedCASSupplierUpdatedStudent,
+            { lastNameUpdated: true },
+          );
+          const [actualReportData] = parsedResult.data as Record<
+            string,
+            string
+          >[];
+          expect(actualReportData).toEqual(expectedReportData);
+        });
+    },
+  );
+
   /**
    * Converts education program offering object into a key-value pair object matching the result data.
    * @param fakeOffering an education program offering record.
@@ -1493,6 +1558,63 @@ describe("ReportAestController(e2e)-exportReport", () => {
       "Offering Type": "",
       "Offering Status": "",
       "Offering Intensity": "",
+    };
+  }
+
+  /**
+   * Build CAS Supplier maintenance updates report data.
+   * @param student student.
+   * @param options expected report data options.
+   * - `firstNameUpdated` indicates if the first name of the student is updated.
+   * - `lastNameUpdated` indicates if the last name of the student is updated.
+   * - `sinUpdated` indicates if the SIN number of the student is updated.
+   * - `addressLine1Updated` indicates if the address line 1 of the student is updated.
+   * - `cityUpdated` indicates if the city of the student is updated.
+   * - `provinceUpdated` indicates if the province of the student is updated.
+   * - `postalCodeUpdated` indicates if the postal code of the student is updated.
+   * - `countryUpdated` indicates if the country of the student is updated.
+   * @returns report data.
+   */
+  function buildCASSupplierMaintenanceUpdatesReport(
+    student: Student,
+    options?: {
+      firstNameUpdated?: boolean;
+      lastNameUpdated?: boolean;
+      sinUpdated?: boolean;
+      addressLine1Updated?: boolean;
+      cityUpdated?: boolean;
+      provinceUpdated?: boolean;
+      postalCodeUpdated?: boolean;
+      countryUpdated?: boolean;
+    },
+  ): Record<string, string> {
+    return {
+      "Given Names": student.user.firstName,
+      "Last Name": student.user.lastName,
+      SIN: student.sinValidation.sin,
+      "Address Line 1": student.contactInfo.address.addressLine1,
+      City: student.contactInfo.address.city,
+      Province: student.contactInfo.address.provinceState,
+      "Postal Code": student.contactInfo.address.postalCode,
+      Country: student.contactInfo.address.country,
+      "Disability Status": student.disabilityStatus,
+      "Profile Type": student.user.identityProviderType ?? "",
+      "Student Updated Date": getISODateOnlyString(student.updatedAt),
+      Supplier: student.casSupplier.supplierNumber,
+      Site: student.casSupplier.supplierAddress.supplierSiteCode,
+      "Protected Supplier": student.casSupplier.supplierProtected?.toString(),
+      "Protected Site": student.casSupplier.supplierAddress.siteProtected,
+      "Supplier Verified Date": getISODateOnlyString(
+        student.casSupplier.supplierStatusUpdatedOn,
+      ),
+      "First Name Updated": options?.firstNameUpdated ? "true" : "false",
+      "Last Name Updated": options?.lastNameUpdated ? "true" : "false",
+      "SIN Updated": options?.sinUpdated ? "true" : "false",
+      "Address Line 1 Updated": options?.addressLine1Updated ? "true" : "false",
+      "City Updated": options?.cityUpdated ? "true" : "false",
+      "Province Updated": options?.provinceUpdated ? "true" : "false",
+      "Postal Code Updated": options?.postalCodeUpdated ? "true" : "false",
+      "Country Updated": options?.countryUpdated ? "true" : "false",
     };
   }
 });

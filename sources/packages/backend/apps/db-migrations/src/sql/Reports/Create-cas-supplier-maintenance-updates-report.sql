@@ -100,7 +100,7 @@ VALUES
             cas_supplier_report.student_profile_type AS "Profile Type",
             TO_CHAR(
                 cas_supplier_report.student_updated_date,
-                ''YYYY - MM - DD''
+                ''YYYY-MM-DD''
             ) AS "Student Updated Date",
             cas_supplier_report.cas_supplier AS "Supplier",
             cas_supplier_report.cas_site AS "Site",
@@ -108,7 +108,7 @@ VALUES
             cas_supplier_report.cas_site_protected AS "Protected Site",
             TO_CHAR(
                 cas_supplier_report.cas_supplier_verified_date,
-                ''YYYY - MM - DD''
+                ''YYYY-MM-DD''
             ) AS "Supplier Verified Date",
             cas_supplier_report.student_first_name NOT ILIKE cas_supplier_report.cas_snapshot_first_name AS "First Name Updated",
             cas_supplier_report.student_last_name NOT ILIKE cas_supplier_report.cas_snapshot_last_name AS "Last Name Updated",

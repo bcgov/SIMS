@@ -89,7 +89,7 @@ export function createFakeCASSupplier(
       lastUpdated: new Date(),
     };
     casSupplier.supplierProtected = true;
-    casSupplier.isValid = false;
+    casSupplier.isValid = options?.initialValues.isValid ?? false;
   }
   casSupplier.supplierName = `${faker.name.lastName()}, ${faker.name.firstName()}`;
   casSupplier.supplierNumber = faker.datatype
