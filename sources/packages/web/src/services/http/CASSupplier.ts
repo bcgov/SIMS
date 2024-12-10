@@ -27,7 +27,7 @@ export class CASSupplierApi extends HttpBaseClient {
    */
   async retryCASSupplier(studentId: number): Promise<void> {
     await this.postCall(
-      this.addClientRoot(`cas-supplier/retry/${studentId}`),
+      this.addClientRoot(`cas-supplier/student/${studentId}/retry`),
       null,
     );
   }

@@ -22,7 +22,7 @@
                   class="mr-2 float-right"
                   color="primary"
                   data-cy="retryCASSupplierButton"
-                  :disabled="notAllowed || !retryButtonDisabled"
+                  :disabled="notAllowed || retryButtonDisabled"
                   @click="retryCASSupplier"
                   prepend-icon="fa:fa fa-repeat"
                   >Retry</v-btn
@@ -162,8 +162,9 @@ export default defineComponent({
           "Unexpected error while loading CAS supplier information.",
         );
       }
+      const [mostRecentSupplier] = casSupplierInfo.value.items;
       retryButtonDisabled.value =
-        casSupplierInfo.value.items[0]?.supplierStatus !==
+        mostRecentSupplier?.supplierStatus ===
         SupplierStatus.PendingSupplierVerification;
     };
     watchEffect(() => loadCASSuppliers(props.studentId));
@@ -171,7 +172,9 @@ export default defineComponent({
     const retryCASSupplier = async () => {
       try {
         await CASSupplierService.shared.retryCASSupplier(props.studentId);
-        snackBar.success("CAS supplier information has been retried.");
+        snackBar.success(
+          "A new CAS pending verification record was created. A new attempt will be made to get information from CAS.",
+        );
         await loadCASSuppliers(props.studentId);
       } catch {
         snackBar.error(

@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { StudentService } from "../../services";
 import {
@@ -13,6 +13,9 @@ import { STUDENT_NOT_FOUND } from "../../constants";
 import { Repository } from "typeorm";
 import { CASSupplierSharedService } from "@sims/services";
 import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
+
+export const CAS_SUPPLIER_ALREADY_IN_PENDING_SUPPLIER_VERIFICATION =
+  "CAS_SUPPLIER_ALREADY_IN_PENDING_SUPPLIER_VERIFICATION";
 
 Injectable();
 export class CASSupplierService {
@@ -136,8 +139,9 @@ export class CASSupplierService {
       student.casSupplier?.supplierStatus ===
       SupplierStatus.PendingSupplierVerification
     ) {
-      throw new UnprocessableEntityException(
+      throw new CustomNamedError(
         `There is already a CAS Supplier for this student in ${SupplierStatus.PendingSupplierVerification} status.`,
+        CAS_SUPPLIER_ALREADY_IN_PENDING_SUPPLIER_VERIFICATION,
       );
     }
     return await this.studentService.createPendingCASSupplier(

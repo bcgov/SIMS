@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   ApiNotFoundResponse,
@@ -121,7 +122,7 @@ export class CASSupplierAESTController extends BaseController {
    * @param userToken user token.
    */
   @Roles(Role.AESTEditCASSupplierInfo)
-  @Post("retry/:studentId")
+  @Post("student/:studentId/retry")
   @ApiNotFoundResponse({
     description: "Student not found.",
   })
@@ -137,9 +138,16 @@ export class CASSupplierAESTController extends BaseController {
     if (!studentExist) {
       throw new NotFoundException("Student not found.");
     }
-    return this.casSupplierService.retryCASSupplier(
-      studentId,
-      userToken.userId,
-    );
+    try {
+      return this.casSupplierService.retryCASSupplier(
+        studentId,
+        userToken.userId,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        throw new UnprocessableEntityException(error.message);
+      }
+      throw error;
+    }
   }
 }
