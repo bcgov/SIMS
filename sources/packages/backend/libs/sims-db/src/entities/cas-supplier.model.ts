@@ -164,12 +164,12 @@ export interface SupplierAddress {
  * Student profile snapshot information.
  */
 export interface StudentProfileSnapshot {
-  firstName: string;
+  firstName?: string;
   lastName: string;
   sin: string;
   addressLine1: string;
   city: string;
-  province: string;
+  province?: string;
   postalCode: string;
   country: string;
 }
