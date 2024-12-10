@@ -913,7 +913,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param studentId student id.
    * @param auditUser user.
    * @param entityManager optional entity manager.
-   * @returns created student.
+   * @returns saved student.
    **/
   async createPendingCASSupplier(
     studentId: number,
