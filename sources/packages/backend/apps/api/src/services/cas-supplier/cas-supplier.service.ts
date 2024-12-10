@@ -12,6 +12,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { STUDENT_NOT_FOUND } from "../../constants";
 import { Repository } from "typeorm";
 import { CASSupplierSharedService } from "@sims/services";
+import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
 
 Injectable();
 export class CASSupplierService {
@@ -106,46 +107,42 @@ export class CASSupplierService {
 
   /**
    * Retries CAS supplier info for a student.
-   * Inserts a new CAS Supplier record for the student with PendingSupplierVerification status.
+   * Inserts a new CAS Supplier record for the student with  {@link SupplierStatus.PendingSupplierVerification} status.
    * @param studentId student id.
    * @param auditUserId user id for the record creation.
+   * @returns the created CAS Supplier.
    */
   async retryCASSupplier(
     studentId: number,
     auditUserId: number,
-  ): Promise<CASSupplier> {
-    const student = await this.studentService.getStudentById(studentId);
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     const auditUser = { id: auditUserId } as User;
-    if (!student) {
-      throw new CustomNamedError("Student not found.", STUDENT_NOT_FOUND);
-    }
-    const studentCasSupplier: CASSupplier = await this.casSupplierRepo.findOne({
+    const student = await this.studentRepo.findOne({
       select: {
         id: true,
-        createdAt: true,
-        supplierStatus: true,
+        casSupplier: {
+          id: true,
+          supplierStatus: true,
+        },
+      },
+      relations: {
+        casSupplier: true,
       },
       where: {
-        student: { id: studentId },
-      },
-      order: {
-        createdAt: "DESC",
+        id: studentId,
       },
     });
     if (
-      studentCasSupplier?.supplierStatus ===
+      student.casSupplier?.supplierStatus ===
       SupplierStatus.PendingSupplierVerification
     ) {
       throw new UnprocessableEntityException(
         `There is already a CAS Supplier for this student in ${SupplierStatus.PendingSupplierVerification} status.`,
       );
     }
-    const casSupplier = new CASSupplier();
-    casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
-    casSupplier.supplierStatusUpdatedOn = new Date();
-    casSupplier.isValid = false;
-    casSupplier.creator = auditUser;
-    casSupplier.student = student;
-    return await this.casSupplierRepo.save(casSupplier);
+    return await this.studentService.createPendingCASSupplier(
+      studentId,
+      auditUser,
+    );
   }
 }

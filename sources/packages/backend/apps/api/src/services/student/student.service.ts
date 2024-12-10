@@ -20,7 +20,14 @@ import {
   CASSupplier,
   SupplierStatus,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, IsNull, Not, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  IsNull,
+  Not,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
@@ -47,6 +54,8 @@ import {
   BC_STUDENT_LOAN_AWARD_CODE,
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
 } from "@sims/services/constants";
+import { InjectRepository } from "@nestjs/typeorm";
+import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -57,6 +66,8 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly noteSharedService: NoteSharedService,
     private readonly systemUsersService: SystemUsersService,
+    @InjectRepository(CASSupplier)
+    private readonly casSupplierRepo: Repository<CASSupplier>,
   ) {
     super(dataSource.getRepository(Student));
     this.logger.log("[Created]");
@@ -223,19 +234,9 @@ export class StudentService extends RecordDataModelService<Student> {
         sinValidation.sin = studentSIN;
         sinValidation.student = student;
         student.sinValidation = sinValidation;
-
-        const casSupplier = new CASSupplier();
-        casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
-        casSupplier.supplierStatusUpdatedOn = new Date();
-        casSupplier.isValid = false;
-        casSupplier.creator = auditUser;
-        casSupplier.student = savedStudent;
-        const savedCASSupplier = await entityManager
-          .getRepository(CASSupplier)
-          .save(casSupplier);
-
-        savedStudent.casSupplier = savedCASSupplier;
-        await entityManager.getRepository(Student).save(student);
+        await this.createPendingCASSupplier(student.id, auditUser, {
+          entityManager,
+        });
       }
 
       if (sfasIndividual) {
@@ -916,5 +917,33 @@ export class StudentService extends RecordDataModelService<Student> {
       },
       loadEagerRelations: false,
     });
+  }
+
+  /**
+   * Creates a new CAS Supplier for a student.
+\   * @param studentId student id.
+   * @param auditUser user.
+   * @param entityManager optional entity manager.
+   * @returns created CAS Supplier.
+   **/
+  async createPendingCASSupplier(
+    studentId: number,
+    auditUser: User,
+    options?: { entityManager?: EntityManager },
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const casSupplierRepo = options?.entityManager
+      ? options.entityManager.getRepository(CASSupplier)
+      : this.casSupplierRepo;
+    const casSupplier = new CASSupplier();
+    casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
+    casSupplier.supplierStatusUpdatedOn = new Date();
+    casSupplier.isValid = false;
+    casSupplier.creator = auditUser;
+    casSupplier.student = { id: studentId } as Student;
+    const savedCASSupplier = await casSupplierRepo.save(casSupplier);
+    await options?.entityManager.getRepository(Student).update(studentId, {
+      casSupplier: savedCASSupplier,
+    });
+    return casSupplier;
   }
 }

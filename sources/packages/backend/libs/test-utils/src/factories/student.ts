@@ -1,5 +1,11 @@
 import * as faker from "faker";
-import { DisabilityStatus, SINValidation, Student, User } from "@sims/sims-db";
+import {
+  CASSupplier,
+  DisabilityStatus,
+  SINValidation,
+  Student,
+  User,
+} from "@sims/sims-db";
 import { createFakeUser } from "@sims/test-utils";
 import { DataSource } from "typeorm";
 import { createFakeSINValidation } from "./sin-validation";
@@ -13,6 +19,7 @@ export function createFakeStudent(
 ): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();
+  student.casSupplier = options?.initialValue?.casSupplier;
   student.birthDate =
     options?.initialValue?.birthDate ??
     getISODateOnlyString(faker.date.past(18));
@@ -41,6 +48,7 @@ export function createFakeStudent(
  * - `user` related user.
  * - `student` student to be created an associated with other relations.
  * - `sinValidation` related SIN validation.
+ * - `casSupplier` related CAS supplier.
  * @param options student options.
  * - `initialValue` student initial values.
  * - `sinValidationInitialValue` sinValidation initial value.
@@ -52,6 +60,7 @@ export async function saveFakeStudent(
     student?: Student;
     user?: User;
     sinValidation?: SINValidation;
+    casSupplier?: CASSupplier;
   },
   options?: {
     initialValue?: Partial<Student>;

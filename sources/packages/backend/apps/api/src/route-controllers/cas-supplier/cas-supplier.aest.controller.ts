@@ -133,6 +133,10 @@ export class CASSupplierAESTController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const studentExist = await this.studentService.studentExists(studentId);
+    if (!studentExist) {
+      throw new NotFoundException("Student not found.");
+    }
     return this.casSupplierService.retryCASSupplier(
       studentId,
       userToken.userId,

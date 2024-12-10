@@ -26,19 +26,18 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
 
   it("Should throw Unprocessable Entity Error when retry CAS supplier is requested for a student who already has a CAS supplier in Pending supplier verification status.", async () => {
     // Arrange
-    // Arrange
-    const student = await saveFakeStudent(db.dataSource);
     // Create a CAS Supplier for the student with Pending supplier verification status.
-    await saveFakeCASSupplier(
-      db,
-      { student },
-      {
-        initialValues: {
-          supplierStatus: SupplierStatus.PendingSupplierVerification,
-          status: "ACTIVE",
-        },
+    const casSupplier = await saveFakeCASSupplier(db, undefined, {
+      initialValues: {
+        supplierStatus: SupplierStatus.PendingSupplierVerification,
+        status: "ACTIVE",
       },
-    );
+    });
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        casSupplier: casSupplier,
+      },
+    });
     const endpoint = `/aest/cas-supplier/retry/${student.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -57,18 +56,18 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
 
   it("Should create CAS supplier when retry CAS supplier is requested for a student who does not have a latest CAS supplier in Pending supplier verification status.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
     // Create a CAS Supplier for the student with Manual Intervention status.
-    await saveFakeCASSupplier(
-      db,
-      { student },
-      {
-        initialValues: {
-          supplierStatus: SupplierStatus.ManualIntervention,
-          status: "ACTIVE",
-        },
+    const casSupplier = await saveFakeCASSupplier(db, undefined, {
+      initialValues: {
+        supplierStatus: SupplierStatus.ManualIntervention,
+        status: "ACTIVE",
       },
-    );
+    });
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        casSupplier: casSupplier,
+      },
+    });
     const endpoint = `/aest/cas-supplier/retry/${student.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -102,5 +101,22 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
       supplierStatus: SupplierStatus.PendingSupplierVerification,
       isValid: false,
     });
+  });
+
+  it("Should throw Not Found Error when a student is not found.", async () => {
+    // Arrange
+    const endpoint = `/aest/cas-supplier/retry/99999`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "Student not found.",
+        error: "Not Found",
+      });
   });
 });
