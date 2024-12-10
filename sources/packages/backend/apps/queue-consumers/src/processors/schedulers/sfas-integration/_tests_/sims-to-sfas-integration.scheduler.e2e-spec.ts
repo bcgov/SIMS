@@ -798,11 +798,9 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       application.applicationStatus === ApplicationStatus.Cancelled
         ? formatDate(application.applicationStatusUpdatedOn, DATE_FORMAT)
         : "        ";
-    return `${applicationRecordType}${studentId
-      .toString()
-      .padStart(10, "0")}${application.id
-      .toString()
-      .padStart(10, "0")}${formatDate(studyStartDate, DATE_FORMAT)}${formatDate(
+    return `${applicationRecordType}${studentId.toString().padStart(10, "0")}${
+      application.applicationNumber
+    }${formatDate(studyStartDate, DATE_FORMAT)}${formatDate(
       studyEndDate,
       DATE_FORMAT,
     )}20222023${csgpAwardTotal ?? "0000000000"}${

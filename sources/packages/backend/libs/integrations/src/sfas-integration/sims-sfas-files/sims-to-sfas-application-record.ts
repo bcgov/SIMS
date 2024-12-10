@@ -10,9 +10,9 @@ export class SIMSToSFASApplicationRecord extends SIMSToSFASBaseRecord {
    */
   studentId: number;
   /**
-   * The application id for the student.
+   * The application Number for the student.
    */
-  applicationId: number;
+  applicationNumber: string;
   /**
    * The student's study start date.
    */
@@ -47,7 +47,7 @@ export class SIMSToSFASApplicationRecord extends SIMSToSFASBaseRecord {
     const record = this.getStringBuilder();
     record.append(this.recordTypeCode);
     record.appendNumberWithFiller(this.studentId, 10);
-    record.appendNumberWithFiller(this.applicationId, 10);
+    record.append(this.applicationNumber);
     record.appendFormattedDate(this.studyStartDate);
     record.appendFormattedDate(this.studyEndDate);
     record.append(this.programYear);

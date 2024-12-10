@@ -110,7 +110,8 @@ export class SIMSToSFASFileLineBuilder {
           ? SIMSToSFASRecordTypeCodes.FullTimeApplicationDataRecord
           : SIMSToSFASRecordTypeCodes.PartTimeApplicationDataRecord;
       applicationFileRecord.studentId = applicationRecord.studentId;
-      applicationFileRecord.applicationId = applicationRecord.applicationId;
+      applicationFileRecord.applicationNumber =
+        applicationRecord.applicationNumber;
       applicationFileRecord.studyStartDate = applicationRecord.studyStartDate;
       applicationFileRecord.studyEndDate = applicationRecord.studyEndDate;
       applicationFileRecord.programYear =
