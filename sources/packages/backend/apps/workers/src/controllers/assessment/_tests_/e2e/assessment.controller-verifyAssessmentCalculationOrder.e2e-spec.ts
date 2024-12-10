@@ -4,6 +4,7 @@ import {
   createFakeStudentAssessment,
   createFakeStudentLoanBalance,
   E2EDataSources,
+  ensureProgramYearExists,
   saveFakeApplicationDisbursements,
   saveFakeSFASIndividual,
   saveFakeStudent,
@@ -26,6 +27,7 @@ import { createFakeVerifyAssessmentCalculationOrderPayload } from "./verify-asse
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
 import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
 import * as faker from "faker";
+import * as dayjs from "dayjs";
 
 describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
   let db: E2EDataSources;
@@ -526,99 +528,143 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     });
   });
 
-  it("Should skip the awards from past SFAS full time cancelled application(s) for the same student and program year when calculating the program year award totals.", async () => {
-    // Arrange
+  it(
+    "Should skip the awards from past legacy full-time cancelled application on calculating the program year award totals" +
+      " when the student has one ore more legacy full-time and also one or more legacy part-time applications in the past for the same program year" +
+      " and one of the legacy full-time application is cancelled.",
+    async () => {
+      // Arrange
 
-    // Create the student and program year to be shared across the applications.
-    const student = await saveFakeStudent(db.dataSource);
-    // Get the program year for the start date.
-    const programYear = await db.programYear.findOne({ where: { id: 2 } });
+      // Create program year with start date in the past.
+      const programYear = await ensureProgramYearExists(db, dayjs().year() + 5);
+      programYear.startDate = getISODateOnlyString(addDays(-180));
+      programYear.endDate = getISODateOnlyString(addDays(185));
+      await db.programYear.save(programYear);
 
-    // Current application having the first assessment in progress.
-    const currentApplication = await saveFakeApplicationDisbursements(
-      db.dataSource,
-      { student },
-      {
-        offeringIntensity: OfferingIntensity.partTime,
-        applicationStatus: ApplicationStatus.InProgress,
-        currentAssessmentInitialValues: {
-          assessmentWorkflowId: "some fake id",
-          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
-          assessmentDate: addDays(30, programYear.startDate),
+      // Create the student and program year to be shared across the applications.
+      const student = await saveFakeStudent(db.dataSource);
+
+      // Current application having the first assessment in progress.
+      const currentApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, programYear },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.InProgress,
+          currentAssessmentInitialValues: {
+            // This is the first ever assessment for the student
+            // and hence the assessment date is not set.
+            assessmentWorkflowId: "some fake id",
+            studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+          },
         },
-      },
-    );
-    const currentApplicationAssessmentDate =
-      currentApplication.currentAssessment.assessmentDate;
-    // The start date for the SFAS full time application record is set to the date before the first assessment date of the current application.
-    const firstLegacyApplicationStartDate = faker.date.between(
-      programYear.startDate,
-      addDays(-1, currentApplicationAssessmentDate),
-    );
-    const firstLegacyApplicationEndDate = addDays(
-      30,
-      currentApplicationAssessmentDate,
-    );
-    await db.application.save(currentApplication);
+      );
+      // The start date for the SFAS full-time application record is set to be after the program year start date.
+      // The start date of this application is 178 days before current date.
+      const legacyApplicationStartDate = addDays(2, programYear.startDate);
+      const legacyApplicationEndDate = addDays(40, legacyApplicationStartDate);
 
-    // SFAS Individual.
-    const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
-      initialValues: {
-        lastName: student.user.lastName,
-        birthDate: student.birthDate,
-        sin: student.sinValidation.sin,
-      },
-    });
-    // Past SFAS application with the start date before the first assessment date of the current application and cancelled.
-    const pastFakeSFASApplication = createFakeSFASApplication(
-      { individual: sfasIndividual },
-      {
+      // The start date for the second SFAS full-time application record is set to be after the first full-time application.
+      // The start date of this application is 136 days before current date.
+      const secondApplicationStartDate = addDays(2, legacyApplicationEndDate);
+      const secondApplicationEndDate = addDays(40, secondApplicationStartDate);
+
+      // The start date for the SFAS part-time application record is set to be after the second full-time application.
+      // The start date of this application is 94 days before current date.
+      const legacyPTApplicationStartDate = addDays(2, secondApplicationEndDate);
+      const legacyPTApplicationEndDate = addDays(
+        40,
+        legacyPTApplicationStartDate,
+      );
+
+      await db.application.save(currentApplication);
+
+      // SFAS Individual.
+      const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
         initialValues: {
-          startDate: getISODateOnlyString(firstLegacyApplicationStartDate),
-          endDate: getISODateOnlyString(firstLegacyApplicationEndDate),
-          csgdAward: 9,
-          csgpAward: 10,
-          sbsdAward: 12,
-          bcagAward: 13,
-          // The SFAS application is cancelled.
-          applicationCancelDate: getISODateOnlyString(new Date()),
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
         },
-      },
-    );
-    // Past SFAS application with the start date before the first assessment date of the current application and active.
-    const secondPastFakeSFASApplication = createFakeSFASApplication(
-      { individual: sfasIndividual },
-      {
-        initialValues: {
-          startDate: getISODateOnlyString(firstLegacyApplicationStartDate),
-          endDate: getISODateOnlyString(firstLegacyApplicationEndDate),
-          csgpAward: 100,
-          sbsdAward: 40,
+      });
+      // Past SFAS application with the start date before the first assessment date of the current application and cancelled.
+      const pastFakeSFASApplication = createFakeSFASApplication(
+        { individual: sfasIndividual },
+        {
+          initialValues: {
+            startDate: getISODateOnlyString(legacyApplicationStartDate),
+            endDate: getISODateOnlyString(legacyApplicationEndDate),
+            csgdAward: 200,
+            csgpAward: 100,
+            sbsdAward: 100,
+            bcagAward: 100,
+            // The SFAS application is cancelled.
+            applicationCancelDate: getISODateOnlyString(new Date()),
+          },
         },
-      },
-    );
-    await db.sfasApplication.save([
-      pastFakeSFASApplication,
-      secondPastFakeSFASApplication,
-    ]);
-    // Act
-    const result = await assessmentController.verifyAssessmentCalculationOrder(
-      createFakeVerifyAssessmentCalculationOrderPayload(
-        currentApplication.currentAssessment.id,
-      ),
-    );
-    // Assert
-    expect(FakeWorkerJobResult.getResultType(result)).toBe(
-      MockedZeebeJobResult.Complete,
-    );
-    // The calculation will skip the SFAS application that is cancelled.
-    expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
-      isReadyForCalculation: true,
-      latestCSLPBalance: 0,
-      programYearTotalFullTimeCSGP: 100,
-      programYearTotalFullTimeSBSD: 40,
-    });
-  });
+      );
+      // Past SFAS application with the start date before the first assessment date of the current application and active.
+      const secondPastFakeSFASApplication = createFakeSFASApplication(
+        { individual: sfasIndividual },
+        {
+          initialValues: {
+            startDate: getISODateOnlyString(secondApplicationStartDate),
+            endDate: getISODateOnlyString(secondApplicationEndDate),
+            csgpAward: 100,
+            sbsdAward: 40,
+          },
+        },
+      );
+      await db.sfasApplication.save([
+        pastFakeSFASApplication,
+        secondPastFakeSFASApplication,
+      ]);
+
+      const pastPTFakeSFASApplication = createFakeSFASPartTimeApplication(
+        {
+          individual: sfasIndividual,
+        },
+        {
+          initialValues: {
+            startDate: getISODateOnlyString(legacyPTApplicationStartDate),
+            endDate: getISODateOnlyString(legacyPTApplicationEndDate),
+            csgpAward: 100,
+            sbsdAward: 40,
+            bcagAward: 200,
+            csgdAward: 300,
+            csptAward: 400,
+          },
+        },
+      );
+
+      await db.sfasPartTimeApplications.save(pastPTFakeSFASApplication);
+      // Act
+      const result =
+        await assessmentController.verifyAssessmentCalculationOrder(
+          createFakeVerifyAssessmentCalculationOrderPayload(
+            currentApplication.currentAssessment.id,
+          ),
+        );
+      // Assert
+      expect(FakeWorkerJobResult.getResultType(result)).toBe(
+        MockedZeebeJobResult.Complete,
+      );
+      // The calculation will skip the SFAS application that is cancelled.
+      expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+        isReadyForCalculation: true,
+        latestCSLPBalance: 0,
+        // Full-time totals.
+        programYearTotalFullTimeCSGP: 100,
+        programYearTotalFullTimeSBSD: 40,
+        // Part-time totals.
+        programYearTotalPartTimeCSGP: 100,
+        programYearTotalPartTimeSBSD: 40,
+        programYearTotalPartTimeBCAG: 200,
+        programYearTotalPartTimeCSGD: 300,
+        programYearTotalPartTimeCSPT: 400,
+      });
+    },
+  );
 
   it("Should sum the awards from SFAS and SFAS part time applications data when there is no past SIMS application for the same student and program year.", async () => {
     // Arrange
