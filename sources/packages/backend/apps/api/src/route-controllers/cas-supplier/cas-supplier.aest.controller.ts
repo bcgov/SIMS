@@ -139,7 +139,7 @@ export class CASSupplierAESTController extends BaseController {
       throw new NotFoundException("Student not found.");
     }
     try {
-      return this.casSupplierService.retryCASSupplier(
+      return await this.casSupplierService.retryCASSupplier(
         studentId,
         userToken.userId,
       );

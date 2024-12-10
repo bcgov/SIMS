@@ -24,7 +24,7 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it.skip("Should throw Unprocessable Entity Error when retry CAS supplier is requested for a student who already has a CAS supplier in Pending supplier verification status.", async () => {
+  it("Should throw Unprocessable Entity Error when retry CAS supplier is requested for a student who already has a CAS supplier in Pending supplier verification status.", async () => {
     // Arrange
     // Create a CAS Supplier for the student with Pending supplier verification status.
     const casSupplier = await saveFakeCASSupplier(db, undefined, {
