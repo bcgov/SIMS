@@ -138,6 +138,7 @@ export class SIMSToSFASService {
       this.applicationRepo
         .createQueryBuilder("application")
         .select("application.id", "applicationId")
+        .addSelect("application.applicationNumber", "applicationNumber")
         .addSelect("student.id", "studentId")
         .addSelect("programYear.programYear", "programYear")
         .addSelect(
