@@ -29,6 +29,22 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
   }
 
   /**
+   * To be removed once the method {@link process} is implemented.
+   * This method "hides" the {@link Process} decorator from the base class.
+   */
+  async processQueue(): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
+   * When implemented in a derived class, process the queue job.
+   * To be implemented.
+   */
+  protected async process(): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
    * Generate data file consisting of all student, application and restriction updates in SIMS since the previous file generation
    * until the start of the current job and send the data file to SFAS.
    * @param job job.

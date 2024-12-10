@@ -31,6 +31,22 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
   }
 
   /**
+   * To be removed once the method {@link process} is implemented.
+   * This method "hides" the {@link Process} decorator from the base class.
+   */
+  async processQueue(): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
+   * When implemented in a derived class, process the queue job.
+   * To be implemented.
+   */
+  protected async process(): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
    * Process Student Loan Balances files from the SFTP
    * and update the database with processed records.
    * @param job Student Loan Balances job.
