@@ -20,14 +20,7 @@ import {
   CASSupplier,
   SupplierStatus,
 } from "@sims/sims-db";
-import {
-  DataSource,
-  EntityManager,
-  IsNull,
-  Not,
-  Repository,
-  UpdateResult,
-} from "typeorm";
+import { DataSource, EntityManager, IsNull, Not, UpdateResult } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
@@ -54,7 +47,6 @@ import {
   BC_STUDENT_LOAN_AWARD_CODE,
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
 } from "@sims/services/constants";
-import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -65,8 +57,6 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly noteSharedService: NoteSharedService,
     private readonly systemUsersService: SystemUsersService,
-    @InjectRepository(CASSupplier)
-    private readonly casSupplierRepo: Repository<CASSupplier>,
   ) {
     super(dataSource.getRepository(Student));
     this.logger.log("[Created]");
