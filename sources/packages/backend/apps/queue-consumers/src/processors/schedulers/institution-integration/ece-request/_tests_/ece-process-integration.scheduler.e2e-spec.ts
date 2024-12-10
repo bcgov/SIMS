@@ -16,6 +16,7 @@ import {
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
+  describeProcessorRootTest,
   mockBullJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
@@ -27,7 +28,7 @@ import { RecordTypeCodes } from "@sims/integrations/institution-integration/ece-
 import * as Client from "ssh2-sftp-client";
 import * as dayjs from "dayjs";
 
-describe(QueueNames.ECEProcessIntegration, () => {
+describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
   let app: INestApplication;
   let processor: ECEProcessIntegrationScheduler;
   let db: E2EDataSources;
@@ -46,8 +47,8 @@ describe(QueueNames.ECEProcessIntegration, () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     // Ensures that every institution location on database has no integration.
-    // to allow the e-Certs to be generated with the data created for every
-    // specific scenario.
+    // to allow eligible COE requestS to be generated with the data created
+    // for every specific scenario.
     await db.institutionLocation.update(
       { hasIntegration: true },
       { hasIntegration: false },
