@@ -932,7 +932,6 @@ export class StudentService extends RecordDataModelService<Student> {
     const student = new Student();
     student.id = studentId;
     student.casSupplier = casSupplier;
-    await studentRepo.save(student);
-    return student;
+    return studentRepo.save(student);
   }
 }
