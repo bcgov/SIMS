@@ -15,11 +15,12 @@ import { COUNTRY_CANADA, getISODateOnlyString } from "@sims/utilities";
 // updated.
 export function createFakeStudent(
   user?: User,
+  relations?: { casSupplier?: CASSupplier },
   options?: { initialValue: Partial<Student> },
 ): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();
-  student.casSupplier = options?.initialValue?.casSupplier;
+  student.casSupplier = relations?.casSupplier;
   student.birthDate =
     options?.initialValue?.birthDate ??
     getISODateOnlyString(faker.date.past(18));
@@ -70,9 +71,13 @@ export async function saveFakeStudent(
   const studentRepo = dataSource.getRepository(Student);
   const student = await studentRepo.save(
     relations?.student ??
-      createFakeStudent(relations?.user, {
-        initialValue: options?.initialValue,
-      }),
+      createFakeStudent(
+        relations?.user,
+        { casSupplier: relations?.casSupplier },
+        {
+          initialValue: options?.initialValue,
+        },
+      ),
   );
   // Saving SIN validation after student is saved due to cyclic dependency error.
   student.sinValidation =

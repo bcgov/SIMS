@@ -32,11 +32,7 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
         supplierStatus: SupplierStatus.PendingSupplierVerification,
       },
     });
-    const student = await saveFakeStudent(db.dataSource, undefined, {
-      initialValue: {
-        casSupplier: casSupplier,
-      },
-    });
+    const student = await saveFakeStudent(db.dataSource, { casSupplier });
     const endpoint = `/aest/cas-supplier/student/${student.id}/retry`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
