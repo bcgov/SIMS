@@ -59,7 +59,6 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
     const fakeCASSupplier = await saveFakeCASSupplier(db, undefined, {
       initialValues: {
         supplierStatus: SupplierStatus.ManualIntervention,
-        status: "ACTIVE",
       },
     });
     const student = await saveFakeStudent(db.dataSource, undefined, {
