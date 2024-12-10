@@ -74,6 +74,7 @@ export class ECertGenerationService {
         "disbursementSchedule.disbursementDate",
         "disbursementSchedule.tuitionRemittanceRequestedAmount",
         "disbursementSchedule.coeStatus",
+        "disbursementSchedule.hasEstimatedAwards",
         "disbursementValue.id",
         "disbursementValue.valueType",
         "disbursementValue.valueCode",

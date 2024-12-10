@@ -131,6 +131,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
             },
           },
         },
+        hasEstimatedAwards: true,
       },
     });
   }
