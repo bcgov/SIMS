@@ -113,7 +113,7 @@ export class CASSupplierService {
    * Inserts a new CAS Supplier record for the student with  {@link SupplierStatus.PendingSupplierVerification} status.
    * @param studentId student id.
    * @param auditUserId user id for the record creation.
-   * @returns the created CAS Supplier.
+   * @returns the created CAS Supplier id.
    */
   async retryCASSupplier(
     studentId: number,
