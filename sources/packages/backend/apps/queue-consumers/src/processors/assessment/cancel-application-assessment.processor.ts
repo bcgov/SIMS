@@ -49,7 +49,7 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
    * @param job information to perform the process.
    * @param processSummary process summary for logging.
    * @returns processing result.   */
-  async process(
+  protected async process(
     job: Job<CancelAssessmentQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string> {

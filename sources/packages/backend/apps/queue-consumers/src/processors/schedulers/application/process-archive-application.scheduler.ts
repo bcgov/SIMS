@@ -1,14 +1,11 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { ApplicationService } from "../../../services";
-import {
-  QueueProcessSummary,
-  QueueProcessSummaryResult,
-} from "../../models/processors.models";
 import { SystemUsersService } from "@sims/services/system-users";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Process applications archiving.
@@ -27,25 +24,20 @@ export class ProcessArchiveApplicationsScheduler extends BaseScheduler<void> {
 
   /**
    * Process all the applications pending to be archived.
-   * @param job applications archiving job.
+   * @param _job applications archiving job.
+   * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  @Process()
-  async processArchiveApplications(
-    job: Job<void>,
-  ): Promise<QueueProcessSummaryResult> {
-    const summary = new QueueProcessSummary({
-      appLogger: this.logger,
-      jobLogger: job,
-    });
-    await summary.info("Processing pending applications to be archived.");
+  protected async process(
+    _job: Job<void>,
+    processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
     const auditUser = this.systemUsersService.systemUser;
     const archivedApplicationsCount =
       await this.applicationService.archiveApplications(auditUser.id);
-    await summary.info(
-      `Total of applications archived: ${archivedApplicationsCount}`,
+    processSummary.info(
+      `Total applications archived: ${archivedApplicationsCount}.`,
     );
-    await summary.info("Completed applications archiving process.");
-    return summary.getSummary();
+    return "All applications processed with success.";
   }
 }

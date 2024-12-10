@@ -30,7 +30,7 @@ export class StartApplicationAssessmentProcessor extends BaseQueue<StartAssessme
    * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  async process(
+  protected async process(
     job: Job<StartAssessmentQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string> {
