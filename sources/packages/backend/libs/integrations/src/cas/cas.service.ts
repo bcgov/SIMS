@@ -252,8 +252,6 @@ export class CASService {
    * @param defaultMessage The default message to throw for non-specific errors.
    */
   private handleBadRequestError(error: unknown, defaultMessage: string): never {
-    console.log(error);
-    console.log(error instanceof AxiosError);
     if (
       error instanceof AxiosError &&
       error.response?.status === HttpStatus.BAD_REQUEST &&

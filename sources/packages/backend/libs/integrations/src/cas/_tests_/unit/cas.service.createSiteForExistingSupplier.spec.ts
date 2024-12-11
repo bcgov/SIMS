@@ -10,17 +10,15 @@ import {
   mockAuthenticationResponseOnce,
 } from "./cas-test.utils";
 import { AxiosError, AxiosHeaders } from "axios";
+import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
 
 describe("CASService-createSiteForExistingSupplier", () => {
   let casService: CASService;
   let httpService: Mocked<HttpService>;
 
-  beforeAll(async () => {
-    [casService, httpService] = await initializeService();
-  });
-
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.resetAllMocks();
+    [casService, httpService] = await initializeService();
   });
 
   it("Should invoke CAS API to create site for existing supplier with formatted payload when all data was provided as expected.", async () => {
@@ -66,7 +64,7 @@ describe("CASService-createSiteForExistingSupplier", () => {
     );
   });
 
-  it.only("Should throw error when CAS API to create site for existing supplier with existing SIN payload data was provided.", async () => {
+  it("Should throw error when CAS API to create site for existing supplier with existing SIN payload data was provided.", async () => {
     // Arrange
     mockAuthenticationResponseOnce(httpService).mockResolvedValue({
       data: {
@@ -111,6 +109,15 @@ describe("CASService-createSiteForExistingSupplier", () => {
     //Assert
     await expect(
       casService.createSiteForExistingSupplier(supplierData),
-    ).rejects.toThrow("CAS Bad Request Errors");
+    ).rejects.toThrow(
+      expect.objectContaining({
+        message: "CAS Bad Request Errors",
+        name: CAS_BAD_REQUEST,
+        objectInfo: [
+          "[0034] SIN is already in use.",
+          "[9999] Duplicate Supplier , Reason: [0065]- Possible duplicate exists, please use online form",
+        ],
+      }),
+    );
   });
 });
