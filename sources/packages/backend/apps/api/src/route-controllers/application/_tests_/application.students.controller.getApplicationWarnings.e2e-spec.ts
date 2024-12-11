@@ -252,7 +252,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
     },
   );
 
-  it("Should return a failed ecert validations array with no estimated awardAmounts when no disbursements values are present.", async () => {
+  it("Should return a failed ecert validations array with no estimated award amounts when no disbursements values are present.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const msfaaNumber = createFakeMSFAANumber(
@@ -277,6 +277,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         firstDisbursementInitialValues: {
           coeStatus: COEStatus.completed,
           disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          hasEstimatedAwards: false,
         },
       },
     );
@@ -298,8 +299,8 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
   });
 
   it(
-    "Should return a failed ecert validations array with no estimated awardAmounts when " +
-      "disbursement values are present but the total amount to be disbursed is 0(zero).",
+    "Should return a failed ecert validations array with no estimated award amounts when " +
+      "disbursement values are present but the disbursements don't have estimated awards.",
     async () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);
@@ -340,6 +341,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.completed,
             disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            hasEstimatedAwards: false,
           },
         },
       );
