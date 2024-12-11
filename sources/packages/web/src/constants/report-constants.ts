@@ -10,6 +10,10 @@ export const INSTITUTION_REPORTS: OptionItemAPIOutDTO[] = [
 ];
 
 export const MINISTRY_REPORTS: OptionItemAPIOutDTO[] = [
+  {
+    description: "CAS Supplier Maintenance Updates",
+    id: "CAS_Supplier_Maintenance_Updates_Report",
+  },
   { description: "Data Inventory", id: "Data_Inventory_Report" },
   { description: "Disbursements", id: "Disbursement_Report" },
   {

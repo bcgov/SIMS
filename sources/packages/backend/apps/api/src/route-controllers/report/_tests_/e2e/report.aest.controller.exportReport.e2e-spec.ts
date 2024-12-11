@@ -38,12 +38,16 @@ import {
   InstitutionLocation,
   OfferingIntensity,
   ProgramIntensity,
+  Student,
+  SupplierStatus,
   WorkflowData,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
+import { getPSTPDTDateFormatted } from "@sims/test-utils/utils";
+import { MinistryReportsFilterAPIInDTO } from "apps/api/src/route-controllers/report/models/report.dto";
 
 describe("ReportAestController(e2e)-exportReport", () => {
   let app: INestApplication;
@@ -51,6 +55,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
   let db: E2EDataSources;
   let appDataSource: DataSource;
   let formService: FormService;
+  let sharedCASSupplierUpdatedStudent: Student;
+  let casSupplierMaintenanceUpdatesPayload: MinistryReportsFilterAPIInDTO;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -65,6 +71,13 @@ describe("ReportAestController(e2e)-exportReport", () => {
       AppAESTModule,
       FormService,
     );
+    // Shared student used for CAS Supplier maintenance updates report.
+    sharedCASSupplierUpdatedStudent = await saveFakeStudent(db.dataSource);
+    // Build payload for CAS Supplier maintenance updates report to use across tests.
+    casSupplierMaintenanceUpdatesPayload = {
+      reportName: "CAS_Supplier_Maintenance_Updates_Report",
+      params: {},
+    };
   });
 
   it("Should generate the eCert Feedback Errors report when a report generation request is made with the appropriate offering intensity and date range.", async () => {
@@ -1426,6 +1439,285 @@ describe("ReportAestController(e2e)-exportReport", () => {
       });
   });
 
+  it(
+    "Should generate CAS Supplier maintenance updates report with the student details of the given student" +
+      " when last name of the student is updated after the CAS supplier is set to be valid.",
+    async () => {
+      // Arrange
+      // Save a CASSupplier for the student.
+      await saveFakeCASSupplier(
+        db,
+        { student: sharedCASSupplierUpdatedStudent },
+        {
+          initialValues: {
+            supplierStatus: SupplierStatus.Verified,
+            isValid: true,
+          },
+        },
+      );
+      // Update the student's last name.
+      sharedCASSupplierUpdatedStudent.user.lastName = "Updated Last Name";
+      await db.student.save(sharedCASSupplierUpdatedStudent);
+
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: casSupplierMaintenanceUpdatesPayload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(casSupplierMaintenanceUpdatesPayload)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          const expectedReportData = buildCASSupplierMaintenanceUpdatesReport(
+            sharedCASSupplierUpdatedStudent,
+            { lastNameUpdated: true },
+          );
+          const [actualReportData] = parsedResult.data as Record<
+            string,
+            string
+          >[];
+          expect(parsedResult.data.length).toBe(1);
+          expect(actualReportData).toEqual(expectedReportData);
+        });
+    },
+  );
+
+  it(
+    "Should generate CAS Supplier maintenance updates report with the student details of the given student" +
+      " when SIN number of the student is updated after the CAS supplier is set to be valid.",
+    async () => {
+      // Arrange
+      // Save a CASSupplier for the student.
+      await saveFakeCASSupplier(
+        db,
+        { student: sharedCASSupplierUpdatedStudent },
+        {
+          initialValues: {
+            supplierStatus: SupplierStatus.Verified,
+            isValid: true,
+          },
+        },
+      );
+      // Update the student's SIN.
+      const newSINValidation = createFakeSINValidation({
+        student: sharedCASSupplierUpdatedStudent,
+      });
+      sharedCASSupplierUpdatedStudent.sinValidation = newSINValidation;
+      await db.student.save(sharedCASSupplierUpdatedStudent);
+
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: casSupplierMaintenanceUpdatesPayload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(casSupplierMaintenanceUpdatesPayload)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          const expectedReportData = buildCASSupplierMaintenanceUpdatesReport(
+            sharedCASSupplierUpdatedStudent,
+            { sinUpdated: true },
+          );
+          const [actualReportData] = parsedResult.data as Record<
+            string,
+            string
+          >[];
+          expect(parsedResult.data.length).toBe(1);
+          expect(actualReportData).toEqual(expectedReportData);
+        });
+    },
+  );
+
+  it(
+    "Should generate CAS Supplier maintenance updates report with the student details of the given student" +
+      " when 'address line 1' of the student is updated after the CAS supplier is set to be valid.",
+    async () => {
+      // Arrange
+      // Save a CASSupplier for the student.
+      await saveFakeCASSupplier(
+        db,
+        { student: sharedCASSupplierUpdatedStudent },
+        {
+          initialValues: {
+            supplierStatus: SupplierStatus.Verified,
+            isValid: true,
+          },
+        },
+      );
+      // Update the student's address line 1.
+      sharedCASSupplierUpdatedStudent.contactInfo.address.addressLine1 =
+        "Updated Address Line 1";
+      await db.student.save(sharedCASSupplierUpdatedStudent);
+
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: casSupplierMaintenanceUpdatesPayload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(casSupplierMaintenanceUpdatesPayload)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          const expectedReportData = buildCASSupplierMaintenanceUpdatesReport(
+            sharedCASSupplierUpdatedStudent,
+            { addressLine1Updated: true },
+          );
+          const [actualReportData] = parsedResult.data as Record<
+            string,
+            string
+          >[];
+          expect(parsedResult.data.length).toBe(1);
+          expect(actualReportData).toEqual(expectedReportData);
+        });
+    },
+  );
+
+  it(
+    "Should generate CAS Supplier maintenance updates report with the student details of the given student" +
+      " when postal code of the student is updated after the CAS supplier is set to be valid.",
+    async () => {
+      // Arrange
+      // Save a CASSupplier for the student.
+      await saveFakeCASSupplier(
+        db,
+        { student: sharedCASSupplierUpdatedStudent },
+        {
+          initialValues: {
+            supplierStatus: SupplierStatus.Verified,
+            isValid: true,
+          },
+        },
+      );
+      // Update the student's postal code.
+      sharedCASSupplierUpdatedStudent.contactInfo.address.postalCode =
+        "Updated postal code";
+      await db.student.save(sharedCASSupplierUpdatedStudent);
+
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: casSupplierMaintenanceUpdatesPayload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(casSupplierMaintenanceUpdatesPayload)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          const expectedReportData = buildCASSupplierMaintenanceUpdatesReport(
+            sharedCASSupplierUpdatedStudent,
+            { postalCodeUpdated: true },
+          );
+          const [actualReportData] = parsedResult.data as Record<
+            string,
+            string
+          >[];
+          expect(parsedResult.data.length).toBe(1);
+          expect(actualReportData).toEqual(expectedReportData);
+        });
+    },
+  );
+
+  it(
+    "Should generate CAS Supplier maintenance updates report without the student details of the given student" +
+      " when last name of the student is updated just to change the case to upper case characters.",
+    async () => {
+      // Arrange
+      // Save a CASSupplier for the student.
+      await saveFakeCASSupplier(
+        db,
+        { student: sharedCASSupplierUpdatedStudent },
+        {
+          initialValues: {
+            supplierStatus: SupplierStatus.Verified,
+            isValid: true,
+          },
+        },
+      );
+      // Update the student's last name to upper case.
+      sharedCASSupplierUpdatedStudent.user.lastName =
+        sharedCASSupplierUpdatedStudent.user.lastName.toUpperCase();
+      await db.student.save(sharedCASSupplierUpdatedStudent);
+
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: casSupplierMaintenanceUpdatesPayload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(casSupplierMaintenanceUpdatesPayload)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"] as string;
+          expect(fileContent).toBe("");
+        });
+    },
+  );
+
   /**
    * Converts education program offering object into a key-value pair object matching the result data.
    * @param fakeOffering an education program offering record.
@@ -1490,6 +1782,63 @@ describe("ReportAestController(e2e)-exportReport", () => {
       "Offering Type": "",
       "Offering Status": "",
       "Offering Intensity": "",
+    };
+  }
+
+  /**
+   * Build CAS Supplier maintenance updates report data.
+   * @param student student.
+   * @param options expected report data options.
+   * - `firstNameUpdated` indicates if the first name of the student is updated.
+   * - `lastNameUpdated` indicates if the last name of the student is updated.
+   * - `sinUpdated` indicates if the SIN number of the student is updated.
+   * - `addressLine1Updated` indicates if the address line 1 of the student is updated.
+   * - `cityUpdated` indicates if the city of the student is updated.
+   * - `provinceUpdated` indicates if the province of the student is updated.
+   * - `postalCodeUpdated` indicates if the postal code of the student is updated.
+   * - `countryUpdated` indicates if the country of the student is updated.
+   * @returns report data.
+   */
+  function buildCASSupplierMaintenanceUpdatesReport(
+    student: Student,
+    options?: {
+      firstNameUpdated?: boolean;
+      lastNameUpdated?: boolean;
+      sinUpdated?: boolean;
+      addressLine1Updated?: boolean;
+      cityUpdated?: boolean;
+      provinceUpdated?: boolean;
+      postalCodeUpdated?: boolean;
+      countryUpdated?: boolean;
+    },
+  ): Record<string, string> {
+    return {
+      "Given Names": student.user.firstName,
+      "Last Name": student.user.lastName,
+      SIN: student.sinValidation.sin,
+      "Address Line 1": student.contactInfo.address.addressLine1,
+      City: student.contactInfo.address.city,
+      Province: student.contactInfo.address.provinceState,
+      "Postal Code": student.contactInfo.address.postalCode,
+      Country: student.contactInfo.address.country,
+      "Disability Status": student.disabilityStatus,
+      "Profile Type": student.user.identityProviderType ?? "",
+      "Student Updated Date": getPSTPDTDateFormatted(student.updatedAt),
+      Supplier: student.casSupplier.supplierNumber,
+      Site: student.casSupplier.supplierAddress.supplierSiteCode,
+      "Protected Supplier": student.casSupplier.supplierProtected?.toString(),
+      "Protected Site": student.casSupplier.supplierAddress.siteProtected,
+      "Supplier Verified Date": getPSTPDTDateFormatted(
+        student.casSupplier.supplierStatusUpdatedOn,
+      ),
+      "First Name Updated": options?.firstNameUpdated ? "true" : "false",
+      "Last Name Updated": options?.lastNameUpdated ? "true" : "false",
+      "SIN Updated": options?.sinUpdated ? "true" : "false",
+      "Address Line 1 Updated": options?.addressLine1Updated ? "true" : "false",
+      "City Updated": options?.cityUpdated ? "true" : "false",
+      "Province Updated": options?.provinceUpdated ? "true" : "false",
+      "Postal Code Updated": options?.postalCodeUpdated ? "true" : "false",
+      "Country Updated": options?.countryUpdated ? "true" : "false",
     };
   }
 });
