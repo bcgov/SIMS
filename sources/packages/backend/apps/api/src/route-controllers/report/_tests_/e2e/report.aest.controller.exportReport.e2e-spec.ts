@@ -68,7 +68,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
       AppAESTModule,
       FormService,
     );
-    await db.casSupplier.update({ isValid: true }, { isValid: false });
+    // Shared student used for CAS Supplier maintenance updates report.
     sharedCASSupplierUpdatedStudent = await saveFakeStudent(db.dataSource);
   });
 
@@ -1489,6 +1489,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
             string,
             string
           >[];
+          expect(parsedResult.data.length).toBe(1);
           expect(actualReportData).toEqual(expectedReportData);
         });
     },
@@ -1555,6 +1556,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
             string,
             string
           >[];
+          expect(parsedResult.data.length).toBe(1);
           expect(actualReportData).toEqual(expectedReportData);
         });
     },
@@ -1619,6 +1621,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
             string,
             string
           >[];
+          expect(parsedResult.data.length).toBe(1);
           expect(actualReportData).toEqual(expectedReportData);
         });
     },
@@ -1683,6 +1686,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
             string,
             string
           >[];
+          expect(parsedResult.data.length).toBe(1);
           expect(actualReportData).toEqual(expectedReportData);
         });
     },
