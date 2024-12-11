@@ -81,10 +81,24 @@ VALUES
                         student.contact_info -> ''address'' ->> ''postalCode'',
                         ''country'',
                         student.contact_info -> ''address'' ->> ''country''
-                    ) :: text NOT ILIKE COALESCE(
-                        cas_supplier.student_profile_snapshot :: text,
-                        ''''
-                    )
+                    ) :: text NOT ILIKE jsonb_build_object(
+                        ''firstName'',
+                        cas_supplier.student_profile_snapshot ->> ''firstName'',
+                        ''lastName'',
+                        cas_supplier.student_profile_snapshot ->> ''lastName'',
+                        ''sin'',
+                        cas_supplier.student_profile_snapshot ->> ''sin'',
+                        ''addressLine1'',
+                        cas_supplier.student_profile_snapshot ->> ''addressLine1'',
+                        ''city'',
+                        cas_supplier.student_profile_snapshot ->> ''city'',
+                        ''province'',
+                        cas_supplier.student_profile_snapshot ->> ''province'',
+                        ''postalCode'',
+                        cas_supplier.student_profile_snapshot ->> ''postalCode'',
+                        ''country'',
+                        cas_supplier.student_profile_snapshot ->> ''country''
+                    ) :: text
                 )
         )
         SELECT
