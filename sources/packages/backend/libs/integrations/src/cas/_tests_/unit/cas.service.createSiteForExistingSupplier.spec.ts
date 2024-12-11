@@ -9,6 +9,7 @@ import {
   initializeService,
   mockAuthenticationResponseOnce,
 } from "./cas-test.utils";
+import { AxiosError, AxiosHeaders } from "axios";
 
 describe("CASService-createSiteForExistingSupplier", () => {
   let casService: CASService;
@@ -63,5 +64,53 @@ describe("CASService-createSiteForExistingSupplier", () => {
       },
       DEFAULT_CAS_AXIOS_AUTH_HEADER,
     );
+  });
+
+  it.only("Should throw error when CAS API to create site for existing supplier with existing SIN payload data was provided.", async () => {
+    // Arrange
+    mockAuthenticationResponseOnce(httpService).mockResolvedValue({
+      data: {
+        SUPPLIER_NUMBER: "9999999",
+        SUPPLIER_SITE_CODE: "123",
+      },
+    });
+    const supplierData: CreateExistingSupplierSiteData = {
+      supplierNumber: "9999999",
+      emailAddress: "test@test.com",
+      supplierSite: {
+        addressLine1: "Street-Special Characters-ãñè-Maximum",
+        city: "City Name Over Maximum Length",
+        provinceCode: "BC",
+        postalCode: "h1h h2h",
+      },
+    };
+    //Act
+    const httpMethodMock = httpService.axiosRef.post as jest.Mock;
+    httpMethodMock.mockImplementationOnce(() => {
+      const error: AxiosError = new AxiosError(
+        "Request failed with status code 400",
+        "ERR_BAD_REQUEST",
+        {
+          headers: new AxiosHeaders(),
+        },
+        {},
+        {
+          status: 400,
+          statusText: "Bad Request",
+          headers: {},
+          config: { headers: new AxiosHeaders() },
+          data: {
+            "CAS-Returned-Messages":
+              "[0034] SIN is already in use. | [9999] Duplicate Supplier , Reason: [0065]- Possible duplicate exists, please use online form",
+          },
+        },
+      );
+      throw error;
+    });
+
+    //Assert
+    await expect(
+      casService.createSiteForExistingSupplier(supplierData),
+    ).rejects.toThrow("CAS Bad Request Errors");
   });
 });

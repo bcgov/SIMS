@@ -252,6 +252,8 @@ export class CASService {
    * @param defaultMessage The default message to throw for non-specific errors.
    */
   private handleBadRequestError(error: unknown, defaultMessage: string): never {
+    console.log(error);
+    console.log(error instanceof AxiosError);
     if (
       error instanceof AxiosError &&
       error.response?.status === HttpStatus.BAD_REQUEST &&
@@ -260,10 +262,13 @@ export class CASService {
       const casKnownErrors = error.response.data[
         CAS_RETURNED_MESSAGES
       ] as string;
+      const casKnownErrorArray = casKnownErrors.split("|").map((error) => {
+        return error.trim();
+      });
       throw new CustomNamedError(
         "CAS Bad Request Errors",
         CAS_BAD_REQUEST,
-        casKnownErrors.trim().split(" | "),
+        casKnownErrorArray,
       );
     }
     throw new Error(defaultMessage, { cause: error });
