@@ -7,7 +7,6 @@ export type StudentDetail = Student & {
 
 export interface ApplicationRecord {
   studentId: number;
-  applicationId: number;
   applicationNumber: string;
   programYear: string;
   studyStartDate: Date;
