@@ -911,7 +911,7 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Creates a new CAS Supplier for a student.
    * @param studentId student id.
-   * @param auditUser user.
+   * @param auditUserId audit user id.
    * @param entityManager optional entity manager.
    * @returns saved student.
    **/
