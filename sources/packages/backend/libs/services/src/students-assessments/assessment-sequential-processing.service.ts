@@ -194,8 +194,14 @@ export class AssessmentSequentialProcessingService {
     // Get the first assessment date ever calculated for the current application.
     // If there are multiple assessments for the current application, then set the
     // first assessment date to the assessment date of the first assessment.
-    const referenceAssessmentDate = getISODateOnlyString(
-      sequencedApplications.current.referenceAssessmentDate,
+    // If this is the first ever assessment for the student in the given program year,
+    // then the assessment date has not been set and use the provided alternative reference date.
+    const referenceAssessmentDate =
+      sequencedApplications.current.referenceAssessmentDate ??
+      options?.alternativeReferenceDate;
+    // Convert the reference assessment date to an ISO date format.
+    const formattedReferenceAssessmentDate = getISODateOnlyString(
+      referenceAssessmentDate,
     );
     const lastName = assessment.application.student.user.lastName;
     const sin = assessment.application.student.sinValidation.sin;
@@ -207,14 +213,14 @@ export class AssessmentSequentialProcessingService {
         birthDate,
         sin,
         programYearStartDate,
-        referenceAssessmentDate,
+        formattedReferenceAssessmentDate,
       ),
       this.getProgramYearSFASPartTimeAwardsTotals(
         lastName,
         birthDate,
         sin,
         programYearStartDate,
-        referenceAssessmentDate,
+        formattedReferenceAssessmentDate,
       ),
     ]);
     if (!sequencedApplications.previous.length) {
@@ -418,7 +424,8 @@ export class AssessmentSequentialProcessingService {
       .addSelect("SUM(sfasApplication.csgdAward)", "CSGD")
       .addSelect("SUM(sfasApplication.bcagAward)", "BCAG")
       .innerJoin("sfasApplication.individual", "sfasStudent")
-      .where("lower(sfasStudent.lastName) = lower(:lastName)", { lastName })
+      .where("sfasApplication.applicationCancelDate IS NULL")
+      .andWhere("lower(sfasStudent.lastName) = lower(:lastName)", { lastName })
       .andWhere("sfasStudent.sin = :sin", { sin })
       .andWhere("sfasStudent.birthDate = :birthDate", { birthDate })
       .andWhere("sfasApplication.startDate >= :startDate", {

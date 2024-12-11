@@ -1,9 +1,14 @@
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames, getISODateOnlyString } from "@sims/utilities";
+import {
+  QueueNames,
+  getDateOnlyFormat,
+  getISODateOnlyString,
+} from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -11,19 +16,21 @@ import {
   saveFakeStudent,
   saveFakeStudentRestriction,
   RestrictionCode,
+  createFakeSFASRestrictionMaps,
 } from "@sims/test-utils";
 import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import { Job } from "bull";
 import * as path from "path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
-import { Student, StudentRestriction } from "@sims/sims-db";
-import { SystemUsersService } from "@sims/services";
-import { In } from "typeorm";
+import {
+  NotificationMessageType,
+  Student,
+  StudentRestriction,
+} from "@sims/sims-db";
+import { In, IsNull, Not } from "typeorm";
 
 // SFAS received file mocks.
-const SFAS_LEGACY_RESTRICTION_FILENAME =
-  "SFAS-TO-SIMS-2024MAR07-LEGACY-RESTRICTIONS.txt";
 const SFAS_ALL_RESTRICTIONS_FILENAME =
   "SFAS-TO-SIMS-2024MAR07-ALL-RESTRICTIONS.txt";
 const SFAS_SAIL_DATA_FILENAME =
@@ -32,6 +39,7 @@ const SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME =
   "SFAS-TO-SIMS-INVALID-INDIVIDUAL-RECORDS-INCONSISTENT-WITH-DATA-IMPORT.txt";
 const SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME =
   "SFAS-TO-SIMS-VALID-INDIVIDUAL-RECORDS.txt";
+const LEGACY_RESTRICTION_EMAIL = "dummy_legacy_email@some.domain";
 
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
@@ -40,7 +48,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let sftpClientMock: DeepMocked<Client>;
   let sfasDownloadFolder: string;
   let sharedStudent: Student;
-  let systemUsersService: SystemUsersService;
 
   beforeAll(async () => {
     sfasDownloadFolder = path.join(__dirname, "sfas-files");
@@ -53,13 +60,12 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     sftpClientMock = sshClientMock;
     // Processor under test.
     processor = app.get(SFASIntegrationScheduler);
-    systemUsersService = nestApplication.get(SystemUsersService);
     // Create student if it doesn't exist.
     sharedStudent = await db.student.findOne({
       where: {
         birthDate: getISODateOnlyString(new Date("1998-03-24")),
         user: { lastName: "FOUR" },
-        sinValidation: { sin: "900041310" },
+        sinValidation: { sin: "428062400" },
       },
     });
     if (!sharedStudent) {
@@ -67,9 +73,14 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Update the student to ensure that the student imported from SFAS is the same student as the one created above.
       sharedStudent.birthDate = getISODateOnlyString(new Date("1998-03-24"));
       sharedStudent.user.lastName = "FOUR";
-      sharedStudent.sinValidation.sin = "900041310";
+      sharedStudent.sinValidation.sin = "428062400";
       await db.student.save(sharedStudent);
     }
+    // Set a value to legacy notification to allow it to be generated.
+    await db.notificationMessage.update(
+      { id: NotificationMessageType.LegacyRestrictionAdded },
+      { emailContacts: [LEGACY_RESTRICTION_EMAIL] },
+    );
   });
 
   beforeEach(async () => {
@@ -79,40 +90,103 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       { student: { id: sharedStudent.id } },
       { isActive: false },
     );
+    // Remove any custom legacy restriction that is not part
+    // of the DB original seeding.
+    await db.sfasRestrictionMap.delete({ isLegacyOnly: true });
+    // Set the current legacy restriction to a different code.
+    await db.restriction.update(
+      { isLegacy: true, restrictionCode: Not(RestrictionCode.LGCY) },
+      { isLegacy: false, restrictionCode: "E2E_UPDATE" },
+    );
+    // Set all legacy restrictions notification to sent.
+    await db.notification.update(
+      {
+        dateSent: IsNull(),
+        notificationMessage: {
+          id: NotificationMessageType.LegacyRestrictionAdded,
+        },
+      },
+      { dateSent: new Date() },
+    );
   });
 
-  it("Should add only one legacy restriction for the student when one or more restrictions are imported from SFAS which do not have a mapping to the SIMS restrictions", async () => {
+  it("Should create missing legacy restrictions, import two student restrictions, and send a single notification when new mapped legacy restrictions are present in the file.", async () => {
     // Arrange
+    // Create the new custom legacy restrictions.
+    // Two are created to ensure only one notification is sent for the student.
+    const customRestrictionMapM1 = createFakeSFASRestrictionMaps({
+      initialValues: { legacyCode: "M1", code: "LGCY_M1" },
+    });
+    const customRestrictionMapB4 = createFakeSFASRestrictionMaps({
+      initialValues: { legacyCode: "B4", code: "LGCY_B4" },
+    });
+    await db.sfasRestrictionMap.save([
+      customRestrictionMapM1,
+      customRestrictionMapB4,
+    ]);
     // Queued job.
-    const job = createMock<Job<void>>();
-    mockDownloadFiles(sftpClientMock, [SFAS_LEGACY_RESTRICTION_FILENAME]);
+    const mockedJob = mockBullJob<void>();
+    mockDownloadFiles(sftpClientMock, [SFAS_ALL_RESTRICTIONS_FILENAME]);
+
     // Act
-    await processor.processSFASIntegrationFiles(job);
+    await processor.processSFASIntegrationFiles(mockedJob.job);
+
     // Assert
-    // Expect the file was archived on SFTP.
-    expect(sftpClientMock.rename).toHaveBeenCalled();
-    const studentRestrictionsCount = await db.studentRestriction.count({
-      where: {
-        student: { id: sharedStudent.id },
-        restriction: { restrictionCode: RestrictionCode.LGCY },
+
+    // Assert new student restrictions LGCY_M1 and LGCY_B4 were added to the student account.
+    const studentRestrictions = await db.studentRestriction.find({
+      select: {
+        id: true,
+        restriction: {
+          restrictionCode: true,
+        },
         isActive: true,
       },
+      relations: { restriction: true },
+      where: { student: { id: sharedStudent.id }, isActive: true },
     });
-    const studentRestriction = await db.studentRestriction.findOne({
-      select: { creator: { id: true } },
-      relations: { creator: true },
-      where: {
-        student: { id: sharedStudent.id },
-        restriction: { restrictionCode: RestrictionCode.LGCY },
-        isActive: true,
-      },
-    });
-    // Expect only one Legacy restriction to be inserted.
-    expect(studentRestrictionsCount).toBe(1);
-    // Expect the restriction to be created by a system user.
-    expect(studentRestriction.creator.id).toEqual(
-      systemUsersService.systemUser.id,
+    // Check if all mapped restriction in the file were imported.
+    expect(studentRestrictions.length).toBe(7);
+    // Check if all legacy restrictions were added to the student account as active.
+    const legacyStudentRestrictions = studentRestrictions.filter(
+      (restriction) =>
+        ["LGCY_M1", "LGCY_B4"].includes(
+          restriction.restriction.restrictionCode,
+        ),
     );
+    expect(legacyStudentRestrictions).toHaveLength(2);
+    legacyStudentRestrictions.forEach((legacyStudentRestriction) =>
+      expect(legacyStudentRestriction.isActive).toBe(true),
+    );
+    // Assert a single notification was generated with the expected data.
+    const notifications = await db.notification.find({
+      select: {
+        id: true,
+        messagePayload: true,
+      },
+      where: {
+        dateSent: IsNull(),
+        notificationMessage: {
+          id: NotificationMessageType.LegacyRestrictionAdded,
+        },
+      },
+    });
+    expect(notifications).toHaveLength(1);
+    const [notification] = notifications;
+    expect(notification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        template_id: "69d5f064-1efa-4109-a45a-5857a6acb612",
+        email_address: LEGACY_RESTRICTION_EMAIL,
+        personalisation: {
+          birthDate: getDateOnlyFormat(sharedStudent.birthDate),
+          lastName: sharedStudent.user.lastName,
+          givenNames: sharedStudent.user.firstName,
+          studentEmail: sharedStudent.user.email,
+          dateTime: expect.any(String),
+        },
+      },
+    });
   });
 
   it(

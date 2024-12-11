@@ -59,6 +59,7 @@ import {
   ApplicationRestrictionBypass,
   BetaUsersAuthorizations,
   SFASBridgeLog,
+  SFASRestrictionMap,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -194,6 +195,7 @@ export const DBEntities = [
   SFASIndividual,
   SFASPartTimeApplications,
   SFASRestriction,
+  SFASRestrictionMap,
   SINValidation,
   StudentAccountApplication,
   StudentAppealRequest,

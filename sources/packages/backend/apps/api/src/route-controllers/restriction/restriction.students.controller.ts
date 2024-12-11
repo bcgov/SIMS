@@ -7,6 +7,17 @@ import { StudentUserToken } from "../../auth/userToken.interface";
 import { StudentRestrictionService } from "../../services";
 import BaseController from "../BaseController";
 import { StudentRestrictionAPIOutDTO } from "./models/restriction.dto";
+import { RestrictionNotificationType, StudentRestriction } from "@sims/sims-db";
+import { DEFAULT_LEGACY_RESTRICTION_CODE } from "@sims/services/constants";
+
+/**
+ * Restriction notifications priority order.
+ * Priority 1 indicates the most important notification.
+ */
+const NOTIFICATION_PRIORITY_ORDER_MAP = {
+  [RestrictionNotificationType.Error]: 1,
+  [RestrictionNotificationType.Warning]: 2,
+};
 
 /**
  * Controller for Student Restrictions.
@@ -34,12 +45,37 @@ export class RestrictionStudentsController extends BaseController {
         studentToken.studentId,
         {
           onlyActive: true,
+          filterNoEffectRestrictions: true,
         },
       );
-
-    return studentRestrictions.map((studentRestriction) => ({
+    // Separate the results between non-legacy and legacy restrictions.
+    const nonLegacyRestrictions: StudentRestriction[] = [];
+    const legacyRestrictions: StudentRestriction[] = [];
+    studentRestrictions.forEach((studentRestriction) => {
+      const resultList = studentRestriction.restriction.isLegacy
+        ? legacyRestrictions
+        : nonLegacyRestrictions;
+      resultList.push(studentRestriction);
+    });
+    // Create the output result for non-legacy restrictions.
+    const results = nonLegacyRestrictions.map((studentRestriction) => ({
       code: studentRestriction.restriction.restrictionCode,
       type: studentRestriction.restriction.notificationType,
     }));
+    if (legacyRestrictions.length) {
+      // If any legacy restriction is present, create a generic LGCY restriction
+      // with the highest notification type.
+      studentRestrictions.sort(
+        (a, b) =>
+          NOTIFICATION_PRIORITY_ORDER_MAP[a.restriction.notificationType] -
+          NOTIFICATION_PRIORITY_ORDER_MAP[b.restriction.notificationType],
+      );
+      const [legacyRestriction] = studentRestrictions;
+      results.push({
+        code: DEFAULT_LEGACY_RESTRICTION_CODE,
+        type: legacyRestriction.restriction.notificationType,
+      });
+    }
+    return results;
   }
 }

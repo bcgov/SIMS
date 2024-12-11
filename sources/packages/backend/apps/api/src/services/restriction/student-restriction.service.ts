@@ -62,6 +62,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "restriction.restrictionCode",
         "restriction.description",
         "restriction.notificationType",
+        "restriction.isLegacy",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
