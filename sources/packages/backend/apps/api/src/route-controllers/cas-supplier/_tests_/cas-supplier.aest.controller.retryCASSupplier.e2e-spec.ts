@@ -79,7 +79,12 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
     const updatedStudent = await db.student.findOne({
       select: {
         id: true,
-        casSupplier: { id: true, supplierStatus: true },
+        casSupplier: {
+          id: true,
+          supplierStatus: true,
+          supplierStatusUpdatedOn: true,
+          isValid: true,
+        },
       },
       relations: {
         casSupplier: true,
@@ -95,6 +100,8 @@ describe("CASSupplierAESTController(e2e)-retryCASSupplier", () => {
       casSupplier: {
         id: responseCasSupplierId,
         supplierStatus: SupplierStatus.PendingSupplierVerification,
+        supplierStatusUpdatedOn: expect.any(Date),
+        isValid: false,
       },
     });
   });
