@@ -24,12 +24,14 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
   /**
    * Scheduler for CAS supplier information process.
    * Checks for pending supplier information for students, request it to CAS and update the data to CAS supplier table.
+   * @param _job process job.
+   * @param processSummary process summary for logging.
    * @returns process summary.
    */
   protected async process(
     _job: Job<void>,
     processSummary: ProcessSummary,
-  ): Promise<string | string[]> {
+  ): Promise<string[]> {
     processSummary.info("Executing CAS supplier integration.");
     const pendingCASSuppliers =
       await this.casSupplierIntegrationService.getStudentsToUpdateSupplierInformation();
