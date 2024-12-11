@@ -46,6 +46,7 @@ import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
+import { getPSTPDTDateFormatted } from "@sims/test-utils/utils";
 
 describe("ReportAestController(e2e)-exportReport", () => {
   let app: INestApplication;
@@ -1850,12 +1851,12 @@ describe("ReportAestController(e2e)-exportReport", () => {
       Country: student.contactInfo.address.country,
       "Disability Status": student.disabilityStatus,
       "Profile Type": student.user.identityProviderType ?? "",
-      "Student Updated Date": getISODateOnlyString(student.updatedAt),
+      "Student Updated Date": getPSTPDTDateFormatted(student.updatedAt),
       Supplier: student.casSupplier.supplierNumber,
       Site: student.casSupplier.supplierAddress.supplierSiteCode,
       "Protected Supplier": student.casSupplier.supplierProtected?.toString(),
       "Protected Site": student.casSupplier.supplierAddress.siteProtected,
-      "Supplier Verified Date": getISODateOnlyString(
+      "Supplier Verified Date": getPSTPDTDateFormatted(
         student.casSupplier.supplierStatusUpdatedOn,
       ),
       "First Name Updated": options?.firstNameUpdated ? "true" : "false",

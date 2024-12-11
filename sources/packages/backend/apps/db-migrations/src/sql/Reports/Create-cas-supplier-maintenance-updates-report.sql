@@ -113,7 +113,7 @@ VALUES
             cas_supplier_report.student_disability_status AS "Disability Status",
             cas_supplier_report.student_profile_type AS "Profile Type",
             TO_CHAR(
-                cas_supplier_report.student_updated_date,
+                (cas_supplier_report.student_updated_date AT TIME ZONE ''America/Vancouver''),
                 ''YYYY-MM-DD''
             ) AS "Student Updated Date",
             cas_supplier_report.cas_supplier AS "Supplier",
@@ -121,7 +121,7 @@ VALUES
             cas_supplier_report.cas_supplier_protected AS "Protected Supplier",
             cas_supplier_report.cas_site_protected AS "Protected Site",
             TO_CHAR(
-                cas_supplier_report.cas_supplier_verified_date,
+                (cas_supplier_report.cas_supplier_verified_date AT TIME ZONE ''America/Vancouver''),
                 ''YYYY-MM-DD''
             ) AS "Supplier Verified Date",
             cas_supplier_report.student_first_name NOT ILIKE cas_supplier_report.cas_snapshot_first_name AS "First Name Updated",
