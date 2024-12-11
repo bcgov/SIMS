@@ -1432,7 +1432,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
   });
 
   it(
-    "Should generate CAS Supplier maintenance updates report with the student details" +
+    "Should generate CAS Supplier maintenance updates report with the student details of the given student" +
       " when last name of the student is updated after the CAS supplier is set to be valid.",
     async () => {
       // Arrange
@@ -1490,6 +1490,253 @@ describe("ReportAestController(e2e)-exportReport", () => {
             string
           >[];
           expect(actualReportData).toEqual(expectedReportData);
+        });
+    },
+  );
+
+  it(
+    "Should generate CAS Supplier maintenance updates report with the student details of the given student" +
+      " when SIN number of the student is updated after the CAS supplier is set to be valid.",
+    async () => {
+      // Arrange
+      // Save a CASSupplier for the student.
+      await saveFakeCASSupplier(
+        db,
+        { student: sharedCASSupplierUpdatedStudent },
+        {
+          initialValues: {
+            supplierStatus: SupplierStatus.Verified,
+            isValid: true,
+          },
+        },
+      );
+      // Update the student's SIN.
+      const newSINValidation = createFakeSINValidation({
+        student: sharedCASSupplierUpdatedStudent,
+      });
+      sharedCASSupplierUpdatedStudent.sinValidation = newSINValidation;
+      await db.student.save(sharedCASSupplierUpdatedStudent);
+
+      const casSupplierMaintenanceUpdates =
+        "CAS_Supplier_Maintenance_Updates_Report";
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      // Payload with no parameters.
+      const payload = {
+        reportName: casSupplierMaintenanceUpdates,
+        params: {},
+      };
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          const expectedReportData = buildCASSupplierMaintenanceUpdatesReport(
+            sharedCASSupplierUpdatedStudent,
+            { sinUpdated: true },
+          );
+          const [actualReportData] = parsedResult.data as Record<
+            string,
+            string
+          >[];
+          expect(actualReportData).toEqual(expectedReportData);
+        });
+    },
+  );
+
+  it(
+    "Should generate CAS Supplier maintenance updates report with the student details of the given student" +
+      " when 'address line 1' of the student is updated after the CAS supplier is set to be valid.",
+    async () => {
+      // Arrange
+      // Save a CASSupplier for the student.
+      await saveFakeCASSupplier(
+        db,
+        { student: sharedCASSupplierUpdatedStudent },
+        {
+          initialValues: {
+            supplierStatus: SupplierStatus.Verified,
+            isValid: true,
+          },
+        },
+      );
+      // Update the student's address line 1.
+      sharedCASSupplierUpdatedStudent.contactInfo.address.addressLine1 =
+        "Updated Address Line 1";
+      await db.student.save(sharedCASSupplierUpdatedStudent);
+
+      const casSupplierMaintenanceUpdates =
+        "CAS_Supplier_Maintenance_Updates_Report";
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      // Payload with no parameters.
+      const payload = {
+        reportName: casSupplierMaintenanceUpdates,
+        params: {},
+      };
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          const expectedReportData = buildCASSupplierMaintenanceUpdatesReport(
+            sharedCASSupplierUpdatedStudent,
+            { addressLine1Updated: true },
+          );
+          const [actualReportData] = parsedResult.data as Record<
+            string,
+            string
+          >[];
+          expect(actualReportData).toEqual(expectedReportData);
+        });
+    },
+  );
+
+  it(
+    "Should generate CAS Supplier maintenance updates report with the student details of the given student" +
+      " when postal code of the student is updated after the CAS supplier is set to be valid.",
+    async () => {
+      // Arrange
+      // Save a CASSupplier for the student.
+      await saveFakeCASSupplier(
+        db,
+        { student: sharedCASSupplierUpdatedStudent },
+        {
+          initialValues: {
+            supplierStatus: SupplierStatus.Verified,
+            isValid: true,
+          },
+        },
+      );
+      // Update the student's postal code.
+      sharedCASSupplierUpdatedStudent.contactInfo.address.postalCode =
+        "Updated postal code";
+      await db.student.save(sharedCASSupplierUpdatedStudent);
+
+      const casSupplierMaintenanceUpdates =
+        "CAS_Supplier_Maintenance_Updates_Report";
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      // Payload with no parameters.
+      const payload = {
+        reportName: casSupplierMaintenanceUpdates,
+        params: {},
+      };
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          const expectedReportData = buildCASSupplierMaintenanceUpdatesReport(
+            sharedCASSupplierUpdatedStudent,
+            { postalCodeUpdated: true },
+          );
+          const [actualReportData] = parsedResult.data as Record<
+            string,
+            string
+          >[];
+          expect(actualReportData).toEqual(expectedReportData);
+        });
+    },
+  );
+
+  it(
+    "Should generate CAS Supplier maintenance updates report without the student details of the given student" +
+      " when last name of the student is updated just to change the case to upper case characters.",
+    async () => {
+      // Arrange
+      // Save a CASSupplier for the student.
+      await saveFakeCASSupplier(
+        db,
+        { student: sharedCASSupplierUpdatedStudent },
+        {
+          initialValues: {
+            supplierStatus: SupplierStatus.Verified,
+            isValid: true,
+          },
+        },
+      );
+      // Update the student's last name to upper case.
+      sharedCASSupplierUpdatedStudent.user.lastName =
+        sharedCASSupplierUpdatedStudent.user.lastName.toUpperCase();
+      await db.student.save(sharedCASSupplierUpdatedStudent);
+
+      const casSupplierMaintenanceUpdates =
+        "CAS_Supplier_Maintenance_Updates_Report";
+      const endpoint = "/aest/report";
+      const ministryUserToken = await getAESTToken(
+        AESTGroups.BusinessAdministrators,
+      );
+
+      // Payload with no parameters.
+      const payload = {
+        reportName: casSupplierMaintenanceUpdates,
+        params: {},
+      };
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payload },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(ministryUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"] as string;
+          expect(fileContent).toBe("");
         });
     },
   );
