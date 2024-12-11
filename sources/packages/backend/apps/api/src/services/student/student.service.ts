@@ -223,19 +223,9 @@ export class StudentService extends RecordDataModelService<Student> {
         sinValidation.sin = studentSIN;
         sinValidation.student = student;
         student.sinValidation = sinValidation;
-
-        const casSupplier = new CASSupplier();
-        casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
-        casSupplier.supplierStatusUpdatedOn = new Date();
-        casSupplier.isValid = false;
-        casSupplier.creator = auditUser;
-        casSupplier.student = savedStudent;
-        const savedCASSupplier = await entityManager
-          .getRepository(CASSupplier)
-          .save(casSupplier);
-
-        savedStudent.casSupplier = savedCASSupplier;
-        await entityManager.getRepository(Student).save(student);
+        await this.createPendingCASSupplier(student.id, auditUserId, {
+          entityManager,
+        });
       }
 
       if (sfasIndividual) {
@@ -916,5 +906,37 @@ export class StudentService extends RecordDataModelService<Student> {
       },
       loadEagerRelations: false,
     });
+  }
+
+  /**
+   * Creates a new CAS Supplier for a student.
+   * @param studentId student id.
+   * @param auditUserId audit user id.
+   * @param options options.
+   * - `entityManager`: entity manager for a given transaction.
+   * @returns saved student.
+   **/
+  async createPendingCASSupplier(
+    studentId: number,
+    auditUserId: number,
+    options?: { entityManager?: EntityManager },
+  ): Promise<Student> {
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
+    const studentRepo = options?.entityManager
+      ? options?.entityManager.getRepository(Student)
+      : this.repo;
+    const casSupplier = new CASSupplier();
+    casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
+    casSupplier.supplierStatusUpdatedOn = now;
+    casSupplier.isValid = false;
+    casSupplier.creator = auditUser;
+    casSupplier.student = { id: studentId } as Student;
+    const student = new Student();
+    student.id = studentId;
+    student.casSupplier = casSupplier;
+    student.modifier = auditUser;
+    student.updatedAt = now;
+    return studentRepo.save(student);
   }
 }
