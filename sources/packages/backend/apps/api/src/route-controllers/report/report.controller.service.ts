@@ -100,7 +100,7 @@ export class ReportControllerService {
     // Adding byte order mark characters to the original file content as applications
     // like excel would look for BOM characters to view the file as UTF8 encoded.
     // Append byte order mark characters only if the file content is not empty.
-    const responseBuffer = !!fileContent
+    const responseBuffer = fileContent
       ? appendByteOrderMark(fileContent)
       : Buffer.from("");
     response.setHeader(
