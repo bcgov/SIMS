@@ -47,6 +47,7 @@ import { DataSource } from "typeorm";
 import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 import { getPSTPDTDateFormatted } from "@sims/test-utils/utils";
+import { MinistryReportsFilterAPIInDTO } from "apps/api/src/route-controllers/report/models/report.dto";
 
 describe("ReportAestController(e2e)-exportReport", () => {
   let app: INestApplication;
@@ -55,6 +56,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
   let appDataSource: DataSource;
   let formService: FormService;
   let sharedCASSupplierUpdatedStudent: Student;
+  let casSupplierMaintenanceUpdatesPayload: MinistryReportsFilterAPIInDTO;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -71,6 +73,11 @@ describe("ReportAestController(e2e)-exportReport", () => {
     );
     // Shared student used for CAS Supplier maintenance updates report.
     sharedCASSupplierUpdatedStudent = await saveFakeStudent(db.dataSource);
+    // Build payload for CAS Supplier maintenance updates report to use across tests.
+    casSupplierMaintenanceUpdatesPayload = {
+      reportName: "CAS_Supplier_Maintenance_Updates_Report",
+      params: {},
+    };
   });
 
   it("Should generate the eCert Feedback Errors report when a report generation request is made with the appropriate offering intensity and date range.", async () => {
@@ -1452,29 +1459,22 @@ describe("ReportAestController(e2e)-exportReport", () => {
       sharedCASSupplierUpdatedStudent.user.lastName = "Updated Last Name";
       await db.student.save(sharedCASSupplierUpdatedStudent);
 
-      const casSupplierMaintenanceUpdates =
-        "CAS_Supplier_Maintenance_Updates_Report";
       const endpoint = "/aest/report";
       const ministryUserToken = await getAESTToken(
         AESTGroups.BusinessAdministrators,
       );
 
-      // Payload with no parameters.
-      const payload = {
-        reportName: casSupplierMaintenanceUpdates,
-        params: {},
-      };
       const dryRunSubmissionMock = jest.fn().mockResolvedValue({
         valid: true,
         formName: FormNames.ExportFinancialReports,
-        data: { data: payload },
+        data: { data: casSupplierMaintenanceUpdatesPayload },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
 
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
-        .send(payload)
+        .send(casSupplierMaintenanceUpdatesPayload)
         .auth(ministryUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED)
         .then((response) => {
@@ -1519,29 +1519,22 @@ describe("ReportAestController(e2e)-exportReport", () => {
       sharedCASSupplierUpdatedStudent.sinValidation = newSINValidation;
       await db.student.save(sharedCASSupplierUpdatedStudent);
 
-      const casSupplierMaintenanceUpdates =
-        "CAS_Supplier_Maintenance_Updates_Report";
       const endpoint = "/aest/report";
       const ministryUserToken = await getAESTToken(
         AESTGroups.BusinessAdministrators,
       );
 
-      // Payload with no parameters.
-      const payload = {
-        reportName: casSupplierMaintenanceUpdates,
-        params: {},
-      };
       const dryRunSubmissionMock = jest.fn().mockResolvedValue({
         valid: true,
         formName: FormNames.ExportFinancialReports,
-        data: { data: payload },
+        data: { data: casSupplierMaintenanceUpdatesPayload },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
 
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
-        .send(payload)
+        .send(casSupplierMaintenanceUpdatesPayload)
         .auth(ministryUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED)
         .then((response) => {
@@ -1584,29 +1577,22 @@ describe("ReportAestController(e2e)-exportReport", () => {
         "Updated Address Line 1";
       await db.student.save(sharedCASSupplierUpdatedStudent);
 
-      const casSupplierMaintenanceUpdates =
-        "CAS_Supplier_Maintenance_Updates_Report";
       const endpoint = "/aest/report";
       const ministryUserToken = await getAESTToken(
         AESTGroups.BusinessAdministrators,
       );
 
-      // Payload with no parameters.
-      const payload = {
-        reportName: casSupplierMaintenanceUpdates,
-        params: {},
-      };
       const dryRunSubmissionMock = jest.fn().mockResolvedValue({
         valid: true,
         formName: FormNames.ExportFinancialReports,
-        data: { data: payload },
+        data: { data: casSupplierMaintenanceUpdatesPayload },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
 
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
-        .send(payload)
+        .send(casSupplierMaintenanceUpdatesPayload)
         .auth(ministryUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED)
         .then((response) => {
@@ -1649,29 +1635,22 @@ describe("ReportAestController(e2e)-exportReport", () => {
         "Updated postal code";
       await db.student.save(sharedCASSupplierUpdatedStudent);
 
-      const casSupplierMaintenanceUpdates =
-        "CAS_Supplier_Maintenance_Updates_Report";
       const endpoint = "/aest/report";
       const ministryUserToken = await getAESTToken(
         AESTGroups.BusinessAdministrators,
       );
 
-      // Payload with no parameters.
-      const payload = {
-        reportName: casSupplierMaintenanceUpdates,
-        params: {},
-      };
       const dryRunSubmissionMock = jest.fn().mockResolvedValue({
         valid: true,
         formName: FormNames.ExportFinancialReports,
-        data: { data: payload },
+        data: { data: casSupplierMaintenanceUpdatesPayload },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
 
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
-        .send(payload)
+        .send(casSupplierMaintenanceUpdatesPayload)
         .auth(ministryUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED)
         .then((response) => {
@@ -1714,29 +1693,22 @@ describe("ReportAestController(e2e)-exportReport", () => {
         sharedCASSupplierUpdatedStudent.user.lastName.toUpperCase();
       await db.student.save(sharedCASSupplierUpdatedStudent);
 
-      const casSupplierMaintenanceUpdates =
-        "CAS_Supplier_Maintenance_Updates_Report";
       const endpoint = "/aest/report";
       const ministryUserToken = await getAESTToken(
         AESTGroups.BusinessAdministrators,
       );
 
-      // Payload with no parameters.
-      const payload = {
-        reportName: casSupplierMaintenanceUpdates,
-        params: {},
-      };
       const dryRunSubmissionMock = jest.fn().mockResolvedValue({
         valid: true,
         formName: FormNames.ExportFinancialReports,
-        data: { data: payload },
+        data: { data: casSupplierMaintenanceUpdatesPayload },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
 
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
-        .send(payload)
+        .send(casSupplierMaintenanceUpdatesPayload)
         .auth(ministryUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED)
         .then((response) => {
