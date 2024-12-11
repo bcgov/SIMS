@@ -257,12 +257,13 @@ export class CASService {
       error.response?.status === HttpStatus.BAD_REQUEST &&
       !!error.response?.data[CAS_RETURNED_MESSAGES]
     ) {
-      const casKnownErrors =
-        error.response.data[CAS_RETURNED_MESSAGES].toString();
+      const casKnownErrors = error.response.data[
+        CAS_RETURNED_MESSAGES
+      ] as string;
       throw new CustomNamedError(
         "CAS Bad Request Errors",
         CAS_BAD_REQUEST,
-        casKnownErrors.split(" | ").trim(),
+        casKnownErrors.trim().split(" | "),
       );
     }
     throw new Error(defaultMessage, { cause: error });
