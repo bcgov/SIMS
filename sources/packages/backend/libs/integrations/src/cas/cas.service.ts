@@ -260,9 +260,9 @@ export class CASService {
       const casKnownErrors = error.response.data[
         CAS_RETURNED_MESSAGES
       ] as string;
-      const casKnownErrorArray = casKnownErrors.split("|").map((error) => {
-        return error.trim();
-      });
+      const casKnownErrorArray = casKnownErrors
+        .split("|")
+        .map((error) => error.trim());
       throw new CustomNamedError(
         "CAS Bad Request Errors",
         CAS_BAD_REQUEST,

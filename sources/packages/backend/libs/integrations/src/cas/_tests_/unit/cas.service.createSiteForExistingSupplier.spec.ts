@@ -67,7 +67,7 @@ describe("CASService-createSiteForExistingSupplier", () => {
     );
   });
 
-  it("Should throw error when CAS API to create site for existing supplier with existing SIN payload data was provided.", async () => {
+  it("Should throw error when CAS API to create site for existing supplier with existing SIN payload data was provided and some CAS validation failed.", async () => {
     // Arrange
     mockAuthenticationResponseOnce(httpService).mockResolvedValue({
       data: {
