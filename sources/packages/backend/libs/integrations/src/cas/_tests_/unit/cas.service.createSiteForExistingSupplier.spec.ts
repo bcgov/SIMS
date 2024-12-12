@@ -9,16 +9,19 @@ import {
   initializeService,
   mockAuthenticationResponseOnce,
 } from "./cas-test.utils";
-import { AxiosError, AxiosHeaders } from "axios";
+import { AxiosError, AxiosHeaders, HttpStatusCode } from "axios";
 import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
 
 describe("CASService-createSiteForExistingSupplier", () => {
   let casService: CASService;
   let httpService: Mocked<HttpService>;
 
-  beforeEach(async () => {
-    jest.resetAllMocks();
+  beforeAll(async () => {
     [casService, httpService] = await initializeService();
+  });
+
+  beforeEach(() => {
+    jest.resetAllMocks();
   });
 
   it("Should invoke CAS API to create site for existing supplier with formatted payload when all data was provided as expected.", async () => {
@@ -83,9 +86,8 @@ describe("CASService-createSiteForExistingSupplier", () => {
       },
     };
     //Act
-    const httpMethodMock = httpService.axiosRef.post as jest.Mock;
-    httpMethodMock.mockImplementationOnce(() => {
-      const error: AxiosError = new AxiosError(
+    httpService.axiosRef.post = jest.fn().mockImplementationOnce(() => {
+      const error = new AxiosError(
         "Request failed with status code 400",
         "ERR_BAD_REQUEST",
         {
@@ -93,7 +95,7 @@ describe("CASService-createSiteForExistingSupplier", () => {
         },
         {},
         {
-          status: 400,
+          status: HttpStatusCode.BadRequest,
           statusText: "Bad Request",
           headers: {},
           config: { headers: new AxiosHeaders() },
