@@ -95,8 +95,8 @@
                 v-if="item.errors && item.errors.length > 0"
                 :icon="
                   isExpanded(internalItem)
-                    ? '$expanderExpandIcon'
-                    : '$expanderCollapseIcon'
+                    ? '$expanderCollapseIcon'
+                    : '$expanderExpandIcon'
                 "
                 variant="text"
                 @click="toggleExpand(internalItem)"
