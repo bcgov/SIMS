@@ -9,6 +9,8 @@ import {
   initializeService,
   mockAuthenticationResponseOnce,
 } from "./cas-test.utils";
+import { AxiosError, AxiosHeaders, HttpStatusCode } from "axios";
+import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
 
 describe("CASService-createSiteForExistingSupplier", () => {
   let casService: CASService;
@@ -62,6 +64,62 @@ describe("CASService-createSiteForExistingSupplier", () => {
         ],
       },
       DEFAULT_CAS_AXIOS_AUTH_HEADER,
+    );
+  });
+
+  it("Should throw error when CAS API to create site for existing supplier with existing SIN payload data was provided and some CAS validation failed.", async () => {
+    // Arrange
+    mockAuthenticationResponseOnce(httpService).mockResolvedValue({
+      data: {
+        SUPPLIER_NUMBER: "9999999",
+        SUPPLIER_SITE_CODE: "123",
+      },
+    });
+    const supplierData: CreateExistingSupplierSiteData = {
+      supplierNumber: "9999999",
+      emailAddress: "test@test.com",
+      supplierSite: {
+        addressLine1: "Street-Special Characters-ãñè-Maximum",
+        city: "City Name Over Maximum Length",
+        provinceCode: "BC",
+        postalCode: "h1h h2h",
+      },
+    };
+    //Act
+    httpService.axiosRef.post = jest.fn().mockImplementationOnce(() => {
+      const error = new AxiosError(
+        "Request failed with status code 400",
+        "ERR_BAD_REQUEST",
+        {
+          headers: new AxiosHeaders(),
+        },
+        {},
+        {
+          status: HttpStatusCode.BadRequest,
+          statusText: "Bad Request",
+          headers: {},
+          config: { headers: new AxiosHeaders() },
+          data: {
+            "CAS-Returned-Messages":
+              "[0034] SIN is already in use. | [9999] Duplicate Supplier , Reason: [0065]- Possible duplicate exists, please use online form",
+          },
+        },
+      );
+      throw error;
+    });
+
+    //Assert
+    await expect(
+      casService.createSiteForExistingSupplier(supplierData),
+    ).rejects.toThrow(
+      expect.objectContaining({
+        message: "CAS Bad Request Errors",
+        name: CAS_BAD_REQUEST,
+        objectInfo: [
+          "[0034] SIN is already in use.",
+          "[9999] Duplicate Supplier , Reason: [0065]- Possible duplicate exists, please use online form",
+        ],
+      }),
     );
   });
 });
