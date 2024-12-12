@@ -35,7 +35,7 @@ describe("CASService-createSupplierAndSite", () => {
       sin: "999999999",
       emailAddress: "test@test.com",
       supplierSite: {
-        addressLine1: "Street-Special Characters-ãñè-Maximum",
+        addressLine1: "{[(Street—5pecial)]},. Characters-ãñè-Maximum",
         city: "City Name Over Maximum Length",
         provinceCode: "BC",
         postalCode: "h1h h2h",
@@ -55,7 +55,7 @@ describe("CASService-createSupplierAndSite", () => {
         Sin: "999999999",
         SupplierAddress: [
           {
-            AddressLine1: "STREET-SPECIAL CHARACTERS-ANE-MAXIM",
+            AddressLine1: "STREET-5PECIAL CHARACTERS-ANE-MAXIM",
             City: "City Name Over Maximum Le",
             Province: "BC",
             Country: "CA",
