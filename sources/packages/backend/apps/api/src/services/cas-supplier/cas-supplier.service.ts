@@ -118,6 +118,7 @@ export class CASSupplierService {
     studentId: number,
     auditUserId: number,
   ): Promise<CASSupplier> {
+    const auditUser = { id: auditUserId } as User;
     const student = await this.studentRepo.findOne({
       select: {
         id: true,
@@ -145,10 +146,12 @@ export class CASSupplierService {
         CAS_SUPPLIER_ALREADY_IN_PENDING_SUPPLIER_VERIFICATION,
       );
     }
-    const savedStudent = await this.studentService.createPendingCASSupplier(
+    student.casSupplier = this.studentService.createPendingCASSupplier(
       studentId,
       auditUserId,
     );
+    student.modifier = auditUser;
+    const savedStudent = await this.studentRepo.save(student);
     return savedStudent.casSupplier;
   }
 }

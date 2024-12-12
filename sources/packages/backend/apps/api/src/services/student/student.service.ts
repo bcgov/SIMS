@@ -223,9 +223,11 @@ export class StudentService extends RecordDataModelService<Student> {
         sinValidation.sin = studentSIN;
         sinValidation.student = student;
         student.sinValidation = sinValidation;
-        await this.createPendingCASSupplier(student.id, auditUserId, {
-          entityManager,
-        });
+        student.casSupplier = this.createPendingCASSupplier(
+          student.id,
+          auditUserId,
+        );
+        await entityManager.getRepository(Student).save(student);
       }
 
       if (sfasIndividual) {
@@ -909,34 +911,22 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Creates a new CAS Supplier for a student.
+   * Create a pending CAS supplier for a student to save.
    * @param studentId student id.
    * @param auditUserId audit user id.
-   * @param options options.
-   * - `entityManager`: entity manager for a given transaction.
-   * @returns saved student.
-   **/
-  async createPendingCASSupplier(
+   * @returns casSupplier.
+   */
+  createPendingCASSupplier(
     studentId: number,
     auditUserId: number,
-    options?: { entityManager?: EntityManager },
-  ): Promise<Student> {
+  ): CASSupplier {
     const auditUser = { id: auditUserId } as User;
-    const now = new Date();
-    const studentRepo = options?.entityManager
-      ? options?.entityManager.getRepository(Student)
-      : this.repo;
     const casSupplier = new CASSupplier();
     casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
-    casSupplier.supplierStatusUpdatedOn = now;
+    casSupplier.supplierStatusUpdatedOn = new Date();
     casSupplier.isValid = false;
     casSupplier.creator = auditUser;
     casSupplier.student = { id: studentId } as Student;
-    const student = new Student();
-    student.id = studentId;
-    student.casSupplier = casSupplier;
-    student.modifier = auditUser;
-    student.updatedAt = now;
-    return studentRepo.save(student);
+    return casSupplier;
   }
 }
