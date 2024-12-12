@@ -363,7 +363,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
 
   describe("Should round down the values for the disbursement when two disbursements are expected and ", () => {
     for (const testFinalAwardNetAmount of TEST_FINAL_AWARD_NET_AMOUNTS) {
-      it.only(`the final award of each type is ${testFinalAwardNetAmount.finalAwardNetAmount}.`, async () => {
+      it(`the final award of each type is ${testFinalAwardNetAmount.finalAwardNetAmount}.`, async () => {
         // Arrange
         const configureDisbursementData =
           createFakeConfigureDisbursementPartTimeData(PROGRAM_YEAR);
