@@ -77,7 +77,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -118,7 +118,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -175,7 +175,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -183,7 +183,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 1.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 10",
+      "Error(s): 0, Warning(s): 1, Info: 11",
     ]);
     expect(
       mockedJob.containLogMessages([
@@ -239,7 +239,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -247,7 +247,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 1.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 10",
+      "Error(s): 0, Warning(s): 1, Info: 11",
     ]);
     expect(
       mockedJob.containLogMessages([
@@ -299,9 +299,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processCASSupplierInformation(
-        mockedJob.job,
-      );
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -426,7 +424,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -436,7 +434,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     ]);
     expect(
       mockedJob.containLogMessages([
-        "Executing CAS supplier integration...",
+        "Executing CAS supplier integration.",
         "Found 1 records to be updated.",
         `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
         `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierFound}.`,
@@ -550,7 +548,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -560,7 +558,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     ]);
     expect(
       mockedJob.containLogMessages([
-        "Executing CAS supplier integration...",
+        "Executing CAS supplier integration.",
         "Found 1 records to be updated.",
         `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
         `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierFound}.`,
@@ -663,9 +661,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    await expect(
-      processor.processCASSupplierInformation(mockedJob.job),
-    ).rejects.toStrictEqual(
+    await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
       new Error(
         "One or more errors were reported during the process, please see logs for details.",
       ),
@@ -674,7 +670,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Assert
     expect(
       mockedJob.containLogMessages([
-        "Executing CAS supplier integration...",
+        "Executing CAS supplier integration.",
         "Found 2 records to be updated.",
         `Processing student CAS supplier ID: ${savedCASSupplierToFail.id}.`,
         'Unexpected error while processing supplier. "Unknown error"',
@@ -706,7 +702,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -714,7 +710,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 0.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 12",
+      "Error(s): 0, Warning(s): 1, Info: 13",
     ]);
     // Assert DB was updated.
     const updateCASSupplier = await db.casSupplier.findOne({
@@ -774,7 +770,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -782,7 +778,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 0.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 2, Info: 11",
+      "Error(s): 0, Warning(s): 2, Info: 12",
     ]);
     // Assert DB was updated.
     const updateCASSupplier = await db.casSupplier.findOne({
@@ -838,7 +834,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -846,7 +842,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 0.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 2, Info: 11",
+      "Error(s): 0, Warning(s): 2, Info: 12",
     ]);
     // Assert DB was updated.
     const updateCASSupplier = await db.casSupplier.findOne({

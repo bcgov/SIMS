@@ -25,6 +25,22 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
   }
 
   /**
+   * To be removed once the method {@link process} is implemented.
+   * This method "hides" the {@link Process} decorator from the base class.
+   */
+  async processQueue(): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
+   * When implemented in a derived class, process the queue job.
+   * To be implemented.
+   */
+  protected async process(): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
    * Process disbursements available to be sent to ESDC.
    * Consider any record that is scheduled in upcoming days or in the past.
    * @params job job details.

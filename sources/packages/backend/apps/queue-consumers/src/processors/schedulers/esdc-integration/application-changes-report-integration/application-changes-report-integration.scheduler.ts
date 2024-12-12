@@ -26,6 +26,22 @@ export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<
   }
 
   /**
+   * To be removed once the method {@link process} is implemented.
+   * This method "hides" the {@link Process} decorator from the base class.
+   */
+  async processQueue(): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
+   * When implemented in a derived class, process the queue job.
+   * To be implemented.
+   */
+  protected async process(): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
    * Generate application changes report for the applications which has at least one e-Cert sent
    * and the application study dates have changed after the first e-Cert
    * or after the last time the application was reported for study dates change
