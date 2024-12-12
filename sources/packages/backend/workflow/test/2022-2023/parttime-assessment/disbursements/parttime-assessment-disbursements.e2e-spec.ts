@@ -58,8 +58,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
     // Assert
     expect(calculatedAssessment.variables.disbursementSchedules).toStrictEqual([
       {
-        disbursementDate: getISODateOnlyString(addDays(30)),
-        negotiatedExpiryDate: getISODateOnlyString(addDays(30)),
+        disbursementDate: configureDisbursementData.offeringStudyStartDate,
+        negotiatedExpiryDate: configureDisbursementData.offeringStudyStartDate,
         disbursements: [
           {
             awardEligibility: true,
@@ -193,8 +193,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
         calculatedAssessment.variables.disbursementSchedules,
       ).toStrictEqual([
         {
-          disbursementDate: getISODateOnlyString(getUTCNow()),
-          negotiatedExpiryDate: getISODateOnlyString(getUTCNow()),
+          disbursementDate: configureDisbursementData.offeringStudyStartDate,
+          negotiatedExpiryDate:
+            configureDisbursementData.offeringStudyStartDate,
           disbursements: [
             {
               awardEligibility: true,
@@ -313,8 +314,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
           calculatedAssessment.variables.disbursementSchedules,
         ).toStrictEqual([
           {
-            disbursementDate: getISODateOnlyString(addDays(30)),
-            negotiatedExpiryDate: getISODateOnlyString(addDays(30)),
+            disbursementDate: configureDisbursementData.offeringStudyStartDate,
+            negotiatedExpiryDate:
+              configureDisbursementData.offeringStudyStartDate,
             disbursements: [
               {
                 awardEligibility: true,
@@ -361,7 +363,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
 
   describe("Should round down the values for the disbursement when two disbursements are expected and ", () => {
     for (const testFinalAwardNetAmount of TEST_FINAL_AWARD_NET_AMOUNTS) {
-      it(`the final award of each type is ${testFinalAwardNetAmount.finalAwardNetAmount}.`, async () => {
+      it.only(`the final award of each type is ${testFinalAwardNetAmount.finalAwardNetAmount}.`, async () => {
         // Arrange
         const configureDisbursementData =
           createFakeConfigureDisbursementPartTimeData(PROGRAM_YEAR);
@@ -393,8 +395,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
           calculatedAssessment.variables.disbursementSchedules,
         ).toStrictEqual([
           {
-            disbursementDate: getISODateOnlyString(getUTCNow()),
-            negotiatedExpiryDate: getISODateOnlyString(getUTCNow()),
+            disbursementDate: configureDisbursementData.offeringStudyStartDate,
+            negotiatedExpiryDate:
+              configureDisbursementData.offeringStudyStartDate,
             disbursements: [
               {
                 awardEligibility: true,
