@@ -29,7 +29,8 @@ export function formatAddress(address: string): string {
   return convertToASCIIString(address)
     .toUpperCase()
     .replace(/[^A-Z0-9\-\s]/g, "")
-    .substring(0, CAS_ADDRESS_MAX_LENGTH);
+    .substring(0, CAS_ADDRESS_MAX_LENGTH)
+    .trim();
 }
 
 /**
