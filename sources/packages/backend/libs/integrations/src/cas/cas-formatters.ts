@@ -26,9 +26,10 @@ export function formatUserName(firstName: string, lastName: string): string {
  * @returns formatted address.
  */
 export function formatAddress(address: string): string {
-  return convertToASCIIString(
-    address.substring(0, CAS_ADDRESS_MAX_LENGTH).trim(),
-  ).toUpperCase();
+  return convertToASCIIString(address)
+    .toUpperCase()
+    .replace(/[^A-Z0-9\-\s]/g, "")
+    .substring(0, CAS_ADDRESS_MAX_LENGTH);
 }
 
 /**
