@@ -14245,9 +14245,9 @@
                             "unique": false,
                             "onlyAvailableItems": true
                           },
-                          "key": "withoutSoleCustody",
+                          "key": "supportnocustodyDependants",
                           "attributes": {
-                            "data-cy": "withoutSoleCustody"
+                            "data-cy": "supportnocustodyDependants"
                           },
                           "type": "radio",
                           "input": true,
@@ -14316,7 +14316,7 @@
                           "key": "dependentsThatYouSupportFinanciallyButDoNotHaveSoleCustody",
                           "conditional": {
                             "show": "true",
-                            "when": "withoutSoleCustody",
+                            "when": "supportnocustodyDependants",
                             "eq": "yes"
                           },
                           "type": "panel",
@@ -14773,7 +14773,7 @@
                               "properties": {},
                               "conditional": {
                                 "show": "true",
-                                "when": "withoutSoleCustody",
+                                "when": "supportnocustodyDependants",
                                 "eq": "yes",
                                 "json": ""
                               },
@@ -15266,26 +15266,6 @@
               "breadcrumb": "default",
               "id": "esww5zq",
               "tags": []
-            },
-            {
-              "input": true,
-              "tableView": false,
-              "key": "supportnocustodyDependants",
-              "label": "Has dependants without sole custody flag",
-              "protected": false,
-              "unique": false,
-              "persistent": true,
-              "type": "hidden",
-              "tags": [],
-              "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
-              },
-              "properties": {},
-              "lockKey": true,
-              "calculateValue": "value = data.hasDependents === 'no' ? 'no' : data.dependants.some((dependant)=>(dependant.withoutSoleCustody && dependant.withoutSoleCustody === 'yes')) ? 'yes' : 'no';",
-              "calculateServer": true
             }
           ],
           "placeholder": "",
