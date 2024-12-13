@@ -7,10 +7,6 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import {
-  getSuccessMessageWithAttentionCheck,
-  logProcessSummaryToJobLogger,
-} from "../../../utilities";
 import { QueueNames } from "@sims/utilities";
 import { SIMSToSFASProcessingService } from "@sims/integrations/sfas-integration";
 import { SIMSToSFASService } from "@sims/integrations/services/sfas";
@@ -29,81 +25,56 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
   }
 
   /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
-   */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
    * Generate data file consisting of all student, application and restriction updates in SIMS since the previous file generation
    * until the start of the current job and send the data file to SFAS.
-   * @param job job.
-   * @returns process summary.
+   * @param _job process job.
+   * @param processSummary process summary for logging.
    */
   @Process()
-  async generateSFASBridgeFile(job: Job<void>): Promise<string[]> {
-    const processSummary = new ProcessSummary();
-
-    try {
-      processSummary.info(
-        `Processing SIMS to SFAS integration job. Job id: ${job.id} and Job name: ${job.name}.`,
-      );
-      // Set the bridge data extracted date as current date-time
-      // before staring to process the bridge data.
-      const bridgeDataExtractedDate = new Date();
-      const latestBridgeFileReferenceDate =
-        await this.simsToSFASService.getLatestBridgeFileLogDate();
-      // If the bridge is being executed for the first time, set the modified since date to
-      // a safe initial date.
-      const modifiedSince =
-        latestBridgeFileReferenceDate ?? SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE;
-      processSummary.info(
-        `Processing data since ${modifiedSince} until ${bridgeDataExtractedDate}.`,
-      );
-      const integrationProcessSummary = new ProcessSummary();
-      processSummary.children(integrationProcessSummary);
-      const {
-        studentRecordsSent,
-        applicationRecordsSent,
-        restrictionRecordsSent,
-        uploadedFileName,
-      } = await this.simsToSFASIntegrationProcessingService.processSIMSUpdates(
-        integrationProcessSummary,
-        modifiedSince,
-        bridgeDataExtractedDate,
-      );
-      processSummary.info("Processing SIMS to SFAS integration job completed.");
-      return getSuccessMessageWithAttentionCheck(
-        [
-          "Process finalized with success.",
-          `Student records sent: ${studentRecordsSent}.`,
-          `Application records sent: ${applicationRecordsSent}.`,
-          `Restriction records sent: ${restrictionRecordsSent}.`,
-          `Uploaded file name: ${uploadedFileName}.`,
-        ],
-        processSummary,
-      );
-    } catch (error: unknown) {
-      const errorMessage =
-        "Unexpected error while executing the SIMS to SFAS integration job.";
-      processSummary.error(errorMessage, error);
-      throw new Error(errorMessage, { cause: error });
-    } finally {
-      this.logger.logProcessSummary(processSummary);
-      await logProcessSummaryToJobLogger(processSummary, job);
-    }
+  protected async process(
+    _job: Job<void>,
+    processSummary: ProcessSummary,
+  ): Promise<string[]> {
+    // Set the bridge data extracted date as current date-time
+    // before staring to process the bridge data.
+    const bridgeDataExtractedDate = new Date();
+    const latestBridgeFileReferenceDate =
+      await this.simsToSFASService.getLatestBridgeFileLogDate();
+    // If the bridge is being executed for the first time, set the modified since date to
+    // a safe initial date.
+    const modifiedSince =
+      latestBridgeFileReferenceDate ?? SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE;
+    processSummary.info(
+      `Processing data since ${modifiedSince} until ${bridgeDataExtractedDate}.`,
+    );
+    const integrationProcessSummary = new ProcessSummary();
+    processSummary.children(integrationProcessSummary);
+    const {
+      studentRecordsSent,
+      applicationRecordsSent,
+      restrictionRecordsSent,
+      uploadedFileName,
+    } = await this.simsToSFASIntegrationProcessingService.processSIMSUpdates(
+      integrationProcessSummary,
+      modifiedSince,
+      bridgeDataExtractedDate,
+    );
+    return [
+      "Process finalized with success.",
+      `Student records sent: ${studentRecordsSent}.`,
+      `Application records sent: ${applicationRecordsSent}.`,
+      `Restriction records sent: ${restrictionRecordsSent}.`,
+      `Uploaded file name: ${uploadedFileName}.`,
+    ];
   }
 
+  /**
+   * Logger for SFAS integration scheduler.
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
   @InjectLogger()
   logger: LoggerService;
 }
