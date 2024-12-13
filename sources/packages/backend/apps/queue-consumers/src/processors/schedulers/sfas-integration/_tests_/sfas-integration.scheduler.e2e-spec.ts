@@ -1,4 +1,4 @@
-import { DeepMocked, createMock } from "@golevelup/ts-jest";
+import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import {
   QueueNames,
@@ -20,7 +20,6 @@ import {
 } from "@sims/test-utils";
 import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
-import { Job } from "bull";
 import * as path from "path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
 import {
@@ -129,7 +128,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     mockDownloadFiles(sftpClientMock, [SFAS_ALL_RESTRICTIONS_FILENAME]);
 
     // Act
-    await processor.processSFASIntegrationFiles(mockedJob.job);
+    await processor.processQueue(mockedJob.job);
 
     // Assert
 
@@ -202,12 +201,15 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       studentRestrictionSSR.isActive = false;
       await db.studentRestriction.save(studentRestrictionSSR);
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [SFAS_ALL_RESTRICTIONS_FILENAME]);
       // Act
-      await processor.processSFASIntegrationFiles(job);
+      const result = await processor.processQueue(mockedJob.job);
       // Assert
       // Expect the file was archived on SFTP.
+      expect(result).toStrictEqual([
+        "Completed processing SFAS integration files.",
+      ]);
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect a total of 5 restrictions to be inserted.
       // Two originally inserted restrictions (LGCY & B6B) from before the file processing and then two AF restrictions and one SSR restriction added from the file import.
@@ -243,17 +245,17 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [SFAS_SAIL_DATA_FILENAME]);
       // Act
-      const processingResults = await processor.processSFASIntegrationFiles(
-        job,
-      );
+      await processor.processQueue(mockedJob.job);
       // Assert
       // Expect the file was archived on SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the file contains 3 records.
-      expect(processingResults[0].summary[1]).toBe("File contains 3 records.");
+      expect(mockedJob.containLogMessage("File contains 3 records.")).toBe(
+        true,
+      );
       const startDate = getISODateOnlyString("2023-08-01");
       const endDate = getISODateOnlyString("2024-02-01");
       // Expect the database data to be the same as the file data for one record.
@@ -322,12 +324,16 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME,
       ]);
-      // Act
-      await processor.processSFASIntegrationFiles(job);
+
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "Error processing record line number 3.",
+      );
+
       // Assert
       // Expect the file data not to be saved in the database.
       const sfasIndividualRecords = await db.sfasIndividual.find({
@@ -348,39 +354,31 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME,
       ]);
+
       // Act
-      const processingResults = await processor.processSFASIntegrationFiles(
-        job,
-      );
+      await processor.processQueue(mockedJob.job);
+
       // Assert
       const downloadedFile = path.join(
         process.env.SFAS_RECEIVE_FOLDER,
         SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME,
       );
-      expect(processingResults).toStrictEqual([
-        {
-          summary: [
-            `Processing file ${downloadedFile}.`,
-            "File contains 3 records.",
-          ],
-          success: true,
-        },
-        {
-          success: true,
-          summary: [
-            "Updating student ids for SFAS individuals.",
-            "Student ids updated.",
-            "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
-            "New disbursement overaward balances inserted to disbursement overawards table.",
-            "Inserting student restrictions from SFAS restrictions data.",
-            "Inserted student restrictions from SFAS restrictions data.",
-          ],
-        },
-      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${downloadedFile}.`,
+          "File contains 3 records.",
+          "Updating student ids for SFAS individuals.",
+          "Student ids updated.",
+          "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+          "New disbursement overaward balances inserted to disbursement overawards table.",
+          "Inserting student restrictions from SFAS restrictions data.",
+          "Inserted student restrictions from SFAS restrictions data.",
+        ]),
+      ).toBe(true);
       // Expect the database data to be the same as the file data.
       const sfasIndividualRecords = await db.sfasIndividual.find({
         select: {
