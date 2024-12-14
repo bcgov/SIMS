@@ -13429,7 +13429,8 @@
                           "inputType": "radio",
                           "fieldSet": false,
                           "id": "ea0vyrg",
-                          "tags": []
+                          "tags": [],
+                          "isNew": false
                         },
                         {
                           "title": "Upload panel",
@@ -13437,8 +13438,8 @@
                           "hideLabel": true,
                           "key": "uploadPanel",
                           "conditional": {
-                            "show": true,
-                            "when": "dependants.declaredOnTaxes",
+                            "show": "true",
+                            "when": "declaredOnTaxes",
                             "eq": "yes"
                           },
                           "type": "panel",
@@ -13907,9 +13908,9 @@
                               "attributes": {},
                               "validateOn": "change",
                               "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
+                                "show": "true",
+                                "when": "declaredOnTaxes",
+                                "eq": "yes"
                               },
                               "overlay": {
                                 "style": "",
@@ -14391,7 +14392,8 @@
                               "allowMultipleMasks": false,
                               "addons": [],
                               "inputType": "hidden",
-                              "id": "ejf7zcr"
+                              "id": "ejf7zcr",
+                              "tags": []
                             },
                             {
                               "label": "HTML",
@@ -15092,8 +15094,9 @@
                           "theme": "default",
                           "breadcrumb": "default",
                           "id": "e88jxwl",
-                          "hideLabel": false,
-                          "tags": []
+                          "hideLabel": true,
+                          "tags": [],
+                          "isNew": false
                         }
                       ],
                       "id": "eja9nnp000000000000000000",
