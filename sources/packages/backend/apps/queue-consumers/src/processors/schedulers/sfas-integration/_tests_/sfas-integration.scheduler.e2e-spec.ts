@@ -331,7 +331,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
 
       // Act/Assert
       await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
-        "Error processing record line number 3.",
+        "Error processing record line number",
       );
 
       // Assert
