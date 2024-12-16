@@ -1,5 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import { DownloadResult, RecordTypeCodes } from "./sfas-integration.models";
 import { SFASIntegrationService } from "./sfas-integration.service";
 import {
@@ -13,7 +17,6 @@ import { ConfigService } from "@sims/utilities/config";
 import { processInParallel } from "@sims/utilities";
 import { SFASRecordIdentification } from "@sims/integrations/sfas-integration/sfas-files/sfas-record-identification";
 import { SFAS_IMPORT_RECORDS_PROGRESS_REPORT_PACE } from "@sims/services/constants";
-import { ProcessSummary } from "@sims/utilities/logger";
 
 @Injectable()
 export class SFASIntegrationProcessingService {
