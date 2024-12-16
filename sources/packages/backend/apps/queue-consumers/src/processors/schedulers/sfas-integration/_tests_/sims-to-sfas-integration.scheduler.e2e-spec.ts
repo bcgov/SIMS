@@ -672,6 +672,21 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     },
   );
 
+  it("Should throw an error when an unexpected error happen during file upload.", async () => {
+    // Arrange
+    sftpClientMock.put.mockImplementationOnce(() => {
+      throw new Error("Unexpected error uploading the file.");
+    });
+
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+
+    // Act/Assert
+    await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      "Unexpected error uploading the file.",
+    );
+  });
+
   /**
    * Creates a student with expected first name, last name and updated date.
    * @param options optional params.
