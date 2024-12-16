@@ -1,11 +1,14 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { CRAIncomeVerificationProcessingService } from "@sims/integrations/cra-integration/cra-income-verification.processing.service";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
-import { ProcessResponseQueue } from "./models/process-response.dto";
 
 @Processor(QueueNames.CRAResponseIntegration)
 export class CRAResponseIntegrationScheduler extends BaseScheduler<void> {
@@ -23,18 +26,20 @@ export class CRAResponseIntegrationScheduler extends BaseScheduler<void> {
    * @params job job details.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
-  @Process()
-  async processResponses(job: Job<void>): Promise<ProcessResponseQueue[]> {
-    this.logger.log(
-      `Processing CRA integration job ${job.id} of type ${job.name}.`,
-    );
+  protected async process(
+    _job: Job<void>,
+    processSummary: ProcessSummary,
+  ): Promise<string> {
     const results = await this.cra.processResponses();
-    return results.map((result) => {
-      return {
-        processSummary: result.processSummary,
-        errorsSummary: result.errorsSummary,
-      };
+    processSummary.info(`CRA response files processed: ${results.length}`);
+    const responsesSummaries = results.map((result) => {
+      const responseSummary = new ProcessSummary();
+      result.processSummary.forEach((info) => responseSummary.info(info));
+      result.errorsSummary.forEach((error) => responseSummary.error(error));
+      return responseSummary;
     });
+    processSummary.children(...responsesSummaries);
+    return "Processed CRA response files.";
   }
 
   @InjectLogger()

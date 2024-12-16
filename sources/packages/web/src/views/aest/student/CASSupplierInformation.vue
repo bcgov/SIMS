@@ -18,6 +18,16 @@
                   prepend-icon="fa:fa fa-plus-circle"
                   >Edit info</v-btn
                 >
+                <v-btn
+                  class="mr-2 float-right"
+                  color="primary"
+                  data-cy="retryCASSupplierButton"
+                  :disabled="notAllowed || retryButtonDisabled"
+                  @click="retryCASSupplier"
+                  prepend-icon="fa:fa fa-repeat"
+                  :loading="retryLoading"
+                  >Retry</v-btn
+                >
               </template>
             </check-permission-role>
           </template>
@@ -30,9 +40,13 @@
             :items="casSupplierInfo.items"
             :items-per-page="DEFAULT_PAGE_LIMIT"
             :items-per-page-options="ITEMS_PER_PAGE"
+            show-expand
           >
             <template #[`item.dateCreated`]="{ item }">
               {{ dateOnlyLongString(item.dateCreated) }}
+            </template>
+            <template #[`item.status`]="{ item }">
+              {{ item.status }}
             </template>
             <template #[`item.supplierNumber`]="{ item }">
               {{ item.supplierNumber }}
@@ -57,6 +71,36 @@
             </template>
             <template #[`item.siteProtected`]="{ item }">
               {{ emptyStringFiller(item.siteProtected) }}
+            </template>
+            <template v-slot:expanded-row="{ item, columns }">
+              <tr>
+                <td :colspan="columns.length">
+                  <ul>
+                    <li v-for="(error, index) in item.errors" :key="index">
+                      {{ error }}
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </template>
+            <template
+              v-slot:[`item.data-table-expand`]="{
+                item,
+                internalItem,
+                isExpanded,
+                toggleExpand,
+              }"
+            >
+              <v-btn
+                v-if="item.errors && item.errors.length > 0"
+                :icon="
+                  isExpanded(internalItem)
+                    ? '$expanderCollapseIcon'
+                    : '$expanderExpandIcon'
+                "
+                variant="text"
+                @click="toggleExpand(internalItem)"
+              ></v-btn>
             </template>
           </v-data-table>
         </toggle-content>
@@ -83,6 +127,7 @@ import EditCASSupplierInfoModal from "@/components/aest/students/EditCASSupplier
 import {
   AddCASSupplierAPIInDTO,
   CASSupplierInfoAPIOutDTO,
+  SupplierStatus,
 } from "@/services/http/dto";
 import { CASSupplierService } from "@/services/CASSupplierService";
 import StatusChipSupplier from "@/components/generic/StatusChipSupplier.vue";
@@ -100,14 +145,16 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { dateOnlyLongString, emptyStringFiller } = useFormatters();
-    const { booleanToYesNo } = useFormatters();
+    const { dateOnlyLongString, emptyStringFiller, booleanToYesNo } =
+      useFormatters();
     const showModal = ref(false);
+    const retryLoading = ref(false);
     const casSupplierInfo = ref({} as CASSupplierInfoAPIOutDTO);
     const addCASSupplierModal = ref(
       {} as ModalDialog<AddCASSupplierAPIInDTO | boolean>,
     );
     const snackBar = useSnackBar();
+    const retryButtonDisabled = ref(true);
     const loadCASSuppliers = async (studentId: number) => {
       try {
         casSupplierInfo.value =
@@ -117,8 +164,29 @@ export default defineComponent({
           "Unexpected error while loading CAS supplier information.",
         );
       }
+      const [mostRecentSupplier] = casSupplierInfo.value.items;
+      retryButtonDisabled.value =
+        mostRecentSupplier?.supplierStatus ===
+        SupplierStatus.PendingSupplierVerification;
     };
     watchEffect(() => loadCASSuppliers(props.studentId));
+
+    const retryCASSupplier = async () => {
+      try {
+        retryLoading.value = true;
+        await CASSupplierService.shared.retryCASSupplier(props.studentId);
+        snackBar.success(
+          "A new CAS pending verification record was created. A new attempt will be made to get information from CAS.",
+        );
+        await loadCASSuppliers(props.studentId);
+      } catch {
+        snackBar.error(
+          "Unexpected error while retrying CAS supplier information.",
+        );
+      } finally {
+        retryLoading.value = false;
+      }
+    };
 
     const addCASSupplierInfo = async () => {
       const addCASSupplierData = await addCASSupplierModal.value.showModal();
@@ -151,6 +219,9 @@ export default defineComponent({
       addCASSupplierModal,
       booleanToYesNo,
       emptyStringFiller,
+      retryCASSupplier,
+      retryButtonDisabled,
+      retryLoading,
     };
   },
 });

@@ -56,6 +56,7 @@ import {
   ApplicationRestrictionBypass,
   BetaUsersAuthorizations,
   SFASBridgeLog,
+  SFASRestrictionMap,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -125,6 +126,7 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
       SFASPartTimeApplicationRecord,
     ),
     sfasRestriction: dataSource.getRepository(SFASRestriction),
+    sfasRestrictionMap: dataSource.getRepository(SFASRestrictionMap),
     sinValidation: dataSource.getRepository(SINValidation),
     student: dataSource.getRepository(Student),
     studentAccountApplication: dataSource.getRepository(
@@ -196,6 +198,7 @@ export interface E2EDataSources {
   sfasPartTimeApplications: Repository<SFASPartTimeApplications>;
   sfasPartTimeApplicationRecord: Repository<SFASPartTimeApplicationRecord>;
   sfasRestriction: Repository<SFASRestriction>;
+  sfasRestrictionMap: Repository<SFASRestrictionMap>;
   sinValidation: Repository<SINValidation>;
   student: Repository<Student>;
   studentAccountApplication: Repository<StudentAccountApplication>;

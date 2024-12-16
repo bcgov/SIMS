@@ -21,6 +21,22 @@ export class PartTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
   }
 
   /**
+   * To be removed once the method {@link process} is implemented.
+   * This method "hides" the {@link Process} decorator from the base class.
+   */
+  async processQueue(): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
+   * When implemented in a derived class, process the queue job.
+   * To be implemented.
+   */
+  protected async process(): Promise<string | string[]> {
+    throw new Error("Method not implemented.");
+  }
+
+  /**
    * Identifies all the records where the MSFAA number
    * is not requested i.e. has date_requested=null
    * Create a fixed file for part time and send file

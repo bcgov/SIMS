@@ -2,6 +2,7 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import {
   AddCASSupplierAPIInDTO,
   CASSupplierInfoAPIOutDTO,
+  PrimaryIdentifierAPIOutDTO,
 } from "@/services/http/dto";
 
 /**
@@ -18,6 +19,20 @@ export class CASSupplierApi extends HttpBaseClient {
   ): Promise<CASSupplierInfoAPIOutDTO> {
     return this.getCall<CASSupplierInfoAPIOutDTO>(
       this.addClientRoot(`cas-supplier/student/${studentId}`),
+    );
+  }
+
+  /**
+   * Retries CAS supplier info for a student.
+   * @param studentId student id.
+   * @returns the created CAS Supplier Id.
+   */
+  async retryCASSupplier(
+    studentId: number,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return await this.postCall(
+      this.addClientRoot(`cas-supplier/student/${studentId}/retry`),
+      null,
     );
   }
 

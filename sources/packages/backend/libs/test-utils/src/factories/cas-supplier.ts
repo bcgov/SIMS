@@ -1,6 +1,7 @@
 import {
   CASSupplier,
   Student,
+  StudentProfileSnapshot,
   SupplierAddress,
   SupplierStatus,
   User,
@@ -38,7 +39,9 @@ export async function saveFakeCASSupplier(
     student = await saveFakeStudent(db.dataSource);
   }
   const casSupplier = createFakeCASSupplier({ student, auditUser }, options);
-  return db.casSupplier.save(casSupplier);
+  student.casSupplier = casSupplier;
+  await db.student.save(student);
+  return student.casSupplier;
 }
 
 /**
@@ -63,6 +66,8 @@ export function createFakeCASSupplier(
   casSupplier.supplierStatus =
     options?.initialValues?.supplierStatus ??
     SupplierStatus.PendingSupplierVerification;
+  casSupplier.status = options?.initialValues?.status;
+  casSupplier.errors = options?.initialValues?.errors;
 
   // Verified manually has a minimum of values populated.
   if (
@@ -84,7 +89,7 @@ export function createFakeCASSupplier(
       lastUpdated: new Date(),
     };
     casSupplier.supplierProtected = true;
-    casSupplier.isValid = false;
+    casSupplier.isValid = options?.initialValues.isValid ?? false;
   }
   casSupplier.supplierName = `${faker.name.lastName()}, ${faker.name.firstName()}`;
   casSupplier.supplierNumber = faker.datatype
@@ -96,6 +101,21 @@ export function createFakeCASSupplier(
   casSupplier.supplierStatusUpdatedOn = new Date();
   casSupplier.creator = relations.auditUser;
   casSupplier.student = relations.student;
+  // Build the student profile snapshot based on valid status.
+  const studentProfileSnapshot: StudentProfileSnapshot = casSupplier.isValid
+    ? {
+        firstName: relations.student.user.firstName,
+        lastName: relations.student.user.lastName,
+        sin: relations.student.sinValidation.sin,
+        addressLine1: relations.student.contactInfo.address.addressLine1,
+        city: relations.student.contactInfo.address.city,
+        province: relations.student.contactInfo.address.provinceState,
+        postalCode: relations.student.contactInfo.address.postalCode,
+        country: relations.student.contactInfo.address.country,
+      }
+    : null;
+  casSupplier.studentProfileSnapshot =
+    options?.initialValues?.studentProfileSnapshot ?? studentProfileSnapshot;
 
   return casSupplier;
 }

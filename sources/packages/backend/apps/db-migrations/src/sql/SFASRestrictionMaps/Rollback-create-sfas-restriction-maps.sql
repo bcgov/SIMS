@@ -1,0 +1,1 @@
+DROP TABLE sims.sfas_restriction_maps;

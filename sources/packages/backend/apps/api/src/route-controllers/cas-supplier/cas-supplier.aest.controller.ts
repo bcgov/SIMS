@@ -6,8 +6,13 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { AuthorizedParties, IUserToken, Role, UserGroups } from "../../auth";
 import {
   AllowAuthorizedParty,
@@ -20,7 +25,11 @@ import {
   AddCASSupplierAPIInDTO,
   CASSupplierInfoAPIOutDTO,
 } from "./models/cas-supplier.dto";
-import { CASSupplierService, StudentService } from "../../services";
+import {
+  CASSupplierService,
+  CAS_SUPPLIER_ALREADY_IN_PENDING_SUPPLIER_VERIFICATION,
+  StudentService,
+} from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { STUDENT_NOT_FOUND } from "../../constants";
@@ -61,7 +70,9 @@ export class CASSupplierAESTController extends BaseController {
       studentId,
     );
     const casSupplierInfoDTOList = casSuppliers.map((casSupplier) => ({
+      id: casSupplier.id,
       dateCreated: casSupplier.createdAt,
+      status: casSupplier.status,
       supplierNumber: casSupplier.supplierNumber,
       supplierProtected: casSupplier.supplierProtected,
       supplierStatus: casSupplier.supplierStatus,
@@ -70,6 +81,7 @@ export class CASSupplierAESTController extends BaseController {
       addressLine1: casSupplier.supplierAddress?.addressLine1,
       siteStatus: casSupplier.supplierAddress?.status,
       siteProtected: casSupplier.supplierAddress?.siteProtected,
+      errors: casSupplier?.errors,
     }));
     return { items: casSupplierInfoDTOList };
   }
@@ -103,6 +115,43 @@ export class CASSupplierAESTController extends BaseController {
         error.name === STUDENT_NOT_FOUND
       ) {
         throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Retries CAS Supplier for a student.
+   * @param studentId student id.
+   * @param userToken user token.
+   */
+  @Roles(Role.AESTEditCASSupplierInfo)
+  @Post("student/:studentId/retry")
+  @ApiNotFoundResponse({
+    description: "Student not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "There is already a CAS Supplier for this student in Pending supplier verification status.",
+  })
+  async retryCASSupplier(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @UserToken() userToken: IUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    try {
+      const casSupplier = await this.casSupplierService.retryCASSupplier(
+        studentId,
+        userToken.userId,
+      );
+      return { id: casSupplier.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case STUDENT_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case CAS_SUPPLIER_ALREADY_IN_PENDING_SUPPLIER_VERIFICATION:
+            throw new UnprocessableEntityException(error.message);
+        }
       }
       throw error;
     }

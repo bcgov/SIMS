@@ -18,6 +18,7 @@ import {
   StudentRestriction,
   CASSupplier,
   DisbursementOveraward,
+  Application,
 } from ".";
 import { SINValidation } from "./sin-validation.model";
 
@@ -140,4 +141,13 @@ export class Student extends RecordDataModel {
     cascade: false,
   })
   overawards?: DisbursementOveraward[];
+
+  /**
+   * Student applications.
+   */
+  @OneToMany(() => Application, (application) => application.student, {
+    eager: false,
+    cascade: false,
+  })
+  applications?: Application[];
 }

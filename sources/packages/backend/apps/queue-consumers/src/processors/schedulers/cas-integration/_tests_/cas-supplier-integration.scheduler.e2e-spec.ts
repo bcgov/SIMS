@@ -6,7 +6,12 @@ import {
   saveFakeCASSupplier,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { COUNTRY_CANADA, OTHER_COUNTRY, QueueNames } from "@sims/utilities";
+import {
+  COUNTRY_CANADA,
+  CustomNamedError,
+  OTHER_COUNTRY,
+  QueueNames,
+} from "@sims/utilities";
 import { CASSupplierIntegrationScheduler } from "../cas-supplier-integration.scheduler";
 import {
   createTestingAppModule,
@@ -31,6 +36,7 @@ import {
   createFakeCASSupplierResponse,
 } from "../../../../../test/helpers/mock-utils/cas-response.factory";
 import { SystemUsersService } from "@sims/services";
+import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
 
 describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
   let app: INestApplication;
@@ -71,7 +77,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -112,7 +118,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -169,7 +175,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -177,7 +183,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 1.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 10",
+      "Error(s): 0, Warning(s): 1, Info: 11",
     ]);
     expect(
       mockedJob.containLogMessages([
@@ -233,7 +239,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -241,7 +247,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 1.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 10",
+      "Error(s): 0, Warning(s): 1, Info: 11",
     ]);
     expect(
       mockedJob.containLogMessages([
@@ -257,6 +263,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
         id: true,
         isValid: true,
         supplierStatus: true,
+        errors: true,
       },
       where: {
         id: savedCASSupplier.id,
@@ -266,6 +273,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       id: savedCASSupplier.id,
       isValid: false,
       supplierStatus: SupplierStatus.ManualIntervention,
+      errors: ["Address outside of Canada cannot be processed."],
     });
   });
 
@@ -291,9 +299,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processCASSupplierInformation(
-        mockedJob.job,
-      );
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -418,7 +424,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -428,7 +434,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     ]);
     expect(
       mockedJob.containLogMessages([
-        "Executing CAS supplier integration...",
+        "Executing CAS supplier integration.",
         "Found 1 records to be updated.",
         `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
         `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierFound}.`,
@@ -542,7 +548,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processCASSupplierInformation(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -552,7 +558,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     ]);
     expect(
       mockedJob.containLogMessages([
-        "Executing CAS supplier integration...",
+        "Executing CAS supplier integration.",
         "Found 1 records to be updated.",
         `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
         `CAS evaluation result status: ${CASEvaluationStatus.ActiveSupplierFound}.`,
@@ -655,9 +661,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    await expect(
-      processor.processCASSupplierInformation(mockedJob.job),
-    ).rejects.toStrictEqual(
+    await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
       new Error(
         "One or more errors were reported during the process, please see logs for details.",
       ),
@@ -666,7 +670,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Assert
     expect(
       mockedJob.containLogMessages([
-        "Executing CAS supplier integration...",
+        "Executing CAS supplier integration.",
         "Found 2 records to be updated.",
         `Processing student CAS supplier ID: ${savedCASSupplierToFail.id}.`,
         'Unexpected error while processing supplier. "Unknown error"',
@@ -678,5 +682,190 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
         "CAS supplier integration executed.",
       ]),
     ).toBe(true);
+  });
+
+  it("Should insert a record in the casSuppliers table when getSupplierInfoFromCAS throws a known error.", async () => {
+    // Arrange
+    // Created a student with same address line 1 and postal code from the expected CAS mocked result.
+    // Postal code has a white space that is expected to be removed.
+    const student = await saveFakeStudent(db.dataSource);
+    const savedCASSupplier = await saveFakeCASSupplier(db, { student });
+
+    // Configure CAS mock to return a custom named Bad Request error.
+    casServiceMock.getSupplierInfoFromCAS = jest.fn().mockImplementation(() => {
+      throw new CustomNamedError("CAS Bad Request Errors", CAS_BAD_REQUEST, [
+        "0035: Site does not exist.",
+      ]);
+    });
+
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    expect(result).toStrictEqual([
+      "Process finalized with success.",
+      "Pending suppliers to update found: 1.",
+      "Records updated: 0.",
+      "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+      "Error(s): 0, Warning(s): 1, Info: 13",
+    ]);
+    // Assert DB was updated.
+    const updateCASSupplier = await db.casSupplier.findOne({
+      select: {
+        id: true,
+        isValid: true,
+        supplierStatus: true,
+        errors: true,
+      },
+      where: {
+        id: savedCASSupplier.id,
+      },
+    });
+    expect(updateCASSupplier).toEqual({
+      id: savedCASSupplier.id,
+      isValid: false,
+      supplierStatus: SupplierStatus.ManualIntervention,
+      errors: ["0035: Site does not exist."],
+    });
+  });
+
+  it("Should insert a record in the casSuppliers table when createSiteForExistingSupplier throws a known error.", async () => {
+    // Arrange
+    // Created a student with same address line 1 and postal code from the expected CAS mocked result.
+    // Postal code has a white space that is expected to be removed.
+    const student = await saveFakeStudent(db.dataSource);
+    const savedCASSupplier = await saveFakeCASSupplier(db, { student });
+    // Configure CAS mock to return a result for the GetSupplier
+    // with the same supplier number and address line 1 from the
+    // saved CAS supplier but a different postal code.
+    casServiceMock.getSupplierInfoFromCAS = jest.fn(() =>
+      Promise.resolve(
+        createFakeCASSupplierResponse({
+          initialValues: {
+            supplierNumber: "1000000",
+            supplierName: "SMITH, DOE",
+            status: "ACTIVE",
+            supplierProtected: "N",
+          },
+        }),
+      ),
+    );
+
+    // Configure CAS mock to return a custom named Bad Request error.
+    casServiceMock.createSiteForExistingSupplier = jest
+      .fn()
+      .mockImplementation(() => {
+        throw new CustomNamedError("CAS Bad Request Errors", CAS_BAD_REQUEST, [
+          "0001: A site code is not expected.",
+          "0009: BC Mail error messages.",
+          "0047: This site is already active.",
+          "0049: Unknown bank and branch.",
+        ]);
+      });
+
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    expect(result).toStrictEqual([
+      "Process finalized with success.",
+      "Pending suppliers to update found: 1.",
+      "Records updated: 0.",
+      "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+      "Error(s): 0, Warning(s): 2, Info: 12",
+    ]);
+    // Assert DB was updated.
+    const updateCASSupplier = await db.casSupplier.findOne({
+      select: {
+        id: true,
+        supplierNumber: true,
+        supplierName: true,
+        supplierStatus: true,
+        supplierProtected: true,
+        status: true,
+        isValid: true,
+        errors: true,
+      },
+      where: {
+        id: savedCASSupplier.id,
+      },
+    });
+    expect(updateCASSupplier).toEqual({
+      id: savedCASSupplier.id,
+      isValid: false,
+      supplierStatus: SupplierStatus.ManualIntervention,
+      supplierNumber: "1000000",
+      supplierName: "SMITH, DOE",
+      status: "ACTIVE",
+      supplierProtected: false,
+      errors: [
+        "0001: A site code is not expected.",
+        "0009: BC Mail error messages.",
+        "0047: This site is already active.",
+        "0049: Unknown bank and branch.",
+      ],
+    });
+  });
+
+  it("Should insert a record in the casSuppliers table when createSupplierAndSite throws a known error.", async () => {
+    // Arrange
+    const savedCASSupplier = await saveFakeCASSupplier(db);
+    // Configure CAS mock to return an empty result for the GetSupplier
+    // and a successful result for the CreateSupplierAndSite.
+    casServiceMock.getSupplierInfoFromCAS = jest.fn(() =>
+      Promise.resolve(createFakeCASNotFoundSupplierResponse()),
+    );
+    casServiceMock.createSupplierAndSite = jest.fn().mockImplementation(() => {
+      throw new CustomNamedError("CAS Bad Request Errors", CAS_BAD_REQUEST, [
+        "0003: A supplier name is required.",
+        "0004: A supplier number is not expected.",
+        "0010: Business Number is already in use.",
+        "0017: Invalid business number.",
+      ]);
+    });
+
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    expect(result).toStrictEqual([
+      "Process finalized with success.",
+      "Pending suppliers to update found: 1.",
+      "Records updated: 0.",
+      "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+      "Error(s): 0, Warning(s): 2, Info: 12",
+    ]);
+    // Assert DB was updated.
+    const updateCASSupplier = await db.casSupplier.findOne({
+      select: {
+        id: true,
+        isValid: true,
+        supplierStatus: true,
+        errors: true,
+      },
+      where: {
+        id: savedCASSupplier.id,
+      },
+    });
+    expect(updateCASSupplier).toEqual({
+      id: savedCASSupplier.id,
+      isValid: false,
+      supplierStatus: SupplierStatus.ManualIntervention,
+      errors: [
+        "0003: A supplier name is required.",
+        "0004: A supplier number is not expected.",
+        "0010: Business Number is already in use.",
+        "0017: Invalid business number.",
+      ],
+    });
   });
 });

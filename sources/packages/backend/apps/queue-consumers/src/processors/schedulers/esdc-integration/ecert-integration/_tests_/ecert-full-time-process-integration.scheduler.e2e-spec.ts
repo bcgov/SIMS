@@ -25,6 +25,7 @@ import {
   createFakeUser,
   saveFakeApplicationDisbursements,
   saveFakeApplicationRestrictionBypass,
+  saveFakeSFASIndividual,
   saveFakeStudent,
   saveFakeStudentRestriction,
 } from "@sims/test-utils";
@@ -53,6 +54,7 @@ import {
   loadAwardValues,
 } from "./e-cert-utils";
 import { RestrictionCode, SystemUsersService } from "@sims/services";
+import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
 
 describe(
   describeQueueProcessorRootTest(QueueNames.FullTimeECertIntegration),
@@ -63,6 +65,7 @@ describe(
     let sftpClientMock: DeepMocked<Client>;
     let systemUsersService: SystemUsersService;
     let sharedMinistryUser: User;
+    const MAX_LIFE_TIME_BC_LOAN_AMOUNT = 50000;
 
     beforeAll(async () => {
       // Env variable required for querying the eligible e-Cert records.
@@ -369,7 +372,6 @@ describe(
 
     it("Should disburse BC funding for a close-to-maximum disbursement, reduce BC funding when passing the maximum, and withhold BC Funding when a restriction was applied due to the maximum configured value for the year was reached.", async () => {
       // Arrange
-      const MAX_LIFE_TIME_BC_LOAN_AMOUNT = 50000;
       // Ensure the right disbursement order for the 3 disbursements.
       const [disbursementDate1, disbursementDate2, disbursementDate3] = [
         getISODateOnlyString(addDays(1)),
@@ -588,6 +590,162 @@ describe(
         }),
       ).toBe(true);
     });
+
+    it(
+      "Should disburse BC funding for a close-to-maximum disbursement and reduce BC funding to not exceed the maximum limit and apply BC Funding Stop Restriction" +
+        " when a student reaches maximum BC life time loan amount ignoring the legacy SFAS applications that are cancelled.",
+      async () => {
+        // Arrange
+        // Student with valid SIN.
+        const student = await saveFakeStudent(db.dataSource);
+        // Valid MSFAA Number.
+        const msfaaNumber = await db.msfaaNumber.save(
+          createFakeMSFAANumber(
+            { student },
+            { msfaaState: MSFAAStates.Signed },
+          ),
+        );
+        // SFAS Individual.
+        const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
+          initialValues: {
+            student: student,
+          },
+        });
+        // SFAS Application reaching close to maximum BC Student Loan value.
+        const activeFakeSFASApplication = createFakeSFASApplication(
+          { individual: sfasIndividual },
+          {
+            initialValues: {
+              bslAward: MAX_LIFE_TIME_BC_LOAN_AMOUNT - 100,
+            },
+          },
+        );
+        // SFAS Application which is cancelled and expected to be ignored.
+        const cancelledFakeSFASApplication = createFakeSFASApplication(
+          { individual: sfasIndividual },
+          {
+            initialValues: {
+              bslAward: 100,
+              applicationCancelDate: getISODateOnlyString(new Date()),
+            },
+          },
+        );
+        await db.sfasApplication.save([
+          activeFakeSFASApplication,
+          cancelledFakeSFASApplication,
+        ]);
+
+        // The current application for the student which reaches the maximum BC life time loan amount.
+        const currentApplication = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            student,
+            msfaaNumber,
+            firstDisbursementValues: [
+              createFakeDisbursementValue(
+                DisbursementValueType.CanadaLoan,
+                "CSLF",
+                199,
+              ),
+              // Should be disbursed because it is a federal grant.
+              createFakeDisbursementValue(
+                DisbursementValueType.CanadaGrant,
+                "CSGP",
+                299,
+              ),
+              // Should disburse only 100 as the student will reach the maximum BC life time loan amount.
+              createFakeDisbursementValue(
+                DisbursementValueType.BCLoan,
+                "BCSL",
+                399,
+              ),
+              // BC Grants should still be disbursed since BCSL has some value.
+              createFakeDisbursementValue(
+                DisbursementValueType.BCGrant,
+                "BCAG",
+                200,
+              ),
+            ],
+          },
+          {
+            offeringIntensity: OfferingIntensity.fullTime,
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              assessmentData: { weeks: 5 } as Assessment,
+              assessmentDate: new Date(),
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+              coeUpdatedAt: new Date(),
+              disbursementDate: getISODateOnlyString(addDays(1)),
+            },
+          },
+        );
+
+        // Updating program year maximum to ensure the expect value.
+        currentApplication.programYear.maxLifetimeBCLoanAmount =
+          MAX_LIFE_TIME_BC_LOAN_AMOUNT;
+        await db.programYear.save(currentApplication.programYear);
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        const result = await processor.processECert(mockedJob.job);
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            "New BCLM restriction was added to the student account.",
+          ]),
+        ).toBe(true);
+
+        // Assert uploaded file.
+        const uploadedFile = getUploadedFile(sftpClientMock);
+        const fileDate = dayjs().format("YYYYMMDD");
+        expect(uploadedFile.remoteFilePath).toBe(
+          `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`,
+        );
+        expect(uploadedFile.fileLines).toHaveLength(3);
+        const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+        expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+        expect(result).toStrictEqual([
+          "Process finalized with success.",
+          `Generated file: ${uploadedFileName}`,
+          "Uploaded records: 1",
+        ]);
+
+        const [header, record1, footer] = uploadedFile.fileLines;
+        // Validate header.
+        expect(header).toContain("100BC  NEW ENTITLEMENT");
+        // Validate footer.
+        expect(footer.substring(0, 3)).toBe("999");
+        // Check record 1 values.
+        const record1Parsed = new FullTimeCertRecordParser(record1);
+        expect(record1Parsed.hasUser(student.user)).toBe(true);
+        expect(record1Parsed.cslfAmount).toBe(199);
+        expect(record1Parsed.grantAmount("CSGP")).toBe(299);
+        // The estimated award for BCSL is 399, but only 100 will be disbursed as the maximum is reached.
+        expect(record1Parsed.bcslAmount).toBe(100);
+        // Check for the total BC grants value.
+        expect(record1Parsed.grantAmount("BCSG")).toBe(200);
+
+        const [currentApplicationDisbursement] =
+          currentApplication.currentAssessment.disbursementSchedules;
+        // Select the BCSL to validate the values impacted by the restriction.
+        const record1Awards = await loadAwardValues(
+          db,
+          currentApplicationDisbursement.id,
+          { valueCode: ["BCSL"] },
+        );
+        expect(
+          awardAssert(record1Awards, "BCSL", {
+            valueAmount: 399,
+            restrictionAmountSubtracted: 299,
+            effectiveAmount: 100,
+          }),
+        ).toBe(true);
+      },
+    );
 
     it("Should not generate disbursement if the Student assessment contains PD/PPD application flag is yes and Student profile PD/PPD missing approval", async () => {
       // Arrange
@@ -1169,7 +1327,7 @@ describe(
     );
 
     it(
-      "Should create a notification for the ministry and student for a blocked disbursement when the total assessed award is 0" +
+      "Should create a notification for the ministry and student for a blocked disbursement when it doesn't have estimated awards" +
         " and there are no previously existing notifications for the disbursement.",
       async () => {
         // Arrange

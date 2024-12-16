@@ -1,4 +1,4 @@
-import { FILE_DEFAULT_ENCODING } from "@sims/utilities";
+import { FILE_DEFAULT_ENCODING, UTF8_BYTE_ORDER_MARK } from "@sims/utilities";
 
 const REPLACE_LINE_BREAK_REGEX = /\r?\n|\r/g;
 
@@ -153,4 +153,15 @@ export function convertToASCII(rawContent?: string): Buffer | null {
  */
 export function convertToASCIIString(rawContent?: string): string | null {
   return convertToASCII(rawContent)?.toString() ?? null;
+}
+
+/**
+ * Append UTF-8 BOM to the content.
+ * @param content content to append the BOM.
+ * @returns content with the BOM appended.
+ */
+export function appendByteOrderMark(content: string): Buffer {
+  const byteOrderMarkBuffer = Buffer.from(UTF8_BYTE_ORDER_MARK);
+  const fileContentBuffer = Buffer.from(content);
+  return Buffer.concat([byteOrderMarkBuffer, fileContentBuffer]);
 }

@@ -20,7 +20,7 @@ import {
   CASSupplier,
   SupplierStatus,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, IsNull, Not, UpdateResult } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
@@ -223,18 +223,10 @@ export class StudentService extends RecordDataModelService<Student> {
         sinValidation.sin = studentSIN;
         sinValidation.student = student;
         student.sinValidation = sinValidation;
-
-        const casSupplier = new CASSupplier();
-        casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
-        casSupplier.supplierStatusUpdatedOn = new Date();
-        casSupplier.isValid = false;
-        casSupplier.creator = auditUser;
-        casSupplier.student = savedStudent;
-        const savedCASSupplier = await entityManager
-          .getRepository(CASSupplier)
-          .save(casSupplier);
-
-        savedStudent.casSupplier = savedCASSupplier;
+        student.casSupplier = this.createPendingCASSupplier(
+          student.id,
+          auditUserId,
+        );
         await entityManager.getRepository(Student).save(student);
       }
 
@@ -878,5 +870,63 @@ export class StudentService extends RecordDataModelService<Student> {
         },
       );
     });
+  }
+
+  /**
+   * Gets student by SIN.
+   * The current assessment id should not be null to ensure the application has an application number and
+   * application status should be not `Overwritten` to ensure distinct application numbers.
+   * @param sin student's SIN.
+   * @returns student.
+   */
+  async getStudentBySIN(sin: string): Promise<Student> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        sinValidation: { id: true, sin: true },
+        user: { id: true, firstName: true, lastName: true, email: true },
+        birthDate: true,
+        contactInfo: true as unknown,
+        applications: { id: true, applicationNumber: true },
+      },
+      relations: {
+        sinValidation: true,
+        user: true,
+        applications: true,
+      },
+      where: {
+        sinValidation: { sin },
+        applications: {
+          currentAssessment: { id: Not(IsNull()) },
+          applicationStatus: Not(ApplicationStatus.Overwritten),
+        },
+      },
+      order: {
+        applications: {
+          id: "DESC",
+        },
+      },
+      loadEagerRelations: false,
+    });
+  }
+
+  /**
+   * Create a pending CAS supplier for a student to save.
+   * @param studentId student id.
+   * @param auditUserId audit user id.
+   * @returns casSupplier.
+   */
+  createPendingCASSupplier(
+    studentId: number,
+    auditUserId: number,
+  ): CASSupplier {
+    const auditUser = { id: auditUserId } as User;
+    const casSupplier = new CASSupplier();
+    casSupplier.supplierStatus = SupplierStatus.PendingSupplierVerification;
+    casSupplier.supplierStatusUpdatedOn = new Date();
+    casSupplier.isValid = false;
+    casSupplier.creator = auditUser;
+    casSupplier.student = { id: studentId } as Student;
+    return casSupplier;
   }
 }

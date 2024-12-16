@@ -5,6 +5,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { Repository } from "typeorm";
 import {
   CASService,
+  CASSupplierResponse,
   formatAddress,
   formatPostalCode,
 } from "@sims/integrations/cas";
@@ -13,7 +14,7 @@ import {
   isAddressFromCanada,
   processInParallel,
 } from "@sims/utilities";
-import { CAS_AUTH_ERROR } from "@sims/integrations/constants";
+import { CAS_AUTH_ERROR, CAS_BAD_REQUEST } from "@sims/integrations/constants";
 import {
   CASEvaluationResult,
   CASEvaluationStatus,
@@ -28,6 +29,7 @@ import {
   CASEvaluationResultProcessor,
   CASActiveSupplierAndSiteFoundProcessor,
   ProcessorResult,
+  CASKnownErrorsProcessor,
 } from "./cas-evaluation-result-processor";
 
 @Injectable()
@@ -40,6 +42,7 @@ export class CASSupplierIntegrationService {
     private readonly casActiveSupplierFoundProcessor: CASActiveSupplierFoundProcessor,
     private readonly casActiveSupplierNotFoundProcessor: CASActiveSupplierNotFoundProcessor,
     private readonly casActiveSupplierAndSiteFoundProcessor: CASActiveSupplierAndSiteFoundProcessor,
+    private readonly casKnownErrorsProcessor: CASKnownErrorsProcessor,
   ) {}
 
   /**
@@ -149,6 +152,8 @@ export class CASSupplierIntegrationService {
         return this.casActiveSupplierAndSiteFoundProcessor;
       case CASEvaluationStatus.NotFound:
         return this.casActiveSupplierNotFoundProcessor;
+      case CASEvaluationStatus.KnownErrors:
+        return this.casKnownErrorsProcessor;
       default:
         throw new Error("Invalid CAS evaluation result status.");
     }
@@ -180,18 +185,31 @@ export class CASSupplierIntegrationService {
         reasons: preValidationsFailedReasons,
       };
     }
-    const supplierResponse = await this.casService.getSupplierInfoFromCAS(
-      studentSupplier.sin,
-      studentSupplier.lastName,
-    );
-    if (!supplierResponse.items.length) {
+    let supplierResponse: CASSupplierResponse;
+    try {
+      supplierResponse = await this.casService.getSupplierInfoFromCAS(
+        studentSupplier.sin,
+        studentSupplier.lastName,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        if (error.name === CAS_BAD_REQUEST) {
+          return {
+            status: CASEvaluationStatus.KnownErrors,
+            knownErrors: error.objectInfo as string[],
+          };
+        }
+      }
+      throw error;
+    }
+    if (!supplierResponse?.items.length) {
       return {
         status: CASEvaluationStatus.NotFound,
         reason: NotFoundReason.SupplierNotFound,
       };
     }
     // Check if there is at least one active supplier.
-    const casResponseActiveSupplier = supplierResponse.items.find(
+    const casResponseActiveSupplier = supplierResponse?.items.find(
       (supplier) => supplier.status === "ACTIVE",
     );
     if (!casResponseActiveSupplier) {

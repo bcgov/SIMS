@@ -36,3 +36,5 @@ export * from "./factories/cra-income-verification";
 export * from "./factories/supporting-user";
 export * from "./factories/application-restriction-bypass";
 export * from "./factories/cas-supplier";
+export * from "./factories/sfas-restriction-maps";
+export * from "./factories/restriction";

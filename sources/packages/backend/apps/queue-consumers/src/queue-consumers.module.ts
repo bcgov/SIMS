@@ -69,6 +69,7 @@ import {
   CASPreValidationsProcessor,
   CASActiveSupplierFoundProcessor,
   CASActiveSupplierAndSiteFoundProcessor,
+  CASKnownErrorsProcessor,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -163,6 +164,7 @@ import { QueuesMetricsModule } from "./queues-metrics.module.module";
     CASPreValidationsProcessor,
     CASActiveSupplierFoundProcessor,
     CASActiveSupplierAndSiteFoundProcessor,
+    CASKnownErrorsProcessor,
     CASSupplierSharedService,
   ],
   controllers: [HealthController, MetricsController],

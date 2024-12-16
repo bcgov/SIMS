@@ -76,4 +76,13 @@ export class Restriction extends RecordDataModel {
     enumName: "RestrictionNotificationType",
   })
   notificationType: RestrictionNotificationType;
+
+  /**
+   * Indicate that the restriction is a legacy and should not be
+   * managed by SIMS, it can only transition to resolved.
+   */
+  @Column({
+    name: "is_legacy",
+  })
+  isLegacy: boolean;
 }

@@ -11,7 +11,7 @@ import {
 import {
   getFileNameAsCurrentTimestamp,
   CustomNamedError,
-  UTF8_BYTE_ORDER_MARK,
+  appendByteOrderMark,
 } from "@sims/utilities";
 import { Response } from "express";
 import { Readable } from "stream";
@@ -99,12 +99,10 @@ export class ReportControllerService {
     const filename = `${reportName}_${timestamp}.csv`;
     // Adding byte order mark characters to the original file content as applications
     // like excel would look for BOM characters to view the file as UTF8 encoded.
-    const byteOrderMarkBuffer = Buffer.from(UTF8_BYTE_ORDER_MARK);
-    const fileContentBuffer = Buffer.from(fileContent);
-    const responseBuffer = Buffer.concat([
-      byteOrderMarkBuffer,
-      fileContentBuffer,
-    ]);
+    // Append byte order mark characters only if the file content is not empty.
+    const responseBuffer = fileContent
+      ? appendByteOrderMark(fileContent)
+      : Buffer.from("");
     response.setHeader(
       "Content-Disposition",
       `attachment; filename=${filename}`,

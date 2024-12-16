@@ -1,3 +1,4 @@
+import { DATE_ONLY_ISO_FORMAT, PST_TIMEZONE } from "@sims/utilities";
 import * as dayjs from "dayjs";
 
 /**
@@ -35,3 +36,16 @@ export const addMilliSeconds = (
     .add(milliSecondsToAdd, "millisecond")
     .toDate();
 };
+
+/**
+ * Convert the date to PST/PDT(PST: UTC−08:00, PDT: UTC−07:00) and format.
+ * @param date date.
+ * @param format date format.
+ * @returns converted date in the given format.
+ */
+export function getPSTPDTDateFormatted(
+  date: Date | string,
+  format = DATE_ONLY_ISO_FORMAT,
+): string {
+  return dayjs(new Date(date)).tz(PST_TIMEZONE, false).format(format);
+}
