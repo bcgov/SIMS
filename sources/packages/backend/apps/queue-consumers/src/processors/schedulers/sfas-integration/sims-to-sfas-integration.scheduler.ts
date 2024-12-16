@@ -30,7 +30,6 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
    * @param _job process job.
    * @param processSummary process summary for logging.
    */
-  @Process()
   protected async process(
     _job: Job<void>,
     processSummary: ProcessSummary,
