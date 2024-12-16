@@ -24,15 +24,20 @@ export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void
   /**
    * Identifies all the students that still do not have their SIN
    * validated and create the validation request for ESDC processing.
-   * @params job job details.
+   * @param _job job details.
+   * @param processSummary process summary for logging.
    * @returns processing result log.
    */
   protected async process(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[]> {
+    const childProcessSummary = new ProcessSummary();
+    processSummary.children(childProcessSummary);
     const uploadResult =
-      await this.sinValidationProcessingService.uploadSINValidationRequests();
+      await this.sinValidationProcessingService.uploadSINValidationRequests(
+        childProcessSummary,
+      );
     processSummary.info("ESDC SIN validation request file sent.");
     return [
       `Generated file: ${uploadResult.generatedFile}`,

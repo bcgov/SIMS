@@ -1,7 +1,6 @@
 import { InjectQueue, Processor } from "@nestjs/bull";
 import { SINValidationProcessingService } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
-import { SystemUsersService } from "@sims/services/system-users";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
@@ -18,7 +17,6 @@ export class SINValidationResponseIntegrationScheduler extends BaseScheduler<voi
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly sinValidationProcessingService: SINValidationProcessingService,
-    private readonly systemUsersService: SystemUsersService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -33,17 +31,11 @@ export class SINValidationResponseIntegrationScheduler extends BaseScheduler<voi
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {
-    const auditUser = this.systemUsersService.systemUser;
-    const results = await this.sinValidationProcessingService.processResponses(
-      auditUser.id,
+    const childProcessSummary = new ProcessSummary();
+    processSummary.children(childProcessSummary);
+    await this.sinValidationProcessingService.processResponses(
+      childProcessSummary,
     );
-    const childProcessSummaries = results.map((result) => {
-      const childprocessSummary = new ProcessSummary();
-      result.processSummary.forEach((info) => processSummary.info(info));
-      result.errorsSummary.forEach((error) => processSummary.error(error));
-      return childprocessSummary;
-    });
-    processSummary.children(...childProcessSummaries);
     return "ESDC SIN validation response files processed.";
   }
 

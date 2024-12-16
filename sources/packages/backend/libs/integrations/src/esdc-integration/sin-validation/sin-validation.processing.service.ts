@@ -1,4 +1,8 @@
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import { SINValidationIntegrationService } from "./sin-validation.integration.service";
@@ -8,7 +12,6 @@ import {
   SINValidationResponseResult,
   SINValidationUploadResult,
 } from "./models/sin-validation-models";
-import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import * as path from "path";
 import { EntityManager } from "typeorm";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
@@ -17,7 +20,6 @@ import {
   SINValidationService,
   StudentService,
 } from "@sims/integrations/services";
-import { parseJSONError } from "@sims/utilities";
 
 /**
  * Manages the process to generate SIN validations requests to ESDC and allow
@@ -40,11 +42,14 @@ export class SINValidationProcessingService {
   /**
    * Identifies all the students that still do not have their SIN
    * validated and create the validation request for ESDC processing.
+   * @param processSummary process summary for logging.
    * @returns result of the upload operation.
    */
-  async uploadSINValidationRequests(): Promise<SINValidationUploadResult> {
+  async uploadSINValidationRequests(
+    processSummary: ProcessSummary,
+  ): Promise<SINValidationUploadResult> {
     const auditUser = this.systemUsersService.systemUser;
-    this.logger.log("Retrieving students with pending SIN validation...");
+    processSummary.info("Retrieving students with pending SIN validation...");
     const students =
       await this.studentService.getStudentsPendingSinValidation();
     if (!students.length) {
@@ -54,7 +59,7 @@ export class SINValidationProcessingService {
       };
     }
 
-    this.logger.log(`Found ${students.length} student(s).`);
+    processSummary.info(`Found ${students.length} student(s).`);
     const sinValidationRecords = students.map((student) => {
       return this.createSINValidationRecordFromStudent(student);
     });
@@ -64,7 +69,7 @@ export class SINValidationProcessingService {
       ESDC_SIN_VALIDATION_SEQUENCE_GROUP_NAME,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
-          this.logger.log("Creating SIN validation file content.");
+          processSummary.info("Creating SIN validation file content.");
           const fileContent =
             this.sinValidationIntegrationService.createRequestFileContent(
               sinValidationRecords,
@@ -78,7 +83,9 @@ export class SINValidationProcessingService {
 
           // Updates the records in SIN Validation table for the particular user.
           // If the upload fails the rollback will be executed on DB.
-          this.logger.log("Updating the records in the SIN Validation table.");
+          processSummary.info(
+            "Updating the records in the SIN Validation table.",
+          );
           const sinValidationRepo = entityManager.getRepository(SINValidation);
           await this.sinValidationService.updateSentRecords(
             sinValidationRecords,
@@ -86,28 +93,25 @@ export class SINValidationProcessingService {
             auditUser.id,
             sinValidationRepo,
           );
-          this.logger.log("SIN Validation table updated.");
-
-          this.logger.log("Uploading content.");
+          processSummary.info("SIN Validation table updated.");
+          processSummary.info("Uploading content.");
           await this.sinValidationIntegrationService.uploadContent(
             fileContent,
             fileInfo.filePath,
           );
-          this.logger.log("Content uploaded.");
-
+          processSummary.info("Content uploaded.");
           uploadResult = {
             generatedFile: fileInfo.filePath,
             uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
           };
-        } catch (error) {
-          this.logger.error(
-            `Error while uploading content for SIN validation: ${error}`,
-          );
-          throw error;
+        } catch (error: unknown) {
+          const errorMessage =
+            "Error while uploading content for SIN validation.";
+          this.logger.error(errorMessage, error);
+          throw new Error(errorMessage, error);
         }
       },
     );
-
     return uploadResult;
   }
 
@@ -131,13 +135,10 @@ export class SINValidationProcessingService {
 
   /**
    * Download all SIN validation files from ESDC response folder on SFTP and process them all.
-   * @param auditUserId user that should be considered the one that is
-   * causing the changes.
+   * @param processSummary process summary for logging.
    * @returns summary with what was processed and the list of all errors, if any.
    */
-  async processResponses(
-    auditUserId: number,
-  ): Promise<ProcessSFTPResponseResult[]> {
+  async processResponses(processSummary: ProcessSummary): Promise<void> {
     const remoteFilePaths =
       await this.sinValidationIntegrationService.getResponseFilesFullPath(
         this.esdcConfig.ftpResponseFolder,
@@ -146,48 +147,42 @@ export class SINValidationProcessingService {
           "i",
         ),
       );
-    const processFiles: ProcessSFTPResponseResult[] = [];
     for (const remoteFilePath of remoteFilePaths) {
-      processFiles.push(await this.processFile(remoteFilePath, auditUserId));
+      const childProcessSummary = new ProcessSummary();
+      processSummary.children(childProcessSummary);
+      await this.processFile(remoteFilePath, childProcessSummary);
     }
-    return processFiles;
   }
 
   /**
    * Process each individual ESDC SIN validation response file from the SFTP.
    * @param remoteFilePath ESDC SIN validation response file to be processed.
-   * @param auditUserId user that should be considered the one that is
-   * causing the changes.
+   * @param processSummary process summary for logging.
    * @returns process summary and errors summary.
    */
   private async processFile(
     remoteFilePath: string,
-    auditUserId: number,
-  ): Promise<ProcessSFTPResponseResult> {
-    const result = new ProcessSFTPResponseResult();
-    result.processSummary.push(`Processing file ${remoteFilePath}.`);
-
+    processSummary: ProcessSummary,
+  ): Promise<void> {
+    processSummary.info(`Processing file ${remoteFilePath}.`);
     let responseResult: SINValidationResponseResult;
-
     try {
       responseResult =
         await this.sinValidationIntegrationService.downloadResponseFile(
           remoteFilePath,
         );
-    } catch (error) {
-      this.logger.error(error);
-      result.errorsSummary.push(
-        `Error downloading file ${remoteFilePath}. Error: ${error}`,
-      );
+    } catch (error: unknown) {
+      const errorMessage = `Error downloading file ${remoteFilePath}.`;
+      this.logger.error(errorMessage, error);
       // Abort the process nicely not throwing an exception and
       // allowing other response files to be processed.
-      return result;
+      processSummary.error(errorMessage, error);
+      return;
     }
-
-    result.processSummary.push(
+    // File downloaded successfully.
+    processSummary.info(
       `File contains ${responseResult.records.length} SIN validations.`,
     );
-
     // Get only the file name for logging.
     const fileName = path.basename(remoteFilePath);
     for (const sinValidationRecord of responseResult.records) {
@@ -197,33 +192,30 @@ export class SINValidationProcessingService {
             sinValidationRecord,
             fileName,
             responseResult.header.processDate,
-            auditUserId,
+            this.systemUsersService.systemUser.id,
           );
-        result.processSummary.push(
+        processSummary.info(
           `Processed SIN validation record from line ${sinValidationRecord.lineNumber}: ${updatedResult.operationDescription}`,
         );
-      } catch (error) {
+      } catch (error: unknown) {
         // Log the error but allow the process to continue.
         const errorDescription = `Error processing record line number ${sinValidationRecord.lineNumber} from file ${fileName}`;
-        result.errorsSummary.push(errorDescription);
-        this.logger.error(`${errorDescription}. ${error}`);
+        processSummary.error(errorDescription, error);
+        this.logger.error(errorDescription, error);
       }
     }
 
     try {
       // Archive file.
       await this.sinValidationIntegrationService.archiveFile(remoteFilePath);
-    } catch (error) {
+    } catch (error: unknown) {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file archiving, it will be
       // processed again and could be archived in the second attempt.
       const logMessage = `Error while archiving ESDC SIN validation response file: ${remoteFilePath}.`;
-      result.errorsSummary.push(logMessage);
-      result.errorsSummary.push(parseJSONError(error));
+      processSummary.error(logMessage, error);
       this.logger.error(logMessage, error);
     }
-
-    return result;
   }
 
   @InjectLogger()
