@@ -129,7 +129,6 @@ export class SIMSToSFASProcessingService {
     } catch (error: unknown) {
       // Translate to friendly error message.
       const errorDescription = `Unexpected error uploading the SIMS to SFAS file ${remoteFilePath} to SFTP.`;
-      processSummary.error(errorDescription, error);
       throw new Error(errorDescription, { cause: error });
     }
     processSummary.info(

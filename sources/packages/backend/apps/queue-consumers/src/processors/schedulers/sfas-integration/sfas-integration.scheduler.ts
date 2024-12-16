@@ -1,11 +1,14 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { Job, Queue } from "bull";
-import { SFASProcessingResult } from "./models/sfas-integration.dto";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { SFASIntegrationProcessingService } from "@sims/integrations/sfas-integration";
-import { QueueProcessSummary } from "../../models/processors.models";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 
 /**
  * Process all SFAS integration files from the SFTP location.
@@ -22,42 +25,30 @@ export class SFASIntegrationScheduler extends BaseScheduler<void> {
   }
 
   /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
-   */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
    * Process all SFAS integration files from the SFTP
    * and update the database with processed records.
-   * @param job SFAS integration job.
+   * @param _job SFAS integration job.
+   * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  @Process()
-  async processSFASIntegrationFiles(
-    job: Job<void>,
-  ): Promise<SFASProcessingResult[]> {
-    const summary = new QueueProcessSummary({
-      appLogger: this.logger,
-      jobLogger: job,
-    });
-    await summary.info("Processing SFAS integration files...");
-    const processingResults =
-      await this.sfasIntegrationProcessingService.process();
-    await summary.info("Completed processing SFAS integration files.");
-    return processingResults.map((result) => ({
-      summary: result.summary,
-      success: result.success,
-    }));
+  protected async process(
+    _job: Job<void>,
+    processSummary: ProcessSummary,
+  ): Promise<string | string[]> {
+    processSummary.info("Processing SFAS integration files.");
+    const childProcessSummary = new ProcessSummary();
+    processSummary.children(childProcessSummary);
+    await this.sfasIntegrationProcessingService.process(childProcessSummary);
+    return "Completed processing SFAS integration files.";
   }
+
+  /**
+   * Logger for SFAS integration scheduler.
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
+  @InjectLogger()
+  logger: LoggerService;
 }

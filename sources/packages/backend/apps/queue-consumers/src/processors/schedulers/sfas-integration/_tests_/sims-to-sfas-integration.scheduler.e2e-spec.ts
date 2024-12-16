@@ -145,9 +145,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.generateSFASBridgeFile(
-        mockedJob.job,
-      );
+      const processingResult = await processor.processQueue(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -212,9 +210,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       MockDate.set(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.generateSFASBridgeFile(
-        mockedJob.job,
-      );
+      const processingResult = await processor.processQueue(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -272,9 +268,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.generateSFASBridgeFile(
-        mockedJob.job,
-      );
+      const processingResult = await processor.processQueue(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -395,9 +389,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.generateSFASBridgeFile(
-        mockedJob.job,
-      );
+      const processingResult = await processor.processQueue(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -476,9 +468,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.generateSFASBridgeFile(
-        mockedJob.job,
-      );
+      const processingResult = await processor.processQueue(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -567,9 +557,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.generateSFASBridgeFile(
-        mockedJob.job,
-      );
+      const processingResult = await processor.processQueue(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -649,9 +637,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.generateSFASBridgeFile(
-        mockedJob.job,
-      );
+      const processingResult = await processor.processQueue(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -685,6 +671,21 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       expect(uploadedFileLog).toBe(true);
     },
   );
+
+  it("Should throw an error when an unexpected error happen during file upload.", async () => {
+    // Arrange
+    sftpClientMock.put.mockImplementationOnce(() => {
+      throw new Error("Unexpected error uploading the file.");
+    });
+
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+
+    // Act/Assert
+    await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      "Unexpected error uploading the file.",
+    );
+  });
 
   /**
    * Creates a student with expected first name, last name and updated date.
