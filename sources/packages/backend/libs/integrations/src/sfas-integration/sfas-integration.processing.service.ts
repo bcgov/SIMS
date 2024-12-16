@@ -175,7 +175,6 @@ export class SFASIntegrationProcessingService {
     } catch (error) {
       const logMessage =
         "Error while wrapping up post file processing operations.";
-      processSummary.error(logMessage, error);
       this.logger.error(logMessage, error);
       throw new Error(logMessage, { cause: error });
     }
