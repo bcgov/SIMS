@@ -92,10 +92,15 @@ jobs:
     env:
       BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "3"
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
@@ -116,10 +121,15 @@ jobs:
     env:
       BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "3"
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
@@ -140,10 +150,15 @@ jobs:
     env:
       BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "3"
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
@@ -164,10 +179,15 @@ jobs:
     env:
       BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "3"
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
+          echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
