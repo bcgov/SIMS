@@ -32,7 +32,6 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
    * @param job Student Loan Balances job.
    * @returns processing result.
    */
-  @Process()
   protected async process(
     _job: Job<void>,
     processSummary: ProcessSummary,
