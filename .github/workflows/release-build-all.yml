@@ -66,7 +66,7 @@ jobs:
       - name: Install CLI tools from OpenShift Mirror
         uses: redhat-actions/openshift-tools-installer@v1
         with:
-          oc: "3"
+          oc: "4"
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
@@ -95,7 +95,7 @@ jobs:
       - name: Install CLI tools from OpenShift Mirror
         uses: redhat-actions/openshift-tools-installer@v1
         with:
-          oc: "3"
+          oc: "4"
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
@@ -124,7 +124,7 @@ jobs:
       - name: Install CLI tools from OpenShift Mirror
         uses: redhat-actions/openshift-tools-installer@v1
         with:
-          oc: "3"
+          oc: "4"
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
@@ -153,7 +153,7 @@ jobs:
       - name: Install CLI tools from OpenShift Mirror
         uses: redhat-actions/openshift-tools-installer@v1
         with:
-          oc: "3"
+          oc: "4"
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
@@ -182,7 +182,7 @@ jobs:
       - name: Install CLI tools from OpenShift Mirror
         uses: redhat-actions/openshift-tools-installer@v1
         with:
-          oc: "3"
+          oc: "4"
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
