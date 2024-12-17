@@ -1,15 +1,14 @@
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
 import { DataSource, Repository } from "typeorm";
 import { FederalRestriction, Restriction } from "@sims/sims-db";
-import {
-  getISODateOnlyString,
-  parseJSONError,
-  processInParallel,
-} from "@sims/utilities";
+import { getISODateOnlyString, processInParallel } from "@sims/utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
-import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "@sims/services/constants";
 import {
@@ -48,9 +47,10 @@ export class FedRestrictionProcessingService {
    * but it is not present on federal data, deactivate it;
    * 3. If the restriction is present on federal data and it is also
    * present and active on student data, update the updated_at only.
+   * @param processSummary process summary for logging.
    * @returns process response.
    */
-  async process(): Promise<ProcessSFTPResponseResult> {
+  async process(processSummary: ProcessSummary): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     // Get the list of all files from SFTP ordered by file name.
     const fileSearch = new RegExp(
@@ -63,12 +63,12 @@ export class FedRestrictionProcessingService {
       fileSearch,
     );
 
-    let result: ProcessSFTPResponseResult;
     if (filePaths.length > 0) {
       // Process only the most updated file.
-      result = await this.processAllRestrictions(
+      await this.processAllRestrictions(
         filePaths[filePaths.length - 1],
         auditUser.id,
+        processSummary,
       );
       // If there are more than one file, archive it.
       // Only the most updated file matters because it represents the entire data snapshot.
@@ -77,36 +77,30 @@ export class FedRestrictionProcessingService {
           await this.integrationService.archiveFile(remoteFilePath);
         } catch (error) {
           const logMessage = `Error while archiving federal restrictions file: ${remoteFilePath}`;
-          result.errorsSummary.push(logMessage);
-          result.errorsSummary.push(parseJSONError(error));
+          processSummary.error(logMessage, error);
           this.logger.error(logMessage, error);
         }
       }
     } else {
-      result = new ProcessSFTPResponseResult();
-      result.processSummary.push(
-        "No files found to be processed at this time.",
-      );
+      processSummary.info("No files found to be processed at this time.");
     }
-
-    return result;
   }
 
   /**
    * Process all the federal restrictions records in the file.
    * @param remoteFilePath remote file to be processed.
    * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param processSummary process summary for logging.
    * @returns result of the processing, summary and errors.
    */
   private async processAllRestrictions(
     remoteFilePath: string,
     auditUserId: number,
-  ): Promise<ProcessSFTPResponseResult> {
-    const result = new ProcessSFTPResponseResult();
-    result.processSummary.push(`Processing file ${remoteFilePath}.`);
-
-    let downloadResult: FedRestrictionFileRecord[];
+    processSummary: ProcessSummary,
+  ): Promise<void> {
+    processSummary.info(`Processing file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
+    let downloadResult: FedRestrictionFileRecord[];
     try {
       // Download the Federal Restrictions file with the full snapshot of the data.
       downloadResult = await this.integrationService.downloadResponseFile(
@@ -114,11 +108,9 @@ export class FedRestrictionProcessingService {
       );
       this.logger.log("File download finished.");
     } catch (error) {
-      this.logger.error(error);
-      result.errorsSummary.push(
-        `Error downloading file ${remoteFilePath}. Error: ${error}`,
-      );
-      return result;
+      const errorMessage = `Error downloading file ${remoteFilePath}.`;
+      processSummary.error(errorMessage, error);
+      this.logger.error(errorMessage, error);
     }
 
     let insertedRestrictionsIDs: number[];
@@ -139,7 +131,7 @@ export class FedRestrictionProcessingService {
         const invalidDataMessage = restriction.getInvalidDataMessage();
         if (invalidDataMessage) {
           const errorMessage = `Found record with invalid data at line number ${restriction.lineNumber}: ${invalidDataMessage}`;
-          result.errorsSummary.push(errorMessage);
+          processSummary.error(errorMessage);
           this.logger.error(errorMessage);
         } else {
           sanitizedRestrictions.push(restriction);
@@ -168,7 +160,7 @@ export class FedRestrictionProcessingService {
         const logMessage = `New restrictions created: ${federalRestrictions.createdRestrictionsCodes.join(
           ", ",
         )}`;
-        result.processSummary.push(logMessage);
+        processSummary.warn(logMessage);
         this.logger.warn(logMessage);
       }
 
@@ -203,10 +195,8 @@ export class FedRestrictionProcessingService {
       } catch (error: unknown) {
         const logMessage =
           "Aborting process due to an error on the bulk insert.";
-        result.errorsSummary.push(logMessage);
-        result.errorsSummary.push(parseJSONError(error));
         this.logger.error(logMessage, error);
-        return result;
+        throw new Error(logMessage, { cause: error });
       }
 
       this.logger.log("Bulk data insert finished.");
@@ -222,11 +212,9 @@ export class FedRestrictionProcessingService {
     } catch (error) {
       const logMessage =
         "Unexpected error while processing federal restrictions. Executing rollback.";
-      result.errorsSummary.push(logMessage);
-      result.errorsSummary.push(error.message);
-      this.logger.error(logMessage);
-      this.logger.error(error);
+      this.logger.error(logMessage, error);
       await queryRunner.rollbackTransaction();
+      throw new Error(logMessage, { cause: error });
     } finally {
       await queryRunner.release();
     }
@@ -242,21 +230,19 @@ export class FedRestrictionProcessingService {
           insertedRestrictionsIDs,
           auditUserId,
         );
-        result.processSummary.push(
+        processSummary.info(
           `${insertedRestrictionsIDs.length} notification(s) generated.`,
         );
       } else {
-        result.processSummary.push(
+        processSummary.info(
           "No notifications were generated because no new student restriction record was created.",
         );
       }
     } catch (error: unknown) {
-      result.errorsSummary.push(
-        "Error while generating notifications. See logs for details.",
-      );
-      this.logger.error(`Error while generating notifications. ${error}`);
+      const errorMessage = "Error while generating notifications.";
+      this.logger.error(errorMessage, error);
+      throw new Error(errorMessage, { cause: error });
     }
-    return result;
   }
 
   /**
