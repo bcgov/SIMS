@@ -57,7 +57,7 @@
     "@nestjs/mapped-types": "^2.0.5",
     "@nestjs/microservices": "^10.3.4",
     "@nestjs/passport": "^10.0.3",
-    "@nestjs/platform-express": "^10.4.2",
+    "@nestjs/platform-express": "^10.4.15",
     "@nestjs/swagger": "^7.4.1",
     "@nestjs/terminus": "^10.2.3",
     "@nestjs/typeorm": "^10.0.2",
