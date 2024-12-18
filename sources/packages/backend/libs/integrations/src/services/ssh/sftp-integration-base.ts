@@ -1,6 +1,5 @@
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { SshService } from "./ssh.service";
-import { unzip } from "node:zlib";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { SFTPConfig } from "@sims/utilities/config";
@@ -14,6 +13,7 @@ import {
   LINE_BREAK_SPLIT_REGEX,
   SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/integrations/constants";
+import * as AdmZip from "adm-zip";
 
 /**
  * Provides the basic features to enable the SFTP integration.
@@ -177,12 +177,9 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       // Read all the file content and create a buffer with 'ascii' encoding.
       let fileContent = await client.get(remoteFilePath);
       if (options?.checkIfZipFile) {
-        unzip(fileContent as Buffer, (err, buffer) => {
-          if (err) {
-            throw new Error("Error while unzipping file.");
-          }
-          fileContent = buffer;
-        });
+        const zipFile = new AdmZip(fileContent as Buffer);
+        const [extractedFile] = zipFile.getEntries();
+        fileContent = extractedFile.getData();
       }
       // Convert the file content to an array of text lines and remove possible blank lines.
       return fileContent
