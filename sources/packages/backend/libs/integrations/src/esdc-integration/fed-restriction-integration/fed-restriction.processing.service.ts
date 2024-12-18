@@ -111,6 +111,7 @@ export class FedRestrictionProcessingService {
       const errorMessage = `Error downloading file ${remoteFilePath}.`;
       processSummary.error(errorMessage, error);
       this.logger.error(errorMessage, error);
+      return;
     }
 
     let insertedRestrictionsIDs: number[];
