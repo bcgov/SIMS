@@ -1742,8 +1742,7 @@
                     "threshold": 0.3
                   },
                   "id": "eopfm7h",
-                  "defaultValue": "",
-                  "isNew": false
+                  "defaultValue": ""
                 },
                 {
                   "label": "Select your program of study:",
@@ -1823,8 +1822,7 @@
                   "truncateMultipleSpaces": false,
                   "id": "easelit",
                   "tags": [],
-                  "lockKey": true,
-                  "isNew": false
+                  "lockKey": true
                 },
                 {
                   "label": "Your program is not listed",
@@ -2505,8 +2503,7 @@
                               "addons": [],
                               "inputType": "text",
                               "id": "ehmio79",
-                              "defaultValue": "",
-                              "isNew": false
+                              "defaultValue": ""
                             }
                           ],
                           "width": 6,
@@ -3689,8 +3686,7 @@
                   "truncateMultipleSpaces": false,
                   "id": "e9w4l3n",
                   "tags": [],
-                  "lockKey": true,
-                  "isNew": false
+                  "lockKey": true
                 },
                 {
                   "label": "Your study dates are not listed",
@@ -13441,8 +13437,8 @@
                           "hideLabel": true,
                           "key": "uploadPanel",
                           "conditional": {
-                            "show": true,
-                            "when": "dependants.declaredOnTaxes",
+                            "show": "true",
+                            "when": "declaredOnTaxes",
                             "eq": "yes"
                           },
                           "type": "panel",
@@ -13891,7 +13887,7 @@
                               "unique": false,
                               "persistent": true,
                               "hidden": false,
-                              "clearOnHide": true,
+                              "clearOnHide": false,
                               "refreshOn": "",
                               "modalEdit": false,
                               "dataGridLabel": false,
@@ -13911,7 +13907,7 @@
                               "attributes": {},
                               "validateOn": "change",
                               "conditional": {
-                                "show": null,
+                                "show": "",
                                 "when": null,
                                 "eq": ""
                               },
@@ -14220,7 +14216,8 @@
                           "lazyLoad": false,
                           "theme": "default",
                           "breadcrumb": "default",
-                          "id": "ec900o"
+                          "id": "ec900o",
+                          "tags": []
                         }
                       ],
                       "id": "eja9nnp000000000000000000",
@@ -14981,7 +14978,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "privateDownload": false,
-                  "id": "e90zuwt"
+                  "id": "e90zuwt",
+                  "isNew": false
                 },
                 {
                   "label": "Columns",
@@ -15266,7 +15264,9 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "e88jxwl"
+              "id": "e88jxwl",
+              "isNew": false,
+              "tags": []
             }
           ],
           "placeholder": "",
