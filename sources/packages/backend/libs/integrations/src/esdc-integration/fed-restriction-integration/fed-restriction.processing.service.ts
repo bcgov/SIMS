@@ -132,7 +132,7 @@ export class FedRestrictionProcessingService {
         const invalidDataMessage = restriction.getInvalidDataMessage();
         if (invalidDataMessage) {
           const errorMessage = `Found record with invalid data at line number ${restriction.lineNumber}: ${invalidDataMessage}`;
-          processSummary.error(errorMessage);
+          processSummary.warn(errorMessage);
           this.logger.error(errorMessage);
         } else {
           sanitizedRestrictions.push(restriction);

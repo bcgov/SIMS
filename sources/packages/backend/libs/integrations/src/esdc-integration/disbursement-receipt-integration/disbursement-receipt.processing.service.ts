@@ -81,7 +81,6 @@ export class DisbursementReceiptProcessingService {
     processSummary: ProcessSummary,
   ): Promise<void> {
     processSummary.info(`Processing file ${remoteFilePath}.`);
-    this.logger.log(`Starting download of file ${remoteFilePath}.`);
     let responseData: DisbursementReceiptDownloadResponse;
     try {
       responseData = await this.integrationService.downloadResponseFile(
@@ -107,7 +106,7 @@ export class DisbursementReceiptProcessingService {
           disbursementSchedule.id),
     );
 
-    this.logger.log(
+    processSummary.info(
       "Processing all the records in file with valid data and document number that belongs to SIMS.",
     );
 
@@ -147,7 +146,6 @@ export class DisbursementReceiptProcessingService {
         const logMessage = `Unexpected error while processing disbursement receipt record at line ${response.lineNumber}`;
         this.logger.error(logMessage, error);
         processSummary.error(logMessage, error);
-        return;
       }
     }
     processSummary.info(`Processing file ${remoteFilePath} completed.`);
@@ -221,9 +219,6 @@ export class DisbursementReceiptProcessingService {
       );
       processSummary.info(
         "Provincial daily disbursement CSV report generated.",
-      );
-      this.logger.log(
-        "Completed provincial daily disbursement report generation.",
       );
     } catch (error: unknown) {
       const errorMessage =
