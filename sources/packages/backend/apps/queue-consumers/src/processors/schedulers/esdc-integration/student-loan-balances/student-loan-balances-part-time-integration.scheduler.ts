@@ -35,13 +35,11 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {
-    processSummary.info("Processing Student Loan Balances files.");
     const serviceProcessSummary = new ProcessSummary();
     processSummary.children(serviceProcessSummary);
     await this.studentLoanBalancesProcessingService.processStudentLoanBalances(
       serviceProcessSummary,
     );
-    processSummary.info("Completed processing Student Loan Balances files.");
     return "Process finalized with success.";
   }
 

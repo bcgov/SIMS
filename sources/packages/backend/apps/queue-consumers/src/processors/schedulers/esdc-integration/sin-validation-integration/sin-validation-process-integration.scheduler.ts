@@ -38,7 +38,6 @@ export class SINValidationProcessIntegrationScheduler extends BaseScheduler<void
       await this.sinValidationProcessingService.uploadSINValidationRequests(
         childProcessSummary,
       );
-    processSummary.info("ESDC SIN validation request file sent.");
     return [
       `Generated file: ${uploadResult.generatedFile}`,
       `Uploaded records: ${uploadResult.uploadedRecords}`,
