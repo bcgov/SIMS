@@ -1,4 +1,4 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { QueueNames } from "@sims/utilities";
@@ -9,7 +9,6 @@ import {
   ProcessSummary,
 } from "@sims/utilities/logger";
 import { StudentLoanBalancesProcessingService } from "@sims/integrations/esdc-integration";
-import { SystemUsersService } from "@sims/services";
 
 /**
  * Process Student Loan Balances file from the SFTP location.
@@ -21,7 +20,6 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly studentLoanBalancesProcessingService: StudentLoanBalancesProcessingService,
-    private readonly systemUsersService: SystemUsersService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -30,6 +28,7 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
    * Process Student Loan Balances files from the SFTP
    * and update the database with processed records.
    * @param job Student Loan Balances job.
+   * @param processSummary process summary.
    * @returns processing result.
    */
   protected async process(
@@ -37,19 +36,16 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
     processSummary: ProcessSummary,
   ): Promise<string> {
     processSummary.info("Processing Student Loan Balances files.");
-    const auditUser = this.systemUsersService.systemUser;
     const serviceProcessSummary = new ProcessSummary();
     processSummary.children(serviceProcessSummary);
     await this.studentLoanBalancesProcessingService.processStudentLoanBalances(
       serviceProcessSummary,
-      auditUser.id,
     );
     processSummary.info("Completed processing Student Loan Balances files.");
     return "Process finalized with success.";
   }
 
   /**
-   * Logger for SFAS integration scheduler.
    * Setting the logger here allows the correct context to be set
    * during the property injection.
    * Even if the logger is not used, it is required to be set, to

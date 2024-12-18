@@ -40,7 +40,6 @@ export class SINValidationResponseIntegrationScheduler extends BaseScheduler<voi
   }
 
   /**
-   * Logger for SFAS integration scheduler.
    * Setting the logger here allows the correct context to be set
    * during the property injection.
    * Even if the logger is not used, it is required to be set, to
