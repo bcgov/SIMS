@@ -1,12 +1,15 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { DisbursementReceiptProcessingService } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { SystemUsersService } from "@sims/services/system-users";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
-import { ProcessSummary } from "@sims/utilities/logger";
 import { BaseScheduler } from "../../base-scheduler";
-import { ESDCFileResponse } from "../models/esdc.models";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 
 @Processor(QueueNames.DisbursementReceiptsFileIntegration)
 export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {
@@ -21,43 +24,30 @@ export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<
   }
 
   /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
+   * Process all the disbursement receipt files from remote SFTP location.
+   * @param _job process job.
+   * @param processSummary process summary for logging.
+   * @returns processing result.
    */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * Process all the disbursement receipt files from remote sftp location.
-   * @params job job details.
-   * @returns Summary details of processing.
-   */
-  @Process()
-  async processDisbursementReceipts(
-    job: Job<void>,
-  ): Promise<ESDCFileResponse[]> {
-    const processSummary = new ProcessSummary();
-    processSummary.info(
-      `Processing full time disbursement receipts integration job ${job.id} of type ${job.name}.`,
-    );
+  protected async process(
+    _job: Job<void>,
+    processSummary: ProcessSummary,
+  ): Promise<string> {
     const auditUser = this.systemUsersService.systemUser;
-    const processResponse =
-      await this.disbursementReceiptProcessingService.process(auditUser.id);
-    processSummary.info(
-      `Completed full time disbursement receipts integration job ${job.id} of type ${job.name}.`,
+    await this.disbursementReceiptProcessingService.process(
+      auditUser.id,
+      processSummary,
     );
-    return processResponse.map((response) => ({
-      processSummary: response.processSummary,
-      errorsSummary: response.errorsSummary,
-    }));
+    return "Completed disbursement receipts integration.";
   }
+
+  /**
+   * Logger for SFAS integration scheduler.
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
+  @InjectLogger()
+  logger: LoggerService;
 }

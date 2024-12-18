@@ -23,12 +23,12 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
 
   /**
    * Federal restriction import.
-   * @param job process job.
+   * @param _job process job.
    * @param processSummary process summary for logging.
    * @returns processing result.
    */
   protected async process(
-    job: Job<void>,
+    _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {
     processSummary.info("Starting federal restrictions import.");
