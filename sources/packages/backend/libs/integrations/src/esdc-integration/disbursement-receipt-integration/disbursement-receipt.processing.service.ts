@@ -1,7 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt.integration.service";
-import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
 import { DisbursementReceiptDownloadResponse } from "./models/disbursement-receipt-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import {
@@ -12,9 +15,10 @@ import {
   NotificationActionsService,
   ReportService,
   ReportsFilterModel,
+  SystemUsersService,
 } from "@sims/services";
 import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
-import { getISODateOnlyString, parseJSONError } from "@sims/utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 
 /**
  * Disbursement schedule map which consists of disbursement schedule id for a document number.
@@ -37,6 +41,7 @@ export class DisbursementReceiptProcessingService {
     private readonly disbursementReceiptService: DisbursementReceiptService,
     private readonly reportService: ReportService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -44,10 +49,10 @@ export class DisbursementReceiptProcessingService {
   /**
    * Process all the available disbursement receipt files in SFTP location.
    * Once the file is processed, it gets archived.
-   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param processSummary process summary for logging.
    * @returns Summary details of the processing.
    */
-  async process(auditUserId: number): Promise<ProcessSFTPResponseResult[]> {
+  async process(processSummary: ProcessSummary): Promise<void> {
     // Get the list of all files from SFTP ordered by file name.
     const fileSearch = new RegExp(
       `^${this.esdcConfig.environmentCode}EDU\\.PBC\\.DIS.[0-9]{8}\\.[0-9]{3}$`,
@@ -57,27 +62,25 @@ export class DisbursementReceiptProcessingService {
       this.esdcConfig.ftpResponseFolder,
       fileSearch,
     );
-    const result: ProcessSFTPResponseResult[] = [];
     for (const filePath of filePaths) {
-      result.push(await this.processAllReceiptsInFile(filePath, auditUserId));
+      const fileProcessSummary = new ProcessSummary();
+      processSummary.children(fileProcessSummary);
+      await this.processAllReceiptsInFile(filePath, fileProcessSummary);
     }
-    return result;
   }
 
   /**
    * Process a given disbursement receipt file and
    * insert the records to database.
    * @param remoteFilePath file which is to be processed.
-   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param processSummary process summary for logging.
    * @returns result processing summary.
    */
   private async processAllReceiptsInFile(
     remoteFilePath: string,
-    auditUserId: number,
-  ): Promise<ProcessSFTPResponseResult> {
-    const result = new ProcessSFTPResponseResult();
-    result.processSummary.push(`Processing file ${remoteFilePath}.`);
-    this.logger.log(`Starting download of file ${remoteFilePath}.`);
+    processSummary: ProcessSummary,
+  ): Promise<void> {
+    processSummary.info(`Processing file ${remoteFilePath}.`);
     let responseData: DisbursementReceiptDownloadResponse;
     try {
       responseData = await this.integrationService.downloadResponseFile(
@@ -85,12 +88,10 @@ export class DisbursementReceiptProcessingService {
       );
     } catch (error: unknown) {
       this.logger.error(error);
-      result.errorsSummary.push(
-        `Error downloading file ${remoteFilePath}. Error: ${error}`,
-      );
-      return result;
+      processSummary.error(`Error downloading file ${remoteFilePath}.`, error);
+      return;
     }
-
+    // File download is successful, import the receipts.
     const documentNumbers = responseData.records.map(
       (record) => record.documentNumber,
     );
@@ -105,7 +106,7 @@ export class DisbursementReceiptProcessingService {
           disbursementSchedule.id),
     );
 
-    this.logger.log(
+    processSummary.info(
       "Processing all the records in file with valid data and document number that belongs to SIMS.",
     );
 
@@ -124,37 +125,35 @@ export class DisbursementReceiptProcessingService {
               response,
               responseData.header,
               disbursementScheduleId,
-              auditUserId,
+              this.systemUsersService.systemUser.id,
               createdAt,
             );
           if (generatedIdentifier) {
-            result.processSummary.push(
+            processSummary.info(
               `Record with document number ${response.documentNumber} at line ${response.lineNumber} inserted successfully.`,
             );
           } else {
-            result.processSummary.push(
+            processSummary.info(
               `Record with document number ${response.documentNumber} at line ${response.lineNumber} has been ignored as the receipt already exist.`,
             );
           }
         } else {
-          result.processSummary.push(
+          processSummary.info(
             `Document number ${response.documentNumber} at line ${response.lineNumber} not found in SIMS.`,
           );
         }
       } catch (error: unknown) {
-        this.logger.error(error);
         const logMessage = `Unexpected error while processing disbursement receipt record at line ${response.lineNumber}`;
-        result.errorsSummary.push(logMessage);
-        this.logger.error(logMessage);
-        this.logger.error(error);
+        this.logger.error(logMessage, error);
+        processSummary.error(logMessage, error);
       }
     }
-    result.processSummary.push(`Processing file ${remoteFilePath} completed.`);
+    processSummary.info(`Processing file ${remoteFilePath} completed.`);
 
     await this.processSendingFile(
-      result,
       responseData.header.fileDate,
       responseData.header.sequenceNumber,
+      processSummary,
     );
 
     try {
@@ -162,26 +161,24 @@ export class DisbursementReceiptProcessingService {
       await this.integrationService.archiveFile(remoteFilePath);
     } catch (error) {
       const logMessage = `Unexpected error while archiving disbursement receipt file: ${remoteFilePath}.`;
-      result.errorsSummary.push(logMessage);
-      result.errorsSummary.push(parseJSONError(error));
       this.logger.error(logMessage, error);
+      processSummary.error(logMessage, error);
     }
-    return result;
   }
 
   /**
    * Create a provincial daily disbursement CSV file and
    * email the content to the ministry users.
-   * @param result output of the processing steps.
+   * @param processSummary process summary for logging.
    * @param fileDate File date to be a part of filename.
    * @param sequenceNumber Sequence number to be a part of filename.
    */
   private async processSendingFile(
-    result: ProcessSFTPResponseResult,
     fileDate: Date,
     sequenceNumber: number,
+    processSummary: ProcessSummary,
   ): Promise<void> {
-    result.processSummary.push(
+    processSummary.info(
       `Processing provincial daily disbursement CSV file on ${getISODateOnlyString(
         fileDate,
       )}.`,
@@ -220,18 +217,14 @@ export class DisbursementReceiptProcessingService {
           fileName: disbursementFileName,
         },
       );
-      result.processSummary.push(
+      processSummary.info(
         "Provincial daily disbursement CSV report generated.",
       );
-      this.logger.log(
-        "Completed provincial daily disbursement report generation.",
-      );
-    } catch (error) {
-      this.logger.error(error);
-      result.errorsSummary.push(
-        "Error while generating provincial daily disbursement CSV report file.",
-      );
-      result.errorsSummary.push(error);
+    } catch (error: unknown) {
+      const errorMessage =
+        "Error while generating provincial daily disbursement CSV report file.";
+      this.logger.error(errorMessage, error);
+      processSummary.error(errorMessage, error);
     }
   }
 

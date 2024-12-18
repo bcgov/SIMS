@@ -136,20 +136,23 @@ describe(
           return createFileFromStructuredRecords(file);
         },
       );
-      // Queued job.
-      const { job } = mockBullJob<void>();
-
-      // Act
-      const [result] = await processor.processDisbursementReceipts(job);
-
-      // Assert
-      const downloadedFile = path.join(
+      const expectedFileName = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
-      expect(result.errorsSummary).toContain(
-        `Error downloading file ${downloadedFile}. Error: Error: Invalid file header.`,
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
       );
+      expect(
+        mockedJob.containLogMessages([
+          `Error downloading file ${expectedFileName}.`,
+          "Invalid file header.",
+        ]),
+      ).toBe(true);
     });
 
     it("Should log 'SIN Hash validation failed' error when the footer has an invalid SIN total hash.", async () => {
@@ -167,20 +170,24 @@ describe(
           return createFileFromStructuredRecords(file);
         },
       );
-      // Queued job.
-      const { job } = mockBullJob<void>();
-
-      // Act
-      const [result] = await processor.processDisbursementReceipts(job);
-
-      // Assert
-      const downloadedFile = path.join(
+      // Expected file name.
+      const expectedFileName = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
-      expect(result.errorsSummary).toContain(
-        `Error downloading file ${downloadedFile}. Error: Error: SIN Hash validation failed.`,
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
       );
+      expect(
+        mockedJob.containLogMessages([
+          `Error downloading file ${expectedFileName}.`,
+          "SIN Hash validation failed.",
+        ]),
+      ).toBe(true);
     });
 
     it("Should log 'Invalid file footer' error when the footer has a record code different than 'T'.", async () => {
@@ -195,20 +202,23 @@ describe(
           return createFileFromStructuredRecords(file);
         },
       );
-      // Queued job.
-      const { job } = mockBullJob<void>();
-
-      // Act
-      const [result] = await processor.processDisbursementReceipts(job);
-
-      // Assert
-      const downloadedFile = path.join(
+      const expectedFileName = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
-      expect(result.errorsSummary).toContain(
-        `Error downloading file ${downloadedFile}. Error: Error: Invalid file footer.`,
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "One or more errors were reported during the process, please see logs for details.",
       );
+      expect(
+        mockedJob.containLogMessages([
+          `Error downloading file ${expectedFileName}.`,
+          "Invalid file footer.",
+        ]),
+      ).toBe(true);
     });
 
     it("Should import disbursement receipt file and create federal and provincial awards receipts with proper awards code mappings for a full-time application when the file contains federal and provincial receipts.", async () => {
@@ -222,29 +232,29 @@ describe(
       });
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_FULL_TIME_FILE]);
       // Queued job.
-      const { job } = mockBullJob<void>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processDisbursementReceipts(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
+      expect(result).toStrictEqual([
+        "Completed disbursement receipts integration.",
+      ]);
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_PROVINCIAL_FULL_TIME_FILE,
       );
-      expect(result).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${downloadedFile}.`,
-            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
-            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
-            `Processing file ${downloadedFile} completed.`,
-            `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
-            "Provincial daily disbursement CSV report generated.",
-          ],
-          errorsSummary: [],
-        },
-      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${downloadedFile}.`,
+          `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
+          `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
+          `Processing file ${downloadedFile} completed.`,
+          `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
+          "Provincial daily disbursement CSV report generated.",
+        ]),
+      ).toBe(true);
       // Assert imported receipts.
       const { bcReceipt, feReceipt } = await getReceiptsForAssert(
         FILE_DATE,
@@ -353,27 +363,27 @@ describe(
       });
       mockDownloadFiles(sftpClientMock, [FEDERAL_ONLY_FULL_TIME_FILE]);
       // Queued job.
-      const { job } = mockBullJob<void>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processDisbursementReceipts(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
+      expect(result).toStrictEqual([
+        "Completed disbursement receipts integration.",
+      ]);
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
-      expect(result).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${downloadedFile}.`,
-            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
-            `Processing file ${downloadedFile} completed.`,
-            `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
-          ],
-          errorsSummary: [],
-        },
-      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${downloadedFile}.`,
+          `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
+          `Processing file ${downloadedFile} completed.`,
+          `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
+        ]),
+      ).toBe(true);
       // Assert imported receipts.
       const { feReceipt, bcReceipt } = await getReceiptsForAssert(
         FILE_DATE,
@@ -430,10 +440,10 @@ describe(
       });
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_PART_TIME_FILE]);
       // Queued job.
-      const { job } = mockBullJob<void>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processDisbursementReceipts(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const downloadedFile = path.join(
@@ -441,18 +451,18 @@ describe(
         FEDERAL_PROVINCIAL_PART_TIME_FILE,
       );
       expect(result).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${downloadedFile}.`,
-            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
-            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
-            `Processing file ${downloadedFile} completed.`,
-            `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
-            "Provincial daily disbursement CSV report generated.",
-          ],
-          errorsSummary: [],
-        },
+        "Completed disbursement receipts integration.",
       ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${downloadedFile}.`,
+          `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
+          `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
+          `Processing file ${downloadedFile} completed.`,
+          `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
+          "Provincial daily disbursement CSV report generated.",
+        ]),
+      ).toBe(true);
       // Assert imported receipts.
       const { bpReceipt, feReceipt } = await getReceiptsForAssert(
         FILE_DATE,
@@ -563,30 +573,31 @@ describe(
         FEDERAL_PROVINCIAL_FULL_TIME_PART_TIME_FILE,
       ]);
       // Queued job.
-      const { job } = mockBullJob<void>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processDisbursementReceipts(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
+      expect(result).toStrictEqual([
+        "Completed disbursement receipts integration.",
+      ]);
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_PROVINCIAL_FULL_TIME_PART_TIME_FILE,
       );
-      expect(result).toEqual([
-        {
-          processSummary: [
-            `Processing file ${downloadedFile}.`,
-            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
-            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
-            `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 4 inserted successfully.`,
-            `Processing file ${downloadedFile} completed.`,
-            `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
-            "Provincial daily disbursement CSV report generated.",
-          ],
-          errorsSummary: [],
-        },
-      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${downloadedFile}.`,
+          `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 2 inserted successfully.`,
+          `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 3 inserted successfully.`,
+          `Record with document number ${SHARED_DOCUMENT_NUMBER} at line 4 inserted successfully.`,
+          `Processing file ${downloadedFile} completed.`,
+          `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
+          "Provincial daily disbursement CSV report generated.",
+        ]),
+      ).toBe(true);
+
       // Assert imported receipts.
       const { feReceipt, bcReceipt, bpReceipt } = await getReceiptsForAssert(
         FILE_DATE,
