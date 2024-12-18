@@ -15,6 +15,7 @@ import {
   NotificationActionsService,
   ReportService,
   ReportsFilterModel,
+  SystemUsersService,
 } from "@sims/services";
 import { DAILY_DISBURSEMENT_REPORT_NAME } from "@sims/services/constants";
 import { getISODateOnlyString } from "@sims/utilities";
@@ -40,6 +41,7 @@ export class DisbursementReceiptProcessingService {
     private readonly disbursementReceiptService: DisbursementReceiptService,
     private readonly reportService: ReportService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -47,14 +49,10 @@ export class DisbursementReceiptProcessingService {
   /**
    * Process all the available disbursement receipt files in SFTP location.
    * Once the file is processed, it gets archived.
-   * @param auditUserId user that should be considered the one that is causing the changes.
    * @param processSummary process summary for logging.
    * @returns Summary details of the processing.
    */
-  async process(
-    auditUserId: number,
-    processSummary: ProcessSummary,
-  ): Promise<void> {
+  async process(processSummary: ProcessSummary): Promise<void> {
     // Get the list of all files from SFTP ordered by file name.
     const fileSearch = new RegExp(
       `^${this.esdcConfig.environmentCode}EDU\\.PBC\\.DIS.[0-9]{8}\\.[0-9]{3}$`,
@@ -67,11 +65,7 @@ export class DisbursementReceiptProcessingService {
     for (const filePath of filePaths) {
       const fileProcessSummary = new ProcessSummary();
       processSummary.children(fileProcessSummary);
-      await this.processAllReceiptsInFile(
-        filePath,
-        auditUserId,
-        fileProcessSummary,
-      );
+      await this.processAllReceiptsInFile(filePath, fileProcessSummary);
     }
   }
 
@@ -79,13 +73,11 @@ export class DisbursementReceiptProcessingService {
    * Process a given disbursement receipt file and
    * insert the records to database.
    * @param remoteFilePath file which is to be processed.
-   * @param auditUserId user that should be considered the one that is causing the changes.
    * @param processSummary process summary for logging.
    * @returns result processing summary.
    */
   private async processAllReceiptsInFile(
     remoteFilePath: string,
-    auditUserId: number,
     processSummary: ProcessSummary,
   ): Promise<void> {
     processSummary.info(`Processing file ${remoteFilePath}.`);
@@ -134,7 +126,7 @@ export class DisbursementReceiptProcessingService {
               response,
               responseData.header,
               disbursementScheduleId,
-              auditUserId,
+              this.systemUsersService.systemUser.id,
               createdAt,
             );
           if (generatedIdentifier) {

@@ -1,7 +1,6 @@
 import { InjectQueue, Processor } from "@nestjs/bull";
 import { DisbursementReceiptProcessingService } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
-import { SystemUsersService } from "@sims/services/system-users";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
@@ -18,7 +17,6 @@ export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly disbursementReceiptProcessingService: DisbursementReceiptProcessingService,
-    private readonly systemUsersService: SystemUsersService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -33,11 +31,7 @@ export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {
-    const auditUser = this.systemUsersService.systemUser;
-    await this.disbursementReceiptProcessingService.process(
-      auditUser.id,
-      processSummary,
-    );
+    await this.disbursementReceiptProcessingService.process(processSummary);
     return "Completed disbursement receipts integration.";
   }
 

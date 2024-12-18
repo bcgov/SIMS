@@ -31,7 +31,6 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {
-    processSummary.info("Starting federal restrictions import.");
     await this.fedRestrictionProcessingService.process(processSummary);
     return "Federal restrictions import process finished.";
   }
