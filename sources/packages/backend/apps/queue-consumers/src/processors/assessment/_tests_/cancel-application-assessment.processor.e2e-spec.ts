@@ -179,7 +179,7 @@ describe(
       expect(result).toEqual([
         "Assessment cancelled with success.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 7",
+        "Error(s): 0, Warning(s): 1, Info: 8",
       ]);
       expect(
         mockedJob.containLogMessage(

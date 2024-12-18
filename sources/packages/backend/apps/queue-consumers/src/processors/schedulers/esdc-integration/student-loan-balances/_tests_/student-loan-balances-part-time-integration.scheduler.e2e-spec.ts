@@ -78,9 +78,7 @@ describe(
       const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
       // Act
-      const result = await processor.processStudentLoanBalancesFiles(
-        mockedJob.job,
-      );
+      const result = await processor.processQueue(mockedJob.job);
       // Assert
       expect(result.length).toBe(1);
       expect(
@@ -89,7 +87,7 @@ describe(
           `Inserted Student Loan balances file ${STUDENT_LOAN_BALANCES_FILENAME}.`,
         ]),
       ).toBe(true);
-      expect(result).toContain("Process finalized with success.");
+      expect(result).toStrictEqual(["Process finalized with success."]);
       // Expect the file was archived on SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       const studentLoanBalance = await db.studentLoanBalance.find({
@@ -120,12 +118,10 @@ describe(
         STUDENT_LOAN_BALANCES_STUDENT_NOT_FOUND_FILENAME,
       ]);
       // Act
-      const result = await processor.processStudentLoanBalancesFiles(
-        mockedJob.job,
-      );
+      const result = await processor.processQueue(mockedJob.job);
       // Assert
       expect(result.length).toBe(1);
-      expect(result).toContain("Process finalized with success.");
+      expect(result).toStrictEqual(["Process finalized with success."]);
       expect(
         mockedJob.containLogMessages(["Student not found for line 2."]),
       ).toBe(true);
@@ -147,19 +143,16 @@ describe(
       mockDownloadFiles(sftpClientMock, [
         STUDENT_LOAN_BALANCES_RECORDS_MISMATCH_FILENAME,
       ]);
-      // Act
-      const result = await processor.processStudentLoanBalancesFiles(
-        mockedJob.job,
+
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
       );
-      // Assert
-      expect(result.length).toBe(3);
-      expect(result).toContain(
-        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      );
+      // Assert log has the extra details.
       expect(
-        mockedJob.containLogMessages([
+        mockedJob.containLogMessage(
           "Records in footer does not match the number of records.",
-        ]),
+        ),
       ).toBe(true);
     });
 
@@ -189,12 +182,10 @@ describe(
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 
       // Act
-      const result = await processor.processStudentLoanBalancesFiles(
-        mockedJob.job,
-      );
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      expect(result).toContain("Process finalized with success.");
+      expect(result).toStrictEqual(["Process finalized with success."]);
       expect(
         mockedJob.containLogMessages([
           "Checking if zero balance records must be inserted.",
@@ -244,12 +235,10 @@ describe(
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 
       // Act
-      const result = await processor.processStudentLoanBalancesFiles(
-        mockedJob.job,
-      );
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      expect(result).toContain("Process finalized with success.");
+      expect(result).toStrictEqual(["Process finalized with success."]);
       expect(
         mockedJob.containLogMessages([
           "Checking if zero balance records must be inserted.",
@@ -298,12 +287,10 @@ describe(
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 
       // Act
-      const result = await processor.processStudentLoanBalancesFiles(
-        mockedJob.job,
-      );
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      expect(result).toContain("Process finalized with success.");
+      expect(result).toStrictEqual(["Process finalized with success."]);
       expect(
         mockedJob.containLogMessages([
           "Checking if zero balance records must be inserted.",

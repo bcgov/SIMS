@@ -18,9 +18,9 @@ on:
         required: true
         default: "web-sims, api-sims, queue-consumers-sims, workers-sims"
       ocjobs:
-          description: "Comma seperated list of job Image Streams to prune"
-          required: true
-          default: "db.migrations"
+        description: "Comma seperated list of job Image Streams to prune"
+        required: true
+        default: "db.migrations"
       prefix:
         description: "Branch prefix to restrict pruning to"
         required: false
@@ -44,6 +44,11 @@ jobs:
           echo "PREFIX=${{ inputs.prefix || 'main' }}" >> $GITHUB_ENV
           echo "MIN_TAGS=${{ inputs.minTags || '10' }}" >> $GITHUB_ENV
 
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "4"
+
       - name: Print env
         run: |
           echo "Environment: ${ENVIRONMENT}"
@@ -51,6 +56,7 @@ jobs:
           echo "Jobs: ${OCJOBS}"
           echo "Prefix: ${PREFIX}"
           echo "Minimum Tags: ${MIN_TAGS}"
+          echo "OC CLI Version: $(oc version)"
 
       - name: Checkout source code
         uses: actions/checkout@v4

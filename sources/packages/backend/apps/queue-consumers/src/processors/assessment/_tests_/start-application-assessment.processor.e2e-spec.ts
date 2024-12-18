@@ -84,7 +84,7 @@ describe(
       expect(result).toEqual([
         "Workflow process not executed due to the assessment not being in the correct status.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 2",
+        "Error(s): 0, Warning(s): 2, Info: 3",
       ]);
       expect(
         mockedJob.containLogMessages([

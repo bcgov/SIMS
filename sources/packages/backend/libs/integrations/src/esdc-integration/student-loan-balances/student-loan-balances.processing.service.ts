@@ -13,9 +13,9 @@ import { DataSource } from "typeorm";
 import {
   DatabaseConstraintNames,
   StudentLoanBalance,
-  User,
   isDatabaseConstraintError,
 } from "@sims/sims-db";
+import { SystemUsersService } from "@sims/services";
 
 /**
  * Manages to process the Student Loan Balances files
@@ -30,6 +30,7 @@ export class StudentLoanBalancesProcessingService {
     private readonly studentLoanBalancesIntegrationService: StudentLoanBalancesIntegrationService,
     private readonly studentService: StudentService,
     private readonly studentLoanBalanceService: StudentLoanBalanceService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -37,12 +38,10 @@ export class StudentLoanBalancesProcessingService {
   /**
    * Download all files from SFTP and process them all.
    * @param parentProcessSummary parent process summary.
-   * @param auditUserId user that should be considered the one that is
    * causing the changes.
    */
   async processStudentLoanBalances(
     parentProcessSummary: ProcessSummary,
-    auditUserId: number,
   ): Promise<void> {
     // Process summary to be populated by each enqueueing workflow call.
     const remoteFilePaths =
@@ -56,24 +55,17 @@ export class StudentLoanBalancesProcessingService {
     for (const remoteFilePath of remoteFilePaths) {
       const fileProcessingSummary = new ProcessSummary();
       parentProcessSummary.children(fileProcessingSummary);
-      await this.processFile(
-        remoteFilePath,
-        fileProcessingSummary,
-        auditUserId,
-      );
+      await this.processFile(remoteFilePath, fileProcessingSummary);
     }
   }
 
   /**
    * Process each individual Student Loan Balances response file from the SFTP.
    * @param remoteFilePath Student Loan Balances response file to be processed.
-   * @param auditUserId user that should be considered the one that is
-   * causing the changes.
    */
   private async processFile(
     remoteFilePath: string,
     childrenProcessSummary: ProcessSummary,
-    auditUserId: number,
   ): Promise<void> {
     childrenProcessSummary.info(`Processing file ${remoteFilePath}.`);
     let studentLoanBalancesSFTPResponseFile: StudentLoanBalancesSFTPResponseFile;
@@ -106,14 +98,13 @@ export class StudentLoanBalancesProcessingService {
             );
             continue;
           }
-          const auditUser = { id: auditUserId } as User;
           await studentLoanBalancesRepo.insert({
             student: student,
             cslBalance: studentLoanBalanceRecord.cslBalance,
             balanceDate: getISODateOnlyString(
               studentLoanBalancesSFTPResponseFile.header.balanceDate,
             ),
-            creator: auditUser,
+            creator: this.systemUsersService.systemUser,
           });
         }
         childrenProcessSummary.info(
