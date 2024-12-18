@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { MSFAANumber, OfferingIntensity } from "@sims/sims-db";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import { getISODateOnlyString } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { SequenceControlService } from "@sims/services";
@@ -32,15 +36,19 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
    * 4. Create the request filename with the file path for the MSFAA Request sent File.
    * 5. Upload the content to the zoneB SFTP server.
    * 6. Update the MSFAA records, that are sent in the request sent file.
-   * @param fileCode File code applicable for Part-Time or Full-Time.
+   * @param fileCode file code applicable for Part-Time or Full-Time.
    * @param offeringIntensity offering intensity.
-   * @returns Processing MSFAA request result.
+   * @param processSummary process summary for logging.
+   * @returns processing MSFAA request result.
    */
   async processMSFAARequest(
     fileCode: string,
     offeringIntensity: OfferingIntensity,
+    processSummary: ProcessSummary,
   ): Promise<MSFAAUploadResult> {
-    this.logger.log(`Retrieving pending ${offeringIntensity} MSFAA request...`);
+    processSummary.info(
+      `Retrieving pending ${offeringIntensity} MSFAA request.`,
+    );
     const pendingMSFAARequests =
       await this.msfaaNumberService.getPendingMSFAARequest(offeringIntensity);
     if (!pendingMSFAARequests.length) {
@@ -49,7 +57,7 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
         uploadedRecords: 0,
       };
     }
-    this.logger.log(
+    processSummary.info(
       `Found ${pendingMSFAARequests.length} MSFAA number(s) for ${offeringIntensity} application that needs request.`,
     );
     const msfaaRecords = pendingMSFAARequests.map((pendingMSFAARequest) => {
@@ -77,11 +85,11 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
       )}`,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         try {
-          this.logger.log(
+          processSummary.info(
             `Applying MSFAA sequence gap to the sequence number. Current sequence gap ${MSFAA_SEQUENCE_GAP}.`,
           );
           nextSequenceNumber += MSFAA_SEQUENCE_GAP;
-          this.logger.log("Creating MSFAA request content...");
+          processSummary.info("Creating MSFAA request content.");
           // Create the Request content for the MSFAA file by populating the
           // header, footer and trailer content.
           const fileContent = this.msfaaService.createMSFAARequestContent(
@@ -96,9 +104,9 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
             fileCode,
             nextSequenceNumber,
           );
-          this.logger.log("Uploading content...");
+          processSummary.info("Uploading content.");
           await this.msfaaService.uploadContent(fileContent, fileInfo.filePath);
-          this.logger.log("Content uploaded.");
+          processSummary.info("Content uploaded.");
           uploadResult = {
             generatedFile: fileInfo.filePath,
             uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
@@ -112,11 +120,10 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
             processDate,
             msfaaNumberRepo,
           );
-        } catch (error) {
-          this.logger.error(
-            `Error while uploading content for ${offeringIntensity} MSFAA Request: ${error}`,
-          );
-          throw error;
+        } catch (error: unknown) {
+          const errorMessage = `Error while uploading content for ${offeringIntensity} MSFAA request.`;
+          this.logger.error(errorMessage, error);
+          throw new Error(errorMessage, { cause: error });
         }
       },
     );
