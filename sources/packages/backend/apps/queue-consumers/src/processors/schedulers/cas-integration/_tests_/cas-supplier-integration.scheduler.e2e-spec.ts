@@ -183,7 +183,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 1.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 11",
+      "Error(s): 0, Warning(s): 1, Info: 12",
     ]);
     expect(
       mockedJob.containLogMessages([
@@ -247,7 +247,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 1.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 11",
+      "Error(s): 0, Warning(s): 1, Info: 12",
     ]);
     expect(
       mockedJob.containLogMessages([
@@ -710,7 +710,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 0.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 13",
+      "Error(s): 0, Warning(s): 1, Info: 14",
     ]);
     // Assert DB was updated.
     const updateCASSupplier = await db.casSupplier.findOne({
@@ -778,7 +778,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 0.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 2, Info: 12",
+      "Error(s): 0, Warning(s): 2, Info: 13",
     ]);
     // Assert DB was updated.
     const updateCASSupplier = await db.casSupplier.findOne({
@@ -842,7 +842,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       "Pending suppliers to update found: 1.",
       "Records updated: 0.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 2, Info: 12",
+      "Error(s): 0, Warning(s): 2, Info: 13",
     ]);
     // Assert DB was updated.
     const updateCASSupplier = await db.casSupplier.findOne({

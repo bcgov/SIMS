@@ -1,9 +1,10 @@
-import { createMock, DeepMocked } from "@golevelup/ts-jest";
+import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -18,7 +19,6 @@ import {
   getStructuredRecords,
   mockDownloadFiles,
 } from "@sims/test-utils/mocks";
-import { Job } from "bull";
 
 const SIN_VALIDATION_FILENAME = "PCSLP.PBC.BC0000.ISR";
 
@@ -55,11 +55,6 @@ describe(
           isValidSIN: true,
         },
       });
-
-      // Queued job.
-      const job = createMock<Job<void>>();
-      mockDownloadFiles(sftpClientMock, [SIN_VALIDATION_FILENAME]);
-
       mockDownloadFiles(
         sftpClientMock,
         [SIN_VALIDATION_FILENAME],
@@ -74,26 +69,28 @@ describe(
         },
       );
 
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
       // Act
-      const processResult = await processor.processSINValidationResponse(job);
+      const processResult = await processor.processQueue(mockedJob.job);
+
       // Assert
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         SIN_VALIDATION_FILENAME,
       );
-
-      // Assert
       expect(processResult).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${downloadedFile}.`,
-            "File contains 2 SIN validations.",
-            "Processed SIN validation record from line 2: No SIN validation was updated because the record id is already present and this is not the most updated.",
-            "Processed SIN validation record from line 3: Not able to find the SIN validation on line number 3 to be updated with the ESDC response.",
-          ],
-          errorsSummary: [],
-        },
+        "ESDC SIN validation response files processed.",
       ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${downloadedFile}.`,
+          "File contains 2 SIN validations.",
+          "Processed SIN validation record from line 2: No SIN validation was updated because the record id is already present and this is not the most updated.",
+          "Processed SIN validation record from line 3: Not able to find the SIN validation on line number 3 to be updated with the ESDC response.",
+        ]),
+      ).toBe(true);
     });
 
     it("Should update one SIN validation record and skip one when one SIN response is from SIMS and the other is from SFAS.", async () => {
@@ -106,11 +103,6 @@ describe(
           dateReceived: null,
         },
       });
-
-      // Queued job.
-      const job = createMock<Job<void>>();
-      mockDownloadFiles(sftpClientMock, [SIN_VALIDATION_FILENAME]);
-
       mockDownloadFiles(
         sftpClientMock,
         [SIN_VALIDATION_FILENAME],
@@ -125,26 +117,27 @@ describe(
         },
       );
 
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
       // Act
-      const processResult = await processor.processSINValidationResponse(job);
+      const processResult = await processor.processQueue(mockedJob.job);
       // Assert
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         SIN_VALIDATION_FILENAME,
       );
-
-      // Assert
       expect(processResult).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${downloadedFile}.`,
-            "File contains 2 SIN validations.",
-            "Processed SIN validation record from line 2: SIN validation record updated.",
-            "Processed SIN validation record from line 3: Not able to find the SIN validation on line number 3 to be updated with the ESDC response.",
-          ],
-          errorsSummary: [],
-        },
+        "ESDC SIN validation response files processed.",
       ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${downloadedFile}.`,
+          "File contains 2 SIN validations.",
+          "Processed SIN validation record from line 2: SIN validation record updated.",
+          "Processed SIN validation record from line 3: Not able to find the SIN validation on line number 3 to be updated with the ESDC response.",
+        ]),
+      ).toBe(true);
     });
   },
 );

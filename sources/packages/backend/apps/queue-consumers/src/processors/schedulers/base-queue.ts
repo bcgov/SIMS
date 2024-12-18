@@ -26,7 +26,9 @@ export abstract class BaseQueue<T> {
   async processQueue(job: Job<T>): Promise<string | string[]> {
     const processSummary = new ProcessSummary();
     try {
-      this.logger.log(`Processing queue ${job.queue.name}, job ID ${job.id}.`);
+      processSummary.info(
+        `Processing queue ${job.queue.name}, job ID ${job.id}.`,
+      );
       const result = await this.process(job, processSummary);
       processSummary.info(`${job.queue.name}, job ID ${job.id}, executed.`);
       const logsSum = processSummary.getLogLevelSum();
