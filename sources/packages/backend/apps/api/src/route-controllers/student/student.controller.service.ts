@@ -154,9 +154,11 @@ export class StudentControllerService {
       );
     }
 
+    const encodedFileName = encodeURIComponent(studentFile.fileName);
+
     response.setHeader(
       "Content-Disposition",
-      `attachment; filename=${studentFile.fileName}`,
+      `attachment; filename*=UTF-8''${encodedFileName}`,
     );
 
     try {
