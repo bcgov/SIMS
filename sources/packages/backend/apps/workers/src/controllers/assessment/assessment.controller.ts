@@ -53,6 +53,7 @@ import { MaxJobsToActivate } from "../../types";
 import {
   AssessmentSequentialProcessingService,
   AwardTotal,
+  ProgramYearTotal,
   SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
@@ -420,16 +421,19 @@ export class AssessmentController {
           this.studentAssessmentService.saveAssessmentCalculationStartDate(
             assessmentId,
           );
-        const getProgramYearTotalAwards =
-          this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotals(
-            assessmentId,
-            { alternativeReferenceDate: new Date() },
-          );
+        const programYearTotals = await this.getProgramYearTotals(
+          assessmentId,
+          {
+            alternativeReferenceDate: new Date(),
+          },
+        );
         // Updates the calculation start date and get the program year totals in parallel.
-        const [, programYearTotalAwards] = await Promise.all([
-          saveAssessmentCalculationStartDate,
-          getProgramYearTotalAwards,
-        ]);
+        const [, programYearTotalAwards, ftProgramYearContributionTotal] =
+          await Promise.all([
+            saveAssessmentCalculationStartDate,
+            programYearTotals.awardTotal,
+            programYearTotals.ftProgramYearContributionTotal,
+          ]);
         if (
           assessment.offering.offeringIntensity === OfferingIntensity.partTime
         ) {
@@ -482,6 +486,33 @@ export class AssessmentController {
         ? output[outputName] + award.total
         : award.total;
     });
+  }
+
+  private async getProgramYearTotals(
+    assessmentId: number,
+    options?: {
+      OfferingIntensity?: OfferingIntensity;
+      alternativeReferenceDate?: Date;
+    },
+  ): Promise<ProgramYearTotal> {
+    const sequencedApplicationsWithAssessment =
+      await this.assessmentSequentialProcessingService.getSequencedApplicationsWithAssessment(
+        assessmentId,
+        options,
+      );
+    return {
+      awardTotal:
+        this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotals(
+          sequencedApplicationsWithAssessment,
+          options,
+        ),
+      ftProgramYearContributionTotal:
+        OfferingIntensity.fullTime === options.OfferingIntensity
+          ? this.assessmentSequentialProcessingService.getFTProgramYearContributionTotals(
+              sequencedApplicationsWithAssessment,
+            )
+          : null,
+    };
   }
 
   /**
