@@ -374,6 +374,7 @@ export class AssessmentController {
       const assessmentId = job.variables.assessmentId;
       const studentId = assessment.application.student.id;
       const programYearId = assessment.application.programYear.id;
+      const offeringIntensity = assessment.offering.offeringIntensity;
       jobLogger.log(
         `Verifying the assessment calculation order for processing assessment id ${assessmentId} student id ${studentId} ` +
           `program year id ${programYearId}.`,
@@ -426,6 +427,7 @@ export class AssessmentController {
           assessmentId,
           {
             alternativeReferenceDate: new Date(),
+            OfferingIntensity: offeringIntensity,
           },
         );
         // Updates the calculation start date and get the program year totals in parallel.
@@ -512,16 +514,23 @@ export class AssessmentController {
         assessmentId,
         options,
       );
+    const sequencedApplications =
+      sequencedApplicationsWithAssessment.sequencedApplications;
+    const assessment = sequencedApplicationsWithAssessment.currentAssessment;
+    const applicationNumbers = sequencedApplications.previous.map(
+      (application) => application.applicationNumber,
+    );
     return {
       awardTotal:
         this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotals(
-          sequencedApplicationsWithAssessment,
+          sequencedApplications,
+          assessment,
           options,
         ),
       ftProgramYearContributionTotal:
         OfferingIntensity.fullTime === options.OfferingIntensity
           ? this.assessmentSequentialProcessingService.getFTProgramYearContributionTotals(
-              sequencedApplicationsWithAssessment,
+              applicationNumbers,
             )
           : null,
     };

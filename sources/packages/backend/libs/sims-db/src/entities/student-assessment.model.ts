@@ -382,6 +382,10 @@ export interface WorkflowData {
     dependantPostSecondaryQuantity?: number;
     pdppdStatus: boolean;
     partnerStudentStudyWeeks?: number;
+    totalFederalFSC?: number;
+    totalProvincialFSC?: number;
+    studentScholarshipsBursaries?: number;
+    studentSpouseContribution?: number;
   };
 }
 

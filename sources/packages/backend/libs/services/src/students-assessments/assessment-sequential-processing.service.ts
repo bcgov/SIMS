@@ -155,12 +155,10 @@ export class AssessmentSequentialProcessingService {
    * program year.
    */
   async getProgramYearPreviousAwardsTotals(
-    sequencedApplicationsWithAssessment: SequencedApplicationsWithAssessment,
+    sequencedApplications: SequencedApplications,
+    assessment: StudentAssessment,
     options?: { alternativeReferenceDate?: Date },
   ): Promise<AwardTotal[]> {
-    const sequencedApplications =
-      sequencedApplicationsWithAssessment.sequencedApplications;
-    const assessment = sequencedApplicationsWithAssessment.currentAssessment;
     // Get the first assessment date ever calculated for the current application.
     // If there are multiple assessments for the current application, then set the
     // first assessment date to the assessment date of the first assessment.
@@ -268,21 +266,26 @@ export class AssessmentSequentialProcessingService {
   }
 
   async getFTProgramYearContributionTotals(
-    sequencedApplicationsWithAssessment: SequencedApplicationsWithAssessment,
+    applicationNumbers: string[],
   ): Promise<FTProgramYearContributionTotal[]> {
-    const sequencedApplications =
-      sequencedApplicationsWithAssessment.sequencedApplications;
-    const applicationNumbers = sequencedApplications.previous.map(
-      (application) => application.applicationNumber,
-    );
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
-      .select([
-        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC' AS NUMERIC)) as totalFederalFSC",
-        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC' AS NUMERIC)) as totalProvincialFSC",
-        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentScholarshipsBursaries' AS NUMERIC)) as studentScholarshipsBursaries",
-        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContribution' AS NUMERIC)) as studentSpouseContribution",
-      ])
+      .select(
+        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC' AS NUMERIC))",
+        "totalFederalFSC",
+      )
+      .addSelect(
+        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC' AS NUMERIC))",
+        "totalProvincialFSC",
+      )
+      .addSelect(
+        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentScholarshipsBursaries' AS NUMERIC))",
+        "studentScholarshipsBursaries",
+      )
+      .addSelect(
+        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContribution' AS NUMERIC))",
+        "studentSpouseContribution",
+      )
       .innerJoin("application.currentAssessment", "currentAssessment")
       .where("application.applicationNumber IN (:...applicationNumbers)", {
         applicationNumbers,
@@ -298,29 +301,29 @@ export class AssessmentSequentialProcessingService {
         },
       )
       .getRawOne<{
-        totalFederalFSC: number;
-        totalProvincialFSC: number;
-        studentScholarshipsBursaries: number;
-        studentSpouseContribution: number;
+        totalFederalFSC: string;
+        totalProvincialFSC: string;
+        studentScholarshipsBursaries: string;
+        studentSpouseContribution: string;
       }>();
 
     // Map the results to the required interface
     const result: FTProgramYearContributionTotal[] = [
       {
         contribution: FullTimeStudentContributionType.FederalFSC,
-        total: totals.totalFederalFSC ?? 0,
+        total: +totals.totalFederalFSC ?? 0,
       },
       {
         contribution: FullTimeStudentContributionType.ProvincialFSC,
-        total: totals.totalProvincialFSC ?? 0,
+        total: +totals.totalProvincialFSC ?? 0,
       },
       {
         contribution: FullTimeStudentContributionType.ScholarshipBursaries,
-        total: totals.studentScholarshipsBursaries ?? 0,
+        total: +totals.studentScholarshipsBursaries ?? 0,
       },
       {
         contribution: FullTimeStudentContributionType.SpouseContributionWeeks,
-        total: totals.studentSpouseContribution ?? 0,
+        total: +totals.studentSpouseContribution ?? 0,
       },
     ];
 
