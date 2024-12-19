@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { onMounted, ref, watch } from "vue";
-import { Formio } from "formiojs";
+import { Formio } from "@formio/js";
 import { defineComponent } from "vue";
 import ApiClient from "@/services/http/ApiClient";
 import FormUploadService from "@/services/FormUploadService";

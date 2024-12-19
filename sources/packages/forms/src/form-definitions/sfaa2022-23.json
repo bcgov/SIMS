@@ -13867,7 +13867,7 @@
                                 }
                               ],
                               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                              "fileMaxSize": "4 MB",
+                              "fileMaxSize": "15MB",
                               "multiple": true,
                               "redrawOn": "dependants.declaredOnTaxes",
                               "validate": {
