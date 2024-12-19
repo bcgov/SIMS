@@ -15,7 +15,6 @@ import {
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
-  RestrictionCode,
   createE2EDataSources,
   createFakeCASSupplier,
   createFakeDisbursementValue,
@@ -35,6 +34,8 @@ import {
   OfferingIntensity,
   ProgramInfoStatus,
   Restriction,
+  RestrictionActionType,
+  RestrictionNotificationType,
   RestrictionType,
   Student,
   StudentRestriction,
@@ -127,11 +128,14 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         restriction: provincialRestriction,
       });
 
-      const legacyRestriction = await db.restriction.findOne({
-        select: { id: true, restrictionCode: true },
-        where: {
-          restrictionCode: RestrictionCode.LGCYAAAA,
-        },
+      const legacyRestriction = await db.restriction.save({
+        restrictionType: RestrictionType.Provincial,
+        isLegacy: true,
+        restrictionCode: "LGCY_XYZ",
+        notificationType: RestrictionNotificationType.Error,
+        restrictionCategory: "Other",
+        description: "Description for LGCY_XYZ",
+        actionType: [RestrictionActionType.StopPartTimeDisbursement],
       });
 
       // Student has a legacy restriction that should be ignored.
