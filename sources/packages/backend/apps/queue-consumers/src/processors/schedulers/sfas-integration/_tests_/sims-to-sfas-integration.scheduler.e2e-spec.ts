@@ -52,7 +52,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
   let mockedCurrentDate: Date;
   const DATE_FORMAT = "YYYYMMDD";
   let provincialRestriction: Restriction;
-  let legacyRestriction: Restriction;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, sshClientMock } =
@@ -66,12 +65,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       select: { id: true, restrictionCode: true },
       where: {
         restrictionType: RestrictionType.Provincial,
-      },
-    });
-    legacyRestriction = await db.restriction.findOne({
-      select: { id: true, restrictionCode: true },
-      where: {
-        restrictionCode: "LGCY_AAAA",
       },
     });
   });
@@ -131,6 +124,13 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         student,
         application,
         restriction: provincialRestriction,
+      });
+
+      const legacyRestriction = await db.restriction.findOne({
+        select: { id: true, restrictionCode: true },
+        where: {
+          restrictionCode: "LGCY_AAAA",
+        },
       });
 
       // Student has a legacy restriction that should be ignored.
