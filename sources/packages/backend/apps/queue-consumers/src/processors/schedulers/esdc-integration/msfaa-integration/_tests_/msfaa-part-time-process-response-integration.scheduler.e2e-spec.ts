@@ -32,7 +32,6 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import * as Client from "ssh2-sftp-client";
-import { Job } from "bull";
 import * as path from "path";
 import {
   MSFAA_PART_TIME_MARRIED,

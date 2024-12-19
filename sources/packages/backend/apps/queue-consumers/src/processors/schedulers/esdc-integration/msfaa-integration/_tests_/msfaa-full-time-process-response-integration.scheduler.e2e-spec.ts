@@ -28,7 +28,6 @@ import {
   NotificationMessageType,
 } from "@sims/sims-db";
 import * as Client from "ssh2-sftp-client";
-import { Job } from "bull";
 import * as path from "path";
 import { FULL_TIME_SAMPLE_MSFAA_NUMBER } from "./msfaa-process-integration.scheduler.models";
 import { IsNull } from "typeorm";
