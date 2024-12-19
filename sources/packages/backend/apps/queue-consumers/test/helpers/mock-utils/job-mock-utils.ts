@@ -11,17 +11,17 @@ export class MockBullJobResult<T> {
   ) {}
 
   /**
-   * Checks if the logs contains a entry that ends with the provided parameter.
-   * @param logMessage log message to be found using string endsWith method.
+   * Checks if the logs contains a entry that includes the provided parameter.
+   * @param logMessage log message to be found using string includes method.
    * @returns true if the log message was found. otherwise false.
    */
   containLogMessage(logMessage: string): boolean {
-    return this.logMessages.some((message) => message.endsWith(logMessage));
+    return this.logMessages.some((message) => message.includes(logMessage));
   }
 
   /**
-   * Checks if the logs contains a entry that ends with the provided parameter.
-   * @param logMessages log messages to be found using string endsWith method.
+   * Checks if the logs contains a entry that includes the provided parameter.
+   * @param logMessages log messages to be found using string includes method.
    * @returns true if the log message was found. otherwise false.
    */
   containLogMessages(logMessages: string[]): boolean {
