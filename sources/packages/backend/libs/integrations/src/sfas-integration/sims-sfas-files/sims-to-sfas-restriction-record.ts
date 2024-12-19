@@ -35,7 +35,7 @@ export class SIMSToSFASRestrictionRecord extends SIMSToSFASBaseRecord {
     record.append(this.recordTypeCode);
     record.appendNumberWithFiller(this.studentId, 10);
     record.appendNumberWithFiller(this.restrictionId, 10);
-    record.append(this.restrictionCode);
+    record.appendWithEndFiller(this.restrictionCode, 10, " ");
     record.appendFormattedDate(this.restrictionEffectiveDate);
     record.appendOptionalFormattedDate(this.restrictionRemovalDate);
     return record.toString();
