@@ -15,6 +15,7 @@ import {
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
+  RestrictionCode,
   createE2EDataSources,
   createFakeCASSupplier,
   createFakeDisbursementValue,
@@ -129,7 +130,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const legacyRestriction = await db.restriction.findOne({
         select: { id: true, restrictionCode: true },
         where: {
-          restrictionCode: "LGCY_AAAA",
+          restrictionCode: RestrictionCode.LGCYAAAA,
         },
       });
 
