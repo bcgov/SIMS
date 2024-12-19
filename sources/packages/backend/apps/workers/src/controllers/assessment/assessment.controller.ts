@@ -53,6 +53,7 @@ import { MaxJobsToActivate } from "../../types";
 import {
   AssessmentSequentialProcessingService,
   AwardTotal,
+  FTProgramYearContributionTotal,
   ProgramYearTotal,
   SystemUsersService,
   WorkflowClientService,
@@ -446,7 +447,11 @@ export class AssessmentController {
         jobLogger.log(
           `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
-        this.createOutputForProgramYearTotals(programYearTotalAwards, result);
+        this.createOutputForProgramYearTotals(
+          programYearTotalAwards,
+          ftProgramYearContributionTotal,
+          result,
+        );
         result.isReadyForCalculation = true;
         return job.complete(result);
       }
@@ -473,6 +478,7 @@ export class AssessmentController {
    */
   private createOutputForProgramYearTotals(
     programYearTotalAwards: AwardTotal[],
+    ftProgramYearContributionTotal: FTProgramYearContributionTotal[],
     output: VerifyAssessmentCalculationOrderJobOutDTO,
   ): void {
     // Create the dynamic variables to be outputted.
@@ -485,6 +491,12 @@ export class AssessmentController {
       output[outputName] = output[outputName]
         ? output[outputName] + award.total
         : award.total;
+    });
+    ftProgramYearContributionTotal.forEach((contributionTotal) => {
+      const outputName = `programYearTotal${contributionTotal.contribution}`;
+      output[outputName] = output[outputName]
+        ? output[outputName] + contributionTotal.total
+        : contributionTotal.total;
     });
   }
 

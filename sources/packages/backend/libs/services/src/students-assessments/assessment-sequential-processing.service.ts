@@ -25,7 +25,10 @@ import {
 } from "..";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getISODateOnlyString } from "@sims/utilities";
-import { StudentAssessmentDetail } from "./student-assessment.model";
+import {
+  FullTimeStudentContributionType,
+  StudentAssessmentDetail,
+} from "./student-assessment.model";
 
 @Injectable()
 export class AssessmentSequentialProcessingService {
@@ -303,17 +306,20 @@ export class AssessmentSequentialProcessingService {
 
     // Map the results to the required interface
     const result: FTProgramYearContributionTotal[] = [
-      { contribution: "totalFederalFSC", total: totals.totalFederalFSC ?? 0 },
       {
-        contribution: "totalProvincialFSC",
+        contribution: FullTimeStudentContributionType.FederalFSC,
+        total: totals.totalFederalFSC ?? 0,
+      },
+      {
+        contribution: FullTimeStudentContributionType.ProvincialFSC,
         total: totals.totalProvincialFSC ?? 0,
       },
       {
-        contribution: "studentScholarshipsBursaries",
+        contribution: FullTimeStudentContributionType.ScholarshipBursaries,
         total: totals.studentScholarshipsBursaries ?? 0,
       },
       {
-        contribution: "studentSpouseContribution",
+        contribution: FullTimeStudentContributionType.SpouseContributionWeeks,
         total: totals.studentSpouseContribution ?? 0,
       },
     ];
