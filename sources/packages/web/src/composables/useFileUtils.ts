@@ -53,7 +53,7 @@ export function useFileUtils() {
     const fileName =
       response.headers["content-disposition"].split("filename=")[1];
     link.href = linkURL;
-    link.setAttribute("download", fileName);
+    link.setAttribute("download", decodeURIComponent(fileName));
     document.body.appendChild(link);
     link.click();
     // After download, remove the element
