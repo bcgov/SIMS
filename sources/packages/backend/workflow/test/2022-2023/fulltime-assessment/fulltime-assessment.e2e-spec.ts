@@ -43,14 +43,14 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
       booksAndSuppliesCost: 3000,
       totalProvincialAward: 1760,
       alimonyOrChildSupport: 0,
-      federalAssessmentNeed: 50535.653846153844,
+      federalAssessmentNeed: 49496.70769230769,
       exceptionalEducationCost:
         assessmentConsolidatedData.offeringExceptionalExpenses,
-      provincialAssessmentNeed: 50673.54423076923,
+      provincialAssessmentNeed: 49496.70769230769,
       parentAssessedContribution: null,
       partnerAssessedContribution: null,
-      studentTotalFederalContribution: 216.34615384615384,
-      studentTotalProvincialContribution: 78.45576923076923,
+      studentTotalFederalContribution: 1255.2923076923078,
+      studentTotalProvincialContribution: 1255.2923076923078,
     };
 
     // Act/Assert

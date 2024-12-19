@@ -14,9 +14,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
   // Expected and not expected credentials types.
   const EXPECTED_PROGRAM_CREDENTIAL_TYPES = [
     CredentialType.UnderGraduateCitation,
+    CredentialType.UnderGraduateDiploma,
     CredentialType.UnderGraduateDegree,
-    CredentialType.GraduateCertificate,
-    CredentialType.GraduateDiploma,
+    CredentialType.UnderGraduateCertificate,
     CredentialType.QualifyingStudies,
   ];
   const NOT_EXPECTED_PROGRAM_CREDENTIAL_TYPES = Object.values(

@@ -33,14 +33,14 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
       booksAndSuppliesCost: 3000,
       totalProvincialAward: 3520,
       alimonyOrChildSupport: 0,
-      federalAssessmentNeed: 30871.653846153848,
+      federalAssessmentNeed: 30174.915384615386,
       exceptionalEducationCost:
         assessmentConsolidatedData.offeringExceptionalExpenses,
-      provincialAssessmentNeed: 31030.93221153846,
+      provincialAssessmentNeed: 30174.915384615386,
       parentAssessedContribution: null,
       partnerAssessedContribution: null,
-      studentTotalFederalContribution: 216.34615384615384,
-      studentTotalProvincialContribution: 57.06778846153846,
+      studentTotalFederalContribution: 913.0846153846154,
+      studentTotalProvincialContribution: 913.0846153846154,
     };
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
