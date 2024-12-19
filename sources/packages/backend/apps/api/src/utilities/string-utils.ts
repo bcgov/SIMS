@@ -17,12 +17,11 @@ export const removeDoubleWhiteSpaces = (stringValue: string): string => {
 };
 
 /**
- * Encodes a filename for Content-Disposition header, providing both UTF-8 and fallback versions
+ * Encodes a filename for Content-Disposition header
  * @param fileName Original filename to encode
  * @returns Object containing encoded filename and fallback filename
  */
 export function encodeFileNameForContentDisposition(fileName: string): string {
   const encodedFileName = encodeURIComponent(fileName);
-  const fallbackFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, "_");
-  return `attachment; filename="${fallbackFileName}"; filename*=UTF-8''${encodedFileName}`;
+  return `attachment; filename=${encodedFileName}`;
 }
