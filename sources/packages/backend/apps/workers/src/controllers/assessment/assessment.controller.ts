@@ -492,7 +492,7 @@ export class AssessmentController {
         ? output[outputName] + award.total
         : award.total;
     });
-    ftProgramYearContributionTotal.forEach((contributionTotal) => {
+    ftProgramYearContributionTotal?.forEach((contributionTotal) => {
       const outputName = `programYearTotal${contributionTotal.contribution}`;
       output[outputName] = output[outputName]
         ? output[outputName] + contributionTotal.total
