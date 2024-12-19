@@ -16,7 +16,10 @@ import {
   ApplicationPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import { getUserFullName } from "../../utilities";
+import {
+  encodeFileNameForContentDisposition,
+  getUserFullName,
+} from "../../utilities";
 import {
   CustomNamedError,
   getISODateOnlyString,
@@ -154,11 +157,11 @@ export class StudentControllerService {
       );
     }
 
-    const encodedFileName = encodeURIComponent(studentFile.fileName);
-
     response.setHeader(
       "Content-Disposition",
-      `attachment; filename*=UTF-8''${encodedFileName}`,
+      `attachment; ${encodeFileNameForContentDisposition(
+        studentFile.fileName,
+      )}`,
     );
 
     try {
