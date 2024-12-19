@@ -167,7 +167,7 @@ describe("StudentStudentsController(e2e)-getUploadedFile", () => {
       .expect(HttpStatus.OK)
       .then((response) => {
         expect(response.headers["content-disposition"]).toBe(
-          `attachment; filename=${studentFile.fileName}`,
+          `attachment; filename=${encodeURIComponent(studentFile.fileName)}`,
         );
         expect(response.text).toStrictEqual(S3_DEFAULT_MOCKED_FILE_CONTENT);
       });
