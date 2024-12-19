@@ -156,7 +156,7 @@ export class StudentControllerService {
 
     response.setHeader(
       "Content-Disposition",
-      `attachment; filename=${studentFile.fileName}`,
+      `attachment; filename=${encodeURIComponent(studentFile.fileName)}`,
     );
 
     try {
