@@ -172,7 +172,7 @@ export class StudentControllerService {
       this.logger.log(
         `Downloaded the file ${studentFile.fileName} from S3 storage.`,
       );
-      // Set headers before piping the response
+      // Populate file information received from S3 storage.
       response.setHeader("Content-Type", fileContent.contentType);
       response.setHeader("Content-Length", fileContent.contentLength);
       fileContent.body.pipe(response);

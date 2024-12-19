@@ -19,7 +19,7 @@ export const removeDoubleWhiteSpaces = (stringValue: string): string => {
 /**
  * Encodes a filename for Content-Disposition header
  * @param fileName Original filename to encode
- * @returns Object containing encoded filename and fallback filename
+ * @returns Object containing encoded filename
  */
 export function encodeFileNameForContentDisposition(fileName: string): string {
   const encodedFileName = encodeURIComponent(fileName);
