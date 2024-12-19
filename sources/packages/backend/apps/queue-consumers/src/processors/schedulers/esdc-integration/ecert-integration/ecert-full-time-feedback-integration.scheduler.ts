@@ -1,4 +1,4 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { FullTimeECertFileHandler } from "@sims/integrations/esdc-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
@@ -9,10 +9,6 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import {
-  getSuccessMessageWithAttentionCheck,
-  logProcessSummaryToJobLogger,
-} from "../../../../utilities";
 
 @Processor(QueueNames.FullTimeFeedbackIntegration)
 export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<void> {
@@ -26,50 +22,25 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
   }
 
   /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
-   */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
    * Download all files from FullTime E-Cert Response folder on SFTP and process them all.
-   * @params job job details.
+   * @param _job process job.
+   * @param processSummary process summary for logging.
    * @returns processing results.
    */
-  @Process()
-  async processFullTimeResponses(job: Job<void>): Promise<string[]> {
-    const processSummary = new ProcessSummary();
-    processSummary.info(
-      "Processing e-Cert full-time feedback integration job.",
-    );
-    try {
-      await this.fullTimeECertFileHandler.processECertResponses(processSummary);
-      processSummary.info("Completed E-Cert Full-time integration job.");
-      return getSuccessMessageWithAttentionCheck(
-        ["Process finalized with success."],
-        processSummary,
-      );
-    } catch (error: unknown) {
-      const errorMessage =
-        "Unexpected error while executing the e-Cert full-time feedback integration job.";
-      processSummary.error(errorMessage, error);
-      return [errorMessage];
-    } finally {
-      this.logger.logProcessSummary(processSummary);
-      await logProcessSummaryToJobLogger(processSummary, job);
-    }
+  protected async process(
+    _job: Job<void>,
+    processSummary: ProcessSummary,
+  ): Promise<string> {
+    await this.fullTimeECertFileHandler.processECertResponses(processSummary);
+    return "Process finalized with success.";
   }
 
+  /**
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
   @InjectLogger()
   logger: LoggerService;
 }
