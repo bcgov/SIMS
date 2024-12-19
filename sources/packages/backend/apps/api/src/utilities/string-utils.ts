@@ -15,13 +15,3 @@ export const removeWhiteSpaces = (stringValue: string): string => {
 export const removeDoubleWhiteSpaces = (stringValue: string): string => {
   return stringValue.replace(/\s+/g, " ");
 };
-
-/**
- * Encodes a filename for Content-Disposition header
- * @param fileName Original filename to encode
- * @returns Object containing encoded filename
- */
-export function encodeFileNameForContentDisposition(fileName: string): string {
-  const encodedFileName = encodeURIComponent(fileName);
-  return `attachment; filename=${encodedFileName}`;
-}
