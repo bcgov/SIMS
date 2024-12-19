@@ -17,8 +17,8 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import {
-  encodeFileNameForContentDisposition,
   getUserFullName,
+  encodeFileNameForContentDisposition,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -159,9 +159,7 @@ export class StudentControllerService {
 
     response.setHeader(
       "Content-Disposition",
-      `attachment; ${encodeFileNameForContentDisposition(
-        studentFile.fileName,
-      )}`,
+      encodeFileNameForContentDisposition(studentFile.fileName),
     );
 
     try {
@@ -174,7 +172,7 @@ export class StudentControllerService {
       this.logger.log(
         `Downloaded the file ${studentFile.fileName} from S3 storage.`,
       );
-      // Populate file information received from S3 storage.
+      // Set headers before piping the response
       response.setHeader("Content-Type", fileContent.contentType);
       response.setHeader("Content-Length", fileContent.contentLength);
       fileContent.body.pipe(response);
