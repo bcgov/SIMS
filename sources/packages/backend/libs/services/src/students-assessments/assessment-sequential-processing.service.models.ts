@@ -126,8 +126,8 @@ export interface AwardTotal {
 }
 
 /**
- * Program year totals with award code (e.g. CSPT, CSGD, CSGP, SBSD, BCAG) and its totals
- * and for full time program year contribution (e.g. ScholarshipBursaries, SpouseContributionWeeks, FederalFSC, ProvincialFSC) and its totals.
+ * Program year totals with award code (e.g. CSPT, CSGD, CSGP, SBSD, BCAG) and its totals promise
+ * and for full time program year contribution (e.g. ScholarshipBursaries, SpouseContributionWeeks, FederalFSC, ProvincialFSC) and its totals promise.
  */
 export interface ProgramYearTotal {
   awardTotal: Promise<AwardTotal[]>;
@@ -142,6 +142,9 @@ export interface FTProgramYearContributionTotal {
   total: number;
 }
 
+/**
+ * Sequenced applications and current assessment.
+ */
 export interface SequencedApplicationsWithAssessment {
   sequencedApplications: SequencedApplications;
   currentAssessment: StudentAssessment;

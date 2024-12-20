@@ -430,7 +430,8 @@ export class AssessmentController {
             OfferingIntensity: offeringIntensity,
           },
         );
-        // Updates the calculation start date and get the program year totals in parallel.
+        // Updates the calculation start date and get the program year totals and for
+        // full time the contribution program year totals in parallel.
         const [, programYearTotalAwards, ftProgramYearContributionTotal] =
           await Promise.all([
             saveAssessmentCalculationStartDate,
@@ -502,6 +503,15 @@ export class AssessmentController {
     });
   }
 
+  /**
+   * Get the promises of the program year awards totals for part time and
+   * full time and contribution totals for full time for the assessment.
+   * @param assessmentId assessment id.
+   * @param options method options.
+   * - `OfferingIntensity` the offering intensity to be used.
+   * - `alternativeReferenceDate` the reference date to be used.
+   * @returns the promise to get the program year totals.
+   */
   private async getProgramYearTotals(
     assessmentId: number,
     options?: {
@@ -509,10 +519,14 @@ export class AssessmentController {
       alternativeReferenceDate?: Date;
     },
   ): Promise<ProgramYearTotal> {
+    // Get the current assessment from the assessment id.
     const currentAssessment =
       await this.assessmentSequentialProcessingService.getCurrentAssessment(
         assessmentId,
       );
+    // The chronology of the applications is defined by the method {@link getSequencedApplications}.
+    // Only the current assessment awards are considered since it must reflect the most updated
+    // workflow calculated values.
     const sequencedApplications =
       await this.assessmentSequentialProcessingService.getSequencedApplications(
         currentAssessment.application.applicationNumber,
@@ -520,16 +534,19 @@ export class AssessmentController {
         currentAssessment.application.programYear.id,
         { alternativeReferenceDate: options?.alternativeReferenceDate },
       );
+    // Get the application numbers of the previous applications.
     const applicationNumbers = sequencedApplications.previous.map(
       (application) => application.applicationNumber,
     );
     return {
+      // Get the program year awards totals for part time and full time.
       awardTotal:
         this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotals(
           sequencedApplications,
           currentAssessment,
           options,
         ),
+      // Only get the full time contribution totals if the offering intensity is full time.
       ftProgramYearContributionTotal:
         OfferingIntensity.fullTime === options.OfferingIntensity
           ? this.assessmentSequentialProcessingService.getFTProgramYearContributionTotals(

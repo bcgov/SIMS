@@ -134,21 +134,16 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
-   * Finds all applications before the one related to the {@link assessmentId} provided
-   * and returns the sum of all awards associated with non-overwritten applications.
+   * Returns the sum of all awards associated with non-overwritten applications.
    * Only pending awards or already sent awards will be considered.
    * Only federal and provincial grants are considered.
    * Grants that are common between part-time and full-time (e.g. CSGP, SBSD) applications will have
    * their totals calculated per intensity, which means that if the student has a part-time
    * and a full-time application in the same year and both have a CSGP grant, its totals will
    * be individually calculated and returned.
-   * The chronology of the applications is defined by the method {@link getSequencedApplications}.
-   * Only the current assessment awards are considered since it must reflect the most updated
-   * workflow calculated values.
-   * @param assessmentId assessment id to be used as a reference to find the past applications.
-   * @param options method options.
+   * @param sequencedApplications sequenced applications for the current application.
+   * @param assessment assessment currently changing.
    * - `alternativeReferenceDate` date that should be used to determine the order when the
-   * {@link assessmentId} used as reference does not have a calculated date yet.
    * @returns list of existing awards and their totals, if any, otherwise it returns an empty array,
    * for instance, if the application is the first application or the only application for the
    * program year.
@@ -264,6 +259,11 @@ export class AssessmentSequentialProcessingService {
     ];
   }
 
+  /**
+   * Gets the full time program year contribution totals for the provided application numbers.
+   * @param applicationNumbers application numbers.
+   * @returns full time program year contribution totals.
+   */
   async getFTProgramYearContributionTotals(
     applicationNumbers: string[],
   ): Promise<FTProgramYearContributionTotal[]> {
@@ -312,6 +312,11 @@ export class AssessmentSequentialProcessingService {
     }));
   }
 
+  /**
+   * Gets the current assessment for the provided assessment id.
+   * @param assessmentId assessment id.
+   * @returns current assessment.
+   */
   async getCurrentAssessment(assessmentId: number): Promise<StudentAssessment> {
     const currentAssessment = await this.studentAssessmentRepo.findOne({
       select: {
