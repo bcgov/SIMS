@@ -35,10 +35,15 @@ import {
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   FormIOForm,
+  FullTimeAssessment,
+  PartTimeAssessment,
 } from "@/types";
 
 interface NoticeOfAssessment extends AssessmentNOAAPIOutDTO {
   canReissueMSFAA: boolean;
+  assessedCosts: any;
+  assessedContributions: any;
+  awardBreakdown: any;
 }
 
 enum MSFAAStatus {
@@ -149,6 +154,27 @@ export default defineComponent({
         : MSFAA_SUCCESS_CLASS;
     };
 
+    const getAwardValue = (disbursement: undefined | number): string => {
+      if (!disbursement) return "(Not eligible)";
+      return `$${disbursement.toLocaleString("en-CA", {
+        minimumFractionDigits: 2,
+      })}`;
+    };
+
+    const getDisbursementTotal = (
+      disbursement1: undefined | number,
+      disbursement2: undefined | number,
+    ): string => {
+      const parsedDisbursement1 = disbursement1 || 0;
+      const parsedDisbursement2 = disbursement2 || 0;
+      return `$${(parsedDisbursement1 + parsedDisbursement2).toLocaleString(
+        "en-CA",
+        {
+          minimumFractionDigits: 2,
+        },
+      )}`;
+    };
+
     const loadNOA = async () => {
       const assessment =
         await StudentAssessmentsService.shared.getAssessmentNOA(
@@ -193,10 +219,235 @@ export default defineComponent({
           (noaDisbursementSchedule.disbursement2Status ===
             DisbursementScheduleStatus.Pending &&
             !!noaDisbursementSchedule.disbursement2MSFAACancelledDate));
+
+      const fullTimeAssessment = assessment.assessment as FullTimeAssessment;
+      const partTimeAssessment = assessment.assessment as PartTimeAssessment;
+      const assessedCosts = {
+        tuitionCost: getAwardValue(fullTimeAssessment.tuitionCost),
+        booksAndSuppliesCost: getAwardValue(
+          fullTimeAssessment.booksAndSuppliesCost,
+        ),
+        exceptionalEducationCost: getAwardValue(
+          fullTimeAssessment.exceptionalEducationCost,
+        ),
+        livingAllowance: getAwardValue(fullTimeAssessment.livingAllowance),
+        transportationCost: getAwardValue(
+          fullTimeAssessment.transportationCost,
+        ),
+        childcareCost: getAwardValue(fullTimeAssessment.childcareCost),
+        otherAllowableCost: getAwardValue(
+          fullTimeAssessment.otherAllowableCost,
+        ),
+        totalAssessedCost: getAwardValue(fullTimeAssessment.totalAssessedCost),
+        mandatoryFees: getAwardValue(partTimeAssessment.mandatoryFees),
+        miscellaneousAllowance: getAwardValue(
+          partTimeAssessment.miscellaneousCost,
+        ),
+        totalAssessmentNeed: getAwardValue(
+          partTimeAssessment.totalAssessmentNeed,
+        ),
+      };
+      const assessedContributions = {
+        studentTotalFederalContribution: getAwardValue(
+          fullTimeAssessment.studentTotalFederalContribution,
+        ),
+        studentTotalProvincialContribution: getAwardValue(
+          fullTimeAssessment.studentTotalProvincialContribution,
+        ),
+        partnerAssessedContribution: getAwardValue(
+          fullTimeAssessment.partnerAssessedContribution,
+        ),
+        parentAssessedContribution: getAwardValue(
+          fullTimeAssessment.parentAssessedContribution,
+        ),
+        totalFederalContribution: getAwardValue(
+          fullTimeAssessment.totalFederalContribution,
+        ),
+        totalProvincialContribution: getAwardValue(
+          fullTimeAssessment.totalProvincialContribution,
+        ),
+        federalAssessmentNeed: getAwardValue(
+          fullTimeAssessment.federalAssessmentNeed,
+        ),
+        provincialAssessmentNeed: getAwardValue(
+          fullTimeAssessment.provincialAssessmentNeed,
+        ),
+      };
+      const awardBreakdown = {
+        fullTime: {
+          disbursement1cslf: getAwardValue(
+            assessment.disbursement?.disbursement1cslf,
+          ),
+          disbursement1bcsl: getAwardValue(
+            assessment.disbursement?.disbursement1bcsl,
+          ),
+          disbursement1csgp: getAwardValue(
+            assessment.disbursement?.disbursement1csgp,
+          ),
+          disbursement1csgd: getAwardValue(
+            assessment.disbursement?.disbursement1csgd,
+          ),
+          disbursement1csgf: getAwardValue(
+            assessment.disbursement?.disbursement1csgf,
+          ),
+          disbursement1csgt: getAwardValue(
+            assessment.disbursement?.disbursement1csgt,
+          ),
+          disbursement1bcag: getAwardValue(
+            assessment.disbursement?.disbursement1bcag,
+          ),
+          disbursement1sbsd: getAwardValue(
+            assessment.disbursement?.disbursement1sbsd,
+          ),
+          disbursement1bgpd: getAwardValue(
+            assessment.disbursement?.disbursement1bgpd,
+          ),
+          disbursement1bcsg: getAwardValue(
+            assessment.disbursement?.disbursement1bcsg,
+          ),
+          disbursement2cslf: getAwardValue(
+            assessment.disbursement?.disbursement2cslf,
+          ),
+          disbursement2bcsl: getAwardValue(
+            assessment.disbursement?.disbursement2bcsl,
+          ),
+          disbursement2csgp: getAwardValue(
+            assessment.disbursement?.disbursement2csgp,
+          ),
+          disbursement2csgd: getAwardValue(
+            assessment.disbursement?.disbursement2csgd,
+          ),
+          disbursement2csgf: getAwardValue(
+            assessment.disbursement?.disbursement2csgf,
+          ),
+          disbursement2csgt: getAwardValue(
+            assessment.disbursement?.disbursement2csgt,
+          ),
+          disbursement2bcag: getAwardValue(
+            assessment.disbursement?.disbursement2bcag,
+          ),
+          disbursement2sbsd: getAwardValue(
+            assessment.disbursement?.disbursement2sbsd,
+          ),
+          disbursement2bgpd: getAwardValue(
+            assessment.disbursement?.disbursement2bgpd,
+          ),
+          disbursement2bcsg: getAwardValue(
+            assessment.disbursement?.disbursement2bcsg,
+          ),
+          totalcslf: getDisbursementTotal(
+            assessment.disbursement?.disbursement1cslf,
+            assessment.disbursement?.disbursement2cslf,
+          ),
+          totalbcsl: getDisbursementTotal(
+            assessment.disbursement?.disbursement1bcsl,
+            assessment.disbursement?.disbursement2bcsl,
+          ),
+          totalcsgp: getDisbursementTotal(
+            assessment.disbursement?.disbursement1csgp,
+            assessment.disbursement?.disbursement2csgp,
+          ),
+          totalcsgd: getDisbursementTotal(
+            assessment.disbursement?.disbursement1csgd,
+            assessment.disbursement?.disbursement2csgd,
+          ),
+          totalcsgf: getDisbursementTotal(
+            assessment.disbursement?.disbursement1csgf,
+            assessment.disbursement?.disbursement2csgf,
+          ),
+          totalcsgt: getDisbursementTotal(
+            assessment.disbursement?.disbursement1csgt,
+            assessment.disbursement?.disbursement2csgt,
+          ),
+          totalbcag: getDisbursementTotal(
+            assessment.disbursement?.disbursement1bcag,
+            assessment.disbursement?.disbursement2bcag,
+          ),
+          totalsbsd: getDisbursementTotal(
+            assessment.disbursement?.disbursement1sbsd,
+            assessment.disbursement?.disbursement2sbsd,
+          ),
+          totalbgpd: getDisbursementTotal(
+            assessment.disbursement?.disbursement1bgpd,
+            assessment.disbursement?.disbursement2bgpd,
+          ),
+          totalbcsg: getDisbursementTotal(
+            assessment.disbursement?.disbursement1bcsg,
+            assessment.disbursement?.disbursement2bcsg,
+          ),
+        },
+        partTime: {
+          disbursement1cslp: getAwardValue(
+            assessment.disbursement?.disbursement1cslp,
+          ),
+          disbursement1csgp: getAwardValue(
+            assessment.disbursement?.disbursement1csgp,
+          ),
+          disbursement1cspt: getAwardValue(
+            assessment.disbursement?.disbursement1cspt,
+          ),
+          disbursement1csgd: getAwardValue(
+            assessment.disbursement?.disbursement1csgd,
+          ),
+          disbursement1bcag: getAwardValue(
+            assessment.disbursement?.disbursement1bcag,
+          ),
+          disbursement1sbsd: getAwardValue(
+            assessment.disbursement?.disbursement1sbsd,
+          ),
+          disbursement2cslp: getAwardValue(
+            assessment.disbursement?.disbursement2cslp,
+          ),
+          disbursement2csgp: getAwardValue(
+            assessment.disbursement?.disbursement2csgp,
+          ),
+          disbursement2cspt: getAwardValue(
+            assessment.disbursement?.disbursement2cspt,
+          ),
+          disbursement2csgd: getAwardValue(
+            assessment.disbursement?.disbursement2csgd,
+          ),
+          disbursement2bcag: getAwardValue(
+            assessment.disbursement?.disbursement2bcag,
+          ),
+          disbursement2sbsd: getAwardValue(
+            assessment.disbursement?.disbursement2sbsd,
+          ),
+          totalcslp: getDisbursementTotal(
+            assessment.disbursement?.disbursement1cslp,
+            assessment.disbursement?.disbursement2cslp,
+          ),
+          totalcsgp: getDisbursementTotal(
+            assessment.disbursement?.disbursement1csgp,
+            assessment.disbursement?.disbursement2csgp,
+          ),
+          totalcspt: getDisbursementTotal(
+            assessment.disbursement?.disbursement1cspt,
+            assessment.disbursement?.disbursement2cspt,
+          ),
+          totalcsgd: getDisbursementTotal(
+            assessment.disbursement?.disbursement1csgd,
+            assessment.disbursement?.disbursement2csgd,
+          ),
+          totalbcag: getDisbursementTotal(
+            assessment.disbursement?.disbursement1bcag,
+            assessment.disbursement?.disbursement2bcag,
+          ),
+          totalsbsd: getDisbursementTotal(
+            assessment.disbursement?.disbursement1sbsd,
+            assessment.disbursement?.disbursement2sbsd,
+          ),
+        },
+      };
+
       initialData.value = {
         ...assessment,
         canReissueMSFAA,
+        assessedCosts,
+        assessedContributions,
+        awardBreakdown,
       };
+
       emit(
         "assessmentDataLoaded",
         initialData.value.applicationStatus,

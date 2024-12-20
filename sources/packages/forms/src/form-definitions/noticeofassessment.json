@@ -717,7 +717,7 @@
                 }
               ],
               "content": "You are eligible to receive: ${{ (data.eligibleAmount)?.toLocaleString('en-CA', { minimumFractionDigits: 2 }) }}",
-              "refreshOnChange": false,
+              "refreshOnChange": true,
               "customClass": "",
               "hidden": false,
               "modalEdit": false,
@@ -784,7 +784,8 @@
               "allowMultipleMasks": false,
               "addons": [],
               "id": "eq8ngf",
-              "hideLabel": true
+              "hideLabel": true,
+              "isNew": false
             },
             {
               "label": "Columns",
@@ -2555,7 +2556,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.tuitionCost}}",
                             "refreshOnChange": true,
                             "key": "html24",
                             "type": "htmlelement",
@@ -2601,7 +2602,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -2620,7 +2621,9 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": [],
+                            "isNew": false
                           }
                         ]
                       },
@@ -2634,7 +2637,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.tuitionCost}}",
                             "refreshOnChange": true,
                             "key": "html23",
                             "type": "htmlelement",
@@ -2680,7 +2683,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -2699,7 +2702,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -2795,7 +2799,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.booksAndSuppliesCost}}",
                             "refreshOnChange": true,
                             "key": "html18",
                             "type": "htmlelement",
@@ -2841,7 +2845,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -2860,7 +2864,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       },
@@ -2874,7 +2879,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.booksAndSuppliesCost}}",
                             "refreshOnChange": true,
                             "key": "html22",
                             "type": "htmlelement",
@@ -2920,7 +2925,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -2939,7 +2944,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -3034,7 +3040,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.exceptionalEducationCost}}",
                             "refreshOnChange": true,
                             "key": "html19",
                             "type": "htmlelement",
@@ -3080,7 +3086,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -3099,7 +3105,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       },
@@ -3113,7 +3120,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.exceptionalEducationCost}}",
                             "refreshOnChange": true,
                             "key": "html27",
                             "type": "htmlelement",
@@ -3159,7 +3166,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -3178,7 +3185,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -3274,7 +3282,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.livingAllowance}}",
                             "refreshOnChange": true,
                             "key": "html20",
                             "type": "htmlelement",
@@ -3320,7 +3328,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -3339,7 +3347,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       },
@@ -3353,7 +3362,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.livingAllowance}}",
                             "refreshOnChange": true,
                             "key": "html29",
                             "type": "htmlelement",
@@ -3399,7 +3408,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -3418,7 +3427,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -3513,7 +3523,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.transportationCost}}",
                             "refreshOnChange": true,
                             "key": "html25",
                             "type": "htmlelement",
@@ -3559,7 +3569,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -3578,7 +3588,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       },
@@ -3592,7 +3603,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.transportationCost}}",
                             "refreshOnChange": true,
                             "key": "html21",
                             "type": "htmlelement",
@@ -3638,7 +3649,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -3657,7 +3668,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -3752,7 +3764,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.childcareCost}}",
                             "refreshOnChange": true,
                             "key": "html26",
                             "type": "htmlelement",
@@ -3798,7 +3810,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -3817,7 +3829,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       },
@@ -3831,7 +3844,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.childcareCost}}",
                             "refreshOnChange": true,
                             "key": "html30",
                             "type": "htmlelement",
@@ -3877,7 +3890,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -3896,7 +3909,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -3991,7 +4005,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.otherAllowableCost}}",
                             "refreshOnChange": true,
                             "key": "html28",
                             "type": "htmlelement",
@@ -4037,7 +4051,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -4056,7 +4070,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       },
@@ -4070,7 +4085,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.otherAllowableCost}}",
                             "refreshOnChange": true,
                             "key": "html31",
                             "type": "htmlelement",
@@ -4116,7 +4131,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -4135,7 +4150,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -4231,7 +4247,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "<strong>\n{{typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment.totalAssessedCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}\n</strong>",
+                            "content": "<strong>\n{{data.assessedCosts.totalAssessedCost}}\n</strong>",
                             "refreshOnChange": true,
                             "key": "html32",
                             "type": "htmlelement",
@@ -4277,7 +4293,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -4296,7 +4312,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       },
@@ -4310,7 +4327,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "<strong>\n{{typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment.totalAssessedCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}\n</strong>",
+                            "content": "<strong>\n{{data.assessedCosts.totalAssessedCost}}\n</strong>",
                             "refreshOnChange": true,
                             "key": "html33",
                             "type": "htmlelement",
@@ -4356,7 +4373,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -4375,7 +4392,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -4902,7 +4920,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.studentTotalFederalContribution === 'number' ? '$' + (data.assessment.studentTotalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedContributions.studentTotalFederalContribution}}",
                             "refreshOnChange": true,
                             "key": "html184",
                             "type": "htmlelement",
@@ -4949,7 +4967,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -4968,7 +4986,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       },
@@ -4982,7 +5001,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.studentTotalProvincialContribution === 'number' ? '$' + (data.assessment.studentTotalProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedContributions.studentTotalProvincialContribution}}",
                             "refreshOnChange": true,
                             "key": "html185",
                             "type": "htmlelement",
@@ -5029,7 +5048,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -5048,7 +5067,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -5144,7 +5164,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedContributions.partnerAssessedContribution}}",
                             "refreshOnChange": true,
                             "key": "html186",
                             "type": "htmlelement",
@@ -5190,7 +5210,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -5209,7 +5229,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       },
@@ -5223,7 +5244,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedContributions.partnerAssessedContribution}}",
                             "refreshOnChange": true,
                             "key": "html187",
                             "type": "htmlelement",
@@ -5270,7 +5291,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -5289,7 +5310,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -5385,7 +5407,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedContributions.parentAssessedContribution}}",
                             "refreshOnChange": true,
                             "key": "html188",
                             "type": "htmlelement",
@@ -5431,7 +5453,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -5450,7 +5472,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       },
@@ -5464,7 +5487,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedContributions.parentAssessedContribution}}",
                             "refreshOnChange": true,
                             "key": "html189",
                             "type": "htmlelement",
@@ -5510,7 +5533,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -5529,7 +5552,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -5636,7 +5660,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "<strong>\n{{typeof data.assessment?.totalFederalContribution === 'number' ? '$' + (data.assessment.totalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}\n</strong>",
+                            "content": "<strong>\n{{data.assessedContributions.totalFederalContribution}}\n</strong>",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -5645,7 +5669,7 @@
                             "tags": [],
                             "properties": {},
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": "",
                               "json": ""
@@ -5722,7 +5746,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "<strong>{{typeof data.assessment?.totalProvincialContribution === 'number' ? '$' + (data.assessment.totalProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}\n</strong>",
+                            "content": "<strong>\n{{data.assessedContributions.totalProvincialContribution}}\n</strong>",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -5731,7 +5755,7 @@
                             "tags": [],
                             "properties": {},
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": "",
                               "json": ""
@@ -6066,7 +6090,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "<strong>{{typeof data.assessment?.federalAssessmentNeed === 'number' ? '$' + (data.assessment.federalAssessmentNeed).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}\n</strong>",
+                            "content": "<strong>\n{{data.assessedContributions.federalAssessmentNeed}}\n</strong>",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -6075,7 +6099,7 @@
                             "tags": [],
                             "properties": {},
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": "",
                               "json": ""
@@ -6152,7 +6176,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "<strong>{{typeof data.assessment?.provincialAssessmentNeed === 'number' ? '$' + (data.assessment.provincialAssessmentNeed).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}\n</strong>",
+                            "content": "<strong>\n{{data.assessedContributions.provincialAssessmentNeed}}\n</strong>",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -6161,7 +6185,7 @@
                             "tags": [],
                             "properties": {},
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": "",
                               "json": ""
@@ -6310,7 +6334,8 @@
               "addons": [],
               "tree": false,
               "lazyLoad": false,
-              "id": "e2dxbsv"
+              "id": "e2dxbsv",
+              "isNew": false
             },
             {
               "title": "Part time Panel",
@@ -6655,7 +6680,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment.tuitionCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.tuitionCost}}",
                             "refreshOnChange": true,
                             "key": "tutionCost",
                             "type": "htmlelement",
@@ -6701,7 +6726,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -6818,7 +6843,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.booksAndSuppliesCost}}",
                             "refreshOnChange": true,
                             "key": "booksCost",
                             "type": "htmlelement",
@@ -6864,7 +6889,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -6931,7 +6956,7 @@
                               }
                             ],
                             "className": "",
-                            "content": "{{typeof data.assessment?.mandatoryFees === 'number' ? '$' + (data.assessment.mandatoryFees).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.mandatoryFees}}",
                             "type": "htmlelement",
                             "refreshOnChange": true,
                             "hideLabel": true,
@@ -6941,8 +6966,7 @@
                               "when": null,
                               "eq": ""
                             },
-                            "properties": {},
-                            "isNew": false
+                            "properties": {}
                           }
                         ]
                       }
@@ -7037,7 +7061,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.transportationCost}}",
                             "refreshOnChange": true,
                             "key": "transpotationCosts",
                             "type": "htmlelement",
@@ -7083,7 +7107,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -7102,7 +7126,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -7198,7 +7223,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.miscellaneousAllowance === 'number' ? '$' + (data.assessment.miscellaneousAllowance).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.miscellaneousAllowance}}",
                             "refreshOnChange": true,
                             "key": "miscellaneousCost",
                             "type": "htmlelement",
@@ -7366,7 +7391,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.assessedCosts.childcareCost}}",
                             "refreshOnChange": true,
                             "key": "html115",
                             "type": "htmlelement",
@@ -7411,7 +7436,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -7431,7 +7456,8 @@
                             "addons": [],
                             "tag": "p",
                             "className": "",
-                            "hideLabel": true
+                            "hideLabel": true,
+                            "tags": []
                           }
                         ]
                       }
@@ -7534,7 +7560,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "<strong>${{(typeof data.assessment?.totalAssessmentNeed === 'number' ? data.assessment?.totalAssessmentNeed : 0).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}</strong>",
+                            "content": "{{data.assessedCosts.totalAssessmentNeed}}",
                             "refreshOnChange": true,
                             "key": "html120",
                             "type": "htmlelement",
@@ -7579,7 +7605,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -7599,7 +7625,8 @@
                             "addons": [],
                             "tag": "p",
                             "className": "",
-                            "hideLabel": true
+                            "hideLabel": true,
+                            "tags": []
                           }
                         ]
                       }
@@ -7702,7 +7729,7 @@
           "persistent": false,
           "clearOnHide": false,
           "refreshOn": "",
-          "redrawOn": "",
+          "redrawOn": "data",
           "dataGridLabel": false,
           "labelPosition": "top",
           "description": "",
@@ -7730,7 +7757,8 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "ekm2v"
+          "id": "ekm2v",
+          "isNew": false
         },
         {
           "title": "Award Breakdown",
@@ -8356,7 +8384,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1cslf ? '$'+ (data.disbursement.disbursement1cslf).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement1cslf}}",
                             "refreshOnChange": true,
                             "key": "html2",
                             "type": "htmlelement",
@@ -8422,7 +8450,8 @@
                             "addons": [],
                             "tag": "p",
                             "className": "",
-                            "tags": []
+                            "tags": [],
+                            "isNew": false
                           }
                         ]
                       },
@@ -8436,7 +8465,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2cslf ? '$'+ (data.disbursement.disbursement2cslf).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement2cslf}}",
                             "refreshOnChange": true,
                             "key": "html58",
                             "type": "htmlelement",
@@ -8516,7 +8545,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1cslf ? parseFloat(data.disbursement.disbursement1cslf) : 0) + (data.disbursement?.disbursement2cslf ? parseFloat(data.disbursement.disbursement2cslf) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.fullTime.totalcslf}}",
                             "refreshOnChange": true,
                             "key": "html63",
                             "type": "htmlelement",
@@ -8562,7 +8591,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -8581,7 +8610,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -8684,7 +8714,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1bcsl ? '$'+ (data.disbursement.disbursement1bcsl).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement1bcsl}}",
                             "refreshOnChange": true,
                             "key": "html5",
                             "type": "htmlelement",
@@ -8765,7 +8795,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2bcsl ? '$'+ (data.disbursement.disbursement2bcsl).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement2bcsl}}",
                             "refreshOnChange": true,
                             "key": "html72",
                             "type": "htmlelement",
@@ -8845,7 +8875,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1bcsl ? parseFloat(data.disbursement.disbursement1bcsl) : 0) + (data.disbursement?.disbursement2bcsl ? parseFloat(data.disbursement.disbursement2bcsl) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.fullTime.totalbcsl}}",
                             "refreshOnChange": true,
                             "key": "html64",
                             "type": "htmlelement",
@@ -8891,7 +8921,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -8910,7 +8940,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -9012,7 +9043,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1csgp ? '$'+ (data.disbursement.disbursement1csgp).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement1csgp}}",
                             "refreshOnChange": true,
                             "key": "html3",
                             "type": "htmlelement",
@@ -9092,7 +9123,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2csgp ? '$'+ (data.disbursement.disbursement2csgp).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement2csgp}}",
                             "refreshOnChange": true,
                             "key": "html73",
                             "type": "htmlelement",
@@ -9172,7 +9203,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement.disbursement1csgp) : 0) + (data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement.disbursement2csgp) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.fullTime.totalcsgp}}",
                             "refreshOnChange": true,
                             "key": "html65",
                             "type": "htmlelement",
@@ -9218,7 +9249,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -9237,7 +9268,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -9339,7 +9371,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1csgd ? '$'+ (data.disbursement.disbursement1csgd).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement1csgd}}",
                             "refreshOnChange": true,
                             "key": "html4",
                             "type": "htmlelement",
@@ -9419,7 +9451,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2csgd ? '$'+ (data.disbursement.disbursement2csgd).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement2csgd}}",
                             "refreshOnChange": true,
                             "key": "html74",
                             "type": "htmlelement",
@@ -9499,7 +9531,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement.disbursement1csgd) : 0) + (data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement.disbursement2csgd) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.fullTime.totalcsgd}}",
                             "refreshOnChange": true,
                             "key": "html66",
                             "type": "htmlelement",
@@ -9545,7 +9577,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -9564,7 +9596,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -9670,7 +9703,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1csgf ? '$'+ (data.disbursement.disbursement1csgf).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement1csgf}}",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -9756,7 +9789,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2csgf ? '$'+ (data.disbursement.disbursement2csgf).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement2csgf}}",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -9838,7 +9871,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1csgf ? parseFloat(data.disbursement.disbursement1csgf) : 0) + (data.disbursement?.disbursement2csgf ? parseFloat(data.disbursement.disbursement2csgf) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.fullTime.totalcsgf}}",
                             "refreshOnChange": true,
                             "key": "html67",
                             "type": "htmlelement",
@@ -9884,7 +9917,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -9903,7 +9936,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -10010,7 +10044,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1csgt ? '$'+ (data.disbursement.disbursement1csgt).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement1csgt}}",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -10092,7 +10126,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2csgt ? '$'+ (data.disbursement.disbursement2csgt).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement2csgt}}",
                             "refreshOnChange": true,
                             "key": "html76",
                             "type": "htmlelement",
@@ -10172,7 +10206,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1csgt ? parseFloat(data.disbursement.disbursement1csgt) : 0) + (data.disbursement?.disbursement2csgt ? parseFloat(data.disbursement.disbursement2csgt) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.fullTime.totalcsgt}}",
                             "refreshOnChange": true,
                             "key": "html68",
                             "type": "htmlelement",
@@ -10218,7 +10252,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -10237,7 +10271,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -10340,7 +10375,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1bcag ? '$'+ (data.disbursement.disbursement1bcag).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement1bcag}}",
                             "refreshOnChange": true,
                             "key": "html9",
                             "type": "htmlelement",
@@ -10420,7 +10455,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2bcag ? '$'+ (data.disbursement.disbursement2bcag).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement2bcag}}",
                             "refreshOnChange": true,
                             "key": "html77",
                             "type": "htmlelement",
@@ -10500,7 +10535,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement.disbursement1bcag) : 0) + (data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement.disbursement2bcag) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.fullTime.totalbcag}}",
                             "refreshOnChange": true,
                             "key": "html69",
                             "type": "htmlelement",
@@ -10546,7 +10581,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -10565,7 +10600,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -10668,7 +10704,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1sbsd ? '$'+ (data.disbursement.disbursement1sbsd).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement1sbsd}}",
                             "refreshOnChange": true,
                             "key": "html11",
                             "type": "htmlelement",
@@ -10753,7 +10789,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2sbsd ? '$'+ (data.disbursement.disbursement2sbsd).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement2sbsd}}",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -10835,7 +10871,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement.disbursement1sbsd) : 0) + (data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement.disbursement2sbsd) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.fullTime.totalsbsd}}",
                             "refreshOnChange": true,
                             "key": "html70",
                             "type": "htmlelement",
@@ -10881,7 +10917,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -10900,7 +10936,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -11007,7 +11044,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1bgpd ? '$'+ (data.disbursement.disbursement1bgpd).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement1bgpd}}",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -11090,7 +11127,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2bgpd ? '$'+ (data.disbursement.disbursement2bgpd).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement2bgpd}}",
                             "refreshOnChange": true,
                             "key": "html79",
                             "type": "htmlelement",
@@ -11170,7 +11207,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1bgpd ? parseFloat(data.disbursement.disbursement1bgpd) : 0) + (data.disbursement?.disbursement2bgpd ? parseFloat(data.disbursement.disbursement2bgpd) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.fullTime.totalbgpd}}",
                             "refreshOnChange": true,
                             "key": "html71",
                             "type": "htmlelement",
@@ -11216,7 +11253,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -11235,7 +11272,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -11337,7 +11375,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1bcsg ? '$'+ (data.disbursement.disbursement1bcsg).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement1bcsg}}",
                             "refreshOnChange": true,
                             "key": "html80",
                             "type": "htmlelement",
@@ -11417,7 +11455,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2bcsg ? '$'+ (data.disbursement.disbursement2bcsg).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.fullTime.disbursement2bcsg}}",
                             "refreshOnChange": true,
                             "key": "html81",
                             "type": "htmlelement",
@@ -11497,7 +11535,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1bcsg ? parseFloat(data.disbursement.disbursement1bcsg) : 0) + (data.disbursement?.disbursement2bcsg ? parseFloat(data.disbursement.disbursement2bcsg) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.fullTime.totalbcsg}}",
                             "refreshOnChange": true,
                             "key": "html82",
                             "type": "htmlelement",
@@ -11543,7 +11581,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -11562,7 +11600,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -12176,7 +12215,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1csgp ? '$'+ (data.disbursement.disbursement1csgp).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.partTime.disbursement1csgp}}",
                             "refreshOnChange": true,
                             "key": "html41",
                             "type": "htmlelement",
@@ -12242,7 +12281,8 @@
                             "tag": "p",
                             "className": "",
                             "hideLabel": true,
-                            "tags": []
+                            "tags": [],
+                            "isNew": false
                           }
                         ]
                       },
@@ -12256,8 +12296,8 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2csgp ? '$'+ (data.disbursement.disbursement2csgp).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
-                            "refreshOnChange": true,
+                            "content": "{{data.awardBreakdown.partTime.disbursement2csgp}}",
+                            "refreshOnChange": false,
                             "key": "html91",
                             "type": "htmlelement",
                             "input": false,
@@ -12321,9 +12361,9 @@
                             "addons": [],
                             "tag": "p",
                             "className": "",
-                            "hideLabel": true,
                             "tags": [],
-                            "customConditional": "show = !!data.disbursement.disbursement2Date"
+                            "customConditional": "show = !!data.disbursement.disbursement2Date",
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -12337,8 +12377,8 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement.disbursement1csgp) : 0) + (data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement.disbursement2csgp) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
-                            "refreshOnChange": true,
+                            "content": "{{data.awardBreakdown.partTime.totalcsgp}}",
+                            "refreshOnChange": false,
                             "key": "html92",
                             "type": "htmlelement",
                             "input": false,
@@ -12382,7 +12422,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -12509,7 +12549,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1cspt ? '$'+ (data.disbursement.disbursement1cspt).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.partTime.disbursement1cspt}}",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -12595,7 +12635,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2cspt ? '$'+ (data.disbursement.disbursement2cspt).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.partTime.disbursement2cspt}}",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -12681,7 +12721,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1cspt ? parseFloat(data.disbursement.disbursement1cspt) : 0) + (data.disbursement?.disbursement2cspt ? parseFloat(data.disbursement.disbursement2cspt) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.partTime.totalcspt}}",
                             "refreshOnChange": true,
                             "customClass": "",
                             "hidden": false,
@@ -12690,7 +12730,7 @@
                             "tags": [],
                             "properties": {},
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": "",
                               "json": ""
@@ -12851,7 +12891,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1csgd ? '$'+ (data.disbursement.disbursement1csgd).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.partTime.disbursement1csgd}}",
                             "refreshOnChange": true,
                             "key": "html42",
                             "type": "htmlelement",
@@ -12931,7 +12971,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2csgd ? '$'+ (data.disbursement.disbursement2csgd).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.partTime.disbursement2csgd}}",
                             "refreshOnChange": true,
                             "key": "html93",
                             "type": "htmlelement",
@@ -13012,7 +13052,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement.disbursement1csgd) : 0) + (data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement.disbursement2csgd) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.partTime.totalcsgd}}",
                             "refreshOnChange": true,
                             "key": "html94",
                             "type": "htmlelement",
@@ -13057,7 +13097,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -13077,7 +13117,8 @@
                             "addons": [],
                             "tag": "p",
                             "className": "",
-                            "hideLabel": true
+                            "hideLabel": true,
+                            "tags": []
                           }
                         ]
                       }
@@ -13180,7 +13221,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1bcag ? '$'+ (data.disbursement.disbursement1bcag).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.partTime.disbursement1bcag}}",
                             "refreshOnChange": true,
                             "key": "html40",
                             "type": "htmlelement",
@@ -13261,7 +13302,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2bcag ? '$'+ (data.disbursement.disbursement2bcag).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.partTime.disbursement2bcag}}",
                             "refreshOnChange": true,
                             "key": "html89",
                             "type": "htmlelement",
@@ -13342,7 +13383,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement.disbursement1bcag) : 0) + (data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement.disbursement2bcag) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.partTime.totalbcag}}",
                             "refreshOnChange": true,
                             "key": "html90",
                             "type": "htmlelement",
@@ -13387,7 +13428,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -13407,7 +13448,8 @@
                             "addons": [],
                             "tag": "p",
                             "className": "",
-                            "hideLabel": true
+                            "hideLabel": true,
+                            "tags": []
                           }
                         ]
                       }
@@ -13509,7 +13551,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1cslp ? '$'+ (data.disbursement.disbursement1cslp).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.partTime.disbursement1cslp}}",
                             "refreshOnChange": true,
                             "key": "html17",
                             "type": "htmlelement",
@@ -13589,7 +13631,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2cslp ? '$'+ (data.disbursement.disbursement2cslp).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.partTime.disbursement2cslp}}",
                             "refreshOnChange": true,
                             "key": "html87",
                             "type": "htmlelement",
@@ -13670,7 +13712,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1cslp ? parseFloat(data.disbursement.disbursement1cslp) : 0) + (data.disbursement?.disbursement2cslp ? parseFloat(data.disbursement.disbursement2cslp) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.partTime.totalcslp}}",
                             "refreshOnChange": true,
                             "key": "html88",
                             "type": "htmlelement",
@@ -13715,7 +13757,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -13735,7 +13777,8 @@
                             "addons": [],
                             "tag": "p",
                             "className": "",
-                            "hideLabel": true
+                            "hideLabel": true,
+                            "tags": []
                           }
                         ]
                       }
@@ -13838,7 +13881,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement1sbsd ? '$'+ (data.disbursement.disbursement1sbsd).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.partTime.disbursement1sbsd}}",
                             "refreshOnChange": true,
                             "key": "html98",
                             "type": "htmlelement",
@@ -13918,7 +13961,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "{{data.disbursement?.disbursement2sbsd ? '$'+ (data.disbursement.disbursement2sbsd).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)'}}",
+                            "content": "{{data.awardBreakdown.partTime.disbursement2sbsd}}",
                             "refreshOnChange": true,
                             "key": "html99",
                             "type": "htmlelement",
@@ -13999,7 +14042,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "${{((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement.disbursement1sbsd) : 0) + (data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement.disbursement2sbsd) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 })}}",
+                            "content": "{{data.awardBreakdown.partTime.totalsbsd}}",
                             "refreshOnChange": true,
                             "key": "html100",
                             "type": "htmlelement",
@@ -14045,7 +14088,7 @@
                               "unique": false
                             },
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": ""
                             },
@@ -14064,7 +14107,8 @@
                             "allowMultipleMasks": false,
                             "addons": [],
                             "tag": "p",
-                            "className": ""
+                            "className": "",
+                            "tags": []
                           }
                         ]
                       }
@@ -14113,7 +14157,8 @@
                   "lazyLoad": false,
                   "header": [],
                   "caption": "",
-                  "id": "edfxn8m"
+                  "id": "edfxn8m",
+                  "isNew": false
                 }
               ],
               "placeholder": "",
@@ -14126,7 +14171,7 @@
               "persistent": false,
               "clearOnHide": false,
               "refreshOn": "",
-              "redrawOn": "",
+              "redrawOn": "data",
               "dataGridLabel": false,
               "labelPosition": "top",
               "description": "",
@@ -14168,8 +14213,8 @@
           "unique": false,
           "persistent": false,
           "clearOnHide": false,
-          "refreshOn": "",
-          "redrawOn": "",
+          "refreshOn": "data",
+          "redrawOn": "data.disbursement",
           "dataGridLabel": false,
           "labelPosition": "top",
           "description": "",
@@ -14197,7 +14242,8 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "evcbgu4"
+          "id": "evcbgu4",
+          "isNew": false
         },
         {
           "title": "When your funds will be received Panel",
