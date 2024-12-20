@@ -19,6 +19,7 @@ import {
 import {
   AwardTotal,
   FTProgramYearContributionTotal,
+  ProgramYearTotal,
   SequencedApplications,
   SequentialApplication,
 } from "..";
@@ -134,6 +135,58 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
+   * Get the program year awards totals for part-time and
+   * full-time and contribution totals for full-time for the assessment.
+   * @param assessmentId assessment id.
+   * @param options method options.
+   * - `offeringIntensity` the offering intensity to be used.
+   * - `alternativeReferenceDate` the reference date to be used.
+   * @returns the promise to get the program year totals.
+   */
+  async getProgramYearTotals(
+    assessmentId: number,
+    options?: {
+      offeringIntensity?: OfferingIntensity;
+      alternativeReferenceDate?: Date;
+    },
+  ): Promise<ProgramYearTotal> {
+    // Get the current assessment from the assessment id.
+    const currentAssessment = await this.getCurrentAssessment(assessmentId);
+    // The chronology of the applications is defined by the method {@link getSequencedApplications}.
+    // Only the current assessment awards are considered since it must reflect the most updated
+    // workflow calculated values.
+    const sequencedApplications = await this.getSequencedApplications(
+      currentAssessment.application.applicationNumber,
+      currentAssessment.application.student.id,
+      currentAssessment.application.programYear.id,
+      { alternativeReferenceDate: options?.alternativeReferenceDate },
+    );
+    // Get the application numbers of the previous applications.
+    const applicationNumbers = sequencedApplications.previous.map(
+      (application) => application.applicationNumber,
+    );
+
+    const [programYearTotalAwards, ftProgramYearContributionTotal] =
+      await Promise.all([
+        // Get the program year awards totals for part-time and full-time.
+        await this.getProgramYearPreviousAwardsTotals(
+          sequencedApplications,
+          currentAssessment,
+          options,
+        ),
+        // Only get the full-time contribution totals if the offering intensity is full-time.
+        OfferingIntensity.fullTime === options.offeringIntensity &&
+        applicationNumbers?.length > 0
+          ? await this.getFTProgramYearContributionTotals(applicationNumbers)
+          : null,
+      ]);
+    return {
+      awardTotal: programYearTotalAwards,
+      ftProgramYearContributionTotal: ftProgramYearContributionTotal,
+    };
+  }
+
+  /**
    * Returns the sum of all awards associated with non-overwritten applications.
    * Only pending awards or already sent awards will be considered.
    * Only federal and provincial grants are considered.
@@ -148,7 +201,7 @@ export class AssessmentSequentialProcessingService {
    * for instance, if the application is the first application or the only application for the
    * program year.
    */
-  async getProgramYearPreviousAwardsTotals(
+  private async getProgramYearPreviousAwardsTotals(
     sequencedApplications: SequencedApplications,
     assessment: StudentAssessment,
     options?: { alternativeReferenceDate?: Date },
@@ -264,7 +317,7 @@ export class AssessmentSequentialProcessingService {
    * @param applicationNumbers application numbers.
    * @returns full-time program year contribution totals.
    */
-  async getFTProgramYearContributionTotals(
+  private async getFTProgramYearContributionTotals(
     applicationNumbers: string[],
   ): Promise<FTProgramYearContributionTotal[]> {
     const totals = await this.applicationRepo
@@ -317,7 +370,9 @@ export class AssessmentSequentialProcessingService {
    * @param assessmentId assessment id.
    * @returns current assessment.
    */
-  async getCurrentAssessment(assessmentId: number): Promise<StudentAssessment> {
+  private async getCurrentAssessment(
+    assessmentId: number,
+  ): Promise<StudentAssessment> {
     const currentAssessment = await this.studentAssessmentRepo.findOne({
       select: {
         id: true,
@@ -372,7 +427,7 @@ export class AssessmentSequentialProcessingService {
    * {@link applicationNumber} used as reference does not have a calculated date yet.
    * @returns sequenced applications.
    */
-  async getSequencedApplications(
+  private async getSequencedApplications(
     applicationNumber: string,
     studentId: number,
     programYearId: number,

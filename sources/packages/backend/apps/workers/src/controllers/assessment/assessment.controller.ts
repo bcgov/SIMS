@@ -54,7 +54,6 @@ import {
   AssessmentSequentialProcessingService,
   AwardTotal,
   FTProgramYearContributionTotal,
-  ProgramYearTotal,
   SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
@@ -423,21 +422,20 @@ export class AssessmentController {
           this.studentAssessmentService.saveAssessmentCalculationStartDate(
             assessmentId,
           );
-        const programYearTotals = await this.getProgramYearTotals(
-          assessmentId,
-          {
-            alternativeReferenceDate: new Date(),
-            offeringIntensity: offeringIntensity,
-          },
-        );
+        const programYearTotals =
+          await this.assessmentSequentialProcessingService.getProgramYearTotals(
+            assessmentId,
+            {
+              alternativeReferenceDate: new Date(),
+              offeringIntensity: offeringIntensity,
+            },
+          );
         // Updates the calculation start date and get the program year totals and for
         // full-time the contribution program year totals in parallel.
-        const [, programYearTotalAwards, ftProgramYearContributionTotal] =
-          await Promise.all([
-            saveAssessmentCalculationStartDate,
-            programYearTotals.awardTotal,
-            programYearTotals.ftProgramYearContributionTotal,
-          ]);
+        const [programYearAwardsContributionTotal] = await Promise.all([
+          programYearTotals,
+          saveAssessmentCalculationStartDate,
+        ]);
         if (
           assessment.offering.offeringIntensity === OfferingIntensity.partTime
         ) {
@@ -451,8 +449,8 @@ export class AssessmentController {
           `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
         this.createOutputForProgramYearTotals(
-          programYearTotalAwards,
-          ftProgramYearContributionTotal,
+          programYearAwardsContributionTotal.awardTotal,
+          programYearAwardsContributionTotal.ftProgramYearContributionTotal,
           result,
         );
         result.isReadyForCalculation = true;
@@ -501,59 +499,6 @@ export class AssessmentController {
         ? output[outputName] + ftContributionTotal.total
         : ftContributionTotal.total;
     });
-  }
-
-  /**
-   * Get the promises of the program year awards totals for part-time and
-   * full-time and contribution totals for full-time for the assessment.
-   * @param assessmentId assessment id.
-   * @param options method options.
-   * - `offeringIntensity` the offering intensity to be used.
-   * - `alternativeReferenceDate` the reference date to be used.
-   * @returns the promise to get the program year totals.
-   */
-  private async getProgramYearTotals(
-    assessmentId: number,
-    options?: {
-      offeringIntensity?: OfferingIntensity;
-      alternativeReferenceDate?: Date;
-    },
-  ): Promise<ProgramYearTotal> {
-    // Get the current assessment from the assessment id.
-    const currentAssessment =
-      await this.assessmentSequentialProcessingService.getCurrentAssessment(
-        assessmentId,
-      );
-    // The chronology of the applications is defined by the method {@link getSequencedApplications}.
-    // Only the current assessment awards are considered since it must reflect the most updated
-    // workflow calculated values.
-    const sequencedApplications =
-      await this.assessmentSequentialProcessingService.getSequencedApplications(
-        currentAssessment.application.applicationNumber,
-        currentAssessment.application.student.id,
-        currentAssessment.application.programYear.id,
-        { alternativeReferenceDate: options?.alternativeReferenceDate },
-      );
-    // Get the application numbers of the previous applications.
-    const applicationNumbers = sequencedApplications.previous.map(
-      (application) => application.applicationNumber,
-    );
-    return {
-      // Get the program year awards totals for part-time and full-time.
-      awardTotal:
-        this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotals(
-          sequencedApplications,
-          currentAssessment,
-          options,
-        ),
-      // Only get the full-time contribution totals if the offering intensity is full-time.
-      ftProgramYearContributionTotal:
-        OfferingIntensity.fullTime === options.offeringIntensity
-          ? this.assessmentSequentialProcessingService.getFTProgramYearContributionTotals(
-              applicationNumbers,
-            )
-          : null,
-    };
   }
 
   /**

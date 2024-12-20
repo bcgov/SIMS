@@ -130,8 +130,8 @@ export interface AwardTotal {
  * and for full-time program year contribution (e.g. ScholarshipsBursaries, SpouseContributionWeeks, FederalFSC, ProvincialFSC) and its totals promise.
  */
 export interface ProgramYearTotal {
-  awardTotal: Promise<AwardTotal[]>;
-  ftProgramYearContributionTotal?: Promise<FTProgramYearContributionTotal[]>;
+  awardTotal: AwardTotal[];
+  ftProgramYearContributionTotal?: FTProgramYearContributionTotal[];
 }
 
 /**
