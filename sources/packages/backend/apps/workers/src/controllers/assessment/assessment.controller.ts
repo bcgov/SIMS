@@ -490,11 +490,11 @@ export class AssessmentController {
         ? output[outputName] + award.total
         : award.total;
     });
-    programYearTotal.contributionTotals?.forEach((ftContributionTotal) => {
-      const outputName = `${PROGRAM_YEAR_TOTAL}${ftContributionTotal.contribution}`;
+    programYearTotal.contributionTotals?.forEach((contributionTotal) => {
+      const outputName = `${PROGRAM_YEAR_TOTAL}${contributionTotal.contribution}`;
       output[outputName] = output[outputName]
-        ? output[outputName] + ftContributionTotal.total
-        : ftContributionTotal.total;
+        ? output[outputName] + contributionTotal.total
+        : contributionTotal.total;
     });
   }
 
