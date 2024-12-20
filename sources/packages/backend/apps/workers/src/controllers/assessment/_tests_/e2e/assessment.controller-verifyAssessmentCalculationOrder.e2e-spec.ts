@@ -1007,7 +1007,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         offeringIntensity: OfferingIntensity.fullTime,
         applicationStatus: ApplicationStatus.Completed,
         currentAssessmentInitialValues: {
-          assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
           assessmentDate: addDays(10, programYear.startDate),
           workflowData: {
@@ -1039,7 +1038,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         offeringIntensity: OfferingIntensity.fullTime,
         applicationStatus: ApplicationStatus.Completed,
         currentAssessmentInitialValues: {
-          assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
           assessmentDate: addDays(20, programYear.startDate),
           workflowData: {
@@ -1061,7 +1059,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         offeringIntensity: OfferingIntensity.fullTime,
         applicationStatus: ApplicationStatus.InProgress,
         currentAssessmentInitialValues: {
-          assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
           assessmentDate: addDays(30, programYear.startDate),
         },
@@ -1075,7 +1072,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       },
       {
         initialValue: {
-          assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.InProgress,
         },
       },
@@ -1093,7 +1089,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The calculation will only take SFAS and SFAS part time application data where the start date is the date before the first assessment date of the current application.
+    // The calculation will only take full-time and part-time application data where the start date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       // Student contribution total.
