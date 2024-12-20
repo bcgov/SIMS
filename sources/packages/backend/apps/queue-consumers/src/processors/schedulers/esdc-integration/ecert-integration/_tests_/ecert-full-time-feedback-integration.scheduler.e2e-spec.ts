@@ -29,7 +29,6 @@ import { FullTimeECertFeedbackIntegrationScheduler } from "../ecert-full-time-fe
 import { IsNull } from "typeorm";
 
 const FEEDBACK_ERROR_FILE_SINGLE_RECORD = "EDU.PBC.FTECERTSFB.SINGLERECORD";
-const FEEDBACK_ERROR_NOTIFICATION_FILE = "EDU.PBC.FTECERTSFB.ERRORNOTIFICATION";
 const FEEDBACK_ERROR_FILE_MULTIPLE_RECORDS =
   "EDU.PBC.FTECERTSFB.MULTIPLERECORDS";
 const SHARED_DOCUMENT_NUMBER = 6666;
@@ -89,18 +88,14 @@ describe(
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      // Act
-      const result = await processor.processFullTimeResponses(mockedJob.job);
-
-      // Assert
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEEDBACK_ERROR_FILE_SINGLE_RECORD,
       );
-      expect(result).toContain(
-        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      );
-      expect(result.length).toBe(3);
       expect(
         mockedJob.containLogMessages([
           `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has an invalid record type code on header.`,
@@ -125,18 +120,14 @@ describe(
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      // Act
-      const result = await processor.processFullTimeResponses(mockedJob.job);
-
-      // Assert
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEEDBACK_ERROR_FILE_SINGLE_RECORD,
       );
-      expect(result).toContain(
-        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      );
-      expect(result.length).toBe(3);
       expect(
         mockedJob.containLogMessages([
           `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has an invalid record type code on trailer.`,
@@ -161,18 +152,14 @@ describe(
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      // Act
-      const result = await processor.processFullTimeResponses(mockedJob.job);
-
-      // Assert
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEEDBACK_ERROR_FILE_SINGLE_RECORD,
       );
-      expect(result).toContain(
-        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      );
-      expect(result.length).toBe(3);
       expect(
         mockedJob.containLogMessages([
           `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has invalid number of records.`,
@@ -197,18 +184,14 @@ describe(
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      // Act
-      const result = await processor.processFullTimeResponses(mockedJob.job);
-
-      // Assert
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEEDBACK_ERROR_FILE_SINGLE_RECORD,
       );
-      expect(result).toContain(
-        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      );
-      expect(result.length).toBe(3);
       expect(
         mockedJob.containLogMessages([
           `Error downloading and parsing the file ${downloadedFile}. The E-Cert file has TotalSINHash inconsistent with the total sum of sin in the records.`,
@@ -234,14 +217,10 @@ describe(
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      // Act
-      const result = await processor.processFullTimeResponses(mockedJob.job);
-
-      // Assert
-      expect(result).toContain(
-        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
       );
-      expect(result.length).toBe(3);
       expect(
         mockedJob.containLogMessages([
           "The following error codes are unknown to the system: UKN-00200.",
@@ -271,7 +250,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processFullTimeResponses(mockedJob.job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       expect(result.length).toBe(1);
@@ -343,13 +322,11 @@ describe(
         // Queued job.
         const mockedJob = mockBullJob<void>();
 
-        // Act
-        const result = await processor.processFullTimeResponses(mockedJob.job);
-
-        // Assert
-        expect(result.length).toBe(3);
-        expect(result).toContain(
-          "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        // Act/Assert
+        await expect(
+          processor.processQueue(mockedJob.job),
+        ).rejects.toThrowError(
+          "One or more errors were reported during the process, please see logs for details.",
         );
         expect(
           mockedJob.containLogMessages([
@@ -433,7 +410,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processFullTimeResponses(mockedJob.job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       expect(result.length).toBe(1);

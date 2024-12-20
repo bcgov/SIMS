@@ -25,21 +25,11 @@ export class FullTimeECertProcessIntegrationScheduler extends ECertProcessIntegr
   }
 
   /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
    */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
   @InjectLogger()
   logger: LoggerService;
 }

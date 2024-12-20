@@ -170,7 +170,7 @@ describe(
       const { job } = mockBullJob<void>();
 
       // Act
-      const result = await processor.processECert(job);
+      const result = await processor.processQueue(job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -178,7 +178,6 @@ describe(
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
-        "Process finalized with success.",
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 1",
       ]);
@@ -265,7 +264,7 @@ describe(
       const { job } = mockBullJob<void>();
 
       // Act
-      const result = await processor.processECert(job);
+      const result = await processor.processQueue(job);
 
       // Assert
 
@@ -275,7 +274,6 @@ describe(
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
-        "Process finalized with success.",
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 1",
       ]);
@@ -500,7 +498,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processECert(mockedJob.job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       expect(
@@ -521,7 +519,6 @@ describe(
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
-        "Process finalized with success.",
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 3",
       ]);
@@ -691,7 +688,7 @@ describe(
         const mockedJob = mockBullJob<void>();
 
         // Act
-        const result = await processor.processECert(mockedJob.job);
+        const result = await processor.processQueue(mockedJob.job);
         // Assert
         expect(
           mockedJob.containLogMessages([
@@ -709,7 +706,6 @@ describe(
         const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
         expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
         expect(result).toStrictEqual([
-          "Process finalized with success.",
           `Generated file: ${uploadedFileName}`,
           "Uploaded records: 1",
         ]);
@@ -793,11 +789,10 @@ describe(
       const { job } = mockBullJob<void>();
 
       // Act
-      const result = await processor.processECert(job);
+      const result = await processor.processQueue(job);
 
       // Assert 0 uploaded records.
       expect(result).toStrictEqual([
-        "Process finalized with success.",
         "Generated file: none",
         "Uploaded records: 0",
       ]);
@@ -865,7 +860,7 @@ describe(
       const { job } = mockBullJob<void>();
 
       // Act
-      const result = await processor.processECert(job);
+      const result = await processor.processQueue(job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -873,7 +868,6 @@ describe(
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
-        "Process finalized with success.",
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 1",
       ]);
@@ -935,7 +929,7 @@ describe(
       const { job } = mockBullJob<void>();
 
       // Act
-      const result = await processor.processECert(job);
+      const result = await processor.processQueue(job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -943,7 +937,6 @@ describe(
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
-        "Process finalized with success.",
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 1",
       ]);
@@ -1036,7 +1029,7 @@ describe(
         const mockedJob = mockBullJob<void>();
 
         // Act
-        await processor.processECert(mockedJob.job);
+        await processor.processQueue(mockedJob.job);
 
         // Assert
         expect(
@@ -1188,7 +1181,7 @@ describe(
         const mockedJob = mockBullJob<void>();
 
         // Act
-        await processor.processECert(mockedJob.job);
+        await processor.processQueue(mockedJob.job);
 
         // Assert
         expect(
@@ -1297,7 +1290,7 @@ describe(
         const mockedJob = mockBullJob<void>();
 
         // Act
-        await processor.processECert(mockedJob.job);
+        await processor.processQueue(mockedJob.job);
 
         // Assert
         expect(
@@ -1341,11 +1334,10 @@ describe(
         const mockedJob = mockBullJob<void>();
 
         // Act
-        const result = await processor.processECert(mockedJob.job);
+        const result = await processor.processQueue(mockedJob.job);
 
         // Assert
         expect(result).toStrictEqual([
-          "Process finalized with success.",
           "Generated file: none",
           "Uploaded records: 0",
         ]);
