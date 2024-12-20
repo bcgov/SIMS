@@ -128,23 +128,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         restriction: provincialRestriction,
       });
 
-      const legacyRestriction = await db.restriction.save({
-        restrictionType: RestrictionType.Provincial,
-        isLegacy: true,
-        restrictionCode: "LGCY_XYZ",
-        notificationType: RestrictionNotificationType.Error,
-        restrictionCategory: "Other",
-        description: "Description for LGCY_XYZ",
-        actionType: [RestrictionActionType.StopPartTimeDisbursement],
-      });
-
-      // Student has a legacy restriction that should be ignored.
-      await saveFakeStudentRestriction(db.dataSource, {
-        student,
-        application,
-        restriction: legacyRestriction,
-      });
-
       await db.studentRestriction.update(
         {
           id: restriction.id,
@@ -153,6 +136,24 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           updatedAt: simsDataUpdatedDate,
         },
       );
+
+      const legacyRestriction = await db.restriction.save({
+        restrictionType: RestrictionType.Provincial,
+        isLegacy: true,
+        restrictionCode: "LGCY_XYZ",
+        notificationType: RestrictionNotificationType.Error,
+        restrictionCategory: "Other",
+        description: "Description for LGCY_XYZ",
+        actionType: [RestrictionActionType.StopPartTimeDisbursement],
+        updatedAt: simsDataUpdatedDate,
+      });
+
+      // Student has a legacy restriction that should be ignored.
+      await saveFakeStudentRestriction(db.dataSource, {
+        student,
+        application,
+        restriction: legacyRestriction,
+      });
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
