@@ -53,6 +53,8 @@ import { MaxJobsToActivate } from "../../types";
 import {
   AssessmentSequentialProcessingService,
   AwardTotal,
+  FTProgramYearContributionTotal,
+  ProgramYearTotal,
   SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
@@ -372,6 +374,7 @@ export class AssessmentController {
       const assessmentId = job.variables.assessmentId;
       const studentId = assessment.application.student.id;
       const programYearId = assessment.application.programYear.id;
+      const offeringIntensity = assessment.offering.offeringIntensity;
       jobLogger.log(
         `Verifying the assessment calculation order for processing assessment id ${assessmentId} student id ${studentId} ` +
           `program year id ${programYearId}.`,
@@ -420,16 +423,20 @@ export class AssessmentController {
           this.studentAssessmentService.saveAssessmentCalculationStartDate(
             assessmentId,
           );
-        const getProgramYearTotalAwards =
-          this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotals(
-            assessmentId,
-            { alternativeReferenceDate: new Date() },
-          );
+        const programYearTotals = await this.getProgramYearTotals(
+          assessmentId,
+          {
+            alternativeReferenceDate: new Date(),
+            OfferingIntensity: offeringIntensity,
+          },
+        );
         // Updates the calculation start date and get the program year totals in parallel.
-        const [, programYearTotalAwards] = await Promise.all([
-          saveAssessmentCalculationStartDate,
-          getProgramYearTotalAwards,
-        ]);
+        const [, programYearTotalAwards, ftProgramYearContributionTotal] =
+          await Promise.all([
+            saveAssessmentCalculationStartDate,
+            programYearTotals.awardTotal,
+            programYearTotals.ftProgramYearContributionTotal,
+          ]);
         if (
           assessment.offering.offeringIntensity === OfferingIntensity.partTime
         ) {
@@ -442,7 +449,11 @@ export class AssessmentController {
         jobLogger.log(
           `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
-        this.createOutputForProgramYearTotals(programYearTotalAwards, result);
+        this.createOutputForProgramYearTotals(
+          programYearTotalAwards,
+          ftProgramYearContributionTotal,
+          result,
+        );
         result.isReadyForCalculation = true;
         return job.complete(result);
       }
@@ -469,6 +480,7 @@ export class AssessmentController {
    */
   private createOutputForProgramYearTotals(
     programYearTotalAwards: AwardTotal[],
+    ftProgramYearContributionTotal: FTProgramYearContributionTotal[],
     output: VerifyAssessmentCalculationOrderJobOutDTO,
   ): void {
     // Create the dynamic variables to be outputted.
@@ -482,6 +494,49 @@ export class AssessmentController {
         ? output[outputName] + award.total
         : award.total;
     });
+    ftProgramYearContributionTotal?.forEach((ftContributionTotal) => {
+      const outputName = `programYearTotal${ftContributionTotal.contribution}`;
+      output[outputName] = output[outputName]
+        ? output[outputName] + ftContributionTotal.total
+        : ftContributionTotal.total;
+    });
+  }
+
+  private async getProgramYearTotals(
+    assessmentId: number,
+    options?: {
+      OfferingIntensity?: OfferingIntensity;
+      alternativeReferenceDate?: Date;
+    },
+  ): Promise<ProgramYearTotal> {
+    const currentAssessment =
+      await this.assessmentSequentialProcessingService.getCurrentAssessment(
+        assessmentId,
+      );
+    const sequencedApplications =
+      await this.assessmentSequentialProcessingService.getSequencedApplications(
+        currentAssessment.application.applicationNumber,
+        currentAssessment.application.student.id,
+        currentAssessment.application.programYear.id,
+        { alternativeReferenceDate: options?.alternativeReferenceDate },
+      );
+    const applicationNumbers = sequencedApplications.previous.map(
+      (application) => application.applicationNumber,
+    );
+    return {
+      awardTotal:
+        this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotals(
+          sequencedApplications,
+          currentAssessment,
+          options,
+        ),
+      ftProgramYearContributionTotal:
+        OfferingIntensity.fullTime === options.OfferingIntensity
+          ? this.assessmentSequentialProcessingService.getFTProgramYearContributionTotals(
+              applicationNumbers,
+            )
+          : null,
+    };
   }
 
   /**

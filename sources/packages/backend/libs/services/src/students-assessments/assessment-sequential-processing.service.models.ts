@@ -1,4 +1,4 @@
-import { OfferingIntensity } from "@sims/sims-db";
+import { OfferingIntensity, StudentAssessment } from "@sims/sims-db";
 
 /**
  * Application information part of a sequence of ordered applications.
@@ -123,4 +123,26 @@ export interface AwardTotal {
   offeringIntensity: OfferingIntensity;
   valueCode: string;
   total: number;
+}
+
+/**
+ * Program year totals with award code (e.g. CSPT, CSGD, CSGP, SBSD, BCAG) and its totals
+ * and for full time program year contribution (e.g. ScholarshipBursaries, SpouseContributionWeeks, FederalFSC, ProvincialFSC) and its totals.
+ */
+export interface ProgramYearTotal {
+  awardTotal: Promise<AwardTotal[]>;
+  ftProgramYearContributionTotal?: Promise<FTProgramYearContributionTotal[]>;
+}
+
+/**
+ * Full time program year contribution and its totals.
+ */
+export interface FTProgramYearContributionTotal {
+  contribution: string;
+  total: number;
+}
+
+export interface SequencedApplicationsWithAssessment {
+  sequencedApplications: SequencedApplications;
+  currentAssessment: StudentAssessment;
 }

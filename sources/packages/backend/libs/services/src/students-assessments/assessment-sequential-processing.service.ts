@@ -16,10 +16,18 @@ import {
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
-import { AwardTotal, SequencedApplications, SequentialApplication } from "..";
+import {
+  AwardTotal,
+  FTProgramYearContributionTotal,
+  SequencedApplications,
+  SequentialApplication,
+} from "..";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getISODateOnlyString } from "@sims/utilities";
-import { StudentAssessmentDetail } from "./student-assessment.model";
+import {
+  FullTimeStudentContributionType,
+  StudentAssessmentDetail,
+} from "./student-assessment.model";
 
 @Injectable()
 export class AssessmentSequentialProcessingService {
@@ -146,51 +154,10 @@ export class AssessmentSequentialProcessingService {
    * program year.
    */
   async getProgramYearPreviousAwardsTotals(
-    assessmentId: number,
+    sequencedApplications: SequencedApplications,
+    assessment: StudentAssessment,
     options?: { alternativeReferenceDate?: Date },
   ): Promise<AwardTotal[]> {
-    const assessment = await this.studentAssessmentRepo.findOne({
-      select: {
-        id: true,
-        application: {
-          id: true,
-          applicationNumber: true,
-          student: {
-            id: true,
-            birthDate: true,
-            sinValidation: {
-              sin: true,
-            },
-            user: {
-              lastName: true,
-            },
-          },
-          programYear: {
-            id: true,
-            startDate: true,
-          },
-        },
-        assessmentDate: true,
-      },
-      relations: {
-        application: {
-          student: { sinValidation: true, user: true },
-          programYear: true,
-        },
-      },
-      where: {
-        id: assessmentId,
-      },
-    });
-    if (!assessment) {
-      throw new Error(`Assessment id ${assessmentId} not found.`);
-    }
-    const sequencedApplications = await this.getSequencedApplications(
-      assessment.application.applicationNumber,
-      assessment.application.student.id,
-      assessment.application.programYear.id,
-      { alternativeReferenceDate: options?.alternativeReferenceDate },
-    );
     // Get the first assessment date ever calculated for the current application.
     // If there are multiple assessments for the current application, then set the
     // first assessment date to the assessment date of the first assessment.
@@ -297,6 +264,94 @@ export class AssessmentSequentialProcessingService {
     ];
   }
 
+  async getFTProgramYearContributionTotals(
+    applicationNumbers: string[],
+  ): Promise<FTProgramYearContributionTotal[]> {
+    const totals = await this.applicationRepo
+      .createQueryBuilder("application")
+      .select(
+        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC' AS NUMERIC)),0)",
+        FullTimeStudentContributionType.FederalFSC,
+      )
+      .addSelect(
+        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC' AS NUMERIC)),0)",
+        FullTimeStudentContributionType.ProvincialFSC,
+      )
+      .addSelect(
+        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentScholarshipsBursaries' AS NUMERIC)),0)",
+        FullTimeStudentContributionType.ScholarshipBursaries,
+      )
+      .addSelect(
+        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContribution' AS NUMERIC)),0)",
+        FullTimeStudentContributionType.SpouseContributionWeeks,
+      )
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .where("application.applicationNumber IN (:...applicationNumbers)", {
+        applicationNumbers,
+      }) // Overwritten application can have awards associated with and they should not be considered.
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.Overwritten,
+      })
+      // Check for assessment completed status to avoid retrieving any cancelation status.
+      .andWhere(
+        "currentAssessment.studentAssessmentStatus = :completedStudentAssessmentStatus",
+        {
+          completedStudentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+      )
+      .getRawOne<{
+        [FullTimeStudentContributionType.FederalFSC]: string;
+        [FullTimeStudentContributionType.ProvincialFSC]: string;
+        [FullTimeStudentContributionType.ScholarshipBursaries]: string;
+        [FullTimeStudentContributionType.SpouseContributionWeeks]: string;
+      }>();
+
+    return Object.keys(FullTimeStudentContributionType).map((key) => ({
+      contribution: key as FullTimeStudentContributionType,
+      total: +totals[key],
+    }));
+  }
+
+  async getCurrentAssessment(assessmentId: number): Promise<StudentAssessment> {
+    const currentAssessment = await this.studentAssessmentRepo.findOne({
+      select: {
+        id: true,
+        application: {
+          id: true,
+          applicationNumber: true,
+          student: {
+            id: true,
+            birthDate: true,
+            sinValidation: {
+              sin: true,
+            },
+            user: {
+              lastName: true,
+            },
+          },
+          programYear: {
+            id: true,
+            startDate: true,
+          },
+        },
+        assessmentDate: true,
+      },
+      relations: {
+        application: {
+          student: { sinValidation: true, user: true },
+          programYear: true,
+        },
+      },
+      where: {
+        id: assessmentId,
+      },
+    });
+    if (!currentAssessment) {
+      throw new Error(`Assessment id ${assessmentId} not found.`);
+    }
+    return currentAssessment;
+  }
+
   /**
    * Get the application correspondent to the {@link applicationNumber} as the current to then search
    * for applications in the past and in the future for the same student and the same program year.
@@ -312,7 +367,7 @@ export class AssessmentSequentialProcessingService {
    * {@link applicationNumber} used as reference does not have a calculated date yet.
    * @returns sequenced applications.
    */
-  private async getSequencedApplications(
+  async getSequencedApplications(
     applicationNumber: string,
     studentId: number,
     programYearId: number,
