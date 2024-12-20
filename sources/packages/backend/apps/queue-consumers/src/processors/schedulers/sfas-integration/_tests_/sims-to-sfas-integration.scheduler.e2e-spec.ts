@@ -136,11 +136,13 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         },
       );
 
-      const legacyRestriction = createFakeRestriction({
-        initialValues: {
-          isLegacy: true,
-        },
-      });
+      const legacyRestriction = await db.restriction.save(
+        createFakeRestriction({
+          initialValues: {
+            isLegacy: true,
+          },
+        }),
+      );
 
       // Student has a legacy restriction that should be ignored.
       const legacyStudentRestriction = await saveFakeStudentRestriction(
