@@ -52,8 +52,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
 import {
   AssessmentSequentialProcessingService,
-  AwardTotal,
-  FTProgramYearContributionTotal,
+  ProgramYearTotal,
   SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
@@ -373,7 +372,6 @@ export class AssessmentController {
       const assessmentId = job.variables.assessmentId;
       const studentId = assessment.application.student.id;
       const programYearId = assessment.application.programYear.id;
-      const offeringIntensity = assessment.offering.offeringIntensity;
       jobLogger.log(
         `Verifying the assessment calculation order for processing assessment id ${assessmentId} student id ${studentId} ` +
           `program year id ${programYearId}.`,
@@ -427,7 +425,6 @@ export class AssessmentController {
             assessmentId,
             {
               alternativeReferenceDate: new Date(),
-              offeringIntensity: offeringIntensity,
             },
           );
         // Updates the calculation start date and get the program year totals and for
@@ -449,8 +446,7 @@ export class AssessmentController {
           `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
         this.createOutputForProgramYearTotals(
-          programYearAwardsContributionTotal.awardTotal,
-          programYearAwardsContributionTotal.ftProgramYearContributionTotal,
+          programYearAwardsContributionTotal,
           result,
         );
         result.isReadyForCalculation = true;
@@ -468,33 +464,34 @@ export class AssessmentController {
   }
 
   /**
-   * Create a new dynamic output variable for each award and offering intensity.
+   * Create a new dynamic output variable for each award and offering intensity for both part-time and full-time.
+   * Create a new dynamic output variable for each contribution for full-time.
    * Each variable is prefixed with 'programYearTotal' and then concatenated
    * with the offering intensity as 'FullTime'/'PartTime' and the award code.
    * @example
    * programYearTotalFullTimeBCAG: 1250
    * programYearTotalPartTimeBCAG: 3450
-   * @param programYearTotalAwards awards to be added to the output.
+   * @param ProgramYearTotal awards to be added to the output.
    * @param output output to receive the dynamic property.
    */
   private createOutputForProgramYearTotals(
-    programYearTotalAwards: AwardTotal[],
-    ftProgramYearContributionTotal: FTProgramYearContributionTotal[],
+    programYearTotal: ProgramYearTotal,
     output: VerifyAssessmentCalculationOrderJobOutDTO,
   ): void {
+    const PROGRAM_YEAR_TOTAL = "programYearTotal";
     // Create the dynamic variables to be outputted.
-    programYearTotalAwards.forEach((award) => {
+    programYearTotal.awardTotals.forEach((award) => {
       const intensity =
         award.offeringIntensity === OfferingIntensity.fullTime
           ? "FullTime"
           : "PartTime";
-      const outputName = `programYearTotal${intensity}${award.valueCode}`;
+      const outputName = `${PROGRAM_YEAR_TOTAL}${intensity}${award.valueCode}`;
       output[outputName] = output[outputName]
         ? output[outputName] + award.total
         : award.total;
     });
-    ftProgramYearContributionTotal?.forEach((ftContributionTotal) => {
-      const outputName = `programYearTotal${ftContributionTotal.contribution}`;
+    programYearTotal.contributionTotals?.forEach((ftContributionTotal) => {
+      const outputName = `${PROGRAM_YEAR_TOTAL}${ftContributionTotal.contribution}`;
       output[outputName] = output[outputName]
         ? output[outputName] + ftContributionTotal.total
         : ftContributionTotal.total;

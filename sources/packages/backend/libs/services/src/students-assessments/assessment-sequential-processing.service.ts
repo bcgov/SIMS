@@ -18,7 +18,7 @@ import {
 } from "@sims/sims-db";
 import {
   AwardTotal,
-  FTProgramYearContributionTotal,
+  programYearContributionTotal,
   ProgramYearTotal,
   SequencedApplications,
   SequentialApplication,
@@ -139,19 +139,18 @@ export class AssessmentSequentialProcessingService {
    * full-time and contribution totals for full-time for the assessment.
    * @param assessmentId assessment id.
    * @param options method options.
-   * - `offeringIntensity` the offering intensity to be used.
    * - `alternativeReferenceDate` the reference date to be used.
    * @returns the promise to get the program year totals.
    */
   async getProgramYearTotals(
     assessmentId: number,
     options?: {
-      offeringIntensity?: OfferingIntensity;
       alternativeReferenceDate?: Date;
     },
   ): Promise<ProgramYearTotal> {
     // Get the current assessment from the assessment id.
     const currentAssessment = await this.getCurrentAssessment(assessmentId);
+    const offeringIntensity = currentAssessment.offering.offeringIntensity;
     // The chronology of the applications is defined by the method {@link getSequencedApplications}.
     // Only the current assessment awards are considered since it must reflect the most updated
     // workflow calculated values.
@@ -166,23 +165,24 @@ export class AssessmentSequentialProcessingService {
       (application) => application.applicationNumber,
     );
 
-    const [programYearTotalAwards, ftProgramYearContributionTotal] =
-      await Promise.all([
-        // Get the program year awards totals for part-time and full-time.
-        await this.getProgramYearPreviousAwardsTotals(
-          sequencedApplications,
-          currentAssessment,
-          options,
-        ),
-        // Only get the full-time contribution totals if the offering intensity is full-time.
-        OfferingIntensity.fullTime === options.offeringIntensity &&
-        applicationNumbers?.length > 0
-          ? await this.getProgramYearContributionTotals(applicationNumbers)
-          : null,
-      ]);
+    // Only get the full-time contribution totals if the offering intensity is full-time.
+    const shouldGetProgramYearContributionTotals =
+      OfferingIntensity.fullTime === offeringIntensity &&
+      !!applicationNumbers?.length;
+    const [awardTotals, contributionTotals] = await Promise.all([
+      // Get the program year awards totals for part-time and full-time.
+      await this.getProgramYearPreviousAwardsTotals(
+        sequencedApplications,
+        currentAssessment,
+        options,
+      ),
+      shouldGetProgramYearContributionTotals
+        ? await this.getProgramYearContributionTotals(applicationNumbers)
+        : null,
+    ]);
     return {
-      awardTotal: programYearTotalAwards,
-      ftProgramYearContributionTotal: ftProgramYearContributionTotal,
+      awardTotals,
+      contributionTotals,
     };
   }
 
@@ -319,7 +319,7 @@ export class AssessmentSequentialProcessingService {
    */
   private async getProgramYearContributionTotals(
     applicationNumbers: string[],
-  ): Promise<FTProgramYearContributionTotal[]> {
+  ): Promise<programYearContributionTotal[]> {
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
       .select(
@@ -394,6 +394,10 @@ export class AssessmentSequentialProcessingService {
             startDate: true,
           },
         },
+        offering: {
+          id: true,
+          offeringIntensity: true,
+        },
         assessmentDate: true,
       },
       relations: {
@@ -401,6 +405,7 @@ export class AssessmentSequentialProcessingService {
           student: { sinValidation: true, user: true },
           programYear: true,
         },
+        offering: true,
       },
       where: {
         id: assessmentId,
