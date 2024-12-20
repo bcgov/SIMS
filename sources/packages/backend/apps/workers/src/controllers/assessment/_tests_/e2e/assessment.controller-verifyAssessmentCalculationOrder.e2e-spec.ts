@@ -976,7 +976,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       // Student contribution total.
       programYearTotalFederalFSC: 0,
       programYearTotalProvincialFSC: 0,
-      programYearTotalScholarshipBursaries: 0,
+      programYearTotalScholarshipsBursaries: 0,
       programYearTotalSpouseContributionWeeks: 0,
     });
   });
@@ -1095,7 +1095,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       // Student contribution total.
       programYearTotalFederalFSC: 6000,
       programYearTotalProvincialFSC: 8000,
-      programYearTotalScholarshipBursaries: 4000,
+      programYearTotalScholarshipsBursaries: 4000,
       programYearTotalSpouseContributionWeeks: 2000,
     });
   });

@@ -279,7 +279,7 @@ export class AssessmentSequentialProcessingService {
       )
       .addSelect(
         "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentScholarshipsBursaries' AS NUMERIC)),0)",
-        FullTimeStudentContributionType.ScholarshipBursaries,
+        FullTimeStudentContributionType.ScholarshipsBursaries,
       )
       .addSelect(
         "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContribution' AS NUMERIC)),0)",
@@ -302,7 +302,7 @@ export class AssessmentSequentialProcessingService {
       .getRawOne<{
         [FullTimeStudentContributionType.FederalFSC]: string;
         [FullTimeStudentContributionType.ProvincialFSC]: string;
-        [FullTimeStudentContributionType.ScholarshipBursaries]: string;
+        [FullTimeStudentContributionType.ScholarshipsBursaries]: string;
         [FullTimeStudentContributionType.SpouseContributionWeeks]: string;
       }>();
 
