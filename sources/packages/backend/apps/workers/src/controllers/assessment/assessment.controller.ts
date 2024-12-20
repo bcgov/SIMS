@@ -429,7 +429,7 @@ export class AssessmentController {
           );
         // Updates the calculation start date and get the program year totals and for
         // full-time the contribution program year totals in parallel.
-        const [programYearAwardsContributionTotal] = await Promise.all([
+        const [programYearAwardsContributionTotals] = await Promise.all([
           programYearTotals,
           saveAssessmentCalculationStartDate,
         ]);
@@ -446,7 +446,7 @@ export class AssessmentController {
           `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
         this.createOutputForProgramYearTotals(
-          programYearAwardsContributionTotal,
+          programYearAwardsContributionTotals,
           result,
         );
         result.isReadyForCalculation = true;
