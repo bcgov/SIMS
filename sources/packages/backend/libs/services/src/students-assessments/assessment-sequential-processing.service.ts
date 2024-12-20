@@ -170,13 +170,13 @@ export class AssessmentSequentialProcessingService {
       !!applicationNumbers?.length;
     const [awardTotals, contributionTotals] = await Promise.all([
       // Get the program year awards totals for part-time and full-time.
-      await this.getProgramYearPreviousAwardsTotals(
+      this.getProgramYearPreviousAwardsTotals(
         sequencedApplications,
         currentAssessment,
         options,
       ),
       shouldGetProgramYearContributionTotals
-        ? await this.getProgramYearContributionTotals(applicationNumbers)
+        ? this.getProgramYearContributionTotals(applicationNumbers)
         : null,
     ]);
     return {
