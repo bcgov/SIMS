@@ -18,6 +18,7 @@ import {
   createE2EDataSources,
   createFakeCASSupplier,
   createFakeDisbursementValue,
+  createFakeRestriction,
   createFakeUser,
   saveFakeApplication,
   saveFakeApplicationDisbursements,
@@ -129,6 +130,33 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       await db.studentRestriction.update(
         {
           id: restriction.id,
+        },
+        {
+          updatedAt: simsDataUpdatedDate,
+        },
+      );
+
+      const legacyRestriction = await db.restriction.save(
+        createFakeRestriction({
+          initialValues: {
+            isLegacy: true,
+          },
+        }),
+      );
+
+      // Student has a legacy restriction that should be ignored.
+      const legacyStudentRestriction = await saveFakeStudentRestriction(
+        db.dataSource,
+        {
+          student,
+          application,
+          restriction: legacyRestriction,
+        },
+      );
+
+      await db.studentRestriction.update(
+        {
+          id: legacyStudentRestriction.id,
         },
         {
           updatedAt: simsDataUpdatedDate,
@@ -824,7 +852,10 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       : "        ";
     return `400${studentId.toString().padStart(10, "0")}${studentRestriction.id
       .toString()
-      .padStart(10, "0")}${restriction.restrictionCode}${formatDate(
+      .padStart(10, "0")}${restriction.restrictionCode.padEnd(
+      10,
+      " ",
+    )}${formatDate(
       studentRestriction.createdAt,
       DATE_FORMAT,
     )}${restrictionRemovalDate}`;
