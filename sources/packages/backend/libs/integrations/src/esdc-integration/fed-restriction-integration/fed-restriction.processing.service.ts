@@ -54,7 +54,7 @@ export class FedRestrictionProcessingService {
     const auditUser = this.systemUsersService.systemUser;
     // Get the list of all files from SFTP ordered by file name.
     const fileSearch = new RegExp(
-      `^${this.esdcConfig.environmentCode}CSLS\\.PBC\\.RESTR\\.LIST\\.D[\\w]*\\.[\\d]*$`,
+      `^${this.esdcConfig.environmentCode}CSLS\\.PBC\\.RESTR\\.LIST\\.D[\\w]*\\.[\\d]*\\.(zip|ZIP)$`,
       "i",
     );
 

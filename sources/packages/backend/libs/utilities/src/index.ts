@@ -15,3 +15,4 @@ export * from "./math-utils";
 export * from "./specialized-string-builder";
 export * from "./string-utils";
 export * from "./address-utils";
+export * from "./compressed-file-extractor";
