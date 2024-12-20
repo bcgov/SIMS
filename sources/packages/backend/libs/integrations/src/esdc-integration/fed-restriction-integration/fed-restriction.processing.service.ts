@@ -52,7 +52,7 @@ export class FedRestrictionProcessingService {
    */
   async process(processSummary: ProcessSummary): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    // Get the list of all files from SFTP ordered by file name.
+    // Get the list of all ZIP files from SFTP ordered by file name.
     const fileSearch = new RegExp(
       `^${this.esdcConfig.environmentCode}CSLS\\.PBC\\.RESTR\\.LIST\\.D[\\w]*\\.[\\d]*\\.(zip|ZIP)$`,
       "i",
