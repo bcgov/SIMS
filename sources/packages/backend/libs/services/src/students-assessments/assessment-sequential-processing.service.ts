@@ -186,7 +186,7 @@ export class AssessmentSequentialProcessingService {
       ),
     ]);
     if (!sequencedApplications.previous.length) {
-      // There are no past applications. Return SFAS full time and part time awards if there are any.
+      // There are no past applications. Return SFAS full-time and part-time awards if there are any.
       return [...sfasAwardsTotals, ...sfasPartTimeAwardsTotals];
     }
     const applicationNumbers = sequencedApplications.previous.map(
@@ -260,9 +260,9 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
-   * Gets the full time program year contribution totals for the provided application numbers.
+   * Gets the full-time program year contribution totals for the provided application numbers.
    * @param applicationNumbers application numbers.
-   * @returns full time program year contribution totals.
+   * @returns full-time program year contribution totals.
    */
   async getFTProgramYearContributionTotals(
     applicationNumbers: string[],
@@ -511,13 +511,13 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
-   * Get SFAS part time application awards totals.
+   * Get SFAS part-time application awards totals.
    * @param lastName last name of the student.
    * @param birthDate birth date of the student.
    * @param sin: SIN number of the student.
    * @param programYearStartDate: the start date of the program year.
    * @param referenceAssessmentDate  date of the first assessment date of the current application.
-   * @returns SFAS application part time awards totals.
+   * @returns SFAS application part-time awards totals.
    */
   private async getProgramYearSFASPartTimeAwardsTotals(
     lastName: string,
