@@ -18,10 +18,15 @@ jobs:
       BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
       FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
     steps:
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "4"
       - name: Print env
         run: |
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo BRANCH: $BUILD_REF
+          echo OC CLI Version: $(oc version)
       # Checkout the PR branch
       - name: Checkout Target Branch
         uses: actions/checkout@v4

@@ -32,10 +32,15 @@ jobs:
       TLS_KEY: ${{ secrets.TLS_KEY }}
       TLS_CA_CERTIFICATE: ${{ secrets.TLS_CA_CERTIFICATE }}
     steps:
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "4"
       - name: Print env
         run: |
           echo NAMESPACE: $NAMESPACE
           echo HOST_PREFIX: $HOST_PREFIX
+          echo OC CLI Version: $(oc version)
       # Checkout the PR branch
       - name: Checkout Target Branch
         uses: actions/checkout@v4
