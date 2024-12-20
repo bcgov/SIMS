@@ -323,19 +323,19 @@ export class AssessmentSequentialProcessingService {
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
       .select(
-        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC' AS NUMERIC)),0)",
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC')::NUMERIC)",
         FullTimeStudentContributionType.FederalFSC,
       )
       .addSelect(
-        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC' AS NUMERIC)),0)",
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC')::NUMERIC)",
         FullTimeStudentContributionType.ProvincialFSC,
       )
       .addSelect(
-        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'exemptScholarshipsBursaries' AS NUMERIC)),0)",
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'exemptScholarshipsBursaries')::NUMERIC)",
         FullTimeStudentContributionType.ScholarshipsBursaries,
       )
       .addSelect(
-        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContributionWeeks' AS NUMERIC)),0)",
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContributionWeeks')::NUMERIC)",
         FullTimeStudentContributionType.SpouseContributionWeeks,
       )
       .innerJoin("application.currentAssessment", "currentAssessment")
@@ -361,7 +361,7 @@ export class AssessmentSequentialProcessingService {
 
     return Object.keys(FullTimeStudentContributionType).map((key) => ({
       contribution: key as FullTimeStudentContributionType,
-      total: +totals[key],
+      total: +totals[key] || 0,
     }));
   }
 
