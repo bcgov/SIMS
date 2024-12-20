@@ -177,7 +177,7 @@ export class AssessmentSequentialProcessingService {
         // Only get the full-time contribution totals if the offering intensity is full-time.
         OfferingIntensity.fullTime === options.offeringIntensity &&
         applicationNumbers?.length > 0
-          ? await this.getFTProgramYearContributionTotals(applicationNumbers)
+          ? await this.getProgramYearContributionTotals(applicationNumbers)
           : null,
       ]);
     return {
@@ -317,7 +317,7 @@ export class AssessmentSequentialProcessingService {
    * @param applicationNumbers application numbers.
    * @returns full-time program year contribution totals.
    */
-  private async getFTProgramYearContributionTotals(
+  private async getProgramYearContributionTotals(
     applicationNumbers: string[],
   ): Promise<FTProgramYearContributionTotal[]> {
     const totals = await this.applicationRepo
