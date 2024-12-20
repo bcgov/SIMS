@@ -1,8 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { MSFAANumberService } from "@sims/integrations/services";
 import { OfferingIntensity } from "@sims/sims-db";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { ProcessSFTPResponseResult } from "../models/esdc-integration.model";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import {
   MSFAASFTPResponseFile,
   ReceivedStatusCode,
@@ -10,7 +13,6 @@ import {
 import { MSFAAResponseCancelledRecord } from "./msfaa-files/msfaa-response-cancelled-record";
 import { MSFAAResponseReceivedRecord } from "./msfaa-files/msfaa-response-received-record";
 import { MSFAAIntegrationService } from "./msfaa.integration.service";
-import { parseJSONError } from "@sims/utilities";
 
 @Injectable()
 export class MSFAAResponseProcessingService {
@@ -18,79 +20,79 @@ export class MSFAAResponseProcessingService {
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly msfaaService: MSFAAIntegrationService,
   ) {}
+
   /**
    * Download all files from MSFAA Response folder on SFTP and process them all.
    * @param offeringIntensity offering intensity.
-   * @returns Summary with what was processed and the list of all errors, if any.
+   * @param processSummary process summary for logging.
    */
   async processResponses(
     offeringIntensity: OfferingIntensity,
-  ): Promise<ProcessSFTPResponseResult[]> {
+    processSummary: ProcessSummary,
+  ): Promise<void> {
     const filePaths = await this.msfaaService.getResponseFilesFullPath(
       offeringIntensity,
     );
-    const processFiles: ProcessSFTPResponseResult[] = [];
     for (const filePath of filePaths) {
-      processFiles.push(await this.processFile(filePath));
+      const childProcessSummary = new ProcessSummary();
+      processSummary.children(childProcessSummary);
+      await this.processFile(filePath, childProcessSummary);
     }
-    return processFiles;
   }
 
   /**
    * Process each individual MSFAA response file from the SFTP.
    * @param filePath MSFAA response file to be processed.
+   * @param processSummary process summary for logging.
    * @returns Process summary and errors summary.
    */
   private async processFile(
     filePath: string,
-  ): Promise<ProcessSFTPResponseResult> {
-    const result = new ProcessSFTPResponseResult();
-    result.processSummary.push(`Processing file ${filePath}.`);
-
+    processSummary: ProcessSummary,
+  ): Promise<void> {
+    processSummary.info(`Processing file ${filePath}.`);
     let responseFile: MSFAASFTPResponseFile;
-
     try {
       responseFile = await this.msfaaService.downloadResponseFile(filePath);
-    } catch (error) {
-      this.logger.error(error);
-      result.errorsSummary.push(`Error downloading file ${filePath}. ${error}`);
+    } catch (error: unknown) {
+      const errorMessage = `Error downloading file ${filePath}.`;
+      this.logger.error(errorMessage, error);
+      processSummary.error(errorMessage, error);
       // Abort the process nicely not throwing an exception and
       // allowing other response files to be processed.
-      return result;
+      return;
     }
-
-    result.processSummary.push("File contains:");
-    result.processSummary.push(
+    processSummary.info("File contains:");
+    processSummary.info(
       `Confirmed MSFAA records (type ${ReceivedStatusCode.Received}): ${responseFile.receivedRecords.length}.`,
     );
-    result.processSummary.push(
+    processSummary.info(
       `Cancelled MSFAA records (type ${ReceivedStatusCode.Cancelled}): ${responseFile.cancelledRecords.length}.`,
     );
-
     for (const receivedRecord of responseFile.receivedRecords) {
       try {
         await this.processReceivedRecord(receivedRecord);
-        result.processSummary.push(
+        processSummary.info(
           `Record from line ${receivedRecord.lineNumber}, updated as confirmed.`,
         );
-      } catch (error) {
+      } catch (error: unknown) {
         // Log the error but allow the process to continue.
-        const errorDescription = `Error processing record line number ${receivedRecord.lineNumber} from file ${responseFile.filePath}`;
-        result.errorsSummary.push(errorDescription);
-        this.logger.error(`${errorDescription}. Error: ${error}`);
+        const errorDescription = `Error processing record line number ${receivedRecord.lineNumber} from file ${responseFile.filePath}.`;
+        processSummary.error(errorDescription, error);
+        this.logger.error(errorDescription, error);
       }
     }
     for (const cancelledRecord of responseFile.cancelledRecords) {
       try {
         await this.processCancelledRecord(cancelledRecord);
-        result.processSummary.push(
+        processSummary.info(
           `Record from line ${cancelledRecord.lineNumber}, updated as cancelled.`,
         );
       } catch (error) {
         // Log the error but allow the process to continue.
-        const errorDescription = `Error processing cancelled record line number ${cancelledRecord.lineNumber} from file ${responseFile.filePath}`;
-        result.errorsSummary.push(errorDescription);
-        this.logger.error(`${errorDescription}. Error: ${error}`);
+        const errorDescription = `Error processing cancelled record line number ${cancelledRecord.lineNumber} from file ${responseFile.filePath}.`;
+        processSummary.error(errorDescription, error);
+        this.logger.error(errorDescription, error);
       }
     }
     try {
@@ -100,13 +102,10 @@ export class MSFAAResponseProcessingService {
       // Log the error but allow the process to continue.
       // If there was an issue only during the file archiving, it will be
       // processed again and could be archived in the second attempt.
-      const logMessage = `Error while archiving MSFAA response file: ${responseFile.filePath}`;
-      result.errorsSummary.push(logMessage);
-      result.errorsSummary.push(parseJSONError(error));
+      const logMessage = `Error while archiving MSFAA response file: ${responseFile.filePath}.`;
+      processSummary.error(logMessage, error);
       this.logger.error(logMessage, error);
     }
-
-    return result;
   }
 
   /**

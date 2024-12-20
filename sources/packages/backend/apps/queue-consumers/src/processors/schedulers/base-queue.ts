@@ -26,11 +26,16 @@ export abstract class BaseQueue<T> {
   async processQueue(job: Job<T>): Promise<string | string[]> {
     const processSummary = new ProcessSummary();
     try {
-      processSummary.info(
-        `Processing queue ${job.queue.name}, job ID ${job.id}.`,
-      );
+      // Log the start of the process for the summary and logger.
+      const startLogMessage = `Processing queue ${job.queue.name}, job ID ${job.id}.`;
+      processSummary.info(startLogMessage);
+      this.logger.log(startLogMessage);
+      // Execute the process.
       const result = await this.process(job, processSummary);
-      processSummary.info(`${job.queue.name}, job ID ${job.id}, executed.`);
+      // Log the end of the process for the summary and logger.
+      const endLogMessage = `${job.queue.name}, job ID ${job.id}, finished.`;
+      processSummary.info(endLogMessage);
+      this.logger.log(endLogMessage);
       const logsSum = processSummary.getLogLevelSum();
       if (logsSum.error) {
         throw new CustomNamedError(

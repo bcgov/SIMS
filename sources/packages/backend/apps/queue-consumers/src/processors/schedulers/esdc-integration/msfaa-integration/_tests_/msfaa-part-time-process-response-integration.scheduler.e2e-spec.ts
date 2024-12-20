@@ -1,9 +1,10 @@
-import { DeepMocked, createMock } from "@golevelup/ts-jest";
+import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames, getISODateOnlyString } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../../../test/helpers";
 import { PartTimeMSFAAProcessResponseIntegrationScheduler } from "../msfaa-part-time-process-response-integration.scheduler";
 import {
@@ -31,7 +32,6 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import * as Client from "ssh2-sftp-client";
-import { Job } from "bull";
 import * as path from "path";
 import {
   MSFAA_PART_TIME_MARRIED,
@@ -110,30 +110,29 @@ describe(
       );
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD,
       ]);
 
       // Act
-      const processResult = await processor.processMSFAAResponses(job);
-
-      // Assert
-      expect(processResult).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
-            "File contains:",
-            "Confirmed MSFAA records (type R): 2.",
-            "Cancelled MSFAA records (type C): 1.",
-            "Record from line 2, updated as confirmed.",
-            "Record from line 4, updated as confirmed.",
-            "Record from line 3, updated as cancelled.",
-          ],
-          errorsSummary: [],
-        },
+      const result = await processor.processQueue(mockedJob.job);
+      expect(result).toStrictEqual([
+        "MSFAA part-time response files processed.",
       ]);
+      // Assert
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
+          "File contains:",
+          "Confirmed MSFAA records (type R): 2.",
+          "Cancelled MSFAA records (type C): 1.",
+          "Record from line 2, updated as confirmed.",
+          "Record from line 4, updated as confirmed.",
+          "Record from line 3, updated as cancelled.",
+        ]),
+      ).toBe(true);
       // Assert that the file was archived on SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Find the updated MSFAA records previously created.
@@ -257,26 +256,27 @@ describe(
         },
       );
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
       ]);
+
       // Act
       // Now reactivate the cancelled MSFAA.
-      const processResult = await processor.processMSFAAResponses(job);
+      const result = await processor.processQueue(mockedJob.job);
       // Assert
-      expect(processResult).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD}.`,
-            "File contains:",
-            "Confirmed MSFAA records (type R): 1.",
-            "Cancelled MSFAA records (type C): 0.",
-            "Record from line 2, updated as confirmed.",
-          ],
-          errorsSummary: [],
-        },
+      expect(result).toStrictEqual([
+        "MSFAA part-time response files processed.",
       ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD}.`,
+          "File contains:",
+          "Confirmed MSFAA records (type R): 1.",
+          "Cancelled MSFAA records (type C): 0.",
+          "Record from line 2, updated as confirmed.",
+        ]),
+      ).toBe(true);
       // Assert that the file was archived on SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Find the updated MSFAA records previously created.
@@ -377,32 +377,29 @@ describe(
       );
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD,
       ]);
 
-      // Act
-      const processResults = await processor.processMSFAAResponses(job);
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
 
-      // Assert
       const expectedFilePath = `${msfaaMocksDownloadFolder}/${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}`;
-      expect(processResults).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
-            "File contains:",
-            "Confirmed MSFAA records (type R): 2.",
-            "Cancelled MSFAA records (type C): 1.",
-            "Record from line 4, updated as confirmed.",
-            "Record from line 3, updated as cancelled.",
-          ],
-          errorsSummary: [
-            `Error processing record line number 2 from file ${expectedFilePath}`,
-          ],
-        },
-      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
+          "File contains:",
+          "Confirmed MSFAA records (type R): 2.",
+          "Cancelled MSFAA records (type C): 1.",
+          "Record from line 4, updated as confirmed.",
+          "Record from line 3, updated as cancelled.",
+          `Error processing record line number 2 from file ${expectedFilePath}.`,
+        ]),
+      ).toBe(true);
       // Assert that the file was archived on SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Find the updated MSFAA records previously created.
@@ -435,26 +432,25 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid SIN hash total.", async () => {
       // Arrange
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL,
       ]);
 
       // Act
-      const processResult = await processor.processMSFAAResponses(job);
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
 
       // Assert
-      expect(processResult).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL}.`,
-          ],
-          errorsSummary: [
-            "Error downloading file msfaa-part-time-receive-file-with-invalid-sin-hash-total.dat. Error: The MSFAA file has TotalSINHash inconsistent with the total sum of sin in the records",
-          ],
-        },
-      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL}.`,
+          `Error downloading file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL}.`,
+          "The MSFAA file has TotalSINHash inconsistent with the total sum of sin in the records",
+        ]),
+      ).toBe(true);
       // Assert that the file was not archived on SFTP.
       expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
@@ -462,26 +458,25 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid record count.", async () => {
       // Arrange
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT,
       ]);
 
       // Act
-      const processResult = await processor.processMSFAAResponses(job);
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
 
       // Assert
-      expect(processResult).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT}.`,
-          ],
-          errorsSummary: [
-            "Error downloading file msfaa-part-time-receive-file-with-invalid-records-count.dat. Error: The MSFAA file has invalid number of records",
-          ],
-        },
-      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT}.`,
+          `Error downloading file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT}.`,
+          "The MSFAA file has invalid number of records",
+        ]),
+      ).toBe(true);
       // Assert that the file was not archived on SFTP.
       expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
@@ -489,7 +484,7 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid header code.", async () => {
       // Arrange
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       mockDownloadFiles(
         sftpClientMock,
@@ -501,19 +496,18 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processMSFAAResponses(job);
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
 
       // Assert
-      expect(processResult).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
-          ],
-          errorsSummary: [
-            "Error downloading file msfaa-part-time-receive-file-with-cancelation-record.dat. Error: The MSFAA file has an invalid transaction code on header",
-          ],
-        },
-      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
+          `Error downloading file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
+          "The MSFAA file has an invalid transaction code on header",
+        ]),
+      ).toBe(true);
       // Assert that the file was not archived on SFTP.
       expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
@@ -521,7 +515,7 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid footer code.", async () => {
       // Arrange
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       mockDownloadFiles(
         sftpClientMock,
@@ -535,19 +529,18 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processMSFAAResponses(job);
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
 
       // Assert
-      expect(processResult).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
-          ],
-          errorsSummary: [
-            "Error downloading file msfaa-part-time-receive-file-with-cancelation-record.dat. Error: The MSFAA file has an invalid transaction code on trailer",
-          ],
-        },
-      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
+          `Error downloading file ${MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD}.`,
+          "The MSFAA file has an invalid transaction code on trailer",
+        ]),
+      ).toBe(true);
       // Assert that the file was not archived on SFTP.
       expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });

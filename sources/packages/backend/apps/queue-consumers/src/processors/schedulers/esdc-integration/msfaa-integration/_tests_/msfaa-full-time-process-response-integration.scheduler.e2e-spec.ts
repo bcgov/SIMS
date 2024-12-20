@@ -1,9 +1,10 @@
-import { DeepMocked, createMock } from "@golevelup/ts-jest";
+import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames, getISODateOnlyString } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../../../test/helpers";
 import { FullTimeMSFAAProcessResponseIntegrationScheduler } from "../msfaa-full-time-process-response-integration.scheduler";
 import {
@@ -27,7 +28,6 @@ import {
   NotificationMessageType,
 } from "@sims/sims-db";
 import * as Client from "ssh2-sftp-client";
-import { Job } from "bull";
 import * as path from "path";
 import { FULL_TIME_SAMPLE_MSFAA_NUMBER } from "./msfaa-process-integration.scheduler.models";
 import { IsNull } from "typeorm";
@@ -140,26 +140,29 @@ describe(
         },
       );
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [
         MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
       ]);
+
       // Act
       // Now reactivate the cancelled MSFAA.
-      const processResult = await processor.processMSFAA(job);
+      const result = await processor.processQueue(mockedJob.job);
+
       // Assert
-      expect(processResult).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD}.`,
-            "File contains:",
-            "Confirmed MSFAA records (type R): 1.",
-            "Cancelled MSFAA records (type C): 0.",
-            "Record from line 2, updated as confirmed.",
-          ],
-          errorsSummary: [],
-        },
+      expect(result).toStrictEqual([
+        "MSFAA full-time response files processed.",
       ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD}.`,
+          "File contains:",
+          "Confirmed MSFAA records (type R): 1.",
+          "Cancelled MSFAA records (type C): 0.",
+          "Record from line 2, updated as confirmed.",
+        ]),
+      ).toBe(true);
+
       // Assert that the file was archived from SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Find the updated MSFAA records previously created.
@@ -259,12 +262,27 @@ describe(
         ),
       );
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [
         MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD,
       ]);
       // Act
-      const processResult = await processor.processMSFAA(job);
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "MSFAA full-time response files processed.",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD}.`,
+          "File contains:",
+          "Confirmed MSFAA records (type R): 0.",
+          "Cancelled MSFAA records (type C): 1.",
+          "Record from line 2, updated as cancelled.",
+        ]),
+      ).toBe(true);
+      // Assert database changes.
       const cancelledMSFAARecord = await db.msfaaNumber.findOne({
         select: {
           cancelledDate: true,
@@ -292,19 +310,6 @@ describe(
           },
         },
       });
-      // Assert
-      expect(processResult).toStrictEqual([
-        {
-          processSummary: [
-            `Processing file ${MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD}.`,
-            "File contains:",
-            "Confirmed MSFAA records (type R): 0.",
-            "Cancelled MSFAA records (type C): 1.",
-            "Record from line 2, updated as cancelled.",
-          ],
-          errorsSummary: [],
-        },
-      ]);
       expect(cancelledMSFAARecord.cancelledDate).toBe("2021-11-24");
       expect(cancelledMSFAARecord.newIssuingProvince).toBe("ON");
       expect(notification.dateSent).toBe(null);
