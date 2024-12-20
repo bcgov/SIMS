@@ -3,6 +3,8 @@ import * as AdmZip from "adm-zip";
 /**
  * Reads the first extracted file from a compressed archive file.
  * @param compressedFileBuffer
+ * @param options options.
+ * - `encoding`: encoding to read the file.
  * @returns first extracted file name and data.
  */
 export function readFirstExtractedFile(
