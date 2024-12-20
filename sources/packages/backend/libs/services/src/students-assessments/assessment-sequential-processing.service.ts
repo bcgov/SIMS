@@ -20,7 +20,6 @@ import {
   AwardTotal,
   FTProgramYearContributionTotal,
   SequencedApplications,
-  SequencedApplicationsWithAssessment,
   SequentialApplication,
 } from "..";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -271,20 +270,20 @@ export class AssessmentSequentialProcessingService {
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
       .select(
-        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC' AS NUMERIC))",
-        "totalFederalFSC",
+        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC' AS NUMERIC)),0)",
+        FullTimeStudentContributionType.FederalFSC,
       )
       .addSelect(
-        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC' AS NUMERIC))",
-        "totalProvincialFSC",
+        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC' AS NUMERIC)),0)",
+        FullTimeStudentContributionType.ProvincialFSC,
       )
       .addSelect(
-        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentScholarshipsBursaries' AS NUMERIC))",
-        "studentScholarshipsBursaries",
+        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentScholarshipsBursaries' AS NUMERIC)),0)",
+        FullTimeStudentContributionType.ScholarshipBursaries,
       )
       .addSelect(
-        "SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContribution' AS NUMERIC))",
-        "studentSpouseContribution",
+        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContribution' AS NUMERIC)),0)",
+        FullTimeStudentContributionType.SpouseContributionWeeks,
       )
       .innerJoin("application.currentAssessment", "currentAssessment")
       .where("application.applicationNumber IN (:...applicationNumbers)", {
@@ -301,42 +300,19 @@ export class AssessmentSequentialProcessingService {
         },
       )
       .getRawOne<{
-        totalFederalFSC: string;
-        totalProvincialFSC: string;
-        studentScholarshipsBursaries: string;
-        studentSpouseContribution: string;
+        [FullTimeStudentContributionType.FederalFSC]: string;
+        [FullTimeStudentContributionType.ProvincialFSC]: string;
+        [FullTimeStudentContributionType.ScholarshipBursaries]: string;
+        [FullTimeStudentContributionType.SpouseContributionWeeks]: string;
       }>();
 
-    // Map the results to the required interface
-    const result: FTProgramYearContributionTotal[] = [
-      {
-        contribution: FullTimeStudentContributionType.FederalFSC,
-        total: +totals.totalFederalFSC ?? 0,
-      },
-      {
-        contribution: FullTimeStudentContributionType.ProvincialFSC,
-        total: +totals.totalProvincialFSC ?? 0,
-      },
-      {
-        contribution: FullTimeStudentContributionType.ScholarshipBursaries,
-        total: +totals.studentScholarshipsBursaries ?? 0,
-      },
-      {
-        contribution: FullTimeStudentContributionType.SpouseContributionWeeks,
-        total: +totals.studentSpouseContribution ?? 0,
-      },
-    ];
-
-    return result;
+    return Object.keys(FullTimeStudentContributionType).map((key) => ({
+      contribution: key as FullTimeStudentContributionType,
+      total: +totals[key],
+    }));
   }
 
-  async getSequencedApplicationsWithAssessment(
-    assessmentId: number,
-    options?: {
-      entityManager?: EntityManager;
-      alternativeReferenceDate?: Date;
-    },
-  ): Promise<SequencedApplicationsWithAssessment> {
+  async getCurrentAssessment(assessmentId: number): Promise<StudentAssessment> {
     const currentAssessment = await this.studentAssessmentRepo.findOne({
       select: {
         id: true,
@@ -373,13 +349,7 @@ export class AssessmentSequentialProcessingService {
     if (!currentAssessment) {
       throw new Error(`Assessment id ${assessmentId} not found.`);
     }
-    const sequencedApplications = await this.getSequencedApplications(
-      currentAssessment.application.applicationNumber,
-      currentAssessment.application.student.id,
-      currentAssessment.application.programYear.id,
-      { alternativeReferenceDate: options?.alternativeReferenceDate },
-    );
-    return { sequencedApplications, currentAssessment };
+    return currentAssessment;
   }
 
   /**
@@ -397,7 +367,7 @@ export class AssessmentSequentialProcessingService {
    * {@link applicationNumber} used as reference does not have a calculated date yet.
    * @returns sequenced applications.
    */
-  private async getSequencedApplications(
+  async getSequencedApplications(
     applicationNumber: string,
     studentId: number,
     programYearId: number,

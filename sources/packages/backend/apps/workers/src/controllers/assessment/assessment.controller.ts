@@ -494,11 +494,11 @@ export class AssessmentController {
         ? output[outputName] + award.total
         : award.total;
     });
-    ftProgramYearContributionTotal?.forEach((contributionTotal) => {
-      const outputName = `programYearTotal${contributionTotal.contribution}`;
+    ftProgramYearContributionTotal?.forEach((ftContributionTotal) => {
+      const outputName = `programYearTotal${ftContributionTotal.contribution}`;
       output[outputName] = output[outputName]
-        ? output[outputName] + contributionTotal.total
-        : contributionTotal.total;
+        ? output[outputName] + ftContributionTotal.total
+        : ftContributionTotal.total;
     });
   }
 
@@ -509,14 +509,17 @@ export class AssessmentController {
       alternativeReferenceDate?: Date;
     },
   ): Promise<ProgramYearTotal> {
-    const sequencedApplicationsWithAssessment =
-      await this.assessmentSequentialProcessingService.getSequencedApplicationsWithAssessment(
+    const currentAssessment =
+      await this.assessmentSequentialProcessingService.getCurrentAssessment(
         assessmentId,
-        options,
       );
     const sequencedApplications =
-      sequencedApplicationsWithAssessment.sequencedApplications;
-    const assessment = sequencedApplicationsWithAssessment.currentAssessment;
+      await this.assessmentSequentialProcessingService.getSequencedApplications(
+        currentAssessment.application.applicationNumber,
+        currentAssessment.application.student.id,
+        currentAssessment.application.programYear.id,
+        { alternativeReferenceDate: options?.alternativeReferenceDate },
+      );
     const applicationNumbers = sequencedApplications.previous.map(
       (application) => application.applicationNumber,
     );
@@ -524,7 +527,7 @@ export class AssessmentController {
       awardTotal:
         this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotals(
           sequencedApplications,
-          assessment,
+          currentAssessment,
           options,
         ),
       ftProgramYearContributionTotal:
