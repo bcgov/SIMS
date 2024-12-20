@@ -164,7 +164,6 @@ export class AssessmentSequentialProcessingService {
     const applicationNumbers = sequencedApplications.previous.map(
       (application) => application.applicationNumber,
     );
-
     // Only get the full-time contribution totals if the offering intensity is full-time.
     const shouldGetProgramYearContributionTotals =
       OfferingIntensity.fullTime === offeringIntensity &&
