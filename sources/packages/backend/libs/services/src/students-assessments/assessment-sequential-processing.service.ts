@@ -331,11 +331,11 @@ export class AssessmentSequentialProcessingService {
         FullTimeStudentContributionType.ProvincialFSC,
       )
       .addSelect(
-        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentScholarshipsBursaries' AS NUMERIC)),0)",
+        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'exemptScholarshipsBursaries' AS NUMERIC)),0)",
         FullTimeStudentContributionType.ScholarshipsBursaries,
       )
       .addSelect(
-        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContribution' AS NUMERIC)),0)",
+        "COALESCE(SUM(CAST(currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContributionWeeks' AS NUMERIC)),0)",
         FullTimeStudentContributionType.SpouseContributionWeeks,
       )
       .innerJoin("application.currentAssessment", "currentAssessment")

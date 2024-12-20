@@ -1011,8 +1011,8 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           assessmentDate: addDays(10, programYear.startDate),
           workflowData: {
             calculatedData: {
-              studentSpouseContribution: 1000,
-              studentScholarshipsBursaries: 2000,
+              studentSpouseContributionWeeks: 1000,
+              exemptScholarshipsBursaries: 2000,
               totalFederalFSC: 3000,
               totalProvincialFSC: 4000,
             },
@@ -1042,8 +1042,8 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           assessmentDate: addDays(20, programYear.startDate),
           workflowData: {
             calculatedData: {
-              studentSpouseContribution: 1000,
-              studentScholarshipsBursaries: 2000,
+              studentSpouseContributionWeeks: 1000,
+              exemptScholarshipsBursaries: 2000,
               totalFederalFSC: 3000,
               totalProvincialFSC: 4000,
             },

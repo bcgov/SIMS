@@ -384,8 +384,8 @@ export interface WorkflowData {
     partnerStudentStudyWeeks?: number;
     totalFederalFSC?: number;
     totalProvincialFSC?: number;
-    studentScholarshipsBursaries?: number;
-    studentSpouseContribution?: number;
+    exemptScholarshipsBursaries?: number;
+    studentSpouseContributionWeeks?: number;
   };
 }
 
