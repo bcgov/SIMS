@@ -234,6 +234,7 @@ export class SIMSToSFASService {
       where: {
         restriction: {
           restrictionType: RestrictionType.Provincial,
+          isLegacy: false,
         },
         updatedAt: And(MoreThan(modifiedSince), LessThanOrEqual(modifiedUntil)),
       },

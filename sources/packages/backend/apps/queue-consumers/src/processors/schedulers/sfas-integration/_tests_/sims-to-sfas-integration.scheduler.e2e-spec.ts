@@ -34,6 +34,8 @@ import {
   OfferingIntensity,
   ProgramInfoStatus,
   Restriction,
+  RestrictionActionType,
+  RestrictionNotificationType,
   RestrictionType,
   Student,
   StudentRestriction,
@@ -134,6 +136,24 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           updatedAt: simsDataUpdatedDate,
         },
       );
+
+      const legacyRestriction = await db.restriction.save({
+        restrictionType: RestrictionType.Provincial,
+        isLegacy: true,
+        restrictionCode: "LGCY_XYZ",
+        notificationType: RestrictionNotificationType.Error,
+        restrictionCategory: "Other",
+        description: "Description for LGCY_XYZ",
+        actionType: [RestrictionActionType.StopPartTimeDisbursement],
+        updatedAt: simsDataUpdatedDate,
+      });
+
+      // Student has a legacy restriction that should be ignored.
+      await saveFakeStudentRestriction(db.dataSource, {
+        student,
+        application,
+        restriction: legacyRestriction,
+      });
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -824,7 +844,10 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       : "        ";
     return `400${studentId.toString().padStart(10, "0")}${studentRestriction.id
       .toString()
-      .padStart(10, "0")}${restriction.restrictionCode}${formatDate(
+      .padStart(10, "0")}${restriction.restrictionCode.padEnd(
+      10,
+      " ",
+    )}${formatDate(
       studentRestriction.createdAt,
       DATE_FORMAT,
     )}${restrictionRemovalDate}`;
