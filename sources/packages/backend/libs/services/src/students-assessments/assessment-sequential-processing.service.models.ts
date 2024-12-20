@@ -127,7 +127,7 @@ export interface AwardTotal {
 
 /**
  * Program year totals with award code (e.g. CSPT, CSGD, CSGP, SBSD, BCAG) and its totals promise
- * and for full time program year contribution (e.g. ScholarshipBursaries, SpouseContributionWeeks, FederalFSC, ProvincialFSC) and its totals promise.
+ * and for full-time program year contribution (e.g. ScholarshipBursaries, SpouseContributionWeeks, FederalFSC, ProvincialFSC) and its totals promise.
  */
 export interface ProgramYearTotal {
   awardTotal: Promise<AwardTotal[]>;
@@ -135,7 +135,7 @@ export interface ProgramYearTotal {
 }
 
 /**
- * Full time program year contribution and its totals.
+ * Full-time program year contribution and its totals.
  */
 export interface FTProgramYearContributionTotal {
   contribution: string;

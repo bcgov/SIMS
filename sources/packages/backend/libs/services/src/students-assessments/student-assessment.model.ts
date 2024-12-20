@@ -12,7 +12,7 @@ export interface StudentAssessmentDetail {
 }
 
 /**
- * Full time program year student contribution for calculating program year totals.
+ * Full-time program year student contribution for calculating program year totals.
  */
 export enum FullTimeStudentContributionType {
   ScholarshipBursaries = "ScholarshipBursaries",
