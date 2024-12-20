@@ -1,10 +1,10 @@
-import { Job } from "bull";
-import { DeepMocked, createMock } from "@golevelup/ts-jest";
+import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames, getISODateOnlyString } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../../../test/helpers";
 import { PartTimeMSFAAProcessIntegrationScheduler } from "../msfaa-part-time-process-integration.scheduler";
 import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
@@ -70,13 +70,13 @@ describe(
         msfaaInputData,
       );
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
       // Spy on the MSFAA content creation to intercept the process date and time used.
       const createMSFAARequestContentMock =
         createMSFAARequestContentSpyOnMock(app);
 
       // Act
-      const msfaaRequestResults = await processor.processMSFAA(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       expect(createMSFAARequestContentMock).toHaveBeenCalledTimes(1);
@@ -87,14 +87,10 @@ describe(
         `MSFT-Request\\DPBC.EDU.MSFA.SENT.PT.${processDateFormatted}.010`,
       );
       // Assert process result.
-      expect(msfaaRequestResults).toStrictEqual([
-        {
-          generatedFile: uploadedFile.remoteFilePath,
-          uploadedRecords: msfaaInputData.length,
-          offeringIntensity: OfferingIntensity.partTime,
-        },
+      expect(result).toStrictEqual([
+        `Generated file: ${uploadedFile.remoteFilePath}`,
+        `Uploaded records: ${msfaaInputData.length}`,
       ]);
-
       // Assert file output.
       expect(uploadedFile.fileLines?.length).toBe(msfaaInputData.length + 2);
       const [
