@@ -431,7 +431,7 @@ export class AssessmentController {
           },
         );
         // Updates the calculation start date and get the program year totals and for
-        // full time the contribution program year totals in parallel.
+        // full-time the contribution program year totals in parallel.
         const [, programYearTotalAwards, ftProgramYearContributionTotal] =
           await Promise.all([
             saveAssessmentCalculationStartDate,
@@ -504,8 +504,8 @@ export class AssessmentController {
   }
 
   /**
-   * Get the promises of the program year awards totals for part time and
-   * full time and contribution totals for full time for the assessment.
+   * Get the promises of the program year awards totals for part-time and
+   * full-time and contribution totals for full-time for the assessment.
    * @param assessmentId assessment id.
    * @param options method options.
    * - `offeringIntensity` the offering intensity to be used.
@@ -539,14 +539,14 @@ export class AssessmentController {
       (application) => application.applicationNumber,
     );
     return {
-      // Get the program year awards totals for part time and full time.
+      // Get the program year awards totals for part-time and full-time.
       awardTotal:
         this.assessmentSequentialProcessingService.getProgramYearPreviousAwardsTotals(
           sequencedApplications,
           currentAssessment,
           options,
         ),
-      // Only get the full time contribution totals if the offering intensity is full time.
+      // Only get the full-time contribution totals if the offering intensity is full-time.
       ftProgramYearContributionTotal:
         OfferingIntensity.fullTime === options.offeringIntensity
           ? this.assessmentSequentialProcessingService.getFTProgramYearContributionTotals(
