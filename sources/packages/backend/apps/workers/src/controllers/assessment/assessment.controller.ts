@@ -508,14 +508,14 @@ export class AssessmentController {
    * full time and contribution totals for full time for the assessment.
    * @param assessmentId assessment id.
    * @param options method options.
-   * - `OfferingIntensity` the offering intensity to be used.
+   * - `offeringIntensity` the offering intensity to be used.
    * - `alternativeReferenceDate` the reference date to be used.
    * @returns the promise to get the program year totals.
    */
   private async getProgramYearTotals(
     assessmentId: number,
     options?: {
-      OfferingIntensity?: OfferingIntensity;
+      offeringIntensity?: OfferingIntensity;
       alternativeReferenceDate?: Date;
     },
   ): Promise<ProgramYearTotal> {
@@ -548,7 +548,7 @@ export class AssessmentController {
         ),
       // Only get the full time contribution totals if the offering intensity is full time.
       ftProgramYearContributionTotal:
-        OfferingIntensity.fullTime === options.OfferingIntensity
+        OfferingIntensity.fullTime === options.offeringIntensity
           ? this.assessmentSequentialProcessingService.getFTProgramYearContributionTotals(
               applicationNumbers,
             )
