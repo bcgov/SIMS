@@ -155,8 +155,8 @@ export abstract class SFTPIntegrationBase<DownloadType> {
           return false;
         }
       }
-      let fileContent: string | NodeJS.WritableStream | Buffer;
-      const fileExtension = path.parse(remoteFilePath).ext.toLocaleLowerCase();
+      let fileContent: string;
+      const fileExtension = path.extname(remoteFilePath).toLowerCase();
       const isZIPFile = fileExtension === ".zip";
       if (isZIPFile) {
         // Read the zip file content with null encoding to avoid data corruption.
@@ -174,9 +174,9 @@ export abstract class SFTPIntegrationBase<DownloadType> {
         fileContent = data;
       } else {
         // Read all the file content and create a buffer with 'ascii' encoding.
-        fileContent = await client.get(remoteFilePath, undefined, {
+        fileContent = (await client.get(remoteFilePath, undefined, {
           readStreamOptions: { encoding: FILE_DEFAULT_ENCODING },
-        });
+        })) as string;
       }
       // Convert the file content to an array of text lines and remove possible blank lines.
       return fileContent
