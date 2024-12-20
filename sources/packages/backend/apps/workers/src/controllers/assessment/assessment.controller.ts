@@ -427,7 +427,7 @@ export class AssessmentController {
           assessmentId,
           {
             alternativeReferenceDate: new Date(),
-            OfferingIntensity: offeringIntensity,
+            offeringIntensity: offeringIntensity,
           },
         );
         // Updates the calculation start date and get the program year totals and for
