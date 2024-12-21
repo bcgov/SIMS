@@ -9,6 +9,7 @@ import {
   getFileNameAsExtendedCurrentTimestamp,
   convertToASCII,
   FILE_DEFAULT_ENCODING,
+  readFirstExtractedFile,
 } from "@sims/utilities";
 import {
   LINE_BREAK_SPLIT_REGEX,
@@ -154,10 +155,29 @@ export abstract class SFTPIntegrationBase<DownloadType> {
           return false;
         }
       }
-      // Read all the file content and create a buffer with 'ascii' encoding.
-      const fileContent = await client.get(remoteFilePath, undefined, {
-        readStreamOptions: { encoding: FILE_DEFAULT_ENCODING },
-      });
+      let fileContent: string;
+      const fileExtension = path.extname(remoteFilePath).toLowerCase();
+      const isZIPFile = fileExtension === ".zip";
+      if (isZIPFile) {
+        // Read the zip file content with null encoding to avoid data corruption.
+        const compressedFileContent = (await client.get(
+          remoteFilePath,
+          undefined,
+          { readStreamOptions: { encoding: null } },
+        )) as Buffer;
+        // Read the first file content with 'ascii' encoding.
+        const { fileName, data } = readFirstExtractedFile(
+          compressedFileContent,
+          { encoding: FILE_DEFAULT_ENCODING },
+        );
+        this.logger.log(`Extracted the first file ${fileName}.`);
+        fileContent = data;
+      } else {
+        // Read all the file content and create a buffer with 'ascii' encoding.
+        fileContent = (await client.get(remoteFilePath, undefined, {
+          readStreamOptions: { encoding: FILE_DEFAULT_ENCODING },
+        })) as string;
+      }
       // Convert the file content to an array of text lines and remove possible blank lines.
       return fileContent
         .toString()
