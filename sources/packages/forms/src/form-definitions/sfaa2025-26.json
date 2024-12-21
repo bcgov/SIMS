@@ -13429,8 +13429,7 @@
                           "inputType": "radio",
                           "fieldSet": false,
                           "id": "ea0vyrg",
-                          "tags": [],
-                          "isNew": false
+                          "tags": []
                         },
                         {
                           "title": "Upload panel",
@@ -13521,7 +13520,8 @@
                               "addons": [],
                               "inputType": "hidden",
                               "id": "e52khib",
-                              "tags": []
+                              "tags": [],
+                              "isNew": false
                             },
                             {
                               "label": "HTML",
@@ -13864,7 +13864,7 @@
                                 }
                               ],
                               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                              "fileMaxSize": "4 MB",
+                              "fileMaxSize": "15MB",
                               "multiple": true,
                               "redrawOn": "dependants.declaredOnTaxes",
                               "validate": {
@@ -13888,7 +13888,7 @@
                               "unique": false,
                               "persistent": true,
                               "hidden": false,
-                              "clearOnHide": false,
+                              "clearOnHide": true,
                               "refreshOn": "",
                               "modalEdit": false,
                               "dataGridLabel": false,
@@ -14218,7 +14218,8 @@
                           "theme": "default",
                           "breadcrumb": "default",
                           "id": "ec900o",
-                          "tags": []
+                          "tags": [],
+                          "isNew": false
                         },
                         {
                           "label": "Is the dependant listed above supported by you financially but not under your sole custody?",
@@ -14393,7 +14394,8 @@
                               "addons": [],
                               "inputType": "hidden",
                               "id": "ejf7zcr",
-                              "tags": []
+                              "tags": [],
+                              "isNew": false
                             },
                             {
                               "label": "HTML",
@@ -14753,7 +14755,7 @@
                               "dbIndex": false,
                               "encrypted": false,
                               "redrawOn": "",
-                              "clearOnHide": false,
+                              "clearOnHide": true,
                               "customDefaultValue": "",
                               "calculateValue": "",
                               "calculateServer": false,
@@ -15095,8 +15097,7 @@
                           "breadcrumb": "default",
                           "id": "e88jxwl",
                           "hideLabel": true,
-                          "tags": [],
-                          "isNew": false
+                          "tags": []
                         }
                       ],
                       "id": "eja9nnp000000000000000000",

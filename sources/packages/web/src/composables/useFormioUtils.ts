@@ -1,6 +1,6 @@
 import { FormIOComponent, FormIOForm } from "@/types";
 import { ClassConstructor, plainToClass } from "class-transformer";
-import { Utils } from "formiojs";
+import { Utils } from "@formio/js";
 
 /**
  * Form.IO helper methods.

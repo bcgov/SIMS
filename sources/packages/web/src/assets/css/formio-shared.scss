@@ -730,3 +730,18 @@ td .formio-custom-tooltip:hover .tooltip-text {
 .wizard-page {
   margin-top: 15px;
 }
+
+// Removes extra text on file component
+.visually-hidden {
+  display: none;
+}
+
+// Shows the remove icon
+.bi-trash::before {
+  content: "\f5de" !important;
+}
+
+// Shows the calendar icon
+.bi-calendar::before {
+  content: "\f1f6" !important;
+}
