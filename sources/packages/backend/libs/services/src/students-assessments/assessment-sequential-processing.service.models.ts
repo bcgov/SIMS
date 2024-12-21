@@ -124,3 +124,20 @@ export interface AwardTotal {
   valueCode: string;
   total: number;
 }
+
+/**
+ * Program year totals with award code (e.g. CSPT, CSGD, CSGP, SBSD, BCAG) and its totals
+ * and for full-time program year contribution (e.g. ScholarshipsBursaries, SpouseContributionWeeks, FederalFSC, ProvincialFSC) and its totals.
+ */
+export interface ProgramYearTotal {
+  awardTotals: AwardTotal[];
+  contributionTotals?: ProgramYearContributionTotal[];
+}
+
+/**
+ * Full-time program year contribution and its totals.
+ */
+export interface ProgramYearContributionTotal {
+  contribution: string;
+  total: number;
+}

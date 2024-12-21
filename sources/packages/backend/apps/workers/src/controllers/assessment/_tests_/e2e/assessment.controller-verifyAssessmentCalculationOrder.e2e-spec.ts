@@ -21,6 +21,7 @@ import {
   DisbursementValueType,
   OfferingIntensity,
   StudentAssessmentStatus,
+  WorkflowData,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { createFakeVerifyAssessmentCalculationOrderPayload } from "./verify-assessment-calculation-order-factory";
@@ -283,7 +284,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     });
   });
 
-  it("Should sum the grants from past applications with different offering intensities and awards from SFAS and SFAS part time applications data when the applications are for the same student and program year.", async () => {
+  it("Should sum the grants from past applications with different offering intensities and awards from SFAS and SFAS part-time applications data when the applications are for the same student and program year.", async () => {
     // Arrange
 
     // Create the student and program year to be shared across the applications.
@@ -395,13 +396,13 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     );
     const firstAssessmentDate =
       currentApplication.currentAssessment.assessmentDate;
-    // The start date for the first SFAS and SFAS part time application record is set to the date before the first assessment date of the current application.
+    // The start date for the first SFAS and SFAS part-time application record is set to the date before the first assessment date of the current application.
     const firstLegacyApplicationStartDate = faker.date.between(
       programYear.startDate,
       addDays(-1, firstAssessmentDate),
     );
     const firstLegacyApplicationEndDate = addDays(30, firstAssessmentDate);
-    // The start date for the second SFAS and SFAS part time application record is set to the date after the end date of the first SFAS application.
+    // The start date for the second SFAS and SFAS part-time application record is set to the date after the end date of the first SFAS application.
     const secondLegacyApplicationStartDate = faker.date.between(
       firstLegacyApplicationEndDate,
       addDays(10, firstLegacyApplicationEndDate),
@@ -466,7 +467,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       firstFakeSFASApplication,
       secondFakeSFASApplication,
     ]);
-    // First SFAS part time application with the start date before the first assessment date of the current application.
+    // First SFAS part-time application with the start date before the first assessment date of the current application.
     const firstFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
       { individual: sfasIndividual },
       {
@@ -481,7 +482,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         },
       },
     );
-    // Second SFAS part time application with the start date after the end date of the first SFAS part time application.
+    // Second SFAS part-time application with the start date after the end date of the first SFAS part-time application.
     const secondFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
       { individual: sfasIndividual },
       {
@@ -510,7 +511,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The calculation will only take SFAS and SFAS part time application data where the start date is the date before the first assessment date of the current application.
+    // The calculation will only take SFAS and SFAS part-time application data where the start date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       latestCSLPBalance: 0,
@@ -666,7 +667,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     },
   );
 
-  it("Should sum the awards from SFAS and SFAS part time applications data when there is no past SIMS application for the same student and program year.", async () => {
+  it("Should sum the awards from SFAS and SFAS part-time applications data when there is no past SIMS application for the same student and program year.", async () => {
     // Arrange
 
     // Create the student to be shared across the applications.
@@ -690,13 +691,13 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     );
     const firstAssessmentDate =
       currentApplication.currentAssessment.assessmentDate;
-    // The start date for the first SFAS and SFAS part time application record is set to the date before the first assessment date of the current application.
+    // The start date for the first SFAS and SFAS part-time application record is set to the date before the first assessment date of the current application.
     const firstLegacyApplicationStartDate = faker.date.between(
       programYear.startDate,
       addDays(-1, firstAssessmentDate),
     );
     const firstLegacyApplicationEndDate = addDays(30, firstAssessmentDate);
-    // The start date for the second SFAS and SFAS part time application record is set to the date after the end date of the first SFAS application.
+    // The start date for the second SFAS and SFAS part-time application record is set to the date after the end date of the first SFAS application.
     const secondLegacyApplicationStartDate = faker.date.between(
       firstLegacyApplicationEndDate,
       addDays(10, firstLegacyApplicationEndDate),
@@ -762,7 +763,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       firstFakeSFASApplication,
       secondFakeSFASApplication,
     ]);
-    // First SFAS part time application with the start date before the first assessment date of the current application.
+    // First SFAS part-time application with the start date before the first assessment date of the current application.
     const firstFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
       { individual: sfasIndividual },
       {
@@ -777,7 +778,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         },
       },
     );
-    // Second SFAS part time application with the start date after the end date of the first SFAS part time application.
+    // Second SFAS part-time application with the start date after the end date of the first SFAS part-time application.
     const secondFakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
       { individual: sfasIndividual },
       {
@@ -806,7 +807,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The calculation will only take SFAS and SFAS part time application data where the start date is the date before the first assessment date of the current application.
+    // The calculation will only take SFAS and SFAS part-time application data where the start date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       latestCSLPBalance: 0,
@@ -824,7 +825,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     });
   });
 
-  it("Should not return any program year total awards or grants from awards from SFAS and SFAS part time applications when there are no SIMS applications in the past and SFAS and SFAS part time applications for the same student and program year.", async () => {
+  it("Should not return any program year total awards or grants from awards from SFAS and SFAS part-time applications when there are no SIMS applications in the past and SFAS and SFAS part-time applications for the same student and program year.", async () => {
     // Arrange
 
     // Create the student to be shared across the applications.
@@ -854,7 +855,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The result will not have data from SFAS or SFAS part time application data.
+    // The result will not have data from SFAS or SFAS part-time application data.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       latestCSLPBalance: 0,
@@ -918,7 +919,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The result will not have data from SFAS or SFAS part time application data.
+    // The result will not have data from SFAS or SFAS part-time application data.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       latestCSLPBalance: 1000,
@@ -969,9 +970,133 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The result will not have data from SFAS or SFAS part time application data.
+    // The result will not have data from SFAS or SFAS part-time application data.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
+      // Student contribution total.
+      programYearTotalFederalFSC: 0,
+      programYearTotalProvincialFSC: 0,
+      programYearTotalScholarshipsBursaries: 0,
+      programYearTotalSpouseContributionWeeks: 0,
+    });
+  });
+
+  it("Should sum the contributions from past applications with full-time offering intensities when the applications are for the same student and program year and the student submits a full-time application.", async () => {
+    // Arrange
+
+    // Create the student and program year to be shared across the applications.
+    const student = await saveFakeStudent(db.dataSource);
+    // Get the program year for the start date.
+    const programYear = await db.programYear.findOne({ where: { id: 2 } });
+
+    // Past full-time application with federal and provincial loans and grants.
+    // Loans will be ignored.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1,
+          ),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(10, programYear.startDate),
+          workflowData: {
+            calculatedData: {
+              studentSpouseContributionWeeks: 1000,
+              exemptScholarshipsBursaries: 2000,
+              totalFederalFSC: 3000,
+              totalProvincialFSC: 4000,
+            },
+          } as WorkflowData,
+        },
+      },
+    );
+    // Past full-time application with federal and provincial loans and grants.
+    // Loans will be ignored.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            8,
+          ),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(20, programYear.startDate),
+          workflowData: {
+            calculatedData: {
+              studentSpouseContributionWeeks: 1000,
+              exemptScholarshipsBursaries: 2000,
+              totalFederalFSC: 3000,
+              totalProvincialFSC: 4000,
+            },
+          } as WorkflowData,
+        },
+      },
+    );
+    // Current application having the first assessment already processed.
+    const currentApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.InProgress,
+        currentAssessmentInitialValues: {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(30, programYear.startDate),
+        },
+      },
+    );
+    const secondAssessment = createFakeStudentAssessment(
+      {
+        auditUser: currentApplication.student.user,
+        application: currentApplication,
+        offering: currentApplication.currentAssessment.offering,
+      },
+      {
+        initialValue: {
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+    currentApplication.currentAssessment = secondAssessment;
+    await db.application.save(currentApplication);
+
+    // Act
+    const result = await assessmentController.verifyAssessmentCalculationOrder(
+      createFakeVerifyAssessmentCalculationOrderPayload(
+        currentApplication.currentAssessment.id,
+      ),
+    );
+    // Assert
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // The calculation will only take full-time and part-time application data where the start date is the date before the first assessment date of the current application.
+    expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+      isReadyForCalculation: true,
+      // Student contribution total.
+      programYearTotalFederalFSC: 6000,
+      programYearTotalProvincialFSC: 8000,
+      programYearTotalScholarshipsBursaries: 4000,
+      programYearTotalSpouseContributionWeeks: 2000,
     });
   });
 });
