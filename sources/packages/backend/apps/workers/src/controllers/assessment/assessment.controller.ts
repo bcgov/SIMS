@@ -471,7 +471,7 @@ export class AssessmentController {
    * @example
    * programYearTotalFullTimeBCAG: 1250
    * programYearTotalPartTimeBCAG: 3450
-   * @param ProgramYearTotal awards to be added to the output.
+   * @param ProgramYearTotal awards and contributions to be added to the output.
    * @param output output to receive the dynamic property.
    */
   private createOutputForProgramYearTotals(
