@@ -131,13 +131,13 @@ export interface AwardTotal {
  */
 export interface ProgramYearTotal {
   awardTotals: AwardTotal[];
-  contributionTotals?: programYearContributionTotal[];
+  contributionTotals?: ProgramYearContributionTotal[];
 }
 
 /**
  * Full-time program year contribution and its totals.
  */
-export interface programYearContributionTotal {
+export interface ProgramYearContributionTotal {
   contribution: string;
   total: number;
 }

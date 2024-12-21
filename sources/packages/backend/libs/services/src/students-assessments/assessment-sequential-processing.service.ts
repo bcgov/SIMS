@@ -18,7 +18,7 @@ import {
 } from "@sims/sims-db";
 import {
   AwardTotal,
-  programYearContributionTotal,
+  ProgramYearContributionTotal,
   ProgramYearTotal,
   SequencedApplications,
   SequentialApplication,
@@ -318,7 +318,7 @@ export class AssessmentSequentialProcessingService {
    */
   private async getProgramYearContributionTotals(
     applicationNumbers: string[],
-  ): Promise<programYearContributionTotal[]> {
+  ): Promise<ProgramYearContributionTotal[]> {
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
       .select(
