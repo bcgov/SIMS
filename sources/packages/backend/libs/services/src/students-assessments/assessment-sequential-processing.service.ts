@@ -16,10 +16,19 @@ import {
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
-import { AwardTotal, SequencedApplications, SequentialApplication } from "..";
+import {
+  AwardTotal,
+  ProgramYearContributionTotal,
+  ProgramYearTotal,
+  SequencedApplications,
+  SequentialApplication,
+} from "..";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getISODateOnlyString } from "@sims/utilities";
-import { StudentAssessmentDetail } from "./student-assessment.model";
+import {
+  FullTimeStudentContributionType,
+  StudentAssessmentDetail,
+} from "./student-assessment.model";
 
 @Injectable()
 export class AssessmentSequentialProcessingService {
@@ -126,71 +135,76 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
-   * Finds all applications before the one related to the {@link assessmentId} provided
-   * and returns the sum of all awards associated with non-overwritten applications.
+   * Get the program year awards totals for part-time and
+   * full-time and contribution totals for full-time for the assessment.
+   * @param assessmentId assessment id.
+   * @param options method options.
+   * - `alternativeReferenceDate` the reference date to be used.
+   * @returns the promise to get the program year totals.
+   */
+  async getProgramYearTotals(
+    assessmentId: number,
+    options?: {
+      alternativeReferenceDate?: Date;
+    },
+  ): Promise<ProgramYearTotal> {
+    // Get the current assessment from the assessment id.
+    const currentAssessment = await this.getCurrentAssessment(assessmentId);
+    const offeringIntensity = currentAssessment.offering.offeringIntensity;
+    // The chronology of the applications is defined by the method {@link getSequencedApplications}.
+    // Only the current assessment awards are considered since it must reflect the most updated
+    // workflow calculated values.
+    const sequencedApplications = await this.getSequencedApplications(
+      currentAssessment.application.applicationNumber,
+      currentAssessment.application.student.id,
+      currentAssessment.application.programYear.id,
+      { alternativeReferenceDate: options?.alternativeReferenceDate },
+    );
+    // Get the application numbers of the previous applications.
+    const applicationNumbers = sequencedApplications.previous.map(
+      (application) => application.applicationNumber,
+    );
+    // Only get the full-time contribution totals if the offering intensity is full-time.
+    const shouldGetProgramYearContributionTotals =
+      OfferingIntensity.fullTime === offeringIntensity &&
+      !!applicationNumbers?.length;
+    const [awardTotals, contributionTotals] = await Promise.all([
+      // Get the program year awards totals for part-time and full-time.
+      this.getProgramYearPreviousAwardsTotals(
+        sequencedApplications,
+        currentAssessment,
+        options,
+      ),
+      shouldGetProgramYearContributionTotals
+        ? this.getProgramYearContributionTotals(applicationNumbers)
+        : null,
+    ]);
+    return {
+      awardTotals,
+      contributionTotals,
+    };
+  }
+
+  /**
+   * Returns the sum of all awards associated with non-overwritten applications.
    * Only pending awards or already sent awards will be considered.
    * Only federal and provincial grants are considered.
    * Grants that are common between part-time and full-time (e.g. CSGP, SBSD) applications will have
    * their totals calculated per intensity, which means that if the student has a part-time
    * and a full-time application in the same year and both have a CSGP grant, its totals will
    * be individually calculated and returned.
-   * The chronology of the applications is defined by the method {@link getSequencedApplications}.
-   * Only the current assessment awards are considered since it must reflect the most updated
-   * workflow calculated values.
-   * @param assessmentId assessment id to be used as a reference to find the past applications.
-   * @param options method options.
+   * @param sequencedApplications sequenced applications for the current application.
+   * @param assessment assessment currently changing.
    * - `alternativeReferenceDate` date that should be used to determine the order when the
-   * {@link assessmentId} used as reference does not have a calculated date yet.
    * @returns list of existing awards and their totals, if any, otherwise it returns an empty array,
    * for instance, if the application is the first application or the only application for the
    * program year.
    */
-  async getProgramYearPreviousAwardsTotals(
-    assessmentId: number,
+  private async getProgramYearPreviousAwardsTotals(
+    sequencedApplications: SequencedApplications,
+    assessment: StudentAssessment,
     options?: { alternativeReferenceDate?: Date },
   ): Promise<AwardTotal[]> {
-    const assessment = await this.studentAssessmentRepo.findOne({
-      select: {
-        id: true,
-        application: {
-          id: true,
-          applicationNumber: true,
-          student: {
-            id: true,
-            birthDate: true,
-            sinValidation: {
-              sin: true,
-            },
-            user: {
-              lastName: true,
-            },
-          },
-          programYear: {
-            id: true,
-            startDate: true,
-          },
-        },
-        assessmentDate: true,
-      },
-      relations: {
-        application: {
-          student: { sinValidation: true, user: true },
-          programYear: true,
-        },
-      },
-      where: {
-        id: assessmentId,
-      },
-    });
-    if (!assessment) {
-      throw new Error(`Assessment id ${assessmentId} not found.`);
-    }
-    const sequencedApplications = await this.getSequencedApplications(
-      assessment.application.applicationNumber,
-      assessment.application.student.id,
-      assessment.application.programYear.id,
-      { alternativeReferenceDate: options?.alternativeReferenceDate },
-    );
     // Get the first assessment date ever calculated for the current application.
     // If there are multiple assessments for the current application, then set the
     // first assessment date to the assessment date of the first assessment.
@@ -224,7 +238,7 @@ export class AssessmentSequentialProcessingService {
       ),
     ]);
     if (!sequencedApplications.previous.length) {
-      // There are no past applications. Return SFAS full time and part time awards if there are any.
+      // There are no past applications. Return SFAS full-time and part-time awards if there are any.
       return [...sfasAwardsTotals, ...sfasPartTimeAwardsTotals];
     }
     const applicationNumbers = sequencedApplications.previous.map(
@@ -295,6 +309,111 @@ export class AssessmentSequentialProcessingService {
       ...sfasAwardsTotals,
       ...sfasPartTimeAwardsTotals,
     ];
+  }
+
+  /**
+   * Gets the full-time program year contribution totals for the provided application numbers.
+   * @param applicationNumbers application numbers.
+   * @returns full-time program year contribution totals.
+   */
+  private async getProgramYearContributionTotals(
+    applicationNumbers: string[],
+  ): Promise<ProgramYearContributionTotal[]> {
+    const totals = await this.applicationRepo
+      .createQueryBuilder("application")
+      .select(
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC')::NUMERIC)",
+        FullTimeStudentContributionType.FederalFSC,
+      )
+      .addSelect(
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC')::NUMERIC)",
+        FullTimeStudentContributionType.ProvincialFSC,
+      )
+      .addSelect(
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'exemptScholarshipsBursaries')::NUMERIC)",
+        FullTimeStudentContributionType.ScholarshipsBursaries,
+      )
+      .addSelect(
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContributionWeeks')::NUMERIC)",
+        FullTimeStudentContributionType.SpouseContributionWeeks,
+      )
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .where("application.applicationNumber IN (:...applicationNumbers)", {
+        applicationNumbers,
+      }) // Overwritten application can have awards associated with and they should not be considered.
+      .andWhere("application.applicationStatus != :overwrittenStatus", {
+        overwrittenStatus: ApplicationStatus.Overwritten,
+      })
+      // Check for assessment completed status to avoid retrieving any cancelation status.
+      .andWhere(
+        "currentAssessment.studentAssessmentStatus = :completedStudentAssessmentStatus",
+        {
+          completedStudentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+      )
+      .getRawOne<{
+        [FullTimeStudentContributionType.FederalFSC]: string;
+        [FullTimeStudentContributionType.ProvincialFSC]: string;
+        [FullTimeStudentContributionType.ScholarshipsBursaries]: string;
+        [FullTimeStudentContributionType.SpouseContributionWeeks]: string;
+      }>();
+
+    return Object.keys(FullTimeStudentContributionType).map((key) => ({
+      contribution: key as FullTimeStudentContributionType,
+      total: +totals[key] || 0,
+    }));
+  }
+
+  /**
+   * Gets the current assessment for the provided assessment id.
+   * @param assessmentId assessment id.
+   * @returns current assessment.
+   */
+  private async getCurrentAssessment(
+    assessmentId: number,
+  ): Promise<StudentAssessment> {
+    const currentAssessment = await this.studentAssessmentRepo.findOne({
+      select: {
+        id: true,
+        application: {
+          id: true,
+          applicationNumber: true,
+          student: {
+            id: true,
+            birthDate: true,
+            sinValidation: {
+              sin: true,
+            },
+            user: {
+              lastName: true,
+            },
+          },
+          programYear: {
+            id: true,
+            startDate: true,
+          },
+        },
+        offering: {
+          id: true,
+          offeringIntensity: true,
+        },
+        assessmentDate: true,
+      },
+      relations: {
+        application: {
+          student: { sinValidation: true, user: true },
+          programYear: true,
+        },
+        offering: true,
+      },
+      where: {
+        id: assessmentId,
+      },
+    });
+    if (!currentAssessment) {
+      throw new Error(`Assessment id ${assessmentId} not found.`);
+    }
+    return currentAssessment;
   }
 
   /**
@@ -451,13 +570,13 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
-   * Get SFAS part time application awards totals.
+   * Get SFAS part-time application awards totals.
    * @param lastName last name of the student.
    * @param birthDate birth date of the student.
    * @param sin: SIN number of the student.
    * @param programYearStartDate: the start date of the program year.
    * @param referenceAssessmentDate  date of the first assessment date of the current application.
-   * @returns SFAS application part time awards totals.
+   * @returns SFAS application part-time awards totals.
    */
   private async getProgramYearSFASPartTimeAwardsTotals(
     lastName: string,

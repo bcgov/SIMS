@@ -10,3 +10,13 @@ export interface StudentAssessmentDetail {
   id: number;
   originalAssessmentStudyStartDate: Date;
 }
+
+/**
+ * Full-time program year student contribution for calculating program year totals.
+ */
+export enum FullTimeStudentContributionType {
+  ScholarshipsBursaries = "ScholarshipsBursaries",
+  SpouseContributionWeeks = "SpouseContributionWeeks",
+  FederalFSC = "FederalFSC",
+  ProvincialFSC = "ProvincialFSC",
+}
