@@ -1,5 +1,4 @@
-import { Job, Queue } from "bull";
-import { createMock } from "@golevelup/ts-jest";
+import { Queue } from "bull";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames, addHours } from "@sims/utilities";
 import {

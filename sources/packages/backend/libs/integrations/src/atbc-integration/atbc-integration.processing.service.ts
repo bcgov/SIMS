@@ -1,5 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import {
   getDateOnlyFromFormat,
   getISODateOnlyString,
@@ -15,7 +19,6 @@ import {
 } from "../services";
 import { DisabilityStatus } from "@sims/sims-db";
 import { StudentDisabilityStatusDetail } from "./models/atbc-integration.model";
-import { ProcessSummaryResult } from "../models";
 
 @Injectable()
 export class ATBCIntegrationProcessingService {
@@ -62,11 +65,12 @@ export class ATBCIntegrationProcessingService {
 
   /**
    * Process all the pending disability requests applied by students.
+   * @param processSummary process summary for logging.
    * @returns process summary result.
    */
-  async processAppliedDisabilityRequests(): Promise<ProcessSummaryResult> {
-    const processSummaryResult: ProcessSummaryResult =
-      new ProcessSummaryResult();
+  async processAppliedDisabilityRequests(
+    processSummary: ProcessSummary,
+  ): Promise<void> {
     // Students who applied for disability status and waiting for confirmation.
     const studentDisabilityUpdates =
       await this.atbcService.getStudentDisabilityStatusUpdatesByDate();
@@ -86,7 +90,7 @@ export class ATBCIntegrationProcessingService {
     this.logger.log(
       `Total disability status requests processed: ${studentsToUpdate.length}`,
     );
-    processSummaryResult.summary.push(
+    processSummary.info(
       `Total disability status requests processed: ${studentsToUpdate.length}`,
     );
     if (studentsToUpdate.length) {
@@ -102,10 +106,9 @@ export class ATBCIntegrationProcessingService {
         (result) => result,
       ).length;
     }
-    processSummaryResult.summary.push(
+    processSummary.info(
       `Students updated with disability status: ${updatedDisabilityStatusCount}`,
     );
-    return processSummaryResult;
   }
 
   /**
