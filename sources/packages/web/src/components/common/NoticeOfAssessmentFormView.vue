@@ -193,10 +193,12 @@ export default defineComponent({
           (noaDisbursementSchedule.disbursement2Status ===
             DisbursementScheduleStatus.Pending &&
             !!noaDisbursementSchedule.disbursement2MSFAACancelledDate));
+
       initialData.value = {
         ...assessment,
         canReissueMSFAA,
       };
+
       emit(
         "assessmentDataLoaded",
         initialData.value.applicationStatus,
