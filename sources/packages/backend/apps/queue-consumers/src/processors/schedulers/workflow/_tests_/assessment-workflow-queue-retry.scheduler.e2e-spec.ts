@@ -5,6 +5,7 @@ import { QueueNames, addHours } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -78,11 +79,12 @@ describe(
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
-      const job = createMock<Job<AssessmentWorkflowQueueRetryInDTO>>();
-      job.data.amountHoursAssessmentRetry = 6;
+      const mockedJob = mockBullJob<AssessmentWorkflowQueueRetryInDTO>({
+        amountHoursAssessmentRetry: 6,
+      });
 
       // Act
-      await retryProcessor.enqueueAssessmentRetryOperations(job);
+      await retryProcessor.processQueue(mockedJob.job);
 
       // Assert
       // Assert item was added to the queue.
@@ -104,11 +106,12 @@ describe(
       );
       await db.studentAssessment.save(currentAssessment);
       // Retry job.
-      const job = createMock<Job<AssessmentWorkflowQueueRetryInDTO>>();
-      job.data.amountHoursAssessmentRetry = 6;
+      const mockedJob = mockBullJob<AssessmentWorkflowQueueRetryInDTO>({
+        amountHoursAssessmentRetry: 6,
+      });
 
       // Act
-      await retryProcessor.enqueueAssessmentRetryOperations(job);
+      await retryProcessor.processQueue(mockedJob.job);
 
       // Assert
       // Assert item was added to the queue.
@@ -133,11 +136,12 @@ describe(
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
-      const job = createMock<Job<AssessmentWorkflowQueueRetryInDTO>>();
-      job.data.amountHoursAssessmentRetry = 6;
+      const mockedJob = mockBullJob<AssessmentWorkflowQueueRetryInDTO>({
+        amountHoursAssessmentRetry: 6,
+      });
 
       // Act
-      await retryProcessor.enqueueAssessmentRetryOperations(job);
+      await retryProcessor.processQueue(mockedJob.job);
 
       // Assert
       // Assert item was added to the queue.
@@ -162,11 +166,12 @@ describe(
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
-      const job = createMock<Job<AssessmentWorkflowQueueRetryInDTO>>();
-      job.data.amountHoursAssessmentRetry = 6;
+      const mockedJob = mockBullJob<AssessmentWorkflowQueueRetryInDTO>({
+        amountHoursAssessmentRetry: 6,
+      });
 
       // Act
-      await retryProcessor.enqueueAssessmentRetryOperations(job);
+      await retryProcessor.processQueue(mockedJob.job);
 
       // Assert
       // Assert item was added to the queue.
