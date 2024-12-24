@@ -110,4 +110,13 @@ export class SFASPartTimeApplications extends BaseSFASApplicationModel {
     nullable: true,
   })
   programYearId?: number;
+  /**
+   * Date that this application was cancelled (sail_application_events.event_date).
+   */
+  @Column({
+    name: "application_cancel_date",
+    type: "date",
+    nullable: true,
+  })
+  applicationCancelDate?: string;
 }

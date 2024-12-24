@@ -89,4 +89,10 @@ export class SFASPartTimeApplicationRecord extends SFASRecordIdentification {
       ? +this.line.substring(99, 99 + 8).trim()
       : null;
   }
+  /**
+   * Date that this application was cancelled (sail_application_events.event_date).
+   */
+  get applicationCancelDate(): Date | null {
+    return parseDate(this.line.substring(107, 107 + 8));
+  }
 }
