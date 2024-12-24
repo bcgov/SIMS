@@ -1,15 +1,15 @@
-import { createMock } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { addDays, formatDate } from "@sims/utilities";
-import { createTestingAppModule } from "../../../../../test/helpers";
+import {
+  createTestingAppModule,
+  mockBullJob,
+} from "../../../../../test/helpers";
 import { ATBCResponseIntegrationScheduler } from "../atbc-response-integration.scheduler";
 import {
   E2EDataSources,
   createE2EDataSources,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { Job } from "bull";
-import { ProcessSummaryResult } from "@sims/integrations/models";
 import {
   ATBCDisabilityStatusResponse,
   ATBCService,
@@ -38,7 +38,7 @@ describe.skip("describeProcessorRootTest(QueueNames.ATBCResponseIntegration)", (
     // Arrange
 
     // Queued job.
-    const job = createMock<Job<void>>();
+    const mockedJob = mockBullJob<void>();
 
     // Create students who applied for disability status.
     const [
@@ -75,15 +75,17 @@ describe.skip("describeProcessorRootTest(QueueNames.ATBCResponseIntegration)", (
     };
 
     // Act
-    const processResult = await processor.processPendingPDRequests(job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
-    const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-    expectedResult.summary = [
-      "Total disability status requests processed: 3",
-      "Students updated with disability status: 2",
-    ];
-    expect(processResult).toStrictEqual(expectedResult);
+    expect(result).toStrictEqual(["Completed processing disability status."]);
+    expect(
+      mockedJob.containLogMessages([
+        "Total disability status requests processed: 3",
+        "Students updated with disability status: 2",
+      ]),
+    ).toBe(true);
+
     // Validate the disability status and status updated date.
     const pdReceivedStudent = await getStudentDisabilityStatusDetails(
       db,
@@ -108,7 +110,7 @@ describe.skip("describeProcessorRootTest(QueueNames.ATBCResponseIntegration)", (
     // Arrange
 
     // Queued job.
-    const job = createMock<Job<void>>();
+    const mockedJob = mockBullJob<void>();
 
     // Create student who applied and received disability status.
     // If the ATBC response is received again with same disability status, no updated should happen.
@@ -132,15 +134,16 @@ describe.skip("describeProcessorRootTest(QueueNames.ATBCResponseIntegration)", (
     };
 
     // Act
-    const processResult = await processor.processPendingPDRequests(job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
-    const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-    expectedResult.summary = [
-      "Total disability status requests processed: 1",
-      "Students updated with disability status: 0",
-    ];
-    expect(processResult).toStrictEqual(expectedResult);
+    expect(result).toStrictEqual(["Completed processing disability status."]);
+    expect(
+      mockedJob.containLogMessages([
+        "Total disability status requests processed: 1",
+        "Students updated with disability status: 0",
+      ]),
+    ).toBe(true);
     const pdReceivedStudent = await getStudentDisabilityStatusDetails(
       db,
       studentAppliedDisabilityAndUpdatedAlready.id,

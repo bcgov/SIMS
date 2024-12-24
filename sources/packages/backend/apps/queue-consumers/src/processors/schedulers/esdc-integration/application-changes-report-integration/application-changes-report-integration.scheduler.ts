@@ -1,4 +1,4 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
@@ -7,10 +7,6 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import {
-  getSuccessMessageWithAttentionCheck,
-  logProcessSummaryToJobLogger,
-} from "../../../../utilities";
 import { QueueNames } from "@sims/utilities";
 import { ApplicationChangesReportProcessingService } from "@sims/integrations/esdc-integration";
 
@@ -26,64 +22,35 @@ export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<
   }
 
   /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
-   */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
    * Generate application changes report for the applications which has at least one e-Cert sent
    * and the application study dates have changed after the first e-Cert
    * or after the last time the application was reported for study dates change
    * through application changes report. Once generated upload the report to the ESDC directory
    * in SFTP server.
-   * @param job job.
+   * @param _job process job.
+   * @param processSummary process summary for logging.
    * @returns process summary.
    */
-  @Process()
-  async processApplicationChanges(job: Job<void>): Promise<string[]> {
-    const processSummary = new ProcessSummary();
-
-    try {
-      processSummary.info(
-        `Processing application changes report integration job. Job id: ${job.id} and Job name: ${job.name}.`,
-      );
-      const integrationProcessSummary = new ProcessSummary();
-      processSummary.children(integrationProcessSummary);
-      const { applicationsReported, uploadedFileName } =
-        await this.applicationChangesReportProcessingService.processApplicationChanges(
-          integrationProcessSummary,
-        );
-      return getSuccessMessageWithAttentionCheck(
-        [
-          "Process finalized with success.",
-          `Applications reported: ${applicationsReported}`,
-          `Uploaded file name: ${uploadedFileName}`,
-        ],
+  protected async process(
+    _job: Job<void>,
+    processSummary: ProcessSummary,
+  ): Promise<string[]> {
+    const { applicationsReported, uploadedFileName } =
+      await this.applicationChangesReportProcessingService.processApplicationChanges(
         processSummary,
       );
-    } catch (error: unknown) {
-      // Translate to friendly error message.
-      const errorMessage =
-        "Unexpected error while executing the job to process application changes.";
-      processSummary.error(errorMessage, error);
-      throw new Error(errorMessage, { cause: error });
-    } finally {
-      this.logger.logProcessSummary(processSummary);
-      await logProcessSummaryToJobLogger(processSummary, job);
-    }
+    return [
+      `Applications reported: ${applicationsReported}`,
+      `Uploaded file name: ${uploadedFileName}`,
+    ];
   }
 
+  /**
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
   @InjectLogger()
   logger: LoggerService;
 }

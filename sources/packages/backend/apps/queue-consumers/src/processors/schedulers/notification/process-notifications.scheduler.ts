@@ -1,11 +1,15 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { Job, Queue } from "bull";
 import { NotificationService } from "@sims/services/notifications";
 import { ProcessNotificationsQueueInDTO } from "./models/notification.dto";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import { QueueProcessSummaryResult } from "../../models/processors.models";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 
 /**
  * Process notifications which are unsent.
@@ -21,22 +25,6 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
     super(schedulerQueue, queueService);
   }
 
-  /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
-   */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
   protected async payload(): Promise<ProcessNotificationsQueueInDTO> {
     const queuePollingRecordsLimit =
       await this.queueService.getQueuePollingRecordLimit(
@@ -48,21 +36,41 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   /**
    * Process all the unsent notifications and return
    * summary of processing.
-   * @param job process notification job.
+   * @param job process job.
+   * @param processSummary process summary for logging.
    * @returns processing summary.
    */
-  @Process()
-  async processNotifications(
+  protected async process(
     job: Job<ProcessNotificationsQueueInDTO>,
-  ): Promise<QueueProcessSummaryResult> {
+    processSummary: ProcessSummary,
+  ): Promise<string> {
     const processNotificationResponse =
       await this.notificationService.processUnsentNotifications(
         job.data.pollingRecordsLimit,
       );
-    const processSummaryResult: string[] = [
-      `Total notifications processed ${processNotificationResponse.notificationsProcessed}`,
-      `Total notifications successfully processed ${processNotificationResponse.notificationsSuccessfullyProcessed}`,
-    ];
-    return { summary: processSummaryResult } as QueueProcessSummaryResult;
+    processSummary.info(
+      `Total notifications processed ${processNotificationResponse.notificationsProcessed}.`,
+    );
+    processSummary.info(
+      `Total notifications successfully processed ${processNotificationResponse.notificationsSuccessfullyProcessed}.`,
+    );
+    if (
+      processNotificationResponse.notificationsProcessed !==
+      processNotificationResponse.notificationsSuccessfullyProcessed
+    ) {
+      processSummary.warn(
+        "Not all pending notifications were successfully processed.",
+      );
+    }
+    return "Notifications processed.";
   }
+
+  /**
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
+  @InjectLogger()
+  logger: LoggerService;
 }

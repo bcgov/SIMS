@@ -86,7 +86,7 @@ describe(
         const mockedJob = mockBullJob<void>();
 
         // Act
-        await processor.studentApplicationNotifications(mockedJob.job);
+        await processor.processQueue(mockedJob.job);
 
         // Assert
         expect(
@@ -172,7 +172,7 @@ describe(
         const mockedJob = mockBullJob<void>();
 
         // Act
-        await processor.studentApplicationNotifications(mockedJob.job);
+        await processor.processQueue(mockedJob.job);
 
         // Assert
         expect(
@@ -271,7 +271,7 @@ describe(
         const mockedJob = mockBullJob<void>();
 
         // Act
-        await processor.studentApplicationNotifications(mockedJob.job);
+        await processor.processQueue(mockedJob.job);
 
         // Assert
         expect(
