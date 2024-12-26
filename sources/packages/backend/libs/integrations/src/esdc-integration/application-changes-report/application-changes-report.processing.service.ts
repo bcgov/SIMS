@@ -40,7 +40,7 @@ export class ApplicationChangesReportProcessingService {
     processSummary: ProcessSummary,
   ): Promise<ApplicationChangesReportProcessingResult> {
     processSummary.info(
-      "Retrieving all application changes which were not reported already.",
+      "Retrieving all application changes that have not yet been reported.",
     );
     const applicationChanges =
       await this.applicationService.getDateChangeNotReportedApplications();

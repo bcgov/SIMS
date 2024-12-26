@@ -238,7 +238,7 @@ describe(
       ]);
       expect(
         mockedJob.containLogMessages([
-          "Retrieving all application changes which were not reported already.",
+          "Retrieving all application changes that have not yet been reported.",
           "Found 0 application changes.",
           `Application changes report with file name ${expectedFileName} has been uploaded successfully.`,
           "Report date update not required as no application changes are reported.",
