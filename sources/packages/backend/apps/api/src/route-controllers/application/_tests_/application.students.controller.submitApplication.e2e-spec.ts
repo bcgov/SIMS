@@ -533,6 +533,104 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     },
   );
 
+  it(
+    "Should submit an application for a student when there is a cancelled part-time application in SFAS with overlapping study dates" +
+      " ignoring the cancelled SFAS application.",
+    async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
+        initialValues: {
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      });
+      // Cancelled SFAS full time application with overlapping study dates.
+      const sfasPartTimeApplication = createFakeSFASPartTimeApplication(
+        { individual: sfasIndividual },
+        {
+          initialValues: {
+            startDate: getISODateOnlyString(new Date()),
+            endDate: getISODateOnlyString(addDays(50)),
+            // The SFAS application is cancelled.
+            applicationCancelDate: getISODateOnlyString(new Date()),
+          },
+        },
+      );
+      await db.sfasPartTimeApplications.save(sfasPartTimeApplication);
+
+      // SIMS Offering having overlapping study period with SFAS.
+      const simsApplicationOfferingInitialValues = {
+        studyStartDate: getISODateOnlyString(addDays(30)),
+        studyEndDate: getISODateOnlyString(addDays(90)),
+        offeringIntensity: OfferingIntensity.partTime,
+      };
+      const simsApplication = createFakeApplication(
+        {
+          student,
+        },
+        {
+          initialValue: {
+            data: {},
+            applicationStatus: ApplicationStatus.Draft,
+            applicationStatusUpdatedOn: new Date(),
+            creator: systemUsersService.systemUser,
+            createdAt: new Date(),
+          } as Application,
+        },
+      );
+      const simsDraftApplication = await db.application.save(simsApplication);
+      const auditUser = await db.user.save(createFakeUser());
+      const simsApplicationOffering = await db.educationProgramOffering.save(
+        createFakeEducationProgramOffering(
+          {
+            auditUser,
+            institutionLocation: simsApplication.location,
+          },
+          {
+            initialValues: simsApplicationOfferingInitialValues,
+          },
+        ),
+      );
+      const secondApplicationProgram = simsApplicationOffering.educationProgram;
+      const applicationData = {
+        selectedOfferingDate:
+          simsApplicationOfferingInitialValues.studyStartDate,
+        selectedOfferingEndDate:
+          simsApplicationOfferingInitialValues.studyEndDate,
+        howWillYouBeAttendingTheProgram:
+          simsApplicationOfferingInitialValues.offeringIntensity,
+        selectedProgram: secondApplicationProgram.id,
+        selectedOffering: simsApplicationOffering.id,
+        selectedLocation: simsApplication.location.id,
+      };
+      const payload = {
+        associatedFiles: [],
+        data: applicationData,
+        programYearId: simsApplication.programYear.id,
+      } as SaveApplicationAPIInDTO;
+      const endpoint = `/students/application/${simsDraftApplication.id}/submit`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.Application,
+        data: { data: applicationData },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+      await mockUserLoginInfo(appModule, student);
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({});
+    },
+  );
+
   afterAll(async () => {
     await app?.close();
   });

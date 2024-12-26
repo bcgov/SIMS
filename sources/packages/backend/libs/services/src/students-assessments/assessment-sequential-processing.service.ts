@@ -593,7 +593,8 @@ export class AssessmentSequentialProcessingService {
       .addSelect("SUM(sfasPTApplication.bcagAward)", "BCAG")
       .addSelect("SUM(sfasPTApplication.csptAward)", "CSPT")
       .innerJoin("sfasPTApplication.individual", "sfasStudent")
-      .where("lower(sfasStudent.lastName) = lower(:lastName)", { lastName })
+      .where("sfasPTApplication.applicationCancelDate IS NULL")
+      .andWhere("lower(sfasStudent.lastName) = lower(:lastName)", { lastName })
       .andWhere("sfasStudent.sin = :sin", { sin })
       .andWhere("sfasStudent.birthDate = :birthDate", { birthDate })
       .andWhere("sfasPTApplication.startDate >= :startDate", {
