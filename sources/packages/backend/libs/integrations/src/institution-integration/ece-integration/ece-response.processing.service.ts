@@ -357,7 +357,7 @@ export class ECEResponseProcessingService {
             case INVALID_TUITION_REMITTANCE_AMOUNT:
             case ECE_DISBURSEMENT_DATA_NOT_VALID:
               ++disbursementProcessingDetails.disbursementsFailedToProcess;
-              processSummary.errors.push(
+              processSummary.warnings.push(
                 `Disbursement ${disbursementScheduleId}, record failed to process due to reason: ${error.message}`,
               );
               break;

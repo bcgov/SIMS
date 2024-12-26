@@ -27,7 +27,6 @@ import {
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { ECE_RESPONSE_FILE_NAME } from "@sims/integrations/constants";
-import { ProcessSummaryResult } from "@sims/integrations/models";
 import {
   ApplicationStatus,
   COEStatus,
@@ -105,7 +104,7 @@ describe(
       );
     });
 
-    it.only("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application is valid.", async () => {
+    it("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application is valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -254,25 +253,26 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        `ECE responses for 1 institution locations were verified, check logs for details.`,
+        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 1, Info: 15",
       ]);
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `Disbursement ${disbursement.id}, enrolment confirmed.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 0",
-        "Total detail records found: 4",
-        "Total disbursements found: 2",
-        "Disbursements successfully updated: 1",
-        "Disbursements skipped to be processed: 1",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 0",
-      ];
-      expectedResult.warnings = [
-        "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
-      ];
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `Disbursement ${disbursement.id}, enrolment confirmed.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 4",
+          "Total disbursements found: 2",
+          "Disbursements successfully updated: 1",
+          "Disbursements skipped to be processed: 1",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 0",
+          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found",
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -381,24 +381,25 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        `ECE responses for 1 institution locations were verified, check logs for details.`,
+        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 1, Info: 14",
       ]);
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 0",
-        "Total detail records found: 1",
-        "Total disbursements found: 1",
-        "Disbursements successfully updated: 0",
-        "Disbursements skipped to be processed: 0",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 1",
-      ];
-      expectedResult.errors = [
-        `Disbursement ${secondDisbursement.id}, record failed to process due to reason: Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees - Previous tuition remittance) and (Canada grants + Canada Loan + BC Loan).`,
-      ];
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 1",
+          "Total disbursements found: 1",
+          "Disbursements successfully updated: 0",
+          "Disbursements skipped to be processed: 0",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 1",
+          `WARN: Disbursement ${secondDisbursement.id}, record failed to process due to reason: Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees - Previous tuition remittance) and (Canada grants + Canada Loan + BC Loan).`,
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -451,25 +452,26 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        `ECE responses for 1 institution locations were verified, check logs for details.`,
+        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 1, Info: 15",
       ]);
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `Disbursement ${disbursement.id}, enrolment declined.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 0",
-        "Total detail records found: 2",
-        "Total disbursements found: 2",
-        "Disbursements successfully updated: 1",
-        "Disbursements skipped to be processed: 1",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 0",
-      ];
-      expectedResult.warnings = [
-        "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
-      ];
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `Disbursement ${disbursement.id}, enrolment declined.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 2",
+          "Total disbursements found: 2",
+          "Disbursements successfully updated: 1",
+          "Disbursements skipped to be processed: 1",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 0",
+          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -528,22 +530,26 @@ describe(
       const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 0",
-        "Total detail records found: 1",
-        "Total disbursements found: 1",
-        "Disbursements successfully updated: 0",
-        "Disbursements skipped to be processed: 0",
-        "Disbursements considered duplicate and skipped: 1",
-        "Disbursements failed to process: 0",
-      ];
-      expectedResult.warnings = [
-        `Disbursement ${disbursement.id}, record is considered as duplicate and skipped due to reason: Enrolment already completed and can neither be confirmed nor declined`,
-      ];
+      expect(result).toStrictEqual([
+        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 1, Info: 14",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 1",
+          "Total disbursements found: 1",
+          "Disbursements successfully updated: 0",
+          "Disbursements skipped to be processed: 0",
+          "Disbursements considered duplicate and skipped: 1",
+          "Disbursements failed to process: 0",
+          `WARN: Disbursement ${disbursement.id}, record is considered as duplicate and skipped due to reason: Enrolment already completed and can neither be confirmed nor declined`,
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -585,22 +591,26 @@ describe(
       const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 0",
-        "Total detail records found: 1",
-        "Total disbursements found: 1",
-        "Disbursements successfully updated: 0",
-        "Disbursements skipped to be processed: 1",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 0",
-      ];
-      expectedResult.warnings = [
-        `Disbursement ${fakeDisbursementId}, record skipped due to reason: Enrolment not found.`,
-      ];
+      expect(result).toStrictEqual([
+        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 1, Info: 14",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 1",
+          "Total disbursements found: 1",
+          "Disbursements successfully updated: 0",
+          "Disbursements skipped to be processed: 1",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 0",
+          `WARN: Disbursement ${fakeDisbursementId}, record skipped due to reason: Enrolment not found.`,
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -652,24 +662,26 @@ describe(
 
       // Act
       const result = await processor.processQueue(mockedJob.job);
-
-      // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 0",
-        "Total detail records found: 1",
-        "Total disbursements found: 1",
-        "Disbursements successfully updated: 0",
-        "Disbursements skipped to be processed: 1",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 0",
-      ];
-      expectedResult.warnings = [
-        `Disbursement ${disbursement.id}, record skipped due to reason: Enrolment for the given application not found.`,
-      ];
+      expect(result).toStrictEqual([
+        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 1, Info: 14",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 1",
+          "Total disbursements found: 1",
+          "Disbursements successfully updated: 0",
+          "Disbursements skipped to be processed: 1",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 0",
+          `WARN: Disbursement ${disbursement.id}, record skipped due to reason: Enrolment for the given application not found.`,
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -702,27 +714,24 @@ describe(
         },
       );
 
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
-
-      // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 1",
-        "Total detail records found: 0",
-        "Total disbursements found: 0",
-        "Disbursements successfully updated: 0",
-        "Disbursements skipped to be processed: 0",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 0",
-      ];
-      expectedResult.errors = [
-        `Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The ECE response file has an invalid record type on header: 2`,
-        "File processing aborted.",
-      ];
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          "Total file parsing errors: 1",
+          "Total detail records found: 0",
+          "Total disbursements found: 0",
+          "Disbursements successfully updated: 0",
+          "Disbursements skipped to be processed: 0",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 0",
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The ECE response file has an invalid record type on header: 2`,
+          "ERROR: File processing aborted.",
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -755,28 +764,27 @@ describe(
         },
       );
 
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
-
-      // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 1",
-        "Total detail records found: 1",
-        "Total disbursements found: 0",
-        "Disbursements successfully updated: 0",
-        "Disbursements skipped to be processed: 0",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 0",
-      ];
-      expectedResult.errors = [
-        "Invalid record type on detail: 3 at line 2.",
-        `Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
-        "File processing aborted.",
-      ];
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 1",
+          "Total detail records found: 1",
+          "Total disbursements found: 0",
+          "Disbursements successfully updated: 0",
+          "Disbursements skipped to be processed: 0",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 0",
+          "ERROR: Invalid record type on detail: 3 at line 2.",
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
+          "ERROR: File processing aborted.",
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -809,27 +817,26 @@ describe(
         },
       );
 
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
-
-      // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 1",
-        "Total detail records found: 0",
-        "Total disbursements found: 0",
-        "Disbursements successfully updated: 0",
-        "Disbursements skipped to be processed: 0",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 0",
-      ];
-      expectedResult.errors = [
-        `Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The ECE response file has an invalid record type on footer: 4`,
-        "File processing aborted.",
-      ];
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 1",
+          "Total detail records found: 0",
+          "Total disbursements found: 0",
+          "Disbursements successfully updated: 0",
+          "Disbursements skipped to be processed: 0",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 0",
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The ECE response file has an invalid record type on footer: 4`,
+          "ERROR: File processing aborted.",
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -862,27 +869,26 @@ describe(
         },
       );
 
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
-
-      // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 1",
-        "Total detail records found: 0",
-        "Total disbursements found: 0",
-        "Disbursements successfully updated: 0",
-        "Disbursements skipped to be processed: 0",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 0",
-      ];
-      expectedResult.errors = [
-        `Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The total count of detail records mentioned in the footer record does not match with the actual total details records count.`,
-        "File processing aborted.",
-      ];
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 1",
+          "Total detail records found: 0",
+          "Total disbursements found: 0",
+          "Disbursements successfully updated: 0",
+          "Disbursements skipped to be processed: 0",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 0",
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The total count of detail records mentioned in the footer record does not match with the actual total details records count.`,
+          "ERROR: File processing aborted.",
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -917,28 +923,27 @@ describe(
         },
       );
 
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
-
-      // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 1",
-        "Total detail records found: 1",
-        "Total disbursements found: 0",
-        "Disbursements successfully updated: 0",
-        "Disbursements skipped to be processed: 0",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 0",
-      ];
-      expectedResult.errors = [
-        "Invalid unique index number for the disbursement record, Invalid application number at line 2.",
-        `Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
-        "File processing aborted.",
-      ];
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 1",
+          "Total detail records found: 1",
+          "Total disbursements found: 0",
+          "Disbursements successfully updated: 0",
+          "Disbursements skipped to be processed: 0",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 0",
+          "ERROR: Invalid unique index number for the disbursement record, Invalid application number at line 2.",
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
+          "ERROR: File processing aborted.",
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -1001,23 +1006,27 @@ describe(
       const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `Disbursement ${disbursement.id}, enrolment confirmed.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 0",
-        "Total detail records found: 2",
-        "Total disbursements found: 2",
-        "Disbursements successfully updated: 1",
-        "Disbursements skipped to be processed: 0",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 1",
-      ];
-      expectedResult.errors = [
-        "Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation flag.",
-      ];
+      expect(result).toStrictEqual([
+        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 1, Info: 15",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `Disbursement ${disbursement.id}, enrolment confirmed.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 2",
+          "Total disbursements found: 2",
+          "Disbursements successfully updated: 1",
+          "Disbursements skipped to be processed: 0",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 1",
+          "WARN: Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation flag.",
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -1080,23 +1089,27 @@ describe(
       const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `Disbursement ${disbursement.id}, enrolment confirmed.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 0",
-        "Total detail records found: 2",
-        "Total disbursements found: 2",
-        "Disbursements successfully updated: 1",
-        "Disbursements skipped to be processed: 0",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 1",
-      ];
-      expectedResult.errors = [
-        "Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation date, Invalid pay to school amount.",
-      ];
+      expect(result).toStrictEqual([
+        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 1, Info: 15",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `Disbursement ${disbursement.id}, enrolment confirmed.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 2",
+          "Total disbursements found: 2",
+          "Disbursements successfully updated: 1",
+          "Disbursements skipped to be processed: 0",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 1",
+          "WARN: Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation date, Invalid pay to school amount.",
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -1157,25 +1170,27 @@ describe(
       const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 0",
-        "Total detail records found: 2",
-        "Total disbursements found: 2",
-        "Disbursements successfully updated: 0",
-        "Disbursements skipped to be processed: 1",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 1",
-      ];
-      expectedResult.warnings = [
-        "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
-      ];
-      expectedResult.errors = [
-        `Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
-      ];
+      expect(result).toStrictEqual([
+        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 2, Info: 14",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 2",
+          "Total disbursements found: 2",
+          "Disbursements successfully updated: 0",
+          "Disbursements skipped to be processed: 1",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 1",
+          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+          `WARN: Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -1234,25 +1249,28 @@ describe(
       const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 0",
-        "Total detail records found: 2",
-        "Total disbursements found: 2",
-        "Disbursements successfully updated: 0",
-        "Disbursements skipped to be processed: 1",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 1",
-      ];
-      expectedResult.warnings = [
-        "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
-      ];
-      expectedResult.errors = [
-        `Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
-      ];
+      // Assert
+      expect(result).toStrictEqual([
+        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 2, Info: 14",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 2",
+          "Total disbursements found: 2",
+          "Disbursements successfully updated: 0",
+          "Disbursements skipped to be processed: 1",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 1",
+          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+          `WARN: Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
