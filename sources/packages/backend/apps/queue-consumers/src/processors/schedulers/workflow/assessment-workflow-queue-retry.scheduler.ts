@@ -1,4 +1,4 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { addHours, QueueNames } from "@sims/utilities";
@@ -10,10 +10,6 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import {
-  getSuccessMessageWithAttentionCheck,
-  logProcessSummaryToJobLogger,
-} from "../../../utilities";
 import { AssessmentWorkflowQueueRetryInDTO } from "./models/assessment-workflow-queue-retry.dto";
 
 /**
@@ -31,60 +27,32 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
   }
 
   /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
-   */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
    * Process all assessments that were not processed in a period of time.
-   * @param job job information.
+   * @param job process job.
+   * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  @Process()
-  async enqueueAssessmentRetryOperations(
+  protected async process(
     job: Job<AssessmentWorkflowQueueRetryInDTO>,
-  ): Promise<string[]> {
-    const processSummary = new ProcessSummary();
-    try {
-      processSummary.info("Checking assessments to be queued for retry.");
-      // Check for assessments cancellations to be retried.
-      await this.executeEnqueueProcess(
-        job.data.amountHoursAssessmentRetry,
-        processSummary,
-        this.workflowEnqueuerService.enqueueCancelAssessmentRetryWorkflows.bind(
-          this.workflowEnqueuerService,
-        ),
-      );
-      // Check for assessments to be started.
-      await this.executeEnqueueProcess(
-        job.data.amountHoursAssessmentRetry,
-        processSummary,
-        this.workflowEnqueuerService.enqueueStartAssessmentRetryWorkflows.bind(
-          this.workflowEnqueuerService,
-        ),
-      );
-      return getSuccessMessageWithAttentionCheck(
-        ["Process finalized with success."],
-        processSummary,
-      );
-    } catch (error: unknown) {
-      const errorMessage = "Unexpected error while executing the job.";
-      processSummary.error(errorMessage, error);
-    } finally {
-      this.logger.logProcessSummary(processSummary);
-      await logProcessSummaryToJobLogger(processSummary, job);
-    }
+    processSummary: ProcessSummary,
+  ): Promise<string> {
+    // Check for assessments cancellations to be retried.
+    await this.executeEnqueueProcess(
+      job.data.amountHoursAssessmentRetry,
+      processSummary,
+      this.workflowEnqueuerService.enqueueCancelAssessmentRetryWorkflows.bind(
+        this.workflowEnqueuerService,
+      ),
+    );
+    // Check for assessments to be started.
+    await this.executeEnqueueProcess(
+      job.data.amountHoursAssessmentRetry,
+      processSummary,
+      this.workflowEnqueuerService.enqueueStartAssessmentRetryWorkflows.bind(
+        this.workflowEnqueuerService,
+      ),
+    );
+    return "Process finalized with success.";
   }
 
   /**
@@ -128,6 +96,12 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
     return { amountHoursAssessmentRetry };
   }
 
+  /**
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
   @InjectLogger()
   logger: LoggerService;
 }

@@ -39,6 +39,8 @@ import {
   ApplicationChangesReportHeaders,
   APPLICATION_CHANGES_DATE_TIME_FORMAT,
 } from "@sims/integrations/esdc-integration";
+import MockDate from "mockdate";
+import * as dayjs from "dayjs";
 
 describe(
   describeProcessorRootTest(QueueNames.ApplicationChangesReportIntegration),
@@ -49,6 +51,7 @@ describe(
     let sftpClientMock: DeepMocked<Client>;
     let auditUser: User;
     let sharedStudent: Student;
+    let expectedFileName: string;
 
     beforeAll(async () => {
       const { nestApplication, dataSource, sshClientMock } =
@@ -70,6 +73,10 @@ describe(
         },
         { previousDateChangedReportedAssessment: { id: null } },
       );
+      // Mock the current date.
+      const now = new Date();
+      MockDate.set(now);
+      expectedFileName = `DPBC.EDU.APPCHANGES.${formatFileNameDate(now)}.csv`;
     });
 
     it("Should generate application changes report and update the reported date when there is one or more application changes which are not reported.", async () => {
@@ -89,16 +96,14 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const processingResult = await processor.processApplicationChanges(
-        mockedJob.job,
-      );
+      const result = await processor.processQueue(mockedJob.job);
+
       // Assert
       // Assert process result.
-      expect(processingResult).toContain("Process finalized with success.");
-      expect(processingResult).toContain("Applications reported: 2");
-      expect(
-        mockedJob.containLogMessages(["Found 2 application changes."]),
-      ).toBe(true);
+      expect(result).toStrictEqual([
+        "Applications reported: 2",
+        `Uploaded file name: ${expectedFileName}`,
+      ]);
       const uploadedFile = getUploadedFile(sftpClientMock);
       const expectedFirstRecord = getExpectedApplicationChangesCSVRecord(
         firstApplication,
@@ -176,16 +181,13 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const processingResult = await processor.processApplicationChanges(
-        mockedJob.job,
-      );
+      const result = await processor.processQueue(mockedJob.job);
       // Assert
       // Assert process result.
-      expect(processingResult).toContain("Process finalized with success.");
-      expect(processingResult).toContain("Applications reported: 1");
-      expect(
-        mockedJob.containLogMessages(["Found 1 application changes."]),
-      ).toBe(true);
+      expect(result).toStrictEqual([
+        "Applications reported: 1",
+        `Uploaded file name: ${expectedFileName}`,
+      ]);
       const uploadedFile = getUploadedFile(sftpClientMock);
       const expectedFirstRecord = getExpectedApplicationChangesCSVRecord(
         application,
@@ -226,16 +228,19 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const processingResult = await processor.processApplicationChanges(
-        mockedJob.job,
-      );
+      const result = await processor.processQueue(mockedJob.job);
+
       // Assert
       // Assert process result.
-      expect(processingResult).toContain("Process finalized with success.");
-      expect(processingResult).toContain("Applications reported: 0");
+      expect(result).toStrictEqual([
+        "Applications reported: 0",
+        `Uploaded file name: ${expectedFileName}`,
+      ]);
       expect(
         mockedJob.containLogMessages([
+          "Retrieving all application changes that have not yet been reported.",
           "Found 0 application changes.",
+          `Application changes report with file name ${expectedFileName} has been uploaded successfully.`,
           "Report date update not required as no application changes are reported.",
         ]),
       ).toBe(true);
@@ -396,6 +401,15 @@ describe(
         newOffering.studyStartDate,
         newOffering.studyEndDate,
       ].join(",");
+    }
+
+    /**
+     * Format date to be used in file name.
+     * @param date date.
+     * @returns file name date format.
+     */
+    function formatFileNameDate(date: Date): string {
+      return dayjs(date).format("YYYY-MM-DD_HH.mm.ss");
     }
   },
 );

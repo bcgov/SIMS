@@ -1,4 +1,4 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
@@ -9,10 +9,6 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import {
-  getSuccessMessageWithAttentionCheck,
-  logProcessSummaryToJobLogger,
-} from "../../../utilities";
 
 /**
  * Search for assessments that have some pending operation, for instance,
@@ -30,59 +26,30 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
   }
 
   /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
-   */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
    * Process all applications with pending assessments to be calculated.
-   * @param job job information.
+   * @param _job process job.
+   * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  @Process()
-  async enqueueAssessmentOperations(job: Job<void>): Promise<string[]> {
-    const processSummary = new ProcessSummary();
-    try {
-      processSummary.info(
-        "Checking application assessments to be queued for start.",
-      );
-      // Check for applications with assessments to be cancelled.
-      await this.executeEnqueueProcess(
-        processSummary,
-        this.workflowEnqueuerService.enqueueCancelAssessmentWorkflows.bind(
-          this.workflowEnqueuerService,
-        ),
-      );
-      // Check for applications with assessments to be started.
-      await this.executeEnqueueProcess(
-        processSummary,
-        this.workflowEnqueuerService.enqueueStartAssessmentWorkflows.bind(
-          this.workflowEnqueuerService,
-        ),
-      );
-      return getSuccessMessageWithAttentionCheck(
-        ["Process finalized with success."],
-        processSummary,
-      );
-    } catch (error: unknown) {
-      const errorMessage = "Unexpected error while executing the job.";
-      processSummary.error(errorMessage, error);
-      return [errorMessage];
-    } finally {
-      this.logger.logProcessSummary(processSummary);
-      await logProcessSummaryToJobLogger(processSummary, job);
-    }
+  protected async process(
+    _job: Job<void>,
+    processSummary: ProcessSummary,
+  ): Promise<string> {
+    // Check for applications with assessments to be cancelled.
+    await this.executeEnqueueProcess(
+      processSummary,
+      this.workflowEnqueuerService.enqueueCancelAssessmentWorkflows.bind(
+        this.workflowEnqueuerService,
+      ),
+    );
+    // Check for applications with assessments to be started.
+    await this.executeEnqueueProcess(
+      processSummary,
+      this.workflowEnqueuerService.enqueueStartAssessmentWorkflows.bind(
+        this.workflowEnqueuerService,
+      ),
+    );
+    return "Process finalized with success.";
   }
 
   /**
@@ -108,6 +75,12 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
     }
   }
 
+  /**
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
   @InjectLogger()
   logger: LoggerService;
 }

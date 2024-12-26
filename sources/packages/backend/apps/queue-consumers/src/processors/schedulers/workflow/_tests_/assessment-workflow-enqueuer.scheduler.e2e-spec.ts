@@ -1,10 +1,10 @@
-import { Job, Queue } from "bull";
-import { createMock } from "@golevelup/ts-jest";
+import { Queue } from "bull";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames, addDays } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../../test/helpers";
 import { AssessmentWorkflowEnqueuerScheduler } from "../assessment-workflow-enqueuer.scheduler";
 import {
@@ -72,10 +72,10 @@ describe(
       // Application submitted with original assessment.
       const application = await createDefaultApplication();
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      await processor.enqueueAssessmentOperations(job);
+      await processor.processQueue(mockedJob.job);
 
       // Assert
       // Load application and related assessments for assertion.
@@ -122,10 +122,10 @@ describe(
       application.currentAssessment = newestAssessment;
       await db.application.save(application);
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      await processor.enqueueAssessmentOperations(job);
+      await processor.processQueue(mockedJob.job);
 
       // Assert
       // Load application and related assessments for assertion.
@@ -166,10 +166,10 @@ describe(
         await db.studentAssessment.save(submittedAssessment);
 
         // Queued job.
-        const job = createMock<Job<void>>();
+        const mockedJob = mockBullJob<void>();
 
         // Act
-        await processor.enqueueAssessmentOperations(job);
+        await processor.processQueue(mockedJob.job);
 
         // Assert
         expect(startApplicationAssessmentQueueMock.add).not.toBeCalled();
@@ -186,10 +186,10 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      await processor.enqueueAssessmentOperations(job);
+      await processor.processQueue(mockedJob.job);
 
       // Assert
       expect(startApplicationAssessmentQueueMock.add).not.toBeCalled();
@@ -206,10 +206,10 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      await processor.enqueueAssessmentOperations(job);
+      await processor.processQueue(mockedJob.job);
 
       // Assert
       // Load application and related assessments for assertion.
@@ -248,10 +248,10 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      await processor.enqueueAssessmentOperations(job);
+      await processor.processQueue(mockedJob.job);
 
       // Assert
       expect(cancelApplicationAssessmentQueueMock.add).not.toBeCalled();

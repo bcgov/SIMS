@@ -1,12 +1,12 @@
-import { Process } from "@nestjs/bull";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueService } from "@sims/services/queue";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
 import {
-  QueueProcessSummary,
-  QueueProcessSummaryResult,
-} from "../../models/processors.models";
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 
 /**
  * Process all the applied PD requests to verify the status with ATBC.
@@ -21,38 +21,27 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
   }
 
   /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
-   */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
    * Process all the applied disability status requests by students.
-   * @param job ATBC response integration job.
+   * @param _job process job.
+   * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  @Process()
-  async processPendingPDRequests(
-    job: Job<void>,
-  ): Promise<QueueProcessSummaryResult> {
-    const summary = new QueueProcessSummary({
-      appLogger: this.logger,
-      jobLogger: job,
-    });
-    await summary.info("Processing disability status for students.");
-    const processingResult =
-      await this.atbcIntegrationProcessingService.processAppliedDisabilityRequests();
-    await summary.info("Completed processing disability status.");
-    return processingResult;
+  protected async process(
+    _job: Job<void>,
+    processSummary: ProcessSummary,
+  ): Promise<string> {
+    await this.atbcIntegrationProcessingService.processAppliedDisabilityRequests(
+      processSummary,
+    );
+    return "Completed processing disability status.";
   }
+
+  /**
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
+  @InjectLogger()
+  logger: LoggerService;
 }
