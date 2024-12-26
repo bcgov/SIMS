@@ -25,7 +25,7 @@ export function dateToDateOnlyText(date: Date | string): string {
 }
 
 /**
- * Get the success string messages when a file is uploaded with success.
+ * Get the success string message when a file is uploaded with success.
  * @param timestamp file timestamp.
  * @param options options.
  * - `expectedRecords`: number of expected records in the file. If not
@@ -34,15 +34,14 @@ export function dateToDateOnlyText(date: Date | string): string {
  */
 export function getSuccessSummaryMessages(
   timestamp: string,
-  options?: {
-    institutionCode?: string;
+  options: {
+    institutionCode: string;
     expectedRecords?: number;
   },
-): QueueProcessSummaryResult {
-  return {
-    summary: [
-      `The uploaded file: ${process.env.INSTITUTION_REQUEST_FOLDER}\\${options?.institutionCode}\\${options?.institutionCode}-IER12-${timestamp}.txt`,
-      `The number of records: ${options?.expectedRecords ?? 1}`,
-    ],
-  } as QueueProcessSummaryResult;
+): string {
+  return `Uploaded file ${process.env.INSTITUTION_REQUEST_FOLDER}\\${
+    options.institutionCode
+  }\\${options.institutionCode}-IER12-${timestamp}.txt, with ${
+    options.expectedRecords ?? 1
+  } record(s).`;
 }

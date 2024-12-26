@@ -1,7 +1,9 @@
-import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { getISODateOnlyString } from "@sims/utilities";
-import { Job } from "bull";
 import { GeneratedDateQueueInDTO } from "../../../models/ier.model";
+import {
+  mockBullJob,
+  MockBullJobResult,
+} from "../../../../../../../../test/helpers";
 
 /**
  * Creates the mocked IER12 job payload for the scheduler.
@@ -10,12 +12,11 @@ import { GeneratedDateQueueInDTO } from "../../../models/ier.model";
  */
 export function createIER12SchedulerJobMock(
   date?: string | Date,
-): DeepMocked<Job<GeneratedDateQueueInDTO>> {
-  // Queued job payload.
+): MockBullJobResult<GeneratedDateQueueInDTO> {
+  // Queued job.
   const data = {} as GeneratedDateQueueInDTO;
   if (date) {
     data.generatedDate = getISODateOnlyString(date);
   }
-  // Queued job.
-  return createMock<Job<GeneratedDateQueueInDTO>>({ data });
+  return mockBullJob<GeneratedDateQueueInDTO>(data);
 }
