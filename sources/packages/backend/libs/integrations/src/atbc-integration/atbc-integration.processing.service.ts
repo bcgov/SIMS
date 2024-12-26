@@ -87,9 +87,6 @@ export class ATBCIntegrationProcessingService {
         ),
       }));
     let updatedDisabilityStatusCount = 0;
-    this.logger.log(
-      `Total disability status requests processed: ${studentsToUpdate.length}`,
-    );
     processSummary.info(
       `Total disability status requests processed: ${studentsToUpdate.length}`,
     );
