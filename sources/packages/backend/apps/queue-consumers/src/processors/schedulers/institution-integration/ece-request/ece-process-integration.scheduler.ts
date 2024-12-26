@@ -8,7 +8,6 @@ import {
   ProcessSummary,
 } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
-import { QueueProcessSummaryResult } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 
 @Processor(QueueNames.ECEProcessIntegration)
@@ -27,6 +26,7 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<void> {
    * for a particular institution.
    * @param _job process job.
    * @param processSummary process summary for logging.
+   * @returns processing result with uploaded files, if any.
    */
   protected async process(
     _job: Job<void>,

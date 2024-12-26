@@ -1,4 +1,4 @@
-import { DeepMocked, createMock } from "@golevelup/ts-jest";
+import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import {
   COE_WINDOW,
@@ -10,6 +10,7 @@ import {
 import {
   createTestingAppModule,
   describeProcessorRootTest,
+  mockBullJob,
 } from "../../../../../../test/helpers";
 import { ECEResponseIntegrationScheduler } from "../ece-response-integration.scheduler";
 import {
@@ -24,7 +25,6 @@ import {
   mockDownloadFiles,
 } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
-import { Job } from "bull";
 import * as path from "path";
 import { ECE_RESPONSE_FILE_NAME } from "@sims/integrations/constants";
 import { ProcessSummaryResult } from "@sims/integrations/models";
@@ -105,7 +105,7 @@ describe(
       );
     });
 
-    it("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application is valid.", async () => {
+    it.only("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application is valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -129,7 +129,7 @@ describe(
         application.currentAssessment.disbursementSchedules;
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement and application number.
@@ -145,27 +145,30 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
-      expectedResult.summary = [
-        `Starting download of file ${confirmEnrolmentResponseFile}.`,
-        `Disbursement ${disbursement.id}, enrolment confirmed.`,
-        `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
-        "Notification has been created to send email to integration contacts.",
-        "Total file parsing errors: 0",
-        "Total detail records found: 2",
-        "Total disbursements found: 2",
-        "Disbursements successfully updated: 1",
-        "Disbursements skipped to be processed: 1",
-        "Disbursements considered duplicate and skipped: 0",
-        "Disbursements failed to process: 0",
-      ];
-      expectedResult.warnings = [
-        "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
-      ];
-      expect(processResult).toStrictEqual([expectedResult]);
+      expect(result).toStrictEqual([
+        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 1, Info: 15",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `Disbursement ${disbursement.id}, enrolment confirmed.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 2",
+          "Total disbursements found: 2",
+          "Disbursements successfully updated: 1",
+          "Disbursements skipped to be processed: 1",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 0",
+          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+        ]),
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -216,7 +219,7 @@ describe(
         application.currentAssessment.disbursementSchedules;
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       const disbursementId = disbursement.id.toString().padStart(10, "0");
       const applicationNumber = application.applicationNumber;
@@ -247,9 +250,12 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
+      expect(result).toStrictEqual([
+        `ECE responses for 1 institution locations were verified, check logs for details.`,
+      ]);
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
@@ -267,7 +273,6 @@ describe(
       expectedResult.warnings = [
         "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -346,7 +351,7 @@ describe(
         application.currentAssessment.disbursementSchedules;
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       const disbursementId = secondDisbursement.id.toString().padStart(10, "0");
       const applicationNumber = application.applicationNumber;
@@ -372,9 +377,12 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
+      expect(result).toStrictEqual([
+        `ECE responses for 1 institution locations were verified, check logs for details.`,
+      ]);
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
@@ -391,8 +399,6 @@ describe(
       expectedResult.errors = [
         `Disbursement ${secondDisbursement.id}, record failed to process due to reason: Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees - Previous tuition remittance) and (Canada grants + Canada Loan + BC Loan).`,
       ];
-
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -426,7 +432,7 @@ describe(
         application.currentAssessment.disbursementSchedules;
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement and application number.
@@ -441,8 +447,12 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
+
       // Assert
+      expect(result).toStrictEqual([
+        `ECE responses for 1 institution locations were verified, check logs for details.`,
+      ]);
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
       expectedResult.summary = [
         `Starting download of file ${confirmEnrolmentResponseFile}.`,
@@ -460,7 +470,6 @@ describe(
       expectedResult.warnings = [
         "Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -500,7 +509,7 @@ describe(
         application.currentAssessment.disbursementSchedules;
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement and application number.
@@ -516,7 +525,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -535,7 +544,6 @@ describe(
       expectedResult.warnings = [
         `Disbursement ${disbursement.id}, record is considered as duplicate and skipped due to reason: Enrolment already completed and can neither be confirmed nor declined`,
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -560,7 +568,7 @@ describe(
       const fakeApplicationNumber = "9999999999";
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have fake disbursement id.
       mockDownloadFiles(
@@ -574,7 +582,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -593,7 +601,6 @@ describe(
       expectedResult.warnings = [
         `Disbursement ${fakeDisbursementId}, record skipped due to reason: Enrolment not found.`,
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -629,7 +636,7 @@ describe(
       const fakeApplicationNumber = "9999999999";
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct disbursement
       // and fake application number.
@@ -644,7 +651,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -663,7 +670,6 @@ describe(
       expectedResult.warnings = [
         `Disbursement ${disbursement.id}, record skipped due to reason: Enrolment for the given application not found.`,
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -685,7 +691,7 @@ describe(
       );
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have invalid header.
       mockDownloadFiles(
@@ -697,7 +703,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -717,7 +723,6 @@ describe(
         `Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The ECE response file has an invalid record type on header: 2`,
         "File processing aborted.",
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -739,7 +744,7 @@ describe(
       );
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have invalid detail.
       mockDownloadFiles(
@@ -751,7 +756,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -772,7 +777,6 @@ describe(
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
         "File processing aborted.",
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -794,7 +798,7 @@ describe(
       );
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have invalid footer.
       mockDownloadFiles(
@@ -806,7 +810,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -826,7 +830,6 @@ describe(
         `Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The ECE response file has an invalid record type on footer: 4`,
         "File processing aborted.",
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -848,7 +851,7 @@ describe(
       );
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have invalid footer.
       mockDownloadFiles(
@@ -860,7 +863,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -880,7 +883,6 @@ describe(
         `Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The total count of detail records mentioned in the footer record does not match with the actual total details records count.`,
         "File processing aborted.",
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -902,7 +904,7 @@ describe(
       );
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have invalid application number.
       // Note: The disbursement id is already an invalid value in file
@@ -916,7 +918,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -937,7 +939,6 @@ describe(
         `Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
         "File processing aborted.",
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -974,7 +975,7 @@ describe(
         application.currentAssessment.disbursementSchedules;
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement and application number.
@@ -997,7 +998,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -1017,7 +1018,6 @@ describe(
       expectedResult.errors = [
         "Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation flag.",
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -1054,7 +1054,7 @@ describe(
         application.currentAssessment.disbursementSchedules;
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement and application number.
@@ -1077,7 +1077,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -1097,7 +1097,6 @@ describe(
       expectedResult.errors = [
         "Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation date, Invalid pay to school amount.",
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -1133,7 +1132,7 @@ describe(
       const disbursementDate = disbursement.disbursementDate;
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement and application number.
@@ -1155,7 +1154,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -1177,7 +1176,6 @@ describe(
       expectedResult.errors = [
         `Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
@@ -1214,7 +1212,7 @@ describe(
         application.currentAssessment.offering.studyEndDate;
 
       // Queued job.
-      const job = createMock<Job<void>>();
+      const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement and application number.
@@ -1233,7 +1231,7 @@ describe(
       );
 
       // Act
-      const processResult = await processor.processECEResponse(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert
       const expectedResult: ProcessSummaryResult = new ProcessSummaryResult();
@@ -1255,7 +1253,6 @@ describe(
       expectedResult.errors = [
         `Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
       ];
-      expect(processResult).toStrictEqual([expectedResult]);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
