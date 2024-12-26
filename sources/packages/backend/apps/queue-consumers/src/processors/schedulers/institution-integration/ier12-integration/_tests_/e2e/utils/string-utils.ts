@@ -1,5 +1,4 @@
 import { formatDate } from "@sims/utilities";
-import { QueueProcessSummaryResult } from "../../../../../../../processors/models/processors.models";
 
 /**
  * Converts a number to its fixed text format.
