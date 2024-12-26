@@ -253,7 +253,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Expect the file was archived on SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the file contains 3 records.
-      expect(mockedJob.containLogMessage("File contains 3 records.")).toBe(
+      expect(mockedJob.containLogMessage("File contains 4 records.")).toBe(
         true,
       );
       const startDate = getISODateOnlyString("2023-08-01");
@@ -270,17 +270,19 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           bcagAward: true,
           cslpAward: true,
           programYearId: true,
+          applicationCancelDate: true,
         },
         where: {
-          individualId: In([950000360, 950000361, 950000362]),
+          individualId: In([950000360, 950000361, 950000362, 950000363]),
         },
         order: { individualId: "ASC" },
       });
-      expect(sfasPartTimeApplications.length).toBe(3);
+      expect(sfasPartTimeApplications.length).toBe(4);
       const [
         firstSFASPartTimeApplication,
         secondSFASPartTimeApplication,
         thirdSFASPartTimeApplication,
+        fourthSFASPartTimeApplication,
       ] = sfasPartTimeApplications;
       expect(firstSFASPartTimeApplication).toEqual({
         startDate: startDate,
@@ -292,6 +294,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         bcagAward: 24,
         cslpAward: 500,
         programYearId: 20232024,
+        applicationCancelDate: null,
       });
       expect(secondSFASPartTimeApplication).toEqual({
         startDate: startDate,
@@ -303,6 +306,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         bcagAward: 25,
         cslpAward: 600,
         programYearId: 20232024,
+        applicationCancelDate: null,
       });
       expect(thirdSFASPartTimeApplication).toEqual({
         startDate: startDate,
@@ -314,6 +318,19 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         bcagAward: 26,
         cslpAward: 700,
         programYearId: null,
+        applicationCancelDate: null,
+      });
+      expect(fourthSFASPartTimeApplication).toEqual({
+        startDate: startDate,
+        endDate: endDate,
+        csgpAward: 7000,
+        sbsdAward: 600,
+        csptAward: 60000,
+        csgdAward: 168,
+        bcagAward: 27,
+        cslpAward: 800,
+        programYearId: 20232024,
+        applicationCancelDate: "2024-02-01",
       });
     },
   );

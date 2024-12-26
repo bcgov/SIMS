@@ -49,6 +49,9 @@ export class SFASPartTimeApplicationsImportService
     application.bcagAward = sfasApplication.bcagAward;
     application.cslpAward = sfasApplication.cslpAward;
     application.programYearId = sfasApplication.programYearId;
+    application.applicationCancelDate = getISODateOnlyString(
+      sfasApplication.applicationCancelDate,
+    );
     await this.repo.save(application, { reload: false, transaction: false });
   }
 
