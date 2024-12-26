@@ -1,8 +1,12 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { ECEProcessingService } from "@sims/integrations/institution-integration/ece-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { QueueProcessSummaryResult } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
@@ -19,49 +23,33 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<void> {
   }
 
   /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
-   */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
    * Identifies all the applications that have an eligible COE request waiting
    * for a particular institution.
-   * @params job details.
-   * @returns Processing result log.
+   * @param _job process job.
+   * @param processSummary process summary for logging.
    */
-  @Process()
-  async processECERequest(
-    job: Job<void>,
-  ): Promise<QueueProcessSummaryResult[]> {
-    this.logger.log(
-      `Processing ECE request integration job ${job.id} of type ${job.name}.`,
+  protected async process(
+    _job: Job<void>,
+    processSummary: ProcessSummary,
+  ): Promise<string[] | string> {
+    const uploadResults = await this.eceFileService.processECEFile(
+      processSummary,
     );
-    this.logger.log("Executing ECE request file generation ...");
-    const uploadResults = await this.eceFileService.processECEFile();
-    this.logger.log("ECE request file generation completed.");
-
+    if (!uploadResults.length) {
+      return "No eligible COEs found.";
+    }
     return uploadResults.map(
       (uploadResult) =>
-        ({
-          summary: [
-            `The uploaded file: ${uploadResult.generatedFile}`,
-            `The number of records: ${uploadResult.uploadedRecords}`,
-          ],
-        } as QueueProcessSummaryResult),
+        `Uploaded file ${uploadResult.generatedFile}, with ${uploadResult.uploadedRecords} record(s).`,
     );
   }
 
+  /**
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
   @InjectLogger()
   logger: LoggerService;
 }

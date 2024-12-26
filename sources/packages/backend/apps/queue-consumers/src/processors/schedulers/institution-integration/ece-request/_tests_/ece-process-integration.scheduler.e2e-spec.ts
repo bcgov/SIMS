@@ -84,25 +84,31 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       },
     );
     application.studentNumber = "1234567789";
+    const locationCode =
+      application.currentAssessment.offering.institutionLocation
+        .institutionCode;
     await db.application.save(application);
     // Queued job.
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processECERequest(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     const uploadedFile = getUploadedFile(sftpClientMock);
     const fileDate = dayjs().format("YYYYMMDD");
-    expect(result).toEqual(
-      expect.arrayContaining([
-        {
-          summary: [
-            `The uploaded file: ${uploadedFile.remoteFilePath}`,
-            "The number of records: 1",
-          ],
-        },
+    expect(result).toStrictEqual([
+      `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
+    ]);
+    expect(
+      mockedJob.containLogMessages([
+        "Retrieving eligible COEs for ECE request.",
+        "Found 1 COEs.",
+        "Creating ECE request content.",
+        `Processing content for institution code ${locationCode}.`,
+        "Uploading content.",
+        `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
       ]),
-    );
+    ).toBe(true);
     // Assert file output.
     const [header, fileDetail, footer] = uploadedFile.fileLines;
     // Expect the header to contain REQUEST and file date.
@@ -138,16 +144,10 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
     const mockedJob = mockBullJob<void>();
 
     // Act
-    const result = await processor.processECERequest(mockedJob.job);
+    const result = await processor.processQueue(mockedJob.job);
 
     // Assert
-    expect(result).toEqual(
-      expect.arrayContaining([
-        {
-          summary: ["The uploaded file: none", "The number of records: 0"],
-        },
-      ]),
-    );
+    expect(result).toStrictEqual(["No eligible COEs found."]);
   });
 
   function buildECEFileDetail(
