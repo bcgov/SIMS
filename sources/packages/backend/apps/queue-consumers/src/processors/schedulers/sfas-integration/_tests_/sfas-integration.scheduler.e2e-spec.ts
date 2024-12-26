@@ -270,6 +270,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           bcagAward: true,
           cslpAward: true,
           programYearId: true,
+          applicationCancelDate: true,
         },
         where: {
           individualId: In([950000360, 950000361, 950000362, 950000363]),
@@ -293,6 +294,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         bcagAward: 24,
         cslpAward: 500,
         programYearId: 20232024,
+        applicationCancelDate: null,
       });
       expect(secondSFASPartTimeApplication).toEqual({
         startDate: startDate,
@@ -304,6 +306,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         bcagAward: 25,
         cslpAward: 600,
         programYearId: 20232024,
+        applicationCancelDate: null,
       });
       expect(thirdSFASPartTimeApplication).toEqual({
         startDate: startDate,
@@ -315,6 +318,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         bcagAward: 26,
         cslpAward: 700,
         programYearId: null,
+        applicationCancelDate: null,
       });
       expect(fourthSFASPartTimeApplication).toEqual({
         startDate: startDate,
@@ -326,6 +330,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         bcagAward: 27,
         cslpAward: 800,
         programYearId: 20232024,
+        applicationCancelDate: "2024-02-01",
       });
     },
   );
