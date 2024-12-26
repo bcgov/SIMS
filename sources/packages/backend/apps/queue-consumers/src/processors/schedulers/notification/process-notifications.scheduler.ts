@@ -43,17 +43,11 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   protected async process(
     job: Job<ProcessNotificationsQueueInDTO>,
     processSummary: ProcessSummary,
-  ): Promise<string> {
+  ): Promise<string[]> {
     const processNotificationResponse =
       await this.notificationService.processUnsentNotifications(
         job.data.pollingRecordsLimit,
       );
-    processSummary.info(
-      `Total notifications processed ${processNotificationResponse.notificationsProcessed}.`,
-    );
-    processSummary.info(
-      `Total notifications successfully processed ${processNotificationResponse.notificationsSuccessfullyProcessed}.`,
-    );
     if (
       processNotificationResponse.notificationsProcessed !==
       processNotificationResponse.notificationsSuccessfullyProcessed
@@ -62,7 +56,12 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
         "Not all pending notifications were successfully processed.",
       );
     }
-    return "Notifications processed.";
+    const processedLogResult = [
+      `Total notifications processed ${processNotificationResponse.notificationsProcessed}.`,
+      `Total notifications successfully processed ${processNotificationResponse.notificationsSuccessfullyProcessed}.`,
+    ];
+    processedLogResult.forEach((log) => processSummary.info(log));
+    return processedLogResult;
   }
 
   /**
