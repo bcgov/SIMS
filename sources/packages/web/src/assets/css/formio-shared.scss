@@ -745,3 +745,8 @@ td .formio-custom-tooltip:hover .tooltip-text {
 .bi-calendar::before {
   content: "\f1f6" !important;
 }
+
+// Shows the tooltip icon
+.bi-question-circle::before {
+  content: "\f504" !important;
+}
