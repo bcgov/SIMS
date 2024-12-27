@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@bcgov/bc-sans": "^2.1.0",
+    "@formio/js": "^5.0.0",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
     "@types/vuelidate": "^0.7.21",
@@ -20,7 +21,6 @@
     "class-validator": "^0.14.1",
     "core-js": "^3.37.0",
     "dayjs": "^1.11.10",
-    "formiojs": "^4.21.4",
     "http-status-codes": "^2.3.0",
     "keycloak-js": "^24.0.3",
     "mitt": "^2.1.0",
