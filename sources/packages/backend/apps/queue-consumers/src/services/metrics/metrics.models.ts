@@ -2,8 +2,8 @@ import { QueueModel } from "@sims/services/queue";
 import { Queue } from "bull";
 
 /**
- * Bull queues event names to have metrics associated.
- * @see https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#events
+ * Bull queues event names to have metrics associated (@see https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#events)
+ * and others that are useful for monitoring.
  */
 export enum QueuesMetricsEvents {
   /**
@@ -62,6 +62,10 @@ export enum QueuesMetricsEvents {
    * are not able to extend locks.
    */
   LockExtensionFailed = "lock-extension-failed",
+  /**
+   * A job was finished with success but contains at leas one warning.
+   */
+  JobFinalizedWithWarnings = "job-finalized-with-warnings",
 }
 
 /**
@@ -76,3 +80,8 @@ export interface MonitoredQueue {
  * Default label added to all the metrics.
  */
 export const DEFAULT_METRICS_APP_LABEL = "queue-consumers";
+
+export enum MetricsQueueTypes {
+  Scheduler = "scheduler",
+  Consumer = "consumer",
+}

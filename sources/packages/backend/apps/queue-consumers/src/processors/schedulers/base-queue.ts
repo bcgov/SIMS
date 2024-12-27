@@ -11,11 +11,14 @@ import {
 } from "../../utilities";
 import { Job } from "bull";
 import { Process } from "@nestjs/bull";
+import { MetricsService, QueuesMetricsEvents } from "../../services";
 
 /**
  * Provides basic functionality for queue processing.
  */
 export abstract class BaseQueue<T> {
+  constructor(private readonly metricsService: MetricsService) {}
+
   /**
    * Wrap the queue job execution in a try/catch for the global error handling.
    * It provides also the default {@link ProcessSummary} for logging.
@@ -37,6 +40,13 @@ export abstract class BaseQueue<T> {
       processSummary.info(endLogMessage);
       this.logger.log(endLogMessage);
       const logsSum = processSummary.getLogLevelSum();
+      if (logsSum.warn) {
+        this.metricsService.incrementJobEventCounter(
+          job,
+          QueuesMetricsEvents.JobFinalizedWithWarnings,
+          { incrementValue: logsSum.warn },
+        );
+      }
       if (logsSum.error) {
         throw new CustomNamedError(
           "One or more errors were reported during the process, please see logs for details.",

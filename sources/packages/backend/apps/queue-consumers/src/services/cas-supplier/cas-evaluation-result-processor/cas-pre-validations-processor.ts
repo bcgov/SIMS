@@ -40,7 +40,7 @@ export class CASPreValidationsProcessor extends CASEvaluationResultProcessor {
     if (evaluationResult.status !== CASEvaluationStatus.PreValidationsFailed) {
       throw new Error("Incorrect CAS evaluation result processor selected.");
     }
-    summary.warn(
+    summary.info(
       `Not possible to retrieve CAS supplier information because some pre-validations were not fulfilled. Reason(s): ${evaluationResult.reasons.join(
         ", ",
       )}.`,
