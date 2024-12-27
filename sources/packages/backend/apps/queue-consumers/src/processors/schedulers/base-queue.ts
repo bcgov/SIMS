@@ -12,12 +12,17 @@ import {
 import { Job } from "bull";
 import { Process } from "@nestjs/bull";
 import { MetricsService, QueuesMetricsEvents } from "../../services";
+import { Inject } from "@nestjs/common";
 
 /**
  * Provides basic functionality for queue processing.
  */
 export abstract class BaseQueue<T> {
-  constructor(private readonly metricsService: MetricsService) {}
+  /**
+   * Metrics service to allow incrementing job events.
+   */
+  @Inject(MetricsService)
+  private readonly metricsService: MetricsService;
 
   /**
    * Wrap the queue job execution in a try/catch for the global error handling.
