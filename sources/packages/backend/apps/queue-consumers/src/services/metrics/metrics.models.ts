@@ -81,6 +81,9 @@ export interface MonitoredQueue {
  */
 export const DEFAULT_METRICS_APP_LABEL = "queue-consumers";
 
+/**
+ * Metrics queue types.
+ */
 export enum MetricsQueueTypes {
   Scheduler = "scheduler",
   Consumer = "consumer",

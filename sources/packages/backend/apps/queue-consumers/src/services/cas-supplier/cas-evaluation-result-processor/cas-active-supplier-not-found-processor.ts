@@ -69,7 +69,7 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         if (error.name === CAS_BAD_REQUEST) {
-          summary.info(
+          summary.warn(
             "Known CAS error while creating supplier and site on CAS.",
           );
           return this.processBadRequestErrors(
