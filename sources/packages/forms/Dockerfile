@@ -8,10 +8,10 @@ ARG FORMIO_SOURCE_REPO_TAG
 # Note: using pinned versions to ensure immutable build environment.
 RUN apk update && \
   apk upgrade && \
-  apk add make=4.4.1-r2 && \
-  apk add python3=3.12.6-r0 && \
-  apk add g++=13.2.1_git20240309-r0 && \
-  apk add git=2.45.2-r0 && \
+  apk add make && \
+  apk add python3 && \
+  apk add g++ && \
+  apk add git && \
   apk cache clean
 
 # Clone code into formio folder, by default.
