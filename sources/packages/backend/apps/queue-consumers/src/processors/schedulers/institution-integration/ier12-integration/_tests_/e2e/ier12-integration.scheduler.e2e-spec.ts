@@ -184,12 +184,12 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
 
     // Queued job.
-    const job = createIER12SchedulerJobMock(
+    const mockedJob = createIER12SchedulerJobMock(
       application.currentAssessment.assessmentDate,
     );
 
     // Act
-    const ier12Results = await processor.processIER12File(job);
+    const ier12Results = await processor.processQueue(mockedJob.job);
     // Assert
     // Assert process result.
     expect(ier12Results).toBeDefined();
@@ -269,12 +269,12 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
 
     // Queued job.
-    const job = createIER12SchedulerJobMock(
+    const mockedJob = createIER12SchedulerJobMock(
       application.currentAssessment.assessmentDate,
     );
 
     // Act
-    const ier12Results = await processor.processIER12File(job);
+    const ier12Results = await processor.processQueue(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -349,12 +349,12 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
 
     // Queued job.
-    const job = createIER12SchedulerJobMock(
+    const mockedJob = createIER12SchedulerJobMock(
       application.currentAssessment.assessmentDate,
     );
 
     // Act
-    const ier12Results = await processor.processIER12File(job);
+    const ier12Results = await processor.processQueue(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -442,12 +442,12 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Queued job.
-    const job = createIER12SchedulerJobMock(
+    const mockedJob = createIER12SchedulerJobMock(
       application.currentAssessment.assessmentDate,
     );
 
     // Act
-    const ier12Results = await processor.processIER12File(job);
+    const ier12Results = await processor.processQueue(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -540,10 +540,10 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     // Queued job.
     // No date provided as it is expected that the disbursement feedback error
     // date would ensure the IER12 record is generated.
-    const job = createIER12SchedulerJobMock();
+    const mockedJob = createIER12SchedulerJobMock();
 
     // Act
-    const ier12Results = await processor.processIER12File(job);
+    const ier12Results = await processor.processQueue(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -623,12 +623,12 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
 
     // Queued job.
-    const job = createIER12SchedulerJobMock(
+    const mockedJob = createIER12SchedulerJobMock(
       application.currentAssessment.assessmentDate,
     );
 
     // Act
-    const ier12Results = await processor.processIER12File(job);
+    const ier12Results = await processor.processQueue(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -758,10 +758,10 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
 
     // Queued job.
-    const job = createIER12SchedulerJobMock(referenceSubmissionDate);
+    const mockedJob = createIER12SchedulerJobMock(referenceSubmissionDate);
 
     // Act
-    const ier12Results = await processor.processIER12File(job);
+    const ier12Results = await processor.processQueue(mockedJob.job);
 
     // Assert
     // Assert process result.

@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { DisbursementSchedule } from "@sims/sims-db";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import {
   ConfigService,
   InstitutionIntegrationConfig,
@@ -29,21 +33,19 @@ export class ECEProcessingService {
    * 3. Create the request filename with the file path with respect to the institution code
    * for the ECE request sent File.
    * 4. Upload the content to the zoneB SFTP server.
+   * @param processSummary process summary for logging.
    * @returns Processing ECE request result.
    */
-  async processECEFile(): Promise<ECEUploadResult[]> {
-    this.logger.log(`Retrieving eligible COEs for ECE request...`);
+  async processECEFile(
+    processSummary: ProcessSummary,
+  ): Promise<ECEUploadResult[]> {
+    processSummary.info(`Retrieving eligible COEs for ECE request.`);
     const eligibleCOEs =
       await this.disbursementScheduleService.getPendingCOEs();
     if (!eligibleCOEs.length) {
-      return [
-        {
-          generatedFile: "none",
-          uploadedRecords: 0,
-        },
-      ];
+      return [];
     }
-    this.logger.log(`Found ${eligibleCOEs.length} COEs.`);
+    processSummary.info(`Found ${eligibleCOEs.length} COEs.`);
     const fileRecords: Record<string, ECERecord[]> = {};
     eligibleCOEs.forEach((eligibleCOE) => {
       const institutionCode =
@@ -56,18 +58,21 @@ export class ECEProcessingService {
     });
     const uploadResult: ECEUploadResult[] = [];
     try {
-      this.logger.log("Creating ECE request content...");
+      processSummary.info("Creating ECE request content.");
       for (const institutionCode of Object.keys(fileRecords)) {
+        const uploadProcessSummary = new ProcessSummary();
+        processSummary.children(uploadProcessSummary);
         const eceUploadResult = await this.uploadECEContent(
           institutionCode,
           fileRecords[institutionCode],
+          uploadProcessSummary,
         );
         uploadResult.push(eceUploadResult);
       }
-    } catch (error) {
-      this.logger.error(
-        `Error while uploading content for ECE request: ${error}`,
-      );
+    } catch (error: unknown) {
+      const logMessage = "Error while uploading content for ECE request.";
+      this.logger.error(logMessage, error);
+      processSummary.error(logMessage, error);
       throw error;
     }
     return uploadResult;
@@ -77,12 +82,17 @@ export class ECEProcessingService {
    * Upload the content in SFTP server location.
    * @param institutionCode Institution code for the file generated.
    * @param institutionFileRecords Total records with institutionCode.
+   * @param processSummary process summary for logging.
    * @returns Updated records count with filepath.
    */
   async uploadECEContent(
     institutionCode: string,
     institutionFileRecords: ECERecord[],
+    processSummary: ProcessSummary,
   ): Promise<ECEUploadResult> {
+    processSummary.info(
+      `Processing content for institution code ${institutionCode}.`,
+    );
     try {
       // Create the Request content for the ECE request file by populating the content.
       const fileContent = this.eceIntegrationService.createECEFileContent(
@@ -90,20 +100,23 @@ export class ECEProcessingService {
       );
       // Create the request filename with the file path for the each and every institutionCode.
       const fileInfo = this.createRequestFileName(institutionCode);
-      this.logger.log("Uploading content...");
+      processSummary.info("Uploading content.");
       await this.eceIntegrationService.uploadContent(
         fileContent,
         fileInfo.filePath,
       );
-      this.logger.log("Content uploaded.");
+      processSummary.info("Content uploaded.");
       const eceFileFooter = fileContent[
         fileContent.length - 1
       ] as ECEFileFooter;
+      processSummary.info(
+        `Uploaded file ${fileInfo.filePath}, with ${eceFileFooter.recordCount} record(s).`,
+      );
       return {
         generatedFile: fileInfo.filePath,
         uploadedRecords: eceFileFooter.recordCount,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
         `Error while uploading content for ECE request file: ${error}`,
       );

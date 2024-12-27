@@ -9,7 +9,11 @@ import {
   StudentAssessment,
   StudentRestriction,
 } from "@sims/sims-db";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import {
+  LoggerService,
+  InjectLogger,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import {
   ConfigService,
   InstitutionIntegrationConfig,
@@ -55,23 +59,22 @@ export class IER12ProcessingService {
    * 3. Create the request filename with the file path with respect to the institution code
    * for the IER 12 sent File.
    * 4. Upload the content to the zoneB SFTP server.
+   * @param processSummary process summary for logging.
    * @param generatedDate date in which the assessment for
    * particular institution is generated.
-   * @returns Processing IER 12 result.
+   * @returns processing IER 12 result.
    */
-  async processIER12File(generatedDate?: string): Promise<IER12UploadResult[]> {
-    this.logger.log(`Retrieving pending assessment for IER 12...`);
+  async processIER12File(
+    processSummary: ProcessSummary,
+    generatedDate?: string,
+  ): Promise<IER12UploadResult[]> {
+    processSummary.info("Retrieving pending assessment for IER 12.");
     const pendingAssessments =
       await this.studentAssessmentService.getPendingAssessment(generatedDate);
     if (!pendingAssessments.length) {
-      return [
-        {
-          generatedFile: "none",
-          uploadedRecords: 0,
-        },
-      ];
+      return [];
     }
-    this.logger.log(`Found ${pendingAssessments.length} assessments.`);
+    processSummary.info(`Found ${pendingAssessments.length} assessment(s).`);
     const fileRecords: Record<string, IER12Record[]> = {};
     for (const assessment of pendingAssessments) {
       const institutionCode =
@@ -84,19 +87,21 @@ export class IER12ProcessingService {
     }
     const uploadResult: IER12UploadResult[] = [];
     try {
-      this.logger.log("Creating IER 12 content...");
+      processSummary.info("Creating IER 12 content.");
       for (const [institutionCode, ierRecords] of Object.entries(fileRecords)) {
+        const uploadProcessSummary = new ProcessSummary();
+        processSummary.children(uploadProcessSummary);
         const ierUploadResult = await this.uploadIER12Content(
           institutionCode,
           ierRecords,
+          uploadProcessSummary,
         );
         uploadResult.push(ierUploadResult);
       }
-    } catch (error) {
-      this.logger.error(`Error while uploading content for IER 12: ${error}`);
-      // TODO: On error, the error message must added to the upload result and
-      // processing must continue for the next institution without aborting.
-      throw error;
+    } catch (error: unknown) {
+      const errorMessage = "Error while uploading content for IER 12.";
+      this.logger.error(errorMessage, error);
+      processSummary.error(errorMessage, error);
     }
     return uploadResult;
   }
@@ -105,11 +110,13 @@ export class IER12ProcessingService {
    * Upload the content in SFTP server location.
    * @param institutionCode Institution code for the file generated.
    * @param ier12Records total records for an institution.
+   * @param processSummary process summary for logging.
    * @returns Updated records count with filepath.
    */
   async uploadIER12Content(
     institutionCode: string,
     ier12Records: IER12Record[],
+    processSummary: ProcessSummary,
   ): Promise<IER12UploadResult> {
     try {
       // Create the Request content for the IER 12 file by populating the content.
@@ -117,20 +124,20 @@ export class IER12ProcessingService {
         this.ier12IntegrationService.createIER12FileContent(ier12Records);
       // Create the request filename with the file path for the each and every institutionCode.
       const fileInfo = this.createRequestFileName(institutionCode);
-      this.logger.log("Uploading content...");
+      processSummary.info("Uploading content.");
       await this.ier12IntegrationService.uploadContent(
         fileContent,
         fileInfo.filePath,
       );
-      this.logger.log("Content uploaded.");
+      processSummary.info("Content uploaded.");
       return {
         generatedFile: fileInfo.filePath,
         uploadedRecords: fileContent.length,
       };
-    } catch (error) {
-      this.logger.error(
-        `Error while uploading content for IER 12 file: ${error}`,
-      );
+    } catch (error: unknown) {
+      const errorMessage = "Error while uploading content for IER 12 file.";
+      this.logger.error(errorMessage, error);
+      processSummary.error(errorMessage, error);
       throw error;
     }
   }

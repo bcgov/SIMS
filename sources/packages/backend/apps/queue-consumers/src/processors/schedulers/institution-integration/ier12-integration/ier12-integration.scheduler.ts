@@ -1,10 +1,13 @@
-import { InjectQueue, Process, Processor } from "@nestjs/bull";
+import { InjectQueue, Processor } from "@nestjs/bull";
 import { IER12ProcessingService } from "@sims/integrations/institution-integration/ier12-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import {
+  InjectLogger,
+  LoggerService,
+  ProcessSummary,
+} from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
-import { QueueProcessSummaryResult } from "../../../models/processors.models";
 import { BaseScheduler } from "../../base-scheduler";
 import { GeneratedDateQueueInDTO } from "./models/ier.model";
 
@@ -20,52 +23,36 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
   }
 
   /**
-   * To be removed once the method {@link process} is implemented.
-   * This method "hides" the {@link Process} decorator from the base class.
-   */
-  async processQueue(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
-   * When implemented in a derived class, process the queue job.
-   * To be implemented.
-   */
-  protected async process(): Promise<string | string[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  /**
    * Identifies all the applications which are in assessment
    * for a particular institution and generate the request file.
-   * @params job has generatedDate Date in which the assessment for
+   * @param job has generatedDate Date in which the assessment for
    * particular institution is generated.
-   * @returns Processing result log.
+   * @param processSummary process summary for logging.
+   * @returns processing result log.
    */
-  @Process()
-  async processIER12File(
-    job: Job<GeneratedDateQueueInDTO | undefined>,
-  ): Promise<QueueProcessSummaryResult[]> {
-    this.logger.log(
-      `Processing IER integration job ${job.id} of type ${job.name}.`,
-    );
-    this.logger.log("Executing IER 12 file generation ...");
+  protected async process(
+    job: Job<GeneratedDateQueueInDTO>,
+    processSummary: ProcessSummary,
+  ): Promise<string[] | string> {
     const uploadResults = await this.ierRequest.processIER12File(
+      processSummary,
       job.data.generatedDate,
     );
-    this.logger.log("IER 12 file generation completed.");
-
+    if (!uploadResults.length) {
+      return "No IR12 files were generated.";
+    }
     return uploadResults.map(
       (uploadResult) =>
-        ({
-          summary: [
-            `The uploaded file: ${uploadResult.generatedFile}`,
-            `The number of records: ${uploadResult.uploadedRecords}`,
-          ],
-        } as QueueProcessSummaryResult),
+        `Uploaded file ${uploadResult.generatedFile}, with ${uploadResult.uploadedRecords} record(s).`,
     );
   }
 
+  /**
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
   @InjectLogger()
   logger: LoggerService;
 }

@@ -1,5 +1,4 @@
 import { formatDate } from "@sims/utilities";
-import { QueueProcessSummaryResult } from "../../../../../../../processors/models/processors.models";
 
 /**
  * Converts a number to its fixed text format.
@@ -25,24 +24,24 @@ export function dateToDateOnlyText(date: Date | string): string {
 }
 
 /**
- * Get the success string messages when a file is uploaded with success.
+ * Get the success string message when a file is uploaded with success.
  * @param timestamp file timestamp.
  * @param options options.
+ * - `institutionCode`: required institution code.
  * - `expectedRecords`: number of expected records in the file. If not
  * provided default value will be 1.
  * @returns success summary result.
  */
 export function getSuccessSummaryMessages(
   timestamp: string,
-  options?: {
-    institutionCode?: string;
+  options: {
+    institutionCode: string;
     expectedRecords?: number;
   },
-): QueueProcessSummaryResult {
-  return {
-    summary: [
-      `The uploaded file: ${process.env.INSTITUTION_REQUEST_FOLDER}\\${options?.institutionCode}\\${options?.institutionCode}-IER12-${timestamp}.txt`,
-      `The number of records: ${options?.expectedRecords ?? 1}`,
-    ],
-  } as QueueProcessSummaryResult;
+): string {
+  return `Uploaded file ${process.env.INSTITUTION_REQUEST_FOLDER}\\${
+    options.institutionCode
+  }\\${options.institutionCode}-IER12-${timestamp}.txt, with ${
+    options.expectedRecords ?? 1
+  } record(s).`;
 }
