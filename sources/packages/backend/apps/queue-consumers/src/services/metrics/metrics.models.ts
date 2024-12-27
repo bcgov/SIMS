@@ -63,7 +63,7 @@ export enum QueuesMetricsEvents {
    */
   LockExtensionFailed = "lock-extension-failed",
   /**
-   * A job was finished with success but contains at leas one warning.
+   * A job was finished with success but contains at least one warning.
    */
   JobFinalizedWithWarnings = "job-finalized-with-warnings",
 }
