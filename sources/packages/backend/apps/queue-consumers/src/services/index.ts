@@ -5,3 +5,4 @@ export * from "./cas-supplier/cas-supplier.service";
 export * from "./student-file/student-file.service";
 export * from "./cas-supplier/cas-evaluation-result-processor";
 export * from "./metrics/metrics.service";
+export * from "./metrics/metrics.models";

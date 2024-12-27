@@ -8,8 +8,9 @@ import {
   DEFAULT_METRICS_APP_LABEL,
   QueuesMetricsEvents,
   MonitoredQueue,
+  MetricsQueueTypes,
 } from "./metrics.models";
-import { Queue } from "bull";
+import { Queue, Job } from "bull";
 import { register, collectDefaultMetrics, Gauge, Counter } from "prom-client";
 
 @Injectable()
@@ -53,6 +54,34 @@ export class MetricsService {
   }
 
   /**
+   * Increments the event counter for a specific job event within a queue.
+   * @param job the job whose event counter is to be incremented.
+   * @param queueEvent the type of event occurring on the job.
+   * @param options options for the increment operation.
+   * - `incrementValue` the value by which to increment
+   * the counter. Defaults to 1 if not provided.
+   */
+  incrementJobEventCounter(
+    job: Job<unknown>,
+    queueEvent: QueuesMetricsEvents,
+    options?: {
+      incrementValue?: number;
+    },
+  ): void {
+    const queueType = job.opts?.repeat
+      ? MetricsQueueTypes.Scheduler
+      : MetricsQueueTypes.Consumer;
+    this.jobsEventsCounter.inc(
+      {
+        queueName: job.queue.name,
+        queueEvent,
+        queueType,
+      },
+      options?.incrementValue ?? 1,
+    );
+  }
+
+  /**
    * Set global metrics configurations.
    */
   setGlobalMetricsConfigurations(): void {
@@ -81,7 +110,9 @@ export class MetricsService {
   private async refreshJobCountsMetricsForQueue(
     queue: MonitoredQueue,
   ): Promise<void> {
-    const queueType = queue.queueModel.isScheduler ? "scheduler" : "consumer";
+    const queueType = queue.queueModel.isScheduler
+      ? MetricsQueueTypes.Scheduler
+      : MetricsQueueTypes.Consumer;
     const queueJobCounts = await queue.provider.getJobCounts();
     Object.keys(queueJobCounts).forEach((jobCountEvent: string) => {
       this.jobCountsGauge.set(
@@ -111,7 +142,9 @@ export class MetricsService {
    */
   private associateCountersToQueueEvents(queue: MonitoredQueue): void {
     const queueName = queue.provider.name;
-    const queueType = queue.queueModel.isScheduler ? "scheduler" : "consumer";
+    const queueType = queue.queueModel.isScheduler
+      ? MetricsQueueTypes.Scheduler
+      : MetricsQueueTypes.Consumer;
     Object.values(QueuesMetricsEvents).forEach(
       (queueEvent: QueuesMetricsEvents) => {
         this.logger.log(
