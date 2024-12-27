@@ -92,6 +92,7 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
         individual: true,
       },
       where: {
+        applicationCancelDate: IsNull(),
         individual: { student: { id: studentId }, msfaaNumber: Not(IsNull()) },
         endDate: MoreThanOrEqual(getISODateOnlyString(minMSFAAValidDate)),
       },
