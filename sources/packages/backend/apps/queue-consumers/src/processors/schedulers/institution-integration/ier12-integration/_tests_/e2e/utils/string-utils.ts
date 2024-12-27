@@ -27,6 +27,7 @@ export function dateToDateOnlyText(date: Date | string): string {
  * Get the success string message when a file is uploaded with success.
  * @param timestamp file timestamp.
  * @param options options.
+ * - `institutionCode`: required institution code.
  * - `expectedRecords`: number of expected records in the file. If not
  * provided default value will be 1.
  * @returns success summary result.
