@@ -25,8 +25,9 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
   /**
    * Identifies all the applications which are in assessment
    * for a particular institution and generate the request file.
-   * @params job has generatedDate Date in which the assessment for
+   * @param job has generatedDate Date in which the assessment for
    * particular institution is generated.
+   * @param processSummary process summary for logging.
    * @returns processing result log.
    */
   protected async process(
