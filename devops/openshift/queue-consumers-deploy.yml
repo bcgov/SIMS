@@ -366,13 +366,13 @@ parameters:
   - name: SERVICE_NAME
     value: queue-consumers
   - name: CPU_LIMIT
-    value: "0.2"
+    value: "0.4"
   - name: MEMORY_LIMIT
-    value: "768M"
+    value: "1024M"
   - name: CPU_REQUEST
-    value: "0.1"
+    value: "0.2"
   - name: MEMORY_REQUEST
-    value: "512M"
+    value: "768M"
   - name: REPLICAS
     value: "2"
   - name: DB_SERVICE_KEY
