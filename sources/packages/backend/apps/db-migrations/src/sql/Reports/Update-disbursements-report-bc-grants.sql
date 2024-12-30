@@ -45,7 +45,7 @@ SET
       union
       all
       select distinct
-        to_char(dr.disburse_date, '' YYYY - MM - DD '') as "Date of Disbursement",
+        to_char(dr.disburse_date, ''YYYY-MM-DD'') as "Date of Disbursement",
         dr.student_sin as "SIN",
         app.application_number as "Application Number",
         ds.document_number as "Certificate Number",
