@@ -825,6 +825,112 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     });
   });
 
+  it("Should not sum the awards from SFAS and SFAS part-time applications data when the SFAS applications for the same student and program year are cancelled.", async () => {
+    // Arrange
+
+    // Create the student to be shared across the applications.
+    const student = await saveFakeStudent(db.dataSource);
+    // Get the program year for the start date.
+    const programYear = await db.programYear.findOne({ where: { id: 2 } });
+
+    // Current application having the first assessment already processed.
+    const currentApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.InProgress,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(30, programYear.startDate),
+        },
+      },
+    );
+    const firstAssessmentDate =
+      currentApplication.currentAssessment.assessmentDate;
+    // The start date for the first SFAS and SFAS part-time application record is set to the date before the first assessment date of the current application.
+    const legacyApplicationStartDate = faker.date.between(
+      programYear.startDate,
+      addDays(-1, firstAssessmentDate),
+    );
+    const legacyApplicationEndDate = addDays(30, firstAssessmentDate);
+
+    // Create the second assessment for the current application with a different assessment date.
+    const secondAssessment = createFakeStudentAssessment(
+      {
+        auditUser: currentApplication.student.user,
+        application: currentApplication,
+        offering: currentApplication.currentAssessment.offering,
+      },
+      {
+        initialValue: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+    currentApplication.currentAssessment = secondAssessment;
+    await db.application.save(currentApplication);
+
+    // SFAS Individual.
+    const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
+      initialValues: {
+        lastName: student.user.lastName,
+        birthDate: student.birthDate,
+        sin: student.sinValidation.sin,
+      },
+    });
+
+    const fakeSFASApplication = createFakeSFASApplication(
+      { individual: sfasIndividual },
+      {
+        initialValues: {
+          startDate: getISODateOnlyString(legacyApplicationStartDate),
+          endDate: getISODateOnlyString(legacyApplicationEndDate),
+          csgdAward: 9,
+          csgpAward: 10,
+          sbsdAward: 12,
+          bcagAward: 13,
+          applicationCancelDate: getISODateOnlyString(new Date()),
+        },
+      },
+    );
+    await db.sfasApplication.save(fakeSFASApplication);
+
+    const fakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
+      { individual: sfasIndividual },
+      {
+        initialValues: {
+          startDate: getISODateOnlyString(legacyApplicationStartDate),
+          endDate: getISODateOnlyString(legacyApplicationEndDate),
+          csptAward: 2,
+          csgdAward: 3,
+          csgpAward: 4,
+          sbsdAward: 6,
+          bcagAward: 7,
+          applicationCancelDate: getISODateOnlyString(new Date()),
+        },
+      },
+    );
+    await db.sfasPartTimeApplications.save(fakeSFASPartTimeApplication);
+    // Act
+    const result = await assessmentController.verifyAssessmentCalculationOrder(
+      createFakeVerifyAssessmentCalculationOrderPayload(
+        currentApplication.currentAssessment.id,
+      ),
+    );
+    // Assert
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // The calculation will not take cancelled SFAS and SFAS part-time application data.
+    expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+      isReadyForCalculation: true,
+      latestCSLPBalance: 0,
+    });
+  });
+
   it("Should not return any program year total awards or grants from awards from SFAS and SFAS part-time applications when there are no SIMS applications in the past and SFAS and SFAS part-time applications for the same student and program year.", async () => {
     // Arrange
 

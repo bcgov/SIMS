@@ -109,6 +109,7 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
         individual: true,
       },
       where: {
+        applicationCancelDate: IsNull(),
         individual: { student: { id: studentId }, msfaaNumber: Not(IsNull()) },
         endDate: MoreThanOrEqual(getISODateOnlyString(minMSFAAValidDate)),
       },

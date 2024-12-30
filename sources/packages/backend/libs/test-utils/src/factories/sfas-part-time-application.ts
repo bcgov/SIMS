@@ -42,5 +42,7 @@ export function createFakeSFASPartTimeApplication(
   sfasPartTimeApplication.createdAt = faker.date.past(18);
   sfasPartTimeApplication.updatedAt = faker.date.past(18);
   sfasPartTimeApplication.extractedAt = faker.date.past(18);
+  sfasPartTimeApplication.applicationCancelDate =
+    options?.initialValues?.applicationCancelDate;
   return sfasPartTimeApplication;
 }

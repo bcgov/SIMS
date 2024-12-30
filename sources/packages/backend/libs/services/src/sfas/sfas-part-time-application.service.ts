@@ -38,7 +38,10 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
       .createQueryBuilder("sfasPTApplication")
       .select(["sfasPTApplication.id"])
       .innerJoin("sfasPTApplication.individual", "sfasPTstudent")
-      .where("lower(sfasPTstudent.lastName) = lower(:lastName)", { lastName })
+      .where("sfasPTApplication.applicationCancelDate IS NULL")
+      .andWhere("lower(sfasPTstudent.lastName) = lower(:lastName)", {
+        lastName,
+      })
       .andWhere("sfasPTstudent.sin = :sin", { sin })
       .andWhere("sfasPTstudent.birthDate = :birthDate", { birthDate })
       .andWhere(
@@ -89,6 +92,7 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
         individual: true,
       },
       where: {
+        applicationCancelDate: IsNull(),
         individual: { student: { id: studentId }, msfaaNumber: Not(IsNull()) },
         endDate: MoreThanOrEqual(getISODateOnlyString(minMSFAAValidDate)),
       },
