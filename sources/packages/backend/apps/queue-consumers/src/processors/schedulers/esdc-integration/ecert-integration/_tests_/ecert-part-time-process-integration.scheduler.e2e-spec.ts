@@ -119,6 +119,12 @@ describe(
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
 
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+
       // Assert
       expect(result).toStrictEqual([
         "Process finalized with success.",
@@ -252,6 +258,12 @@ describe(
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
 
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+
       // Assert
       expect(result).toStrictEqual([
         "Process finalized with success.",
@@ -281,6 +293,12 @@ describe(
 
       // Act
       const result = await processor.processQueue(mockedJob.job);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -320,6 +338,12 @@ describe(
 
       // Act
       const result = await processor.processQueue(mockedJob.job);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -846,6 +870,12 @@ describe(
 
       // Act
       const result = await processor.processQueue(job);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
