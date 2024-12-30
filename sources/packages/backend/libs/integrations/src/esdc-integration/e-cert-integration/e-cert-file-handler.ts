@@ -29,14 +29,6 @@ import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import * as path from "path";
 
 /**
- * Used to abort the e-Cert generation process, cancel the current transaction,
- * and let the consumer method know that it was aborted because no records are
- * present to be processed.
- */
-const ECERT_GENERATION_NO_RECORDS_AVAILABLE =
-  "ECERT_GENERATION_NO_RECORDS_AVAILABLE";
-
-/**
  * Error details: error id and block funding info
  * for each error code.
  */
@@ -121,10 +113,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       );
       return uploadResult;
     } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === ECERT_GENERATION_NO_RECORDS_AVAILABLE
-      ) {
+      if (error instanceof CustomNamedError) {
         return {
           generatedFile: "none",
           uploadedRecords: 0,
@@ -144,7 +133,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param fileCode file code applicable for Part-Time or Full-Time.
    * @param log cumulative process log.
    * @returns information of the uploaded e-Cert file.
-   * @throws CustomNamedError ECERT_GENERATION_NO_RECORDS_AVAILABLE
    */
   private async processECert(
     sequenceNumber: number,
@@ -160,13 +148,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
           offeringIntensity,
           entityManager,
         );
-      if (!disbursements.length) {
-        // Throws an exception to cancel the transaction and DB lock started by `consumeNextSequence`.
-        throw new CustomNamedError(
-          `There are no records available to generate an e-Cert file for ${offeringIntensity}`,
-          ECERT_GENERATION_NO_RECORDS_AVAILABLE,
-        );
-      }
       log.info(
         `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
       );
@@ -207,10 +188,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         uploadedRecords: disbursementRecords.length,
       };
     } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name !== ECERT_GENERATION_NO_RECORDS_AVAILABLE
-      ) {
+      if (error instanceof CustomNamedError) {
         log.error(
           `Error while uploading content for ${offeringIntensity} e-Cert file: ${parseJSONError(
             error,
