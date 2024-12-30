@@ -44,7 +44,7 @@ SET
         and :endDate
       union
       all
-      select
+      select distinct
         to_char(dr.disburse_date, '' YYYY - MM - DD '') as "Date of Disbursement",
         dr.student_sin as "SIN",
         app.application_number as "Application Number",
