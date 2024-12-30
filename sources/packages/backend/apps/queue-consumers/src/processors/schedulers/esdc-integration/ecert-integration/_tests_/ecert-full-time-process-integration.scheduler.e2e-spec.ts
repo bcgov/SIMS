@@ -209,7 +209,6 @@ describe(
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
-        "Process finalized with success.",
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 0",
       ]);
@@ -814,7 +813,6 @@ describe(
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
-        "Process finalized with success.",
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 0",
       ]);
@@ -1365,7 +1363,6 @@ describe(
         expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
         // Assert
         expect(result).toStrictEqual([
-          "Process finalized with success.",
           `Generated file: ${uploadedFileName}`,
           "Uploaded records: 0",
         ]);
