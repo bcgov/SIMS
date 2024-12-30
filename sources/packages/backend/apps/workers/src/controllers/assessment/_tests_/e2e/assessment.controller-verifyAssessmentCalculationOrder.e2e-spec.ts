@@ -913,7 +913,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         },
       },
     );
-    await db.sfasPartTimeApplications.save([fakeSFASPartTimeApplication]);
+    await db.sfasPartTimeApplications.save(fakeSFASPartTimeApplication);
     // Act
     const result = await assessmentController.verifyAssessmentCalculationOrder(
       createFakeVerifyAssessmentCalculationOrderPayload(

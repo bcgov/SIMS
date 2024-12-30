@@ -497,6 +497,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     // Fetch MSFAA Number for the student in SIMS.
     const createdMSFAANumber = await db.msfaaNumber.findOne({
       select: {
+        id: true,
         msfaaNumber: true,
       },
       where: {
@@ -727,6 +728,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     // Fetch MSFAA Number for the student in SIMS.
     const createdMSFAANumber = await db.msfaaNumber.findOne({
       select: {
+        id: true,
         msfaaNumber: true,
       },
       where: {
