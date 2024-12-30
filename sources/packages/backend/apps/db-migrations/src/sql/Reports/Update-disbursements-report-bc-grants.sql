@@ -2,7 +2,7 @@ UPDATE
     sims.report_configs
 SET
     report_sql = (
-        'select
+        '(select
         to_char(dr.disburse_date, ''YYYY-MM-DD'') as "Date of Disbursement",
         dr.student_sin as "SIN",
         app.application_number as "Application Number",
