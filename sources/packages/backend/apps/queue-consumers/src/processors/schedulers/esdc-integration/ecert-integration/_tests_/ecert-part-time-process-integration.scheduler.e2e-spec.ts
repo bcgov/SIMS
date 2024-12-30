@@ -406,8 +406,6 @@ describe(
       // Act
       const result = await processor.processQueue(job);
 
-      // Assert
-
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
       const fileDate = dayjs().format("YYYYMMDD");
@@ -453,9 +451,7 @@ describe(
       const { job } = mockBullJob<void>();
 
       // Act
-      const result = await processor.processECert(job);
-
-      // Assert
+      const result = await processor.processQueue(job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -740,8 +736,6 @@ describe(
 
       // Act
       const result = await processor.processQueue(job);
-
-      // Assert
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);

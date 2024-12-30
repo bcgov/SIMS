@@ -201,7 +201,7 @@ describe(
       const { job } = mockBullJob<void>();
 
       // Act
-      const result = await processor.processECert(job);
+      const result = await processor.processQueue(job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -284,8 +284,6 @@ describe(
 
       // Act
       const result = await processor.processQueue(job);
-
-      // Assert
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -810,7 +808,7 @@ describe(
       // Act
       const result = await processor.processQueue(job);
 
-      // Assert 0 uploaded records.
+      // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
       const fileDate = dayjs().format("YYYYMMDD");
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
