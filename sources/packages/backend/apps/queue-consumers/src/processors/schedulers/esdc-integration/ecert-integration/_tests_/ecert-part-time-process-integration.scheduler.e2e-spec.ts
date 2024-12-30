@@ -102,6 +102,13 @@ describe(
       );
     });
 
+    // Helper function to get the uploaded file name.
+    function getUploadedFileName() {
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      return uploadedFileName;
+    }
+
     it("Should create a notification for the ministry and student for a blocked disbursement when there are no previously existing notifications for the disbursement.", async () => {
       // Arrange
       const { student, disbursement } = await createBlockedDisbursementTestData(
@@ -115,8 +122,7 @@ describe(
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      const uploadedFileName = getUploadedFileName();
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
 
       // Assert
@@ -181,8 +187,7 @@ describe(
 
         // Assert uploaded file.
         const uploadedFile = getUploadedFile(sftpClientMock);
-        const fileDate = dayjs().format("YYYYMMDD");
-        const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+        const uploadedFileName = getUploadedFileName();
         expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
         // Assert
         expect(result).toStrictEqual([
@@ -246,8 +251,7 @@ describe(
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      const uploadedFileName = getUploadedFileName();
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
 
       // Assert
@@ -281,8 +285,7 @@ describe(
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      const uploadedFileName = getUploadedFileName();
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
 
       // Assert
@@ -319,8 +322,7 @@ describe(
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      const uploadedFileName = getUploadedFileName();
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
 
       // Assert
@@ -397,8 +399,7 @@ describe(
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      const uploadedFileName = getUploadedFileName();
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
         `Generated file: ${uploadedFileName}`,
@@ -435,7 +436,7 @@ describe(
       expect(scheduleIsSent).toBe(true);
     });
 
-    it("Should generate disbursement file with formatted records when there is no data for the ecert generation.", async () => {
+    it("Should generate an e-cert file with only header and footer when there is no disbursement to be sent.", async () => {
       // Queued job.
       const { job } = mockBullJob<void>();
 
@@ -444,13 +445,19 @@ describe(
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      const uploadedFileName = getUploadedFileName();
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 0",
       ]);
+
+      // Assert header and footer
+      const [header, footer] = uploadedFile.fileLines;
+      // Validate header.
+      expect(header).toContain("01BC  NEW PT ENTITLEMENT");
+      // Validate footer.
+      expect(footer.substring(0, 2)).toBe("99");
     });
 
     it("Should create an e-Cert with valid student profile data when the student has necessary profile data and gender defined as 'Prefer not to answer'.", async () => {
@@ -597,8 +604,7 @@ describe(
       // Assert
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      const uploadedFileName = getUploadedFileName();
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
         `Generated file: ${uploadedFileName}`,
@@ -727,8 +733,7 @@ describe(
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      const uploadedFileName = getUploadedFileName();
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
         `Generated file: ${uploadedFileName}`,
@@ -837,8 +842,7 @@ describe(
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      const uploadedFileName = getUploadedFileName();
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
 
       // Assert
@@ -955,8 +959,7 @@ describe(
       // Assert
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      const uploadedFileName = getUploadedFileName();
       expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
         `Generated file: ${uploadedFileName}`,
