@@ -113,9 +113,16 @@ describe(
       // Act
       const result = await processor.processQueue(mockedJob.job);
 
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+
       // Assert
       expect(result).toStrictEqual([
-        "Generated file: none",
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
         "Uploaded records: 0",
       ]);
       expect(
@@ -173,9 +180,15 @@ describe(
         // Act
         const result = await processor.processQueue(mockedJob.job);
 
+        // Assert uploaded file.
+        const uploadedFile = getUploadedFile(sftpClientMock);
+        const fileDate = dayjs().format("YYYYMMDD");
+        const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+        expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
         // Assert
         expect(result).toStrictEqual([
-          "Generated file: none",
+          "Process finalized with success.",
+          `Generated file: ${uploadedFileName}`,
           "Uploaded records: 0",
         ]);
         expect(
@@ -233,9 +246,16 @@ describe(
       // Act
       const result = await processor.processQueue(mockedJob.job);
 
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+
       // Assert
       expect(result).toStrictEqual([
-        "Generated file: none",
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
         "Uploaded records: 0",
       ]);
       const notificationsCount = await db.notification.count({
@@ -262,9 +282,16 @@ describe(
       // Act
       const result = await processor.processQueue(mockedJob.job);
 
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+
       // Assert
       expect(result).toStrictEqual([
-        "Generated file: none",
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
         "Uploaded records: 0",
       ]);
       const notificationsCount = await db.notification.count({
@@ -294,9 +321,16 @@ describe(
       // Act
       const result = await processor.processQueue(mockedJob.job);
 
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+
       // Assert
       expect(result).toStrictEqual([
-        "Generated file: none",
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
         "Uploaded records: 0",
       ]);
       expect(
@@ -406,6 +440,27 @@ describe(
         },
       });
       expect(scheduleIsSent).toBe(true);
+    });
+
+    it("Should generate disbursement file with formatted records when there is no data for the ecert generation.", async () => {
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(job);
+
+      // Assert
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 0",
+      ]);
     });
 
     it("Should create an e-Cert with valid student profile data when the student has necessary profile data and gender defined as 'Prefer not to answer'.", async () => {
@@ -792,9 +847,16 @@ describe(
       // Act
       const result = await processor.processQueue(job);
 
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+
       // Assert
       expect(result).toStrictEqual([
-        "Generated file: none",
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
         "Uploaded records: 0",
       ]);
       const [disbursement] =
