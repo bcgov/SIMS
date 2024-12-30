@@ -9,12 +9,7 @@ import {
   ECertFeedbackErrorService,
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
-import {
-  CustomNamedError,
-  getISODateOnlyString,
-  parseJSONError,
-  processInParallel,
-} from "@sims/utilities";
+import { getISODateOnlyString, processInParallel } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
@@ -93,34 +88,25 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     log.info(
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
-    try {
-      const sequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(
-        new Date(),
-      )}`;
-      let uploadResult: ECertUploadResult;
-      await this.sequenceService.consumeNextSequence(
-        sequenceGroup,
-        async (nextSequenceNumber: number, entityManager: EntityManager) => {
-          uploadResult = await this.processECert(
-            nextSequenceNumber,
-            entityManager,
-            eCertIntegrationService,
-            offeringIntensity,
-            fileCode,
-            log,
-          );
-        },
-      );
-      return uploadResult;
-    } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        return {
-          generatedFile: "none",
-          uploadedRecords: 0,
-        };
-      }
-      throw error;
-    }
+
+    const sequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(
+      new Date(),
+    )}`;
+    let uploadResult: ECertUploadResult;
+    await this.sequenceService.consumeNextSequence(
+      sequenceGroup,
+      async (nextSequenceNumber: number, entityManager: EntityManager) => {
+        uploadResult = await this.processECert(
+          nextSequenceNumber,
+          entityManager,
+          eCertIntegrationService,
+          offeringIntensity,
+          fileCode,
+          log,
+        );
+      },
+    );
+    return uploadResult;
   }
 
   /**
@@ -142,61 +128,47 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     fileCode: string,
     log: ProcessSummary,
   ): Promise<ECertUploadResult> {
-    try {
-      const disbursements =
-        await this.eCertGenerationService.getReadyToSendDisbursements(
-          offeringIntensity,
-          entityManager,
-        );
-      log.info(
-        `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
+    const disbursements =
+      await this.eCertGenerationService.getReadyToSendDisbursements(
+        offeringIntensity,
+        entityManager,
       );
-      const disbursementRecords = disbursements.map((disbursement) =>
-        this.createECertRecord(disbursement),
-      );
+    log.info(
+      `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
+    );
+    const disbursementRecords = disbursements.map((disbursement) =>
+      this.createECertRecord(disbursement),
+    );
 
-      log.info(`Creating ${offeringIntensity} e-Cert file content...`);
-      const fileContent = eCertIntegrationService.createRequestContent(
-        disbursementRecords,
-        sequenceNumber,
-      );
+    log.info(`Creating ${offeringIntensity} e-Cert file content...`);
+    const fileContent = eCertIntegrationService.createRequestContent(
+      disbursementRecords,
+      sequenceNumber,
+    );
 
-      // Create the request filename with the file path for the e-Cert File.
-      const fileInfo = this.createRequestFileName(fileCode, sequenceNumber);
-      log.info(`Uploading ${offeringIntensity} content...`);
-      await eCertIntegrationService.uploadContent(
-        fileContent,
-        fileInfo.filePath,
+    // Create the request filename with the file path for the e-Cert File.
+    const fileInfo = this.createRequestFileName(fileCode, sequenceNumber);
+    log.info(`Uploading ${offeringIntensity} content...`);
+    await eCertIntegrationService.uploadContent(fileContent, fileInfo.filePath);
+    // Mark all disbursements as sent.
+    const dateSent = new Date();
+    const disbursementScheduleRepo =
+      entityManager.getRepository(DisbursementSchedule);
+    await processInParallel((disbursement) => {
+      return disbursementScheduleRepo.update(
+        { id: disbursement.id },
+        {
+          dateSent,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          updatedAt: dateSent,
+          modifier: this.systemUserService.systemUser,
+        },
       );
-      // Mark all disbursements as sent.
-      const dateSent = new Date();
-      const disbursementScheduleRepo =
-        entityManager.getRepository(DisbursementSchedule);
-      await processInParallel((disbursement) => {
-        return disbursementScheduleRepo.update(
-          { id: disbursement.id },
-          {
-            dateSent,
-            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-            updatedAt: dateSent,
-            modifier: this.systemUserService.systemUser,
-          },
-        );
-      }, disbursements);
-      return {
-        generatedFile: fileInfo.filePath,
-        uploadedRecords: disbursementRecords.length,
-      };
-    } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        log.error(
-          `Error while uploading content for ${offeringIntensity} e-Cert file: ${parseJSONError(
-            error,
-          )}`,
-        );
-      }
-      throw error;
-    }
+    }, disbursements);
+    return {
+      generatedFile: fileInfo.filePath,
+      uploadedRecords: disbursementRecords.length,
+    };
   }
 
   /**

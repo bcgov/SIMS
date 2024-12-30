@@ -106,13 +106,6 @@ describe(
       );
     });
 
-    // Helper function to get the uploaded file name.
-    function getUploadedFileName() {
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
-      return uploadedFileName;
-    }
-
     it("Should generate disbursement file with formatted records when there is data for the ecert generation.", async () => {
       // Arrange
       const student = await saveFakeStudent(
@@ -1405,5 +1398,12 @@ describe(
         ]);
       },
     );
+
+    // Helper function to get the uploaded file name.
+    function getUploadedFileName() {
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+      return uploadedFileName;
+    }
   },
 );

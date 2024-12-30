@@ -102,13 +102,6 @@ describe(
       );
     });
 
-    // Helper function to get the uploaded file name.
-    function getUploadedFileName() {
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
-      return uploadedFileName;
-    }
-
     it("Should create a notification for the ministry and student for a blocked disbursement when there are no previously existing notifications for the disbursement.", async () => {
       // Arrange
       const { student, disbursement } = await createBlockedDisbursementTestData(
@@ -1495,5 +1488,12 @@ describe(
         }),
       ).toBe(true);
     });
+
+    // Helper function to get the uploaded file name.
+    function getUploadedFileName() {
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      return uploadedFileName;
+    }
   },
 );
