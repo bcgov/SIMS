@@ -197,6 +197,25 @@ describe(
       // TODO Add other fields as needed.
     });
 
+    it("Should generate disbursement file with formatted records when there is no data for the ecert generation.", async () => {
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processECert(job);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        "Process finalized with success.",
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 0",
+      ]);
+    });
+
     it("Should execute overawards deductions and calculate awards effective value", async () => {
       // Arrange
 
@@ -796,9 +815,13 @@ describe(
       const result = await processor.processECert(job);
 
       // Assert 0 uploaded records.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       expect(result).toStrictEqual([
         "Process finalized with success.",
-        "Generated file: none",
+        `Generated file: ${uploadedFileName}`,
         "Uploaded records: 0",
       ]);
       const [disbursement] =
@@ -1343,10 +1366,15 @@ describe(
         // Act
         const result = await processor.processECert(mockedJob.job);
 
+        // Assert uploaded file.
+        const uploadedFile = getUploadedFile(sftpClientMock);
+        const fileDate = dayjs().format("YYYYMMDD");
+        const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+        expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
         // Assert
         expect(result).toStrictEqual([
           "Process finalized with success.",
-          "Generated file: none",
+          `Generated file: ${uploadedFileName}`,
           "Uploaded records: 0",
         ]);
         expect(
