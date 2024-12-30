@@ -1,5 +1,5 @@
-import { getSQLFileData } from "@sims/utilities";
 import { MigrationInterface, QueryRunner } from "typeorm";
+import { getSQLFileData } from "../utilities/sqlLoader";
 
 export class UpdateDisbursementReportsBCGrants1735584931753
   implements MigrationInterface

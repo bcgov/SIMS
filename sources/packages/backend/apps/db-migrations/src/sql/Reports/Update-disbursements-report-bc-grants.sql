@@ -1,10 +1,8 @@
-INSERT INTO
-    sims.report_configs (report_name, report_sql)
-VALUES
-    (
-        'Disbursement_Report',
-        '(
-      select
+UPDATE
+    sims.report_configs
+SET
+    report_sql = (
+        'select
         to_char(dr.disburse_date, ''YYYY-MM-DD'') as "Date of Disbursement",
         dr.student_sin as "SIN",
         app.application_number as "Application Number",
@@ -69,4 +67,6 @@ VALUES
     order by
       "Date of Disbursement",
       "Certificate Number"'
-    );
+    )
+WHERE
+    report_name = 'Disbursement_Report';
