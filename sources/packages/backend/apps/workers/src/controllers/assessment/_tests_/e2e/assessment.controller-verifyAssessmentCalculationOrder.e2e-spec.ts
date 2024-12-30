@@ -896,7 +896,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         },
       },
     );
-    await db.sfasApplication.save([fakeSFASApplication]);
+    await db.sfasApplication.save(fakeSFASApplication);
 
     const fakeSFASPartTimeApplication = createFakeSFASPartTimeApplication(
       { individual: sfasIndividual },

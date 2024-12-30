@@ -461,7 +461,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
       { student },
       {
         offeringIntensity: OfferingIntensity.fullTime,
-        applicationStatus: ApplicationStatus.Completed,
+        applicationStatus: ApplicationStatus.InProgress,
       },
     );
 
@@ -495,12 +495,9 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     );
 
     // Fetch MSFAA Number for the student in SIMS.
-    const [createdMSFAANumber] = await db.msfaaNumber.find({
+    const createdMSFAANumber = await db.msfaaNumber.findOne({
       select: {
         msfaaNumber: true,
-      },
-      relations: {
-        referenceApplication: true,
       },
       where: {
         student: { id: student.id },
@@ -694,7 +691,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
       { student },
       {
         offeringIntensity: OfferingIntensity.partTime,
-        applicationStatus: ApplicationStatus.Completed,
+        applicationStatus: ApplicationStatus.InProgress,
       },
     );
 
@@ -728,12 +725,9 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     );
 
     // Fetch MSFAA Number for the student in SIMS.
-    const [createdMSFAANumber] = await db.msfaaNumber.find({
+    const createdMSFAANumber = await db.msfaaNumber.findOne({
       select: {
         msfaaNumber: true,
-      },
-      relations: {
-        referenceApplication: true,
       },
       where: {
         student: { id: student.id },
