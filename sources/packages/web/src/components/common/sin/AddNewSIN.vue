@@ -19,7 +19,8 @@
         <v-checkbox
           label="Skip the validations"
           v-model="formModel.skipValidations"
-          hide-details="auto" />
+          hide-details="auto"
+          @update:model-value="(value: boolean | null) => (formModel.skipValidations = !!value)" />
         <banner
           class="mb-4"
           v-if="formModel.skipValidations"
@@ -76,7 +77,9 @@ export default defineComponent({
       CreateSINValidationAPIInDTO | boolean
     >();
     const addNewSINForm = ref({} as VForm);
-    const formModel = reactive({} as CreateSINValidationAPIInDTO);
+    const formModel = reactive({
+      skipValidations: false,
+    } as CreateSINValidationAPIInDTO);
 
     const submit = async () => {
       const validationResult = await addNewSINForm.value.validate();
@@ -91,8 +94,6 @@ export default defineComponent({
 
     const cancel = () => {
       addNewSINForm.value.reset();
-      formModel.skipValidations = false;
-      addNewSINForm.value.resetValidation();
       resolvePromise(false);
     };
 
