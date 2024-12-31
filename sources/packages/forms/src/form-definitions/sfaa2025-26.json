@@ -1,5 +1,4 @@
 {
-  "_id": "675c7b1e1af14c2b8a3fd820",
   "title": "SFAA2025-26",
   "name": "SFAA2025-26",
   "path": "sfaa2025-26",
@@ -8,7 +7,6 @@
   "tags": [
     "common"
   ],
-  "owner": "675c7aff1af14c2b8a3fd703",
   "components": [
     {
       "title": "Welcome",
@@ -13522,7 +13520,8 @@
                               "addons": [],
                               "inputType": "hidden",
                               "id": "e52khib",
-                              "tags": []
+                              "tags": [],
+                              "isNew": false
                             },
                             {
                               "label": "HTML",
@@ -14219,7 +14218,8 @@
                           "theme": "default",
                           "breadcrumb": "default",
                           "id": "ec900o",
-                          "tags": []
+                          "tags": [],
+                          "isNew": false
                         },
                         {
                           "label": "Is the dependant listed above supported by you financially but not under your sole custody?",
@@ -14394,7 +14394,8 @@
                               "addons": [],
                               "inputType": "hidden",
                               "id": "ejf7zcr",
-                              "tags": []
+                              "tags": [],
+                              "isNew": false
                             },
                             {
                               "label": "HTML",
@@ -33113,20 +33114,5 @@
       "inputType": "hidden",
       "id": "e6z1qd9"
     }
-  ],
-  "pdfComponents": [],
-  "access": [
-    {
-      "type": "read_all",
-      "roles": [
-        "675c7aff1af14c2b8a3fd6bd",
-        "675c7aff1af14c2b8a3fd6c1",
-        "675c7aff1af14c2b8a3fd6c5"
-      ]
-    }
-  ],
-  "submissionAccess": [],
-  "created": "2024-12-13T18:21:18.578Z",
-  "modified": "2024-12-31T21:54:38.768Z",
-  "machineName": "SFAA2025-26"
+  ]
 }
