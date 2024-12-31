@@ -40,6 +40,7 @@ SET
         inner join sims.education_programs_offerings epo on epo.id = sa.offering_id
       where
         epo.offering_intensity = any(:offeringIntensity)
+        and dr.funding_type <> ''FE''
         and drv.grant_type = ''BCSG''
         and dv.value_type = ''BC Grant''
         and dr.disburse_date between :startDate
