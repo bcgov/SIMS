@@ -1489,7 +1489,10 @@ describe(
       ).toBe(true);
     });
 
-    // Helper function to get the uploaded file name.
+    /**
+     * Helper function to get the uploaded file name.
+     * @returns The uploaded file name
+     */
     function getUploadedFileName() {
       const fileDate = dayjs().format("YYYYMMDD");
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
