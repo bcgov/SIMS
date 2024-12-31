@@ -1,4 +1,5 @@
 {
+  "_id": "675c7b1e1af14c2b8a3fd820",
   "title": "SFAA2025-26",
   "name": "SFAA2025-26",
   "path": "sfaa2025-26",
@@ -7,6 +8,7 @@
   "tags": [
     "common"
   ],
+  "owner": "675c7aff1af14c2b8a3fd703",
   "components": [
     {
       "title": "Welcome",
@@ -7161,9 +7163,9 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": "",
+                    "show": "true",
+                    "when": "citizenship",
+                    "eq": "permanentResident",
                     "json": ""
                   },
                   "customConditional": "",
@@ -7664,7 +7666,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents accepted:</h4>\n<ul>\n  <li>Valid Confirmation of SIN document; and</li>\n  <li>Notice of Decision (issued by Immigration and Refugee Board) or</li>\n  <li>Verification of Status document (IMM5009) or</li>\n  <li>Confirmation of Protected Persons Status document (IMM5292)</li>\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul>\n  <li><b>Valid Confirmation of SIN document; and</b></li>\n  <li>Notice of Decision (issued by Immigration and Refugee Board) or</li>\n  <li>Verification of Status document (IMM5009) or</li>\n  <li>Confirmation of Protected Persons Status document (IMM5292)</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "hidden": false,
@@ -13520,8 +13522,7 @@
                               "addons": [],
                               "inputType": "hidden",
                               "id": "e52khib",
-                              "tags": [],
-                              "isNew": false
+                              "tags": []
                             },
                             {
                               "label": "HTML",
@@ -14218,8 +14219,7 @@
                           "theme": "default",
                           "breadcrumb": "default",
                           "id": "ec900o",
-                          "tags": [],
-                          "isNew": false
+                          "tags": []
                         },
                         {
                           "label": "Is the dependant listed above supported by you financially but not under your sole custody?",
@@ -14394,8 +14394,7 @@
                               "addons": [],
                               "inputType": "hidden",
                               "id": "ejf7zcr",
-                              "tags": [],
-                              "isNew": false
+                              "tags": []
                             },
                             {
                               "label": "HTML",
@@ -33114,5 +33113,20 @@
       "inputType": "hidden",
       "id": "e6z1qd9"
     }
-  ]
+  ],
+  "pdfComponents": [],
+  "access": [
+    {
+      "type": "read_all",
+      "roles": [
+        "675c7aff1af14c2b8a3fd6bd",
+        "675c7aff1af14c2b8a3fd6c1",
+        "675c7aff1af14c2b8a3fd6c5"
+      ]
+    }
+  ],
+  "submissionAccess": [],
+  "created": "2024-12-13T18:21:18.578Z",
+  "modified": "2024-12-31T21:54:38.768Z",
+  "machineName": "SFAA2025-26"
 }
