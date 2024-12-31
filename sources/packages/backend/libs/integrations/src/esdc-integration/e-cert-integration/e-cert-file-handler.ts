@@ -9,12 +9,7 @@ import {
   ECertFeedbackErrorService,
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
-import {
-  CustomNamedError,
-  getISODateOnlyString,
-  parseJSONError,
-  processInParallel,
-} from "@sims/utilities";
+import { getISODateOnlyString, processInParallel } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
@@ -27,14 +22,6 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import * as path from "path";
-
-/**
- * Used to abort the e-Cert generation process, cancel the current transaction,
- * and let the consumer method know that it was aborted because no records are
- * present to be processed.
- */
-const ECERT_GENERATION_NO_RECORDS_AVAILABLE =
-  "ECERT_GENERATION_NO_RECORDS_AVAILABLE";
 
 /**
  * Error details: error id and block funding info
@@ -101,37 +88,25 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     log.info(
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
-    try {
-      const sequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(
-        new Date(),
-      )}`;
-      let uploadResult: ECertUploadResult;
-      await this.sequenceService.consumeNextSequence(
-        sequenceGroup,
-        async (nextSequenceNumber: number, entityManager: EntityManager) => {
-          uploadResult = await this.processECert(
-            nextSequenceNumber,
-            entityManager,
-            eCertIntegrationService,
-            offeringIntensity,
-            fileCode,
-            log,
-          );
-        },
-      );
-      return uploadResult;
-    } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === ECERT_GENERATION_NO_RECORDS_AVAILABLE
-      ) {
-        return {
-          generatedFile: "none",
-          uploadedRecords: 0,
-        };
-      }
-      throw error;
-    }
+
+    const sequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(
+      new Date(),
+    )}`;
+    let uploadResult: ECertUploadResult;
+    await this.sequenceService.consumeNextSequence(
+      sequenceGroup,
+      async (nextSequenceNumber: number, entityManager: EntityManager) => {
+        uploadResult = await this.processECert(
+          nextSequenceNumber,
+          entityManager,
+          eCertIntegrationService,
+          offeringIntensity,
+          fileCode,
+          log,
+        );
+      },
+    );
+    return uploadResult;
   }
 
   /**
@@ -144,7 +119,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param fileCode file code applicable for Part-Time or Full-Time.
    * @param log cumulative process log.
    * @returns information of the uploaded e-Cert file.
-   * @throws CustomNamedError ECERT_GENERATION_NO_RECORDS_AVAILABLE
    */
   private async processECert(
     sequenceNumber: number,
@@ -154,71 +128,47 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     fileCode: string,
     log: ProcessSummary,
   ): Promise<ECertUploadResult> {
-    try {
-      const disbursements =
-        await this.eCertGenerationService.getReadyToSendDisbursements(
-          offeringIntensity,
-          entityManager,
-        );
-      if (!disbursements.length) {
-        // Throws an exception to cancel the transaction and DB lock started by `consumeNextSequence`.
-        throw new CustomNamedError(
-          `There are no records available to generate an e-Cert file for ${offeringIntensity}`,
-          ECERT_GENERATION_NO_RECORDS_AVAILABLE,
-        );
-      }
-      log.info(
-        `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
+    const disbursements =
+      await this.eCertGenerationService.getReadyToSendDisbursements(
+        offeringIntensity,
+        entityManager,
       );
-      const disbursementRecords = disbursements.map((disbursement) =>
-        this.createECertRecord(disbursement),
-      );
+    log.info(
+      `Found ${disbursements.length} ${offeringIntensity} disbursements schedules.`,
+    );
+    const disbursementRecords = disbursements.map((disbursement) =>
+      this.createECertRecord(disbursement),
+    );
 
-      log.info(`Creating ${offeringIntensity} e-Cert file content...`);
-      const fileContent = eCertIntegrationService.createRequestContent(
-        disbursementRecords,
-        sequenceNumber,
-      );
+    log.info(`Creating ${offeringIntensity} e-Cert file content...`);
+    const fileContent = eCertIntegrationService.createRequestContent(
+      disbursementRecords,
+      sequenceNumber,
+    );
 
-      // Create the request filename with the file path for the e-Cert File.
-      const fileInfo = this.createRequestFileName(fileCode, sequenceNumber);
-      log.info(`Uploading ${offeringIntensity} content...`);
-      await eCertIntegrationService.uploadContent(
-        fileContent,
-        fileInfo.filePath,
+    // Create the request filename with the file path for the e-Cert File.
+    const fileInfo = this.createRequestFileName(fileCode, sequenceNumber);
+    log.info(`Uploading ${offeringIntensity} content...`);
+    await eCertIntegrationService.uploadContent(fileContent, fileInfo.filePath);
+    // Mark all disbursements as sent.
+    const dateSent = new Date();
+    const disbursementScheduleRepo =
+      entityManager.getRepository(DisbursementSchedule);
+    await processInParallel((disbursement) => {
+      return disbursementScheduleRepo.update(
+        { id: disbursement.id },
+        {
+          dateSent,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          updatedAt: dateSent,
+          modifier: this.systemUserService.systemUser,
+        },
       );
-      // Mark all disbursements as sent.
-      const dateSent = new Date();
-      const disbursementScheduleRepo =
-        entityManager.getRepository(DisbursementSchedule);
-      await processInParallel((disbursement) => {
-        return disbursementScheduleRepo.update(
-          { id: disbursement.id },
-          {
-            dateSent,
-            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-            updatedAt: dateSent,
-            modifier: this.systemUserService.systemUser,
-          },
-        );
-      }, disbursements);
-      return {
-        generatedFile: fileInfo.filePath,
-        uploadedRecords: disbursementRecords.length,
-      };
-    } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name !== ECERT_GENERATION_NO_RECORDS_AVAILABLE
-      ) {
-        log.error(
-          `Error while uploading content for ${offeringIntensity} e-Cert file: ${parseJSONError(
-            error,
-          )}`,
-        );
-      }
-      throw error;
-    }
+    }, disbursements);
+    return {
+      generatedFile: fileInfo.filePath,
+      uploadedRecords: disbursementRecords.length,
+    };
   }
 
   /**
