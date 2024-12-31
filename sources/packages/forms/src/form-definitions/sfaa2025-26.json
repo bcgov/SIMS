@@ -7161,9 +7161,9 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": "",
+                    "show": "true",
+                    "when": "citizenship",
+                    "eq": "permanentResident",
                     "json": ""
                   },
                   "customConditional": "",
@@ -7664,7 +7664,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents accepted:</h4>\n<ul>\n  <li>Valid Confirmation of SIN document; and</li>\n  <li>Notice of Decision (issued by Immigration and Refugee Board) or</li>\n  <li>Verification of Status document (IMM5009) or</li>\n  <li>Confirmation of Protected Persons Status document (IMM5292)</li>\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul>\n  <li><b>Valid Confirmation of SIN document; and</b></li>\n  <li>Notice of Decision (issued by Immigration and Refugee Board) or</li>\n  <li>Verification of Status document (IMM5009) or</li>\n  <li>Confirmation of Protected Persons Status document (IMM5292)</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "hidden": false,
