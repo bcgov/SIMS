@@ -16,7 +16,7 @@
             {{ savingDraft ? "Saving..." : "Save draft" }}</v-btn
           >
           <v-btn
-            v-if="!isReadOnly && !isFirstPage"
+            v-if="!isReadOnly && isLastPage"
             class="ml-2"
             :disabled="submittingApplication"
             color="primary"
