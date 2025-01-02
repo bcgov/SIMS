@@ -717,7 +717,7 @@
                 }
               ],
               "content": "You are eligible to receive: ${{ (data.eligibleAmount)?.toLocaleString('en-CA', { minimumFractionDigits: 2 }) }}",
-              "refreshOnChange": false,
+              "refreshOnChange": true,
               "customClass": "",
               "hidden": false,
               "modalEdit": false,
