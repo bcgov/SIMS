@@ -9766,7 +9766,7 @@
               "collapsible": false,
               "key": "notABcResidentPanel",
               "conditional": {
-                "show": true,
+                "show": "true",
                 "when": "bcResident",
                 "eq": "no"
               },
@@ -11067,7 +11067,7 @@
               "addons": [],
               "lazyLoad": false,
               "tags": [],
-              "hideLabel": false
+              "hideLabel": true
             }
           ],
           "type": "panel",
