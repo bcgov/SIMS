@@ -88,12 +88,16 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     log.info(
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
+    const fileNameSequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(
+      new Date(),
+    )}`;
     let uploadResult: ECertUploadResult;
     await this.sequenceService.consumeNextSequence(
       sequenceGroup,
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         uploadResult = await this.processECert(
           nextSequenceNumber,
+          fileNameSequenceGroup
           entityManager,
           eCertIntegrationService,
           offeringIntensity,
@@ -108,6 +112,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
   /**
    * Prepare the disbursements for e-Cert generation and upload the e-Cert file.
    * @param sequenceNumber e-Cert sequence number.
+   * @param fileNameSequenceGroup e-Cert file name sequence group.
    * @param entityManager manages the current DB transaction.
    * @param eCertIntegrationService Full-Time/Part-Time integration responsible
    * for the respective integration.
@@ -118,6 +123,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    */
   private async processECert(
     sequenceNumber: number,
+    fileNameSequenceGroup: number,
     entityManager: EntityManager,
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
@@ -143,7 +149,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     );
 
     // Create the request filename with the file path for the e-Cert File.
-    const fileInfo = this.createRequestFileName(fileCode, sequenceNumber);
+    const fileInfo = this.createRequestFileName(fileCode, fileNameSequenceGroup);
     log.info(`Uploading ${offeringIntensity} content...`);
     await eCertIntegrationService.uploadContent(fileContent, fileInfo.filePath);
     // Mark all disbursements as sent.
