@@ -23,6 +23,7 @@ import {
   EducationProgramOffering,
   Institution,
   InstitutionLocation,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../../../utilities";
 import { COE_WINDOW, addDays, getISODateOnlyString } from "@sims/utilities";
@@ -66,6 +67,41 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
         institutionLocation: collegeCLocation,
       },
       { applicationStatus: ApplicationStatus.Enrolment },
+    );
+    const [firstDisbursementSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send({ tuitionRemittanceAmount: 1 })
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.OK);
+    // Check if the application was updated as expected.
+    const updatedApplication = await applicationRepo.findOne({
+      select: { applicationStatus: true },
+      where: { id: application.id },
+    });
+    expect(updatedApplication.applicationStatus).toBe(
+      ApplicationStatus.Completed,
+    );
+  });
+
+  it("Should allow the COE confirmation when the application is on Enrolment status and all the conditions are fulfilled for Part Time offering.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+      },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        offeringIntensity: OfferingIntensity.partTime,
+      },
     );
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
