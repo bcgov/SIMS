@@ -72,7 +72,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * for the respective integration.
    * @param offeringIntensity disbursement offering intensity.
    * @param fileCode file code applicable for Part-Time or Full-Time.
-   * @param sequenceGroupPrefix sequence group prefix for Part-Time or Full-Time
+   * @param sequenceGroup sequence group for Part-Time or Full-Time
    * file sequence generation.
    * @param log cumulative process log.
    * @returns result of the file upload with the file generated and the
@@ -82,16 +82,12 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
-    sequenceGroupPrefix: string,
+    sequenceGroup: string,
     log: ProcessSummary,
   ): Promise<ECertUploadResult> {
     log.info(
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
-
-    const sequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(
-      new Date(),
-    )}`;
     let uploadResult: ECertUploadResult;
     await this.sequenceService.consumeNextSequence(
       sequenceGroup,
