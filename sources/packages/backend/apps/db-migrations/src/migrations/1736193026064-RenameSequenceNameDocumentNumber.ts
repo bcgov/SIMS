@@ -1,5 +1,5 @@
-import { getSQLFileData } from "@sims/utilities/sqlLoader";
 import { MigrationInterface, QueryRunner } from "typeorm";
+import { getSQLFileData } from "../utilities/sqlLoader";
 
 export class RenameSequenceNameDocumentNumber1736193026064
   implements MigrationInterface

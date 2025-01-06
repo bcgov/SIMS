@@ -267,7 +267,6 @@ export class ConfirmationOfEnrollmentService {
   getCOEApprovalPeriodStatus(
     disbursementDate: string | Date,
     studyEndDate: string | Date,
-    offeringIntensity: OfferingIntensity,
     enrolmentConfirmationDate?: string | Date,
   ): COEApprovalPeriodStatus {
     if (!disbursementDate || !studyEndDate) {
@@ -354,6 +353,7 @@ export class ConfirmationOfEnrollmentService {
    * @param applicationStatus application status of the disbursed application.
    * @param tuitionRemittanceRequestedAmount tuition remittance amount requested by the institution.
    * @param enrolmentConfirmationDate enrolment confirmation date.
+   * @param offeringIntensity offering intensity.
    */
   private async updateDisbursementAndApplicationCOEApproval(
     disbursementScheduleId: number,
@@ -362,7 +362,7 @@ export class ConfirmationOfEnrollmentService {
     applicationStatus: ApplicationStatus,
     tuitionRemittanceRequestedAmount: number,
     enrolmentConfirmationDate?: Date,
-    offeringIntensity: OfferingIntensity,
+    offeringIntensity?: OfferingIntensity,
   ): Promise<void> {
     const documentNumber = await this.getNextDocumentNumber(offeringIntensity);
     const auditUser = { id: userId } as User;
@@ -606,13 +606,15 @@ export class ConfirmationOfEnrollmentService {
         ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
+    console.log(
+      disbursementSchedule.studentAssessment.application.currentAssessment
+        .offering.offeringIntensity,
+    );
     if (!options?.allowOutsideCOEApprovalPeriod) {
       const approvalPeriodStatus = this.getCOEApprovalPeriodStatus(
         disbursementSchedule.disbursementDate,
         disbursementSchedule.studentAssessment.application.currentAssessment
           .offering.studyEndDate,
-        disbursementSchedule.studentAssessment.application.currentAssessment
-          .offering.offeringIntensity,
         options?.enrolmentConfirmationDate,
       );
       if (
