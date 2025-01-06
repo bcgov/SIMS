@@ -14,11 +14,6 @@ export HOST_PREFIX := $(or $(HOST_PREFIX), $$HOST_PREFIX)
 export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
 export SITE_MINDER_LOGOUT_URL := $(or $(SITE_MINDER_LOGOUT_URL), https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi)
-export PATRONI_SIMSDB_BACKUP_APP_NAME := $(or $(PATRONI_SIMSDB_BACKUP_APP_NAME), patroni-simsdb-backup)
-# PATRONI_SIMSDB_BACKUP_TAG_NAME is both the version of the backup container or the tag name created for the build.
-export PATRONI_SIMSDB_BACKUP_TAG_NAME := $(or $(PATRONI_SIMSDB_BACKUP_TAG_NAME), 2.7.0)
-export PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME := $(or $(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME), patroni-simsdb-backup-conf)
-export PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME := $(or $(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME), patroni-simsdb-backup.conf)
 export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION), false)
 export IS_FULLTIME_ALLOWED := $(or $(IS_FULLTIME_ALLOWED), false)
 export BYPASS_APPLICATION_SUBMIT_VALIDATIONS := $(or $(BYPASS_APPLICATION_SUBMIT_VALIDATIONS), false)
@@ -126,7 +121,6 @@ define rollout_and_wait
 endef
 
 init-oc: | print-status init-project
-oc-deploy-patroni: | print-status deploy-patroni
 oc-build-db-migrations: | print-status build-db-migrations
 oc-run-db-migrations: | print-status delete-db-migrations run-db-migrations wait-for-db-migrations
 oc-build-api: | print-status build-api
@@ -147,16 +141,6 @@ oc-create-qa-api-db: | print-status create-qa-api-db
 oc-build-forms: | print-status build-forms
 oc-deploy-ha-mongo: | print-status deploy-ha-mongo
 oc-deploy-forms: | print-status deploy-forms
-
-# Build backup structure.
-oc-db-backup-patroni-simsdb-build: | print-status db-backup-build-patroni
-oc-db-backup-patroni-simsdb-build-delete: | print-status db-backup-build-patroni-delete
-
-# Create/delete backup structure.
-# Create/delete structure for patroni.
-oc-db-backup-patroni-simsdb-deploy: | print-status db-backup-configmap db-backup-deploy-patroni
-oc-db-backup-patroni-simsdb-deploy-delete: | print-status db-backup-configmap-delete db-backup-deploy-patroni-delete
-
 
 print-status:
 	@echo " +---------------------------------------------------------+ "
@@ -289,18 +273,9 @@ build-web:
 	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)web -p NAME=$(WEB_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WEB_BUILD_REF) --wait
 
-init-patroni:
-	@echo "++\n Init Patroni in $(NAMESPACE) \n++"
-	@oc -n $(NAMESPACE) process -f openshift/database/patroni-pre-req.yml | oc -n $(NAMESPACE) apply -f -
-
 init-redis:
 	@echo "++\n Init Redis in $(NAMESPACE) \n++"
 	@oc -n $(NAMESPACE) process -f openshift/database/redis-secrets.yml | oc -n $(NAMESPACE) apply -f -
-
-deploy-patroni:
-	@oc -n $(NAMESPACE) process -f openshift/database/patroni-deploy.yml \
-			-p PVC_SIZE=$(PVC_SIZE) \
-			| oc -n $(NAMESPACE) apply -f -
 
 deploy-redis:
 	@oc -n $(NAMESPACE) process -f openshift/database/redis-ha-deploy.yml -p IMAGE_NAME="redis" -p IMAGE_TAG="6.2.7-alpine" -p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/docker-remote" | oc -n $(NAMESPACE) apply -f -
@@ -317,19 +292,6 @@ init-redis-cluster:
 redis-cluster-meet:
 	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d); \
   oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP} $(REDIS_PORT) {end}' | xargs -n2 oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -a $$REDIS_PASSWORD -c CLUSTER MEET
-
-create-db:
-	test -n $(DB_NAME)
-	test -n $(NAMESPACE)
-	@echo "+\n++ Creating DB ($(DB_NAME)) in $(NAMESPACE) patroni db cluster"
-	@oc -n $(NAMESPACE) process -f openshift/database/createdb-job.yml -p DB_NAME=$(DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=main | oc -n $(NAMESPACE) apply -f -
-
-create-new-db:
-	test -n $(NEW_DB)
-	test -n $(NAMESPACE)
-	test -n $(JOB_NAME)
-	@echo "+\n++ Creating DB ($(NEW_DB)) in $(NAMESPACE) patroni db cluster"
-	@oc -n $(NAMESPACE) process -f openshift/database/createdb-job.yml -p DB_NAME=$(NEW_DB) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=$(JOB_NAME) | oc -n $(NAMESPACE) apply -f -
 
 run-db-migrations:
 	test -n "$(NAMESPACE)"
@@ -513,12 +475,6 @@ deploy-web:
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(WEB))
 
-create-qa-api-db:
-	test -n $(QA_DB_NAME)
-	test -n $(NAMESPACE)
-	@echo "+\n++ Creating DB ($(QA_DB_NAME)) in $(NAMESPACE) patroni db cluster"
-	@oc -n $(NAMESPACE) process -f openshift/database/createdb-job.yml -p DB_NAME=$(QA_DB_NAME) -p BUILD_NAMESPACE=$(BUILD_NAMESPACE) -p JOB_NAME=qa-api-db | oc -n $(NAMESPACE) apply -f -
-
 deploy-ha-mongo:
 	test -n "$(NAMESPACE)"
 	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
@@ -556,76 +512,6 @@ deploy-forms:
 	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,dc/$(FORMS_NAME))
-
-# Create database backup structure (build/configmap/deploy)
-# Create the POSTGRES structure
-db-backup-build-patroni:
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(PATRONI_SIMSDB_BACKUP_APP_NAME)"
-	@echo "+\n++ Creating build resources for database backups on $(BUILD_NAMESPACE)\n+"
-	oc -n $(BUILD_NAMESPACE) process -f ./openshift/database-backup/backup-build.yaml \
-		-p NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME) OUTPUT_IMAGE_TAG=$(PATRONI_SIMSDB_BACKUP_TAG_NAME) \
-		-p GIT_REF=$(PATRONI_SIMSDB_BACKUP_TAG_NAME) \
-		-p BASE_IMAGE_FOR_BUILD=quay.io/fedora/postgresql-14:14 \
-		| oc -n $(BUILD_NAMESPACE) apply -f -
-
-db-backup-build-patroni-delete:
-	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(PATRONI_SIMSDB_BACKUP_APP_NAME)"
-	@echo "+\n++ Removing build resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(BUILD_NAMESPACE) delete is/$(PATRONI_SIMSDB_BACKUP_APP_NAME) bc/$(PATRONI_SIMSDB_BACKUP_APP_NAME)
-
-# Create the config map to be shared by POSTGRES.
-db-backup-configmap:
-	test -n "$(NAMESPACE)"
-	test -n "$(PATRONI_SIMSDB_BACKUP_APP_NAME)"
-	@echo "+\n++ Creating configmap resources for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) create configmap $(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME) --from-file=./openshift/database-backup/$(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME)
-
-db-backup-configmap-delete:
-	test -n "$(NAMESPACE)"
-	@echo "+\n++ Removing configmap resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) delete configmap/$(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME)
-
-# Deploy POSTGRES backup container.
-db-backup-deploy-patroni:
-	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(PATRONI_SIMSDB_BACKUP_APP_NAME)"
-	@echo "+\n++ Creating deploy config resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) process -f ./openshift/database-backup/backup-deploy.yaml \
-  	-p NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME) \
-  	-p IMAGE_NAMESPACE=$(BUILD_NAMESPACE) \
-  	-p SOURCE_IMAGE_NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME) \
-  	-p TAG_NAME=$(PATRONI_SIMSDB_BACKUP_TAG_NAME) \
-		-p FTP_SECRET_KEY=$(PATRONI_SIMSDB_BACKUP_APP_NAME)-ftp-secret \
-  	-p BACKUP_VOLUME_NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME)-pvc \
-		-p BACKUP_VOLUME_SIZE=20Gi \
-  	-p VERIFICATION_VOLUME_SIZE=5Gi \
-  	-p ENVIRONMENT_NAME=$(NAMESPACE) \
-		-p CONFIG_MAP_NAME=$(PATRONI_SIMSDB_BACKUP_CONFIGMAP_NAME) \
-		-p CUSTOM_CONFIG_FILE_NAME=$(PATRONI_SIMSDB_BACKUP_CONFIG_FILE_NAME) \
-		-p VERIFICATION_VOLUME_NAME=$(PATRONI_SIMSDB_BACKUP_APP_NAME)-verification-pvc \
-		-p DATABASE_DEPLOYMENT_NAME=patroni-creds \
-		-p DATABASE_USER_KEY_NAME=database-user \
-		-p DATABASE_PASSWORD_KEY_NAME=database-password \
-  	-p ENVIRONMENT_FRIENDLY_NAME='SIMS $(NAMESPACE) POSTGRESQL DB Backups' \
-		-p TABLE_SCHEMA='sims' \
-		| oc -n $(NAMESPACE) apply -f -
-
-db-backup-deploy-patroni-delete:
-	test -n "$(NAMESPACE)"
-	test -n "$(PATRONI_SIMSDB_BACKUP_APP_NAME)"
-	@echo "+\n++ Removing deploy resoures for database backups on $(NAMESPACE)\n+"
-	oc -n $(NAMESPACE) delete \
-  	secret/$(PATRONI_SIMSDB_BACKUP_APP_NAME) \
-  	secret/$(PATRONI_SIMSDB_BACKUP_APP_NAME)-ftp-secret \
-  	dc/$(PATRONI_SIMSDB_BACKUP_APP_NAME) \
-  	networkpolicy/$(PATRONI_SIMSDB_BACKUP_APP_NAME)
-# The below PVCs are not deleted.
-# pvc/$(PATRONI_SIMSDB_BACKUP_APP_NAME)-pvc \
-# pvc/$(PATRONI_SIMSDB_BACKUP_APP_NAME)-verification-pvc \
 
 # Remove redis and resources including secrets from openshift namespace.
 delete-redis:
