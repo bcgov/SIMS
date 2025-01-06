@@ -606,10 +606,6 @@ export class ConfirmationOfEnrollmentService {
         ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
-    console.log(
-      disbursementSchedule.studentAssessment.application.currentAssessment
-        .offering.offeringIntensity,
-    );
     if (!options?.allowOutsideCOEApprovalPeriod) {
       const approvalPeriodStatus = this.getCOEApprovalPeriodStatus(
         disbursementSchedule.disbursementDate,
