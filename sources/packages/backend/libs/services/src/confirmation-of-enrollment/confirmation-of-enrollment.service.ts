@@ -361,8 +361,8 @@ export class ConfirmationOfEnrollmentService {
     applicationId: number,
     applicationStatus: ApplicationStatus,
     tuitionRemittanceRequestedAmount: number,
+    offeringIntensity: OfferingIntensity,
     enrolmentConfirmationDate?: Date,
-    offeringIntensity?: OfferingIntensity,
   ): Promise<void> {
     const documentNumber = await this.getNextDocumentNumber(offeringIntensity);
     const auditUser = { id: userId } as User;
@@ -652,9 +652,9 @@ export class ConfirmationOfEnrollmentService {
       disbursementSchedule.studentAssessment.application.id,
       disbursementSchedule.studentAssessment.application.applicationStatus,
       tuitionRemittanceAmount,
-      options?.enrolmentConfirmationDate,
       disbursementSchedule.studentAssessment.application.currentAssessment
         .offering.offeringIntensity,
+      options?.enrolmentConfirmationDate,
     );
   }
 
@@ -762,6 +762,7 @@ export class ConfirmationOfEnrollmentService {
   /**
    * Generates the next document number to be associated
    * with a disbursement.
+   * @param offeringIntensity offering intensity.
    * @returns sequence number for disbursement document number.
    */
   private async getNextDocumentNumber(
