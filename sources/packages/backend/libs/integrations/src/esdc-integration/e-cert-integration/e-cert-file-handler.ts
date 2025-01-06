@@ -27,6 +27,7 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import * as path from "path";
+import { CreateRequestFileNameResult } from "../models/esdc-integration.model";
 
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
@@ -106,15 +107,27 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         new Date(),
       )}`;
       let uploadResult: ECertUploadResult;
+      let fileInfo: CreateRequestFileNameResult;
+      // Consume the next sequence number for the e-Cert filename
+      // and execute the creation of the request filename.
       await this.sequenceService.consumeNextSequence(
         sequenceGroup,
+        async (nextSequenceNumber: number) => {
+          // Create the request filename with the file path for the e-Cert File.
+          fileInfo = this.createRequestFileName(fileCode, nextSequenceNumber);
+        },
+      );
+      // Consume the next sequence number for the e-Cert file header
+      // and execute the processECert process.
+      await this.sequenceService.consumeNextSequence(
+        sequenceGroupPrefix,
         async (nextSequenceNumber: number, entityManager: EntityManager) => {
           uploadResult = await this.processECert(
             nextSequenceNumber,
             entityManager,
             eCertIntegrationService,
             offeringIntensity,
-            fileCode,
+            fileInfo,
             log,
           );
         },
@@ -141,17 +154,16 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param eCertIntegrationService Full-Time/Part-Time integration responsible
    * for the respective integration.
    * @param offeringIntensity disbursement offering intensity.
-   * @param fileCode file code applicable for Part-Time or Full-Time.
+   * @param fileInfo e-Cert file information.
    * @param log cumulative process log.
    * @returns information of the uploaded e-Cert file.
-   * @throws CustomNamedError ECERT_GENERATION_NO_RECORDS_AVAILABLE
    */
   private async processECert(
     sequenceNumber: number,
     entityManager: EntityManager,
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
-    fileCode: string,
+    fileInfo: CreateRequestFileNameResult,
     log: ProcessSummary,
   ): Promise<ECertUploadResult> {
     try {
@@ -180,8 +192,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         sequenceNumber,
       );
 
-      // Create the request filename with the file path for the e-Cert File.
-      const fileInfo = this.createRequestFileName(fileCode, sequenceNumber);
       log.info(`Uploading ${offeringIntensity} content...`);
       await eCertIntegrationService.uploadContent(
         fileContent,
