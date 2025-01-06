@@ -9,7 +9,7 @@ import {
   ECertFeedbackErrorService,
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
-import { getISODateOnlyString, processInParallel } from "@sims/utilities";
+import { processInParallel } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
