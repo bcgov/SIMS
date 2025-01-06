@@ -207,7 +207,6 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         this.confirmationOfEnrollmentService.getCOEApprovalPeriodStatus(
           disbursementSchedule.disbursementDate,
           offering.studyEndDate,
-          offering.offeringIntensity,
         ),
       applicationLocationId: offering.institutionLocation.id,
       applicationDeniedReason: getCOEDeniedReason(disbursementSchedule),
