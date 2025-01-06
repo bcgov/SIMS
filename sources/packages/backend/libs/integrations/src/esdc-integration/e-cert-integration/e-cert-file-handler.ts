@@ -9,7 +9,7 @@ import {
   ECertFeedbackErrorService,
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
-import { processInParallel } from "@sims/utilities";
+import { getISODateOnlyString, processInParallel } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
@@ -88,7 +88,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     log.info(
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
-    const fileNameSequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(
+    const fileNameSequenceGroup = `${sequenceGroup}_${getISODateOnlyString(
       new Date(),
     )}`;
     let uploadResult: ECertUploadResult;
@@ -97,7 +97,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       async (nextSequenceNumber: number, entityManager: EntityManager) => {
         uploadResult = await this.processECert(
           nextSequenceNumber,
-          fileNameSequenceGroup
+          fileNameSequenceGroup,
           entityManager,
           eCertIntegrationService,
           offeringIntensity,
@@ -123,7 +123,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    */
   private async processECert(
     sequenceNumber: number,
-    fileNameSequenceGroup: number,
+    fileNameSequenceGroup: string,
     entityManager: EntityManager,
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
@@ -149,7 +149,10 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     );
 
     // Create the request filename with the file path for the e-Cert File.
-    const fileInfo = this.createRequestFileName(fileCode, fileNameSequenceGroup);
+    const fileInfo = this.createRequestFileName(
+      fileCode,
+      fileNameSequenceGroup,
+    );
     log.info(`Uploading ${offeringIntensity} content...`);
     await eCertIntegrationService.uploadContent(fileContent, fileInfo.filePath);
     // Mark all disbursements as sent.
