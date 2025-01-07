@@ -84,11 +84,6 @@ describe(
       );
       // Create a Ministry user to b used, for instance, for audit.
       sharedMinistryUser = await db.user.save(createFakeUser());
-      // Create the sequence number in advance to control the file header sequence.
-      await db.sequenceControl.save({
-        sequenceName: ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP,
-        sequenceNumber: "0",
-      });
     });
 
     beforeEach(async () => {
@@ -372,13 +367,12 @@ describe(
         },
       );
       const eCertLifetimeSequence = 100000;
-      await db.sequenceControl.update(
+      await db.sequenceControl.upsert(
         {
           sequenceName: ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP,
-        },
-        {
           sequenceNumber: eCertLifetimeSequence.toString(),
         },
+        ["sequenceName"],
       );
       // Queued job.
       const { job } = mockBullJob<void>();
