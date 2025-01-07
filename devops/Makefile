@@ -511,7 +511,7 @@ deploy-web:
 	-p TLS_KEY=$(TLS_KEY) \
 	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(WEB))
+	$(call rollout_and_wait,deployment/$(WEB))
 
 create-qa-api-db:
 	test -n $(QA_DB_NAME)
