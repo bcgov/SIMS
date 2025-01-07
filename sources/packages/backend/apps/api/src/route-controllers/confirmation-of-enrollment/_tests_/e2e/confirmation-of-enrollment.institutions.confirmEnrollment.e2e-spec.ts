@@ -24,6 +24,7 @@ import {
   Institution,
   InstitutionLocation,
   OfferingIntensity,
+  SequenceControl,
 } from "@sims/sims-db";
 import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../../../utilities";
 import { COE_WINDOW, addDays, getISODateOnlyString } from "@sims/utilities";
@@ -36,6 +37,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
   let offeringRepo: Repository<EducationProgramOffering>;
   let collegeC: Institution;
   let collegeCLocation: InstitutionLocation;
+  let sequenceControlRepo: Repository<SequenceControl>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -44,6 +46,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     applicationRepo = dataSource.getRepository(Application);
     disbursementScheduleRepo = dataSource.getRepository(DisbursementSchedule);
     offeringRepo = dataSource.getRepository(EducationProgramOffering);
+    sequenceControlRepo = dataSource.getRepository(SequenceControl);
 
     const { institution } = await getAuthRelatedEntities(
       appDataSource,
@@ -123,6 +126,14 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     expect(updatedApplication.applicationStatus).toBe(
       ApplicationStatus.Completed,
     );
+
+    const sequenceControl = await sequenceControlRepo.findOne({
+      where: {
+        sequenceName: "Part Time_DISBURSEMENT_DOCUMENT_NUMBER",
+        sequenceNumber: firstDisbursementSchedule.documentNumber.toString(),
+      },
+    });
+    expect(sequenceControl).toBeDefined();
   });
 
   it("Should allow the second COE confirmation when the application is on Completed status and all the conditions are fulfilled.", async () => {

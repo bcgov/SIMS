@@ -6,13 +6,19 @@ export class RenameSequenceNameDocumentNumber1736193026064
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Update-sequence-name.sql", "SequenceControl"),
+      getSQLFileData(
+        "Update-disbursement-document-number-sequence.sql",
+        "SequenceControl",
+      ),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Rollback-update-sequence-name.sql", "SequenceControl"),
+      getSQLFileData(
+        "Rollback-update-disbursement-document-number-sequence.sql",
+        "SequenceControl",
+      ),
     );
   }
 }
