@@ -19,6 +19,7 @@ import {
   CompletedApplicationDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
+  ApplicationVersionAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -37,7 +38,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import { ApplicationControllerService } from "./application.controller.service";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { MSFAANumberSharedService } from "@sims/services";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, getPSTPDTDateHourMinute } from "@sims/utilities";
 import {
   APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
   APPLICATION_NOT_FOUND,
@@ -45,6 +46,7 @@ import {
 } from "@sims/services/constants";
 import { IUserToken, Role } from "../../auth";
 import { ApplicationStatus } from "@sims/sims-db";
+import { application } from "express";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -74,7 +76,7 @@ export class ApplicationAESTController extends BaseController {
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
-      { loadDynamicData },
+      { loadDynamicData, allowOverwritten: true },
     );
     if (!application) {
       throw new NotFoundException(
@@ -230,5 +232,29 @@ export class ApplicationAESTController extends BaseController {
     return this.applicationControllerService.getCompletedApplicationDetails(
       applicationId,
     );
+  }
+
+  /**
+   * Get history of application versions for an application
+   * where the current application is excluded.
+   * @param applicationId application Id.
+   * @returns history of application versions.
+   */
+  @ApiNotFoundResponse({
+    description: `Application not found or not on ${ApplicationStatus.Completed} status.`,
+  })
+  @Get(":applicationId/versions")
+  async getApplicationVersionHistory(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<ApplicationVersionAPIOutDTO[]> {
+    const applications =
+      await this.applicationService.applicationVersionHistory(applicationId);
+    if (!application) {
+      throw new NotFoundException("Application not found.");
+    }
+    return applications.map((application) => ({
+      id: application.id,
+      submittedDate: getPSTPDTDateHourMinute(application.submittedDate),
+    }));
   }
 }

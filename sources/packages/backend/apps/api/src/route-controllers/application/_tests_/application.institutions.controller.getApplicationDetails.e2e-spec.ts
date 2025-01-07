@@ -16,6 +16,7 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
+  ApplicationStatus,
   EducationProgramOffering,
   InstitutionLocation,
   OfferingIntensity,
@@ -92,7 +93,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         id: savedApplication.id,
         applicationStatus: savedApplication.applicationStatus,
         applicationNumber: savedApplication.applicationNumber,
-        applicationFormName: "SFAA2022-23",
+        applicationFormName: "SFAA2022-2023",
         applicationProgramYearID: savedApplication.programYearId,
         studentFullName: getUserFullName(savedApplication.student.user),
         applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
@@ -134,6 +135,36 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
     const savedApplication = await saveFakeApplication(appDataSource, {
       institutionLocation: collegeCLocation,
     });
+
+    const student = savedApplication.student;
+    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: 403,
+        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+        error: "Forbidden",
+      });
+  });
+
+  it("Should not get the student application details when the application status is overwritten.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(
+      appDataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        applicationStatus: ApplicationStatus.Overwritten,
+      },
+    );
 
     const student = savedApplication.student;
     const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;

@@ -22,6 +22,7 @@ export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "MMM DD YYYY";
 export const DATE_ONLY_FULL_MONTH_FORMAT = "MMMM D, YYYY";
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
+export const DATE_HOUR_MINUTE_FORMAT = "MMM DD YYYY HH:mm";
 export const TIMESTAMP_CONTINUOUS_FORMAT = "YYYY-MM-DD_HH.mm.ss";
 export const TIMESTAMP_CONTINUOUS_EXTENDED_FORMAT = "YYYYMMDD-HHmmssSSS";
 export const PST_TIMEZONE = "America/Vancouver";
@@ -97,6 +98,25 @@ export const getPSTPDTDateTime = (
   local = false,
 ): string => {
   return dayjs(new Date(date)).tz(PST_TIMEZONE, local).format(DATE_TIME_FORMAT);
+};
+
+/**
+ * Convert the date to (PST: UTC−08:00/PDT: UTC−07:00).
+ * @param date date to be converted to PST.
+ * @param local, if local is set to true,
+ * then the offset will be directly append to the date without
+ * converting to the timezone actual date,
+ * if set to false, the date will be converted
+ * to the actual timezone time with offset.
+ * @returns date in MMM DD YYYY HH:mm format.
+ */
+export const getPSTPDTDateHourMinute = (
+  date: string | Date,
+  local = false,
+): string => {
+  return dayjs(new Date(date))
+    .tz(PST_TIMEZONE, local)
+    .format(DATE_HOUR_MINUTE_FORMAT);
 };
 
 /**

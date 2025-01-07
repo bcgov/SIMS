@@ -591,8 +591,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       loadDynamicData?: boolean;
       studentId?: number;
       institutionId?: number;
+      allowOverwritten?: boolean;
     },
   ): Promise<Application> {
+    const applicationStatus = options?.allowOverwritten
+      ? undefined
+      : Not(ApplicationStatus.Overwritten);
     return this.repo.findOne({
       select: {
         id: true,
@@ -656,7 +660,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       where: {
         id: applicationId,
-        applicationStatus: Not(ApplicationStatus.Overwritten),
+        applicationStatus: applicationStatus,
         student: {
           id: options?.studentId,
         },
@@ -1833,6 +1837,34 @@ export class ApplicationService extends RecordDataModelService<Application> {
             },
           },
         },
+      },
+    });
+  }
+
+  /**
+   * Get history of application versions for an application
+   * where the current application is excluded.
+   * @param applicationId application id.
+   * @returns assessment history list.
+   */
+  async applicationVersionHistory(
+    applicationId: number,
+  ): Promise<Application[]> {
+    const application = await this.repo.findOne({
+      select: { applicationNumber: true },
+      where: { id: applicationId },
+    });
+    if (!application) {
+      return null;
+    }
+    return this.repo.find({
+      select: { id: true, submittedDate: true },
+      where: {
+        applicationNumber: application.applicationNumber,
+        applicationStatus: ApplicationStatus.Overwritten,
+      },
+      order: {
+        submittedDate: "DESC",
       },
     });
   }

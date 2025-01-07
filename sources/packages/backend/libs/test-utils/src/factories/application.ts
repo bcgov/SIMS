@@ -67,6 +67,7 @@ export function createFakeApplication(
   application.location = relations?.location ?? createFakeInstitutionLocation();
   application.pirStatus = options?.initialValue?.pirStatus;
   application.isArchived = options?.initialValue?.isArchived;
+  application.submittedDate = options?.initialValue?.submittedDate;
   return application;
 }
 
@@ -259,12 +260,14 @@ export async function saveFakeApplication(
   },
   options?: {
     applicationStatus?: ApplicationStatus;
+    applicationNumber?: string;
     offeringIntensity?: OfferingIntensity;
     applicationData?: ApplicationData;
     pirStatus?: ProgramInfoStatus;
     isArchived?: boolean;
     currentAssessmentInitialValues?: Partial<StudentAssessment>;
     offeringInitialValues?: Partial<EducationProgramOffering>;
+    submittedDate?: Date;
   },
 ): Promise<Application> {
   const userRepo = dataSource.getRepository(User);
@@ -296,6 +299,8 @@ export async function saveFakeApplication(
         data: options?.applicationData,
         pirStatus: options?.pirStatus,
         isArchived: options?.isArchived ? options?.isArchived : false,
+        applicationNumber: options?.applicationNumber,
+        submittedDate: options?.submittedDate,
       },
     },
   );
