@@ -91,6 +91,15 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     expect(updatedApplication.applicationStatus).toBe(
       ApplicationStatus.Completed,
     );
+
+    // Assert that the sequence control record was created correctly.
+    const sequenceControl = await sequenceControlRepo.findOne({
+      where: {
+        sequenceName: "Full Time_DISBURSEMENT_DOCUMENT_NUMBER",
+        sequenceNumber: firstDisbursementSchedule.documentNumber.toString(),
+      },
+    });
+    expect(sequenceControl).toBeDefined();
   });
 
   it("Should allow the COE confirmation when the application is on Enrolment status and all the conditions are fulfilled for Part Time offering.", async () => {
@@ -109,7 +118,6 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
     const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
-    // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
       .send({ tuitionRemittanceAmount: 1 })
@@ -118,6 +126,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
         BEARER_AUTH_TYPE,
       )
       .expect(HttpStatus.OK);
+    // Act/Assert
     // Check if the application was updated as expected.
     const updatedApplication = await applicationRepo.findOne({
       select: { applicationStatus: true },
@@ -126,7 +135,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     expect(updatedApplication.applicationStatus).toBe(
       ApplicationStatus.Completed,
     );
-
+    // Assert that the sequence control record was created correctly.
     const sequenceControl = await sequenceControlRepo.findOne({
       where: {
         sequenceName: "Part Time_DISBURSEMENT_DOCUMENT_NUMBER",
