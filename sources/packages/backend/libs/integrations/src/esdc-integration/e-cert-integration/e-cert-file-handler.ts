@@ -15,7 +15,7 @@ import {
   parseJSONError,
   processInParallel,
 } from "@sims/utilities";
-import { EntityManager } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
   Award,
@@ -27,6 +27,7 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import * as path from "path";
+import { CreateRequestFileNameResult } from "../models/esdc-integration.model";
 
 /**
  * Used to abort the e-Cert generation process, cancel the current transaction,
@@ -54,6 +55,7 @@ type ECertFeedbackCodeMap = Record<string, ErrorDetails>;
 export abstract class ECertFileHandler extends ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
   constructor(
+    private readonly dataSource: DataSource,
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly eCertGenerationService: ECertGenerationService,
@@ -85,7 +87,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * for the respective integration.
    * @param offeringIntensity disbursement offering intensity.
    * @param fileCode file code applicable for Part-Time or Full-Time.
-   * @param sequenceGroupPrefix sequence group prefix for Part-Time or Full-Time
+   * @param sequenceGroup sequence group for Part-Time or Full-Time
    * file sequence generation.
    * @param log cumulative process log.
    * @returns result of the file upload with the file generated and the
@@ -95,30 +97,46 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
-    sequenceGroupPrefix: string,
+    sequenceGroup: string,
     log: ProcessSummary,
   ): Promise<ECertUploadResult> {
     log.info(
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
     try {
-      const sequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(
+      const sequenceGroupFileName = `${sequenceGroup}_${getISODateOnlyString(
         new Date(),
       )}`;
       let uploadResult: ECertUploadResult;
-      await this.sequenceService.consumeNextSequence(
-        sequenceGroup,
-        async (nextSequenceNumber: number, entityManager: EntityManager) => {
-          uploadResult = await this.processECert(
-            nextSequenceNumber,
-            entityManager,
-            eCertIntegrationService,
-            offeringIntensity,
-            fileCode,
-            log,
-          );
-        },
-      );
+      let fileInfo: CreateRequestFileNameResult;
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
+        // Consume the next sequence number for the e-Cert filename
+        // and execute the creation of the request filename.
+        await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
+          sequenceGroupFileName,
+          transactionalEntityManager,
+          async (nextSequenceNumber: number) => {
+            // Create the request filename with the file path for the e-Cert File.
+            fileInfo = this.createRequestFileName(fileCode, nextSequenceNumber);
+          },
+        );
+        // Consume the next sequence number for the e-Cert file header
+        // and execute the processECert process.
+        await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
+          sequenceGroup,
+          transactionalEntityManager,
+          async (nextSequenceNumber: number, entityManager: EntityManager) => {
+            uploadResult = await this.processECert(
+              nextSequenceNumber,
+              entityManager,
+              eCertIntegrationService,
+              offeringIntensity,
+              fileInfo,
+              log,
+            );
+          },
+        );
+      });
       return uploadResult;
     } catch (error: unknown) {
       if (
@@ -141,17 +159,16 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param eCertIntegrationService Full-Time/Part-Time integration responsible
    * for the respective integration.
    * @param offeringIntensity disbursement offering intensity.
-   * @param fileCode file code applicable for Part-Time or Full-Time.
+   * @param fileInfo e-Cert file information.
    * @param log cumulative process log.
    * @returns information of the uploaded e-Cert file.
-   * @throws CustomNamedError ECERT_GENERATION_NO_RECORDS_AVAILABLE
    */
   private async processECert(
     sequenceNumber: number,
     entityManager: EntityManager,
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
-    fileCode: string,
+    fileInfo: CreateRequestFileNameResult,
     log: ProcessSummary,
   ): Promise<ECertUploadResult> {
     try {
@@ -180,8 +197,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         sequenceNumber,
       );
 
-      // Create the request filename with the file path for the e-Cert File.
-      const fileInfo = this.createRequestFileName(fileCode, sequenceNumber);
       log.info(`Uploading ${offeringIntensity} content...`);
       await eCertIntegrationService.uploadContent(
         fileContent,

@@ -52,6 +52,7 @@ import {
 } from "./e-cert-utils";
 import { SystemUsersService } from "@sims/services";
 import * as faker from "faker";
+import { ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP } from "@sims/integrations/esdc-integration";
 
 describe(
   describeQueueProcessorRootTest(QueueNames.PartTimeECertIntegration),
@@ -97,7 +98,7 @@ describe(
       );
       // Reset sequence number to control the file name generated.
       await db.sequenceControl.update(
-        { sequenceName: Like("ECERT_PT_SENT_FILE_%") },
+        { sequenceName: Like("ECERT_PT_SENT_FILE%") },
         { sequenceNumber: "0" },
       );
     });
@@ -365,6 +366,14 @@ describe(
           },
         },
       );
+      const eCertLifetimeSequence = 100000;
+      await db.sequenceControl.upsert(
+        {
+          sequenceName: ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP,
+          sequenceNumber: eCertLifetimeSequence.toString(),
+        },
+        ["sequenceName"],
+      );
       // Queued job.
       const { job } = mockBullJob<void>();
 
@@ -386,7 +395,10 @@ describe(
 
       expect(uploadedFile.fileLines).toHaveLength(3);
       const [header, record, footer] = uploadedFile.fileLines;
+      const headerSequence = header.substring(58, 64);
       // Validate header.
+      const expectedHeaderSequence = (eCertLifetimeSequence + 1).toString();
+      expect(headerSequence).toBe(expectedHeaderSequence);
       expect(header).toContain("01BC  NEW PT ENTITLEMENT");
       // Validate footer.
       // Record Type.
