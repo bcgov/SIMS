@@ -7,6 +7,7 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
+  OfferingIntensity,
   User,
 } from "@sims/sims-db";
 import {
@@ -34,7 +35,6 @@ import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { SequenceControlService } from "../sequence-control/sequence-control.service";
 import { NotificationActionsService } from "../notifications";
 import {
-  DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP,
   ENROLMENT_ALREADY_COMPLETED,
   ENROLMENT_CONFIRMATION_DATE_NOT_WITHIN_APPROVAL_PERIOD,
   ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
@@ -229,6 +229,7 @@ export class ConfirmationOfEnrollmentService {
         "offering.actualTuitionCosts",
         "offering.programRelatedCosts",
         "offering.studyEndDate",
+        "offering.offeringIntensity",
         "disbursementValues.valueType",
         "disbursementValues.valueCode",
         "disbursementValues.valueAmount",
@@ -352,6 +353,7 @@ export class ConfirmationOfEnrollmentService {
    * @param applicationStatus application status of the disbursed application.
    * @param tuitionRemittanceRequestedAmount tuition remittance amount requested by the institution.
    * @param enrolmentConfirmationDate enrolment confirmation date.
+   * @param offeringIntensity offering intensity.
    */
   private async updateDisbursementAndApplicationCOEApproval(
     disbursementScheduleId: number,
@@ -359,9 +361,10 @@ export class ConfirmationOfEnrollmentService {
     applicationId: number,
     applicationStatus: ApplicationStatus,
     tuitionRemittanceRequestedAmount: number,
+    offeringIntensity: OfferingIntensity,
     enrolmentConfirmationDate?: Date,
   ): Promise<void> {
-    const documentNumber = await this.getNextDocumentNumber();
+    const documentNumber = await this.getNextDocumentNumber(offeringIntensity);
     const auditUser = { id: userId } as User;
     const coeConfirmationDate = enrolmentConfirmationDate ?? new Date();
 
@@ -649,6 +652,8 @@ export class ConfirmationOfEnrollmentService {
       disbursementSchedule.studentAssessment.application.id,
       disbursementSchedule.studentAssessment.application.applicationStatus,
       tuitionRemittanceAmount,
+      disbursementSchedule.studentAssessment.application.currentAssessment
+        .offering.offeringIntensity,
       options?.enrolmentConfirmationDate,
     );
   }
@@ -757,12 +762,16 @@ export class ConfirmationOfEnrollmentService {
   /**
    * Generates the next document number to be associated
    * with a disbursement.
+   * @param offeringIntensity offering intensity.
    * @returns sequence number for disbursement document number.
    */
-  private async getNextDocumentNumber(): Promise<number> {
+  private async getNextDocumentNumber(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<number> {
+    const sequenceGroupName = `${offeringIntensity}_DISBURSEMENT_DOCUMENT_NUMBER`;
     let nextDocumentNumber: number;
     await this.sequenceService.consumeNextSequence(
-      DISBURSEMENT_DOCUMENT_NUMBER_SEQUENCE_GROUP,
+      sequenceGroupName,
       async (nextSequenceNumber) => {
         nextDocumentNumber = nextSequenceNumber;
       },
