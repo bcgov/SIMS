@@ -367,7 +367,7 @@ describe(
         },
       );
       const eCertLifetimeSequence = 100000;
-      db.sequenceControl.update(
+      await db.sequenceControl.update(
         {
           sequenceName: ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP,
         },
