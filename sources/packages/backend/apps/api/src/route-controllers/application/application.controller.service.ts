@@ -442,17 +442,17 @@ export class ApplicationControllerService {
 
   /**
    * Transformation util for Application.
-   * @param application
-   * @returns Application DTO
+   * @param application application to be converted to the DTO.
+   * @param previousData previous application to allow changes detection.
+   * @returns application DTO.
    */
   async transformToApplicationDTO(
     application: Application,
-    originalApplicationData: unknown,
     previousData?: unknown,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     let changes: ApplicationDataChangeAPIOutDTO[] = [];
     if (previousData) {
-      changes = compareApplicationData(originalApplicationData, previousData);
+      changes = compareApplicationData(application.data, previousData);
     }
     return {
       data: application.data,

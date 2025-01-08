@@ -19,6 +19,7 @@ import {
   CompletedApplicationDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
+  ApplicationFormData,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -81,25 +82,27 @@ export class ApplicationAESTController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-
-    const originalApplicationData = application.data;
-    const previousApplicationVersion =
-      await this.applicationService.getPreviousApplicationDataVersion(
-        applicationId,
-        application.applicationNumber,
-      );
-
+    let currentReadOnlyData: ApplicationFormData;
+    let previousReadOnlyData: ApplicationFormData;
     if (loadDynamicData) {
-      application.data =
-        await this.applicationControllerService.generateApplicationFormData(
-          originalApplicationData,
+      const previousApplicationVersion =
+        await this.applicationService.getPreviousApplicationDataVersion(
+          applicationId,
+          application.applicationNumber,
         );
+      [currentReadOnlyData, previousReadOnlyData] = await Promise.all([
+        this.applicationControllerService.generateApplicationFormData(
+          application.data,
+        ),
+        this.applicationControllerService.generateApplicationFormData(
+          previousApplicationVersion.data,
+        ),
+      ]);
+      application.data = currentReadOnlyData;
     }
-
     return this.applicationControllerService.transformToApplicationDTO(
       application,
-      originalApplicationData,
-      previousApplicationVersion.data,
+      previousReadOnlyData,
     );
   }
 
