@@ -473,7 +473,7 @@ deploy-web:
 	-p TLS_KEY=$(TLS_KEY) \
 	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(WEB))
+	$(call rollout_and_wait,deployment/$(WEB))
 
 deploy-ha-mongo:
 	test -n "$(NAMESPACE)"
