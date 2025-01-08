@@ -9,6 +9,7 @@ import {
 } from "@sims/auth/utilities/certificate-utils";
 import {
   createE2EDataSources,
+  createFakeInstitutionLocation,
   E2EDataSources,
   getProviderInstanceForModule,
 } from "@sims/test-utils";
@@ -21,15 +22,16 @@ import { DataSource } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
 import { INVALID_BETA_USER, MISSING_USER_ACCOUNT } from "../../../constants";
 import {
+  authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
+  getAuthRelatedEntities,
   getInstitutionToken,
   InstitutionTokenTypes,
   mockUserLoginInfo,
   resetMockUserLoginInfo,
 } from "../../../testHelpers";
 import * as dayjs from "dayjs";
-import { Student, User } from "@sims/sims-db";
-import { SIMS2_COLLE_USER } from "@sims/test-utils/constants";
+import { InstitutionUserTypes, Student, User } from "@sims/sims-db";
 
 describe("Authentication (e2e)", () => {
   // Nest application to be shared for all e2e tests
@@ -93,248 +95,263 @@ describe("Authentication (e2e)", () => {
     await resetMockUserLoginInfo(moduleFixture);
   });
 
-  it("Load publicKey from Keycloak", async () => {
-    // Arrange
-    const headerAndFooterLength =
-      PEM_BEGIN_HEADER.length + PEM_END_HEADER.length;
-
-    // Act
-    await KeycloakConfig.load();
-
-    // Assert
-    expect(KeycloakConfig.PEM_PublicKey).toContain(PEM_BEGIN_HEADER);
-    expect(KeycloakConfig.PEM_PublicKey).toContain(PEM_END_HEADER);
-    // Besides that header and footer, the public_key need have some additional
-    // content that would be the public key retrieve fromKeycloak,
-    // that does not contains the PEM_BEGIN_HEADER and PEM_END_HEADER.
-    expect(KeycloakConfig.PEM_PublicKey.length).toBeGreaterThan(
-      headerAndFooterLength,
+  it("Should return a HttpStatus OK(200) when a read-only institution user tries to access a read-only route to their institution.", async () => {
+    const { institution: collegeE } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
     );
-  });
-
-  it(
-    "Should allow BCSC user to access the application when user is not registered in beta users authorizations table but " +
-      "config allows any user to access the application.",
-    async () => {
-      return request(app.getHttpServer())
-        .get("/auth-test/authenticated-student")
-        .auth(studentAccessToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK);
-    },
-  );
-
-  it(
-    "Should not allow BCSC beta user to access the application when config allows only beta users to access the application but " +
-      "user is not registered in beta users authorizations table.",
-    async () => {
-      // Arrange
-      jest
-        .spyOn(configService, "allowBetaUsersOnly", "get")
-        .mockReturnValue(true);
-      // Act/Assert
-      return request(app.getHttpServer())
-        .get("/auth-test/authenticated-student")
-        .auth(studentAccessToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.UNAUTHORIZED)
-        .expect({
-          message: "The student is not registered as a beta user.",
-          errorType: INVALID_BETA_USER,
-        });
-    },
-  );
-
-  it(
-    "Should allow BCSC beta user to access the application when config allows only beta users to access the application and " +
-      "user is registered in beta users authorizations table.",
-    async () => {
-      // Arrange
-      jest
-        .spyOn(configService, "allowBetaUsersOnly", "get")
-        .mockReturnValue(true);
-
-      // Add user to beta users authorizations table in upper case to test the query.
-      await db.betaUsersAuthorizations.save({
-        givenNames: studentDecodedToken.givenNames.toUpperCase(),
-        lastName: studentDecodedToken.lastName.toUpperCase(),
-      });
-
-      // Act/Assert
-      return request(app.getHttpServer())
-        .get("/auth-test/authenticated-student")
-        .auth(studentAccessToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK);
-    },
-  );
-
-  it(
-    "Should not allow BCSC beta user to access the application when config allows only beta users to access the application and " +
-      "user is registered in beta users authorizations table with a future date to be enabled.",
-    async () => {
-      // Arrange
-      jest
-        .spyOn(configService, "allowBetaUsersOnly", "get")
-        .mockReturnValue(true);
-
-      const tomorrow = dayjs().add(1, "day");
-      const betaUsersAuthorizations =
-        await db.betaUsersAuthorizations.findOneBy({
-          givenNames: studentDecodedToken.givenNames.toUpperCase(),
-          lastName: studentDecodedToken.lastName.toUpperCase(),
-        });
-      betaUsersAuthorizations.enabledFrom = tomorrow.toDate();
-      // Save beta users authorizations with tomorrow's date.
-      await db.betaUsersAuthorizations.save(betaUsersAuthorizations);
-
-      // Act/Assert
-      return request(app.getHttpServer())
-        .get("/auth-test/authenticated-student")
-        .auth(studentAccessToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.UNAUTHORIZED)
-        .expect({
-          message: "The student is not registered as a beta user.",
-          errorType: INVALID_BETA_USER,
-        });
-    },
-  );
-
-  it("Endpoint with Public decorator should allow access when the bearer token is not present", () => {
+    const collegeELocation = createFakeInstitutionLocation({
+      institution: collegeE,
+    });
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+      collegeELocation,
+      InstitutionUserTypes.readOnlyUser,
+    );
+    // Institution token.
+    const collegEInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
     return request(app.getHttpServer())
-      .get("/auth-test/public-route")
+      .get(
+        `/auth-test/institution-location-reading-route/${collegeELocation.id}`,
+      )
+      .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
   });
 
-  describe("Endpoint that requires authentication", () => {
-    it("Should return a HttpStatus UNAUTHORIZED(401) when bearer token is not present", () => {
-      return request(app.getHttpServer())
-        .get("/auth-test/global-authenticated-route")
-        .expect(HttpStatus.UNAUTHORIZED);
-    });
-
-    it("Should return a HttpStatus OK(200) when bearer token is present", () => {
-      return request(app.getHttpServer())
-        .get("/auth-test/global-authenticated-route")
-        .auth(studentAccessToken, { type: "bearer" })
-        .expect(HttpStatus.OK);
-    });
-
-    it("Should return a HttpStatus UNAUTHORIZED(401) when bearer token is present but it is invalid", () => {
-      return request(app.getHttpServer())
-        .get("/auth-test/global-authenticated-route")
-        .auth("invalid_token", { type: "bearer" })
-        .expect(HttpStatus.UNAUTHORIZED);
-    });
-
-    it("Should return a HttpStatus OK(200) when the Role decorator is present and the role is present and it is the expected one", () => {
-      return request(app.getHttpServer())
-        .get("/auth-test/authenticated-route-by-role")
-        .auth(aestAccessToken, { type: "bearer" })
-        .expect(HttpStatus.OK);
-    });
-
-    it("Should return a HttpStatus FORBIDDEN(403) when the Role decorator is present but the role it is not the expected one", () => {
-      return request(app.getHttpServer())
-        .get("/auth-test/authenticated-route-by-non-existing-role")
-        .auth(studentAccessToken, { type: "bearer" })
-        .expect(HttpStatus.FORBIDDEN);
-    });
-
-    it("Should return a HttpStatus OK(200) when the Group decorator is present and the group is present and it is the expected one", () => {
-      return request(app.getHttpServer())
-        .get("/auth-test/authenticated-route-by-group")
-        .auth(aestAccessToken, { type: "bearer" })
-        .expect(HttpStatus.OK);
-    });
-
-    it("Should return a HttpStatus FORBIDDEN(403) when the Group decorator is present but the group it is not the expected one", () => {
-      return request(app.getHttpServer())
-        .get("/auth-test/authenticated-route-by-non-existing-group")
-        .auth(aestAccessToken, { type: "bearer" })
-        .expect(HttpStatus.FORBIDDEN);
-    });
-
-    it("Can parse the UserToken", () => {
-      return request(app.getHttpServer())
-        .get("/auth-test/global-authenticated-route")
-        .auth(studentAccessToken, { type: "bearer" })
-        .expect(HttpStatus.OK)
-        .then((resp) => {
-          // Only the basic properties that are present in a basic
-          // Keycloak user are being validated here.
-          expect(resp.body).toBeDefined();
-          expect(resp.body.userName).toBeTruthy();
-          expect(resp.body.email).toBeTruthy();
-        });
-    });
-
-    it(
-      "Should return a HttpStatus FORBIDDEN(403) when there is no user account associated to the user token " +
-        "to a default route that requires a user account.",
-      async () => {
-        await mockUserLoginInfo(moduleFixture, {
-          id: null,
-          user: { id: null, isActive: null } as User,
-        } as Student);
-        return request(app.getHttpServer())
-          .get("/auth-test/default-requires-user-route")
-          .auth(studentAccessToken, { type: "bearer" })
-          .expect(HttpStatus.FORBIDDEN)
-          .expect({
-            message: "No user account has been associated to the user token.",
-            errorType: MISSING_USER_ACCOUNT,
-          });
-      },
+  it("Should return a HttpStatus FORBIDDEN(403) when a read-only institution user tries to access a non-reading-only route to their institution.", async () => {
+    const { institution: collegeE } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
     );
-
-    it(
-      "Should return a HttpStatus OK(200) when there is no user account associated to the user token " +
-        "to a route that does not requires a user account.",
-      async () => {
-        await mockUserLoginInfo(moduleFixture, {
-          id: null,
-          user: { id: null, isActive: null } as User,
-        } as Student);
-        return request(app.getHttpServer())
-          .get("/auth-test/user-not-required-route")
-          .auth(studentAccessToken, { type: "bearer" })
-          .expect(HttpStatus.OK);
-      },
+    const collegeELocation = createFakeInstitutionLocation({
+      institution: collegeE,
+    });
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+      collegeELocation,
+      InstitutionUserTypes.readOnlyUser,
     );
-
-    it("Should return a HttpStatus OK(200) when a read-only institution user tries to access a read-only route to their institution.", async () => {
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeEReadOnlyUser,
-      );
-      const institutionUserAuth = await db.institutionUserAuth.findOne({
-        where: {
-          institutionUser: { user: { userName: SIMS2_COLLE_USER } },
-        },
-        relations: { location: true },
-      });
-      return request(app.getHttpServer())
-        .get(
-          `/auth-test/institution-location-reading-route/${institutionUserAuth.location.id}`,
-        )
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK);
-    });
-    it("Should return a HttpStatus FORBIDDEN(403) when a read-only institution user tries to access a non-reading-only route to their institution.", async () => {
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeEReadOnlyUser,
-      );
-      const institutionUserAuth = await db.institutionUserAuth.findOne({
-        where: {
-          institutionUser: { user: { userName: SIMS2_COLLE_USER } },
-        },
-        relations: { location: true },
-      });
-      return request(app.getHttpServer())
-        .get(
-          `/auth-test/institution-location-modifying-route/${institutionUserAuth.location.id}`,
-        )
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.FORBIDDEN);
-    });
+    // Institution token.
+    const collegEInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+    return request(app.getHttpServer())
+      .get(
+        `/auth-test/institution-location-modifying-route/${collegeELocation.id}`,
+      )
+      .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN);
   });
+});
+
+it("Load publicKey from Keycloak", async () => {
+  // Arrange
+  const headerAndFooterLength = PEM_BEGIN_HEADER.length + PEM_END_HEADER.length;
+
+  // Act
+  await KeycloakConfig.load();
+
+  // Assert
+  expect(KeycloakConfig.PEM_PublicKey).toContain(PEM_BEGIN_HEADER);
+  expect(KeycloakConfig.PEM_PublicKey).toContain(PEM_END_HEADER);
+  // Besides that header and footer, the public_key need have some additional
+  // content that would be the public key retrieve fromKeycloak,
+  // that does not contains the PEM_BEGIN_HEADER and PEM_END_HEADER.
+  expect(KeycloakConfig.PEM_PublicKey.length).toBeGreaterThan(
+    headerAndFooterLength,
+  );
+});
+
+it(
+  "Should allow BCSC user to access the application when user is not registered in beta users authorizations table but " +
+    "config allows any user to access the application.",
+  async () => {
+    return request(app.getHttpServer())
+      .get("/auth-test/authenticated-student")
+      .auth(studentAccessToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+  },
+);
+
+it(
+  "Should not allow BCSC beta user to access the application when config allows only beta users to access the application but " +
+    "user is not registered in beta users authorizations table.",
+  async () => {
+    // Arrange
+    jest
+      .spyOn(configService, "allowBetaUsersOnly", "get")
+      .mockReturnValue(true);
+    // Act/Assert
+    return request(app.getHttpServer())
+      .get("/auth-test/authenticated-student")
+      .auth(studentAccessToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNAUTHORIZED)
+      .expect({
+        message: "The student is not registered as a beta user.",
+        errorType: INVALID_BETA_USER,
+      });
+  },
+);
+
+it(
+  "Should allow BCSC beta user to access the application when config allows only beta users to access the application and " +
+    "user is registered in beta users authorizations table.",
+  async () => {
+    // Arrange
+    jest
+      .spyOn(configService, "allowBetaUsersOnly", "get")
+      .mockReturnValue(true);
+
+    // Add user to beta users authorizations table in upper case to test the query.
+    await db.betaUsersAuthorizations.save({
+      givenNames: studentDecodedToken.givenNames.toUpperCase(),
+      lastName: studentDecodedToken.lastName.toUpperCase(),
+    });
+
+    // Act/Assert
+    return request(app.getHttpServer())
+      .get("/auth-test/authenticated-student")
+      .auth(studentAccessToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+  },
+);
+
+it(
+  "Should not allow BCSC beta user to access the application when config allows only beta users to access the application and " +
+    "user is registered in beta users authorizations table with a future date to be enabled.",
+  async () => {
+    // Arrange
+    jest
+      .spyOn(configService, "allowBetaUsersOnly", "get")
+      .mockReturnValue(true);
+
+    const tomorrow = dayjs().add(1, "day");
+    const betaUsersAuthorizations = await db.betaUsersAuthorizations.findOneBy({
+      givenNames: studentDecodedToken.givenNames.toUpperCase(),
+      lastName: studentDecodedToken.lastName.toUpperCase(),
+    });
+    betaUsersAuthorizations.enabledFrom = tomorrow.toDate();
+    // Save beta users authorizations with tomorrow's date.
+    await db.betaUsersAuthorizations.save(betaUsersAuthorizations);
+
+    // Act/Assert
+    return request(app.getHttpServer())
+      .get("/auth-test/authenticated-student")
+      .auth(studentAccessToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNAUTHORIZED)
+      .expect({
+        message: "The student is not registered as a beta user.",
+        errorType: INVALID_BETA_USER,
+      });
+  },
+);
+
+it("Endpoint with Public decorator should allow access when the bearer token is not present", () => {
+  return request(app.getHttpServer())
+    .get("/auth-test/public-route")
+    .expect(HttpStatus.OK);
+});
+
+describe("Endpoint that requires authentication", () => {
+  it("Should return a HttpStatus UNAUTHORIZED(401) when bearer token is not present", () => {
+    return request(app.getHttpServer())
+      .get("/auth-test/global-authenticated-route")
+      .expect(HttpStatus.UNAUTHORIZED);
+  });
+
+  it("Should return a HttpStatus OK(200) when bearer token is present", () => {
+    return request(app.getHttpServer())
+      .get("/auth-test/global-authenticated-route")
+      .auth(studentAccessToken, { type: "bearer" })
+      .expect(HttpStatus.OK);
+  });
+
+  it("Should return a HttpStatus UNAUTHORIZED(401) when bearer token is present but it is invalid", () => {
+    return request(app.getHttpServer())
+      .get("/auth-test/global-authenticated-route")
+      .auth("invalid_token", { type: "bearer" })
+      .expect(HttpStatus.UNAUTHORIZED);
+  });
+
+  it("Should return a HttpStatus OK(200) when the Role decorator is present and the role is present and it is the expected one", () => {
+    return request(app.getHttpServer())
+      .get("/auth-test/authenticated-route-by-role")
+      .auth(aestAccessToken, { type: "bearer" })
+      .expect(HttpStatus.OK);
+  });
+
+  it("Should return a HttpStatus FORBIDDEN(403) when the Role decorator is present but the role it is not the expected one", () => {
+    return request(app.getHttpServer())
+      .get("/auth-test/authenticated-route-by-non-existing-role")
+      .auth(studentAccessToken, { type: "bearer" })
+      .expect(HttpStatus.FORBIDDEN);
+  });
+
+  it("Should return a HttpStatus OK(200) when the Group decorator is present and the group is present and it is the expected one", () => {
+    return request(app.getHttpServer())
+      .get("/auth-test/authenticated-route-by-group")
+      .auth(aestAccessToken, { type: "bearer" })
+      .expect(HttpStatus.OK);
+  });
+
+  it("Should return a HttpStatus FORBIDDEN(403) when the Group decorator is present but the group it is not the expected one", () => {
+    return request(app.getHttpServer())
+      .get("/auth-test/authenticated-route-by-non-existing-group")
+      .auth(aestAccessToken, { type: "bearer" })
+      .expect(HttpStatus.FORBIDDEN);
+  });
+
+  it("Can parse the UserToken", () => {
+    return request(app.getHttpServer())
+      .get("/auth-test/global-authenticated-route")
+      .auth(studentAccessToken, { type: "bearer" })
+      .expect(HttpStatus.OK)
+      .then((resp) => {
+        // Only the basic properties that are present in a basic
+        // Keycloak user are being validated here.
+        expect(resp.body).toBeDefined();
+        expect(resp.body.userName).toBeTruthy();
+        expect(resp.body.email).toBeTruthy();
+      });
+  });
+
+  it(
+    "Should return a HttpStatus FORBIDDEN(403) when there is no user account associated to the user token " +
+      "to a default route that requires a user account.",
+    async () => {
+      await mockUserLoginInfo(moduleFixture, {
+        id: null,
+        user: { id: null, isActive: null } as User,
+      } as Student);
+      return request(app.getHttpServer())
+        .get("/auth-test/default-requires-user-route")
+        .auth(studentAccessToken, { type: "bearer" })
+        .expect(HttpStatus.FORBIDDEN)
+        .expect({
+          message: "No user account has been associated to the user token.",
+          errorType: MISSING_USER_ACCOUNT,
+        });
+    },
+  );
+
+  it(
+    "Should return a HttpStatus OK(200) when there is no user account associated to the user token " +
+      "to a route that does not requires a user account.",
+    async () => {
+      await mockUserLoginInfo(moduleFixture, {
+        id: null,
+        user: { id: null, isActive: null } as User,
+      } as Student);
+      return request(app.getHttpServer())
+        .get("/auth-test/user-not-required-route")
+        .auth(studentAccessToken, { type: "bearer" })
+        .expect(HttpStatus.OK);
+    },
+  );
 
   afterAll(async () => {
     await app.close();
