@@ -120,7 +120,11 @@ export default defineComponent({
         } else if (change.key) {
           searchComponent = parentComponent;
         }
-        if (!change.key || !searchComponent) {
+        if (
+          !change.key ||
+          !searchComponent ||
+          !searchComponent.components?.length
+        ) {
           continue;
         }
         const [component] = searchByKey(searchComponent.components, change.key);
@@ -141,7 +145,12 @@ export default defineComponent({
       component: FormIOComponent,
       itemRemoved?: boolean,
     ) {
-      if (component.type === FromIOComponentTypes.Hidden) {
+      // TODO: should we check for changes in the read-only version?
+      // TODO: should we check only read-only versions?
+      if (
+        component.type === FromIOComponentTypes.Hidden ||
+        component._visible === false
+      ) {
         return;
       }
       const cssClass = itemRemoved ? "changed-list-length" : "changed-value";
