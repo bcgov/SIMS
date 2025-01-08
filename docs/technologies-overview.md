@@ -25,10 +25,10 @@ Please find below some references to the main technologies being used on the app
 
 ### Database
 
-A decision was made to use PostgreSQL as the main database for the project due to the large adoption on BC Gov projects. Alongside PostgreSQL, Patroni was adopted to provide a high availability database support.
+A decision was made to use PostgreSQL as the main database for the project due to the large adoption on BC Gov projects. Alongside PostgreSQL, Crunchy was adopted to provide a high availability database support.
 
 Please find below some references to the main database related tecnologies being used on application backend.
 
 - PostgreSQL: <https://www.postgresql.org/>
 - TypeORM: <https://typeorm.io/>
-- Patroni: <https://patroni.readthedocs.io/en/latest/>
+- Crunchy: <https://access.crunchydata.com/documentation/postgres-operator/latest/installation/helm>
