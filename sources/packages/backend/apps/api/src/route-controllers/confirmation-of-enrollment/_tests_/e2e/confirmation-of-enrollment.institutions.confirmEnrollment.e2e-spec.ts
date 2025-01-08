@@ -170,7 +170,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
-      .auth(await collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+      .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN);
   });
 

@@ -37,7 +37,8 @@ export enum InstitutionTokenTypes {
    */
   CollegeEAdminNonLegalSigningUser,
   /**
-   * SIMS2_COLLE user configured as a regular user.
+   * SIMS2_COLLE user configured as a read-only user.
+   * Please do not add user type 'user' to this user as it is intended to be used as a read-only user.
    */
   CollegeEReadOnlyUser,
   /**
