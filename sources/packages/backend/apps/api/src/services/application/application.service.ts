@@ -1860,8 +1860,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.find({
       select: { id: true, submittedDate: true },
       where: {
+        id: Not(applicationId),
         applicationNumber: application.applicationNumber,
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: Not(ApplicationStatus.Draft),
       },
       order: {
         submittedDate: "DESC",
