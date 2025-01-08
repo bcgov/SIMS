@@ -93,7 +93,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         id: savedApplication.id,
         applicationStatus: savedApplication.applicationStatus,
         applicationNumber: savedApplication.applicationNumber,
-        applicationFormName: "SFAA2022-2023",
+        applicationFormName: "SFAA2022-23",
         applicationProgramYearID: savedApplication.programYearId,
         studentFullName: getUserFullName(savedApplication.student.user),
         applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
