@@ -20,6 +20,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   InstitutionLocation,
+  InstitutionUserTypes,
   OfferingIntensity,
 } from "@sims/sims-db";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
@@ -130,6 +131,34 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       "applicationOfferingChangeRequestStatus",
       ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
     );
+  });
+
+  it("Should not be able to submit application offering request with a read-only user.", async () => {
+    // Arrange
+    const { institution: collegeE } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+    const collegeELocation = createFakeInstitutionLocation({
+      institution: collegeE,
+    });
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+      collegeELocation,
+      InstitutionUserTypes.readOnlyUser,
+    );
+    const endpoint = `/institutions/location/${collegeELocation.id}/application-offering-change-request`;
+    // Institution token.
+    const collegEInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN);
   });
 
   it("Should throw study overlap error when trying to submit application offering request with an offering, which overlap with students another application.", async () => {

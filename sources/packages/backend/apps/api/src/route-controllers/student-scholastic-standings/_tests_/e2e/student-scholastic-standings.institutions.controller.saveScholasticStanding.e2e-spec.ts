@@ -21,6 +21,7 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   InstitutionLocation,
+  InstitutionUserTypes,
   NotificationMessageType,
   OfferingIntensity,
   StudentScholasticStandingChangeType,
@@ -258,6 +259,34 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     expect(
       queryApplication.currentAssessment.studentScholasticStanding.id,
     ).toBe(createdScholasticStandingId);
+  });
+
+  it("Should not create a new scholastic standing when the user is read-only.", async () => {
+    // Arrange
+    const { institution: collegeE } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+    const collegeELocation = createFakeInstitutionLocation({
+      institution: collegeE,
+    });
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+      collegeELocation,
+      InstitutionUserTypes.readOnlyUser,
+    );
+    const endpoint = `/institutions/scholastic-standing/location/${collegeELocation.id}/application/99999`;
+    // Institution token.
+    const collegEInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN);
   });
 
   it("Should create a new scholastic standing 'School transfer' for a part-time application when the institution user requests.", async () => {

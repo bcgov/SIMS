@@ -34,6 +34,7 @@ import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
   Application,
   AssessmentTriggerType,
+  InstitutionUserTypes,
   ProgramInfoStatus,
 } from "@sims/sims-db";
 import {
@@ -164,7 +165,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     description:
       "'Other' is selected as PIR reason but the reason was not provided.",
   })
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @Patch(":locationId/program-info-request/application/:applicationId/deny")
   async denyProgramInfoRequest(
     @Param("locationId", ParseIntPipe) locationId: number,
@@ -220,7 +221,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
   @ApiUnauthorizedResponse({
     description: "The location does not have access to the offering.",
   })
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @Patch(":locationId/program-info-request/application/:applicationId/complete")
   async completeProgramInfoRequest(
     @Param("locationId", ParseIntPipe) locationId: number,

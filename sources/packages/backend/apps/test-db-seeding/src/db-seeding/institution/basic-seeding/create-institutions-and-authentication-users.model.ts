@@ -6,12 +6,15 @@ import {
 import {
   COLLEGE_C_BUSINESS_GUID,
   COLLEGE_D_BUSINESS_GUID,
+  COLLEGE_E_BUSINESS_GUID,
   COLLEGE_F_BUSINESS_GUID,
   SIMS2_COLLC_USER,
   SIMS2_COLLD_USER,
+  SIMS2_COLLE_USER,
   SIMS2_COLLF_USER,
   SIMS_COLLC_ADMIN_LEGAL_SIGNING_USER,
   SIMS_COLLD_ADMIN_NON_LEGAL_SIGNING_USER,
+  SIMS_COLLE_ADMIN_NON_LEGAL_SIGNING_USER,
   SIMS_COLLF_ADMIN_LEGAL_SIGNING_USER,
 } from "@sims/test-utils/constants";
 
@@ -48,7 +51,7 @@ export const INSTITUTIONS_INITIAL_DATA: InstitutionBaseData[] = [
       {
         userName: SIMS2_COLLC_USER,
         firstName: "SIMS2",
-        lastName: "SIMS2",
+        lastName: "COLLC",
         userType: InstitutionUserTypes.user,
         userRole: undefined,
       },
@@ -72,6 +75,28 @@ export const INSTITUTIONS_INITIAL_DATA: InstitutionBaseData[] = [
         firstName: "SIMS2",
         lastName: "COLLD",
         userType: InstitutionUserTypes.user,
+        userRole: undefined,
+      },
+    ],
+  },
+  {
+    legalOperatingName: "College E - Business BCeID",
+    operatingName: "College E (non-legal operating name)",
+    businessGuid: COLLEGE_E_BUSINESS_GUID,
+    institutionTypeId: INSTITUTION_TYPE_BC_PUBLIC,
+    users: [
+      {
+        userName: SIMS_COLLE_ADMIN_NON_LEGAL_SIGNING_USER,
+        firstName: "SIMS",
+        lastName: "COLLE",
+        userType: InstitutionUserTypes.admin,
+        userRole: undefined,
+      },
+      {
+        userName: SIMS2_COLLE_USER,
+        firstName: "SIMS2",
+        lastName: "COLLE",
+        userType: InstitutionUserTypes.readOnlyUser,
         userRole: undefined,
       },
     ],

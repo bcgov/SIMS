@@ -2,6 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   Institution,
   InstitutionLocation,
+  InstitutionUserTypes,
   OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
@@ -196,6 +197,33 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         courseLoad: null,
       }),
     );
+  });
+
+  it("Should not create a new offering when user is read-only.", async () => {
+    // Arrange
+    const { institution: collegeE } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+    const collegeELocation = createFakeInstitutionLocation({
+      institution: collegeE,
+    });
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+      collegeELocation,
+      InstitutionUserTypes.readOnlyUser,
+    );
+    const endpoint = `/institutions/education-program-offering/location/${collegeELocation.id}/education-program/999999`;
+    const collegEInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN);
   });
 
   it("Should throw error when education program is expired.", async () => {

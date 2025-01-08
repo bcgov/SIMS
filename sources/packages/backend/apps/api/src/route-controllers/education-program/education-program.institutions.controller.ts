@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  ForbiddenException,
   Get,
   Param,
   ParseBoolPipe,
@@ -24,12 +25,16 @@ import {
 } from "./models/education-program.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import {
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { EducationProgramService } from "../../services";
+import {
+  EducationProgramService,
+  InstitutionUserAuthorizations,
+} from "../../services";
 import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,
@@ -37,6 +42,7 @@ import {
 import { EducationProgramControllerService } from "..";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
+import { InstitutionUserTypes } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
@@ -79,11 +85,15 @@ export class EducationProgramInstitutionsController extends BaseController {
       "Not able to a save the program due to an invalid request or " +
       "duplicate SABC code.",
   })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
   @Post()
   async createEducationProgram(
     @Body() payload: EducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
+    this.checkAuthorization(userToken.authorizations);
     const newProgram = await this.educationProgramControllerService.saveProgram(
       payload,
       userToken.authorizations.institutionId,
@@ -106,12 +116,16 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiNotFoundResponse({
     description: "Not able to find the education program.",
   })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
   @Patch(":programId")
   async updateEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,
     @Body() payload: EducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
+    this.checkAuthorization(userToken.authorizations);
     await this.educationProgramControllerService.saveProgram(
       payload,
       userToken.authorizations.institutionId,
@@ -130,11 +144,15 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description: "The education program is already set as requested.",
   })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
   @Patch(":programId/deactivate")
   async deactivateProgram(
     @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
+    this.checkAuthorization(userToken.authorizations);
     await this.educationProgramControllerService.deactivateProgram(
       programId,
       userToken.userId,
@@ -185,5 +203,25 @@ export class EducationProgramInstitutionsController extends BaseController {
       programId,
       userToken.authorizations.institutionId,
     );
+  }
+
+  /**
+   * Checks if the user is authorized to create or modify programs for the institution.
+   * User should have a user type different from read-only user.
+   * @param userToken
+   */
+  private checkAuthorization(
+    institutionUserAuthorizations: InstitutionUserAuthorizations,
+  ) {
+    const isAuthorized = institutionUserAuthorizations.authorizations.some(
+      (auth) =>
+        auth.userType === InstitutionUserTypes.admin ||
+        auth.userType === InstitutionUserTypes.user,
+    );
+    if (!isAuthorized) {
+      throw new ForbiddenException(
+        "You are not authorized to create or modify a program.",
+      );
+    }
   }
 }

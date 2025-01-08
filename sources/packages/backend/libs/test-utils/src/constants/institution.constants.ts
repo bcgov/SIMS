@@ -26,6 +26,19 @@ export const SIMS2_COLLD_USER = "2260473f105e4a54bad8c7e348cd9b82@bceidboth";
  */
 export const COLLEGE_D_BUSINESS_GUID = "B0BF341C26164156AD486F274108539A";
 /**
+ * SIMS_COLLE user configured as an admin without legal signing officer.
+ */
+export const SIMS_COLLE_ADMIN_NON_LEGAL_SIGNING_USER =
+  "a0e8119fe7e4490397f6de7471261e69@bceidboth";
+/**
+ * SIMS2_COLLE user configured as a read-only user.
+ */
+export const SIMS2_COLLE_USER = "954adea3f4fc49db8085082ba60fb575@bceidboth";
+/**
+ * College E business guid.
+ */
+export const COLLEGE_E_BUSINESS_GUID = "C65360FBB47B45C6BCA7B8CCCB4F5BCF";
+/**
  * SIMS_COLLF user configured as an admin and also as a legal signing officer.
  */
 export const SIMS_COLLF_ADMIN_LEGAL_SIGNING_USER =

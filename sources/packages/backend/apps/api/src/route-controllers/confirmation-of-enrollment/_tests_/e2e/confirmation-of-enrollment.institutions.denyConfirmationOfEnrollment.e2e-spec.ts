@@ -23,6 +23,7 @@ import {
   DisbursementScheduleStatus,
   Institution,
   InstitutionLocation,
+  InstitutionUserTypes,
   OfferingIntensity,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
@@ -81,6 +82,34 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-denyConfirmationOf
     });
     expect(declinedCOE.coeStatus).toBe(COEStatus.declined);
     expect(declinedCOE.coeDeniedReason.id).toBe(coeDenyReasonId);
+  });
+
+  it("Should not decline the COE when user is read-only.", async () => {
+    // Arrange
+    const { institution: collegeE } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+    const collegeELocation = createFakeInstitutionLocation({
+      institution: collegeE,
+    });
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+      collegeELocation,
+      InstitutionUserTypes.readOnlyUser,
+    );
+    const endpoint = `/institutions/location/${collegeELocation.id}/confirmation-of-enrollment/disbursement-schedule/9999999/deny`;
+    // Institution token.
+    const collegEInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN);
   });
 
   it(

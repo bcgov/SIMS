@@ -63,6 +63,7 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { InstitutionUserTypes } from "@sims/sims-db";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -95,7 +96,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
       "Application not found or invalid application or invalid" +
       " application status or another assessment already in progress.",
   })
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @Post("location/:locationId/application/:applicationId")
   async saveScholasticStanding(
     @Param("locationId", ParseIntPipe) locationId: number,

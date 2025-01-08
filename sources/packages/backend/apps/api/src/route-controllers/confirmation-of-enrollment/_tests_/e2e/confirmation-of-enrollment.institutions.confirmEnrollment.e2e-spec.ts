@@ -10,8 +10,10 @@ import {
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 import {
+  createE2EDataSources,
   createFakeDisbursementValue,
   createFakeInstitutionLocation,
+  E2EDataSources,
   saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
 import {
@@ -23,6 +25,7 @@ import {
   EducationProgramOffering,
   Institution,
   InstitutionLocation,
+  InstitutionUserTypes,
 } from "@sims/sims-db";
 import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../../../utilities";
 import { COE_WINDOW, addDays, getISODateOnlyString } from "@sims/utilities";
@@ -35,6 +38,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
   let offeringRepo: Repository<EducationProgramOffering>;
   let collegeC: Institution;
   let collegeCLocation: InstitutionLocation;
+  let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -43,6 +47,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     applicationRepo = dataSource.getRepository(Application);
     disbursementScheduleRepo = dataSource.getRepository(DisbursementSchedule);
     offeringRepo = dataSource.getRepository(EducationProgramOffering);
+    db = createE2EDataSources(dataSource);
 
     const { institution } = await getAuthRelatedEntities(
       appDataSource,
@@ -87,6 +92,34 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     expect(updatedApplication.applicationStatus).toBe(
       ApplicationStatus.Completed,
     );
+  });
+
+  it("Should not allow the COE confirmation when the user is read-only.", async () => {
+    // Arrange
+    const { institution: collegeE } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+    const collegeELocation = createFakeInstitutionLocation({
+      institution: collegeE,
+    });
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+      collegeELocation,
+      InstitutionUserTypes.readOnlyUser,
+    );
+    const endpoint = `/institutions/location/${collegeELocation.id}/confirmation-of-enrollment/disbursement-schedule/999999/confirm`;
+    // Institution token.
+    const collegEInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(await collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN);
   });
 
   it("Should allow the second COE confirmation when the application is on Completed status and all the conditions are fulfilled.", async () => {

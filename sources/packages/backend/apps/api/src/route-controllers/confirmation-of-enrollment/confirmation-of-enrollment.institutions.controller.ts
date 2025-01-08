@@ -21,7 +21,7 @@ import {
   COEDeniedReasonService,
   DisbursementScheduleService,
 } from "../../services";
-import { DisbursementSchedule } from "@sims/sims-db";
+import { DisbursementSchedule, InstitutionUserTypes } from "@sims/sims-db";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   getCOEDeniedReason,
@@ -245,7 +245,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
    * @param locationId location id of the application.
    * @param payload COE confirmation information.
    */
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @ApiNotFoundResponse({
     description: "Enrolment not found.",
   })
@@ -283,7 +283,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
    * @param payload contains the denied reason of the
    * student application.
    */
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @ApiNotFoundResponse({
     description: "Enrolment not found.",
   })
