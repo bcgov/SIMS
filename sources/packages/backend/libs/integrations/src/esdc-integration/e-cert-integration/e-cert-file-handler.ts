@@ -22,6 +22,7 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import * as path from "path";
+import { CreateRequestFileNameResult } from "../models/esdc-integration.model";
 
 /**
  * Error details: error id and block funding info
@@ -41,6 +42,7 @@ type ECertFeedbackCodeMap = Record<string, ErrorDetails>;
 export abstract class ECertFileHandler extends ESDCFileHandler {
   esdcConfig: ESDCIntegrationConfig;
   constructor(
+    private readonly dataSource: DataSource,
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly eCertGenerationService: ECertGenerationService,
@@ -72,7 +74,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * for the respective integration.
    * @param offeringIntensity disbursement offering intensity.
    * @param fileCode file code applicable for Part-Time or Full-Time.
-   * @param sequenceGroupPrefix sequence group prefix for Part-Time or Full-Time
+   * @param sequenceGroup sequence group for Part-Time or Full-Time
    * file sequence generation.
    * @param log cumulative process log.
    * @returns result of the file upload with the file generated and the
@@ -82,7 +84,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
     fileCode: string,
-    sequenceGroupPrefix: string,
+    sequenceGroup: string,
     log: ProcessSummary,
   ): Promise<ECertUploadResult> {
     log.info(
@@ -116,7 +118,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
    * @param eCertIntegrationService Full-Time/Part-Time integration responsible
    * for the respective integration.
    * @param offeringIntensity disbursement offering intensity.
-   * @param fileCode file code applicable for Part-Time or Full-Time.
+   * @param fileInfo e-Cert file information.
    * @param log cumulative process log.
    * @returns information of the uploaded e-Cert file.
    */
@@ -125,7 +127,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     entityManager: EntityManager,
     eCertIntegrationService: ECertIntegrationService,
     offeringIntensity: OfferingIntensity,
-    fileCode: string,
+    fileInfo: CreateRequestFileNameResult,
     log: ProcessSummary,
   ): Promise<ECertUploadResult> {
     const disbursements =
