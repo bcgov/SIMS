@@ -10,7 +10,7 @@ import {
 } from "../../services";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import { getISODateOnlyString, processInParallel } from "@sims/utilities";
-import { EntityManager } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import {
   Award,
@@ -91,23 +91,39 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       `Retrieving ${offeringIntensity} disbursements to generate the e-Cert file...`,
     );
 
-    const sequenceGroup = `${sequenceGroupPrefix}_${getISODateOnlyString(
+    const sequenceGroupFileName = `${sequenceGroup}_${getISODateOnlyString(
       new Date(),
     )}`;
     let uploadResult: ECertUploadResult;
-    await this.sequenceService.consumeNextSequence(
-      sequenceGroup,
-      async (nextSequenceNumber: number, entityManager: EntityManager) => {
-        uploadResult = await this.processECert(
-          nextSequenceNumber,
-          entityManager,
-          eCertIntegrationService,
-          offeringIntensity,
-          fileCode,
-          log,
-        );
-      },
-    );
+    let fileInfo: CreateRequestFileNameResult;
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      // Consume the next sequence number for the e-Cert filename
+      // and execute the creation of the request filename.
+      await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
+        sequenceGroupFileName,
+        transactionalEntityManager,
+        async (nextSequenceNumber: number) => {
+          // Create the request filename with the file path for the e-Cert File.
+          fileInfo = this.createRequestFileName(fileCode, nextSequenceNumber);
+        },
+      );
+      // Consume the next sequence number for the e-Cert file header
+      // and execute the processECert process.
+      await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
+        sequenceGroup,
+        transactionalEntityManager,
+        async (nextSequenceNumber: number, entityManager: EntityManager) => {
+          uploadResult = await this.processECert(
+            nextSequenceNumber,
+            entityManager,
+            eCertIntegrationService,
+            offeringIntensity,
+            fileInfo,
+            log,
+          );
+        },
+      );
+    });
     return uploadResult;
   }
 
@@ -148,8 +164,6 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
       sequenceNumber,
     );
 
-    // Create the request filename with the file path for the e-Cert File.
-    const fileInfo = this.createRequestFileName(fileCode, sequenceNumber);
     log.info(`Uploading ${offeringIntensity} content...`);
     await eCertIntegrationService.uploadContent(fileContent, fileInfo.filePath);
     // Mark all disbursements as sent.
