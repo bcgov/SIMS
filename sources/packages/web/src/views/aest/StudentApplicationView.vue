@@ -37,7 +37,7 @@ import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { useFormioUtils } from "@/composables";
-import { FormIOComponent } from "@/types";
+import { FormIOComponent, FromIOComponentTypes } from "@/types";
 
 export default defineComponent({
   components: {
@@ -66,7 +66,12 @@ export default defineComponent({
       applicationWizard = form;
     };
 
+    /**
+     * Happens when all the form components are rendered, including lists.
+     */
     const formRender = async () => {
+      // Highlight changes in the form after all the components are rendered.
+      // List components are ready only after the form is rendered.
       highlightChanges();
     };
 
@@ -84,47 +89,63 @@ export default defineComponent({
       highlightChanges();
     });
 
+    /**
+     * Check if the application has changes to be highlighted.
+     * Changes are expected after applications are edited after submitted at least once.
+     */
     function highlightChanges() {
       if (!applicationWizard || !applicationDetail.value.changes.length) {
         return;
       }
       highlightChangesRecursive(
-        applicationDetail.value.changes,
         applicationWizard,
+        applicationDetail.value.changes,
       );
     }
 
+    /**
+     * Apply the style class to the components that have changes.
+     * @param parentComponent component to have the changes highlighted.
+     * @param changes list of changes to be highlighted.
+     */
     function highlightChangesRecursive(
-      changes: ApplicationDataChangeAPIOutDTO[],
       parentComponent: FormIOComponent,
+      changes: ApplicationDataChangeAPIOutDTO[],
     ) {
       for (const change of changes) {
         let searchComponent: FormIOComponent | undefined;
-        if (change.key) {
-          searchComponent = parentComponent;
-        } else if (change.index != undefined) {
+        if (typeof change.index === "number") {
           searchComponent = parentComponent.components[change.index];
-          highlightChangesRecursive(change.changes, searchComponent);
-        } else {
-          throw new Error("Invalid change object.");
+          highlightChangesRecursive(searchComponent, change.changes);
+        } else if (change.key) {
+          searchComponent = parentComponent;
         }
-        if (!change.key) {
+        if (!change.key || !searchComponent) {
           continue;
         }
         const [component] = searchByKey(searchComponent.components, change.key);
         if (component) {
-          applyChangedValueStyleClass(component);
-          highlightChangesRecursive(change.changes, component);
+          applyChangedValueStyleClass(component, change.itemsRemoved);
+          highlightChangesRecursive(component, change.changes);
         }
       }
     }
 
-    function applyChangedValueStyleClass(component: FormIOComponent) {
-      const htmlElement = document.getElementById(component.id);
-      if (!htmlElement || htmlElement.classList.contains("changed-value")) {
+    /**
+     * Apply the proper highlight style to a changed component.
+     * @param component component to received the style.
+     * @param itemRemoved indicates if the component had an item removed,
+     * which would required a different style to be applied.
+     */
+    function applyChangedValueStyleClass(
+      component: FormIOComponent,
+      itemRemoved?: boolean,
+    ) {
+      if (component.type === FromIOComponentTypes.Hidden) {
         return;
       }
-      document.getElementById(component.id)?.classList.add("changed-value");
+      const cssClass = itemRemoved ? "changed-list-length" : "changed-value";
+      document.getElementById(component.id)?.classList.add(cssClass);
     }
 
     return {

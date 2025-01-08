@@ -452,7 +452,7 @@ export class ApplicationControllerService {
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     let changes: ApplicationDataChangeAPIOutDTO[] = [];
     if (previousData) {
-      changes = compareApplicationData(previousData, originalApplicationData);
+      changes = compareApplicationData(originalApplicationData, previousData);
     }
     return {
       data: application.data,

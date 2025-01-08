@@ -751,7 +751,37 @@ td .formio-custom-tooltip:hover .tooltip-text {
   content: "\f504" !important;
 }
 
-.changed-value {
+// Styles related to the application changes
+// between the current and previous application versions.
+.changed-value-base {
   color: #dc2525;
-  font-style: italic !important;
+  border-radius: 5px;
+  border: 1px solid #dc2525;
+  padding: 4px;
+}
+
+.changed-value-content-base {
+  @extend .label-small-bold;
+  background: #dc2525;
+  color: white;
+  border-radius: 5px;
+  display: block;
+}
+
+.changed-value {
+  @extend .changed-value-base;
+}
+
+.changed-value::before {
+  @extend .changed-value-content-base;
+  content: "\00a0\00a0Updated";
+}
+
+.changed-list-length {
+  @extend .changed-value-base;
+}
+
+.changed-list-length::before {
+  @extend .changed-value-content-base;
+  content: "\00a0\00a0Items were removed from this list";
 }

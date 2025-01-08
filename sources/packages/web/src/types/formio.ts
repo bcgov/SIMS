@@ -79,6 +79,22 @@ export enum FormIOCustomEventTypes {
   ReissueMSFAA = "reissueMSFAA",
 }
 
+/**
+ * Form IO component types.
+ * This does not represent all the types available in Form.IO,
+ * please expand the list as needed.
+ */
+export enum FromIOComponentTypes {
+  Hidden = "hidden",
+  Datagrid = "datagrid",
+  Button = "button",
+  Select = "select",
+  Panel = "panel",
+  EditGrid = "editgrid",
+  Radio = "radio",
+  Calendar = "calendar",
+}
+
 export interface FormIOComponentInternal {
   key: string;
   customClass: string;
@@ -98,5 +114,6 @@ export interface FormIOComponent {
   customClass: string;
   redraw: any;
   disabled: boolean;
+  type: FromIOComponentTypes;
   setValue: (value: unknown) => void;
 }
