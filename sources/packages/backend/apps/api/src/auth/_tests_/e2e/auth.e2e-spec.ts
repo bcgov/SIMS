@@ -340,6 +340,7 @@ describe("Authentication (e2e)", () => {
       const collegeELocation = createFakeInstitutionLocation({
         institution: collegeE,
       });
+      console.log("collegeELocation:", collegeELocation);
       console.log("Before authorizeUserTokenForLocation !#$%%^%*&(*");
       await authorizeUserTokenForLocation(
         db.dataSource,
@@ -351,6 +352,10 @@ describe("Authentication (e2e)", () => {
       console.log("Before getInstitutionToken !#$%%^%*&(*");
       const collegEInstitutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeEReadOnlyUser,
+      );
+      console.log(
+        "collegEInstitutionUserToken:",
+        collegEInstitutionUserToken.substring(0, 10),
       );
       console.log("Before request !#$%%^%*&(*");
       // Act/Assert
