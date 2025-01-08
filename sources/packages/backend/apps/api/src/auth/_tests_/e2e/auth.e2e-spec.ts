@@ -16,7 +16,6 @@ import {
 import { ConfigModule, ConfigService } from "@sims/utilities/config";
 import { createZeebeModuleMock } from "@sims/test-utils/mocks";
 import { AppModule } from "../../../app.module";
-import { AuthTestController } from "../../../testHelpers/controllers/auth-test/auth-test.controller";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { DataSource } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
@@ -72,7 +71,7 @@ describe("Authentication (e2e)", () => {
       imports: [AppModule, createZeebeModuleMock(), DiscoveryModule],
       // AuthTestController is used only for e2e tests and could be
       // changed as needed to implement more test scenarios.
-      controllers: [AuthTestController],
+      //controllers: [AuthTestController],
     }).compile();
     app = moduleFixture.createNestApplication();
     await app.init();
