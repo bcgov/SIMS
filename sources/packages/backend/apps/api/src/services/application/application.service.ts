@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, Not, Brackets, EntityManager } from "typeorm";
+import {
+  DataSource,
+  In,
+  Not,
+  Brackets,
+  EntityManager,
+  LessThan,
+} from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -661,6 +668,34 @@ export class ApplicationService extends RecordDataModelService<Application> {
           id: options?.studentId,
         },
         location: { institution: { id: options?.institutionId } },
+      },
+    });
+  }
+
+  async getPreviousApplicationDataVersion(
+    referenceApplicationId: number,
+    applicationNumber: string,
+    options?: {
+      studentId?: number;
+      institutionId?: number;
+    },
+  ): Promise<Application | null> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        data: true as unknown,
+      },
+      where: {
+        id: LessThan(referenceApplicationId),
+        applicationNumber,
+        applicationStatus: ApplicationStatus.Overwritten,
+        student: {
+          id: options?.studentId,
+        },
+        location: { institution: { id: options?.institutionId } },
+      },
+      order: {
+        id: "DESC",
       },
     });
   }

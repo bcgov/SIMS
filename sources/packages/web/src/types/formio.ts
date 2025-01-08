@@ -79,6 +79,14 @@ export enum FormIOCustomEventTypes {
   ReissueMSFAA = "reissueMSFAA",
 }
 
+export interface FormIOComponentInternal {
+  key: string;
+  customClass: string;
+  options: unknown;
+  values: unknown;
+  data: { values: unknown[] };
+}
+
 export interface FormIOComponent {
   id: string;
   key: string;
@@ -86,6 +94,9 @@ export interface FormIOComponent {
   components: FormIOComponent[];
   selectOptions: unknown[];
   _visible: boolean;
-  component: any;
+  component: FormIOComponentInternal;
+  customClass: string;
   redraw: any;
+  disabled: boolean;
+  setValue: (value: unknown) => void;
 }

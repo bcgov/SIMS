@@ -53,6 +53,7 @@ export class ApplicationInstitutionsController extends BaseController {
       );
     return this.applicationControllerService.transformToApplicationDTO(
       application,
+      application.data,
     );
   }
 }

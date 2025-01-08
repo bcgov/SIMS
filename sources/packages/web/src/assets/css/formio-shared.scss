@@ -750,3 +750,8 @@ td .formio-custom-tooltip:hover .tooltip-text {
 .bi-question-circle::before {
   content: "\f504" !important;
 }
+
+.changed-value {
+  color: #dc2525;
+  font-style: italic !important;
+}

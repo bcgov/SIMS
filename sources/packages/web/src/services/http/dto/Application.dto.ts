@@ -86,6 +86,13 @@ export interface ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   submittedDate?: Date;
 }
 
+export interface ApplicationDataChangeAPIOutDTO {
+  key?: string;
+  index?: number;
+  itemsRemoved?: boolean;
+  changes: ApplicationDataChangeAPIOutDTO[];
+}
+
 /**
  * DTO for application data
  */
@@ -96,6 +103,7 @@ export interface ApplicationSupplementalDataAPIOutDTO
   applicationStartDate?: string;
   applicationEndDate?: string;
   applicationInstitutionName?: string;
+  changes: ApplicationDataChangeAPIOutDTO[];
 }
 
 /**

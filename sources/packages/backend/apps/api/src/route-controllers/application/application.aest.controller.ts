@@ -82,15 +82,24 @@ export class ApplicationAESTController extends BaseController {
       );
     }
 
+    const originalApplicationData = application.data;
+    const previousApplicationVersion =
+      await this.applicationService.getPreviousApplicationDataVersion(
+        applicationId,
+        application.applicationNumber,
+      );
+
     if (loadDynamicData) {
       application.data =
         await this.applicationControllerService.generateApplicationFormData(
-          application.data,
+          originalApplicationData,
         );
     }
 
     return this.applicationControllerService.transformToApplicationDTO(
       application,
+      originalApplicationData,
+      previousApplicationVersion.data,
     );
   }
 

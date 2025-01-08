@@ -29,7 +29,6 @@ import { Student } from "./student.model";
 import { ProgramYear } from "./program-year.model";
 import { StudentAssessment } from "./student-assessment.model";
 import { ApplicationException } from "./application-exceptions.model";
-import { YesNoOptions } from "@sims/test-utils";
 
 export const APPLICATION_NUMBER_LENGTH = 10;
 export const SIN_NUMBER_LENGTH = 9;
@@ -429,7 +428,7 @@ export interface ApplicationData {
   /**
    * Application PD/PPD Status.
    */
-  applicationPDPPDStatus?: YesNoOptions;
+  applicationPDPPDStatus?: string;
   /**
    * Indigenous person status.
    */

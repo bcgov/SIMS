@@ -6,6 +6,7 @@
     @loaded="formLoaded"
     @changed="formChanged"
     @submitted="submitted"
+    @render="formRender"
     @customEvent="customEvent"
   ></formio>
   <footer-buttons
@@ -68,6 +69,7 @@ export default defineComponent({
     "pageChanged",
     "saveDraft",
     "wizardSubmit",
+    "render",
   ],
   props: {
     initialData: {
@@ -180,6 +182,11 @@ export default defineComponent({
         }
       }
     };
+
+    const formRender = async (form: any) => {
+      context.emit("render", form);
+    };
+
     const formLoaded = async (form: any) => {
       showNav.value = true;
       // Emit formLoadedCallback event to the parent, so that parent can
@@ -216,6 +223,7 @@ export default defineComponent({
       };
       formInstance.on("prevPage", prevNextNavigation);
       formInstance.on("nextPage", prevNextNavigation);
+
       await loadFormDependencies();
     };
 
@@ -355,6 +363,7 @@ export default defineComponent({
       wizardGoPrevious,
       formChanged,
       formLoaded,
+      formRender,
       isFirstPage,
       isLastPage,
       submitted,

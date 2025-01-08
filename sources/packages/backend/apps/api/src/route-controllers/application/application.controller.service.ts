@@ -26,6 +26,7 @@ import {
   ApplicationProgressDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
+  ApplicationDataChangeAPIOutDTO,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -54,6 +55,7 @@ import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { AssessmentSequentialProcessingService } from "@sims/services";
+import { compareApplicationData } from "@sims/utilities";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
@@ -445,7 +447,13 @@ export class ApplicationControllerService {
    */
   async transformToApplicationDTO(
     application: Application,
+    originalApplicationData: unknown,
+    previousData?: unknown,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+    let changes: ApplicationDataChangeAPIOutDTO[] = [];
+    if (previousData) {
+      changes = compareApplicationData(previousData, originalApplicationData);
+    }
     return {
       data: application.data,
       id: application.id,
@@ -461,6 +469,7 @@ export class ApplicationControllerService {
       applicationEndDate: application.currentAssessment?.offering?.studyEndDate,
       applicationInstitutionName:
         application.location?.institution.legalOperatingName,
+      changes,
     };
   }
 
