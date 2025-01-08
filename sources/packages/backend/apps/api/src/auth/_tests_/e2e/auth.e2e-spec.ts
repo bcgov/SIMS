@@ -329,15 +329,19 @@ describe("Authentication (e2e)", () => {
         .expect(HttpStatus.OK);
     });
 
-    it("Should return a HttpStatus FORBIDDEN(403) when a read-only institution user tries to access a non-reading-only route to their institution.", async () => {
+    it.only("Should return a HttpStatus FORBIDDEN(403) when a read-only institution user tries to access a non-reading-only route to their institution.", async () => {
       // Arrange
+
+      console.log("Before getAuthRelatedEntities !#@$!%$&");
       const { institution: collegeE } = await getAuthRelatedEntities(
         db.dataSource,
         InstitutionTokenTypes.CollegeEReadOnlyUser,
       );
+      console.log("Before createFakeInstitutionLocation !#$%%^%*&(*");
       const collegeELocation = createFakeInstitutionLocation({
         institution: collegeE,
       });
+      console.log("Before authorizeUserTokenForLocation !#$%%^%*&(*");
       await authorizeUserTokenForLocation(
         db.dataSource,
         InstitutionTokenTypes.CollegeEReadOnlyUser,
@@ -345,10 +349,11 @@ describe("Authentication (e2e)", () => {
         InstitutionUserTypes.readOnlyUser,
       );
       const endpoint = `/auth-test/institution-location-modifying-route/${collegeELocation.id}`;
+      console.log("Before getInstitutionToken !#$%%^%*&(*");
       const collegEInstitutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeEReadOnlyUser,
       );
-
+      console.log("Before request !#$%%^%*&(*");
       // Act/Assert
       await request(app.getHttpServer())
         .get(endpoint)
