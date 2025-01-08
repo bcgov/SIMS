@@ -62,16 +62,14 @@ describe("ApplicationAESTController(e2e)-getApplicationVersionHistory", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        applicationVersions: [
-          {
-            applicationId: previousApplication.id,
-            submittedDate: getPSTPDTDateHourMinute(
-              previousApplication.submittedDate,
-            ),
-          },
-        ],
-      });
+      .expect([
+        {
+          id: previousApplication.id,
+          submittedDate: getPSTPDTDateHourMinute(
+            previousApplication.submittedDate,
+          ),
+        },
+      ]);
   });
 
   it("Should throw not found error when an application is not found.", async () => {
