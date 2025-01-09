@@ -36,7 +36,11 @@ import {
   getPIRDeniedReason,
   getUserFullName,
 } from "../../utilities";
-import { ApplicationDataChange, getDateOnlyFormat } from "@sims/utilities";
+import {
+  ApplicationDataChange,
+  getDateOnlyFormat,
+  compareApplicationData,
+} from "@sims/utilities";
 import {
   Application,
   ApplicationData,
@@ -55,7 +59,6 @@ import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { AssessmentSequentialProcessingService } from "@sims/services";
-import { compareApplicationData } from "@sims/utilities";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
