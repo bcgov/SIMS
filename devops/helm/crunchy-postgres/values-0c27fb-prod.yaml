@@ -1,7 +1,7 @@
 fullnameOverride: simsdb
 appuser: app-database-user
 nonsuperuser: non-super-user
-
+readonlyuser: read-only-user
 crunchyImage: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
 #crunchyImage: artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres-gis:ubi8-15.2-3.3-0 # use this image for POSTGIS
 postgresVersion: 15
