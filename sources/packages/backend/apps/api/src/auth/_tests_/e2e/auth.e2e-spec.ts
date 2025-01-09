@@ -69,11 +69,12 @@ describe("Authentication (e2e)", () => {
     );
     aestAccessToken = aestToken.access_token;
 
-    collegEInstitutionUserToken = await KeycloakService.shared.getToken(
+    const collegEToken = await KeycloakService.shared.getToken(
       SIMS2_COLLE_USER,
       process.env.E2E_TEST_STUDENT_PASSWORD,
       "institution",
     );
+    collegEInstitutionUserToken = collegEToken.access_token;
 
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule, createZeebeModuleMock(), DiscoveryModule],
