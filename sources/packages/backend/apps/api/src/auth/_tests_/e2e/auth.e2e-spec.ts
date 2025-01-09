@@ -24,13 +24,14 @@ import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
   getAuthRelatedEntities,
-  getInstitutionToken,
   InstitutionTokenTypes,
   mockUserLoginInfo,
   resetMockUserLoginInfo,
 } from "../../../testHelpers";
 import * as dayjs from "dayjs";
 import { InstitutionUserTypes, Student, User } from "@sims/sims-db";
+import { AuthTestController } from "apps/api/src/testHelpers/controllers/auth-test/auth-test.controller";
+import { SIMS2_COLLE_USER } from "@sims/test-utils/constants";
 
 describe("Authentication (e2e)", () => {
   // Nest application to be shared for all e2e tests
@@ -48,6 +49,7 @@ describe("Authentication (e2e)", () => {
   let db: E2EDataSources;
   let studentDecodedToken: any;
   let moduleFixture: TestingModule;
+  let collegEInstitutionUserToken: string;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -67,11 +69,17 @@ describe("Authentication (e2e)", () => {
     );
     aestAccessToken = aestToken.access_token;
 
+    collegEInstitutionUserToken = await KeycloakService.shared.getToken(
+      SIMS2_COLLE_USER,
+      process.env.E2E_TEST_STUDENT_PASSWORD,
+      "institution",
+    );
+
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule, createZeebeModuleMock(), DiscoveryModule],
       // AuthTestController is used only for e2e tests and could be
       // changed as needed to implement more test scenarios.
-      //controllers: [AuthTestController],
+      controllers: [AuthTestController],
     }).compile();
     app = moduleFixture.createNestApplication();
     await app.init();
@@ -317,9 +325,9 @@ describe("Authentication (e2e)", () => {
         InstitutionUserTypes.readOnlyUser,
       );
       const endpoint = `/auth-test/institution-location-reading-route/${collegeELocation.id}`;
-      const collegEInstitutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeEReadOnlyUser,
-      );
+      // const collegEInstitutionUserToken = await getInstitutionToken(
+      //   InstitutionTokenTypes.CollegeEReadOnlyUser,
+      // );
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -349,10 +357,10 @@ describe("Authentication (e2e)", () => {
         InstitutionUserTypes.readOnlyUser,
       );
       const endpoint = `/auth-test/institution-location-modifying-route/${collegeELocation.id}`;
-      console.log("Before getInstitutionToken !#$%%^%*&(*");
-      const collegEInstitutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeEReadOnlyUser,
-      );
+      // console.log("Before getInstitutionToken !#$%%^%*&(*");
+      // const collegEInstitutionUserToken = await getInstitutionToken(
+      //   InstitutionTokenTypes.CollegeEReadOnlyUser,
+      // );
       console.log(
         "collegEInstitutionUserToken:",
         collegEInstitutionUserToken.substring(0, 10),
