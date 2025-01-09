@@ -9,9 +9,7 @@ import {
   RequiresUserAccount,
   HasLocationAccess,
 } from "../../../auth/decorators";
-import { Role } from "../../../auth/roles.enum";
-import { UserGroups } from "../../../auth/user-groups.enum";
-import { InstitutionUserTypes } from "@sims/sims-db";
+import { Role, UserGroups, InstitutionUserTypes } from "../../../auth";
 
 /**
  * Controller dedicated to test the functionalities around the authentication layer.

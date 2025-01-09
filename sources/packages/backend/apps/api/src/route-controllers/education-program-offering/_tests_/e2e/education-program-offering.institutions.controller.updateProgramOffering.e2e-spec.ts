@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   Institution,
   InstitutionLocation,
-  InstitutionUserTypes,
   OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
@@ -23,6 +22,7 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
   createFakeEducationProgramOffering,
+  getReadOnlyCollegeEAuthorizedLocation,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import * as faker from "faker";
@@ -163,22 +163,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
 
   it("Should not update a new offering when requested by a read-only user.", async () => {
     // Arrange
-    const { institution: collegeE } = await getAuthRelatedEntities(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeEReadOnlyUser,
-    );
-    const collegeELocation = createFakeInstitutionLocation({
-      institution: collegeE,
-    });
-    await authorizeUserTokenForLocation(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeEReadOnlyUser,
-      collegeELocation,
-      InstitutionUserTypes.readOnlyUser,
-    );
-
+    const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
     const endpoint = `/institutions/education-program-offering/location/${collegeELocation.id}/education-program/999999/offering/999999`;
-
     const collegEInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeEReadOnlyUser,
     );
@@ -187,7 +173,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     await request(app.getHttpServer())
       .patch(endpoint)
       .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN);
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "Forbidden resource",
+        error: "Forbidden",
+      });
   });
 
   it("Should throw error when education program is expired.", async () => {

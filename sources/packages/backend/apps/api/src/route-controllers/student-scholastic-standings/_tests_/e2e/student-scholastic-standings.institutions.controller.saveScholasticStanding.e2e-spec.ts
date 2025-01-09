@@ -15,13 +15,13 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
+  getReadOnlyCollegeEAuthorizedLocation,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import {
   ApplicationStatus,
   AssessmentTriggerType,
   InstitutionLocation,
-  InstitutionUserTypes,
   NotificationMessageType,
   OfferingIntensity,
   StudentScholasticStandingChangeType,
@@ -263,21 +263,8 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
 
   it("Should not create a new scholastic standing when the user is read-only.", async () => {
     // Arrange
-    const { institution: collegeE } = await getAuthRelatedEntities(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeEReadOnlyUser,
-    );
-    const collegeELocation = createFakeInstitutionLocation({
-      institution: collegeE,
-    });
-    await authorizeUserTokenForLocation(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeEReadOnlyUser,
-      collegeELocation,
-      InstitutionUserTypes.readOnlyUser,
-    );
+    const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
     const endpoint = `/institutions/scholastic-standing/location/${collegeELocation.id}/application/99999`;
-    // Institution token.
     const collegEInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeEReadOnlyUser,
     );
@@ -286,7 +273,12 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     await request(app.getHttpServer())
       .post(endpoint)
       .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN);
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "Forbidden resource",
+        error: "Forbidden",
+      });
   });
 
   it("Should create a new scholastic standing 'School transfer' for a part-time application when the institution user requests.", async () => {

@@ -9,7 +9,6 @@ import {
 } from "@sims/auth/utilities/certificate-utils";
 import {
   createE2EDataSources,
-  createFakeInstitutionLocation,
   E2EDataSources,
   getProviderInstanceForModule,
 } from "@sims/test-utils";
@@ -21,15 +20,13 @@ import { DataSource } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
 import { INVALID_BETA_USER, MISSING_USER_ACCOUNT } from "../../../constants";
 import {
-  authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
-  getAuthRelatedEntities,
-  InstitutionTokenTypes,
+  getReadOnlyCollegeEAuthorizedLocation,
   mockUserLoginInfo,
   resetMockUserLoginInfo,
 } from "../../../testHelpers";
 import * as dayjs from "dayjs";
-import { InstitutionUserTypes, Student, User } from "@sims/sims-db";
+import { Student, User } from "@sims/sims-db";
 import { AuthTestController } from "../../../testHelpers/controllers/auth-test/auth-test.controller";
 import { SIMS2_COLLE_USER } from "@sims/test-utils/constants";
 
@@ -312,19 +309,7 @@ describe("Authentication (e2e)", () => {
 
     it("Should return a HttpStatus OK(200) when a read-only institution user tries to access a read-only route to their institution.", async () => {
       // Arrange
-      const { institution: collegeE } = await getAuthRelatedEntities(
-        db.dataSource,
-        InstitutionTokenTypes.CollegeEReadOnlyUser,
-      );
-      const collegeELocation = createFakeInstitutionLocation({
-        institution: collegeE,
-      });
-      await authorizeUserTokenForLocation(
-        db.dataSource,
-        InstitutionTokenTypes.CollegeEReadOnlyUser,
-        collegeELocation,
-        InstitutionUserTypes.readOnlyUser,
-      );
+      const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
       const endpoint = `/auth-test/institution-location-reading-route/${collegeELocation.id}`;
 
       // Act/Assert
@@ -336,27 +321,19 @@ describe("Authentication (e2e)", () => {
 
     it("Should return a HttpStatus FORBIDDEN(403) when a read-only institution user tries to access a non-reading-only route to their institution.", async () => {
       // Arrange
-
-      const { institution: collegeE } = await getAuthRelatedEntities(
-        db.dataSource,
-        InstitutionTokenTypes.CollegeEReadOnlyUser,
-      );
-      const collegeELocation = createFakeInstitutionLocation({
-        institution: collegeE,
-      });
-      await authorizeUserTokenForLocation(
-        db.dataSource,
-        InstitutionTokenTypes.CollegeEReadOnlyUser,
-        collegeELocation,
-        InstitutionUserTypes.readOnlyUser,
-      );
+      const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
       const endpoint = `/auth-test/institution-location-modifying-route/${collegeELocation.id}`;
 
       // Act/Assert
       await request(app.getHttpServer())
         .get(endpoint)
         .auth(collegEInstitutionReadOnlyUserAccessToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.FORBIDDEN);
+        .expect(HttpStatus.FORBIDDEN)
+        .expect({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: "Forbidden resource",
+          error: "Forbidden",
+        });
     });
   });
 

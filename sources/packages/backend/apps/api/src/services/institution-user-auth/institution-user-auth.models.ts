@@ -111,6 +111,20 @@ export class InstitutionUserAuthorizations {
       .filter((auth) => auth.locationId)
       .map((auth) => auth.locationId);
   }
+
+  /**
+   * Determines whether the user has a user type associated with any location.
+   * @param userType User type to check the permission.
+   * @returns true if the user type is present at any location the user is associated with.
+   */
+  hasUserTypeAtAnyLocation(institutionUserType: InstitutionUserTypes): boolean {
+    if (this.isAdmin()) {
+      return true;
+    }
+    return this.authorizations.some(
+      (auth) => auth.userType === institutionUserType,
+    );
+  }
 }
 
 export interface Authorizations {

@@ -63,7 +63,7 @@ import {
   uploadLimits,
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { InstitutionUserTypes } from "@sims/sims-db";
+import { InstitutionUserTypes } from "../../auth";
 
 /**
  * Scholastic standing controller for institutions Client.

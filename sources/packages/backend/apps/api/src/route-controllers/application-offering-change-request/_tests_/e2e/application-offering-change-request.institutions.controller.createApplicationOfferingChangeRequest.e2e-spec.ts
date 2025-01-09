@@ -6,6 +6,7 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
+  getReadOnlyCollegeEAuthorizedLocation,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 import {
@@ -20,7 +21,6 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   InstitutionLocation,
-  InstitutionUserTypes,
   OfferingIntensity,
 } from "@sims/sims-db";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
@@ -135,21 +135,8 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
 
   it("Should not be able to submit application offering request with a read-only user.", async () => {
     // Arrange
-    const { institution: collegeE } = await getAuthRelatedEntities(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeEReadOnlyUser,
-    );
-    const collegeELocation = createFakeInstitutionLocation({
-      institution: collegeE,
-    });
-    await authorizeUserTokenForLocation(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeEReadOnlyUser,
-      collegeELocation,
-      InstitutionUserTypes.readOnlyUser,
-    );
+    const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
     const endpoint = `/institutions/location/${collegeELocation.id}/application-offering-change-request`;
-    // Institution token.
     const collegEInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeEReadOnlyUser,
     );
@@ -158,7 +145,12 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     await request(app.getHttpServer())
       .post(endpoint)
       .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN);
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "Forbidden resource",
+        error: "Forbidden",
+      });
   });
 
   it("Should throw study overlap error when trying to submit application offering request with an offering, which overlap with students another application.", async () => {

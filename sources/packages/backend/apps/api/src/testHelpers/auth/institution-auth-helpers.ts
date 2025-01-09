@@ -8,7 +8,11 @@ import {
   InstitutionUserTypes,
   User,
 } from "@sims/sims-db";
-import { createFakeInstitutionUser } from "@sims/test-utils";
+import {
+  createFakeInstitutionLocation,
+  createFakeInstitutionUser,
+  E2EDataSources,
+} from "@sims/test-utils";
 import {
   COLLEGE_C_BUSINESS_GUID,
   COLLEGE_D_BUSINESS_GUID,
@@ -134,7 +138,9 @@ export async function authorizeUserTokenForLocation(
   dataSource: DataSource,
   userTokenType: InstitutionTokenTypes,
   location: InstitutionLocation,
-  institutionUserType?: InstitutionUserTypes,
+  options?: {
+    institutionUserType?: InstitutionUserTypes;
+  },
 ) {
   const { institution, user } = await getAuthRelatedEntities(
     dataSource,
@@ -149,8 +155,27 @@ export async function authorizeUserTokenForLocation(
     institution.id,
     user.id,
     location.id,
-    institutionUserType ?? InstitutionUserTypes.user,
+    options?.institutionUserType ?? InstitutionUserTypes.user,
   );
+}
+
+export async function getReadOnlyCollegeEAuthorizedLocation(
+  db: E2EDataSources,
+) {
+  const { institution: collegeE } = await getAuthRelatedEntities(
+    db.dataSource,
+    InstitutionTokenTypes.CollegeEReadOnlyUser,
+  );
+  const collegeELocation = createFakeInstitutionLocation({
+    institution: collegeE,
+  });
+  await authorizeUserTokenForLocation(
+    db.dataSource,
+    InstitutionTokenTypes.CollegeEReadOnlyUser,
+    collegeELocation,
+    { institutionUserType: InstitutionUserTypes.readOnlyUser },
+  );
+  return collegeELocation;
 }
 
 export const INSTITUTION_BC_PUBLIC_ERROR_MESSAGE =

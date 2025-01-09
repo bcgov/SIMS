@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -7,8 +8,13 @@ import {
   EducationProgramOfferingService,
   EducationProgramService,
   FormService,
+  InstitutionUserAuthorizations,
 } from "../../services";
-import { EducationProgram, OfferingTypes } from "@sims/sims-db";
+import {
+  EducationProgram,
+  InstitutionUserTypes,
+  OfferingTypes,
+} from "@sims/sims-db";
 import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,
@@ -304,6 +310,25 @@ export class EducationProgramControllerService {
         }
       }
       throw error;
+    }
+  }
+
+  /**
+   * Checks if the user is authorized to create or modify programs for the institution.
+   * User should have a user type different from read-only user.
+   * @param userToken user token.
+   * @throws ForbiddenException if the user is not authorized.
+   */
+  checkInstitutionAuthorization(
+    institutionUserAuthorizations: InstitutionUserAuthorizations,
+  ) {
+    const isAuthorized = institutionUserAuthorizations.hasUserTypeAtAnyLocation(
+      InstitutionUserTypes.user,
+    );
+    if (!isAuthorized) {
+      throw new ForbiddenException(
+        "You are not authorized to create or modify a program.",
+      );
     }
   }
 }

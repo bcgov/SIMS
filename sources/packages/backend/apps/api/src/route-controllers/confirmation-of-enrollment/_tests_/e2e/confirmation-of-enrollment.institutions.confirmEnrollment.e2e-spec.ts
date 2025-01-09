@@ -7,6 +7,7 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
+  getReadOnlyCollegeEAuthorizedLocation,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 import {
@@ -25,7 +26,6 @@ import {
   EducationProgramOffering,
   Institution,
   InstitutionLocation,
-  InstitutionUserTypes,
   OfferingIntensity,
   SequenceControl,
 } from "@sims/sims-db";
@@ -148,21 +148,8 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
 
   it("Should not allow the COE confirmation when the user is read-only.", async () => {
     // Arrange
-    const { institution: collegeE } = await getAuthRelatedEntities(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeEReadOnlyUser,
-    );
-    const collegeELocation = createFakeInstitutionLocation({
-      institution: collegeE,
-    });
-    await authorizeUserTokenForLocation(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeEReadOnlyUser,
-      collegeELocation,
-      InstitutionUserTypes.readOnlyUser,
-    );
+    const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
     const endpoint = `/institutions/location/${collegeELocation.id}/confirmation-of-enrollment/disbursement-schedule/999999/confirm`;
-    // Institution token.
     const collegEInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeEReadOnlyUser,
     );
@@ -171,7 +158,12 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     await request(app.getHttpServer())
       .patch(endpoint)
       .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN);
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "Forbidden resource",
+        error: "Forbidden",
+      });
   });
 
   it("Should allow the second COE confirmation when the application is on Completed status and all the conditions are fulfilled.", async () => {
