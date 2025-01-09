@@ -1,5 +1,14 @@
 import { ApplicationDataChange } from "./application-data-comparison.models";
 
+/**
+ * Compares two sets of student application data and returns an array of changes.
+ * Identifies differences between the current and previous
+ * data, such as changes in values, additions, or deletions, and represents
+ * them as an array of {@link ApplicationDataChange} objects.
+ * @param currentData current state of the application data.
+ * @param previousData previous state of the application data.
+ * @returns array of {@link ApplicationDataChange} objects representing the detected changes.
+ */
 export function compareApplicationData(
   currentData: unknown,
   previousData: unknown,
@@ -11,6 +20,15 @@ export function compareApplicationData(
   return root?.changes ?? [];
 }
 
+/**
+ * Recursively compares two sets of student application data and detect the differences.
+ * @param currentData current state of the student application data.
+ * @param previousData previous state of the student application data.
+ * @param parentChange parent change to add the new changes detected.
+ * @param options options to support the new change creation.
+ * - `propertyKey`: key of the property that changed.
+ * - `index`: index of the array item that changed.
+ */
 function compareApplicationDataRecursive(
   currentData: unknown,
   previousData: unknown,
@@ -59,6 +77,15 @@ function compareApplicationDataRecursive(
   parentChange.changes.push(newChange);
 }
 
+/**
+ * Checks if an array has changes comparing the currentData and previousData arrays.
+ * @param currentData current data array.
+ * @param previousData previous data array.
+ * @param parentChange parent change that will have the new {@link ApplicationDataChange} added.
+ * @param options options to support the new change creation.
+ * - `propertyKey`: key of the property that changed.
+ * - `index`: index of the array item that changed.
+ */
 function checkArrayChanges(
   currentData: unknown[],
   previousData: unknown[],
@@ -69,7 +96,7 @@ function checkArrayChanges(
   if (!isEqual(currentData, previousData)) {
     arrayItemChange = new ApplicationDataChange(options?.propertyKey);
     parentChange.changes.push(arrayItemChange);
-    if (currentData.length > previousData.length) {
+    if (currentData.length < previousData.length) {
       arrayItemChange.itemsRemoved = true;
     }
   }
@@ -88,6 +115,15 @@ function checkArrayChanges(
   }
 }
 
+/**
+ * Checks if an object has changes comparing the currentData and previousData objects.
+ * @param currentData current data object.
+ * @param previousData previous data object.
+ * @param parentChange parent change that will have the new {@link ApplicationDataChange} added.
+ * @param options options to support the new change creation.
+ * - `propertyKey`: key of the property that changed.
+ * - `index`: index of the array item that changed.
+ */
 function checkObjectChanges(
   currentData: unknown,
   previousData: unknown,

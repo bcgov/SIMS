@@ -36,7 +36,7 @@ import {
   getPIRDeniedReason,
   getUserFullName,
 } from "../../utilities";
-import { getDateOnlyFormat } from "@sims/utilities";
+import { ApplicationDataChange, getDateOnlyFormat } from "@sims/utilities";
 import {
   Application,
   ApplicationData,
@@ -450,9 +450,13 @@ export class ApplicationControllerService {
     application: Application,
     previousData?: unknown,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    let changes: ApplicationDataChangeAPIOutDTO[] = [];
+    const changes: ApplicationDataChangeAPIOutDTO[] = [];
     if (previousData) {
-      changes = compareApplicationData(application.data, previousData);
+      const applicationDataChanges = compareApplicationData(
+        application.data,
+        previousData,
+      );
+      this.transformToApplicationChangesDTO(applicationDataChanges, changes);
     }
     return {
       data: application.data,
@@ -471,6 +475,33 @@ export class ApplicationControllerService {
         application.location?.institution.legalOperatingName,
       changes,
     };
+  }
+
+  /**
+   * Recursively converts the {@link ApplicationDataChange} service model to the
+   * DTO model {@link ApplicationDataChangeAPIOutDTO} which will ensure
+   * that only required properties will be returned from the API also preventing
+   * that future changes in the service model will not be directly returned.
+   * @param applicationDataChanges service model application changes.
+   * @param applicationDataChangeAPIOutDTO converted API DTO model.
+   */
+  transformToApplicationChangesDTO(
+    applicationDataChanges: ApplicationDataChange[],
+    applicationDataChangeAPIOutDTO: ApplicationDataChangeAPIOutDTO[],
+  ): void {
+    applicationDataChanges.forEach((dataChange) => {
+      const dataChangeDTO: ApplicationDataChangeAPIOutDTO = {
+        key: dataChange.key,
+        index: dataChange.index,
+        itemsRemoved: dataChange.itemsRemoved,
+        changes: [],
+      };
+      applicationDataChangeAPIOutDTO.push(dataChangeDTO);
+      this.transformToApplicationChangesDTO(
+        dataChange.changes,
+        dataChangeDTO.changes,
+      );
+    });
   }
 
   /**

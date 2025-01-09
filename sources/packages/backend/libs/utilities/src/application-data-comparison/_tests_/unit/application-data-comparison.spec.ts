@@ -18,7 +18,7 @@ describe("Detect differences between student application data.", () => {
     expect(result).toHaveLength(0);
   });
 
-  it("Should detected changes when the changes happened in primitive values at the first level including null and undefined.", () => {
+  it("Should detected changes when the changes happened in primitive values at the first level including null to undefined or vice versa.", () => {
     // Arrange
     const current = {
       bcResident: "yes",
@@ -100,6 +100,117 @@ describe("Detect differences between student application data.", () => {
             newValue: false,
             oldValue: true,
             changes: [],
+          },
+        ],
+      },
+    ]);
+  });
+
+  it("Should detected items removed in an array when the current data array has fewer items than the previous.", () => {
+    // Arrange
+    const current = {
+      dependants: [
+        {
+          fullName: "My son 1",
+          dateOfBirth: "2025-01-02",
+        },
+      ],
+    };
+    const previous = {
+      dependants: [
+        {
+          fullName: "My son 1",
+          dateOfBirth: "2025-01-02",
+        },
+        {
+          fullName: "My son 2",
+          dateOfBirth: "2025-01-02",
+        },
+      ],
+    };
+    // Act
+    const result = compareApplicationData(current, previous);
+    // Assert
+    expect(result).toEqual([
+      {
+        key: "dependants",
+        changes: [],
+        itemsRemoved: true,
+      },
+    ]);
+  });
+
+  it("Should detected items changed in an array at any level when the current data has at least one different property from the previous data.", () => {
+    // Arrange
+    const current = {
+      dependants: [
+        {
+          fullName: "My son 1",
+          dateOfBirth: "2025-01-02",
+          someFilesArray: [
+            {
+              url: "student/files/FileNameA-3370396b-8460-41d3-bb47-198ee84cc528.txt",
+              name: "FileNameA-3370396b-8460-41d3-bb47-198ee84cc528.txt",
+              originalName: "FileNameA.txt",
+            },
+            {
+              url: "student/files/FileNameA-3370396b-8460-41d3-bb47-198ee84cc528.txt",
+              name: "FileNameA-3370396b-8460-41d3-bb47-198ee84cc528_SOMETHING_CHANGED.txt",
+              originalName: "FileNameA.txt",
+            },
+          ],
+        },
+      ],
+    };
+    const previous = {
+      dependants: [
+        {
+          fullName: "My son 1",
+          dateOfBirth: "2025-01-02",
+          someFilesArray: [
+            {
+              url: "student/files/FileNameA-3370396b-8460-41d3-bb47-198ee84cc528.txt",
+              name: "FileNameA-3370396b-8460-41d3-bb47-198ee84cc528.txt",
+              originalName: "FileNameA.txt",
+            },
+            {
+              url: "student/files/FileNameA-3370396b-8460-41d3-bb47-198ee84cc528.txt",
+              name: "FileNameA-3370396b-8460-41d3-bb47-198ee84cc528.txt",
+              originalName: "FileNameA.txt",
+            },
+          ],
+        },
+      ],
+    };
+    // Act
+    const result = compareApplicationData(current, previous);
+    // Assert
+    expect(result).toEqual([
+      {
+        key: "dependants",
+        changes: [
+          {
+            index: 0,
+            changes: [
+              {
+                key: "someFilesArray",
+                changes: [
+                  {
+                    index: 1,
+                    changes: [
+                      {
+                        key: "name",
+                        newValue:
+                          "FileNameA-3370396b-8460-41d3-bb47-198ee84cc528_SOMETHING_CHANGED.txt",
+                        oldValue:
+                          "FileNameA-3370396b-8460-41d3-bb47-198ee84cc528.txt",
+                        changes: [],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
           },
         ],
       },
