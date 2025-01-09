@@ -160,6 +160,13 @@ export async function authorizeUserTokenForLocation(
   );
 }
 
+/**
+ * Create a location for College E with read only user access.
+ * This is useful for tests that need to assert that the API endpoints
+ * are properly restricted for read only users.
+ * @param db E2E testing data sources.
+ * @returns location with read only access for College E.
+ */
 export async function getReadOnlyCollegeEAuthorizedLocation(
   db: E2EDataSources,
 ) {
