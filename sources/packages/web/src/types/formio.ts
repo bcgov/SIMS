@@ -2,7 +2,7 @@
  * FormIO form. Methods available can be checked on
  * https://help.form.io/developers/form-renderer.
  */
-export interface FormIOForm<T = unknown> {
+export interface FormIOForm<T = unknown> extends FormIOComponent {
   data: T;
   nosubmit: boolean;
   checkValidity: (

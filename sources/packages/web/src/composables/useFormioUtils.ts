@@ -71,8 +71,6 @@ export function useFormioUtils() {
   ) => {
     const stopOnFirstMatch = options?.stopOnFirstMatch ?? false;
     components.forEach((component: any) => {
-      // console.log(component.key);
-      // console.log(component.component.key);
       if (stopOnFirstMatch && matchedComponents.length) {
         // If only the first match is needed, and one was found, stop searching.
         return;
@@ -119,6 +117,15 @@ export function useFormioUtils() {
     return matchedComponents;
   };
 
+  /**
+   * Search recursively by a component and returns
+   * all the matches with the same key.
+   * @param components components to be checked.
+   * @param componentKey key to be matched.
+   * @param options search options.
+   * - `stopOnFirstMatch` indicates if should stop at the first match, default true.
+   * @returns components found.
+   */
   const searchByKey = (
     components: FormIOComponent[],
     componentKey: string,

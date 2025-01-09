@@ -16,7 +16,6 @@
       {{ emptyStringFiller(applicationDetail.applicationNumber) }}
     </h2>
     <StudentApplication
-      @formLoadedCallback="loadForm"
       @render="formRender"
       :selectedForm="selectedForm"
       :initialData="initialData"
@@ -37,7 +36,7 @@ import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { useFormioUtils } from "@/composables";
-import { FormIOComponent, FromIOComponentTypes } from "@/types";
+import { FormIOComponent, FormIOForm, FromIOComponentTypes } from "@/types";
 
 export default defineComponent({
   components: {
@@ -56,25 +55,22 @@ export default defineComponent({
   setup(props) {
     const { emptyStringFiller } = useFormatters();
     const { searchByKey } = useFormioUtils();
-
     const applicationDetail = ref({} as ApplicationSupplementalDataAPIOutDTO);
     const initialData = ref({});
     const selectedForm = ref();
-    let applicationWizard: any;
-
-    const loadForm = async (form: any) => {
-      applicationWizard = form;
-    };
-
+    let applicationWizard: FormIOForm;
     /**
      * Happens when all the form components are rendered, including lists.
      */
-    const formRender = async () => {
+    const formRender = async (form: FormIOForm) => {
+      applicationWizard = form;
       // Highlight changes in the form after all the components are rendered.
       // List components are ready only after the form is rendered.
       highlightChanges();
     };
-
+    /**
+     * Loads the initial application data.
+     */
     onMounted(async () => {
       const application = await ApplicationService.shared.getApplicationDetail(
         props.applicationId,
@@ -88,7 +84,6 @@ export default defineComponent({
       };
       highlightChanges();
     });
-
     /**
      * Check if the application has changes to be highlighted.
      * Changes are expected after applications are edited after submitted at least once.
@@ -102,7 +97,6 @@ export default defineComponent({
         applicationDetail.value.changes,
       );
     }
-
     /**
      * Apply the style class to the components that have changes.
      * @param parentComponent component to have the changes highlighted.
@@ -145,8 +139,6 @@ export default defineComponent({
       component: FormIOComponent,
       itemRemoved?: boolean,
     ) {
-      // TODO: should we check for changes in the read-only version?
-      // TODO: should we check only read-only versions?
       if (
         component.type === FromIOComponentTypes.Hidden ||
         component._visible === false
@@ -158,7 +150,6 @@ export default defineComponent({
     }
 
     return {
-      loadForm,
       formRender,
       applicationDetail,
       initialData,
