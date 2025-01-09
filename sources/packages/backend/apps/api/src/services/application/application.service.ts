@@ -672,34 +672,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
   }
 
-  async getPreviousApplicationDataVersion(
-    referenceApplicationId: number,
-    applicationNumber: string,
-    options?: {
-      studentId?: number;
-      institutionId?: number;
-    },
-  ): Promise<Application | null> {
-    return this.repo.findOne({
-      select: {
-        id: true,
-        data: true as unknown,
-      },
-      where: {
-        id: LessThan(referenceApplicationId),
-        applicationNumber,
-        applicationStatus: ApplicationStatus.Overwritten,
-        student: {
-          id: options?.studentId,
-        },
-        location: { institution: { id: options?.institutionId } },
-      },
-      order: {
-        id: "DESC",
-      },
-    });
-  }
-
   /**
    * Get all student applications.
    * @param studentId student id.
@@ -1869,6 +1841,39 @@ export class ApplicationService extends RecordDataModelService<Application> {
           },
         },
       },
+    });
+  }
+
+  /**
+   * Get previous application versions for an application.
+   * @param applicationId application id.
+   * @param options method options.
+   * - `limit` number of previous application versions to be returned.
+   * - `loadDynamicData` optionally loads the dynamic data.
+   * @returns previous application versions.
+   */
+  async getPreviousApplicationVersions(
+    applicationId: number,
+    options?: { loadDynamicData?: boolean; limit?: number },
+  ): Promise<Application[]> {
+    const application = await this.repo.findOne({
+      select: { applicationNumber: true, submittedDate: true },
+      where: { id: applicationId },
+    });
+    return this.repo.find({
+      select: {
+        id: true,
+        submittedDate: true,
+        data: !!options?.loadDynamicData as unknown,
+      },
+      where: {
+        submittedDate: LessThan(application.submittedDate),
+        applicationNumber: application.applicationNumber,
+      },
+      order: {
+        submittedDate: "DESC",
+      },
+      take: options?.limit,
     });
   }
 

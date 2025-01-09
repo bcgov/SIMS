@@ -341,6 +341,7 @@ export async function saveFakeApplication(
       fakeOriginalAssessment,
     );
     savedApplication.currentAssessment = savedOriginalAssessment;
+    savedApplication.submittedDate = new Date();
   } else {
     savedApplication.location = null;
   }

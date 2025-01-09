@@ -90,10 +90,10 @@ export class ApplicationAESTController extends BaseController {
           application.data,
         );
       // Check if a previous application exists.
-      const previousApplicationVersion =
-        await this.applicationService.getPreviousApplicationDataVersion(
+      const [previousApplicationVersion] =
+        await this.applicationService.getPreviousApplicationVersions(
           applicationId,
-          application.applicationNumber,
+          { loadDynamicData: true, limit: 1 },
         );
       // If there is a previous application, generate its read-only data.
       const previousReadOnlyDataPromise =
