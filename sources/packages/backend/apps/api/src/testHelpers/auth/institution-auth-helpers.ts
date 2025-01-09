@@ -133,6 +133,7 @@ async function authorizeUserForLocation(
  * @param userTokenType user type that need to be associated. This will be the
  * same userTokenType used to authenticate to the API.
  * @param location location to have the access granted for the user.
+ * @param options optional parameters.
  */
 export async function authorizeUserTokenForLocation(
   dataSource: DataSource,
