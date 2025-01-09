@@ -19,7 +19,7 @@ dayjs.extend(utc);
 
 const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
-export const DATE_HOUR_MINUTE_ISO_FORMAT = "MMMM DD YYYY HH:mm";
+export const DATE_HOUR_MINUTE_ISO_FORMAT = "MMM DD YYYY HH:mm";
 
 /**
  * Helpers to adjust how values are shown in the UI.

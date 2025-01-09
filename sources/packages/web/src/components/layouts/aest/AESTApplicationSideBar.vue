@@ -8,7 +8,11 @@
       :title="studentMenu.studentApplication.title"
       @click="studentMenu.studentApplication.command"
     />
-    <v-list density="compact" v-if="relatedParentPartners.length" nav>
+    <v-list
+      density="compact"
+      nav
+      v-if="relatedParentPartners.length && !$props.applicationVersionId"
+    >
       <v-list-subheader>Supporting users</v-list-subheader>
       <v-list-item
         v-for="relatedParentPartner in relatedParentPartners"
@@ -21,6 +25,7 @@
     <v-list-item
       density="compact"
       nav
+      v-if="!$props.applicationVersionId"
       :prepend-icon="studentMenu.assessments.props?.prependIcon"
       :title="studentMenu.assessments.title"
       @click="studentMenu.assessments.command"
@@ -28,6 +33,7 @@
     <v-list-item
       density="compact"
       nav
+      v-if="!$props.applicationVersionId"
       :prepend-icon="
         studentMenu.applicationRestrictionsManagement.props?.prependIcon
       "
@@ -37,6 +43,7 @@
     <v-list-item
       density="compact"
       nav
+      v-if="!$props.applicationVersionId"
       :prepend-icon="studentMenu.applicationStatus.props?.prependIcon"
       :title="studentMenu.applicationStatus.title"
       @click="studentMenu.applicationStatus.command"
@@ -91,11 +98,15 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    applicationVersionId: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props) {
+    console.info("props.applicationVersionId: ", props.applicationVersionId);
     const router = useRouter();
     const { getISODateHourMinuteString } = useFormatters();
-    const applicationId = ref(0);
     const relatedParentPartners = ref([] as MenuItemModel[]);
     const applicationHistory = ref([] as MenuItemModel[]);
     const studentMenu = ref<StudentApplicationMenu>({
@@ -165,25 +176,6 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      if (applicationId.value === 0) {
-        applicationId.value = props.applicationId;
-      }
-      studentMenu.value = {
-        ...studentMenu.value,
-        studentApplication: {
-          title: "Application",
-          props: { prependIcon: "mdi-school-outline" },
-          command: () => {
-            router.push({
-              name: AESTRoutesConst.APPLICATION_DETAILS,
-              params: {
-                applicationId: applicationId.value,
-                studentId: props.studentId,
-              },
-            });
-          },
-        },
-      };
       const supportingUsers =
         await SupportingUsersService.shared.getSupportingUsersForSideBar(
           props.applicationId,
@@ -209,29 +201,32 @@ export default defineComponent({
           props.applicationId,
         );
       if (applicationOverallDetails.previousVersions.length) {
-        applicationOverallDetails.previousVersions.forEach((application) => {
-          applicationHistory.value.push({
-            title: `Submitted on ${getISODateHourMinuteString(
-              application.submittedDate,
-            )}`,
-            props: { prependIcon: "mdi-update" },
-            children: [
-              {
-                title: "Application",
-                props: {
-                  prependIcon: "mdi-school-outline",
-                  to: {
-                    name: AESTRoutesConst.APPLICATION_DETAILS,
-                    params: {
-                      studentId: props.studentId,
-                      applicationId: application.id,
+        applicationOverallDetails.previousVersions.forEach(
+          (applicationVersion) => {
+            applicationHistory.value.push({
+              title: `${getISODateHourMinuteString(
+                applicationVersion.submittedDate,
+              )}`,
+              props: { prependIcon: "mdi-update" },
+              children: [
+                {
+                  title: "Application",
+                  props: {
+                    prependIcon: "mdi-school-outline",
+                    to: {
+                      name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
+                      params: {
+                        studentId: props.studentId,
+                        applicationId: props.applicationId,
+                        applicationVersionId: applicationVersion.id,
+                      },
                     },
                   },
                 },
-              },
-            ],
-          });
-        });
+              ],
+            });
+          },
+        );
       }
     });
 
