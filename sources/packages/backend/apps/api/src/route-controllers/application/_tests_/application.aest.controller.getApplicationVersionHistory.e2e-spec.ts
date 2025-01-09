@@ -24,7 +24,7 @@ describe("ApplicationAESTController(e2e)-getApplicationVersionHistory", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get an array of application versions when there are an overwritten application and a completed application associated with the given application.", async () => {
+  it("Should get an array of application versions when there is an overwritten application associated with the given application.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       submittedDate: new Date(),
