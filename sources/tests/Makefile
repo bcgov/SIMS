@@ -21,7 +21,7 @@ backend-unit-tests:
 
 e2e-tests-api:
 	@echo "+\n++ Make: Starting containers for API E2E tests \n+"
-	@docker compose run --name api-e2e-$(BUILD_REF) api npm run test:e2e:api auth.e2e-spec.ts
+	@docker compose run --name api-e2e-$(BUILD_REF) api npm run test:e2e:api
 	@mkdir -p coverage/api
 	@docker cp api-e2e-$(BUILD_REF):app/apps/api/coverage/clover.xml coverage/api
 	@docker rm api-e2e-$(BUILD_REF)

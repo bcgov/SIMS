@@ -310,7 +310,7 @@ describe("Authentication (e2e)", () => {
       },
     );
 
-    it.only("Should return a HttpStatus OK(200) when a read-only institution user tries to access a read-only route to their institution.", async () => {
+    it("Should return a HttpStatus OK(200) when a read-only institution user tries to access a read-only route to their institution.", async () => {
       // Arrange
       const { institution: collegeE } = await getAuthRelatedEntities(
         db.dataSource,
@@ -334,7 +334,7 @@ describe("Authentication (e2e)", () => {
         .expect(HttpStatus.OK);
     });
 
-    it.only("Should return a HttpStatus FORBIDDEN(403) when a read-only institution user tries to access a non-reading-only route to their institution.", async () => {
+    it("Should return a HttpStatus FORBIDDEN(403) when a read-only institution user tries to access a non-reading-only route to their institution.", async () => {
       // Arrange
 
       const { institution: collegeE } = await getAuthRelatedEntities(
