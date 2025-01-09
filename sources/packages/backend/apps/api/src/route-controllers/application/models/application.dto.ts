@@ -126,7 +126,7 @@ export class ApplicationSupplementalDataAPIOutDTO extends ApplicationBaseAPIOutD
   applicationStartDate?: string;
   applicationEndDate?: string;
   applicationInstitutionName?: string;
-  changes: ApplicationDataChangeAPIOutDTO[];
+  changes?: ApplicationDataChangeAPIOutDTO[];
 }
 
 export class ApplicationWithProgramYearAPIOutDTO {

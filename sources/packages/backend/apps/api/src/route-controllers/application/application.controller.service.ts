@@ -443,19 +443,21 @@ export class ApplicationControllerService {
   /**
    * Transformation util for Application.
    * @param application application to be converted to the DTO.
-   * @param previousData previous application to allow changes detection.
+   * @param options additional options.
+   * - `previousData` previous application to allow changes detection.
    * @returns application DTO.
    */
   async transformToApplicationDTO(
     application: Application,
-    previousData?: unknown,
+    options?: { previousData?: unknown },
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    const changes: ApplicationDataChangeAPIOutDTO[] = [];
-    if (previousData) {
+    let changes: ApplicationDataChangeAPIOutDTO[];
+    if (options?.previousData) {
       const applicationDataChanges = compareApplicationData(
         application.data,
-        previousData,
+        options.previousData,
       );
+      changes = [];
       this.transformToApplicationChangesDTO(applicationDataChanges, changes);
     }
     return {

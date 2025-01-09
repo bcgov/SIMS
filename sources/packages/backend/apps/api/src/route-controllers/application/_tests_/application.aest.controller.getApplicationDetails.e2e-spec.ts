@@ -11,7 +11,12 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { EducationProgramOffering, OfferingIntensity } from "@sims/sims-db";
+import {
+  ApplicationData,
+  ApplicationStatus,
+  EducationProgramOffering,
+  OfferingIntensity,
+} from "@sims/sims-db";
 import { getUserFullName } from "../../../utilities";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 
@@ -108,6 +113,50 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         applicationInstitutionName:
           application.location.institution.legalOperatingName,
       });
+  });
+
+  it("Should get the student application changes when the application has a previous version and its dynamic data was changed.", async () => {
+    // Arrange
+    const previousApplication = await saveFakeApplication(
+      db.dataSource,
+      {},
+      {
+        applicationStatus: ApplicationStatus.Overwritten,
+        applicationData: {
+          studystartDate: "2000-01-01",
+          studyendDate: "2000-01-31",
+          selectedOffering: 1,
+          studentNumber: "1234567",
+        } as ApplicationData,
+      },
+    );
+    const currentApplication = await saveFakeApplication(
+      db.dataSource,
+      {},
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        applicationNumber: previousApplication.applicationNumber,
+        applicationData: {
+          studystartDate: "2000-12-01",
+          studyendDate: "2000-12-31",
+          selectedOffering: 4,
+        } as ApplicationData,
+      },
+    );
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/application/${currentApplication.id}`;
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    expect(response.body.changes).toStrictEqual([
+      { key: "studyendDate", changes: [] },
+      { key: "studystartDate", changes: [] },
+      { key: "selectedOffering", changes: [] },
+      { key: "selectedOfferingName", changes: [] },
+    ]);
   });
 
   afterAll(async () => {
