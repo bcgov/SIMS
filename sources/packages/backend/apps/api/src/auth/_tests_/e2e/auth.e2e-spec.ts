@@ -49,7 +49,7 @@ describe("Authentication (e2e)", () => {
   let db: E2EDataSources;
   let studentDecodedToken: any;
   let moduleFixture: TestingModule;
-  let collegEInstitutionUserToken: string;
+  let collegEInstitutionReadOnlyUserAccessToken: string;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -74,7 +74,7 @@ describe("Authentication (e2e)", () => {
       process.env.E2E_TEST_PASSWORD,
       "institution",
     );
-    collegEInstitutionUserToken = collegEToken.access_token;
+    collegEInstitutionReadOnlyUserAccessToken = collegEToken.access_token;
 
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule, createZeebeModuleMock(), DiscoveryModule],
@@ -330,7 +330,7 @@ describe("Authentication (e2e)", () => {
       // Act/Assert
       await request(app.getHttpServer())
         .get(endpoint)
-        .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+        .auth(collegEInstitutionReadOnlyUserAccessToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK);
     });
 
@@ -355,7 +355,7 @@ describe("Authentication (e2e)", () => {
       // Act/Assert
       await request(app.getHttpServer())
         .get(endpoint)
-        .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+        .auth(collegEInstitutionReadOnlyUserAccessToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.FORBIDDEN);
     });
   });

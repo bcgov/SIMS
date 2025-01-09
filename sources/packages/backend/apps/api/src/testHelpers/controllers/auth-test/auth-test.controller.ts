@@ -130,7 +130,7 @@ export class AuthTestController {
   }
 
   /**
-   * Test route which requires a location to be present and the institution user type should be 'user' (non-read-only).
+   * Test route which requires a location to be present and the institution user type should be non-read-only.
    */
   @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @Get("/institution-location-modifying-route/:locationId")
