@@ -8,7 +8,7 @@ export function compareApplicationData(
   const initialChanges = new ApplicationDataChange();
   compareApplicationDataRecursive(currentData, previousData, initialChanges);
   const [root] = initialChanges.changes;
-  return root.changes;
+  return root?.changes ?? [];
 }
 
 function compareApplicationDataRecursive(
@@ -23,8 +23,10 @@ function compareApplicationDataRecursive(
   }
   // Property has a null or undefined value but had a value before or vice versa.
   if (
-    (currentData == null && previousData != null) ||
-    (currentData != null && previousData == null)
+    (currentData === null && previousData !== null) ||
+    (currentData !== null && previousData === null) ||
+    (currentData === undefined && previousData !== undefined) ||
+    (currentData !== undefined && previousData === undefined)
   ) {
     const newValueChange = new ApplicationDataChange(
       options?.propertyKey,
