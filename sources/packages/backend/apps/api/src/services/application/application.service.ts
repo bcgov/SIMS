@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, Not, Brackets, EntityManager } from "typeorm";
+import {
+  DataSource,
+  In,
+  Not,
+  Brackets,
+  EntityManager,
+  LessThan,
+} from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -583,6 +590,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
    * - `studentId` student id.
    * - `institutionId` institution id.
+   * - `allowOverwritten` indicates if overwritten application is allowed.
    * @returns student application.
    */
   async getApplicationById(
@@ -660,7 +668,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       where: {
         id: applicationId,
-        applicationStatus: applicationStatus,
+        applicationStatus,
         student: {
           id: options?.studentId,
         },
@@ -1842,27 +1850,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get history of application versions for an application
-   * where the current application is excluded.
+   * Get previous application versions for an application.
    * @param applicationId application id.
-   * @returns assessment history list.
+   * @returns previous application versions.
    */
-  async applicationVersionHistory(
+  async getPreviousApplicationVersions(
     applicationId: number,
   ): Promise<Application[]> {
     const application = await this.repo.findOne({
-      select: { applicationNumber: true },
+      select: { applicationNumber: true, submittedDate: true },
       where: { id: applicationId },
     });
-    if (!application) {
-      return null;
-    }
     return this.repo.find({
       select: { id: true, submittedDate: true },
       where: {
-        id: Not(applicationId),
+        submittedDate: LessThan(application.submittedDate),
         applicationNumber: application.applicationNumber,
-        applicationStatus: Not(ApplicationStatus.Draft),
       },
       order: {
         submittedDate: "DESC",

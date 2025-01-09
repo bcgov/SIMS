@@ -165,5 +165,9 @@ export interface ApplicationWarningsAPIOutDTO {
 
 export interface ApplicationVersionAPIOutDTO {
   id: number;
-  submittedDate: string;
+  submittedDate: Date;
+}
+
+export interface ApplicationOverallDetailsAPIOutDTO {
+  previousVersions: ApplicationVersionAPIOutDTO[];
 }

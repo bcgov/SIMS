@@ -20,7 +20,7 @@ import {
   CompletedApplicationDetailsAPIOutDTO,
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
-  ApplicationVersionAPIOutDTO,
+  ApplicationOverallDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationService {
@@ -204,14 +204,13 @@ export class ApplicationService {
   }
 
   /**
-   * Get history of application versions for an application
-   * where the current application is excluded.
+   * Get application overall details for an application.
    * @param applicationId, application id.
-   * @returns history of application versions.
+   * @returns application overall details list.
    */
-  async getApplicationVersionHistory(
+  async getApplicationOverallDetails(
     applicationId: number,
-  ): Promise<ApplicationVersionAPIOutDTO[]> {
-    return ApiClient.Application.getApplicationVersionHistory(applicationId);
+  ): Promise<ApplicationOverallDetailsAPIOutDTO> {
+    return ApiClient.Application.getApplicationOverallDetails(applicationId);
   }
 }

@@ -19,6 +19,7 @@ dayjs.extend(utc);
 
 const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
+export const DATE_HOUR_MINUTE_ISO_FORMAT = "MMMM DD YYYY HH:mm";
 
 /**
  * Helpers to adjust how values are shown in the UI.
@@ -43,6 +44,15 @@ export function useFormatters() {
    */
   const getISODateOnlyString = (date: Date | string): string => {
     return dayjs(date).format(DATE_ONLY_ISO_FORMAT);
+  };
+
+  /**
+   * Get the date hour and minute of a date/time or string.
+   * @param date date/time or string to have the date extracted.
+   * @returns date only string in ISO format YYYY-MM-DD.
+   */
+  const getISODateHourMinuteString = (date: Date | string): string => {
+    return dayjs(date).format(DATE_HOUR_MINUTE_ISO_FORMAT);
   };
 
   /**
@@ -421,6 +431,7 @@ export function useFormatters() {
     booleanToYesNo,
     sinDisplayFormat,
     getISODateOnlyString,
+    getISODateHourMinuteString,
     institutionUserRoleToDisplay,
     emptyStringFiller,
     numberEmptyFiller,

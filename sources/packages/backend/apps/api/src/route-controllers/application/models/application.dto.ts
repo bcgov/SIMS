@@ -214,5 +214,9 @@ export class ApplicationWarningsAPIOutDTO {
 
 export class ApplicationVersionAPIOutDTO {
   id: number;
-  submittedDate: string;
+  submittedDate: Date;
+}
+
+export class ApplicationOverallDetailsAPIOutDTO {
+  previousVersions: ApplicationVersionAPIOutDTO[];
 }

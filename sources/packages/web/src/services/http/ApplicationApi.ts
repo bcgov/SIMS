@@ -21,7 +21,7 @@ import {
   CompletedApplicationDetailsAPIOutDTO,
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
-  ApplicationVersionAPIOutDTO,
+  ApplicationOverallDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
@@ -225,16 +225,15 @@ export class ApplicationApi extends HttpBaseClient {
   }
 
   /**
-   * Get history of application versions for an application
-   * where the current application is excluded.
+   * Get application overall details for an application.
    * @param applicationId, application id.
-   * @returns application version list.
+   * @returns application overall details list.
    */
-  public async getApplicationVersionHistory(
+  async getApplicationOverallDetails(
     applicationId: number,
-  ): Promise<ApplicationVersionAPIOutDTO[]> {
-    const endpoint = `application/${applicationId}/versions`;
-    return this.getCall<ApplicationVersionAPIOutDTO[]>(
+  ): Promise<ApplicationOverallDetailsAPIOutDTO> {
+    const endpoint = `application/${applicationId}/overall-details`;
+    return this.getCall<ApplicationOverallDetailsAPIOutDTO>(
       this.addClientRoot(endpoint),
     );
   }

@@ -49,7 +49,7 @@
         :title="application.title"
         :value="application.title"
       >
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <v-list-item v-bind="props" :title="application.title"></v-list-item>
         </template>
 
@@ -58,7 +58,7 @@
           :key="child.title"
           :title="child.title"
           :prepend-icon="child.props?.prependIcon"
-          @click="child.command"
+          :to="child.props?.to"
         ></v-list-item>
       </v-list-group>
     </v-list>
@@ -72,6 +72,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, SupportingUserType } from "@/types";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { ApplicationService } from "@/services/ApplicationService";
+import { useFormatters } from "@/composables";
 
 export interface StudentApplicationMenu {
   studentApplication: MenuItemModel;
@@ -93,6 +94,8 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
+    const { getISODateHourMinuteString } = useFormatters();
+    const applicationId = ref(0);
     const relatedParentPartners = ref([] as MenuItemModel[]);
     const applicationHistory = ref([] as MenuItemModel[]);
     const studentMenu = ref<StudentApplicationMenu>({
@@ -161,17 +164,26 @@ export default defineComponent({
       });
     };
 
-    const goToApplicationVersion = (applicationId: number) => {
-      router.push({
-        name: AESTRoutesConst.APPLICATION_DETAILS,
-        params: {
-          studentId: props.studentId,
-          applicationId: applicationId,
-        },
-      });
-    };
-
     onMounted(async () => {
+      if (applicationId.value === 0) {
+        applicationId.value = props.applicationId;
+      }
+      studentMenu.value = {
+        ...studentMenu.value,
+        studentApplication: {
+          title: "Application",
+          props: { prependIcon: "mdi-school-outline" },
+          command: () => {
+            router.push({
+              name: AESTRoutesConst.APPLICATION_DETAILS,
+              params: {
+                applicationId: applicationId.value,
+                studentId: props.studentId,
+              },
+            });
+          },
+        },
+      };
       const supportingUsers =
         await SupportingUsersService.shared.getSupportingUsersForSideBar(
           props.applicationId,
@@ -192,20 +204,30 @@ export default defineComponent({
           });
         }
       });
-      const applicationVersionHistory =
-        await ApplicationService.shared.getApplicationVersionHistory(
+      const applicationOverallDetails =
+        await ApplicationService.shared.getApplicationOverallDetails(
           props.applicationId,
         );
-      if (applicationVersionHistory.length) {
-        applicationVersionHistory.forEach((application) => {
+      if (applicationOverallDetails.previousVersions.length) {
+        applicationOverallDetails.previousVersions.forEach((application) => {
           applicationHistory.value.push({
-            title: `${application.submittedDate}`,
+            title: `Submitted on ${getISODateHourMinuteString(
+              application.submittedDate,
+            )}`,
             props: { prependIcon: "mdi-update" },
             children: [
               {
                 title: "Application",
-                props: { prependIcon: "mdi-school-outline" },
-                command: () => goToApplicationVersion(application.id),
+                props: {
+                  prependIcon: "mdi-school-outline",
+                  to: {
+                    name: AESTRoutesConst.APPLICATION_DETAILS,
+                    params: {
+                      studentId: props.studentId,
+                      applicationId: application.id,
+                    },
+                  },
+                },
               },
             ],
           });
