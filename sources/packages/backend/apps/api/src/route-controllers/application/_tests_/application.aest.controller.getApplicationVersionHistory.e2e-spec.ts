@@ -52,9 +52,7 @@ describe("ApplicationAESTController(e2e)-getApplicationVersionHistory", () => {
         submittedDate: addDays(-10),
       },
     );
-
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-
     const endpoint = `/aest/application/${application.id}/overall-details`;
 
     // Act/Assert
