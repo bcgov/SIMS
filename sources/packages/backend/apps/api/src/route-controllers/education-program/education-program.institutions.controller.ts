@@ -208,7 +208,8 @@ export class EducationProgramInstitutionsController extends BaseController {
   /**
    * Checks if the user is authorized to create or modify programs for the institution.
    * User should have a user type different from read-only user.
-   * @param userToken
+   * @param userToken user token.
+   * @throws ForbiddenException if the user is not authorized.
    */
   private checkAuthorization(
     institutionUserAuthorizations: InstitutionUserAuthorizations,
