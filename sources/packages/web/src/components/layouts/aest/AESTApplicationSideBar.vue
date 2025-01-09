@@ -8,11 +8,7 @@
       :title="studentMenu.studentApplication.title"
       @click="studentMenu.studentApplication.command"
     />
-    <v-list
-      density="compact"
-      nav
-      v-if="relatedParentPartners.length && !$props.applicationVersionId"
-    >
+    <v-list density="compact" nav v-if="relatedParentPartners.length">
       <v-list-subheader>Supporting users</v-list-subheader>
       <v-list-item
         v-for="relatedParentPartner in relatedParentPartners"
@@ -25,7 +21,6 @@
     <v-list-item
       density="compact"
       nav
-      v-if="!$props.applicationVersionId"
       :prepend-icon="studentMenu.assessments.props?.prependIcon"
       :title="studentMenu.assessments.title"
       @click="studentMenu.assessments.command"
@@ -33,7 +28,6 @@
     <v-list-item
       density="compact"
       nav
-      v-if="!$props.applicationVersionId"
       :prepend-icon="
         studentMenu.applicationRestrictionsManagement.props?.prependIcon
       "
@@ -43,7 +37,6 @@
     <v-list-item
       density="compact"
       nav
-      v-if="!$props.applicationVersionId"
       :prepend-icon="studentMenu.applicationStatus.props?.prependIcon"
       :title="studentMenu.applicationStatus.title"
       @click="studentMenu.applicationStatus.command"
@@ -104,7 +97,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    console.info("props.applicationVersionId: ", props.applicationVersionId);
     const router = useRouter();
     const { getISODateHourMinuteString } = useFormatters();
     const relatedParentPartners = ref([] as MenuItemModel[]);
