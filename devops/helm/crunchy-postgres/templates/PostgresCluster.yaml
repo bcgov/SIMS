@@ -76,7 +76,9 @@ spec:
     - name: {{ .Values.readonlyuser }}
       databases:
         - {{ template "crunchy-postgres.fullname" . }}
-      options: "NOSUPERUSER,NOCREATEDB,NOCREATEROLE"
+      options: "LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE"
+      password:
+        type: ASCII
 
   backups:
     pgbackrest:
@@ -144,6 +146,7 @@ spec:
     dynamicConfiguration:
       postgresql:
         pg_hba:
+          - "host all {{ .Values.readonlyuser }} all md5"
           - {{ .Values.patroni.postgresql.pg_hba }}
         parameters:
           shared_buffers: {{ .Values.patroni.postgresql.parameters.shared_buffers }}
@@ -151,11 +154,6 @@ spec:
           min_wal_size: {{ .Values.patroni.postgresql.parameters.min_wal_size }}
           max_wal_size: {{ .Values.patroni.postgresql.parameters.max_wal_size }}
           max_slot_wal_keep_size:  {{ .Values.patroni.postgresql.parameters.max_slot_wal_keep_size }}
-        postgresql.conf:
-          pg_init:
-           - ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO {{ .Values.readonlyuser }};
-            - GRANT USAGE ON SCHEMA public TO {{ .Values.readonlyuser }};
-            - GRANT SELECT ON ALL TABLES IN SCHEMA public TO {{ .Values.readonlyuser }};
   
   proxy:
     pgBouncer:
