@@ -460,8 +460,10 @@ export class ApplicationControllerService {
         application.data,
         options.previousData,
       );
-      changes = [];
-      this.transformToApplicationChangesDTO(applicationDataChanges, changes);
+      if (applicationDataChanges.length) {
+        changes = [];
+        this.transformToApplicationChangesDTO(applicationDataChanges, changes);
+      }
     }
     return {
       data: application.data,
@@ -493,15 +495,19 @@ export class ApplicationControllerService {
   transformToApplicationChangesDTO(
     applicationDataChanges: ApplicationDataChange[],
     applicationDataChangeAPIOutDTO: ApplicationDataChangeAPIOutDTO[],
-  ): void {
+  ) {
     applicationDataChanges.forEach((dataChange) => {
       const dataChangeDTO: ApplicationDataChangeAPIOutDTO = {
         key: dataChange.key,
         index: dataChange.index,
         itemsRemoved: dataChange.itemsRemoved,
-        changes: [],
       };
       applicationDataChangeAPIOutDTO.push(dataChangeDTO);
+      // Check if there are nested changes
+      if (!dataChange.changes.length) {
+        return;
+      }
+      dataChangeDTO.changes = [];
       this.transformToApplicationChangesDTO(
         dataChange.changes,
         dataChangeDTO.changes,

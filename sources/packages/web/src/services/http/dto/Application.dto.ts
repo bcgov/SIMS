@@ -90,7 +90,7 @@ export interface ApplicationDataChangeAPIOutDTO {
   key?: string;
   index?: number;
   itemsRemoved?: boolean;
-  changes: ApplicationDataChangeAPIOutDTO[];
+  changes?: ApplicationDataChangeAPIOutDTO[];
 }
 
 /**
@@ -103,7 +103,7 @@ export interface ApplicationSupplementalDataAPIOutDTO
   applicationStartDate?: string;
   applicationEndDate?: string;
   applicationInstitutionName?: string;
-  changes: ApplicationDataChangeAPIOutDTO[];
+  changes?: ApplicationDataChangeAPIOutDTO[];
 }
 
 /**

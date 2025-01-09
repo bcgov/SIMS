@@ -117,7 +117,7 @@ export class ApplicationDataChangeAPIOutDTO {
   key?: string;
   index?: number;
   itemsRemoved?: boolean;
-  changes: ApplicationDataChangeAPIOutDTO[];
+  changes?: ApplicationDataChangeAPIOutDTO[];
 }
 
 export class ApplicationSupplementalDataAPIOutDTO extends ApplicationBaseAPIOutDTO {

@@ -127,6 +127,12 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
           studyendDate: "2000-01-31",
           selectedOffering: 1,
           studentNumber: "1234567",
+          courseDetails: [
+            {
+              courseName: "courseName",
+              courseCode: "courseCode",
+            },
+          ],
         } as ApplicationData,
       },
     );
@@ -140,6 +146,12 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
           studystartDate: "2000-12-01",
           studyendDate: "2000-12-31",
           selectedOffering: 4,
+          courseDetails: [
+            {
+              courseName: "courseName updated",
+              courseCode: "courseCode",
+            },
+          ],
         } as ApplicationData,
       },
     );
@@ -152,10 +164,14 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
     expect(response.body.changes).toStrictEqual([
-      { key: "studyendDate", changes: [] },
-      { key: "studystartDate", changes: [] },
-      { key: "selectedOffering", changes: [] },
-      { key: "selectedOfferingName", changes: [] },
+      { key: "studyendDate" },
+      {
+        key: "courseDetails",
+        changes: [{ index: 0, changes: [{ key: "courseName" }] }],
+      },
+      { key: "studystartDate" },
+      { key: "selectedOffering" },
+      { key: "selectedOfferingName" },
     ]);
   });
 
