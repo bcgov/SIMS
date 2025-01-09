@@ -76,9 +76,7 @@ spec:
     - name: {{ .Values.readonlyuser }}
       databases:
         - {{ template "crunchy-postgres.fullname" . }}
-      options: "LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE"
-      password:
-        type: ASCII
+      options: "LOGIN"
 
   backups:
     pgbackrest:
@@ -146,14 +144,13 @@ spec:
     dynamicConfiguration:
       postgresql:
         pg_hba:
-          - "host all {{ .Values.readonlyuser }} all md5"
           - {{ .Values.patroni.postgresql.pg_hba }}
         parameters:
           shared_buffers: {{ .Values.patroni.postgresql.parameters.shared_buffers }}
           wal_buffers: {{ .Values.patroni.postgresql.parameters.wal_buffers }}
           min_wal_size: {{ .Values.patroni.postgresql.parameters.min_wal_size }}
           max_wal_size: {{ .Values.patroni.postgresql.parameters.max_wal_size }}
-          max_slot_wal_keep_size:  {{ .Values.patroni.postgresql.parameters.max_slot_wal_keep_size }}
+          max_slot_wal_keep_size: {{ .Values.patroni.postgresql.parameters.max_slot_wal_keep_size }}
   
   proxy:
     pgBouncer:
