@@ -30,7 +30,7 @@ import {
 } from "../../../testHelpers";
 import * as dayjs from "dayjs";
 import { InstitutionUserTypes, Student, User } from "@sims/sims-db";
-import { AuthTestController } from "apps/api/src/testHelpers/controllers/auth-test/auth-test.controller";
+import { AuthTestController } from "../../../testHelpers/controllers/auth-test/auth-test.controller";
 import { SIMS2_COLLE_USER } from "@sims/test-utils/constants";
 
 describe("Authentication (e2e)", () => {
