@@ -71,7 +71,7 @@ describe("Authentication (e2e)", () => {
 
     const collegEToken = await KeycloakService.shared.getToken(
       SIMS2_COLLE_USER,
-      process.env.E2E_TEST_STUDENT_PASSWORD,
+      process.env.E2E_TEST_PASSWORD,
       "institution",
     );
     collegEInstitutionUserToken = collegEToken.access_token;
@@ -349,7 +349,7 @@ describe("Authentication (e2e)", () => {
       const collegeELocation = createFakeInstitutionLocation({
         institution: collegeE,
       });
-      console.log("collegeELocation:", collegeELocation);
+      console.log("collegeELocation:", collegeELocation.id);
       console.log("Before authorizeUserTokenForLocation !#$%%^%*&(*");
       await authorizeUserTokenForLocation(
         db.dataSource,
