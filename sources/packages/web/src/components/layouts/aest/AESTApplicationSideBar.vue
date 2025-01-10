@@ -45,7 +45,6 @@
       <v-list-group
         v-for="application in applicationHistory"
         :key="application.title"
-        :prepend-icon="application.props?.prependIcon"
         :title="application.title"
         :value="application.title"
       >

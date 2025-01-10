@@ -47,7 +47,7 @@ export default defineComponent({
     },
     versionApplicationId: {
       type: Number,
-      required: true,
+      required: false,
     },
   },
   setup(props) {
