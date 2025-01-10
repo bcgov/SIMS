@@ -1,6 +1,6 @@
 import { compareApplicationData } from "../../application-data-comparison";
 
-describe("Detect differences between student application data.", () => {
+describe("compareApplicationData", () => {
   it("Should return an empty array when no changes were detected.", () => {
     // Arrange
     const current = {
