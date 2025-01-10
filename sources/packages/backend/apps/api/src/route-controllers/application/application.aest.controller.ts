@@ -19,6 +19,7 @@ import {
   CompletedApplicationDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
+  ApplicationOverallDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -74,7 +75,7 @@ export class ApplicationAESTController extends BaseController {
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
-      { loadDynamicData },
+      { loadDynamicData, allowOverwritten: true },
     );
     if (!application) {
       throw new NotFoundException(
@@ -230,5 +231,35 @@ export class ApplicationAESTController extends BaseController {
     return this.applicationControllerService.getCompletedApplicationDetails(
       applicationId,
     );
+  }
+
+  /**
+   * Get application overall details for an application.
+   * @param applicationId application Id.
+   * @returns application overall details.
+   */
+  @ApiNotFoundResponse({
+    description: "Application not found.",
+  })
+  @Get(":applicationId/overall-details")
+  async getApplicationOverallDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<ApplicationOverallDetailsAPIOutDTO> {
+    const application = await this.applicationService.doesApplicationExist({
+      applicationId,
+    });
+    if (!application) {
+      throw new NotFoundException("Application not found.");
+    }
+    const applications =
+      await this.applicationService.getPreviousApplicationVersions(
+        applicationId,
+      );
+    return {
+      previousVersions: applications.map((application) => ({
+        id: application.id,
+        submittedDate: application.submittedDate,
+      })),
+    };
   }
 }

@@ -162,3 +162,12 @@ export interface ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
 }
+
+export interface ApplicationVersionAPIOutDTO {
+  id: number;
+  submittedDate: Date;
+}
+
+export interface ApplicationOverallDetailsAPIOutDTO {
+  previousVersions: ApplicationVersionAPIOutDTO[];
+}

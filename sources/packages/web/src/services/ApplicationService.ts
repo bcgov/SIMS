@@ -20,6 +20,7 @@ import {
   CompletedApplicationDetailsAPIOutDTO,
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
+  ApplicationOverallDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ApplicationService {
@@ -200,5 +201,16 @@ export class ApplicationService {
     return ApiClient.Application.getApplicationAssessmentStatusDetails(
       applicationId,
     );
+  }
+
+  /**
+   * Get application overall details for an application.
+   * @param applicationId, application id.
+   * @returns application overall details list.
+   */
+  async getApplicationOverallDetails(
+    applicationId: number,
+  ): Promise<ApplicationOverallDetailsAPIOutDTO> {
+    return ApiClient.Application.getApplicationOverallDetails(applicationId);
   }
 }
