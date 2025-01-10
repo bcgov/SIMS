@@ -15,7 +15,7 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
-  getReadOnlyCollegeEAuthorizedLocation,
+  getReadOnlyAuthorizedLocation,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import {
@@ -263,7 +263,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
 
   it("Should not create a new scholastic standing when the user is read-only.", async () => {
     // Arrange
-    const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
+    const collegeELocation = await getReadOnlyAuthorizedLocation(
+      db,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
     const endpoint = `/institutions/scholastic-standing/location/${collegeELocation.id}/application/99999`;
     const collegEInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeEReadOnlyUser,

@@ -22,7 +22,7 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
   createFakeEducationProgramOffering,
-  getReadOnlyCollegeEAuthorizedLocation,
+  getReadOnlyAuthorizedLocation,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import * as faker from "faker";
@@ -201,7 +201,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
 
   it("Should not create a new offering when user is read-only.", async () => {
     // Arrange
-    const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
+    const collegeELocation = await getReadOnlyAuthorizedLocation(
+      db,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
     const endpoint = `/institutions/education-program-offering/location/${collegeELocation.id}/education-program/999999`;
     const collegEInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeEReadOnlyUser,

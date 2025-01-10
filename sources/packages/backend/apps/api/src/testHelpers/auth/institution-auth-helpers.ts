@@ -161,29 +161,28 @@ export async function authorizeUserTokenForLocation(
 }
 
 /**
- * Create a location for College E with read only user access.
+ * Create a location with read only user access.
  * This is useful for tests that need to assert that the API endpoints
  * are properly restricted for read only users.
  * @param db E2E testing data sources.
- * @returns location with read only access for College E.
+ * @returns location the user will have read only access.
  */
-export async function getReadOnlyCollegeEAuthorizedLocation(
+export async function getReadOnlyAuthorizedLocation(
   db: E2EDataSources,
+  institutionTokenType: InstitutionTokenTypes,
 ) {
-  const { institution: collegeE } = await getAuthRelatedEntities(
+  const { institution } = await getAuthRelatedEntities(
     db.dataSource,
-    InstitutionTokenTypes.CollegeEReadOnlyUser,
+    institutionTokenType,
   );
-  const collegeELocation = createFakeInstitutionLocation({
-    institution: collegeE,
-  });
+  const location = createFakeInstitutionLocation({ institution });
   await authorizeUserTokenForLocation(
     db.dataSource,
-    InstitutionTokenTypes.CollegeEReadOnlyUser,
-    collegeELocation,
+    institutionTokenType,
+    location,
     { institutionUserType: InstitutionUserTypes.readOnlyUser },
   );
-  return collegeELocation;
+  return location;
 }
 
 export const INSTITUTION_BC_PUBLIC_ERROR_MESSAGE =

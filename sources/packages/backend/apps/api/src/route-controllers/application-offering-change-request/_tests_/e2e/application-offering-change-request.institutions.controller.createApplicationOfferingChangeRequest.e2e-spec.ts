@@ -6,7 +6,7 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
-  getReadOnlyCollegeEAuthorizedLocation,
+  getReadOnlyAuthorizedLocation,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 import {
@@ -135,7 +135,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
 
   it("Should not be able to submit application offering request with a read-only user.", async () => {
     // Arrange
-    const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
+    const collegeELocation = await getReadOnlyAuthorizedLocation(
+      db,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
     const endpoint = `/institutions/location/${collegeELocation.id}/application-offering-change-request`;
     const collegEInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeEReadOnlyUser,

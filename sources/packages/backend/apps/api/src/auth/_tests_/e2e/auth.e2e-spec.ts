@@ -21,7 +21,8 @@ import { JwtService } from "@nestjs/jwt";
 import { INVALID_BETA_USER, MISSING_USER_ACCOUNT } from "../../../constants";
 import {
   BEARER_AUTH_TYPE,
-  getReadOnlyCollegeEAuthorizedLocation,
+  getReadOnlyAuthorizedLocation,
+  InstitutionTokenTypes,
   mockUserLoginInfo,
   resetMockUserLoginInfo,
 } from "../../../testHelpers";
@@ -309,7 +310,10 @@ describe("Authentication (e2e)", () => {
 
     it("Should return a HttpStatus OK(200) when a read-only institution user tries to access a read-only route to their institution.", async () => {
       // Arrange
-      const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
+      const collegeELocation = await getReadOnlyAuthorizedLocation(
+        db,
+        InstitutionTokenTypes.CollegeEReadOnlyUser,
+      );
       const endpoint = `/auth-test/institution-location-reading-route/${collegeELocation.id}`;
 
       // Act/Assert
@@ -321,7 +325,10 @@ describe("Authentication (e2e)", () => {
 
     it("Should return a HttpStatus FORBIDDEN(403) when a read-only institution user tries to access a non-reading-only route to their institution.", async () => {
       // Arrange
-      const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
+      const collegeELocation = await getReadOnlyAuthorizedLocation(
+        db,
+        InstitutionTokenTypes.CollegeEReadOnlyUser,
+      );
       const endpoint = `/auth-test/institution-location-modifying-route/${collegeELocation.id}`;
 
       // Act/Assert

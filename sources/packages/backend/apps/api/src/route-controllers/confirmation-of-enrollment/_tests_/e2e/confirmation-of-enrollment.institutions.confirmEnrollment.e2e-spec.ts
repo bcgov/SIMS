@@ -7,7 +7,7 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
-  getReadOnlyCollegeEAuthorizedLocation,
+  getReadOnlyAuthorizedLocation,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 import {
@@ -148,7 +148,10 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
 
   it("Should not allow the COE confirmation when the user is read-only.", async () => {
     // Arrange
-    const collegeELocation = await getReadOnlyCollegeEAuthorizedLocation(db);
+    const collegeELocation = await getReadOnlyAuthorizedLocation(
+      db,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
     const endpoint = `/institutions/location/${collegeELocation.id}/confirmation-of-enrollment/disbursement-schedule/999999/confirm`;
     const collegEInstitutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeEReadOnlyUser,
