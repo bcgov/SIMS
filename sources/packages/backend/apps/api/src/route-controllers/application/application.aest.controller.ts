@@ -239,7 +239,7 @@ export class ApplicationAESTController extends BaseController {
    * @returns application overall details.
    */
   @ApiNotFoundResponse({
-    description: `Application not found.`,
+    description: "Application not found.",
   })
   @Get(":applicationId/overall-details")
   async getApplicationOverallDetails(

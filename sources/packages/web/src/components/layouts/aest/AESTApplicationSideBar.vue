@@ -90,7 +90,7 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    applicationVersionId: {
+    versionApplicationId: {
       type: Number,
       required: false,
     },
@@ -198,7 +198,6 @@ export default defineComponent({
               title: `${getISODateHourMinuteString(
                 applicationVersion.submittedDate,
               )}`,
-              props: { prependIcon: "mdi-update" },
               children: [
                 {
                   title: "Application",
@@ -209,7 +208,7 @@ export default defineComponent({
                       params: {
                         studentId: props.studentId,
                         applicationId: props.applicationId,
-                        applicationVersionId: applicationVersion.id,
+                        versionApplicationId: applicationVersion.id,
                       },
                     },
                   },

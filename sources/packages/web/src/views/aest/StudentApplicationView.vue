@@ -45,6 +45,10 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    versionApplicationId: {
+      type: Number,
+      required: true,
+    },
   },
   setup(props) {
     const { emptyStringFiller } = useFormatters();
@@ -53,10 +57,10 @@ export default defineComponent({
     const selectedForm = ref();
 
     onMounted(async () => {
+      // When the application version is present load the given application version instead of the current application version.
+      const applicationId = props.versionApplicationId ?? props.applicationId;
       applicationDetail.value =
-        await ApplicationService.shared.getApplicationDetail(
-          props.applicationId,
-        );
+        await ApplicationService.shared.getApplicationDetail(applicationId);
       selectedForm.value = applicationDetail.value.applicationFormName;
       initialData.value = {
         ...applicationDetail.value.data,
