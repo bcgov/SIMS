@@ -11,8 +11,10 @@ describe("Detect differences between student application data.", () => {
         offeringnotListed: false,
       },
     };
+
     // Act
     const result = compareApplicationData(current, current);
+
     // Assert
     console.log(JSON.stringify(result, null, 2));
     expect(result).toHaveLength(0);
@@ -48,57 +50,81 @@ describe("Detect differences between student application data.", () => {
         offeringnotListed: true,
       },
     };
+
     // Act
     const result = compareApplicationData(current, previous);
+
     // Assert
     expect(result).toEqual([
       {
         key: "bcResident",
         newValue: "yes",
         oldValue: "changed yes",
+        index: undefined,
+        changeType: "updated",
         changes: [],
       },
       {
         key: "hasDependents",
         newValue: "no",
         oldValue: "changed no",
+        index: undefined,
+        changeType: "updated",
         changes: [],
       },
       {
         key: "calculatedTaxYear",
         newValue: 2023,
         oldValue: 2000,
+        index: undefined,
+        changeType: "updated",
         changes: [],
       },
       {
         key: "isFullTimeAllowed",
         newValue: "",
+        oldValue: undefined,
+        index: undefined,
+        changeType: "updated",
         changes: [],
       },
       {
         key: "studentGivenNames",
         newValue: null,
+        oldValue: undefined,
+        index: undefined,
+        changeType: "updated",
         changes: [],
       },
       {
         key: "showParentInformation",
         newValue: null,
         oldValue: true,
+        index: undefined,
+        changeType: "updated",
         changes: [],
       },
       {
         key: "applicationPDPPDStatus",
         newValue: "no",
         oldValue: "changed no",
+        index: undefined,
+        changeType: "updated",
         changes: [],
       },
       {
         key: "myStudyPeriodIsntListed",
+        newValue: undefined,
+        oldValue: undefined,
+        index: undefined,
+        changeType: "updated",
         changes: [
           {
             key: "offeringnotListed",
             newValue: false,
             oldValue: true,
+            index: undefined,
+            changeType: "updated",
             changes: [],
           },
         ],
@@ -128,14 +154,16 @@ describe("Detect differences between student application data.", () => {
         },
       ],
     };
+
     // Act
     const result = compareApplicationData(current, previous);
+
     // Assert
     expect(result).toEqual([
       {
         key: "dependants",
+        changeType: "itemsRemoved",
         changes: [],
-        itemsRemoved: true,
       },
     ]);
   });
@@ -182,21 +210,27 @@ describe("Detect differences between student application data.", () => {
         },
       ],
     };
+
     // Act
     const result = compareApplicationData(current, previous);
+
     // Assert
     expect(result).toEqual([
       {
         key: "dependants",
+        changeType: "updated",
         changes: [
           {
             index: 0,
+            changeType: "updated",
             changes: [
               {
                 key: "someFilesArray",
+                changeType: "updated",
                 changes: [
                   {
                     index: 1,
+                    changeType: "updated",
                     changes: [
                       {
                         key: "name",
@@ -204,6 +238,7 @@ describe("Detect differences between student application data.", () => {
                           "FileNameA-3370396b-8460-41d3-bb47-198ee84cc528_SOMETHING_CHANGED.txt",
                         oldValue:
                           "FileNameA-3370396b-8460-41d3-bb47-198ee84cc528.txt",
+                        changeType: "updated",
                         changes: [],
                       },
                     ],
@@ -211,6 +246,51 @@ describe("Detect differences between student application data.", () => {
                 ],
               },
             ],
+          },
+        ],
+      },
+    ]);
+  });
+
+  it("Should detected an object with removed properties in the current data when these objects belongs to an array.", () => {
+    // Arrange
+    const current = {
+      dependants: [
+        {
+          fullName: "My son 1",
+          dateOfBirth: "2025-01-01",
+        },
+        {
+          fullName: "My son 2",
+        },
+      ],
+    };
+    const previous = {
+      dependants: [
+        {
+          fullName: "My son 1",
+          dateOfBirth: "2025-01-01",
+        },
+        {
+          fullName: "My son 2",
+          dateOfBirth: "2025-01-02",
+        },
+      ],
+    };
+
+    // Act
+    const result = compareApplicationData(current, previous);
+
+    // Assert
+    expect(result).toEqual([
+      {
+        key: "dependants",
+        changeType: "updated",
+        changes: [
+          {
+            index: 1,
+            changeType: "propertiesRemoved",
+            changes: [],
           },
         ],
       },

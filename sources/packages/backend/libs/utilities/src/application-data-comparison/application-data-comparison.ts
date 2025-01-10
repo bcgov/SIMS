@@ -1,4 +1,7 @@
-import { ApplicationDataChange } from "./application-data-comparison.models";
+import {
+  ApplicationDataChange,
+  ChangeTypes,
+} from "./application-data-comparison.models";
 
 /**
  * Compares two sets of student application data and returns an array of changes.
@@ -46,12 +49,12 @@ function compareApplicationDataRecursive(
     (currentData === undefined && previousData !== undefined) ||
     (currentData !== undefined && previousData === undefined)
   ) {
-    const newValueChange = new ApplicationDataChange(
-      options?.propertyKey,
-      currentData,
-      previousData,
-      options?.index,
-    );
+    const newValueChange = new ApplicationDataChange({
+      key: options?.propertyKey,
+      newValue: currentData,
+      oldValue: previousData,
+      index: options?.index,
+    });
     parentChange.changes.push(newValueChange);
     return;
   }
@@ -68,12 +71,12 @@ function compareApplicationDataRecursive(
     return;
   }
   // Property was changed and it is a leaf property.
-  const newChange = new ApplicationDataChange(
-    options.propertyKey,
-    currentData,
-    previousData,
-    options?.index,
-  );
+  const newChange = new ApplicationDataChange({
+    key: options?.propertyKey,
+    newValue: currentData,
+    oldValue: previousData,
+    index: options?.index,
+  });
   parentChange.changes.push(newChange);
 }
 
@@ -94,10 +97,10 @@ function checkArrayChanges(
 ): void {
   let arrayItemChange: ApplicationDataChange;
   if (!isEqual(currentData, previousData)) {
-    arrayItemChange = new ApplicationDataChange(options?.propertyKey);
+    arrayItemChange = new ApplicationDataChange({ key: options?.propertyKey });
     parentChange.changes.push(arrayItemChange);
     if (currentData.length < previousData.length) {
-      arrayItemChange.itemsRemoved = true;
+      arrayItemChange.changeType = ChangeTypes.ItemsRemoved;
     }
   }
   // Property is an array that should have its items checked.
@@ -132,12 +135,13 @@ function checkObjectChanges(
 ): void {
   // Property is a object that should have its properties checked.
   if (!isEqual(currentData, previousData)) {
-    const objectPropertyChange = new ApplicationDataChange(
-      options?.propertyKey,
-      undefined,
-      undefined,
-      options?.index,
-    );
+    const objectPropertyChange = new ApplicationDataChange({
+      key: options?.propertyKey,
+      index: options?.index,
+    });
+    if (Object.keys(currentData).length < Object.keys(previousData).length) {
+      objectPropertyChange.changeType = ChangeTypes.PropertiesRemoved;
+    }
     parentChange.changes.push(objectPropertyChange);
     for (const propertyKey of Object.keys(currentData)) {
       compareApplicationDataRecursive(

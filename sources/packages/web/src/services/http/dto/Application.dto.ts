@@ -13,6 +13,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
   StudentAssessmentStatus,
   ECertFailedValidation,
+  ChangeTypes,
 } from "@/types";
 
 export interface InProgressApplicationDetailsAPIOutDTO {
@@ -89,7 +90,7 @@ export interface ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
 export interface ApplicationDataChangeAPIOutDTO {
   key?: string;
   index?: number;
-  itemsRemoved?: boolean;
+  changeType: ChangeTypes;
   changes?: ApplicationDataChangeAPIOutDTO[];
 }
 

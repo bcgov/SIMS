@@ -500,7 +500,7 @@ export class ApplicationControllerService {
       const dataChangeDTO: ApplicationDataChangeAPIOutDTO = {
         key: dataChange.key,
         index: dataChange.index,
-        itemsRemoved: dataChange.itemsRemoved,
+        changeType: dataChange.changeType,
       };
       applicationDataChangeAPIOutDTO.push(dataChangeDTO);
       // Check if there are nested changes

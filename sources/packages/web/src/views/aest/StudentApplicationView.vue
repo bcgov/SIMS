@@ -36,7 +36,12 @@ import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { useFormioUtils } from "@/composables";
-import { FormIOComponent, FormIOForm, FromIOComponentTypes } from "@/types";
+import {
+  ChangeTypes,
+  FormIOComponent,
+  FormIOForm,
+  FromIOComponentTypes,
+} from "@/types";
 
 export default defineComponent({
   components: {
@@ -89,7 +94,7 @@ export default defineComponent({
      * Changes are expected after applications are edited after submitted at least once.
      */
     function highlightChanges() {
-      if (!applicationWizard || !applicationDetail.value.changes.length) {
+      if (!applicationWizard || !applicationDetail.value.changes?.length) {
         return;
       }
       highlightChangesRecursive(
@@ -104,8 +109,13 @@ export default defineComponent({
      */
     function highlightChangesRecursive(
       parentComponent: FormIOComponent,
-      changes: ApplicationDataChangeAPIOutDTO[],
+      changes?: ApplicationDataChangeAPIOutDTO[],
     ) {
+      if (!changes?.length) {
+        // Since the method is called recursively, the check is executed at this level
+        // instead of every time this method is called.
+        return;
+      }
       for (const change of changes) {
         let searchComponent: FormIOComponent | undefined;
         if (typeof change.index === "number") {
@@ -114,16 +124,12 @@ export default defineComponent({
         } else if (change.key) {
           searchComponent = parentComponent;
         }
-        if (
-          !change.key ||
-          !searchComponent ||
-          !searchComponent.components?.length
-        ) {
+        if (!change.key || !searchComponent?.components?.length) {
           continue;
         }
         const [component] = searchByKey(searchComponent.components, change.key);
         if (component) {
-          applyChangedValueStyleClass(component, change.itemsRemoved);
+          applyChangedValueStyleClass(component, change.changeType);
           highlightChangesRecursive(component, change.changes);
         }
       }
@@ -137,7 +143,7 @@ export default defineComponent({
      */
     function applyChangedValueStyleClass(
       component: FormIOComponent,
-      itemRemoved?: boolean,
+      changeType: ChangeTypes,
     ) {
       if (
         component.type === FromIOComponentTypes.Hidden ||
@@ -145,7 +151,10 @@ export default defineComponent({
       ) {
         return;
       }
-      const cssClass = itemRemoved ? "changed-list-length" : "changed-value";
+      const cssClass =
+        changeType === ChangeTypes.ItemsRemoved
+          ? "changed-list-length"
+          : "changed-value";
       document.getElementById(component.id)?.classList.add(cssClass);
     }
 

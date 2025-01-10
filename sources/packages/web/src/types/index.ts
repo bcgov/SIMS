@@ -46,3 +46,4 @@ export * from "@/types/contracts/StatusChip";
 export * from "@/types/contracts/ApplicationOfferingChangeRequest";
 export * from "@/types/contracts/ECertFailedValidation";
 export * from "@/types/contracts/RestrictionBypassContracts";
+export * from "@/types/contracts/ApplicationDataComparison";
