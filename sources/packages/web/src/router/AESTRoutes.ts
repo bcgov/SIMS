@@ -303,22 +303,8 @@ export const aestRoutes: Array<RouteRecordRaw> = [
               clientType: ClientIdType.AEST,
             },
           },
-        ],
-      },
-      {
-        path: AppRoutes.ApplicationVersionDetail,
-        redirect: { name: AESTRoutesConst.APPLICATION_VERSION_DETAILS },
-        props: true,
-        components: {
-          default: ApplicationDetails,
-          sidebar: AESTApplicationSideBar,
-        },
-        meta: {
-          clientType: ClientIdType.AEST,
-        },
-        children: [
           {
-            path: AppRoutes.ApplicationView,
+            path: AppRoutes.ApplicationVersionDetail,
             name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
             props: true,
             component: StudentApplicationView,

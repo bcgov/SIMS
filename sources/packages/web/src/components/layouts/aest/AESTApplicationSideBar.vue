@@ -52,7 +52,6 @@
         <template #activator="{ props }">
           <v-list-item v-bind="props" :title="application.title"></v-list-item>
         </template>
-
         <v-list-item
           v-for="child in application.children"
           :key="child.title"

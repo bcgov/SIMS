@@ -91,7 +91,7 @@ export enum AppRoutes {
   SINManagement = "sin-management",
   CASSupplierManagement = "cas-supplier-management",
   ApplicationDetail = "student/:studentId/application/:applicationId",
-  ApplicationVersionDetail = "student/:studentId/application/:applicationId/version/:applicationVersionId",
+  ApplicationVersionDetail = "version/:applicationVersionId/view",
   SupportingUserDetail = "supporting-user/:supportingUserId",
   // Supporting Users
   SupportingUsersRoot = "/supporting-users",
