@@ -165,6 +165,7 @@ export async function authorizeUserTokenForLocation(
  * This is useful for tests that need to assert that the API endpoints
  * are properly restricted for read only users.
  * @param db E2E testing data sources.
+ * @param institutionTokenType user type that will have read only access.
  * @returns location the user will have read only access.
  */
 export async function getReadOnlyAuthorizedLocation(
