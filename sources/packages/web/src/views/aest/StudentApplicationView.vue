@@ -108,18 +108,20 @@ export default defineComponent({
      * @param changes list of changes to be highlighted.
      */
     function highlightChangesRecursive(
-      parentComponent: FormIOComponent,
+      parentComponent?: FormIOComponent,
       changes?: ApplicationDataChangeAPIOutDTO[],
     ) {
-      if (!changes?.length) {
-        // Since the method is called recursively, the check is executed at this level
+      if (!parentComponent || !changes?.length) {
+        // Since the method is called recursively, the checks are executed at this level
         // instead of every time this method is called.
         return;
       }
       for (const change of changes) {
         let searchComponent: FormIOComponent | undefined;
         if (typeof change.index === "number") {
-          searchComponent = parentComponent.components[change.index];
+          searchComponent = parentComponent?.components?.length
+            ? parentComponent.components[change.index]
+            : undefined;
           highlightChangesRecursive(searchComponent, change.changes);
         } else if (change.key) {
           searchComponent = parentComponent;
