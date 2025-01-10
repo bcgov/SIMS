@@ -754,15 +754,15 @@ td .formio-custom-tooltip:hover .tooltip-text {
 // Styles related to the application changes
 // between the current and previous application versions.
 .changed-value-base {
-  color: #dc2525;
+  color: $application-changed-value-color;
   border-radius: 5px;
-  border: 1px solid #dc2525;
+  border: 1px solid $application-changed-value-color;
   padding: 4px;
 }
 
 .changed-value-content-base {
   @extend .label-small-bold;
-  background: #dc2525;
+  background: $application-changed-value-color;
   color: white;
   border-radius: 5px;
   display: block;

@@ -16,7 +16,6 @@ describe("compareApplicationData", () => {
     const result = compareApplicationData(current, current);
 
     // Assert
-    console.log(JSON.stringify(result, null, 2));
     expect(result).toHaveLength(0);
   });
 
@@ -60,7 +59,6 @@ describe("compareApplicationData", () => {
         key: "bcResident",
         newValue: "yes",
         oldValue: "changed yes",
-        index: undefined,
         changeType: "updated",
         changes: [],
       },
@@ -68,7 +66,6 @@ describe("compareApplicationData", () => {
         key: "hasDependents",
         newValue: "no",
         oldValue: "changed no",
-        index: undefined,
         changeType: "updated",
         changes: [],
       },
@@ -76,23 +73,18 @@ describe("compareApplicationData", () => {
         key: "calculatedTaxYear",
         newValue: 2023,
         oldValue: 2000,
-        index: undefined,
         changeType: "updated",
         changes: [],
       },
       {
         key: "isFullTimeAllowed",
         newValue: "",
-        oldValue: undefined,
-        index: undefined,
         changeType: "updated",
         changes: [],
       },
       {
         key: "studentGivenNames",
         newValue: null,
-        oldValue: undefined,
-        index: undefined,
         changeType: "updated",
         changes: [],
       },
@@ -100,7 +92,6 @@ describe("compareApplicationData", () => {
         key: "showParentInformation",
         newValue: null,
         oldValue: true,
-        index: undefined,
         changeType: "updated",
         changes: [],
       },
@@ -108,22 +99,17 @@ describe("compareApplicationData", () => {
         key: "applicationPDPPDStatus",
         newValue: "no",
         oldValue: "changed no",
-        index: undefined,
         changeType: "updated",
         changes: [],
       },
       {
         key: "myStudyPeriodIsntListed",
-        newValue: undefined,
-        oldValue: undefined,
-        index: undefined,
         changeType: "updated",
         changes: [
           {
             key: "offeringnotListed",
             newValue: false,
             oldValue: true,
-            index: undefined,
             changeType: "updated",
             changes: [],
           },

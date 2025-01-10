@@ -8,7 +8,7 @@ export enum ChangeTypes {
    */
   ItemsRemoved = "itemsRemoved",
   /**
-   * An array had at least one property removed.
+   * An object had at least one property removed.
    */
   PropertiesRemoved = "propertiesRemoved",
 }

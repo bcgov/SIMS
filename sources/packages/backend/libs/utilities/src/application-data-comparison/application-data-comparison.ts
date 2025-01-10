@@ -133,7 +133,7 @@ function checkObjectChanges(
   parentChange: ApplicationDataChange,
   options?: { propertyKey?: string; index?: number },
 ): void {
-  // Property is a object that should have its properties checked.
+  // Property is an object that should have its properties checked.
   if (!isEqual(currentData, previousData)) {
     const objectPropertyChange = new ApplicationDataChange({
       key: options?.propertyKey,
