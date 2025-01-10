@@ -70,13 +70,13 @@ spec:
       databases:
         - {{ template "crunchy-postgres.fullname" . }}
       options: "CREATEROLE"
-    - name: postgres
-      databases:
-        - {{ template "crunchy-postgres.fullname" . }}
     - name: {{ .Values.readonlyuser }}
       databases:
         - {{ template "crunchy-postgres.fullname" . }}
       options: "LOGIN"
+    - name: postgres
+      databases:
+        - {{ template "crunchy-postgres.fullname" . }}
 
   backups:
     pgbackrest:
