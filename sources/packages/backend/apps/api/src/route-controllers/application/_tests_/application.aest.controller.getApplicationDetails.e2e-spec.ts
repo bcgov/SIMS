@@ -164,14 +164,38 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
     expect(response.body.changes).toStrictEqual([
-      { key: "studyendDate" },
       {
-        key: "courseDetails",
-        changes: [{ index: 0, changes: [{ key: "courseName" }] }],
+        changeType: "updated",
+        key: "studyendDate",
       },
-      { key: "studystartDate" },
-      { key: "selectedOffering" },
-      { key: "selectedOfferingName" },
+      {
+        changeType: "updated",
+        changes: [
+          {
+            changeType: "updated",
+            changes: [
+              {
+                changeType: "updated",
+                key: "courseName",
+              },
+            ],
+            index: 0,
+          },
+        ],
+        key: "courseDetails",
+      },
+      {
+        changeType: "updated",
+        key: "studystartDate",
+      },
+      {
+        changeType: "updated",
+        key: "selectedOffering",
+      },
+      {
+        changeType: "updated",
+        key: "selectedOfferingName",
+      },
     ]);
   });
 
