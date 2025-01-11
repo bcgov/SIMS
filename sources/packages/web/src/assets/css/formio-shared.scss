@@ -777,11 +777,20 @@ td .formio-custom-tooltip:hover .tooltip-text {
   content: "\00a0\00a0Updated";
 }
 
-.changed-list-length {
+.changed-list-item-removed {
   @extend .changed-value-base;
 }
 
-.changed-list-length::before {
+.changed-list-item-removed::before {
   @extend .changed-value-content-base;
   content: "\00a0\00a0Items were removed from this list";
+}
+
+.changed-list-item-appended {
+  @extend .changed-value-base;
+}
+
+.changed-list-item-appended::before {
+  @extend .changed-value-content-base;
+  content: "\00a0\00a0Items were appended to the list";
 }

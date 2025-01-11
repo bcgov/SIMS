@@ -108,21 +108,23 @@ export default defineComponent({
      * @param changes list of changes to be highlighted.
      */
     function highlightChangesRecursive(
-      parentComponent?: FormIOComponent,
-      changes?: ApplicationDataChangeAPIOutDTO[],
+      parentComponent: FormIOComponent,
+      changes: ApplicationDataChangeAPIOutDTO[],
     ) {
-      if (!parentComponent || !changes?.length) {
-        // Since the method is called recursively, the checks are executed at this level
-        // instead of every time this method is called.
-        return;
-      }
       for (const change of changes) {
         let searchComponent: FormIOComponent | undefined;
         if (typeof change.index === "number") {
           searchComponent = parentComponent?.components?.length
             ? parentComponent.components[change.index]
             : undefined;
-          highlightChangesRecursive(searchComponent, change.changes);
+          if (searchComponent && change.changes) {
+            // Should check further for nested changes.
+            highlightChangesRecursive(searchComponent, change.changes);
+          } else if (searchComponent) {
+            // searchComponent has a change, but no nested changes.
+            // It also does not have a key because it is a child in a list.
+            applyChangedValueStyleClass(searchComponent, change.changeType);
+          }
         } else if (change.key) {
           searchComponent = parentComponent;
         }
@@ -132,7 +134,10 @@ export default defineComponent({
         const [component] = searchByKey(searchComponent.components, change.key);
         if (component) {
           applyChangedValueStyleClass(component, change.changeType);
-          highlightChangesRecursive(component, change.changes);
+          if (change.changes) {
+            // Should check further for nested changes.
+            highlightChangesRecursive(component, change.changes);
+          }
         }
       }
     }
@@ -153,10 +158,18 @@ export default defineComponent({
       ) {
         return;
       }
-      const cssClass =
-        changeType === ChangeTypes.ItemsRemoved
-          ? "changed-list-length"
-          : "changed-value";
+      let cssClass: string;
+      switch (changeType) {
+        case ChangeTypes.ItemsAppended:
+          cssClass = "changed-list-item-appended";
+          break;
+        case ChangeTypes.ItemsRemoved:
+          cssClass = "changed-list-item-removed";
+          break;
+        default:
+          cssClass = "changed-value";
+          break;
+      }
       document.getElementById(component.id)?.classList.add(cssClass);
     }
 

@@ -101,6 +101,8 @@ function checkArrayChanges(
     parentChange.changes.push(arrayItemChange);
     if (currentData.length < previousData.length) {
       arrayItemChange.changeType = ChangeTypes.ItemsRemoved;
+    } else if (currentData.length > previousData.length) {
+      arrayItemChange.changeType = ChangeTypes.ItemsAppended;
     }
   }
   // Property is an array that should have its items checked.
