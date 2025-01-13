@@ -266,6 +266,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
