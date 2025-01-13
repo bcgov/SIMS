@@ -19,6 +19,7 @@ import {
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
+import { ChangeTypes } from "@sims/utilities";
 
 export class SaveApplicationAPIInDTO {
   /**
@@ -113,12 +114,20 @@ export class ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   submittedDate?: Date;
 }
 
+export class ApplicationDataChangeAPIOutDTO {
+  key?: string;
+  index?: number;
+  changeType: ChangeTypes;
+  changes?: ApplicationDataChangeAPIOutDTO[];
+}
+
 export class ApplicationSupplementalDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   studentFullName: string;
   applicationOfferingIntensity?: OfferingIntensity;
   applicationStartDate?: string;
   applicationEndDate?: string;
   applicationInstitutionName?: string;
+  changes?: ApplicationDataChangeAPIOutDTO[];
 }
 
 export class ApplicationWithProgramYearAPIOutDTO {

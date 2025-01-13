@@ -12,6 +12,7 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
+  ApplicationData,
   ApplicationStatus,
   EducationProgramOffering,
   OfferingIntensity,
@@ -153,6 +154,90 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         });
     },
   );
+
+  it("Should get the student application changes when the application has a previous version and its dynamic data was changed.", async () => {
+    // Arrange
+    const previousApplication = await saveFakeApplication(
+      db.dataSource,
+      {},
+      {
+        applicationStatus: ApplicationStatus.Overwritten,
+        applicationData: {
+          studystartDate: "2000-01-01",
+          studyendDate: "2000-01-31",
+          selectedOffering: 1,
+          studentNumber: "1234567",
+          courseDetails: [
+            {
+              courseName: "courseName",
+              courseCode: "courseCode",
+            },
+          ],
+        } as ApplicationData,
+      },
+    );
+    const currentApplication = await saveFakeApplication(
+      db.dataSource,
+      {},
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        applicationNumber: previousApplication.applicationNumber,
+        applicationData: {
+          studystartDate: "2000-12-01",
+          studyendDate: "2000-12-31",
+          selectedOffering: 4,
+          courseDetails: [
+            {
+              courseName: "courseName updated",
+              courseCode: "courseCode",
+            },
+          ],
+        } as ApplicationData,
+      },
+    );
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/application/${currentApplication.id}`;
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    expect(response.body.changes).toStrictEqual([
+      {
+        changeType: "updated",
+        key: "studyendDate",
+      },
+      {
+        changeType: "updated",
+        changes: [
+          {
+            changeType: "updated",
+            changes: [
+              {
+                changeType: "updated",
+                key: "courseName",
+              },
+            ],
+            index: 0,
+          },
+        ],
+        key: "courseDetails",
+      },
+      {
+        changeType: "updated",
+        key: "studystartDate",
+      },
+      {
+        changeType: "updated",
+        key: "selectedOffering",
+      },
+      {
+        changeType: "updated",
+        key: "selectedOfferingName",
+      },
+    ]);
+  });
 
   afterAll(async () => {
     await app?.close();

@@ -26,6 +26,7 @@ import {
   ApplicationProgressDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
+  ApplicationDataChangeAPIOutDTO,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -35,7 +36,11 @@ import {
   getPIRDeniedReason,
   getUserFullName,
 } from "../../utilities";
-import { getDateOnlyFormat } from "@sims/utilities";
+import {
+  ApplicationDataChange,
+  getDateOnlyFormat,
+  compareApplicationData,
+} from "@sims/utilities";
 import {
   Application,
   ApplicationData,
@@ -355,7 +360,7 @@ export class ApplicationControllerService {
   private async processSelectedLocation(
     data: ApplicationData,
     additionalFormData: ApplicationFormData,
-  ) {
+  ): Promise<void> {
     if (data.selectedLocation) {
       const designatedLocation = await this.locationService.getLocation(
         data.selectedLocation,
@@ -378,7 +383,7 @@ export class ApplicationControllerService {
   private async processSelectedProgram(
     data: ApplicationData,
     additionalFormData: ApplicationFormData,
-  ) {
+  ): Promise<void> {
     if (data.selectedProgram) {
       const selectedProgram = await this.programService.getProgramById(
         data.selectedProgram,
@@ -424,7 +429,7 @@ export class ApplicationControllerService {
   private async processSelectedOffering(
     data: ApplicationData,
     additionalFormData: ApplicationFormData,
-  ) {
+  ): Promise<void> {
     if (data.selectedOffering) {
       const selectedOffering = await this.offeringService.getOfferingById(
         data.selectedOffering,
@@ -440,12 +445,26 @@ export class ApplicationControllerService {
 
   /**
    * Transformation util for Application.
-   * @param application
-   * @returns Application DTO
+   * @param application application to be converted to the DTO.
+   * @param options additional options.
+   * - `previousData` previous application to allow changes detection.
+   * @returns application DTO.
    */
   async transformToApplicationDTO(
     application: Application,
+    options?: { previousData?: unknown },
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+    let changes: ApplicationDataChangeAPIOutDTO[];
+    if (options?.previousData) {
+      const applicationDataChanges = compareApplicationData(
+        application.data,
+        options.previousData,
+      );
+      if (applicationDataChanges.length) {
+        changes = [];
+        this.transformToApplicationChangesDTO(applicationDataChanges, changes);
+      }
+    }
     return {
       data: application.data,
       id: application.id,
@@ -461,7 +480,39 @@ export class ApplicationControllerService {
       applicationEndDate: application.currentAssessment?.offering?.studyEndDate,
       applicationInstitutionName:
         application.location?.institution.legalOperatingName,
+      changes,
     };
+  }
+
+  /**
+   * Recursively converts the {@link ApplicationDataChange} service model to the
+   * DTO model {@link ApplicationDataChangeAPIOutDTO} which will ensure
+   * that only required properties will be returned from the API also preventing
+   * that future changes in the service model will not be directly returned.
+   * @param applicationDataChanges service model application changes.
+   * @param applicationDataChangeAPIOutDTO converted API DTO model.
+   */
+  transformToApplicationChangesDTO(
+    applicationDataChanges: ApplicationDataChange[],
+    applicationDataChangeAPIOutDTO: ApplicationDataChangeAPIOutDTO[],
+  ): void {
+    applicationDataChanges.forEach((dataChange) => {
+      const dataChangeDTO: ApplicationDataChangeAPIOutDTO = {
+        key: dataChange.key,
+        index: dataChange.index,
+        changeType: dataChange.changeType,
+      };
+      applicationDataChangeAPIOutDTO.push(dataChangeDTO);
+      // Check if there are nested changes
+      if (!dataChange.changes.length) {
+        return;
+      }
+      dataChangeDTO.changes = [];
+      this.transformToApplicationChangesDTO(
+        dataChange.changes,
+        dataChangeDTO.changes,
+      );
+    });
   }
 
   /**

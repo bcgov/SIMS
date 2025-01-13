@@ -240,6 +240,7 @@ export async function saveFakeApplicationDisbursements(
  * - `programYear` related program year.
  * @param options additional options:
  * - `applicationStatus` application status for the application.
+ * - `applicationNumber` application number for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
  * - `applicationData` related application data.
  * - `pirStatus` program info status.
@@ -297,9 +298,9 @@ export async function saveFakeApplication(
     {
       initialValue: {
         data: options?.applicationData,
+        applicationNumber: options?.applicationNumber,
         pirStatus: options?.pirStatus,
         isArchived: options?.isArchived ? options?.isArchived : false,
-        applicationNumber: options?.applicationNumber,
         submittedDate: options?.submittedDate,
       },
     },
@@ -343,6 +344,10 @@ export async function saveFakeApplication(
       fakeOriginalAssessment,
     );
     savedApplication.currentAssessment = savedOriginalAssessment;
+    if (!savedApplication.submittedDate) {
+      // Ensures a non-draft application will have a submitted date.
+      savedApplication.submittedDate = new Date();
+    }
   } else {
     savedApplication.location = null;
   }

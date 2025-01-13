@@ -750,3 +750,48 @@ td .formio-custom-tooltip:hover .tooltip-text {
 .bi-question-circle::before {
   content: "\f504" !important;
 }
+
+// Styles related to the application changes
+// between the current and previous application versions.
+.changed-value-base {
+  color: $application-changed-value-color;
+  border-radius: 5px;
+  border: 1px solid $application-changed-value-color;
+  padding: 4px;
+}
+
+.changed-value-content-base {
+  @extend .label-small-bold;
+  background: $application-changed-value-color;
+  color: white;
+  border-radius: 5px;
+  display: block;
+  white-space: pre;
+}
+
+.changed-value {
+  @extend .changed-value-base;
+}
+
+.changed-value::before {
+  @extend .changed-value-content-base;
+  content: "  Updated";
+}
+
+.changed-list-item-removed {
+  @extend .changed-value-base;
+}
+
+.changed-list-item-removed::before {
+  @extend .changed-value-content-base;
+  content: "  Items were removed from this list";
+}
+
+.changed-list-item-appended {
+  @extend .changed-value-base;
+}
+
+.changed-list-item-appended::before {
+  @extend .changed-value-content-base;
+  content: "  Items were appended to the list";
+}

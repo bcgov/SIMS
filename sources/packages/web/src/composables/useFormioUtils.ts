@@ -7,7 +7,7 @@ import { Utils } from "@formio/js";
  */
 export function useFormioUtils() {
   // Get a component in a form definition once it is loaded.
-  const getComponent = (form: any, componentKey: string): any => {
+  const getComponent = (form: any, componentKey: string): FormIOComponent => {
     return Utils.getComponent(form.components, componentKey, true);
   };
 
@@ -23,7 +23,7 @@ export function useFormioUtils() {
   ): FormIOComponent => {
     const [firstComponentFound] = recursiveSearch(
       form,
-      (component) => component.key === componentKey,
+      (component) => component.component.key === componentKey,
       { stopOnFirstMatch: true },
     );
     return firstComponentFound;
@@ -113,6 +113,33 @@ export function useFormioUtils() {
       matchedComponents,
       matchCondition,
       options,
+    );
+    return matchedComponents;
+  };
+
+  /**
+   * Search recursively by a component and returns
+   * all the matches with the same key.
+   * @param components components to be checked.
+   * @param componentKey key to be matched.
+   * @param options search options.
+   * - `stopOnFirstMatch` indicates if should stop at the first match, default true.
+   * @returns components found.
+   */
+  const searchByKey = (
+    components: FormIOComponent[],
+    componentKey: string,
+    options?: {
+      stopOnFirstMatch: boolean;
+    },
+  ): FormIOComponent[] => {
+    const defaultOptions = { stopOnFirstMatch: true };
+    const matchedComponents: any[] = [];
+    internalRecursiveSearch(
+      components,
+      matchedComponents,
+      (component) => component.key === componentKey,
+      options ?? defaultOptions,
     );
     return matchedComponents;
   };
@@ -229,5 +256,6 @@ export function useFormioUtils() {
     resetCheckBox,
     checkFormioValidity,
     excludeExtraneousValues,
+    searchByKey,
   };
 }

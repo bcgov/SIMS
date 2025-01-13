@@ -1,0 +1,46 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": ".",
+  "testRegex": ".*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "collectCoverageFrom": [
+    "**/*.(t|j)s"
+  ],
+  "coveragePathIgnorePatterns": [
+    "node_modules",
+    "db-migrations",
+    "backend/workflow",
+    "_tests_",
+    "main.ts",
+    ".module.ts",
+    "coverage",
+    "test-utils",
+    "testHelpers",
+    ".e2e-spec.ts",
+    ".models.ts",
+    ".model.ts",
+    ".dto.ts",
+    ".controller.ts",
+    ".mock.ts"
+  ],
+  "coverageDirectory": "../../tests/coverage/unit-tests",
+  "testEnvironment": "node",
+  "roots": [
+    "<rootDir>/libs/",
+    "<rootDir>/apps/"
+  ],
+  "moduleNameMapper": {
+    "^@sims/sims-db(|/.*)$": "<rootDir>/libs/sims-db/src/$1",
+    "^@sims/services(|/.*)$": "<rootDir>/libs/services/src/$1",
+    "^@sims/utilities(|/.*)$": "<rootDir>/libs/utilities/src/$1",
+    "^@sims/test-utils(|/.*)$": "<rootDir>/libs/test-utils/src/$1",
+    "^@sims/integrations(|/.*)$": "<rootDir>/libs/integrations/src/$1",
+    "^@sims/auth(|/.*)$": "<rootDir>/libs/auth/src/$1"
+  }
+}

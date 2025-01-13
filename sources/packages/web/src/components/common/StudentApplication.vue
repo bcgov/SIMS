@@ -6,6 +6,7 @@
     @loaded="formLoaded"
     @changed="formChanged"
     @submitted="submitted"
+    @render="formRender"
     @customEvent="customEvent"
   ></formio>
   <footer-buttons
@@ -68,6 +69,7 @@ export default defineComponent({
     "pageChanged",
     "saveDraft",
     "wizardSubmit",
+    "render",
   ],
   props: {
     initialData: {
@@ -123,7 +125,7 @@ export default defineComponent({
       () => !props.notDraft && !isFirstPage.value && !props.processing,
     );
 
-    const getSelectedId = (form: any) => {
+    const getSelectedId = (form: FormIOForm) => {
       return formioUtils.getComponentValueByKey(form, LOCATIONS_DROPDOWN_KEY);
     };
 
@@ -180,7 +182,15 @@ export default defineComponent({
         }
       }
     };
-    const formLoaded = async (form: any) => {
+
+    /**
+     * The form is done rendering and has completed the attach phase.
+     */
+    const formRender = async (form: FormIOForm) => {
+      context.emit("render", form);
+    };
+
+    const formLoaded = async (form: FormIOForm) => {
       showNav.value = true;
       // Emit formLoadedCallback event to the parent, so that parent can
       // perform the parent specific logic inside parent on
@@ -216,10 +226,11 @@ export default defineComponent({
       };
       formInstance.on("prevPage", prevNextNavigation);
       formInstance.on("nextPage", prevNextNavigation);
+
       await loadFormDependencies();
     };
 
-    const getOfferingDetails = async (form: any, locationId: number) => {
+    const getOfferingDetails = async (form: FormIOForm, locationId: number) => {
       const selectedIntensity: OfferingIntensity =
         formioUtils.getComponentValueByKey(form, OFFERING_INTENSITY_KEY);
       const educationProgramIdFromForm: number =
@@ -336,11 +347,11 @@ export default defineComponent({
       formInstance.nextPage();
     };
 
-    const submitted = (args: any, form: any) => {
+    const submitted = (args: any, form: FormIOForm) => {
       context.emit("submitApplication", args, form);
     };
 
-    const customEvent = (form: any, event: FormIOCustomEvent) => {
+    const customEvent = (form: FormIOForm, event: FormIOCustomEvent) => {
       context.emit("customEventCallback", form, event);
     };
 
@@ -355,6 +366,7 @@ export default defineComponent({
       wizardGoPrevious,
       formChanged,
       formLoaded,
+      formRender,
       isFirstPage,
       isLastPage,
       submitted,

@@ -241,6 +241,25 @@
         "ENVIRONMENT": "test",
         "TZ": "UTC"
       }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Unit tests - Current test file",
+      "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
+      "args": [
+        "${fileBasenameNoExtension}",
+        "--runInBand",
+        "--config",
+        "./sources/packages/backend/jest-unit-tests.json",
+        "--forceExit"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
+      }
     }
   ]
 }

@@ -2,7 +2,7 @@
  * FormIO form. Methods available can be checked on
  * https://help.form.io/developers/form-renderer.
  */
-export interface FormIOForm<T = unknown> {
+export interface FormIOForm<T = unknown> extends FormIOComponent {
   data: T;
   nosubmit: boolean;
   checkValidity: (
@@ -79,6 +79,30 @@ export enum FormIOCustomEventTypes {
   ReissueMSFAA = "reissueMSFAA",
 }
 
+/**
+ * Form IO component types.
+ * This does not represent all the types available in Form.IO,
+ * please expand the list as needed.
+ */
+export enum FromIOComponentTypes {
+  Hidden = "hidden",
+  Datagrid = "datagrid",
+  Button = "button",
+  Select = "select",
+  Panel = "panel",
+  EditGrid = "editgrid",
+  Radio = "radio",
+  Calendar = "calendar",
+}
+
+export interface FormIOComponentInternal {
+  key: string;
+  customClass: string;
+  options: unknown;
+  values: unknown;
+  data: { values: unknown[] };
+}
+
 export interface FormIOComponent {
   id: string;
   key: string;
@@ -86,6 +110,10 @@ export interface FormIOComponent {
   components: FormIOComponent[];
   selectOptions: unknown[];
   _visible: boolean;
-  component: any;
+  component: FormIOComponentInternal;
+  customClass: string;
   redraw: any;
+  disabled: boolean;
+  type: FromIOComponentTypes;
+  setValue: (value: unknown) => void;
 }

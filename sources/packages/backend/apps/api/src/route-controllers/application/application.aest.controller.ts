@@ -20,6 +20,7 @@ import {
   EnrolmentApplicationDetailsAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
+  ApplicationFormData,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -82,16 +83,35 @@ export class ApplicationAESTController extends BaseController {
         `Application id ${applicationId} was not found.`,
       );
     }
-
+    let currentReadOnlyData: ApplicationFormData;
+    let previousReadOnlyData: ApplicationFormData;
     if (loadDynamicData) {
-      application.data =
-        await this.applicationControllerService.generateApplicationFormData(
+      // Check if a previous application exists.
+      const [previousApplicationVersion] =
+        await this.applicationService.getPreviousApplicationVersions(
+          applicationId,
+          { loadDynamicData: true, limit: 1 },
+        );
+      const currentReadOnlyDataPromise =
+        this.applicationControllerService.generateApplicationFormData(
           application.data,
         );
+      // If there is a previous application, generate its read-only data.
+      const previousReadOnlyDataPromise =
+        previousApplicationVersion &&
+        this.applicationControllerService.generateApplicationFormData(
+          previousApplicationVersion.data,
+        );
+      // Wait for both promises to resolve.
+      [currentReadOnlyData, previousReadOnlyData] = await Promise.all([
+        currentReadOnlyDataPromise,
+        previousReadOnlyDataPromise,
+      ]);
+      application.data = currentReadOnlyData;
     }
-
     return this.applicationControllerService.transformToApplicationDTO(
       application,
+      { previousData: previousReadOnlyData },
     );
   }
 

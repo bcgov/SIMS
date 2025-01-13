@@ -16,3 +16,5 @@ export * from "./specialized-string-builder";
 export * from "./string-utils";
 export * from "./address-utils";
 export * from "./compressed-file-utils";
+export * from "./application-data-comparison/application-data-comparison";
+export * from "./application-data-comparison/application-data-comparison.models";

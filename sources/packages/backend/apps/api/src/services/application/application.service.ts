@@ -1852,17 +1852,25 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Get previous application versions for an application.
    * @param applicationId application id.
+   * @param options method options.
+   * - `limit` number of previous application versions to be returned.
+   * - `loadDynamicData` optionally loads the dynamic data.
    * @returns previous application versions.
    */
   async getPreviousApplicationVersions(
     applicationId: number,
+    options?: { loadDynamicData?: boolean; limit?: number },
   ): Promise<Application[]> {
     const application = await this.repo.findOne({
       select: { applicationNumber: true, submittedDate: true },
       where: { id: applicationId },
     });
     return this.repo.find({
-      select: { id: true, submittedDate: true },
+      select: {
+        id: true,
+        submittedDate: true,
+        data: !!options?.loadDynamicData as unknown,
+      },
       where: {
         submittedDate: LessThan(application.submittedDate),
         applicationNumber: application.applicationNumber,
@@ -1870,6 +1878,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       order: {
         submittedDate: "DESC",
       },
+      take: options?.limit,
     });
   }
 
