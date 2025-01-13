@@ -114,6 +114,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -130,6 +131,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -150,6 +152,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -170,6 +173,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -193,6 +197,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
         children: [
@@ -294,6 +299,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -314,6 +320,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -340,6 +347,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -411,6 +419,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -457,6 +466,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -478,6 +488,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -504,6 +515,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -543,6 +555,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -556,6 +569,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },
@@ -623,6 +637,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
           allowOnlyBCPublic: true,
         },
@@ -637,6 +652,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
+                InstitutionUserTypes.readOnlyUser,
               ],
             },
           },
@@ -650,6 +666,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
+                InstitutionUserTypes.readOnlyUser,
               ],
             },
           },
@@ -663,6 +680,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
+                InstitutionUserTypes.readOnlyUser,
               ],
             },
           },
@@ -676,6 +694,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
+                InstitutionUserTypes.readOnlyUser,
               ],
             },
           },
@@ -689,6 +708,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
+                InstitutionUserTypes.readOnlyUser,
               ],
             },
           },
@@ -702,6 +722,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               institutionUserTypes: [
                 InstitutionUserTypes.admin,
                 InstitutionUserTypes.user,
+                InstitutionUserTypes.readOnlyUser,
               ],
             },
           },
@@ -720,6 +741,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
           ],
           allowOnlyBCPublic: true,
         },
