@@ -344,7 +344,10 @@ export async function saveFakeApplication(
       fakeOriginalAssessment,
     );
     savedApplication.currentAssessment = savedOriginalAssessment;
-    savedApplication.submittedDate = new Date();
+    if (!savedApplication.submittedDate) {
+      // Ensures a non-draft application will have a submitted date.
+      savedApplication.submittedDate = new Date();
+    }
   } else {
     savedApplication.location = null;
   }
