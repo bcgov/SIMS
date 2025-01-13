@@ -1,17 +1,13 @@
 <template>
   <v-dialog
     v-model="showHideDialog"
+    width="auto"
     persistent
     :no-click-animation="true"
     scrollable
+    :fullscreen="showFullScreen"
   >
-    <!-- TODO remove mx-auto in stable version of vuetify to center modelDialog -->
-    <v-card
-      elevation="10"
-      :max-width="maxWidth"
-      :min-width="minWidth"
-      class="modal-height mx-auto"
-    >
+    <v-card elevation="10" :max-width="maxWidth" class="modal-height">
       <v-card-title>
         <slot name="header">
           <h2 v-if="title" class="category-header-large primary-color mt-3">
@@ -56,18 +52,36 @@ export default defineComponent({
       required: false,
       default: 730,
     },
-    minWidth: {
-      type: Number,
-      required: false,
-      default: 730,
-    },
     subTitle: {
       type: String,
       required: false,
     },
   },
+
   setup(props, context) {
     const showHideDialog = ref(false);
+    const showFullScreen = ref(true);
+    const mediaQuerySmallToLarge = window.matchMedia("(min-width: 768px)");
+    const mediaQueryLargeToSmall = window.matchMedia("(max-width: 767px)");
+
+    function handleScreenChangeSmallToLarge(e: MediaQueryList) {
+      if (e.matches) {
+        showFullScreen.value = false;
+      }
+    }
+    function handleScreenChangeLargeToSmall(e: MediaQueryList) {
+      if (e.matches) {
+        showFullScreen.value = true;
+      }
+    }
+    mediaQuerySmallToLarge.addEventListener("change", () =>
+      handleScreenChangeSmallToLarge(mediaQuerySmallToLarge),
+    );
+    mediaQueryLargeToSmall.addEventListener("change", () =>
+      handleScreenChangeLargeToSmall(mediaQueryLargeToSmall),
+    );
+    handleScreenChangeSmallToLarge(mediaQuerySmallToLarge);
+
     watch(
       () => props.showDialog,
       (currValue: boolean) => {
@@ -86,7 +100,7 @@ export default defineComponent({
       },
     );
 
-    return { showHideDialog };
+    return { showHideDialog, showFullScreen };
   },
 });
 </script>
