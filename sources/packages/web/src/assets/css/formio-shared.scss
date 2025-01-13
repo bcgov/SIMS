@@ -766,6 +766,7 @@ td .formio-custom-tooltip:hover .tooltip-text {
   color: white;
   border-radius: 5px;
   display: block;
+  white-space: pre;
 }
 
 .changed-value {
@@ -774,7 +775,7 @@ td .formio-custom-tooltip:hover .tooltip-text {
 
 .changed-value::before {
   @extend .changed-value-content-base;
-  content: "\00a0\00a0Updated";
+  content: "  Updated";
 }
 
 .changed-list-item-removed {
@@ -783,7 +784,7 @@ td .formio-custom-tooltip:hover .tooltip-text {
 
 .changed-list-item-removed::before {
   @extend .changed-value-content-base;
-  content: "\00a0\00a0Items were removed from this list";
+  content: "  Items were removed from this list";
 }
 
 .changed-list-item-appended {
@@ -792,5 +793,5 @@ td .formio-custom-tooltip:hover .tooltip-text {
 
 .changed-list-item-appended::before {
   @extend .changed-value-content-base;
-  content: "\00a0\00a0Items were appended to the list";
+  content: "  Items were appended to the list";
 }
