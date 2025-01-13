@@ -2,7 +2,7 @@ export enum ChangeTypes {
   /**
    * Indicates that a new value was added or updated.
    */
-  Update = "updated",
+  Updated = "updated",
   /**
    * An array had at least one property removed.
    */
@@ -33,7 +33,7 @@ export class ApplicationDataChange {
     this.newValue = options?.newValue;
     this.oldValue = options?.oldValue;
     this.index = options?.index;
-    this.changeType = ChangeTypes.Update;
+    this.changeType = ChangeTypes.Updated;
     this.changes = [];
   }
 

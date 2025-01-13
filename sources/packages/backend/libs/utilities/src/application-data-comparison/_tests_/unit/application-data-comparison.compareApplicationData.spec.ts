@@ -154,6 +154,49 @@ describe("compareApplicationData", () => {
     ]);
   });
 
+  it("Should detected items appended to an array when the current data array has more items than the previous.", () => {
+    // Arrange
+    const current = {
+      dependants: [
+        {
+          fullName: "My son 1",
+          dateOfBirth: "2025-01-02",
+        },
+        {
+          fullName: "My son 2",
+          dateOfBirth: "2025-01-02",
+        },
+      ],
+    };
+    const previous = {
+      dependants: [
+        {
+          fullName: "My son 1",
+          dateOfBirth: "2025-01-02",
+        },
+      ],
+    };
+
+    // Act
+    const result = compareApplicationData(current, previous);
+
+    // Assert
+    expect(result).toEqual([
+      {
+        key: "dependants",
+        changeType: "itemsAppended",
+        changes: [
+          {
+            newValue: { fullName: "My son 2", dateOfBirth: "2025-01-02" },
+            index: 1,
+            changeType: "updated",
+            changes: [],
+          },
+        ],
+      },
+    ]);
+  });
+
   it("Should detected items changed in an array at any level when the current data has at least one different property from the previous data.", () => {
     // Arrange
     const current = {

@@ -2,7 +2,7 @@ export enum ChangeTypes {
   /**
    * Indicates that a new value was added or updated.
    */
-  Update = "updated",
+  Updated = "updated",
   /**
    * An array had at least one property removed.
    */
