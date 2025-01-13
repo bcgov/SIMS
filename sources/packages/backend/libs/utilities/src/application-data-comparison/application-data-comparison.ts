@@ -96,15 +96,14 @@ function checkArrayChanges(
   parentChange: ApplicationDataChange,
   options?: { propertyKey?: string; index?: number },
 ): void {
-  let arrayItemChange: ApplicationDataChange;
-  if (!isEqual(currentData, previousData)) {
-    arrayItemChange = new ApplicationDataChange({ key: options?.propertyKey });
-    parentChange.changes.push(arrayItemChange);
-    if (currentData.length < previousData.length) {
-      arrayItemChange.changeType = ChangeTypes.ItemsRemoved;
-    } else if (currentData.length > previousData.length) {
-      arrayItemChange.changeType = ChangeTypes.ItemsAppended;
-    }
+  const arrayItemChange = new ApplicationDataChange({
+    key: options?.propertyKey,
+  });
+  parentChange.changes.push(arrayItemChange);
+  if (currentData.length < previousData.length) {
+    arrayItemChange.changeType = ChangeTypes.ItemsRemoved;
+  } else if (currentData.length > previousData.length) {
+    arrayItemChange.changeType = ChangeTypes.ItemsAppended;
   }
   // Property is an array that should have its items checked.
   for (let index = 0; index < currentData.length; index++) {
@@ -137,23 +136,21 @@ function checkObjectChanges(
   options?: { propertyKey?: string; index?: number },
 ): void {
   // Property is an object that should have its properties checked.
-  if (!isEqual(currentData, previousData)) {
-    const objectPropertyChange = new ApplicationDataChange({
-      key: options?.propertyKey,
-      index: options?.index,
-    });
-    if (Object.keys(currentData).length < Object.keys(previousData).length) {
-      objectPropertyChange.changeType = ChangeTypes.PropertiesRemoved;
-    }
-    parentChange.changes.push(objectPropertyChange);
-    for (const propertyKey of Object.keys(currentData)) {
-      compareApplicationDataRecursive(
-        currentData[propertyKey],
-        previousData[propertyKey],
-        objectPropertyChange,
-        { propertyKey },
-      );
-    }
+  const objectPropertyChange = new ApplicationDataChange({
+    key: options?.propertyKey,
+    index: options?.index,
+  });
+  if (Object.keys(currentData).length < Object.keys(previousData).length) {
+    objectPropertyChange.changeType = ChangeTypes.PropertiesRemoved;
+  }
+  parentChange.changes.push(objectPropertyChange);
+  for (const propertyKey of Object.keys(currentData)) {
+    compareApplicationDataRecursive(
+      currentData[propertyKey],
+      previousData[propertyKey],
+      objectPropertyChange,
+      { propertyKey },
+    );
   }
 }
 
