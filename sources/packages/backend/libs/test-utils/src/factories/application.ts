@@ -301,7 +301,6 @@ export async function saveFakeApplication(
         applicationNumber: options?.applicationNumber,
         pirStatus: options?.pirStatus,
         isArchived: options?.isArchived ? options?.isArchived : false,
-        applicationNumber: options?.applicationNumber,
         submittedDate: options?.submittedDate,
       },
     },

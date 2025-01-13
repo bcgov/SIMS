@@ -44,10 +44,11 @@ function compareApplicationDataRecursive(
   }
   // Property has a null or undefined value but had a value before or vice versa.
   if (
-    (currentData === null && previousData !== null) ||
-    (currentData !== null && previousData === null) ||
-    (currentData === undefined && previousData !== undefined) ||
-    (currentData !== undefined && previousData === undefined)
+    (currentData === null ||
+      currentData === undefined ||
+      previousData === null ||
+      previousData === undefined) &&
+    currentData !== previousData
   ) {
     const newValueChange = new ApplicationDataChange({
       key: options?.propertyKey,

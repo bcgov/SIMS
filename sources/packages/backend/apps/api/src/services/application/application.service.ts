@@ -7,14 +7,6 @@ import {
   EntityManager,
   LessThan,
 } from "typeorm";
-import {
-  DataSource,
-  In,
-  Not,
-  Brackets,
-  EntityManager,
-  LessThan,
-} from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,

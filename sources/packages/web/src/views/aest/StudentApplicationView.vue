@@ -68,6 +68,7 @@ export default defineComponent({
     const initialData = ref({});
     const selectedForm = ref();
     let applicationWizard: FormIOForm;
+
     /**
      * Happens when all the form components are rendered, including lists.
      */
@@ -77,6 +78,7 @@ export default defineComponent({
       // List components are ready only after the form is rendered.
       highlightChanges();
     };
+
     /**
      * Loads the initial application data.
      */
@@ -95,6 +97,7 @@ export default defineComponent({
       };
       highlightChanges();
     });
+
     /**
      * Check if the application has changes to be highlighted.
      * Changes are expected after applications are edited after submitted at least once.
@@ -108,6 +111,7 @@ export default defineComponent({
         applicationDetail.value.changes,
       );
     }
+
     /**
      * Apply the style class to the components that have changes.
      * @param parentComponent component to have the changes highlighted.
@@ -120,18 +124,14 @@ export default defineComponent({
       for (const change of changes) {
         let searchComponent: FormIOComponent | undefined;
         if (typeof change.index === "number") {
-          searchComponent = parentComponent?.components?.length
-            ? parentComponent.components[change.index]
-            : undefined;
-          if (searchComponent && change.changes) {
-            // Should check further for nested changes.
-            highlightChangesRecursive(searchComponent, change.changes);
-          } else if (searchComponent) {
-            // searchComponent has a change, but no nested changes.
-            // It also does not have a key because it is a child in a list.
-            applyChangedValueStyleClass(searchComponent, change.changeType);
-          }
+          // The item to be processed is an array item.
+          searchComponent = processArrayItem(
+            parentComponent,
+            change.index,
+            change,
+          );
         } else if (change.key) {
+          // The item to be processed is a component.
           searchComponent = parentComponent;
         }
         if (!change.key || !searchComponent?.components?.length) {
@@ -146,6 +146,32 @@ export default defineComponent({
           }
         }
       }
+    }
+
+    /**
+     * Process an array item component.
+     * @param parentComponent component that contains the array item.
+     * @param changeIndex index of the array item that has the change.
+     * @param change change object that contains the change details.
+     * @returns component if it exists, otherwise undefined.
+     */
+    function processArrayItem(
+      parentComponent: FormIOComponent,
+      changeIndex: number,
+      change: ApplicationDataChangeAPIOutDTO,
+    ): FormIOComponent | undefined {
+      const searchComponent = parentComponent?.components?.length
+        ? parentComponent.components[changeIndex]
+        : undefined;
+      if (searchComponent && change.changes) {
+        // Should check further for nested changes.
+        highlightChangesRecursive(searchComponent, change.changes);
+      } else if (searchComponent) {
+        // searchComponent has a change, but no nested changes.
+        // It also does not have a key because it is a child in a list.
+        applyChangedValueStyleClass(searchComponent, change.changeType);
+      }
+      return searchComponent;
     }
 
     /**
