@@ -95,7 +95,6 @@ export default defineComponent({
         ...applicationDetail.value.data,
         isReadOnly: true,
       };
-      highlightChanges();
     });
 
     /**
@@ -177,8 +176,8 @@ export default defineComponent({
     /**
      * Apply the proper highlight style to a changed component.
      * @param component component to received the style.
-     * @param itemRemoved indicates if the component had an item removed,
-     * which would required a different style to be applied.
+     * @param changeType indicates the operation that has changed the value,
+     * which may required a different style to be applied.
      */
     function applyChangedValueStyleClass(
       component: FormIOComponent,
