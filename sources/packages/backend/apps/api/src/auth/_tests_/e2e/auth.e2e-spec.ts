@@ -21,7 +21,7 @@ import { JwtService } from "@nestjs/jwt";
 import { INVALID_BETA_USER, MISSING_USER_ACCOUNT } from "../../../constants";
 import {
   BEARER_AUTH_TYPE,
-  getReadOnlyAuthorizedLocation,
+  getAuthorizedLocation,
   InstitutionTokenTypes,
   mockUserLoginInfo,
   resetMockUserLoginInfo,
@@ -30,6 +30,7 @@ import * as dayjs from "dayjs";
 import { Student, User } from "@sims/sims-db";
 import { AuthTestController } from "../../../testHelpers/controllers/auth-test/auth-test.controller";
 import { SIMS2_COLLE_USER } from "@sims/test-utils/constants";
+import { InstitutionUserTypes } from "../../user-types.enum";
 
 describe("Authentication (e2e)", () => {
   // Nest application to be shared for all e2e tests
@@ -310,9 +311,10 @@ describe("Authentication (e2e)", () => {
 
     it("Should return a HttpStatus OK(200) when a read-only institution user tries to access a read-only route to their institution.", async () => {
       // Arrange
-      const collegeELocation = await getReadOnlyAuthorizedLocation(
+      const collegeELocation = await getAuthorizedLocation(
         db,
         InstitutionTokenTypes.CollegeEReadOnlyUser,
+        InstitutionUserTypes.readOnlyUser,
       );
       const endpoint = `/auth-test/institution-location-reading-route/${collegeELocation.id}`;
 
@@ -325,9 +327,10 @@ describe("Authentication (e2e)", () => {
 
     it("Should return a HttpStatus FORBIDDEN(403) when a read-only institution user tries to access a non-reading-only route to their institution.", async () => {
       // Arrange
-      const collegeELocation = await getReadOnlyAuthorizedLocation(
+      const collegeELocation = await getAuthorizedLocation(
         db,
         InstitutionTokenTypes.CollegeEReadOnlyUser,
+        InstitutionUserTypes.readOnlyUser,
       );
       const endpoint = `/auth-test/institution-location-modifying-route/${collegeELocation.id}`;
 

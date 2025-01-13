@@ -6,7 +6,7 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
-  getReadOnlyAuthorizedLocation,
+  getAuthorizedLocation,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 import {
@@ -28,6 +28,7 @@ import {
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { COE_WINDOW, addDays, getISODateOnlyString } from "@sims/utilities";
+import { InstitutionUserTypes } from "../../../../auth";
 
 describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-denyConfirmationOfEnrollment", () => {
   let app: INestApplication;
@@ -86,9 +87,10 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-denyConfirmationOf
 
   it("Should not decline the COE when user is read-only.", async () => {
     // Arrange
-    const collegeELocation = await getReadOnlyAuthorizedLocation(
+    const collegeELocation = await getAuthorizedLocation(
       db,
       InstitutionTokenTypes.CollegeEReadOnlyUser,
+      InstitutionUserTypes.readOnlyUser,
     );
     const endpoint = `/institutions/location/${collegeELocation.id}/confirmation-of-enrollment/disbursement-schedule/9999999/deny`;
     const collegEInstitutionUserToken = await getInstitutionToken(

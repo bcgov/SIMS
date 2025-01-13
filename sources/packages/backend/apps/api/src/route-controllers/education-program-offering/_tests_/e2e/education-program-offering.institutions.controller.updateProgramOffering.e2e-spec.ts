@@ -22,7 +22,7 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
   createFakeEducationProgramOffering,
-  getReadOnlyAuthorizedLocation,
+  getAuthorizedLocation,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import * as faker from "faker";
@@ -31,6 +31,7 @@ import {
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
+import { InstitutionUserTypes } from "../../../../auth";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffering", () => {
   let app: INestApplication;
@@ -163,9 +164,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
 
   it("Should not update a new offering when requested by a read-only user.", async () => {
     // Arrange
-    const collegeELocation = await getReadOnlyAuthorizedLocation(
+    const collegeELocation = await getAuthorizedLocation(
       db,
       InstitutionTokenTypes.CollegeEReadOnlyUser,
+      InstitutionUserTypes.readOnlyUser,
     );
     const endpoint = `/institutions/education-program-offering/location/${collegeELocation.id}/education-program/999999/offering/999999`;
     const collegEInstitutionUserToken = await getInstitutionToken(

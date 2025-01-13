@@ -22,7 +22,7 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
   createFakeEducationProgramOffering,
-  getReadOnlyAuthorizedLocation,
+  getAuthorizedLocation,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import * as faker from "faker";
@@ -37,6 +37,7 @@ import {
 } from "../../models/education-program-offering.dto";
 import { WILComponentOptions } from "../../../../services";
 import { getISODateOnlyString } from "@sims/utilities";
+import { InstitutionUserTypes } from "../../../../auth";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
   let app: INestApplication;
@@ -201,9 +202,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
 
   it("Should not create a new offering when user is read-only.", async () => {
     // Arrange
-    const collegeELocation = await getReadOnlyAuthorizedLocation(
+    const collegeELocation = await getAuthorizedLocation(
       db,
       InstitutionTokenTypes.CollegeEReadOnlyUser,
+      InstitutionUserTypes.readOnlyUser,
     );
     const endpoint = `/institutions/education-program-offering/location/${collegeELocation.id}/education-program/999999`;
     const collegEInstitutionUserToken = await getInstitutionToken(

@@ -6,7 +6,7 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
-  getReadOnlyAuthorizedLocation,
+  getAuthorizedLocation,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 import {
@@ -27,6 +27,7 @@ import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validati
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { STUDY_DATE_OVERLAP_ERROR } from "../../../../utilities";
 import { OFFERING_INTENSITY_MISMATCH } from "../../../../constants";
+import { InstitutionUserTypes } from "../../../../auth";
 
 describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createApplicationOfferingChangeRequest", () => {
   let app: INestApplication;
@@ -135,9 +136,10 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
 
   it("Should not be able to submit application offering request with a read-only user.", async () => {
     // Arrange
-    const collegeELocation = await getReadOnlyAuthorizedLocation(
+    const collegeELocation = await getAuthorizedLocation(
       db,
       InstitutionTokenTypes.CollegeEReadOnlyUser,
+      InstitutionUserTypes.readOnlyUser,
     );
     const endpoint = `/institutions/location/${collegeELocation.id}/application-offering-change-request`;
     const collegEInstitutionUserToken = await getInstitutionToken(

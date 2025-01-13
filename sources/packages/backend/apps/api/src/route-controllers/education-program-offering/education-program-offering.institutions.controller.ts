@@ -32,11 +32,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
-import {
-  InstitutionUserTypes,
-  OfferingIntensity,
-  OfferingTypes,
-} from "@sims/sims-db";
+import { OfferingIntensity, OfferingTypes } from "@sims/sims-db";
 import {
   CreateFromValidatedOfferingError,
   EducationProgramOfferingService,
@@ -80,6 +76,7 @@ import {
 } from "../../constants";
 import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
 import { Request } from "express";
+import { InstitutionUserTypes } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program-offering")

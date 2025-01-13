@@ -15,7 +15,7 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
-  getReadOnlyAuthorizedLocation,
+  getAuthorizedLocation,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import {
@@ -36,6 +36,7 @@ import { addToDateOnlyString, getISODateOnlyString } from "@sims/utilities";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { TestingModule } from "@nestjs/testing";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../../../constants";
+import { InstitutionUserTypes } from "../../../../auth";
 
 describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticStanding.", () => {
   let app: INestApplication;
@@ -263,9 +264,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
 
   it("Should not create a new scholastic standing when the user is read-only.", async () => {
     // Arrange
-    const collegeELocation = await getReadOnlyAuthorizedLocation(
+    const collegeELocation = await getAuthorizedLocation(
       db,
       InstitutionTokenTypes.CollegeEReadOnlyUser,
+      InstitutionUserTypes.readOnlyUser,
     );
     const endpoint = `/institutions/scholastic-standing/location/${collegeELocation.id}/application/99999`;
     const collegEInstitutionUserToken = await getInstitutionToken(

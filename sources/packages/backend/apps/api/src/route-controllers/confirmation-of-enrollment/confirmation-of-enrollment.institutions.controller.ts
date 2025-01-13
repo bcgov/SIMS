@@ -21,7 +21,7 @@ import {
   COEDeniedReasonService,
   DisbursementScheduleService,
 } from "../../services";
-import { DisbursementSchedule, InstitutionUserTypes } from "@sims/sims-db";
+import { DisbursementSchedule } from "@sims/sims-db";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   getCOEDeniedReason,
@@ -62,6 +62,7 @@ import {
   ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ENROLMENT_NOT_FOUND,
 } from "@sims/services/constants";
+import { InstitutionUserTypes } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")

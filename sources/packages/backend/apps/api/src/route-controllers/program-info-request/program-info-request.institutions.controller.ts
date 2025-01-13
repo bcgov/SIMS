@@ -34,7 +34,6 @@ import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
   Application,
   AssessmentTriggerType,
-  InstitutionUserTypes,
   ProgramInfoStatus,
 } from "@sims/sims-db";
 import {
@@ -55,6 +54,7 @@ import {
 import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { WorkflowClientService } from "@sims/services";
+import { InstitutionUserTypes } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")

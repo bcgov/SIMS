@@ -134,6 +134,7 @@ async function authorizeUserForLocation(
  * same userTokenType used to authenticate to the API.
  * @param location location to have the access granted for the user.
  * @param options optional parameters.
+ * - `institutionUserType` type of the institution user.
  */
 export async function authorizeUserTokenForLocation(
   dataSource: DataSource,
@@ -161,16 +162,18 @@ export async function authorizeUserTokenForLocation(
 }
 
 /**
- * Create a location with read only user access.
+ * Create a location with user access.
  * This is useful for tests that need to assert that the API endpoints
- * are properly restricted for read only users.
+ * are properly restricted to their institution user type.
  * @param db E2E testing data sources.
  * @param institutionTokenType user type that will have read only access.
+ * @param institutionUserType type of the institution user.
  * @returns location the user will have read only access.
  */
-export async function getReadOnlyAuthorizedLocation(
+export async function getAuthorizedLocation(
   db: E2EDataSources,
   institutionTokenType: InstitutionTokenTypes,
+  institutionUserType: InstitutionUserTypes,
 ) {
   const { institution } = await getAuthRelatedEntities(
     db.dataSource,
@@ -181,7 +184,7 @@ export async function getReadOnlyAuthorizedLocation(
     db.dataSource,
     institutionTokenType,
     location,
-    { institutionUserType: InstitutionUserTypes.readOnlyUser },
+    { institutionUserType },
   );
   return location;
 }

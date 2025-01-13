@@ -10,11 +10,7 @@ import {
   FormService,
   InstitutionUserAuthorizations,
 } from "../../services";
-import {
-  EducationProgram,
-  InstitutionUserTypes,
-  OfferingTypes,
-} from "@sims/sims-db";
+import { EducationProgram, OfferingTypes } from "@sims/sims-db";
 import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,
@@ -42,6 +38,7 @@ import {
   SaveEducationProgram,
 } from "../../services/education-program/education-program.service.models";
 import { InstitutionService } from "../../services/institution/institution.service";
+import { InstitutionUserTypes } from "../../auth";
 
 @Injectable()
 export class EducationProgramControllerService {

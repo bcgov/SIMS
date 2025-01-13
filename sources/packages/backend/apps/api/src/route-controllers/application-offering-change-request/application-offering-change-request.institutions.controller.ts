@@ -43,10 +43,7 @@ import {
   ApplicationOfferingChangeRequestService,
   ApplicationService,
 } from "../../services";
-import {
-  ApplicationOfferingChangeRequestStatus,
-  InstitutionUserTypes,
-} from "@sims/sims-db";
+import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IInstitutionUserToken } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
@@ -59,6 +56,7 @@ import {
 } from "../../constants";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
+import { InstitutionUserTypes } from "../../auth";
 
 /**
  * Application offering change request controller for institutions client.
