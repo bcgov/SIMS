@@ -45,7 +45,7 @@ import {
 } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { IInstitutionUserToken } from "../../auth";
+import { IInstitutionUserToken, InstitutionUserTypes } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
 import {
   EDUCATION_PROGRAM_IS_EXPIRED,
@@ -56,7 +56,6 @@ import {
 } from "../../constants";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
-import { InstitutionUserTypes } from "../../auth";
 
 /**
  * Application offering change request controller for institutions client.
