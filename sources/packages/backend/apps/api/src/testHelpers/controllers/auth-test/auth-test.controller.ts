@@ -7,9 +7,9 @@ import {
   Groups,
   RequiresStudentAccount,
   RequiresUserAccount,
+  HasLocationAccess,
 } from "../../../auth/decorators";
-import { Role } from "../../../auth/roles.enum";
-import { UserGroups } from "../../../auth/user-groups.enum";
+import { Role, UserGroups, InstitutionUserTypes } from "../../../auth";
 
 /**
  * Controller dedicated to test the functionalities around the authentication layer.
@@ -115,6 +115,24 @@ export class AuthTestController {
   @RequiresUserAccount(false)
   @Get("/user-not-required-route")
   userNotRequired(): void {
+    return;
+  }
+
+  /**
+   * Test route which requires a location to be present as default authorization.
+   */
+  @HasLocationAccess("locationId")
+  @Get("/institution-location-reading-route/:locationId")
+  institutionLocationReadingRoute(): void {
+    return;
+  }
+
+  /**
+   * Test route which requires a location to be present and the institution user type should be non-read-only.
+   */
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
+  @Get("/institution-location-modifying-route/:locationId")
+  institutionLocationModifyingRoute(): void {
     return;
   }
 }

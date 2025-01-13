@@ -76,6 +76,7 @@ import {
 } from "../../constants";
 import { OfferingCSVModel } from "../../services/education-program-offering/education-program-offering-import-csv.models";
 import { Request } from "express";
+import { InstitutionUserTypes } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program-offering")
@@ -101,7 +102,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param payload offering data to be validated.
    * @returns offering validation result.
    */
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @ApiNotFoundResponse({
     description: "Not able to find the program in the provided location.",
   })
@@ -159,7 +160,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param programId offering program.
    * @returns primary identifier of the created offering.
    */
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @ApiNotFoundResponse({
     description:
       "Program to create the offering not found for the institution or " +
@@ -218,7 +219,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param programId offering program.
    * @param offeringId offering to be modified.
    */
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @ApiUnprocessableEntityResponse({
     description:
       "Either offering for the program and location is not found " +
@@ -296,7 +297,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param programId offering program.
    * @param offeringId offering to be modified.
    */
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @ApiUnprocessableEntityResponse({
     description:
       "Either offering for the program and location is not found or the offering is not in the appropriate status to be updated.",
@@ -455,7 +456,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
    * @param programId program to which the offering belongs to.
    * @returns primary identifier of created resource.
    */
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @Post(
     ":offeringId/location/:locationId/education-program/:programId/request-change",
   )

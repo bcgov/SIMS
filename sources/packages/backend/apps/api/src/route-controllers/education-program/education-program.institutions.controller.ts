@@ -24,6 +24,7 @@ import {
 } from "./models/education-program.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import {
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -79,11 +80,17 @@ export class EducationProgramInstitutionsController extends BaseController {
       "Not able to a save the program due to an invalid request or " +
       "duplicate SABC code.",
   })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
   @Post()
   async createEducationProgram(
     @Body() payload: EducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
     const newProgram = await this.educationProgramControllerService.saveProgram(
       payload,
       userToken.authorizations.institutionId,
@@ -106,12 +113,18 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiNotFoundResponse({
     description: "Not able to find the education program.",
   })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
   @Patch(":programId")
   async updateEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,
     @Body() payload: EducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
     await this.educationProgramControllerService.saveProgram(
       payload,
       userToken.authorizations.institutionId,
@@ -130,11 +143,17 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description: "The education program is already set as requested.",
   })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
   @Patch(":programId/deactivate")
   async deactivateProgram(
     @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
     await this.educationProgramControllerService.deactivateProgram(
       programId,
       userToken.userId,

@@ -15,6 +15,7 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
+  getAuthorizedLocation,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import {
@@ -35,6 +36,7 @@ import { addToDateOnlyString, getISODateOnlyString } from "@sims/utilities";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { TestingModule } from "@nestjs/testing";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../../../constants";
+import { InstitutionUserTypes } from "../../../../auth";
 
 describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticStanding.", () => {
   let app: INestApplication;
@@ -258,6 +260,30 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     expect(
       queryApplication.currentAssessment.studentScholasticStanding.id,
     ).toBe(createdScholasticStandingId);
+  });
+
+  it("Should not create a new scholastic standing when the user is read-only.", async () => {
+    // Arrange
+    const collegeELocation = await getAuthorizedLocation(
+      db,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+      InstitutionUserTypes.readOnlyUser,
+    );
+    const endpoint = `/institutions/scholastic-standing/location/${collegeELocation.id}/application/99999`;
+    const collegEInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "Forbidden resource",
+        error: "Forbidden",
+      });
   });
 
   it("Should create a new scholastic standing 'School transfer' for a part-time application when the institution user requests.", async () => {

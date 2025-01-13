@@ -32,7 +32,7 @@ import {
   INSTITUTION_USER_ALREADY_EXISTS,
   LEGAL_SIGNING_AUTHORITY_EXIST,
 } from "../../constants";
-import { InstitutionUserTypes } from "../../auth/user-types.enum";
+import { InstitutionUserTypes } from "../../auth";
 
 /**
  * Service/Provider for Institutions controller to wrap the common methods.

@@ -97,9 +97,9 @@ export class CreateInstitutionsAndAuthenticationUsers {
           user.userRole,
         );
       // Check if a default location need to be created.
-      // Only regular users must be associated with a location.
+      // Only non-admin users must be associated with a location.
       let location: InstitutionLocation;
-      if (user.userType === InstitutionUserTypes.user) {
+      if (user.userType !== InstitutionUserTypes.admin) {
         // Crate a default location.
         // Create a default location to have it associated with the regular user.
         const fakeInstitutionDefaultLocation = createFakeInstitutionLocation({

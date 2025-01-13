@@ -74,6 +74,25 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
     });
   });
 
+  it("Should not deactivate an education program when user is read-only.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+    const endpoint = "/institutions/education-program/99999/deactivate";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "You are not authorized to create or modify a program.",
+        error: "Forbidden",
+      });
+  });
+
   it("Should return a not found HTTP status when a different institution accesses the program.", async () => {
     // Arrange
     const program = createFakeEducationProgram({

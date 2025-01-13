@@ -6,6 +6,7 @@ import {
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
+  getAuthorizedLocation,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 import {
@@ -27,6 +28,7 @@ import {
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import { COE_WINDOW, addDays, getISODateOnlyString } from "@sims/utilities";
+import { InstitutionUserTypes } from "../../../../auth";
 
 describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-denyConfirmationOfEnrollment", () => {
   let app: INestApplication;
@@ -81,6 +83,30 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-denyConfirmationOf
     });
     expect(declinedCOE.coeStatus).toBe(COEStatus.declined);
     expect(declinedCOE.coeDeniedReason.id).toBe(coeDenyReasonId);
+  });
+
+  it("Should not decline the COE when user is read-only.", async () => {
+    // Arrange
+    const collegeELocation = await getAuthorizedLocation(
+      db,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+      InstitutionUserTypes.readOnlyUser,
+    );
+    const endpoint = `/institutions/location/${collegeELocation.id}/confirmation-of-enrollment/disbursement-schedule/9999999/deny`;
+    const collegEInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "Forbidden resource",
+        error: "Forbidden",
+      });
   });
 
   it(

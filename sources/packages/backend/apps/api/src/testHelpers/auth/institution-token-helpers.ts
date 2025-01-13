@@ -1,9 +1,11 @@
 import {
   SIMS2_COLLC_USER,
   SIMS2_COLLD_USER,
+  SIMS2_COLLE_USER,
   SIMS2_COLLF_USER,
   SIMS_COLLC_ADMIN_LEGAL_SIGNING_USER,
   SIMS_COLLD_ADMIN_NON_LEGAL_SIGNING_USER,
+  SIMS_COLLE_ADMIN_NON_LEGAL_SIGNING_USER,
   SIMS_COLLF_ADMIN_LEGAL_SIGNING_USER,
 } from "@sims/test-utils/constants";
 import { UserPasswordCredential } from "@sims/utilities/config";
@@ -30,6 +32,15 @@ export enum InstitutionTokenTypes {
    * SIMS2_COLLD user configured as a regular user.
    */
   CollegeDUser,
+  /**
+   * SIMS_COLLE user configured as an admin without legal signing officer.
+   */
+  CollegeEAdminNonLegalSigningUser,
+  /**
+   * SIMS2_COLLE user configured as a read-only user.
+   * Please do not add user type 'user' to this user as it is intended to be used as a read-only user.
+   */
+  CollegeEReadOnlyUser,
   /**
    * SIMS_COLLF user configured as an admin and also as a legal signing officer.
    */
@@ -71,6 +82,18 @@ export async function getInstitutionToken(
     case InstitutionTokenTypes.CollegeDUser:
       credential = {
         userName: SIMS2_COLLD_USER,
+        password: process.env.E2E_TEST_PASSWORD,
+      };
+      break;
+    case InstitutionTokenTypes.CollegeEAdminNonLegalSigningUser:
+      credential = {
+        userName: SIMS_COLLE_ADMIN_NON_LEGAL_SIGNING_USER,
+        password: process.env.E2E_TEST_PASSWORD,
+      };
+      break;
+    case InstitutionTokenTypes.CollegeEReadOnlyUser:
+      credential = {
+        userName: SIMS2_COLLE_USER,
         password: process.env.E2E_TEST_PASSWORD,
       };
       break;

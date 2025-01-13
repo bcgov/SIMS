@@ -22,6 +22,7 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
   createFakeEducationProgramOffering,
+  getAuthorizedLocation,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import * as faker from "faker";
@@ -30,6 +31,7 @@ import {
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
+import { InstitutionUserTypes } from "../../../../auth";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffering", () => {
   let app: INestApplication;
@@ -158,6 +160,30 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         offeringStatus: OfferingStatus.CreationPending,
       }),
     );
+  });
+
+  it("Should not update a new offering when requested by a read-only user.", async () => {
+    // Arrange
+    const collegeELocation = await getAuthorizedLocation(
+      db,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+      InstitutionUserTypes.readOnlyUser,
+    );
+    const endpoint = `/institutions/education-program-offering/location/${collegeELocation.id}/education-program/999999/offering/999999`;
+    const collegEInstitutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(collegEInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "Forbidden resource",
+        error: "Forbidden",
+      });
   });
 
   it("Should throw error when education program is expired.", async () => {

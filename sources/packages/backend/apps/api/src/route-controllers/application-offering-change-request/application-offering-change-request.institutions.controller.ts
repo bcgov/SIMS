@@ -45,7 +45,7 @@ import {
 } from "../../services";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { IInstitutionUserToken } from "../../auth";
+import { IInstitutionUserToken, InstitutionUserTypes } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
 import {
   EDUCATION_PROGRAM_IS_EXPIRED,
@@ -271,6 +271,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   @ApiUnauthorizedResponse({
     description: "The location does not have access to the offering.",
   })
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @Post()
   async createApplicationOfferingChangeRequest(
     @UserToken() userToken: IInstitutionUserToken,

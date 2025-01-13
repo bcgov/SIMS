@@ -62,6 +62,7 @@ import {
   ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ENROLMENT_NOT_FOUND,
 } from "@sims/services/constants";
+import { InstitutionUserTypes } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
@@ -245,7 +246,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
    * @param locationId location id of the application.
    * @param payload COE confirmation information.
    */
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @ApiNotFoundResponse({
     description: "Enrolment not found.",
   })
@@ -283,7 +284,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
    * @param payload contains the denied reason of the
    * student application.
    */
-  @HasLocationAccess("locationId")
+  @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @ApiNotFoundResponse({
     description: "Enrolment not found.",
   })

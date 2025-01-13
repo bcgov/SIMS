@@ -144,6 +144,25 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     );
   });
 
+  it("Should not create an education program when user is read-only.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+    const endpoint = "/institutions/education-program";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        statusCode: HttpStatus.FORBIDDEN,
+        message: "You are not authorized to create or modify a program.",
+        error: "Forbidden",
+      });
+  });
+
   it("Should throw duplicate SABC code for education program when there is already an active education program with the same SABC code.", async () => {
     // Arrange
     const sameSabcCode = "GGG9";
