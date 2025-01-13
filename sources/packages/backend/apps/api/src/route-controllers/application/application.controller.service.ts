@@ -360,7 +360,7 @@ export class ApplicationControllerService {
   private async processSelectedLocation(
     data: ApplicationData,
     additionalFormData: ApplicationFormData,
-  ) {
+  ): Promise<void> {
     if (data.selectedLocation) {
       const designatedLocation = await this.locationService.getLocation(
         data.selectedLocation,
@@ -383,7 +383,7 @@ export class ApplicationControllerService {
   private async processSelectedProgram(
     data: ApplicationData,
     additionalFormData: ApplicationFormData,
-  ) {
+  ): Promise<void> {
     if (data.selectedProgram) {
       const selectedProgram = await this.programService.getProgramById(
         data.selectedProgram,
@@ -429,7 +429,7 @@ export class ApplicationControllerService {
   private async processSelectedOffering(
     data: ApplicationData,
     additionalFormData: ApplicationFormData,
-  ) {
+  ): Promise<void> {
     if (data.selectedOffering) {
       const selectedOffering = await this.offeringService.getOfferingById(
         data.selectedOffering,
@@ -495,7 +495,7 @@ export class ApplicationControllerService {
   transformToApplicationChangesDTO(
     applicationDataChanges: ApplicationDataChange[],
     applicationDataChangeAPIOutDTO: ApplicationDataChangeAPIOutDTO[],
-  ) {
+  ): void {
     applicationDataChanges.forEach((dataChange) => {
       const dataChangeDTO: ApplicationDataChangeAPIOutDTO = {
         key: dataChange.key,
