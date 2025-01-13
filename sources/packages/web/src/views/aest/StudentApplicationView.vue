@@ -56,6 +56,10 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    versionApplicationId: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props) {
     const { emptyStringFiller } = useFormatters();
@@ -77,8 +81,10 @@ export default defineComponent({
      * Loads the initial application data.
      */
     onMounted(async () => {
+      // When the application version is present load the given application version instead of the current application version.
+      const applicationId = props.versionApplicationId ?? props.applicationId;
       const application = await ApplicationService.shared.getApplicationDetail(
-        props.applicationId,
+        applicationId,
       );
       applicationDetail.value =
         application as ApplicationSupplementalDataAPIOutDTO;

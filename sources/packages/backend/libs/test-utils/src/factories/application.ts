@@ -67,6 +67,7 @@ export function createFakeApplication(
   application.location = relations?.location ?? createFakeInstitutionLocation();
   application.pirStatus = options?.initialValue?.pirStatus;
   application.isArchived = options?.initialValue?.isArchived;
+  application.submittedDate = options?.initialValue?.submittedDate;
   return application;
 }
 
@@ -267,6 +268,7 @@ export async function saveFakeApplication(
     isArchived?: boolean;
     currentAssessmentInitialValues?: Partial<StudentAssessment>;
     offeringInitialValues?: Partial<EducationProgramOffering>;
+    submittedDate?: Date;
   },
 ): Promise<Application> {
   const userRepo = dataSource.getRepository(User);
@@ -299,6 +301,8 @@ export async function saveFakeApplication(
         applicationNumber: options?.applicationNumber,
         pirStatus: options?.pirStatus,
         isArchived: options?.isArchived ? options?.isArchived : false,
+        applicationNumber: options?.applicationNumber,
+        submittedDate: options?.submittedDate,
       },
     },
   );

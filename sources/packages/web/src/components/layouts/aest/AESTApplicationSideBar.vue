@@ -8,7 +8,7 @@
       :title="studentMenu.studentApplication.title"
       @click="studentMenu.studentApplication.command"
     />
-    <v-list density="compact" v-if="relatedParentPartners.length" nav>
+    <v-list density="compact" nav v-if="relatedParentPartners.length">
       <v-list-subheader>Supporting users</v-list-subheader>
       <v-list-item
         v-for="relatedParentPartner in relatedParentPartners"
@@ -41,6 +41,25 @@
       :title="studentMenu.applicationStatus.title"
       @click="studentMenu.applicationStatus.command"
     />
+    <v-list v-if="applicationHistory.length" density="compact" nav>
+      <v-list-group
+        v-for="application in applicationHistory"
+        :key="application.title"
+        :title="application.title"
+        :value="application.title"
+      >
+        <template #activator="{ props }">
+          <v-list-item v-bind="props" :title="application.title"></v-list-item>
+        </template>
+        <v-list-item
+          v-for="child in application.children"
+          :key="child.title"
+          :title="child.title"
+          :prepend-icon="child.props?.prependIcon"
+          :to="child.props?.to"
+        ></v-list-item>
+      </v-list-group>
+    </v-list>
   </v-navigation-drawer>
 </template>
 
@@ -50,6 +69,8 @@ import { ref, onMounted, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, SupportingUserType } from "@/types";
 import { SupportingUsersService } from "@/services/SupportingUserService";
+import { ApplicationService } from "@/services/ApplicationService";
+import { useFormatters } from "@/composables";
 
 export interface StudentApplicationMenu {
   studentApplication: MenuItemModel;
@@ -68,10 +89,16 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    versionApplicationId: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props) {
     const router = useRouter();
+    const { getISODateHourMinuteString } = useFormatters();
     const relatedParentPartners = ref([] as MenuItemModel[]);
+    const applicationHistory = ref([] as MenuItemModel[]);
     const studentMenu = ref<StudentApplicationMenu>({
       studentApplication: {
         title: "Application",
@@ -159,11 +186,43 @@ export default defineComponent({
           });
         }
       });
+      const applicationOverallDetails =
+        await ApplicationService.shared.getApplicationOverallDetails(
+          props.applicationId,
+        );
+      if (applicationOverallDetails.previousVersions.length) {
+        applicationOverallDetails.previousVersions.forEach(
+          (applicationVersion) => {
+            applicationHistory.value.push({
+              title: `${getISODateHourMinuteString(
+                applicationVersion.submittedDate,
+              )}`,
+              children: [
+                {
+                  title: "Application",
+                  props: {
+                    prependIcon: "mdi-school-outline",
+                    to: {
+                      name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
+                      params: {
+                        studentId: props.studentId,
+                        applicationId: props.applicationId,
+                        versionApplicationId: applicationVersion.id,
+                      },
+                    },
+                  },
+                },
+              ],
+            });
+          },
+        );
+      }
     });
 
     return {
       studentMenu,
       relatedParentPartners,
+      applicationHistory,
     };
   },
 });

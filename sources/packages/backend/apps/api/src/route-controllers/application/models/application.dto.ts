@@ -220,3 +220,12 @@ export class ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
 }
+
+export class ApplicationVersionAPIOutDTO {
+  id: number;
+  submittedDate: Date;
+}
+
+export class ApplicationOverallDetailsAPIOutDTO {
+  previousVersions: ApplicationVersionAPIOutDTO[];
+}

@@ -15,6 +15,7 @@ import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertFullTimeIntegrationService } from "./e-cert-full-time-integration/e-cert-full-time.integration.service";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { DataSource } from "typeorm";
 
 const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 
@@ -22,6 +23,7 @@ const ECERT_FULL_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_FT_SENT_FILE";
 export class FullTimeECertFileHandler extends ECertFileHandler {
   esdcConfig: ESDCIntegrationConfig;
   constructor(
+    dataSource: DataSource,
     configService: ConfigService,
     sequenceService: SequenceControlService,
     eCertGenerationService: ECertGenerationService,
@@ -31,6 +33,7 @@ export class FullTimeECertFileHandler extends ECertFileHandler {
     private readonly eCertIntegrationService: ECertFullTimeIntegrationService,
   ) {
     super(
+      dataSource,
       configService,
       sequenceService,
       eCertGenerationService,

@@ -303,6 +303,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
               clientType: ClientIdType.AEST,
             },
           },
+          {
+            path: AppRoutes.ApplicationVersionDetail,
+            name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
+            props: true,
+            component: StudentApplicationView,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
         ],
       },
       {

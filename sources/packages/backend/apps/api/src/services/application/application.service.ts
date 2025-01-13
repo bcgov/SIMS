@@ -7,6 +7,14 @@ import {
   EntityManager,
   LessThan,
 } from "typeorm";
+import {
+  DataSource,
+  In,
+  Not,
+  Brackets,
+  EntityManager,
+  LessThan,
+} from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -590,6 +598,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
    * - `studentId` student id.
    * - `institutionId` institution id.
+   * - `allowOverwritten` indicates if overwritten application is allowed.
    * @returns student application.
    */
   async getApplicationById(
@@ -598,8 +607,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       loadDynamicData?: boolean;
       studentId?: number;
       institutionId?: number;
+      allowOverwritten?: boolean;
     },
   ): Promise<Application> {
+    const applicationStatus = options?.allowOverwritten
+      ? undefined
+      : Not(ApplicationStatus.Overwritten);
     return this.repo.findOne({
       select: {
         id: true,
@@ -663,7 +676,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       where: {
         id: applicationId,
-        applicationStatus: Not(ApplicationStatus.Overwritten),
+        applicationStatus,
         student: {
           id: options?.studentId,
         },

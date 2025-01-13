@@ -115,6 +115,46 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       });
   });
 
+  it(
+    "Should get the student application details when the application status is overwritten and " +
+      "the optional query parameter to load dynamic data is not passed.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplication(db.dataSource, undefined, {
+        applicationStatus: ApplicationStatus.Overwritten,
+      });
+
+      await db.application.save(application);
+
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+      const endpoint = `/aest/application/${application.id}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          data: {},
+          id: application.id,
+          applicationStatus: application.applicationStatus,
+          applicationNumber: application.applicationNumber,
+          applicationFormName: "SFAA2022-23",
+          applicationProgramYearID: application.programYearId,
+          studentFullName: getUserFullName(application.student.user),
+          applicationOfferingIntensity:
+            application.currentAssessment.offering.offeringIntensity,
+          applicationStartDate:
+            application.currentAssessment.offering.studyStartDate,
+          applicationEndDate:
+            application.currentAssessment.offering.studyEndDate,
+          applicationInstitutionName:
+            application.location.institution.legalOperatingName,
+        });
+    },
+  );
+
   it("Should get the student application changes when the application has a previous version and its dynamic data was changed.", async () => {
     // Arrange
     const previousApplication = await saveFakeApplication(
