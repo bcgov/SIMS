@@ -393,7 +393,7 @@ deploy-workers:
 		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
 		-p DISABLE_ORM_CACHE=$(DISABLE_ORM_CACHE) \
 		| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(WORKERS))
+	$(call rollout_and_wait,deployment/$(WORKERS))
 
 deploy-queue-consumers:
 	test -n "$(NAMESPACE)"
