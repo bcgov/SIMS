@@ -1,14 +1,14 @@
-name: Env Setup - Update Sysdig Teams in Openshift
-run-name: Env Setup - Update Sysdig Teams in Openshift using ${{ github.ref_name }}
+name: Env Setup - Update Sysdig Team in Openshift
+run-name: Env Setup - Update Sysdig Team in Openshift using ${{ github.ref_name }}
 
-concurrency: update-sysdig-teams
+concurrency: update-sysdig-team
 
 on:
   workflow_dispatch:
 
 jobs:
-  update-sysdig-teams:
-    name: Update Sysdig Teams
+  update-sysdig-team:
+    name: Update Sysdig Team
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Target Branch
@@ -25,4 +25,4 @@ jobs:
       - name: Delete Redis
         working-directory: "./devops/"
         run: |
-          make update-sysdig-teams
+          make update-sysdig-team
