@@ -156,6 +156,111 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       .expect(expectation);
   });
 
+  it.only("Should exclude BC Total Grant from eligible amount calculation when getting NOA details", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    await mockUserLoginInfo(appModule, student);
+
+    // Create signed MSFAA
+    const msfaaNumber = createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.Signed,
+      },
+    );
+    await db.msfaaNumber.save(msfaaNumber);
+
+    // Create application with disbursements
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        msfaaNumber,
+        student,
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+      },
+    );
+
+    // Create assessment with disbursement schedule containing both regular grants and BC Total Grant
+    const assessment = await db.studentAssessment.save(
+      createFakeStudentAssessment(
+        {
+          auditUser: student.user,
+          application,
+          offering: application.currentAssessment.offering,
+        },
+        {
+          initialValue: {
+            triggerType: AssessmentTriggerType.RelatedApplicationChanged,
+          },
+        },
+      ),
+    );
+
+    // Set as current assessment
+    application.currentAssessment = assessment;
+    await db.application.save(application);
+
+    // Create disbursement schedule with mixed grant types
+    const disbursementSchedule = createFakeDisbursementSchedule({
+      studentAssessment: assessment,
+      msfaaNumber,
+      disbursementValues: [
+        // BC Total Grant (excluded from eligible amount)
+        createFakeDisbursementValue(
+          DisbursementValueType.BCTotalGrant,
+          "BCSG",
+          540,
+        ),
+        // Canada Student Loans and Grants
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaLoan,
+          "CSLP",
+          0,
+        ),
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSGP",
+          0,
+        ),
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSPT",
+          2520,
+        ),
+        // BC Grants
+        createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 140),
+        createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 400),
+      ],
+    });
+    await db.disbursementSchedule.save(disbursementSchedule);
+
+    const endpoint = `/students/assessment/${assessment.id}/noa`;
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // Verify that eligibleAmount excludes BC Total Grant
+    expect(response.body.eligibleAmount).toBe(3060); // Sum of CSPT(2520) + BCAG(140) + SBSD(400), excluding BCSG(540)
+
+    // Verify disbursement values are present but BC Total Grant is excluded from eligible amount
+    expect(response.body.disbursement).toMatchObject({
+      disbursement1bcsg: 540, // BC Total Grant included in details but excluded from eligible amount
+      disbursement1cslp: 0,
+      disbursement1csgp: 0,
+      disbursement1cspt: 2520,
+      disbursement1bcag: 140,
+      disbursement1sbsd: 400,
+    });
+  });
+
   afterAll(async () => {
     await app?.close();
   });

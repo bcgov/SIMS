@@ -200,14 +200,14 @@ export class AssessmentControllerService {
     disbursementSchedules: DisbursementSchedule[],
   ): number {
     return disbursementSchedules
-      .flatMap(
-        (disbursementSchedule) => disbursementSchedule.disbursementValues,
+      .flatMap((disbursementSchedule) =>
+        disbursementSchedule.disbursementValues.filter(
+          (value) => value.valueType !== DisbursementValueType.BCTotalGrant,
+        ),
       )
-      .reduce(
-        (accumulator, disbursementValue) =>
-          accumulator + disbursementValue.valueAmount,
-        0,
-      );
+      .reduce((total, disbursementValue) => {
+        return total + disbursementValue.valueAmount;
+      }, 0);
   }
 
   /**
