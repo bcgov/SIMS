@@ -62,6 +62,7 @@ export class DisbursementReceiptProcessingService {
       this.esdcConfig.ftpResponseFolder,
       fileSearch,
     );
+    // Throw an error if there are no files to be processed.
     if (filePaths.length === 0) {
       processSummary.error(
         "There are no disbursement receipt files to be processed.",
