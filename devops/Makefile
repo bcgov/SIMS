@@ -517,3 +517,11 @@ deploy-forms:
 delete-redis:
 	@echo "+\n++ Removing redis and resources on $(NAMESPACE)\n+"
 	@oc delete -n $(NAMESPACE) all,rc,svc,dc,route,pvc,secret,configmap,sa -l app=redis
+
+update-sysdig-teams:
+	@echo "Updating Sysdig Team for license plate 0c27fb.\n"
+	@oc project 0c27fb-tools
+	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=0c27fb | oc apply -f -
+	@echo "Updating Sysdig Team for license plate a6ef19.\n"
+	@oc project a6ef19-tools
+	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=a6ef19 | oc apply -f -
