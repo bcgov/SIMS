@@ -371,7 +371,7 @@ deploy-api:
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
     -p ALLOW_BETA_USERS_ONLY=$(ALLOW_BETA_USERS_ONLY) \
 		| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(API))
+	$(call rollout_and_wait,deployment/$(API))
 
 deploy-workers:
 	test -n "$(NAMESPACE)"
@@ -393,7 +393,7 @@ deploy-workers:
 		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
 		-p DISABLE_ORM_CACHE=$(DISABLE_ORM_CACHE) \
 		| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(WORKERS))
+	$(call rollout_and_wait,deployment/$(WORKERS))
 
 deploy-queue-consumers:
 	test -n "$(NAMESPACE)"
@@ -426,7 +426,7 @@ deploy-queue-consumers:
 		-p TLS_KEY=$(TLS_KEY) \
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(QUEUE_CONSUMERS))
+	$(call rollout_and_wait,deployment/$(QUEUE_CONSUMERS))
 
 deploy-load-test-gateway:
 	test -n "$(NAMESPACE)"
@@ -453,7 +453,7 @@ deploy-load-test-gateway:
 		-p TLS_KEY=$(TLS_KEY) \
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(LOAD_TEST_GATEWAY))
+	$(call rollout_and_wait,deployment/$(LOAD_TEST_GATEWAY))
 
 deploy-web:
 	test -n "$(NAMESPACE)"
