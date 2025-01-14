@@ -205,10 +205,6 @@ export class DisbursementReceiptProcessingService {
       const dailyDisbursementsRecordsInCSV =
         await this.reportService.getReportDataAsCSV(reportFilterModel);
 
-      if (dailyDisbursementsRecordsInCSV === "") {
-        return;
-      }
-
       // Create the file name for the daily disbursement report.
       const disbursementFileName =
         this.integrationService.createDisbursementFileName(
