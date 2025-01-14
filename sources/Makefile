@@ -241,24 +241,48 @@ workers:
 # Enable local DB connection to Openshift DEV/TEST/STG/PROD
 connect-dev-db:
 	@echo "Forward local port 5454 to Openshift simsdb-pgbouncer default port."
-	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5454."
+	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5454."
 	@oc project 0c27fb-dev
 	@oc port-forward services/simsdb-pgbouncer 5454:5432
 
 connect-test-db:
 	@echo "Forward local port 5555 to Openshift simsdb-pgbouncer default port."
-	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5555."
+	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5555."
 	@oc project 0c27fb-test
 	@oc port-forward services/simsdb-pgbouncer 5555:5432
 
 connect-stg-db:
 	@echo "Forward local port 5656 to Openshift simsdb-pgbouncer default port."
-	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5656."
+	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5656."
 	@oc project a6ef19-test
 	@oc port-forward services/simsdb-pgbouncer 5656:5432
 
 connect-prod-db:
 	@echo "Forward local port 5757 to Openshift simsdb-pgbouncer default port."
-	@echo "Use your prefered DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5757."
+	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5757."
 	@oc project 0c27fb-prod
 	@oc port-forward services/simsdb-pgbouncer 5757:5432
+
+connect-dev-db-superuser:
+	@echo "Forward local port 5858 to Openshift master pod default port."
+	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5858."
+	@oc project 0c27fb-dev
+	@oc port-forward $(MASTER_POD) 5858:5432
+
+connect-test-db-superuser:
+	@echo "Forward local port 5959 to Openshift master pod default port."
+	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5959."
+	@oc project 0c27fb-test
+	@oc port-forward $(MASTER_POD) 5959:5432
+
+connect-stg-db-superuser:
+	@echo "Forward local port 6060 to Openshift master pod default port."
+	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 6060."
+	@oc project a6ef19-test
+	@oc port-forward $(MASTER_POD) 6060:5432
+
+connect-prod-db-superuser:
+	@echo "Forward local port 6161 to Openshift master pod default port."
+	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 6161."
+	@oc project 0c27fb-prod
+	@oc port-forward $(MASTER_POD) 6161:5432
