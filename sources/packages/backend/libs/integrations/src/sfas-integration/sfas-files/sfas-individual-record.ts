@@ -136,13 +136,13 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
   /**
    * BC Student Loan total overaward balance (overaward_balance.overaward_balance_amt, overaward_balance_cde = "CSL").
    */
-  get cslOveraward(): number {
+  get bcslOveraward(): number {
     return parseDecimal(this.line.substring(171, 181));
   }
   /**
    * Canada Student Loan total overaward balance (overaward_balance.overaward_balance_amt, overaward_balance_cde = "BCSL").
    */
-  get bcslOveraward(): number {
+  get cslOveraward(): number {
     return parseDecimal(this.line.substring(181, 191));
   }
   /**
