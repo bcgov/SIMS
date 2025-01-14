@@ -371,7 +371,7 @@ deploy-api:
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
     -p ALLOW_BETA_USERS_ONLY=$(ALLOW_BETA_USERS_ONLY) \
 		| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(API))
+	$(call rollout_and_wait,deployment/$(API))
 
 deploy-workers:
 	test -n "$(NAMESPACE)"
