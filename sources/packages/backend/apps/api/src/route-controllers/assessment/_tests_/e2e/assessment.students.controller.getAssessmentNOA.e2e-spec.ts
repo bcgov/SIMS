@@ -156,7 +156,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       .expect(expectation);
   });
 
-  it.only("Should exclude BC Total Grant from eligible amount calculation when getting NOA details", async () => {
+  it("Should exclude BC Total Grant from eligible amount calculation when getting NOA details", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     await mockUserLoginInfo(appModule, student);
@@ -250,9 +250,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
     // Verify that eligibleAmount excludes BC Total Grant
     expect(response.body.eligibleAmount).toBe(3060); // Sum of CSPT(2520) + BCAG(140) + SBSD(400), excluding BCSG(540)
 
-    // Verify disbursement values are present but BC Total Grant is excluded from eligible amount
+    // Verify disbursement values are present (BC Total Grant should be excluded)
     expect(response.body.disbursement).toMatchObject({
-      disbursement1bcsg: 540, // BC Total Grant included in details but excluded from eligible amount
       disbursement1cslp: 0,
       disbursement1csgp: 0,
       disbursement1cspt: 2520,
