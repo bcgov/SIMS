@@ -1,27 +1,39 @@
-apiVersion: ops.gov.bc.ca/v1alpha1
-kind: SysdigTeam
-metadata:
-  name: 0c27fb-sysdigteam
-  namespace: 0c27fb-tools
-spec:
-  team:
-    description: The Sysdig Team for the OpenShift Project Set SIMS
-    users:
-      - name: nino.samson@gov.bc.ca
-        role: ROLE_TEAM_EDIT
-      - name: bidyashish.kumar@gov.bc.ca
-        role: ROLE_TEAM_EDIT
-      - name: shashank.x.shekhar@gov.bc.ca
-        role: ROLE_TEAM_EDIT
-      - name: jason.tang@gov.bc.ca
-        role: ROLE_TEAM_EDIT
-      - name: gurumoorthy.mohan@aot-technologies.com
-        role: ROLE_TEAM_EDIT
-      - name: dheepak.rr@aot-technologies.com
-        role: ROLE_TEAM_EDIT
-      - name: andrew.signori@aot-technologies.com
-        role: ROLE_TEAM_EDIT
-      - name: andre.pestana@aot-technologies.com
-        role: ROLE_TEAM_STANDARD
-      - name: lewis.chen@aot-technologies.com
-        role: ROLE_TEAM_STANDARD
+apiVersion: template.openshift.io/v1
+kind: Template
+objects:
+  - apiVersion: ops.gov.bc.ca/v1alpha1
+    kind: SysdigTeam
+    metadata:
+      name: ${LICENSE_PLATE}-sysdigteam
+      namespace: ${LICENSE_PLATE}-tools
+    spec:
+      team:
+        description: The Sysdig Team for the OpenShift Project Set SIMS
+        users:
+          - name: nino.samson@gov.bc.ca
+            role: ROLE_TEAM_EDIT
+          - name: bidyashish.kumar@gov.bc.ca
+            role: ROLE_TEAM_EDIT
+          - name: shashank.x.shekhar@gov.bc.ca
+            role: ROLE_TEAM_EDIT
+          - name: carly.cotton@gov.bc.ca
+            role: ROLE_TEAM_EDIT
+          - name: joshua.lakusta@gov.bc.ca
+            role: ROLE_TEAM_STANDARD
+          - name: jason.tang@gov.bc.ca
+            role: ROLE_TEAM_EDIT
+          - name: gurumoorthy.mohan@aot-technologies.com
+            role: ROLE_TEAM_EDIT
+          - name: dheepak.rr@aot-technologies.com
+            role: ROLE_TEAM_EDIT
+          - name: andrew.signori@aot-technologies.com
+            role: ROLE_TEAM_EDIT
+          - name: andre.pestana@aot-technologies.com
+            role: ROLE_TEAM_STANDARD
+          - name: lewis.chen@aot-technologies.com
+            role: ROLE_TEAM_STANDARD
+parameters:
+  - name: LICENSE_PLATE
+    description: |
+      License plate to apply the template.
+    required: true
