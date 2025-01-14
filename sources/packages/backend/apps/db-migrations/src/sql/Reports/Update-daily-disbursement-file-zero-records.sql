@@ -113,10 +113,8 @@ SET
             0 AS "Part Time BC Total",
             0 AS "BC Total",
             0 AS "Total Records",
-            CAST(:fileDate AS varchar) AS "File Date",
-            -- Use the :fileDate parameter here
-            NULL AS "Batch Run Date",
-            -- Batch Run Date is NULL
+            CAST(:fileDate AS varchar) AS "File Date", -- Use the :fileDate parameter here
+            NULL AS "Batch Run Date", -- Batch Run Date is NULL
             :sequenceNumber AS "Sequence Number" -- Use the :sequenceNumber parameter here
         WHERE NOT EXISTS (
                 SELECT 1
