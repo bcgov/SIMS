@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="showHideDialog"
-    width="auto"
+    :width="width"
     persistent
     :no-click-animation="true"
     scrollable
@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, defineComponent } from "vue";
+import { ref, watch, defineComponent, computed } from "vue";
 const dialogClosedEvent = "dialogClosed";
 
 export default defineComponent({
@@ -61,21 +61,21 @@ export default defineComponent({
   setup(props, context) {
     const showHideDialog = ref(false);
     const showFullScreen = ref(true);
-    const mediaQuery = window.matchMedia("(min-width: 768px)");
-
+    const mediaQuery = window.matchMedia(
+      "(max-width: 768px), (max-height: 576px)",
+    );
     function handleScreenChange(e: MediaQueryList) {
-      showFullScreen.value = !e.matches;
+      showFullScreen.value = e.matches;
     }
     mediaQuery.addEventListener("change", () => handleScreenChange(mediaQuery));
     handleScreenChange(mediaQuery);
-
+    const width = computed(() => (showFullScreen.value ? undefined : "auto"));
     watch(
       () => props.showDialog,
       (currValue: boolean) => {
         showHideDialog.value = currValue;
       },
     );
-
     watch(
       () => showHideDialog.value,
       () => {
@@ -87,7 +87,7 @@ export default defineComponent({
       },
     );
 
-    return { showHideDialog, showFullScreen };
+    return { showHideDialog, showFullScreen, width };
   },
 });
 </script>
