@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
-import { getSQLFileData } from "@sims/utilities";
+import { getSQLFileData } from "../utilities/sqlLoader";
 
 export class SwapCSLOverawardColumnsForSFASIndividuals1736876400977
   implements MigrationInterface
