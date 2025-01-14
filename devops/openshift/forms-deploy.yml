@@ -16,20 +16,19 @@ objects:
       FORMS_URL: "https://${FORMS_URL}"
     type: Opaque
 
-  - apiVersion: apps.openshift.io/v1
-    kind: DeploymentConfig
+  - apiVersion: apps/v1
+    kind: Deployment
     metadata:
-      annotations:
-      creationTimestamp: null
       labels:
         app: ${NAME}
       name: ${NAME}
     spec:
       replicas: "${{REPLICAS}}"
       selector:
-        app: ${NAME}
+        matchLabels:
+          app: ${NAME}
       strategy:
-        type: Rolling
+        type: RollingUpdate
         rollingParams:
           updatePeriodSeconds: 1
           intervalSeconds: 1
@@ -120,7 +119,6 @@ objects:
               namespace: "${TOOLS_NAMESPACE}"
               name: "${IMAGE_STREAM_TAG}"
           type: ImageChange
-    status: {}
 
   - apiVersion: v1
     kind: Service
@@ -182,8 +180,8 @@ objects:
       name: ${NAME}-hpa
     spec:
       scaleTargetRef:
-        apiVersion: apps.openshift.io/v1
-        kind: DeploymentConfig
+        apiVersion: apps/v1
+        kind: Deployment
         name: ${NAME}
       minReplicas: "${{REPLICAS}}"
       maxReplicas: 6
