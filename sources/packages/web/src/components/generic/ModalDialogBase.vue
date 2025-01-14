@@ -61,26 +61,13 @@ export default defineComponent({
   setup(props, context) {
     const showHideDialog = ref(false);
     const showFullScreen = ref(true);
-    const mediaQuerySmallToLarge = window.matchMedia("(min-width: 768px)");
-    const mediaQueryLargeToSmall = window.matchMedia("(max-width: 767px)");
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
 
-    function handleScreenChangeSmallToLarge(e: MediaQueryList) {
-      if (e.matches) {
-        showFullScreen.value = false;
-      }
+    function handleScreenChange(e: MediaQueryList) {
+      showFullScreen.value = !e.matches;
     }
-    function handleScreenChangeLargeToSmall(e: MediaQueryList) {
-      if (e.matches) {
-        showFullScreen.value = true;
-      }
-    }
-    mediaQuerySmallToLarge.addEventListener("change", () =>
-      handleScreenChangeSmallToLarge(mediaQuerySmallToLarge),
-    );
-    mediaQueryLargeToSmall.addEventListener("change", () =>
-      handleScreenChangeLargeToSmall(mediaQueryLargeToSmall),
-    );
-    handleScreenChangeSmallToLarge(mediaQuerySmallToLarge);
+    mediaQuery.addEventListener("change", () => handleScreenChange(mediaQuery));
+    handleScreenChange(mediaQuery);
 
     watch(
       () => props.showDialog,
