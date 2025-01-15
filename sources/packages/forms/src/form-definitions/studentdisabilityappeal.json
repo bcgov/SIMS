@@ -7,9 +7,25 @@
   "tags": [
     "common"
   ],
-  "submissionAccess": [],
-  "owner": "64711d803a5a30268c17ebe1",
   "components": [
+    {
+      "input": true,
+      "tableView": false,
+      "key": "programYear",
+      "label": "Program Year",
+      "protected": false,
+      "unique": false,
+      "persistent": true,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true
+    },
     {
       "label": "Disability Information",
       "labelWidth": "",

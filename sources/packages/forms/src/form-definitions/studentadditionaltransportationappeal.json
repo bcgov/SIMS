@@ -1227,7 +1227,7 @@
           "label": "Program Year",
           "protected": false,
           "unique": false,
-          "persistent": false,
+          "persistent": true,
           "type": "hidden",
           "tags": [],
           "conditional": {
