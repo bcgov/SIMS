@@ -16,6 +16,6 @@ export class DeleteLegacyOverawardRecordsDisbursementOverawards1736973127750
   public async down(): Promise<void> {
     // No rollback is needed after the above records are deleted.
     // The SFAS bridge process will add back the data,
-    // which will be considered a recover of the data.
+    // which will be considered as a recovery of the data.
   }
 }
