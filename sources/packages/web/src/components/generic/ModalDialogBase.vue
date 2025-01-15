@@ -1,17 +1,13 @@
 <template>
   <v-dialog
     v-model="showHideDialog"
+    :width="width"
     persistent
     :no-click-animation="true"
     scrollable
+    :fullscreen="showFullScreen"
   >
-    <!-- TODO remove mx-auto in stable version of vuetify to center modelDialog -->
-    <v-card
-      elevation="10"
-      :max-width="maxWidth"
-      :min-width="minWidth"
-      class="modal-height mx-auto"
-    >
+    <v-card elevation="10" :max-width="maxWidth" class="modal-height">
       <v-card-title>
         <slot name="header">
           <h2 v-if="title" class="category-header-large primary-color mt-3">
@@ -37,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, defineComponent } from "vue";
+import { ref, watch, defineComponent, computed } from "vue";
 const dialogClosedEvent = "dialogClosed";
 
 export default defineComponent({
@@ -56,25 +52,30 @@ export default defineComponent({
       required: false,
       default: 730,
     },
-    minWidth: {
-      type: Number,
-      required: false,
-      default: 730,
-    },
     subTitle: {
       type: String,
       required: false,
     },
   },
+
   setup(props, context) {
     const showHideDialog = ref(false);
+    const showFullScreen = ref(true);
+    const mediaQuery = window.matchMedia(
+      "(max-width: 768px), (max-height: 576px)",
+    );
+    function handleScreenChange(e: MediaQueryList) {
+      showFullScreen.value = e.matches;
+    }
+    mediaQuery.addEventListener("change", () => handleScreenChange(mediaQuery));
+    handleScreenChange(mediaQuery);
+    const width = computed(() => (showFullScreen.value ? undefined : "auto"));
     watch(
       () => props.showDialog,
       (currValue: boolean) => {
         showHideDialog.value = currValue;
       },
     );
-
     watch(
       () => showHideDialog.value,
       () => {
@@ -86,7 +87,7 @@ export default defineComponent({
       },
     );
 
-    return { showHideDialog };
+    return { showHideDialog, showFullScreen, width };
   },
 });
 </script>
