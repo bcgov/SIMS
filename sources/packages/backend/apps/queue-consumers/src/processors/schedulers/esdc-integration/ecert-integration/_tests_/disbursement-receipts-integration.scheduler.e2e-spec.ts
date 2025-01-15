@@ -24,7 +24,7 @@ import {
   mockBullJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames } from "@sims/utilities";
+import { END_OF_LINE, QueueNames, base64Encode } from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
 import * as Client from "ssh2-sftp-client";
 import { DisbursementReceiptsFileIntegrationScheduler } from "../disbursement-receipts-integration.scheduler";
@@ -718,29 +718,18 @@ describe(
         email_address: TEST_EMAIL,
         personalisation: {
           application_file: {
-            file:
-              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXRlLEJhdGNoIFJ1biBEYXR" +
-              "lLFNlcXVlbmNlIE51bWJlcg0KMTIzLjAwLDc2MC4wMCw4ODMuMDAsNzYwLjAwLDc2MC4wMCwxNjQzLjAwLDIsMjAyNC0wMS0zMSwyMDI0LTAxLTMwLDMyMjg=",
+            file: base64Encode(
+              `Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number${END_OF_LINE}` +
+                "123.00,760.00,883.00,760.00,760.00,1643.00,2,2024-01-31,2024-01-30,3228",
+            ),
             filename: "Daily_Disbursement_File_2024-01-31_3228.csv",
             sending_method: "attach",
           },
         },
       });
-      // Verify the file content as expected.
-      const file =
-        createdNotification.messagePayload["personalisation"][
-          "application_file"
-        ]["file"];
-      const fileContent = Buffer.from(file, "base64").toString("ascii");
-      expect(fileContent).toContain(
-        "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
-      );
-      expect(fileContent).toContain(
-        "123.00,760.00,883.00,760.00,760.00,1643.00,2,2024-01-31,2024-01-30,3228",
-      );
     });
 
-    it("Should import disbursement receipt file and send empty file content notification when the file does not contain match any records in SIMS disbursement receipts.", async () => {
+    it("Should import disbursement receipt file and send empty daily disbursement file notification when the no records are imported into SIMS from the disbursement receipt file.", async () => {
       // Arrange
       mockDownloadFiles(sftpClientMock, [NON_MATCHING_RECORDS_FILE]);
       // Queued job.
@@ -765,10 +754,11 @@ describe(
           `Document number ${SHARED_DOCUMENT_NUMBER} at line 4 not found in SIMS.`,
           `Processing file ${downloadedFile} completed.`,
           `Processing provincial daily disbursement CSV file on ${FILE_DATE}.`,
+          "Provincial daily disbursement CSV report generated.",
         ]),
       ).toBe(true);
       // Assert imported receipts.
-      const { feReceipt, bcReceipt } = await getReceiptsForAssert(
+      const { feReceipt, bcReceipt, bpReceipt } = await getReceiptsForAssert(
         FILE_DATE,
         SEQUENCE_NUMBER,
       );
@@ -776,6 +766,8 @@ describe(
       expect(bcReceipt).not.toBeDefined();
       // BC receipt should not be present.
       expect(feReceipt).not.toBeDefined();
+      // BP receipt should not be present.
+      expect(bpReceipt).not.toBeDefined();
       // Notification record.
       const createdNotification = await db.notification.findOne({
         select: {
@@ -797,24 +789,15 @@ describe(
         email_address: TEST_EMAIL,
         personalisation: {
           application_file: {
-            file:
-              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvd" +
-              "GFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXRlLEJhdGNoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMCwwLDAsMCwwLDAsMCwyMDI0LTAxLTMxLCwzMjI4",
+            file: base64Encode(
+              `Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number${END_OF_LINE}` +
+                "0,0,0,0,0,0,0,2024-01-31,,3228",
+            ),
             filename: `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`,
             sending_method: "attach",
           },
         },
       });
-      // Verify the file content as expected.
-      const file =
-        createdNotification.messagePayload["personalisation"][
-          "application_file"
-        ]["file"];
-      const fileContent = Buffer.from(file, "base64").toString("ascii");
-      expect(fileContent).toContain(
-        "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
-      );
-      expect(fileContent).toContain("0,0,0,0,0,0,0,2024-01-31,,3228");
     });
 
     it("Should throw error when there is no disbursement receipt file to be processed.", async () => {

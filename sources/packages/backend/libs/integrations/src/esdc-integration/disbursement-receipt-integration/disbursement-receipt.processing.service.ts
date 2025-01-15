@@ -62,7 +62,8 @@ export class DisbursementReceiptProcessingService {
       this.esdcConfig.ftpResponseFolder,
       fileSearch,
     );
-    // Throw an error if there are no files to be processed.
+    //  Business reason from what we know is, the file is expected to be present when the scheduler runs,
+    // and it should be considered as error if the file is not present for disbursement receipts.
     if (filePaths.length === 0) {
       processSummary.error(
         "There are no disbursement receipt files to be processed.",

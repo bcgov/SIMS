@@ -103,7 +103,6 @@ SET
             disbursement_receipts."Batch Run Date",
             disbursement_receipts."Sequence Number"
         UNION
-        ALL 
         -- Empty row with :fileDate, :sequenceNumber, and NULL for Batch Run Date
         SELECT
             0 AS "Full Time BC Student Loan",
