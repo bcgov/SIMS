@@ -170,94 +170,108 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
     );
     await db.msfaaNumber.save(msfaaNumber);
 
-    // Create application with disbursements
     const application = await saveFakeApplicationDisbursements(
       db.dataSource,
       {
         msfaaNumber,
         student,
+        disbursementValues: [
+          // BC Total Grant (excluded from eligible amount)
+          createFakeDisbursementValue(
+            DisbursementValueType.BCTotalGrant,
+            "BCSG",
+            540,
+          ),
+          // Canada Student Loans and Grants
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            0,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGP",
+            0,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSPT",
+            2520,
+          ),
+          // BC Grants
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BCAG",
+            140,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "SBSD",
+            400,
+          ),
+        ],
       },
       {
         offeringIntensity: OfferingIntensity.fullTime,
       },
     );
 
-    // Create assessment with disbursement schedule containing both regular grants and BC Total Grant
-    const assessment = await db.studentAssessment.save(
-      createFakeStudentAssessment(
-        {
-          auditUser: student.user,
-          application,
-          offering: application.currentAssessment.offering,
-        },
-        {
-          initialValue: {
-            triggerType: AssessmentTriggerType.RelatedApplicationChanged,
-          },
-        },
-      ),
-    );
-
-    // Set as current assessment
-    application.currentAssessment = assessment;
-    await db.application.save(application);
-
-    // Create disbursement schedule with mixed grant types
-    const disbursementSchedule = createFakeDisbursementSchedule({
-      studentAssessment: assessment,
-      msfaaNumber,
-      disbursementValues: [
-        // BC Total Grant (excluded from eligible amount)
-        createFakeDisbursementValue(
-          DisbursementValueType.BCTotalGrant,
-          "BCSG",
-          540,
-        ),
-        // Canada Student Loans and Grants
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaLoan,
-          "CSLP",
-          0,
-        ),
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaGrant,
-          "CSGP",
-          0,
-        ),
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaGrant,
-          "CSPT",
-          2520,
-        ),
-        // BC Grants
-        createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 140),
-        createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 400),
-      ],
-    });
-    await db.disbursementSchedule.save(disbursementSchedule);
+    const assessment = application.currentAssessment;
+    const [disbursement] = assessment.disbursementSchedules;
 
     const endpoint = `/students/assessment/${assessment.id}/noa`;
     const studentUserToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
 
+    const expectedNOADetails = {
+      applicationId: application.id,
+      applicationNumber: application.applicationNumber,
+      applicationStatus: application.applicationStatus,
+      assessment: assessment.assessmentData,
+      noaApprovalStatus: assessment.noaApprovalStatus,
+      applicationCurrentAssessmentId: application.currentAssessment.id,
+      fullName: getUserFullName(application.student.user),
+      programName: assessment.offering.educationProgram.name,
+      locationName: assessment.offering.institutionLocation.name,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringStudyEndDate: getDateOnlyFullMonthFormat(
+        assessment.offering.studyEndDate,
+      ),
+      offeringStudyStartDate: getDateOnlyFullMonthFormat(
+        assessment.offering.studyStartDate,
+      ),
+      // Sum of CSPT(2520) + BCAG(140) + SBSD(400), excluding BCSG(540)
+      eligibleAmount: 3060,
+      disbursement: {
+        disbursement1COEStatus: disbursement.coeStatus,
+        disbursement1Date: getDateOnlyFullMonthFormat(
+          disbursement.disbursementDate,
+        ),
+        disbursement1Id: disbursement.id,
+        disbursement1MSFAACancelledDate:
+          disbursement.msfaaNumber?.cancelledDate,
+        disbursement1MSFAADateSigned: disbursement.msfaaNumber?.dateSigned,
+        disbursement1MSFAAId: disbursement.msfaaNumber?.id,
+        disbursement1MSFAANumber: msfaaNumber.msfaaNumber,
+        disbursement1Status: disbursement.disbursementScheduleStatus,
+        disbursement1TuitionRemittance:
+          disbursement.tuitionRemittanceRequestedAmount,
+        disbursement1cslf: 0,
+        disbursement1csgp: 0,
+        disbursement1cspt: 2520,
+        disbursement1bcag: 140,
+        disbursement1sbsd: 400,
+      },
+      offeringName: assessment.offering.name,
+    };
+
     // Act/Assert
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(studentUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-
-    // Verify that eligibleAmount excludes BC Total Grant
-    expect(response.body.eligibleAmount).toBe(3060); // Sum of CSPT(2520) + BCAG(140) + SBSD(400), excluding BCSG(540)
-
-    // Verify disbursement values are present (BC Total Grant should be excluded)
-    expect(response.body.disbursement).toMatchObject({
-      disbursement1cslp: 0,
-      disbursement1csgp: 0,
-      disbursement1cspt: 2520,
-      disbursement1bcag: 140,
-      disbursement1sbsd: 400,
-    });
+      .expect(HttpStatus.OK)
+      .expect(expectedNOADetails);
   });
 
   afterAll(async () => {
