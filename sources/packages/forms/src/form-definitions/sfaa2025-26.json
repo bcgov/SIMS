@@ -10918,7 +10918,7 @@
           },
           "properties": {},
           "lockKey": true,
-          "customConditional": "show = data.howWillYouBeAttendingTheProgram === \"Full Time\" && \n    data.dependantStatus === \"independant\";"
+          "customConditional": "show = data.dependantStatus === \"independant\";"
         },
         {
           "title": "Share information with trusted contact",
