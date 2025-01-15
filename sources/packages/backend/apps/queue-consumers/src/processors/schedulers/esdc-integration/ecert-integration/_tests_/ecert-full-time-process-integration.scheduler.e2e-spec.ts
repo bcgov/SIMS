@@ -8,6 +8,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   FormYesNoOptions,
+  NotificationMessage,
   NotificationMessageType,
   OfferingIntensity,
   RelationshipStatus,
@@ -22,6 +23,7 @@ import {
   createFakeDisbursementOveraward,
   createFakeDisbursementValue,
   createFakeMSFAANumber,
+  createFakeNotification,
   createFakeUser,
   saveFakeApplicationDisbursements,
   saveFakeApplicationRestrictionBypass,
@@ -1361,8 +1363,8 @@ describe(
         expect(
           mockedJob.containLogMessages([
             "Disbursement estimated awards do not contain any amount to be disbursed.",
-            `Creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
-            `Completed creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
+            `Ministry Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
+            `Student Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
           ]),
         ).toBe(true);
         const notifications = await db.notification.find({
@@ -1398,6 +1400,77 @@ describe(
         ]);
       },
     );
+
+    it("Should create a notification for the student and avoid creating a notification for the Ministry when the Ministry was already notified about the same blocked disbursement.", async () => {
+      // Arrange
+      const { student, disbursement } = await createBlockedDisbursementTestData(
+        db,
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          isValidSIN: true,
+          disbursementValues: [],
+        },
+      );
+      // Create a sent notification for Ministry.
+      const ministryNotification = createFakeNotification(
+        {
+          user: systemUsersService.systemUser,
+          auditUser: systemUsersService.systemUser,
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+          } as NotificationMessage,
+        },
+        {
+          initialValue: {
+            metadata: {
+              disbursementId: disbursement.id,
+            },
+            dateSent: new Date(),
+          },
+        },
+      );
+      await db.notification.save(ministryNotification);
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      await processor.processQueue(mockedJob.job);
+
+      // Assert
+      // Assert disbursement was blocked and expected student notification was created and ministry notification was not created.
+      expect(
+        mockedJob.containLogMessages([
+          "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
+          `Ministry Blocked Disbursement notification should not be created at this moment for disbursement ID ${disbursement.id}.`,
+          `Student Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
+        ]),
+      ).toBe(true);
+      // Assert only student notification was created on DB.
+      const notifications = await db.notification.find({
+        select: {
+          id: true,
+          user: { id: true },
+          notificationMessage: { id: true },
+        },
+        relations: { user: true, notificationMessage: true },
+        where: {
+          metadata: {
+            disbursementId: disbursement.id,
+          },
+          dateSent: IsNull(),
+        },
+      });
+      expect(notifications).toEqual([
+        {
+          id: expect.any(Number),
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          },
+          user: { id: student.user.id },
+        },
+      ]);
+    });
 
     /**
      * Helper function to get the uploaded file name.

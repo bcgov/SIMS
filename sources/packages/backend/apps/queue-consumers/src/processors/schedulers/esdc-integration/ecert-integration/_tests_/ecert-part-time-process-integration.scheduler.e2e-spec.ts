@@ -126,8 +126,8 @@ describe(
       ]);
       expect(
         mockedJob.containLogMessages([
-          `Creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
-          `Completed creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
+          `Ministry Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
+          `Student Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
         ]),
       ).toBe(true);
       const notifications = await db.notification.find({
@@ -191,8 +191,8 @@ describe(
         expect(
           mockedJob.containLogMessages([
             "Disbursement estimated awards do not contain any amount to be disbursed.",
-            `Creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
-            `Completed creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
+            `Ministry Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
+            `Student Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
           ]),
         ).toBe(true);
         const notifications = await db.notification.find({
@@ -287,6 +287,13 @@ describe(
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 0",
       ]);
+      expect(
+        mockedJob.containLogMessages([
+          "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
+          `Ministry Blocked Disbursement notification should not be created at this moment for disbursement ID ${disbursement.id}.`,
+          `Student Blocked Disbursement notification should not be created at this moment for disbursement ID ${disbursement.id}.`,
+        ]),
+      ).toBe(true);
       const notificationsCount = await db.notification.count({
         where: {
           notificationMessage: {
@@ -326,8 +333,8 @@ describe(
       ]);
       expect(
         mockedJob.containLogMessages([
-          `Creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
-          `Completed creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
+          `Ministry Blocked Disbursement notification should not be created at this moment for disbursement ID ${disbursement.id}.`,
+          `Student Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
         ]),
       ).toBe(true);
       const notificationsCount = await db.notification.count({
@@ -338,8 +345,8 @@ describe(
           dateSent: IsNull(),
         },
       });
-      // Checking 1 created notification for the student and 1 notification for the ministry.
-      expect(notificationsCount).toBe(2);
+      // Checking 1 created notification for the student only.
+      expect(notificationsCount).toBe(1);
     });
 
     it("Should create an e-Cert with one disbursement record for one student with one eligible schedule.", async () => {

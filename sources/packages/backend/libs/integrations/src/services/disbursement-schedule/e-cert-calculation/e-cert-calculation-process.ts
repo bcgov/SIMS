@@ -123,8 +123,8 @@ export abstract class ECertCalculationProcess {
               disbursementLog,
             );
             if (!shouldProceed) {
-              await this.eCertNotificationService.createDisbursementBlockedNotification(
-                eCertDisbursement.disbursement.id,
+              await this.eCertNotificationService.notifyBlockedDisbursement(
+                eCertDisbursement,
                 entityManager,
                 parentLog,
               );
