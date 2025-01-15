@@ -432,24 +432,15 @@ describe(
         email_address: TEST_EMAIL,
         personalisation: {
           application_file: {
-            file:
-              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvd" +
-              "GFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXRlLEJhdGNoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMCwwLDAsMCwwLDAsMCwyMDI0LTAxLTMxLCwzMjI4",
+            file: base64Encode(
+              `Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number${END_OF_LINE}` +
+                `0,0,0,0,0,0,0,${FILE_DATE},,${SEQUENCE_NUMBER}`,
+            ),
             filename: `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`,
             sending_method: "attach",
           },
         },
       });
-      // Verify the file content as expected.
-      const file =
-        createdNotification.messagePayload["personalisation"][
-          "application_file"
-        ]["file"];
-      const fileContent = Buffer.from(file, "base64").toString("ascii");
-      expect(fileContent).toContain(
-        "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
-      );
-      expect(fileContent).toContain("0,0,0,0,0,0,0,2024-01-31,,3228");
     });
 
     it("Should import disbursement receipt file and create federal and provincial awards receipts with proper awards code mappings for a part-time application when the file contains federal and provincial receipts.", async () => {
@@ -791,7 +782,7 @@ describe(
           application_file: {
             file: base64Encode(
               `Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number${END_OF_LINE}` +
-                "0,0,0,0,0,0,0,2024-01-31,,3228",
+                `0,0,0,0,0,0,0,${FILE_DATE},,${SEQUENCE_NUMBER}`,
             ),
             filename: `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`,
             sending_method: "attach",
