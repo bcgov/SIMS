@@ -333,7 +333,7 @@ describe(
       ]);
       expect(
         mockedJob.containLogMessages([
-          `Ministry Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
+          `Ministry Blocked Disbursement notification should not be created at this moment for disbursement ID ${disbursement.id}.`,
           `Student Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
         ]),
       ).toBe(true);
@@ -345,8 +345,8 @@ describe(
           dateSent: IsNull(),
         },
       });
-      // Checking 1 created notification for the student and 1 notification for the ministry.
-      expect(notificationsCount).toBe(2);
+      // Checking 1 created notification for the student only.
+      expect(notificationsCount).toBe(1);
     });
 
     it("Should create an e-Cert with one disbursement record for one student with one eligible schedule.", async () => {

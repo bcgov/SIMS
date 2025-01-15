@@ -1,9 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
-import { MinistryBlockedDisbursementNotification } from "./blocked-disbursement/ministry-blocked-disbursement-notification";
-import { StudentBlockedDisbursementNotification } from "./blocked-disbursement/student-blocked-disbursement-notification";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
+import {
+  MinistryBlockedDisbursementNotification,
+  StudentBlockedDisbursementNotification,
+} from ".";
 
 @Injectable()
 export class ECertNotificationService {
