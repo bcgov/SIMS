@@ -203,6 +203,10 @@ export class AssessmentControllerService {
       .flatMap(
         (disbursementSchedule) => disbursementSchedule.disbursementValues,
       )
+      .filter(
+        (disbursementValue) =>
+          disbursementValue.valueType !== DisbursementValueType.BCTotalGrant,
+      )
       .reduce(
         (accumulator, disbursementValue) =>
           accumulator + disbursementValue.valueAmount,
