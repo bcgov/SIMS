@@ -195,7 +195,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           ),
           createFakeDisbursementValue(
             DisbursementValueType.CanadaGrant,
-            "CSPT",
+            "CSGF",
             2520,
           ),
           // BC Grants
@@ -241,7 +241,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       offeringStudyStartDate: getDateOnlyFullMonthFormat(
         assessment.offering.studyStartDate,
       ),
-      // Sum of CSPT(2520) + BCAG(140) + SBSD(400), excluding BCSG(540)
+      // Sum of CSGF(2520) + BCAG(140) + SBSD(400), excluding BCSG(540)
       eligibleAmount: 3060,
       disbursement: {
         disbursement1COEStatus: disbursement.coeStatus,
@@ -259,7 +259,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           disbursement.tuitionRemittanceRequestedAmount,
         disbursement1cslf: 0,
         disbursement1csgp: 0,
-        disbursement1cspt: 2520,
+        disbursement1csgf: 2520,
         disbursement1bcag: 140,
         disbursement1sbsd: 400,
       },
