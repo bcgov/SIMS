@@ -1411,6 +1411,7 @@ describe(
           disbursementValues: [],
         },
       );
+      // Create a sent notification for Ministry.
       const ministryNotification = createFakeNotification(
         {
           user: systemUsersService.systemUser,

@@ -29,20 +29,19 @@ export class MinistryBlockedDisbursementNotification extends ECertNotification {
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
   ): Promise<boolean> {
-    const notification = await entityManager
+    const hasNotification = await entityManager
       .getRepository(Notification)
-      .createQueryBuilder("notification")
-      .select("count(*)::int", "count")
-      .innerJoin("notification.notificationMessage", "notificationMessage")
-      .where("notificationMessage.id = :notificationMessageId", {
-        notificationMessageId:
-          NotificationMessageType.MinistryNotificationDisbursementBlocked,
-      })
-      .andWhere("notification.metadata->>'disbursementId' = :disbursementId", {
-        disbursementId: eCertDisbursement.disbursement.id,
-      })
-      .getRawOne<{ count: number }>();
-    return notification.count === 0;
+      .exists({
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+          },
+          metadata: {
+            disbursementId: eCertDisbursement.disbursement.id,
+          },
+        },
+      });
+    return !hasNotification;
   }
 
   /**
