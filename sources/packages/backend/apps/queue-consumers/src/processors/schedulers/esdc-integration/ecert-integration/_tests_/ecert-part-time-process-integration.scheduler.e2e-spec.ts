@@ -128,7 +128,6 @@ describe(
         mockedJob.containLogMessages([
           `Ministry Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
           `Student Blocked Disbursement notification created for disbursement ID ${disbursement.id}.`,
-          ,
         ]),
       ).toBe(true);
       const notifications = await db.notification.find({
