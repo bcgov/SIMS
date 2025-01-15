@@ -46,6 +46,10 @@ import {
 } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { FullTimeECertFileHandler } from "./full-time-e-cert-file-handler";
 import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
+import {
+  MinistryBlockedDisbursementNotification,
+  StudentBlockedDisbursementNotification,
+} from "@sims/integrations/services/disbursement-schedule/e-cert-notification";
 
 @Module({
   imports: [ConfigModule, SystemUserModule],
@@ -88,6 +92,8 @@ import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
     StudentLoanBalanceSharedService,
     ECertFeedbackErrorService,
     ECertPreValidationService,
+    MinistryBlockedDisbursementNotification,
+    StudentBlockedDisbursementNotification,
   ],
   exports: [
     FullTimeECertFileHandler,

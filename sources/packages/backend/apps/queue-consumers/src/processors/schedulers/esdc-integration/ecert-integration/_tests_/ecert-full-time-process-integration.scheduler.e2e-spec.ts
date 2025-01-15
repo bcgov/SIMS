@@ -8,6 +8,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   FormYesNoOptions,
+  NotificationMessage,
   NotificationMessageType,
   OfferingIntensity,
   RelationshipStatus,
@@ -22,6 +23,7 @@ import {
   createFakeDisbursementOveraward,
   createFakeDisbursementValue,
   createFakeMSFAANumber,
+  createFakeNotification,
   createFakeUser,
   saveFakeApplicationDisbursements,
   saveFakeApplicationRestrictionBypass,
@@ -1361,8 +1363,10 @@ describe(
         expect(
           mockedJob.containLogMessages([
             "Disbursement estimated awards do not contain any amount to be disbursed.",
-            `Creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
-            `Completed creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
+            `Validating if 'Ministry Blocked Disbursement' notification should be created for disbursement ID ${disbursement.id}.`,
+            "Notification created.",
+            `Validating if 'Student Blocked Disbursement' notification should be created for disbursement ID ${disbursement.id}.`,
+            "Notification created.",
           ]),
         ).toBe(true);
         const notifications = await db.notification.find({
@@ -1398,6 +1402,84 @@ describe(
         ]);
       },
     );
+
+    it("Should create a notification for the student and avoid creating a notification for the Ministry when the Ministry was already notified about the same blocked disbursement.", async () => {
+      // Arrange
+      const { student, disbursement } = await createBlockedDisbursementTestData(
+        db,
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          isValidSIN: true,
+          disbursementValues: [],
+        },
+      );
+      const ministryNotification = createFakeNotification(
+        {
+          user: systemUsersService.systemUser,
+          auditUser: systemUsersService.systemUser,
+          notificationMessage: {
+            id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+          } as NotificationMessage,
+        },
+        {
+          initialValue: {
+            metadata: {
+              disbursementId: disbursement.id,
+            },
+            dateSent: new Date(),
+          },
+        },
+      );
+      await db.notification.save(ministryNotification);
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const uploadedFileName = getUploadedFileName();
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      // Assert
+      expect(result).toStrictEqual([
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 0",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
+          `Validating if 'Ministry Blocked Disbursement' notification should be created for disbursement ID ${disbursement.id}.`,
+          "Notification should not be created at this moment.",
+          `Validating if 'Student Blocked Disbursement' notification should be created for disbursement ID ${disbursement.id}.`,
+          "Notification created.",
+        ]),
+      ).toBe(true);
+      const notifications = await db.notification.find({
+        select: {
+          id: true,
+          user: { id: true },
+          notificationMessage: { id: true },
+        },
+        relations: { user: true, notificationMessage: true },
+        where: {
+          metadata: {
+            disbursementId: disbursement.id,
+          },
+          dateSent: IsNull(),
+        },
+      });
+      expect(notifications).toEqual([
+        {
+          id: expect.any(Number),
+          notificationMessage: {
+            id: NotificationMessageType.StudentNotificationDisbursementBlocked,
+          },
+          user: { id: student.user.id },
+        },
+      ]);
+    });
 
     /**
      * Helper function to get the uploaded file name.
