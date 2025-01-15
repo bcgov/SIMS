@@ -103,7 +103,8 @@ SET
             disbursement_receipts."Batch Run Date",
             disbursement_receipts."Sequence Number"
         UNION
-        ALL -- Empty row with :fileDate, :sequenceNumber, and NULL for Batch Run Date
+        ALL 
+        -- Empty row with :fileDate, :sequenceNumber, and NULL for Batch Run Date
         SELECT
             0 AS "Full Time BC Student Loan",
             0 AS "Full Time BC Student Grant",
@@ -113,10 +114,8 @@ SET
             0 AS "BC Total",
             0 AS "Total Records",
             CAST(:fileDate AS varchar) AS "File Date",
-            -- Use the :fileDate parameter here
             NULL AS "Batch Run Date",
-            -- Batch Run Date is NULL
-            :sequenceNumber AS "Sequence Number" -- Use the :sequenceNumber parameter here
+            :sequenceNumber AS "Sequence Number"
         WHERE
             NOT EXISTS (
                 SELECT

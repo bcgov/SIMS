@@ -817,7 +817,7 @@ describe(
       expect(fileContent).toContain("0,0,0,0,0,0,0,2024-01-31,,3228");
     });
 
-    it("Should throw error when import disbursement receipt file and retry import disbursement receipt file when there was no file to be processed.", async () => {
+    it("Should throw error when there is no disbursement receipt file to be processed.", async () => {
       // Arrange
       mockDownloadFiles(sftpClientMock, []);
       // Queued job.
