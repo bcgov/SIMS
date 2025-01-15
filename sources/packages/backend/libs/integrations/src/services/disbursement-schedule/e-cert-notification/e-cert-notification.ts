@@ -51,21 +51,20 @@ export abstract class ECertNotification {
   ): Promise<boolean> {
     const notificationLog = new ProcessSummary();
     log.children(notificationLog);
-    notificationLog.info(
-      `Validating if '${this.notificationName}' notification should be created for disbursement ID ${eCertDisbursement.disbursement.id}.`,
-    );
     const shouldCreateNotification = await this.shouldCreateNotification(
       eCertDisbursement,
       entityManager,
     );
     if (!shouldCreateNotification) {
       notificationLog.info(
-        "Notification should not be created at this moment.",
+        `${this.notificationName} notification should not be created at this moment for disbursement ID ${eCertDisbursement.disbursement.id}.`,
       );
       return false;
     }
     await this.createNotification(eCertDisbursement, entityManager);
-    notificationLog.info("Notification created.");
+    notificationLog.info(
+      `${this.notificationName} notification created for disbursement ID ${eCertDisbursement.disbursement.id}.`,
+    );
     return true;
   }
 }
