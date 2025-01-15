@@ -126,8 +126,10 @@ describe(
       ]);
       expect(
         mockedJob.containLogMessages([
-          `Creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
-          `Completed creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
+          `Validating if 'Ministry Blocked Disbursement' notification should be created for disbursement ID ${disbursement.id}.`,
+          "Notification created.",
+          `Validating if 'Student Blocked Disbursement' notification should be created for disbursement ID ${disbursement.id}.`,
+          "Notification created.",
         ]),
       ).toBe(true);
       const notifications = await db.notification.find({
@@ -191,8 +193,10 @@ describe(
         expect(
           mockedJob.containLogMessages([
             "Disbursement estimated awards do not contain any amount to be disbursed.",
-            `Creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
-            `Completed creating notifications for disbursement id: ${disbursement.id} for student and ministry.`,
+            `Validating if 'Ministry Blocked Disbursement' notification should be created for disbursement ID ${disbursement.id}.`,
+            "Notification created.",
+            `Validating if 'Student Blocked Disbursement' notification should be created for disbursement ID ${disbursement.id}.`,
+            "Notification created.",
           ]),
         ).toBe(true);
         const notifications = await db.notification.find({
@@ -287,6 +291,15 @@ describe(
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 0",
       ]);
+      expect(
+        mockedJob.containLogMessages([
+          "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
+          `Validating if 'Ministry Blocked Disbursement' notification should be created for disbursement ID ${disbursement.id}.`,
+          "Notification should not be created at this moment.",
+          `Validating if 'Student Blocked Disbursement' notification should be created for disbursement ID ${disbursement.id}.`,
+          "Notification should not be created at this moment.",
+        ]),
+      ).toBe(true);
       const notificationsCount = await db.notification.count({
         where: {
           notificationMessage: {

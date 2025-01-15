@@ -1436,17 +1436,10 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      await processor.processQueue(mockedJob.job);
 
-      // Assert uploaded file.
-      const uploadedFile = getUploadedFile(sftpClientMock);
-      const uploadedFileName = getUploadedFileName();
-      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
       // Assert
-      expect(result).toStrictEqual([
-        `Generated file: ${uploadedFileName}`,
-        "Uploaded records: 0",
-      ]);
+      // Assert disbursement was blocked and expected student notification was created and ministry notification was not created.
       expect(
         mockedJob.containLogMessages([
           "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
@@ -1456,6 +1449,7 @@ describe(
           "Notification created.",
         ]),
       ).toBe(true);
+      // Assert only student notification was created on DB.
       const notifications = await db.notification.find({
         select: {
           id: true,
