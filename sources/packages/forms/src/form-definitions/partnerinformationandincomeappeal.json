@@ -15,7 +15,7 @@
       "customClass": "",
       "modalEdit": false,
       "defaultValue": null,
-      "persistent": false,
+      "persistent": true,
       "protected": false,
       "dbIndex": false,
       "encrypted": false,
