@@ -62,6 +62,14 @@ export class DisbursementReceiptProcessingService {
       this.esdcConfig.ftpResponseFolder,
       fileSearch,
     );
+    // The file is expected to be present when the scheduler runs,
+    // and it should be considered as error if the file is not present for disbursement receipts.
+    if (filePaths.length === 0) {
+      processSummary.error(
+        "There are no disbursement receipt files to be processed.",
+      );
+      return;
+    }
     for (const filePath of filePaths) {
       const fileProcessSummary = new ProcessSummary();
       processSummary.children(fileProcessSummary);
@@ -197,10 +205,6 @@ export class DisbursementReceiptProcessingService {
       // Fetch the reports data and convert them into CSV.
       const dailyDisbursementsRecordsInCSV =
         await this.reportService.getReportDataAsCSV(reportFilterModel);
-
-      if (dailyDisbursementsRecordsInCSV === "") {
-        return;
-      }
 
       // Create the file name for the daily disbursement report.
       const disbursementFileName =
