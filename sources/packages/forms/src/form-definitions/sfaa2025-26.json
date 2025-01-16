@@ -1,4 +1,5 @@
 {
+  "_id": "675c7b1e1af14c2b8a3fd820",
   "title": "SFAA2025-26",
   "name": "SFAA2025-26",
   "path": "sfaa2025-26",
@@ -7,6 +8,7 @@
   "tags": [
     "common"
   ],
+  "owner": "675c7aff1af14c2b8a3fd703",
   "components": [
     {
       "title": "Welcome",
@@ -12346,7 +12348,7 @@
           },
           "properties": {},
           "calculateServer": true,
-          "calculateValue": "/**\r\n * Full-time student will only be considered independant if\r\n * parent information does not need to be entered (showParentInformation) or \r\n * if parent information does not need to be entered and student selects\r\n * both the parents passed away \r\n * or estranged from both of my parents. \r\n * Otherwise, student is considered dependant.\r\n */\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n\tinstance.setValue(\"independant\");\r\n} else if (data.showParentInformation) {\r\n\tconst doesNotHaveParents = (data.parentbcResident === \"bothOfMyHaveParentsHavePassedAwayAndIHaveNoLegalGuardian\" || data.parentbcResident === \"estranged\");\r\n\tinstance.setValue(doesNotHaveParents ? \"independant\" : \"dependant\");\r\n} else {\r\n\tinstance.setValue(\"independant\");\r\n}\r\n",
+          "calculateValue": "/**\r\n * Full-time student will only be considered independant if\r\n * parent information does not need to be entered (showParentInformation) or \r\n * if parent information does not need to be entered and student selects\r\n * both the parents passed away \r\n * or estranged from both of my parents. \r\n * Otherwise, student is considered dependant.\r\n */\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n\tinstance.setValue(\"independant\");\r\n} else if (data.showParentInformation) {\r\n\tconst doesNotHaveParents = (data.parentbcResident === \"bothOfMyHaveParentsHavePassedAwayAndIHaveNoLegalGuardian\" || data.parentbcResident === \"estranged\");\r\n\tinstance.setValue(doesNotHaveParents ? \"independant\" : \"dependant\");\r\n} else {\r\n\tinstance.setValue(\"dependant\");\r\n}\r\n",
           "lockKey": true
         }
       ],
@@ -32735,5 +32737,20 @@
       "inputType": "hidden",
       "id": "e6z1qd9"
     }
-  ]
+  ],
+  "pdfComponents": [],
+  "access": [
+    {
+      "type": "read_all",
+      "roles": [
+        "675c7aff1af14c2b8a3fd6bd",
+        "675c7aff1af14c2b8a3fd6c1",
+        "675c7aff1af14c2b8a3fd6c5"
+      ]
+    }
+  ],
+  "submissionAccess": [],
+  "created": "2024-12-13T18:21:18.578Z",
+  "modified": "2025-01-16T23:14:28.109Z",
+  "machineName": "SFAA2025-26"
 }
