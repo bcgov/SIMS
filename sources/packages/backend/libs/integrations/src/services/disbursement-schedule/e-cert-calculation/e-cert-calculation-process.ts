@@ -113,20 +113,26 @@ export abstract class ECertCalculationProcess {
           let stepNumber = 1;
           // Execute all steps sequentially. The order of execution is important since the
           // disbursement data is potentially changed along the steps till it is persisted.
+          const stepsLog = new ProcessSummary();
+          disbursementLog.children(stepsLog);
+          stepsLog.info("Executing e-Cert calculation steps.");
           for (const step of steps) {
-            disbursementLog.info(
+            stepsLog.info(
               `Executing step ${stepNumber++} out of ${steps.length}.`,
             );
             const shouldProceed = await step.executeStep(
               eCertDisbursement,
               entityManager,
-              disbursementLog,
+              stepsLog,
             );
             if (!shouldProceed) {
+              stepsLog.info(
+                `Checking if blocked disbursement notifications should be generated.`,
+              );
               await this.eCertNotificationService.notifyBlockedDisbursement(
                 eCertDisbursement,
                 entityManager,
-                parentLog,
+                stepsLog,
               );
               disbursementLog.info(
                 "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
