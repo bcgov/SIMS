@@ -37,7 +37,6 @@ objects:
           maxSurge: 25%
       template:
         metadata:
-          creationTimestamp: null
           labels:
             app: ${NAME}
         spec:
@@ -124,7 +123,6 @@ objects:
     kind: Service
     metadata:
       annotations:
-      creationTimestamp: null
       labels:
         app: ${NAME}
       name: ${NAME}

@@ -59,7 +59,8 @@ IS_NAMESPACE="${LICENSE_PLATE}-tools"
 DC_NAME="${ENV}-${APP_NAME}"
 
 # Lookup the dc to get the deployed container image tag
-DC_IMAGE=$(oc get dc/$DC_NAME -n $DC_NAMESPACE -o json | jq -r '.spec.template.spec.containers[].image')
+# TODO: Change the naming convention from DC to deployment if required in future.
+DC_IMAGE=$(oc get deployment/$DC_NAME -n $DC_NAMESPACE -o json | jq -r '.spec.template.spec.containers[].image')
 if [ -z "$DC_IMAGE" ]; then
   echo "DeploymentConfig image tag not found." >&2
   exit 1
