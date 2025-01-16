@@ -12346,7 +12346,7 @@
           },
           "properties": {},
           "calculateServer": true,
-          "calculateValue": "/**\r\n * When parent information is entered if student selects\r\n * both the parents passed away \r\n * or estranged from both of my parents then consider the\r\n * student as not dependant.\r\n */\r\nconst isDependant =\r\n  data.showParentInformation &&\r\n  (data.parentbcResident === \"yes\" || data.parentbcResident === \"no\");\r\n\r\nvalue = isDependant ? \"dependant\" : \"independant\";",
+          "calculateValue": "/**\r\n * Full-time student will only be considered independant if\r\n * parent information does not need to be entered (showParentInformation) or \r\n * if parent information does not need to be entered and student selects\r\n * both the parents passed away \r\n * or estranged from both of my parents. \r\n * Otherwise, student is considered dependant.\r\n */\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n\tinstance.setValue(\"independant\");\r\n} else if (data.showParentInformation) {\r\n\tconst doesNotHaveParents = !!data.parentbcResident && (data.parentbcResident === \"bothOfMyHaveParentsHavePassedAwayAndIHaveNoLegalGuardian\" || data.parentbcResident === \"estranged\");\r\n\tinstance.setValue(doesNotHaveParents ? \"independant\" : \"dependant\");\r\n} else {\r\n\tinstance.setValue(\"independant\");\r\n}\r\n",
           "lockKey": true
         }
       ],
