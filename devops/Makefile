@@ -511,7 +511,7 @@ deploy-forms:
 	-p TLS_KEY=$(TLS_KEY) \
 	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,dc/$(FORMS_NAME))
+	$(call rollout_and_wait,deployment/$(FORMS_NAME))
 
 # Remove redis and resources including secrets from openshift namespace.
 delete-redis:
