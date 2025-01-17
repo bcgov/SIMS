@@ -37,6 +37,7 @@ export class ConfigController extends BaseController {
         this.configService.maximumIdleTimeForWarningInstitution,
       maximumIdleTimeForWarningAEST:
         this.configService.maximumIdleTimeForWarningAEST,
+      appEnv: this.configService.appEnv,
     };
   }
 }

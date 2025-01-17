@@ -155,6 +155,14 @@ export class ConfigService {
     );
   }
 
+  /** 
+   * App environment.
+   * @returns app environment.
+   */
+  get appEnv(): string {
+    return this.getCachedConfig("appEnvConfig", process.env.APP_ENV);
+  }
+
   /**
    * Maximum idle time for warning student Configuration.
    * @returns maximum idle time for warning student number.

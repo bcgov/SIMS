@@ -11,7 +11,7 @@ import { BannerTypes } from "@/types";
 export default defineComponent({
   setup() {
     // Get environment from env variable APP_ENV | DEV, TEST, STAGING, PROD
-    const environment = process.env.APP_ENV?.toUpperCase() ?? "DEV";
+    const environment = await getAppConfigService().appEnv;
     const isProduction = environment === "PROD";
 
     const bannerText = computed(() => {
@@ -28,10 +28,11 @@ export default defineComponent({
 
 <style>
 /* Global styles to handle layout with banner */
-.environment-banner ~ .v-application .v-app-bar {
+.environment-banner~.v-application .v-app-bar {
   top: 18px !important;
 }
-.environment-banner ~ .v-application {
+
+.environment-banner~.v-application {
   padding-top: 18px;
 }
 </style>
@@ -43,7 +44,8 @@ export default defineComponent({
   left: 0;
   right: 0;
   z-index: 1005;
-  background-color: #e3a82b; /* BC Gold */
+  background-color: #e3a82b;
+  /* BC Gold */
   color: #000000;
   font-weight: bold;
   text-align: center;
