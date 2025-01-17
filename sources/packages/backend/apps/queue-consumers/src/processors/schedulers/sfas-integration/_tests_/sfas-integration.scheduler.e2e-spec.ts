@@ -31,6 +31,10 @@ import {
 } from "@sims/sims-db";
 import { In, IsNull, Not } from "typeorm";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
+import {
+  BC_STUDENT_LOAN_AWARD_CODE,
+  CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+} from "@sims/services/constants";
 
 // SFAS received file mocks.
 const SFAS_ALL_RESTRICTIONS_FILENAME =
@@ -582,7 +586,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         cslOveraward: 741.3,
       });
       const disbursementOverawards = await db.disbursementOveraward.find({
-        select: { overawardValue: true },
+        select: { disbursementValueCode: true, overawardValue: true },
         where: {
           student: { id: student.id },
           originType: DisbursementOverawardOriginType.LegacyOveraward,
@@ -590,8 +594,14 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       });
       expect(disbursementOverawards).toEqual(
         expect.arrayContaining([
-          { overawardValue: 714.3 },
-          { overawardValue: 741.3 },
+          {
+            disbursementValueCode: BC_STUDENT_LOAN_AWARD_CODE,
+            overawardValue: 714.3,
+          },
+          {
+            disbursementValueCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+            overawardValue: 741.3,
+          },
         ]),
       );
     },
