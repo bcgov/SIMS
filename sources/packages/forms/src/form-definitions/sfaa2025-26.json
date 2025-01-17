@@ -12325,7 +12325,7 @@
             "eq": ""
           },
           "properties": {},
-          "calculateValue": "if (\r\n  data.hasDependents === \"no\" &&\r\n  data.relationshipStatus === \"single\" &&\r\n  data.outOfHighSchoolFor4Years === \"no\" &&\r\n  data.howWillYouBeAttendingTheProgram === \"Full Time\" &&\r\n  data.custodyOfChildWelfare !== \"yes\"\r\n) {\r\n  instance.setValue(true);\r\n} else {\r\n  instance.setValue(false);\r\n}\r\n",
+          "calculateValue": "if (\r\n  data.hasDependents === \"no\" &&\r\n  data.relationshipStatus === \"single\" &&\r\n  data.outOfHighSchoolFor4Years === \"no\" &&\r\n  data.howWillYouBeAttendingTheProgram === \"Full Time\" &&\r\n  data.custodyOfChildWelfare !== \"yes\" &&\r\n  data.fulltimelabourForce ===\"no\"\r\n) {\r\n  instance.setValue(true);\r\n} else {\r\n  instance.setValue(false);\r\n}\r\n",
           "calculateServer": true,
           "lockKey": true
         },
@@ -12346,7 +12346,7 @@
           },
           "properties": {},
           "calculateServer": true,
-          "calculateValue": "/**\r\n * Full-time student will only be considered independant if\r\n * parent information does not need to be entered (showParentInformation) or \r\n * if parent information does not need to be entered and student selects\r\n * both the parents passed away \r\n * or estranged from both of my parents. \r\n * Otherwise, student is considered dependant.\r\n */\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n\tinstance.setValue(\"independant\");\r\n} else if (data.showParentInformation) {\r\n\tconst doesNotHaveParents = (data.parentbcResident === \"bothOfMyHaveParentsHavePassedAwayAndIHaveNoLegalGuardian\" || data.parentbcResident === \"estranged\");\r\n\tinstance.setValue(doesNotHaveParents ? \"independant\" : \"dependant\");\r\n} else {\r\n\tinstance.setValue(\"independant\");\r\n}\r\n",
+          "calculateValue": "/**\r\n * Part-time is always considered \"independant\".\r\n * Full-time student will be considered \"independant\" if\r\n * parent information does not need to be entered after \r\n * all the questions in the personal information are answered or \r\n * if parent information needs to be entered and student\r\n * \t- has both the parents passed away or; \r\n * \t- is estranged from both of parents. \r\n * Otherwise, student is considered \"dependant\".\r\n */\r\n \r\nconst personalInfoAnswered = !!data.hasDependents &&\r\n  !!data.relationshipStatus &&\r\n  !!data.outOfHighSchoolFor4Years &&\r\n  !!data.fulltimelabourForce &&\r\n  ([\"no\",\"preferNotToAnswer\"].includes(data.youthInCare) || !!data.custodyOfChildWelfare);\r\n\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n\tinstance.setValue(\"independant\");\r\n} else if (personalInfoAnswered && !data.showParentInformation) { \r\n\tinstance.setValue(\"independant\");\r\n} else if (data.showParentInformation && \r\n\t[\"bothOfMyHaveParentsHavePassedAwayAndIHaveNoLegalGuardian\",\"estranged\"].includes(data.parentbcResident)) {\r\n\tinstance.setValue(\"independant\");\r\n} else {\r\n\tinstance.setValue(\"dependant\");\r\n}",
           "lockKey": true
         }
       ],
