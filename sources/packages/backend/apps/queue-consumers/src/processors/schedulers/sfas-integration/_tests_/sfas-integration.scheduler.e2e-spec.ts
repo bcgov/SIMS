@@ -17,17 +17,24 @@ import {
   saveFakeStudentRestriction,
   RestrictionCode,
   createFakeSFASRestrictionMaps,
+  createFakeUser,
 } from "@sims/test-utils";
 import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
 import {
+  DisbursementOverawardOriginType,
   NotificationMessageType,
   Student,
   StudentRestriction,
 } from "@sims/sims-db";
 import { In, IsNull, Not } from "typeorm";
+import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
+import {
+  BC_STUDENT_LOAN_AWARD_CODE,
+  CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+} from "@sims/services/constants";
 
 // SFAS received file mocks.
 const SFAS_ALL_RESTRICTIONS_FILENAME =
@@ -38,6 +45,8 @@ const SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME =
   "SFAS-TO-SIMS-INVALID-INDIVIDUAL-RECORDS-INCONSISTENT-WITH-DATA-IMPORT.txt";
 const SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME =
   "SFAS-TO-SIMS-VALID-INDIVIDUAL-RECORDS.txt";
+const SFAS_INDIVIDUAL_VALID_RECORD_OVERAWARD_FILENAME =
+  "SFAS-TO-SIMS-VALID-INDIVIDUAL-RECORD-OVERAWARD.txt";
 const LEGACY_RESTRICTION_EMAIL = "dummy_legacy_email@some.domain";
 
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
@@ -502,6 +511,99 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         partTimeMSFAANumber: null,
         partTimeMSFAAEffectiveDate: null,
       });
+    },
+  );
+
+  it(
+    "Should update disbursement legacy overawards for an existing student when SFAS individual data records are added by importing valid data from SFAS " +
+      "where the record type is the individual data record.",
+    async () => {
+      // Arrange
+      const user = createFakeUser();
+      user.lastName = "INNAVOIG";
+      const student = await saveFakeStudent(
+        db.dataSource,
+        { user },
+        { initialValue: { birthDate: "1966-07-21" } },
+      );
+      const sinValidation = createFakeSINValidation(
+        {
+          student,
+        },
+        { initialValue: { sin: "121380175" } },
+      );
+      student.sinValidation = sinValidation;
+      await db.student.save(student);
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+      mockDownloadFiles(sftpClientMock, [
+        SFAS_INDIVIDUAL_VALID_RECORD_OVERAWARD_FILENAME,
+      ]);
+
+      // Act
+      await processor.processQueue(mockedJob.job);
+
+      // Assert
+      const downloadedFile = path.join(
+        process.env.SFAS_RECEIVE_FOLDER,
+        SFAS_INDIVIDUAL_VALID_RECORD_OVERAWARD_FILENAME,
+      );
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${downloadedFile}.`,
+          "File contains 1 records.",
+          "Updating student ids for SFAS individuals.",
+          "Student ids updated.",
+          "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+          "New disbursement overaward balances inserted to disbursement overawards table.",
+          "Inserting student restrictions from SFAS restrictions data.",
+          "Inserted student restrictions from SFAS restrictions data.",
+        ]),
+      ).toBe(true);
+      // Expect
+      const sFASIndividual = await db.sfasIndividual.findOne({
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          birthDate: true,
+          sin: true,
+          cslOveraward: true,
+          bcslOveraward: true,
+        },
+        where: {
+          id: 83543,
+        },
+      });
+      expect(sFASIndividual).toEqual({
+        id: 83543,
+        firstName: "GIORGIO",
+        lastName: "INNAVOIG",
+        birthDate: "1966-07-21",
+        sin: "121380175",
+        bcslOveraward: 714.3,
+        cslOveraward: 741.3,
+      });
+      const disbursementOverawards = await db.disbursementOveraward.find({
+        select: { disbursementValueCode: true, overawardValue: true },
+        where: {
+          student: { id: student.id },
+          originType: DisbursementOverawardOriginType.LegacyOveraward,
+        },
+      });
+      expect(disbursementOverawards).toEqual(
+        expect.arrayContaining([
+          {
+            disbursementValueCode: BC_STUDENT_LOAN_AWARD_CODE,
+            overawardValue: 714.3,
+          },
+          {
+            disbursementValueCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+            overawardValue: 741.3,
+          },
+        ]),
+      );
     },
   );
 

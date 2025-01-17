@@ -245,6 +245,73 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     });
   });
 
+  it("Should create disbursement overawards when an exact match is found with matching last name, birth dates and SIN for importing a student record with disbursement overawards from SFAS.", async () => {
+    // Arrange
+    const user = await db.user.save(createFakeUser());
+    const submittedData = createFakeSubmittedData(user);
+
+    // Save the fake student account application to be later approved by the Ministry
+    // and create the Student Account.
+    const studentAccountApplication = await db.studentAccountApplication.save(
+      createFakeStudentAccountApplication(
+        { user },
+        { initialValues: { submittedData } },
+      ),
+    );
+
+    const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
+      initialValues: {
+        lastName: user.lastName,
+        birthDate: submittedData.dateOfBirth,
+        sin: submittedData.sinNumber,
+        cslOveraward: 1000,
+        bcslOveraward: 2000,
+      },
+    });
+
+    const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    // Mock the form.io response.
+    sharedFormService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.StudentProfile,
+      data: { data: submittedData },
+    });
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(submittedData)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+      });
+
+    // Check that the disbursement overawards are created.
+    const disbursementOverawards = await db.disbursementOveraward.find({
+      select: {
+        overawardValue: true,
+        originType: true,
+      },
+      where: {
+        student: { id: sfasIndividual.student.id },
+      },
+    });
+    expect(disbursementOverawards).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          overawardValue: 1000,
+          originType: "Legacy overaward",
+        }),
+        expect.objectContaining({
+          overawardValue: 2000,
+          originType: "Legacy overaward",
+        }),
+      ]),
+    );
+  });
+
   afterAll(async () => {
     await app?.close();
   });
