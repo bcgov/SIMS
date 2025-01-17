@@ -5,17 +5,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
-import { BannerTypes } from "@/types";
+import { AppConfigService } from "@/services/AppConfigService";
+import { defineComponent, computed, ref, onMounted } from "vue";
 
 export default defineComponent({
   setup() {
-    // Get environment from env variable APP_ENV | DEV, TEST, STAGING, PROD
-    const environment = await getAppConfigService().appEnv;
-    const isProduction = environment === "PROD";
+    const appEnv = ref("");
+    const isProduction = ref(false);
+
+    onMounted(async () => {
+      // Get environment from env variable APP_ENV | dev, test, staging, production
+      const config = await AppConfigService.shared.config();
+      appEnv.value = config.appEnv;
+      isProduction.value = appEnv.value === "production";
+    });
 
     const bannerText = computed(() => {
-      return `Non-Production ${environment} Environment`;
+      return `Non-Production ${appEnv.value} Environment`;
     });
 
     return {
@@ -28,11 +34,11 @@ export default defineComponent({
 
 <style>
 /* Global styles to handle layout with banner */
-.environment-banner~.v-application .v-app-bar {
+.environment-banner ~ .v-application .v-app-bar {
   top: 18px !important;
 }
 
-.environment-banner~.v-application {
+.environment-banner ~ .v-application {
   padding-top: 18px;
 }
 </style>
