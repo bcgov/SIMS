@@ -1,4 +1,5 @@
 {
+  "_id": "675c7b1e1af14c2b8a3fd820",
   "title": "SFAA2025-26",
   "name": "SFAA2025-26",
   "path": "sfaa2025-26",
@@ -7,6 +8,7 @@
   "tags": [
     "common"
   ],
+  "owner": "675c7aff1af14c2b8a3fd703",
   "components": [
     {
       "title": "Welcome",
@@ -12346,7 +12348,7 @@
           },
           "properties": {},
           "calculateServer": true,
-          "calculateValue": "/**\r\n * Part-time is always considered \"independant\".\r\n * Full-time student will be considered \"independant\" if\r\n * parent information does not need to be entered after \r\n * all the questions in the personal information are answered or \r\n * if parent information needs to be entered and student\r\n * \t- has both the parents passed away or; \r\n * \t- is estranged from both of parents. \r\n * Otherwise, student is considered \"dependant\".\r\n */\r\n \r\nconst personalInfoAnswered = !!data.hasDependents &&\r\n  !!data.relationshipStatus &&\r\n  !!data.outOfHighSchoolFor4Years &&\r\n  !!data.fulltimelabourForce &&\r\n  ([\"no\",\"preferNotToAnswer\"].includes(data.youthInCare) || !!data.custodyOfChildWelfare);\r\n\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n\tinstance.setValue(\"independant\");\r\n} else if (personalInfoAnswered && !data.showParentInformation) { \r\n\tinstance.setValue(\"independant\");\r\n} else if (data.showParentInformation && \r\n\t(data.parentbcResident === \"bothOfMyHaveParentsHavePassedAwayAndIHaveNoLegalGuardian\" || \r\n\tdata.parentbcResident === \"estranged\")) {\r\n\tinstance.setValue(\"independant\");\r\n} else {\r\n\tinstance.setValue(\"dependant\");\r\n}",
+          "calculateValue": "/**\r\n * Part-time is always considered \"independant\".\r\n * Full-time student will be considered \"independant\" if\r\n * parent information does not need to be entered after \r\n * all the questions in the personal information are answered or \r\n * if parent information needs to be entered and student\r\n * \t- has both the parents passed away or; \r\n * \t- is estranged from both of parents. \r\n * Otherwise, student is considered \"dependant\".\r\n */\r\n \r\nconst personalInfoAnswered = !!data.hasDependents &&\r\n  !!data.relationshipStatus &&\r\n  !!data.outOfHighSchoolFor4Years &&\r\n  !!data.fulltimelabourForce &&\r\n  ([\"no\",\"preferNotToAnswer\"].includes(data.youthInCare) || !!data.custodyOfChildWelfare);\r\n\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n\tinstance.setValue(\"independant\");\r\n} else if (personalInfoAnswered && !data.showParentInformation) { \r\n\tinstance.setValue(\"independant\");\r\n} else if (data.showParentInformation && \r\n\t[\"bothOfMyHaveParentsHavePassedAwayAndIHaveNoLegalGuardian\",\"estranged\"].includes(data.parentbcResident)) {\r\n\tinstance.setValue(\"independant\");\r\n} else {\r\n\tinstance.setValue(\"dependant\");\r\n}",
           "lockKey": true
         }
       ],
@@ -32735,5 +32737,20 @@
       "inputType": "hidden",
       "id": "e6z1qd9"
     }
-  ]
+  ],
+  "pdfComponents": [],
+  "access": [
+    {
+      "type": "read_all",
+      "roles": [
+        "675c7aff1af14c2b8a3fd6bd",
+        "675c7aff1af14c2b8a3fd6c1",
+        "675c7aff1af14c2b8a3fd6c5"
+      ]
+    }
+  ],
+  "submissionAccess": [],
+  "created": "2024-12-13T18:21:18.578Z",
+  "modified": "2025-01-17T22:55:03.120Z",
+  "machineName": "SFAA2025-26"
 }
