@@ -617,7 +617,7 @@
           <text>"2022-2023"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_0cb65f7">
-          <text>&gt; 7</text>
+          <text>&gt;= 7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_19tnso3">
           <text>84933</text>
@@ -946,7 +946,7 @@
           <text>"2023-2024"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1q5nz0l">
-          <text>&gt; 7</text>
+          <text>&gt;= 7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1mhcmbi">
           <text>93737</text>
@@ -1282,7 +1282,7 @@
           <text>"2024-2025"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_133s2og">
-          <text>&gt; 7</text>
+          <text>&gt;= 7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0lnlz1h">
           <text>97395</text>
@@ -1611,7 +1611,7 @@
           <text>"2025-2026"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1x0upra">
-          <text>&gt; 7</text>
+          <text>&gt;= 7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0p7ohoj">
           <text>97395</text>
