@@ -155,7 +155,7 @@ export class ConfigService {
     );
   }
 
-  /** 
+  /**
    * App environment.
    * @returns app environment.
    */
