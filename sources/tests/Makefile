@@ -15,7 +15,7 @@ export MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION :=$(or $(MAXIMUM_IDLE_TIME_FOR_
 export MAXIMUM_IDLE_TIME_FOR_WARNING_AEST := $(or $(MAXIMUM_IDLE_TIME_FOR_WARNING_AEST), 3600)
 
 # App Environment
-export APP_ENV := $(or $(APP_ENV), production)
+export APP_ENV := $(or $(APP_ENV), local)
 
 export ALLOW_BETA_USERS_ONLY :=$(or $(ALLOW_BETA_USERS_ONLY), false)
 
