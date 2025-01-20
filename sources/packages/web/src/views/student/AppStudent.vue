@@ -9,7 +9,7 @@
         class="navigation-btn float-left"
       >
         <v-btn
-          v-if="hasAuthenticatedStudentAccount"
+          v-show="hasAuthenticatedStudentAccount && showExpandedMenu"
           class="nav-item-label"
           variant="text"
           :to="{
@@ -24,7 +24,7 @@
             /> </template
         ></v-btn>
         <v-btn
-          v-if="hasAuthenticatedStudentAccount"
+          v-show="hasAuthenticatedStudentAccount && showExpandedMenu"
           class="nav-item-label"
           variant="text"
           :to="{
@@ -34,7 +34,7 @@
           >Applications</v-btn
         >
         <v-btn
-          v-if="hasAuthenticatedStudentAccount"
+          v-show="hasAuthenticatedStudentAccount && showExpandedMenu"
           class="nav-item-label"
           variant="text"
           :to="{ name: StudentRoutesConst.STUDENT_FILE_UPLOADER }"
@@ -42,26 +42,24 @@
           >File Uploader</v-btn
         >
         <v-btn
-          v-if="hasAuthenticatedStudentAccount"
+          v-show="hasAuthenticatedStudentAccount && showExpandedMenu"
           class="nav-item-label"
           variant="text"
           :to="{ name: StudentRoutesConst.STUDENT_REQUEST_CHANGE }"
           prepend-icon="fa:far fa-hand-paper"
           >Request a Change</v-btn
         >
-
         <v-menu v-if="isAuthenticated">
           <template v-slot:activator="{ props }">
             <v-btn
-              class="mr-5 nav-item-label"
-              rounded="xl"
-              icon="fa:fa fa-user"
+              class="mr-5 ml-2 nav-item-label"
               variant="outlined"
               elevation="1"
               color="secondary"
               v-bind="props"
               aria-label="Account"
-            ></v-btn>
+              >Menu</v-btn
+            >
           </template>
           <v-list
             active-class="active-list-item"
@@ -100,7 +98,7 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { computed, ref, defineComponent, onMounted } from "vue";
+import { computed, ref, defineComponent, onMounted, watchEffect } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ClientIdType, MenuItemModel } from "@/types";
 import { useAuth, useStudentStore } from "@/composables";
@@ -116,6 +114,7 @@ export default defineComponent({
     const router = useRouter();
     const { isAuthenticated } = useAuth();
     const { hasStudentAccount } = useStudentStore();
+    const showExpandedMenu = ref(true);
 
     const logoClick = () => {
       if (hasStudentAccount.value) {
@@ -134,6 +133,42 @@ export default defineComponent({
 
     const menuItems = computed(() => {
       const items: MenuItemModel[] = [];
+      if (hasAuthenticatedStudentAccount.value && !showExpandedMenu.value) {
+        items.push(
+          {
+            title: "Home",
+            props: {
+              to: {
+                name: StudentRoutesConst.STUDENT_DASHBOARD,
+              },
+            },
+          },
+          {
+            title: "Applications",
+            props: {
+              to: {
+                name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+              },
+            },
+          },
+          {
+            title: "File Uploader",
+            props: {
+              to: {
+                name: StudentRoutesConst.STUDENT_FILE_UPLOADER,
+              },
+            },
+          },
+          {
+            title: "Request a Change",
+            props: {
+              to: {
+                name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
+              },
+            },
+          },
+        );
+      }
       if (hasStudentAccount.value) {
         items.push(
           {
@@ -152,17 +187,8 @@ export default defineComponent({
               },
             },
           },
-          {
-            title: "Overawards Balance",
-            props: {
-              to: {
-                name: StudentRoutesConst.STUDENT_OVERAWARDS,
-              },
-            },
-          },
         );
       }
-
       items.push({
         title: "Log Out",
         command: async () => {
@@ -173,14 +199,28 @@ export default defineComponent({
     });
 
     onMounted(async () => {
-      const { isFulltimeAllowed } = await AppConfigService.shared.config();
-      if (!isFulltimeAllowed) {
-        menuItems.value.forEach((item, index) => {
-          if (item.title === "Overawards Balance") {
-            menuItems.value.splice(index, 1);
-          }
-        });
+      const mediaQuery = window.matchMedia("(max-width: 1060px)");
+      function handleScreenChange(e: MediaQueryList) {
+        showExpandedMenu.value = !e.matches;
       }
+      mediaQuery.addEventListener("change", () =>
+        handleScreenChange(mediaQuery),
+      );
+      // Initial Call
+      handleScreenChange(mediaQuery);
+      const { isFulltimeAllowed } = await AppConfigService.shared.config();
+      watchEffect(() => {
+        if (isFulltimeAllowed) {
+          menuItems.value.splice(menuItems.value.length - 1, 0, {
+            title: "Overawards Balance",
+            props: {
+              to: {
+                name: StudentRoutesConst.STUDENT_OVERAWARDS,
+              },
+            },
+          });
+        }
+      });
     });
     return {
       logoClick,
@@ -190,6 +230,7 @@ export default defineComponent({
       ClientIdType,
       hasAuthenticatedStudentAccount,
       toggleNav,
+      showExpandedMenu,
     };
   },
 });
