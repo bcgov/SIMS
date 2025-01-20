@@ -1,6 +1,6 @@
 <template>
-  <environment-banner />
   <v-app>
+    <environment-banner />
     <snack-bar :snackBarOptions="snackBarOptions" />
     <router-view></router-view>
   </v-app>
