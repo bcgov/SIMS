@@ -38,7 +38,7 @@ export interface ApplicationExceptionSummaryAPIOutDTO {
   applicationId: number;
   studentId: number;
   submittedDate: Date;
-  givenNames: string;
+  givenNames?: string;
   lastName: string;
   applicationNumber: string;
 }
