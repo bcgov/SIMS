@@ -80,7 +80,7 @@ export class StudentAccountApplicationAESTController extends BaseController {
       id: accountApplication.id,
       lastName: accountApplication.user.lastName,
       givenNames: accountApplication.user.firstName,
-      dateOfBirth: accountApplication.submittedData["dateOfBirth"],
+      dateOfBirth: accountApplication.submittedData.dateOfBirth,
       submittedDate: accountApplication.submittedDate,
     }));
   }

@@ -9,6 +9,7 @@ import {
   AccountApplicationSubmittedData,
   StudentAccountApplicationApprovalModel,
   StudentAccountApplicationCreateModel,
+  StudentAccountApplicationSummary,
 } from "./student-account-applications.models";
 import { StudentService } from "../student/student.service";
 import { CustomNamedError } from "@sims/utilities";
@@ -49,13 +50,13 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
    * @returns list of pending student account applications.
    */
   async getPendingStudentAccountApplications(): Promise<
-    StudentAccountApplication[]
+    StudentAccountApplicationSummary[]
   > {
     return this.repo.find({
       select: {
         id: true,
         submittedDate: true,
-        submittedData: true,
+        submittedData: true as unknown,
         user: { firstName: true, lastName: true },
       },
       relations: {
