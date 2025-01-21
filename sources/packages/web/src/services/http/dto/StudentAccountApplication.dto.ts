@@ -7,7 +7,9 @@ export interface CreateStudentAccountApplicationAPIInDTO {
 
 export interface StudentAccountApplicationSummaryAPIOutDTO {
   id: number;
-  fullName: string;
+  lastName: string;
+  givenNames: string;
+  dateOfBirth: string;
   submittedDate: Date;
 }
 

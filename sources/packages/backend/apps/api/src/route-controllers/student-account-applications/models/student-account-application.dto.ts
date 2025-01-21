@@ -11,7 +11,9 @@ export class CreateStudentAccountApplicationAPIInDTO {
 
 export class StudentAccountApplicationSummaryAPIOutDTO {
   id: number;
-  fullName: string;
+  lastName: string;
+  givenNames: string;
+  dateOfBirth: string;
   submittedDate: Date;
 }
 

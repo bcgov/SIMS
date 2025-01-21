@@ -1,3 +1,4 @@
+import { User } from "@sims/sims-db";
 import { StudentInfo } from "../student/student.service.models";
 
 /**
@@ -32,4 +33,15 @@ export type StudentAccountApplicationApprovalModel = StudentInfo &
  */
 export interface AccountApplicationSubmittedData {
   sinConsent: boolean;
+}
+
+/**
+ * Data needed to obtain a list of student account applications
+ * waiting to be assessed by the Ministry.
+ */
+export interface StudentAccountApplicationSummary {
+  id: number;
+  user: User;
+  submittedData: { dateOfBirth?: string };
+  submittedDate: Date;
 }
