@@ -40,8 +40,8 @@ export interface AccountApplicationSubmittedData {
  */
 export interface StudentAccountApplicationSummary {
   id: number;
-  submittedDate: Date;
   lastName: string;
   givenNames: string;
-  birthDate: Date;
+  birthDate: string;
+  submittedDate: Date;
 }

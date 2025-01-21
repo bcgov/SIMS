@@ -7,10 +7,10 @@ export interface CreateStudentAccountApplicationAPIInDTO {
 
 export interface StudentAccountApplicationSummaryAPIOutDTO {
   id: number;
-  submittedDate: Date;
   lastName: string;
   givenNames: string;
-  birthDate: Date;
+  birthDate: string;
+  submittedDate: Date;
 }
 
 export interface AESTStudentAccountApplicationAPIOutDTO {

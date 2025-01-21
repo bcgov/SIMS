@@ -76,13 +76,7 @@ export class StudentAccountApplicationAESTController extends BaseController {
   > {
     const accountApplications =
       await this.studentAccountApplicationsService.getPendingStudentAccountApplications();
-    return accountApplications.map((accountApplication) => ({
-      id: accountApplication.id,
-      lastName: accountApplication.lastName,
-      givenNames: accountApplication.givenNames,
-      birthDate: accountApplication.birthDate,
-      submittedDate: accountApplication.submittedDate,
-    }));
+    return accountApplications;
   }
 
   /**

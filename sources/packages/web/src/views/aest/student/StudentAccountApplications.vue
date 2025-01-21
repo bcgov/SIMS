@@ -8,16 +8,6 @@
       subTitle="Basic BCeID account requests that require ministry review."
       :recordsCount="accountApplications?.length"
     >
-      <template #actions>
-        <v-text-field
-          density="compact"
-          label="Search first name or last name"
-          variant="outlined"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
-        >
-        </v-text-field>
-      </template>
     </body-header>
     <content-group>
       <toggle-content :toggled="!accountApplications.length">

@@ -13,7 +13,7 @@ export class StudentAccountApplicationSummaryAPIOutDTO {
   id: number;
   lastName: string;
   givenNames: string;
-  birthDate: Date;
+  birthDate: string;
   submittedDate: Date;
 }
 
