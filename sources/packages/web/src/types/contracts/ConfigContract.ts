@@ -23,4 +23,5 @@ export interface AppConfig {
   maximumIdleTimeForWarningSupportingUser: number;
   maximumIdleTimeForWarningInstitution: number;
   maximumIdleTimeForWarningAEST: number;
+  appEnv: string;
 }

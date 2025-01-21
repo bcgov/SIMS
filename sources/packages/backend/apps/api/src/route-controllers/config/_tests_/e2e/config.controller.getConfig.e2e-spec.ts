@@ -21,6 +21,7 @@ describe("ConfigController(e2e)-getConfig", () => {
     MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER: "270",
     MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION: "3600",
     MAXIMUM_IDLE_TIME_FOR_WARNING_AEST: "3600",
+    APP_ENV: "production",
   };
 
   beforeAll(async () => {
@@ -65,6 +66,7 @@ describe("ConfigController(e2e)-getConfig", () => {
           +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
         maximumIdleTimeForWarningAEST:
           +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
+        appEnv: fakeEnvVariables.APP_ENV,
       });
   });
 

@@ -15,4 +15,5 @@ export interface ConfigAPIOutDTO {
   maximumIdleTimeForWarningSupportingUser: number;
   maximumIdleTimeForWarningInstitution: number;
   maximumIdleTimeForWarningAEST: number;
+  appEnv: string;
 }
