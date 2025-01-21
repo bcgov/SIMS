@@ -30,7 +30,6 @@ import {
   UpdateApplicationExceptionAPIInDTO,
 } from "./models/application-exception.dto";
 import { IUserToken } from "../../auth/userToken.interface";
-import { getUserFullName } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
   STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
@@ -141,7 +140,8 @@ export class ApplicationExceptionAESTController extends BaseController {
         studentId: eachApplication.application.student.id,
         applicationNumber: eachApplication.application.applicationNumber,
         submittedDate: eachApplication.createdAt,
-        fullName: getUserFullName(eachApplication.application.student.user),
+        givenNames: eachApplication.application.student.user.firstName,
+        lastName: eachApplication.application.student.user.lastName,
       })),
       count: applicationExceptions.count,
     };
