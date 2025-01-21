@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
-  Student,
   StudentAccountApplication,
   User,
 } from "@sims/sims-db";
@@ -10,7 +9,6 @@ import {
   AccountApplicationSubmittedData,
   StudentAccountApplicationApprovalModel,
   StudentAccountApplicationCreateModel,
-  StudentAccountApplicationSummary,
 } from "./student-account-applications.models";
 import { StudentService } from "../student/student.service";
 import { CustomNamedError } from "@sims/utilities";
@@ -51,20 +49,25 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
    * @returns list of pending student account applications.
    */
   async getPendingStudentAccountApplications(): Promise<
-    StudentAccountApplicationSummary[]
+    StudentAccountApplication[]
   > {
-    return this.repo
-      .createQueryBuilder("studentAccountApplication")
-      .select("studentAccountApplication.id", "id")
-      .addSelect("studentAccountApplication.submittedDate", "submittedDate")
-      .addSelect("user.firstName", "givenNames")
-      .addSelect("user.lastName", "lastName")
-      .addSelect("student.birthDate", "birthDate")
-      .innerJoin("studentAccountApplication.user", "user")
-      .leftJoin(Student, "student", "student.user.id = user.id")
-      .where("studentAccountApplication.assessedDate is NULL")
-      .orderBy("studentAccountApplication.submittedDate", "ASC")
-      .getRawMany();
+    return this.repo.find({
+      select: {
+        id: true,
+        submittedDate: true,
+        submittedData: true,
+        user: { firstName: true, lastName: true },
+      },
+      relations: {
+        user: true,
+      },
+      where: {
+        assessedDate: IsNull(),
+      },
+      order: {
+        submittedDate: "ASC",
+      },
+    });
   }
 
   /**

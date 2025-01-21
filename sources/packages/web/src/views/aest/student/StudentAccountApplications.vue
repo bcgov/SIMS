@@ -29,7 +29,7 @@
           <Column header="Last name" field="lastName"></Column>
           <Column header="Date of birth" headerClass="text-no-wrap"
             ><template #body="slotProps">
-              <span>{{ dateOnlyLongString(slotProps.data.birthDate) }}</span>
+              <span>{{ dateOnlyLongString(slotProps.data.dateOfBirth) }}</span>
             </template>
           </Column>
           <Column header="Action">
