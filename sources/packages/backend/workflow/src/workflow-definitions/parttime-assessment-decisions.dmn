@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnPartTimeAssessmentDecisions" name="dmnPartTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.29.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnPartTimeAssessmentDecisions" name="dmnPartTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
   <decision id="dmnPartTimeProgramYearMaximums" name="dmnPartTimeProgramYearMaximums">
     <decisionTable id="DecisionTable_1oyvbif" hitPolicy="FIRST">
       <input id="InputClause_02zjhj9" label="programYear">
@@ -617,7 +617,7 @@
           <text>"2022-2023"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_0cb65f7">
-          <text>&gt; 7</text>
+          <text>&gt;= 7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_19tnso3">
           <text>84933</text>
@@ -946,7 +946,7 @@
           <text>"2023-2024"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1q5nz0l">
-          <text>&gt; 7</text>
+          <text>&gt;= 7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1mhcmbi">
           <text>93737</text>
@@ -1282,7 +1282,7 @@
           <text>"2024-2025"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_133s2og">
-          <text>&gt; 7</text>
+          <text>&gt;= 7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0lnlz1h">
           <text>97395</text>
@@ -1611,7 +1611,7 @@
           <text>"2025-2026"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1x0upra">
-          <text>&gt; 7</text>
+          <text>&gt;= 7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0p7ohoj">
           <text>97395</text>
