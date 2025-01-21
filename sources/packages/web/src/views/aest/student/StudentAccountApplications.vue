@@ -4,10 +4,20 @@
       <header-navigator title="Student requests" subTitle="Accounts" />
     </template>
     <body-header
-      title="Requested accounts"
-      subTitle="Make a determination for students requesting to login with a Basic BCeID."
+      title="Pending account requests"
+      subTitle="Basic BCeID account requests that require ministry review."
       :recordsCount="accountApplications?.length"
     >
+      <template #actions>
+        <v-text-field
+          density="compact"
+          label="Search first name or last name"
+          variant="outlined"
+          prepend-inner-icon="mdi-magnify"
+          hide-details="auto"
+        >
+        </v-text-field>
+      </template>
     </body-header>
     <content-group>
       <toggle-content :toggled="!accountApplications.length">
@@ -25,7 +35,13 @@
               }}</span>
             </template>
           </Column>
-          <Column header="Name" field="fullName" bodyClass="w-100"></Column>
+          <Column header="Given names" field="givenNames"></Column>
+          <Column header="Last name" field="lastName"></Column>
+          <Column header="Date of birth" headerClass="text-no-wrap"
+            ><template #body="slotProps">
+              <span>{{ dateOnlyLongString(slotProps.data.birthDate) }}</span>
+            </template>
+          </Column>
           <Column header="Action">
             <template #body="slotProps">
               <v-btn

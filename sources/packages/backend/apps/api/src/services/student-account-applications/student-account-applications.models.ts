@@ -33,3 +33,15 @@ export type StudentAccountApplicationApprovalModel = StudentInfo &
 export interface AccountApplicationSubmittedData {
   sinConsent: boolean;
 }
+
+/**
+ * Data needed to obtain a list of student account applications
+ * waiting to be assessed by the Ministry.
+ */
+export interface StudentAccountApplicationSummary {
+  id: number;
+  submittedDate: Date;
+  lastName: string;
+  givenNames: string;
+  birthDate: Date;
+}

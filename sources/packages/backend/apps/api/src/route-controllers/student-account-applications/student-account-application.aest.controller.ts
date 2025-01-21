@@ -38,7 +38,6 @@ import {
   StudentAccountApplicationApprovalAPIInDTO,
   StudentAccountApplicationSummaryAPIOutDTO,
 } from "./models/student-account-application.dto";
-import { getUserFullName } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
@@ -79,7 +78,9 @@ export class StudentAccountApplicationAESTController extends BaseController {
       await this.studentAccountApplicationsService.getPendingStudentAccountApplications();
     return accountApplications.map((accountApplication) => ({
       id: accountApplication.id,
-      fullName: getUserFullName(accountApplication.user),
+      lastName: accountApplication.lastName,
+      givenNames: accountApplication.givenNames,
+      birthDate: accountApplication.birthDate,
       submittedDate: accountApplication.submittedDate,
     }));
   }
