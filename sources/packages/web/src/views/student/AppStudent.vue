@@ -9,7 +9,7 @@
         class="navigation-btn float-left"
       >
         <v-btn
-          v-show="hasAuthenticatedStudentAccount && showExpandedMenu"
+          v-show="hasAuthenticatedStudentAccount && !smallScreen"
           class="nav-item-label"
           variant="text"
           :to="{
@@ -24,7 +24,7 @@
             /> </template
         ></v-btn>
         <v-btn
-          v-show="hasAuthenticatedStudentAccount && showExpandedMenu"
+          v-show="hasAuthenticatedStudentAccount && !smallScreen"
           class="nav-item-label"
           variant="text"
           :to="{
@@ -34,7 +34,7 @@
           >Applications</v-btn
         >
         <v-btn
-          v-show="hasAuthenticatedStudentAccount && showExpandedMenu"
+          v-show="hasAuthenticatedStudentAccount && !smallScreen"
           class="nav-item-label"
           variant="text"
           :to="{ name: StudentRoutesConst.STUDENT_FILE_UPLOADER }"
@@ -42,7 +42,7 @@
           >File Uploader</v-btn
         >
         <v-btn
-          v-show="hasAuthenticatedStudentAccount && showExpandedMenu"
+          v-show="hasAuthenticatedStudentAccount && !smallScreen"
           class="nav-item-label"
           variant="text"
           :to="{ name: StudentRoutesConst.STUDENT_REQUEST_CHANGE }"
@@ -52,6 +52,18 @@
         <v-menu v-if="isAuthenticated">
           <template v-slot:activator="{ props }">
             <v-btn
+              v-if="!smallScreen"
+              class="mr-5 ml-2 nav-item-label"
+              rounded="xl"
+              icon="fa:fa fa-user"
+              variant="outlined"
+              elevation="1"
+              color="secondary"
+              v-bind="props"
+              aria-label="Account"
+            ></v-btn>
+            <v-btn
+              v-if="smallScreen"
               class="mr-5 ml-2 nav-item-label"
               variant="outlined"
               elevation="1"
@@ -105,6 +117,7 @@ import { useAuth, useStudentStore } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 import { AppConfigService } from "@/services/AppConfigService";
+import { useDisplay } from "vuetify";
 
 export default defineComponent({
   components: { BCLogo, IdleTimeChecker },
@@ -114,7 +127,7 @@ export default defineComponent({
     const router = useRouter();
     const { isAuthenticated } = useAuth();
     const { hasStudentAccount } = useStudentStore();
-    const showExpandedMenu = ref(true);
+    const { mobile: smallScreen } = useDisplay({ mobileBreakpoint: 1060 });
 
     const logoClick = () => {
       if (hasStudentAccount.value) {
@@ -133,7 +146,7 @@ export default defineComponent({
 
     const menuItems = computed(() => {
       const items: MenuItemModel[] = [];
-      if (hasAuthenticatedStudentAccount.value && !showExpandedMenu.value) {
+      if (hasAuthenticatedStudentAccount.value && smallScreen.value) {
         items.push(
           {
             title: "Home",
@@ -199,15 +212,6 @@ export default defineComponent({
     });
 
     onMounted(async () => {
-      const mediaQuery = window.matchMedia("(max-width: 1060px)");
-      function handleScreenChange(e: MediaQueryList) {
-        showExpandedMenu.value = !e.matches;
-      }
-      mediaQuery.addEventListener("change", () =>
-        handleScreenChange(mediaQuery),
-      );
-      // Initial Call
-      handleScreenChange(mediaQuery);
       const { isFulltimeAllowed } = await AppConfigService.shared.config();
       watchEffect(() => {
         if (isFulltimeAllowed) {
@@ -230,7 +234,7 @@ export default defineComponent({
       ClientIdType,
       hasAuthenticatedStudentAccount,
       toggleNav,
-      showExpandedMenu,
+      smallScreen,
     };
   },
 });
