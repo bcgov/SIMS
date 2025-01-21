@@ -414,6 +414,6 @@ div.v-field__field input[type="date"] {
   box-shadow: none !important;
   .v-app-bar-title {
     font-size: 16px;
-    font-weight: bold;
+    @extend .font-bold;
   }
 }

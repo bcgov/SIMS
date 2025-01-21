@@ -1,6 +1,6 @@
 <template>
   <v-app-bar
-    v-if="!isProduction"
+    v-if="environment !== 'production'"
     height="20"
     color="#e3a82b"
     class="environment-banner"
@@ -15,23 +15,20 @@ import { defineComponent, computed, ref, onMounted } from "vue";
 
 export default defineComponent({
   setup() {
-    const appEnv = ref("");
-    const isProduction = ref(false);
-
+    const environment = ref("");
     onMounted(async () => {
       // Get environment from env variable APP_ENV | dev, test, staging, production
-      const config = await AppConfigService.shared.config();
-      appEnv.value = config.appEnv;
-      isProduction.value = appEnv.value === "production";
+      const { appEnv } = await AppConfigService.shared.config();
+      environment.value = appEnv;
     });
 
     const bannerText = computed(() => {
-      return `Non-Production ${appEnv.value} Environment`;
+      return `Non-Production ${environment.value} Environment`;
     });
 
     return {
       bannerText,
-      isProduction,
+      environment,
     };
   },
 });
