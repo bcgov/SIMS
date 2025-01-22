@@ -839,7 +839,7 @@
                       "attributes": {},
                       "validateOn": "change",
                       "validate": {
-                        "required": false,
+                        "required": true,
                         "custom": "",
                         "customPrivate": false,
                         "strictDateValidation": false,
