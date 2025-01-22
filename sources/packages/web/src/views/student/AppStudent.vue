@@ -49,10 +49,10 @@
           prepend-icon="fa:far fa-hand-paper"
           >Request a Change</v-btn
         >
-        <v-menu v-show="isAuthenticated">
+        <v-menu v-show="showMenu">
           <template v-slot:activator="{ props }">
             <v-btn
-              v-show="!smallScreen"
+              v-show="showMenu"
               class="mr-5 nav-item-label"
               rounded="xl"
               icon="fa:fa fa-user"
@@ -64,7 +64,7 @@
             ></v-btn>
           </template>
           <v-list
-            v-show="!smallScreen"
+            v-show="showMenu"
             active-class="active-list-item"
             density="compact"
             bg-color="default"
@@ -175,6 +175,10 @@ export default defineComponent({
       return isAuthenticated.value && smallScreen.value;
     });
 
+    const showMenu = computed(() => {
+      return isAuthenticated.value && !smallScreen.value;
+    });
+
     watchEffect(() => {
       if (!smallScreen.value) {
         drawer.value = false;
@@ -274,6 +278,7 @@ export default defineComponent({
       drawer,
       showIndividualMenuButtons,
       showNavigationDrawer,
+      showMenu,
     };
   },
 });
