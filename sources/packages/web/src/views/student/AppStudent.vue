@@ -49,11 +49,11 @@
           prepend-icon="fa:far fa-hand-paper"
           >Request a Change</v-btn
         >
-        <v-menu v-if="isAuthenticated">
+        <v-menu v-show="isAuthenticated">
           <template v-slot:activator="{ props }">
             <v-btn
-              v-if="!smallScreen"
-              class="mr-5 ml-2 nav-item-label"
+              v-show="!smallScreen"
+              class="mr-5 nav-item-label"
               rounded="xl"
               icon="fa:fa fa-user"
               variant="outlined"
@@ -62,18 +62,9 @@
               v-bind="props"
               aria-label="Account"
             ></v-btn>
-            <v-btn
-              v-if="smallScreen"
-              class="mr-5 ml-2 nav-item-label"
-              variant="outlined"
-              elevation="1"
-              color="secondary"
-              v-bind="props"
-              aria-label="Account"
-              >Menu</v-btn
-            >
           </template>
           <v-list
+            v-show="!smallScreen"
             active-class="active-list-item"
             density="compact"
             bg-color="default"
@@ -97,8 +88,38 @@
             </template>
           </v-list>
         </v-menu>
+        <v-app-bar-nav-icon
+          variant="text"
+          @click.stop="drawer = !drawer"
+          v-show="isAuthenticated && smallScreen"
+        ></v-app-bar-nav-icon>
       </v-btn-toggle>
     </v-app-bar>
+    <v-navigation-drawer
+      v-show="isAuthenticated && smallScreen"
+      v-model="drawer"
+      location="right"
+      temporary
+    >
+      <v-list active-class="active-list-item" density="compact" color="primary">
+        <template v-for="(item, index) in menuItems" :key="index">
+          <v-list-item
+            :value="index"
+            @click="item.command"
+            :to="item.props?.to"
+            tabindex="0"
+          >
+            <v-list-item-title>
+              <span class="label-bold">{{ item.title }}</span>
+            </v-list-item-title>
+          </v-list-item>
+          <v-divider-inset-opaque
+            v-if="index < menuItems.length - 1"
+            :key="index"
+          ></v-divider-inset-opaque>
+        </template>
+      </v-list>
+    </v-navigation-drawer>
     <router-view name="sidebar"></router-view>
     <v-main class="body-background">
       <v-container fluid>
@@ -127,7 +148,9 @@ export default defineComponent({
     const router = useRouter();
     const { isAuthenticated } = useAuth();
     const { hasStudentAccount } = useStudentStore();
-    const { mobile: smallScreen } = useDisplay({ mobileBreakpoint: 1060 });
+    const drawer = ref(false);
+    const allowFulltime = ref(false);
+    const { smAndDown: smallScreen } = useDisplay();
 
     const logoClick = () => {
       if (hasStudentAccount.value) {
@@ -144,45 +167,51 @@ export default defineComponent({
       () => isAuthenticated.value && hasStudentAccount.value,
     );
 
+    watchEffect(() => {
+      if (!smallScreen.value) {
+        drawer.value = false;
+      }
+    });
+
     const menuItems = computed(() => {
       const items: MenuItemModel[] = [];
-      if (hasAuthenticatedStudentAccount.value && smallScreen.value) {
-        items.push(
-          {
-            title: "Home",
-            props: {
-              to: {
-                name: StudentRoutesConst.STUDENT_DASHBOARD,
-              },
-            },
-          },
-          {
-            title: "Applications",
-            props: {
-              to: {
-                name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
-              },
-            },
-          },
-          {
-            title: "File Uploader",
-            props: {
-              to: {
-                name: StudentRoutesConst.STUDENT_FILE_UPLOADER,
-              },
-            },
-          },
-          {
-            title: "Request a Change",
-            props: {
-              to: {
-                name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
-              },
-            },
-          },
-        );
-      }
       if (hasStudentAccount.value) {
+        if (smallScreen.value) {
+          items.push(
+            {
+              title: "Home",
+              props: {
+                to: {
+                  name: StudentRoutesConst.STUDENT_DASHBOARD,
+                },
+              },
+            },
+            {
+              title: "Applications",
+              props: {
+                to: {
+                  name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+                },
+              },
+            },
+            {
+              title: "File Uploader",
+              props: {
+                to: {
+                  name: StudentRoutesConst.STUDENT_FILE_UPLOADER,
+                },
+              },
+            },
+            {
+              title: "Request a Change",
+              props: {
+                to: {
+                  name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
+                },
+              },
+            },
+          );
+        }
         items.push(
           {
             title: "Profile",
@@ -201,6 +230,16 @@ export default defineComponent({
             },
           },
         );
+        if (allowFulltime.value) {
+          items.push({
+            title: "Overawards Balance",
+            props: {
+              to: {
+                name: StudentRoutesConst.STUDENT_OVERAWARDS,
+              },
+            },
+          });
+        }
       }
       items.push({
         title: "Log Out",
@@ -213,18 +252,7 @@ export default defineComponent({
 
     onMounted(async () => {
       const { isFulltimeAllowed } = await AppConfigService.shared.config();
-      watchEffect(() => {
-        if (isFulltimeAllowed) {
-          menuItems.value.splice(menuItems.value.length - 1, 0, {
-            title: "Overawards Balance",
-            props: {
-              to: {
-                name: StudentRoutesConst.STUDENT_OVERAWARDS,
-              },
-            },
-          });
-        }
-      });
+      allowFulltime.value = isFulltimeAllowed;
     });
     return {
       logoClick,
@@ -235,6 +263,7 @@ export default defineComponent({
       hasAuthenticatedStudentAccount,
       toggleNav,
       smallScreen,
+      drawer,
     };
   },
 });
