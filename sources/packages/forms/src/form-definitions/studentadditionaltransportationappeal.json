@@ -287,7 +287,7 @@
                   "key": "transportationCostSituation",
                   "conditional": {
                     "show": "",
-                    "when": "",
+                    "when": null,
                     "eq": ""
                   },
                   "type": "radio",
@@ -422,8 +422,7 @@
                   "properties": {},
                   "decimalLimit": 0,
                   "lockKey": true,
-                  "customConditional": "",
-                  "isNew": false
+                  "customConditional": ""
                 },
                 {
                   "autofocus": false,
@@ -480,7 +479,7 @@
                   "scrollToTop": false,
                   "collapsible": false,
                   "key": "additionTransportationPanel",
-                  "customConditional": "",
+                  "customConditional": "show = (data.transportationCostSituation === 'noLimit' || data.transportationCostSituation === 'special' || data.transportationCostSituation === 'educationPlacement');",
                   "type": "panel",
                   "label": "Addition Transportation Panel",
                   "input": false,
