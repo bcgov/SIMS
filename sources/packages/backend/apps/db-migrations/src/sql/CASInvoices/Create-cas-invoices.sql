@@ -11,7 +11,7 @@ CREATE TABLE sims.cas_invoices(
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   creator INT NOT NULL REFERENCES sims.users(id),
   modifier INT NULL DEFAULT NULL REFERENCES sims.users(id),
-  UNIQUE (invoice_number)
+  UNIQUE (cas_supplier_id, invoice_number)
 );
 
 -- ## Comments
@@ -23,9 +23,9 @@ COMMENT ON COLUMN sims.cas_invoices.cas_invoice_batch_id IS 'Related batch that 
 
 COMMENT ON COLUMN sims.cas_invoices.disbursement_receipt_id IS 'e-Cert receipt that this invoice is related to.';
 
-COMMENT ON COLUMN sims.cas_invoices.cas_supplier_id IS 'Active CAS supplier associated with the student.';
+COMMENT ON COLUMN sims.cas_invoices.cas_supplier_id IS 'Active CAS supplier associated with the student at the moment the invoice was created.';
 
-COMMENT ON COLUMN sims.cas_invoices.invoice_number IS 'Unique invoice number.';
+COMMENT ON COLUMN sims.cas_invoices.invoice_number IS 'Unique invoice number for a supplier.';
 
 COMMENT ON COLUMN sims.cas_invoices.invoice_status IS 'Status of the invoice indicating if it was sent to CAS.';
 

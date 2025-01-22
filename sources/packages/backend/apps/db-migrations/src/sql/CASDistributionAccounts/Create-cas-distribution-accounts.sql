@@ -2,6 +2,7 @@ CREATE TABLE sims.cas_distribution_accounts(
   id SERIAL PRIMARY KEY,
   award_value_code VARCHAR(10) NOT NULL,
   operation_code CHAR(2) NOT NULL,
+  distribution_account VARCHAR(40) NOT NULL,
   is_active BOOLEAN NOT NULL,
   -- Audit columns
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -22,6 +23,8 @@ COMMENT ON COLUMN sims.cas_distribution_accounts.id IS 'Auto-generated sequentia
 COMMENT ON COLUMN sims.cas_distribution_accounts.award_value_code IS 'SIMS award value codes.';
 
 COMMENT ON COLUMN sims.cas_distribution_accounts.operation_code IS 'Codes for the operations, expected to be "DR" for debit and "CR" for credit.';
+
+COMMENT ON COLUMN sims.cas_distribution_accounts.distribution_account IS 'Distribution account.';
 
 COMMENT ON COLUMN sims.cas_distribution_accounts.is_active IS 'Indicates if the distribution account for the award code is active. One pair of distribution accounts are expected to each award code (one for debit and one for credit).';
 
