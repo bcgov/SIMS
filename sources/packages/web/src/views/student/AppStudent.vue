@@ -176,6 +176,7 @@ export default defineComponent({
       return isAuthenticated.value && !smallScreen.value;
     });
 
+    // Close the navigation drawer when the screen is large.
     watchEffect(() => {
       if (!smallScreen.value) {
         drawer.value = false;
