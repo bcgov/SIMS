@@ -10,7 +10,7 @@
         class="navigation-btn float-left"
       >
         <v-btn
-          v-show="hasAuthenticatedStudentAccount"
+          v-if="hasAuthenticatedStudentAccount"
           class="nav-item-label"
           variant="text"
           :to="{
@@ -25,7 +25,7 @@
             /> </template
         ></v-btn>
         <v-btn
-          v-show="hasAuthenticatedStudentAccount"
+          v-if="hasAuthenticatedStudentAccount"
           class="nav-item-label"
           variant="text"
           :to="{
@@ -35,7 +35,7 @@
           >Applications</v-btn
         >
         <v-btn
-          v-show="hasAuthenticatedStudentAccount"
+          v-if="hasAuthenticatedStudentAccount"
           class="nav-item-label"
           variant="text"
           :to="{ name: StudentRoutesConst.STUDENT_FILE_UPLOADER }"
@@ -43,17 +43,16 @@
           >File Uploader</v-btn
         >
         <v-btn
-          v-show="hasAuthenticatedStudentAccount"
+          v-if="hasAuthenticatedStudentAccount"
           class="nav-item-label"
           variant="text"
           :to="{ name: StudentRoutesConst.STUDENT_REQUEST_CHANGE }"
           prepend-icon="fa:far fa-hand-paper"
           >Request a Change</v-btn
         >
-        <v-menu v-show="showMenu">
+        <v-menu v-if="isAuthenticated">
           <template v-slot:activator="{ props }">
             <v-btn
-              v-show="showMenu"
               class="mr-5 nav-item-label"
               rounded="xl"
               icon="fa:fa fa-user"
@@ -65,7 +64,7 @@
             ></v-btn>
           </template>
           <v-list
-            v-show="showMenu"
+            v-show="isAuthenticated"
             active-class="active-list-item"
             density="compact"
             bg-color="default"
@@ -93,7 +92,7 @@
       <v-app-bar-nav-icon
         variant="text"
         @click.stop="drawer = !drawer"
-        v-show="showNavigationDrawer"
+        v-if="showNavigationDrawer"
       ></v-app-bar-nav-icon>
     </v-app-bar>
     <v-navigation-drawer
@@ -170,10 +169,6 @@ export default defineComponent({
 
     const showNavigationDrawer = computed(() => {
       return isAuthenticated.value && smallScreen.value;
-    });
-
-    const showMenu = computed(() => {
-      return isAuthenticated.value && !smallScreen.value;
     });
 
     // Close the navigation drawer when the screen is large.
@@ -275,7 +270,6 @@ export default defineComponent({
       smallScreen,
       drawer,
       showNavigationDrawer,
-      showMenu,
     };
   },
 });
