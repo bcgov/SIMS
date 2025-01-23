@@ -34,6 +34,7 @@
 
 <script lang="ts">
 import { ref, watch, defineComponent, computed } from "vue";
+import { useDisplay } from "vuetify";
 const dialogClosedEvent = "dialogClosed";
 
 export default defineComponent({
@@ -60,15 +61,7 @@ export default defineComponent({
 
   setup(props, context) {
     const showHideDialog = ref(false);
-    const showFullScreen = ref(true);
-    const mediaQuery = window.matchMedia(
-      "(max-width: 768px), (max-height: 576px)",
-    );
-    function handleScreenChange(e: MediaQueryList) {
-      showFullScreen.value = e.matches;
-    }
-    mediaQuery.addEventListener("change", () => handleScreenChange(mediaQuery));
-    handleScreenChange(mediaQuery);
+    const { smAndDown: showFullScreen } = useDisplay();
     const width = computed(() => (showFullScreen.value ? undefined : "auto"));
     watch(
       () => props.showDialog,

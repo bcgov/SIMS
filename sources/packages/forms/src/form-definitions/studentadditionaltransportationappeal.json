@@ -287,7 +287,7 @@
                   "key": "transportationCostSituation",
                   "conditional": {
                     "show": "",
-                    "when": "",
+                    "when": null,
                     "eq": ""
                   },
                   "type": "radio",
@@ -422,8 +422,7 @@
                   "properties": {},
                   "decimalLimit": 0,
                   "lockKey": true,
-                  "customConditional": "",
-                  "isNew": false
+                  "customConditional": ""
                 },
                 {
                   "autofocus": false,
@@ -840,7 +839,7 @@
                       "attributes": {},
                       "validateOn": "change",
                       "validate": {
-                        "required": false,
+                        "required": true,
                         "custom": "",
                         "customPrivate": false,
                         "strictDateValidation": false,
