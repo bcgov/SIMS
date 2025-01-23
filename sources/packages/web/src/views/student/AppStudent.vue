@@ -6,10 +6,11 @@
       <v-btn-toggle
         selected-class="active-btn label-bold"
         v-model="toggleNav"
+        v-if="!smallScreen"
         class="navigation-btn float-left"
       >
         <v-btn
-          v-show="showIndividualMenuButtons"
+          v-show="hasAuthenticatedStudentAccount"
           class="nav-item-label"
           variant="text"
           :to="{
@@ -24,7 +25,7 @@
             /> </template
         ></v-btn>
         <v-btn
-          v-show="showIndividualMenuButtons"
+          v-show="hasAuthenticatedStudentAccount"
           class="nav-item-label"
           variant="text"
           :to="{
@@ -34,7 +35,7 @@
           >Applications</v-btn
         >
         <v-btn
-          v-show="showIndividualMenuButtons"
+          v-show="hasAuthenticatedStudentAccount"
           class="nav-item-label"
           variant="text"
           :to="{ name: StudentRoutesConst.STUDENT_FILE_UPLOADER }"
@@ -42,7 +43,7 @@
           >File Uploader</v-btn
         >
         <v-btn
-          v-show="showIndividualMenuButtons"
+          v-show="hasAuthenticatedStudentAccount"
           class="nav-item-label"
           variant="text"
           :to="{ name: StudentRoutesConst.STUDENT_REQUEST_CHANGE }"
@@ -88,12 +89,12 @@
             </template>
           </v-list>
         </v-menu>
-        <v-app-bar-nav-icon
-          variant="text"
-          @click.stop="drawer = !drawer"
-          v-show="showNavigationDrawer"
-        ></v-app-bar-nav-icon>
       </v-btn-toggle>
+      <v-app-bar-nav-icon
+        variant="text"
+        @click.stop="drawer = !drawer"
+        v-show="showNavigationDrawer"
+      ></v-app-bar-nav-icon>
     </v-app-bar>
     <v-navigation-drawer
       v-if="showNavigationDrawer"
@@ -166,10 +167,6 @@ export default defineComponent({
     const hasAuthenticatedStudentAccount = computed(
       () => isAuthenticated.value && hasStudentAccount.value,
     );
-
-    const showIndividualMenuButtons = computed(() => {
-      return hasAuthenticatedStudentAccount.value && !smallScreen.value;
-    });
 
     const showNavigationDrawer = computed(() => {
       return isAuthenticated.value && smallScreen.value;
@@ -276,7 +273,6 @@ export default defineComponent({
       toggleNav,
       smallScreen,
       drawer,
-      showIndividualMenuButtons,
       showNavigationDrawer,
       showMenu,
     };
