@@ -17,6 +17,16 @@
         color="primary"
         nav
       >
+        <check-permission-role :role="Role.AESTEditCASSupplierInfo">
+          <template #="{ notAllowed }">
+            <v-list-item
+              :to="{ name: AESTRoutesConst.CAS_INVOICES }"
+              prepend-icon="mdi-invoice-outline"
+              title="Invoices"
+              :disabled="notAllowed"
+            />
+          </template>
+        </check-permission-role>
         <check-permission-role :role="Role.AESTReports">
           <template #="{ notAllowed }">
             <v-list-item

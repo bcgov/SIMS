@@ -30,7 +30,7 @@ export class CASInvoiceBatch extends RecordDataModel {
    * Batch date.
    */
   @Column({
-    name: "batch_name",
+    name: "batch_date",
     type: "date",
   })
   batchDate: string;

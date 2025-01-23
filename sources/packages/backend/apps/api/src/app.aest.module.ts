@@ -34,6 +34,7 @@ import {
   CASSupplierService,
   ApplicationRestrictionBypassService,
   CRAIncomeVerificationService,
+  CASInvoiceBatchService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -78,6 +79,7 @@ import {
   StudentLoanBalanceAESTController,
   CASSupplierAESTController,
   ApplicationRestrictionBypassAESTController,
+  CASInvoiceBatchAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -127,6 +129,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     StudentLoanBalanceAESTController,
     CASSupplierAESTController,
     ApplicationRestrictionBypassAESTController,
+    CASInvoiceBatchAESTController,
   ],
   providers: [
     ApplicationExceptionControllerService,
@@ -196,6 +199,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     CRAIncomeVerificationService,
     SupportingUserService,
     CASSupplierSharedService,
+    CASInvoiceBatchService,
   ],
 })
 export class AppAESTModule {}
