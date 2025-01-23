@@ -479,7 +479,7 @@
                   "scrollToTop": false,
                   "collapsible": false,
                   "key": "additionTransportationPanel",
-                  "customConditional": "show = (data.transportationCostSituation === 'noLimit' || data.transportationCostSituation === 'special' || data.transportationCostSituation === 'educationPlacement');",
+                  "customConditional": "",
                   "type": "panel",
                   "label": "Addition Transportation Panel",
                   "input": false,
