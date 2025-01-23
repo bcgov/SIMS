@@ -275,8 +275,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       });
     }
     return assessmentHistoryQuery
-      .orderBy("assessment.studentAssessmentStatus", "ASC")
-      .addOrderBy("assessment.submittedDate", "DESC")
+      .orderBy("assessment.submittedDate", "DESC")
       .getMany();
   }
 
