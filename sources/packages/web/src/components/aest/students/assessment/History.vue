@@ -55,7 +55,7 @@
               :sortable="true"
               ><template #body="slotProps">
                 <span v-if="slotProps.data.assessmentDate">{{
-                  dateOnlyLongString(slotProps.data.assessmentDate)
+                  getISODateHourMinuteString(slotProps.data.assessmentDate)
                 }}</span
                 ><span v-else>-</span></template
               ></Column
@@ -116,7 +116,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, getISODateHourMinuteString } = useFormatters();
     const assessmentHistory = ref([] as AssessmentHistorySummaryAPIOutDTO[]);
     onMounted(async () => {
       assessmentHistory.value =
@@ -185,6 +185,7 @@ export default defineComponent({
       PAGINATION_LIST,
       assessmentHistory,
       dateOnlyLongString,
+      getISODateHourMinuteString,
       viewRequest,
       canShowViewRequest,
       getViewRequestLabel,
