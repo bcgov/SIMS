@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from "@nestjs/common";
+import { Controller, Get } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties, UserGroups } from "../../auth";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
@@ -7,7 +7,6 @@ import { ClientTypeBaseRoute } from "../../types";
 import { CASInvoiceBatchService } from "../../services";
 import { CASInvoiceBatchesAPIOutDTO } from "./models/cas-invoice-batch.dto";
 import { getUserFullName } from "../../utilities";
-import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -32,11 +31,5 @@ export class CASInvoiceBatchAESTController extends BaseController {
         approvalStatusUpdatedBy: getUserFullName(batch.approvalStatusUpdatedBy),
       })),
     };
-  }
-
-  @Post()
-  async createInvoiceBatch(): Promise<PrimaryIdentifierAPIOutDTO> {
-    const newBatch = await this.casInvoiceBatchService.createInvoiceBatch();
-    return { id: newBatch.id };
   }
 }

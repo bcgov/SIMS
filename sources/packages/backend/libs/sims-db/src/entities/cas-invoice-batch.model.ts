@@ -3,11 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { User, CASInvoiceBatchApprovalStatus } from ".";
+import { User, CASInvoiceBatchApprovalStatus, CASInvoice } from ".";
 
 /**
  * CAS batch information to group disbursement invoices.
@@ -61,4 +62,11 @@ export class CASInvoiceBatch extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   approvalStatusUpdatedBy: User;
+  /**
+   * Invoices in this batch.
+   */
+  @OneToMany(() => CASInvoice, (casInvoice) => casInvoice.casInvoiceBatch, {
+    cascade: ["insert", "update"],
+  })
+  casInvoices: CASInvoice[];
 }

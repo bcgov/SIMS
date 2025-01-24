@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
@@ -12,6 +13,7 @@ import {
   DisbursementReceipt,
   CASSupplier,
   CASInvoiceStatus,
+  CASInvoiceDetail,
 } from ".";
 
 /**
@@ -77,4 +79,15 @@ export class CASInvoice extends RecordDataModel {
     type: "timestamptz",
   })
   invoiceStatusUpdatedOn: Date;
+  /**
+   * Invoice details.
+   */
+  @OneToMany(
+    () => CASInvoiceDetail,
+    (casInvoiceDetail) => casInvoiceDetail.casInvoice,
+    {
+      cascade: ["insert", "update"],
+    },
+  )
+  casInvoiceDetails: CASInvoiceDetail[];
 }
