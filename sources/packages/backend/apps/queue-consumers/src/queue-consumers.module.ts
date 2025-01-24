@@ -30,7 +30,6 @@ import {
   ApplicationChangesReportIntegrationScheduler,
   StudentApplicationNotificationsScheduler,
   SIMSToSFASIntegrationScheduler,
-  CASInvoicesBatchesCreationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -71,7 +70,6 @@ import {
   CASActiveSupplierFoundProcessor,
   CASActiveSupplierAndSiteFoundProcessor,
   CASKnownErrorsProcessor,
-  CASInvoiceBatchService,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -168,8 +166,6 @@ import { QueuesMetricsModule } from "./queues-metrics.module.module";
     CASActiveSupplierAndSiteFoundProcessor,
     CASKnownErrorsProcessor,
     CASSupplierSharedService,
-    CASInvoiceBatchService,
-    CASInvoicesBatchesCreationScheduler,
   ],
   controllers: [HealthController, MetricsController],
 })

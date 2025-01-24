@@ -88,7 +88,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
     process: (
       sequenceNumber: number,
       entityManager: EntityManager,
-    ) => Promise<void | number>,
+    ) => Promise<void>,
   ) {
     try {
       // Select and lock the specific record only.
@@ -124,14 +124,10 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       );
       // Even the sequence number being represented as a bigint in Postgres here
       // we are assuming that the max value will not go beyond the number safe limit.
-      const result = await process(nextSequenceNumber, entityManager);
+      await process(nextSequenceNumber, entityManager);
       // If the external process was successfully execute
       // update the new sequence number to the database.
-      if (typeof result === "number") {
-        sequenceRecord.sequenceNumber = result.toString();
-      } else {
-        sequenceRecord.sequenceNumber = nextSequenceNumber.toString();
-      }
+      sequenceRecord.sequenceNumber = nextSequenceNumber.toString();
       this.logger.log("Persisting new sequence number to database...");
       await entityManager.save(sequenceRecord);
     } catch (error) {

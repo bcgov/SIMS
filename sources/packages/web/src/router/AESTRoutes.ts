@@ -26,7 +26,6 @@ import StudentNotes from "@/views/aest/student/StudentNotes.vue";
 import StudentRestrictions from "@/views/aest/student/StudentRestrictions.vue";
 import InstitutionLocationEdit from "@/views/aest/institution/InstitutionLocationEdit.vue";
 import Reports from "@/views/aest/Reports.vue";
-import CASInvoices from "@/views/aest/CASInvoices.vue";
 import ViewOffering from "@/views/aest/institution/ViewOffering.vue";
 import {
   AESTRoutesConst,
@@ -496,17 +495,6 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE,
         components: {
           default: ProfileCreate,
-        },
-        meta: {
-          clientType: ClientIdType.AEST,
-        },
-      },
-      {
-        path: AppRoutes.CASInvoices,
-        name: AESTRoutesConst.CAS_INVOICES,
-        components: {
-          default: CASInvoices,
-          sidebar: AESTHomeSideBar,
         },
         meta: {
           clientType: ClientIdType.AEST,
