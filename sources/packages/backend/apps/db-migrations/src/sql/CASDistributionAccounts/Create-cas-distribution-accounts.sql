@@ -1,6 +1,7 @@
 CREATE TABLE sims.cas_distribution_accounts(
   id SERIAL PRIMARY KEY,
   award_value_code VARCHAR(10) NOT NULL,
+  offering_intensity sims.offering_intensity NOT NULL,
   operation_code CHAR(2) NOT NULL,
   distribution_account VARCHAR(40) NOT NULL,
   is_active BOOLEAN NOT NULL,
@@ -11,7 +12,11 @@ CREATE TABLE sims.cas_distribution_accounts(
   modifier INT NULL DEFAULT NULL REFERENCES sims.users(id)
 );
 
-CREATE UNIQUE INDEX cas_distribution_accounts_award_value_code_operation_code ON sims.cas_distribution_accounts(award_value_code, operation_code)
+CREATE UNIQUE INDEX cas_distribution_accounts_award_value_code_offering_intensity_operation_code ON sims.cas_distribution_accounts(
+  award_value_code,
+  offering_intensity,
+  operation_code
+)
 WHERE
   (is_active = TRUE);
 
@@ -21,6 +26,8 @@ COMMENT ON TABLE sims.cas_distribution_accounts IS 'CAS distribution account inf
 COMMENT ON COLUMN sims.cas_distribution_accounts.id IS 'Auto-generated sequential primary key column.';
 
 COMMENT ON COLUMN sims.cas_distribution_accounts.award_value_code IS 'SIMS award value codes.';
+
+COMMENT ON COLUMN sims.cas_distribution_accounts.offering_intensity IS 'Offering intensity that can potentially have a different distribution account.';
 
 COMMENT ON COLUMN sims.cas_distribution_accounts.operation_code IS 'Codes for the operations, expected to be "DR" for debit and "CR" for credit.';
 

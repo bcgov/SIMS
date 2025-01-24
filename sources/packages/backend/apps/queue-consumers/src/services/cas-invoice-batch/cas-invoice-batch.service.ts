@@ -13,17 +13,16 @@ import {
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { DataSource, Repository } from "typeorm";
-import * as dayjs from "dayjs";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import { ProcessSummary } from "@sims/utilities/logger";
+
+const INVOICES_CHUNK_SIZE_INSERTS = 150;
 
 Injectable();
 export class CASInvoiceBatchService {
   constructor(
     @InjectRepository(CASDistributionAccount)
     private readonly casDistributionAccountRepo: Repository<CASDistributionAccount>,
-    @InjectRepository(CASInvoiceBatch)
-    private readonly casInvoiceBatchRepo: Repository<CASInvoiceBatch>,
     @InjectRepository(CASInvoice)
     private readonly casInvoiceRepo: Repository<CASInvoice>,
     @InjectRepository(DisbursementReceipt)
@@ -86,6 +85,9 @@ export class CASInvoiceBatchService {
             const student =
               receipt.disbursementSchedule.studentAssessment.application
                 .student;
+            const offeringIntensity =
+              receipt.disbursementSchedule.studentAssessment.offering
+                .offeringIntensity;
             // New invoice creation.
             const invoice = new CASInvoice();
             invoice.casInvoiceBatch = invoiceBatch;
@@ -97,17 +99,19 @@ export class CASInvoiceBatchService {
             invoice.invoiceStatus = CASInvoiceStatus.Pending;
             invoice.invoiceStatusUpdatedOn = now;
             invoice.creator = this.systemUsersService.systemUser;
+            invoice.casInvoiceDetails = [];
             // Add the invoice to the invoice batch to be returned.
             casInvoices.push(invoice);
-            const casInvoiceDetails: CASInvoiceDetail[] = [];
             const disbursedAwards =
               receipt.disbursementSchedule.disbursementValues;
             for (const disbursedAward of disbursedAwards) {
-              // TODO: Add offering intensity.
+              // Find the distribution accounts for the award.
               const accounts = distributionAccounts.filter(
                 (account) =>
-                  account.awardValueCode === disbursedAward.valueCode,
+                  account.awardValueCode === disbursedAward.valueCode &&
+                  account.offeringIntensity === offeringIntensity,
               );
+              // Create invoice details for each distribution account.
               const awardInvoiceDetails = accounts.map((account) => {
                 const invoiceDetail = new CASInvoiceDetail();
                 invoiceDetail.casInvoice = invoice;
@@ -116,18 +120,15 @@ export class CASInvoiceBatchService {
                 invoiceDetail.creator = this.systemUsersService.systemUser;
                 return invoiceDetail;
               });
-              casInvoiceDetails.push(...awardInvoiceDetails);
+              invoice.casInvoiceDetails.push(...awardInvoiceDetails);
             }
-            invoice.casInvoiceDetails = casInvoiceDetails;
           }
           return newInvoiceSequence;
         },
       );
-      console.time("Creating CAS invoice batch");
       await entityManager.getRepository(CASInvoice).save(casInvoices, {
-        chunk: 100,
+        chunk: INVOICES_CHUNK_SIZE_INSERTS,
       });
-      console.timeEnd("Creating CAS invoice batch");
       invoiceBatch.casInvoices = casInvoices;
       return invoiceBatch;
     });
@@ -137,7 +138,7 @@ export class CASInvoiceBatchService {
     CASDistributionAccount[]
   > {
     return this.casDistributionAccountRepo.find({
-      select: { id: true, awardValueCode: true },
+      select: { id: true, awardValueCode: true, offeringIntensity: true },
       where: { isActive: true },
     });
   }
@@ -156,6 +157,8 @@ export class CASInvoiceBatchService {
         "disbursementReceipt.id",
         "disbursementSchedule.id",
         "studentAssessment.id",
+        "offering.id",
+        "offering.offeringIntensity",
         "application.id",
         "student.id",
         "casSupplier.id",
@@ -174,6 +177,7 @@ export class CASInvoiceBatchService {
       )
       .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
       .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.offering", "offering")
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.student", "student")
       .innerJoin("student.casSupplier", "casSupplier")

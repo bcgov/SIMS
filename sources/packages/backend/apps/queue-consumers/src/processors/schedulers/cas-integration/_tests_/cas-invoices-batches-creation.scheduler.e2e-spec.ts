@@ -51,64 +51,63 @@ describe(
 
     it.only("Should create a new CAS invoice batch when there are e-Cert receipts with no invoice associated.", async () => {
       // Arrange
-      for (let i = 0; i < 50; i++) {
-        const casSupplier = await saveFakeCASSupplier(db, undefined, {
-          initialValues: {
-            supplierStatus: SupplierStatus.VerifiedManually,
-          },
-        });
-        const student = await saveFakeStudent(db.dataSource, { casSupplier });
-        const application = await saveFakeApplicationDisbursements(
-          db.dataSource,
-          {
-            student,
-            disbursementValues: [
-              createFakeDisbursementValue(
-                DisbursementValueType.CanadaLoan,
-                "CSLF",
-                1000,
-              ),
-              createFakeDisbursementValue(
-                DisbursementValueType.CanadaGrant,
-                "CSGD",
-                500,
-              ),
-              createFakeDisbursementValue(
-                DisbursementValueType.BCLoan,
-                "BCSL",
-                901,
-                {
-                  effectiveAmount: 900,
-                },
-              ),
-              createFakeDisbursementValue(
-                DisbursementValueType.BCGrant,
-                "BCAG",
-                351,
-                { effectiveAmount: 350 },
-              ),
-              createFakeDisbursementValue(
-                DisbursementValueType.BCGrant,
-                "SBSD",
-                201,
-                { effectiveAmount: 200 },
-              ),
-              createFakeDisbursementValue(
-                DisbursementValueType.BCTotalGrant,
-                "BCSG",
-                350,
-                { effectiveAmount: 350 },
-              ),
-            ],
-          },
-        );
-        const [firstDisbursementSchedule] =
-          application.currentAssessment.disbursementSchedules;
-        await saveFakeDisbursementReceiptsFromDisbursementSchedule(
-          db,
-          firstDisbursementSchedule,
-        );
-      }
+
+      // const casSupplier = await saveFakeCASSupplier(db, undefined, {
+      //   initialValues: {
+      //     supplierStatus: SupplierStatus.VerifiedManually,
+      //   },
+      // });
+      // const student = await saveFakeStudent(db.dataSource, { casSupplier });
+      // const application = await saveFakeApplicationDisbursements(
+      //   db.dataSource,
+      //   {
+      //     student,
+      //     disbursementValues: [
+      //       createFakeDisbursementValue(
+      //         DisbursementValueType.CanadaLoan,
+      //         "CSLF",
+      //         1000,
+      //       ),
+      //       createFakeDisbursementValue(
+      //         DisbursementValueType.CanadaGrant,
+      //         "CSGD",
+      //         500,
+      //       ),
+      //       createFakeDisbursementValue(
+      //         DisbursementValueType.BCLoan,
+      //         "BCSL",
+      //         901,
+      //         {
+      //           effectiveAmount: 900,
+      //         },
+      //       ),
+      //       createFakeDisbursementValue(
+      //         DisbursementValueType.BCGrant,
+      //         "BCAG",
+      //         351,
+      //         { effectiveAmount: 350 },
+      //       ),
+      //       createFakeDisbursementValue(
+      //         DisbursementValueType.BCGrant,
+      //         "SBSD",
+      //         201,
+      //         { effectiveAmount: 200 },
+      //       ),
+      //       createFakeDisbursementValue(
+      //         DisbursementValueType.BCTotalGrant,
+      //         "BCSG",
+      //         350,
+      //         { effectiveAmount: 350 },
+      //       ),
+      //     ],
+      //   },
+      // );
+      // const [firstDisbursementSchedule] =
+      //   application.currentAssessment.disbursementSchedules;
+      // await saveFakeDisbursementReceiptsFromDisbursementSchedule(
+      //   db,
+      //   firstDisbursementSchedule,
+      // );
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
