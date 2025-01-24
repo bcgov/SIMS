@@ -4,7 +4,7 @@ import { RecordDataModel } from "./record.model";
 import { OfferingIntensity } from ".";
 
 /**
- * CAS distribution account information to be reported in invoices.
+ * CAS distribution account information to be reported in invoice details.
  */
 @Entity({ name: TableNames.CASDistributionAccounts })
 export class CASDistributionAccount extends RecordDataModel {
@@ -21,8 +21,8 @@ export class CASDistributionAccount extends RecordDataModel {
   })
   awardValueCode: string;
   /**
-   * Offering intensity that can potentially
-   * have a different distribution account.
+   * Offering intensity to allow same awards to potentially have
+   * different distribution accounts for a same award code.
    */
   @Column({
     name: "offering_intensity",

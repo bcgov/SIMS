@@ -10,7 +10,7 @@ export class CreateCASInvoiceStatus1737512342015 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Rollback-cas-invoice-status.sql", "Types"),
+      getSQLFileData("Rollback-create-cas-invoice-status.sql", "Types"),
     );
   }
 }

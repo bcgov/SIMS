@@ -8,7 +8,7 @@ CREATE TABLE sims.cas_distribution_accounts(
   -- Audit columns
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  creator INT NULL DEFAULT NULL REFERENCES sims.users(id),
+  creator INT NOT NULL DEFAULT NULL REFERENCES sims.users(id),
   modifier INT NULL DEFAULT NULL REFERENCES sims.users(id)
 );
 
@@ -21,13 +21,13 @@ WHERE
   (is_active = TRUE);
 
 -- ## Comments
-COMMENT ON TABLE sims.cas_distribution_accounts IS 'CAS distribution account information to be reported in invoices.';
+COMMENT ON TABLE sims.cas_distribution_accounts IS 'CAS distribution account information to be reported in invoice details.';
 
 COMMENT ON COLUMN sims.cas_distribution_accounts.id IS 'Auto-generated sequential primary key column.';
 
 COMMENT ON COLUMN sims.cas_distribution_accounts.award_value_code IS 'SIMS award value codes.';
 
-COMMENT ON COLUMN sims.cas_distribution_accounts.offering_intensity IS 'Offering intensity that can potentially have a different distribution account.';
+COMMENT ON COLUMN sims.cas_distribution_accounts.offering_intensity IS 'Offering intensity to allow same awards to potentially have different distribution accounts for a same award code.';
 
 COMMENT ON COLUMN sims.cas_distribution_accounts.operation_code IS 'Codes for the operations, expected to be "DR" for debit and "CR" for credit.';
 
