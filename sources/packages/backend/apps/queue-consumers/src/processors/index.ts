@@ -30,4 +30,3 @@ export * from "./schedulers/cas-integration/cas-supplier-integration.scheduler";
 export * from "./schedulers/esdc-integration/application-changes-report-integration/application-changes-report-integration.scheduler";
 export * from "./schedulers/student-application-notifications/student-application-notifications.scheduler";
 export * from "./schedulers/sfas-integration/sims-to-sfas-integration.scheduler";
-export * from "./schedulers/cas-integration/cas-invoices-batches-creation.scheduler";
