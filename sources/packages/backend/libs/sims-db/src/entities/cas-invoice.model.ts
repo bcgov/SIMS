@@ -90,4 +90,14 @@ export class CASInvoice extends RecordDataModel {
     },
   )
   casInvoiceDetails: CASInvoiceDetail[];
+  /**
+   * Errors while sending invoices to CAS.
+   */
+  @Column({
+    name: "errors",
+    nullable: true,
+    array: true,
+    type: "varchar",
+  })
+  errors?: string[];
 }

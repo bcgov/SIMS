@@ -6,6 +6,7 @@ CREATE TABLE sims.cas_invoices(
   invoice_number VARCHAR(40) NOT NULL,
   invoice_status sims.cas_invoice_status NOT NULL,
   invoice_status_updated_on TIMESTAMP WITH TIME ZONE NOT NULL,
+  errors VARCHAR(300) [],
   -- Audit columns
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -30,6 +31,8 @@ COMMENT ON COLUMN sims.cas_invoices.invoice_number IS 'Unique invoice number for
 COMMENT ON COLUMN sims.cas_invoices.invoice_status IS 'Status of the invoice indicating if it was sent to CAS.';
 
 COMMENT ON COLUMN sims.cas_invoices.invoice_status_updated_on IS 'Date and time when the invoice status was updated.';
+
+COMMENT ON COLUMN sims.cas_invoices.errors IS 'Errors while sending invoices to CAS.';
 
 COMMENT ON COLUMN sims.cas_invoices.created_at IS 'Record creation timestamp.';
 
