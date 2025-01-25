@@ -24,7 +24,7 @@ export class CASInvoiceDetail extends RecordDataModel {
   /**
    * Related invoice.
    */
-  @ManyToOne(() => CASInvoice)
+  @ManyToOne(() => CASInvoice, { nullable: false })
   @JoinColumn({
     name: "cas_invoice_id",
     referencedColumnName: ColumnNames.ID,
@@ -33,7 +33,7 @@ export class CASInvoiceDetail extends RecordDataModel {
   /**
    * Active distribution account for the award code.
    */
-  @ManyToOne(() => CASDistributionAccount)
+  @ManyToOne(() => CASDistributionAccount, { nullable: false })
   @JoinColumn({
     name: "cas_distribution_account_id",
     referencedColumnName: ColumnNames.ID,

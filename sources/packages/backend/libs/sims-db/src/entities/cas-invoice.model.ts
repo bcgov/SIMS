@@ -30,7 +30,7 @@ export class CASInvoice extends RecordDataModel {
   /**
    * Related batch that this invoice belongs to.
    */
-  @ManyToOne(() => CASInvoiceBatch)
+  @ManyToOne(() => CASInvoiceBatch, { nullable: false })
   @JoinColumn({
     name: "cas_invoice_batch_id",
     referencedColumnName: ColumnNames.ID,
@@ -39,7 +39,7 @@ export class CASInvoice extends RecordDataModel {
   /**
    * e-Cert receipt that this invoice is related to.
    */
-  @ManyToOne(() => DisbursementReceipt)
+  @ManyToOne(() => DisbursementReceipt, { nullable: false })
   @JoinColumn({
     name: "disbursement_receipt_id",
     referencedColumnName: ColumnNames.ID,
@@ -48,7 +48,7 @@ export class CASInvoice extends RecordDataModel {
   /**
    * Active CAS supplier associated with the student at the moment the invoice was created.
    */
-  @ManyToOne(() => DisbursementReceipt)
+  @ManyToOne(() => CASSupplier, { nullable: false })
   @JoinColumn({
     name: "cas_supplier_id",
     referencedColumnName: ColumnNames.ID,
@@ -87,6 +87,7 @@ export class CASInvoice extends RecordDataModel {
     (casInvoiceDetail) => casInvoiceDetail.casInvoice,
     {
       cascade: ["insert", "update"],
+      nullable: false,
     },
   )
   casInvoiceDetails: CASInvoiceDetail[];

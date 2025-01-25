@@ -9,7 +9,7 @@ export enum CASInvoiceStatus {
   /**
    * Record was sent to CAS.
    */
-  Approved = "Sent",
+  Sent = "Sent",
   /**
    * Some error happened while trying to send the invoice to CAS
    * and a manual intervention is required.

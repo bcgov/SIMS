@@ -56,7 +56,7 @@ export class CASInvoiceBatch extends RecordDataModel {
   /**
    * User that changed the status last time.
    */
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { nullable: false })
   @JoinColumn({
     name: "approval_status_updated_by",
     referencedColumnName: ColumnNames.ID,
@@ -67,6 +67,7 @@ export class CASInvoiceBatch extends RecordDataModel {
    */
   @OneToMany(() => CASInvoice, (casInvoice) => casInvoice.casInvoiceBatch, {
     cascade: ["insert", "update"],
+    nullable: false,
   })
   casInvoices: CASInvoice[];
 }
