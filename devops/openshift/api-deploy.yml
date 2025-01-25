@@ -59,6 +59,8 @@ objects:
                   value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION}"
                 - name: MAXIMUM_IDLE_TIME_FOR_WARNING_AEST
                   value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_AEST}"
+                - name: APP_ENV
+                  value: "${APP_ENV}"
                 - name: ALLOW_BETA_USERS_ONLY
                   value: "${ALLOW_BETA_USERS_ONLY}"
                 - name: POSTGRES_HOST
@@ -526,6 +528,8 @@ parameters:
   - name: MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION
     required: true
   - name: MAXIMUM_IDLE_TIME_FOR_WARNING_AEST
+    required: true
+  - name: APP_ENV
     required: true
   - name: TLS_CERTIFICATE
     required: true

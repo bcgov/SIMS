@@ -292,15 +292,12 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     sortOrder = FieldSortOrder.ASC,
   ): OrderByCondition {
     const orderByCondition = {};
-    if (sortField === "fullName") {
-      orderByCondition["user.firstName"] = sortOrder;
-      orderByCondition["user.lastName"] = sortOrder;
-      return orderByCondition;
-    }
 
     const fieldSortOptions = {
       applicationNumber: "application.applicationNumber",
       submittedDate: "exception.createdAt",
+      givenNames: "user.firstName",
+      lastName: "user.lastName",
     };
 
     const dbColumnName = fieldSortOptions[sortField];

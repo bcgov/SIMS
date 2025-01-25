@@ -4,9 +4,9 @@
       <header-navigator title="Student requests" subTitle="Exceptions" />
     </template>
     <body-header
-      title="Requested exceptions"
+      title="Pending exception requests"
       :recordsCount="applicationExceptions.count"
-      subTitle="Make a determination on application submitted with exceptions."
+      subTitle="Exception requests that require ministry review."
     >
       <template #actions>
         <v-text-field
@@ -46,7 +46,8 @@
               </span>
             </template>
           </Column>
-          <Column field="fullName" header="Name" :sortable="true"> </Column>
+          <Column field="givenNames" header="Given names" :sortable="true" />
+          <Column field="lastName" header="Last name" :sortable="true" />
           <Column
             field="applicationNumber"
             :sortable="true"

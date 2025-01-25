@@ -408,3 +408,12 @@ ul.no-bullets {
 div.v-field__field input[type="date"] {
   padding: 1rem;
 }
+
+.environment-banner {
+  text-align: center;
+  box-shadow: none !important;
+  .v-app-bar-title {
+    font-size: 16px;
+    @extend .font-bold;
+  }
+}

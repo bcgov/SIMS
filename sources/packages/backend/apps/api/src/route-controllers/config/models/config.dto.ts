@@ -6,6 +6,7 @@ export class ConfigAPIOutDTO {
   maximumIdleTimeForWarningSupportingUser: number;
   maximumIdleTimeForWarningInstitution: number;
   maximumIdleTimeForWarningAEST: number;
+  appEnv: string;
 }
 
 export class AuthConfigAPIOutDTO {

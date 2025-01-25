@@ -4,8 +4,8 @@
       <header-navigator title="Student requests" subTitle="Accounts" />
     </template>
     <body-header
-      title="Requested accounts"
-      subTitle="Make a determination for students requesting to login with a Basic BCeID."
+      title="Pending account requests"
+      subTitle="Basic BCeID account requests that require ministry review."
       :recordsCount="accountApplications?.length"
     >
     </body-header>
@@ -25,7 +25,13 @@
               }}</span>
             </template>
           </Column>
-          <Column header="Name" field="fullName" bodyClass="w-100"></Column>
+          <Column header="Given names" field="givenNames"></Column>
+          <Column header="Last name" field="lastName"></Column>
+          <Column header="Date of birth" headerClass="text-no-wrap"
+            ><template #body="slotProps">
+              <span>{{ dateOnlyLongString(slotProps.data.dateOfBirth) }}</span>
+            </template>
+          </Column>
           <Column header="Action">
             <template #body="slotProps">
               <v-btn

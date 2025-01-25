@@ -7,7 +7,6 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { ApplicationExceptionStatus, ApplicationStatus } from "@sims/sims-db";
-import { getUserFullName } from "../../../../utilities";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
 import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
 
@@ -84,7 +83,8 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
               applicationNumber: application1.applicationNumber,
               submittedDate:
                 application1.applicationException.createdAt.toISOString(),
-              fullName: getUserFullName(application1.student.user),
+              givenNames: application1.student.user.firstName,
+              lastName: application1.student.user.lastName,
             }),
             expect.objectContaining({
               applicationId: application2.id,
@@ -92,7 +92,8 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
               applicationNumber: application2.applicationNumber,
               submittedDate:
                 application2.applicationException.createdAt.toISOString(),
-              fullName: getUserFullName(application2.student.user),
+              givenNames: application2.student.user.firstName,
+              lastName: application2.student.user.lastName,
             }),
           ]),
         );
@@ -103,7 +104,8 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
             applicationNumber: application3.applicationNumber,
             submittedDate:
               application3.applicationException.createdAt.toISOString(),
-            fullName: getUserFullName(application3.student.user),
+            givenNames: application3.student.user.firstName,
+            lastName: application3.student.user.lastName,
           }),
         );
         expect(applicationExceptionList).not.toContainEqual(
@@ -113,7 +115,8 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
             applicationNumber: application4.applicationNumber,
             submittedDate:
               application4.applicationException.createdAt.toISOString(),
-            fullName: getUserFullName(application4.student.user),
+            givenNames: application4.student.user.firstName,
+            lastName: application4.student.user.lastName,
           }),
         );
         expect(applicationExceptionList).not.toContainEqual(
@@ -123,7 +126,8 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
             applicationNumber: application5.applicationNumber,
             submittedDate:
               application5.applicationException.createdAt.toISOString(),
-            fullName: getUserFullName(application5.student.user),
+            givenNames: application5.student.user.firstName,
+            lastName: application5.student.user.lastName,
           }),
         );
       });
