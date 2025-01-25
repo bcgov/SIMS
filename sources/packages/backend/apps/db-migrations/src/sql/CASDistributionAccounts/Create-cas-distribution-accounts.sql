@@ -21,6 +21,8 @@ WHERE
   (is_active = TRUE);
 
 -- ## Comments
+COMMENT ON INDEX sims.cas_distribution_accounts_award_value_code_offering_intensity_operation_code IS 'Ensures only one distribution account record will be active for an award code for a particular offering intensity and operation code.';
+
 COMMENT ON TABLE sims.cas_distribution_accounts IS 'CAS distribution account information to be reported in invoice details.';
 
 COMMENT ON COLUMN sims.cas_distribution_accounts.id IS 'Auto-generated sequential primary key column.';

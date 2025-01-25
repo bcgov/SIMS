@@ -32,9 +32,9 @@ export class CASInvoiceBatch extends RecordDataModel {
    */
   @Column({
     name: "batch_date",
-    type: "date",
+    type: "timestamptz",
   })
-  batchDate: string;
+  batchDate: Date;
   /**
    * Approval status.
    */

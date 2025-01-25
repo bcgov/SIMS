@@ -1,7 +1,7 @@
 CREATE TABLE sims.cas_invoice_batches(
   id SERIAL PRIMARY KEY,
   batch_name VARCHAR(50) NOT NULL,
-  batch_date DATE NOT NULL,
+  batch_date TIMESTAMP WITH TIME ZONE NOT NULL,
   approval_status sims.cas_invoice_batch_approval_status NOT NULL,
   approval_status_updated_on TIMESTAMP WITH TIME ZONE NOT NULL,
   approval_status_updated_by INT NOT NULL REFERENCES sims.users(id),
