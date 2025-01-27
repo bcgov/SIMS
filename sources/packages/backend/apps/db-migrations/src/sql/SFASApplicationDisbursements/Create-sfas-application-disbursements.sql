@@ -16,17 +16,17 @@ CREATE INDEX sfas_application_disbursements_application_id ON sims.sfas_applicat
 -- ## Comments
 COMMENT ON TABLE sims.sfas_application_disbursements IS 'These records contain data related to the actual funding disbursements records in SFAS.';
 
-COMMENT ON COLUMN sims.sfas_application_disbursements.id IS 'The unique key/number used in SFAS to identify specific disbursement records(Award_disbursement.award_disbursement_idx).';
+COMMENT ON COLUMN sims.sfas_application_disbursements.id IS 'The unique key/number used in SFAS to identify specific disbursement records (Award_disbursement.award_disbursement_idx).';
 
-COMMENT ON COLUMN sims.sfas_application_disbursements.application_id IS 'The unique key/number used in SFAS to identify this application(Application.application_idx).';
+COMMENT ON COLUMN sims.sfas_application_disbursements.application_id IS 'The unique key/number used in SFAS to identify this application (Application.application_idx).';
 
-COMMENT ON COLUMN sims.sfas_application_disbursements.funding_type IS 'Program code used by SFAS(award_disbursement.program_cde).';
+COMMENT ON COLUMN sims.sfas_application_disbursements.funding_type IS 'Program code used by SFAS (award_disbursement.program_cde).';
 
-COMMENT ON COLUMN sims.sfas_application_disbursements.funding_amount IS 'Amount of funding for this specific disbursement(award_disbursement.disbursement_amt).';
+COMMENT ON COLUMN sims.sfas_application_disbursements.funding_amount IS 'Amount of funding for this specific disbursement (award_disbursement.disbursement_amt).';
 
-COMMENT ON COLUMN sims.sfas_application_disbursements.funding_date IS 'The earliest disbursement date(award_disbursement.disbursement_dte).';
+COMMENT ON COLUMN sims.sfas_application_disbursements.funding_date IS 'The earliest disbursement date (award_disbursement.disbursement_dte).';
 
-COMMENT ON COLUMN sims.sfas_application_disbursements.date_issued IS 'The date this disbursement has been sent to the service provider(Issued_document.document_issue_dte).';
+COMMENT ON COLUMN sims.sfas_application_disbursements.date_issued IS 'The date this disbursement has been sent to the service provider (Issued_document.document_issue_dte).';
 
 COMMENT ON COLUMN sims.sfas_application_disbursements.created_at IS 'Record creation timestamp.';
 

@@ -55,48 +55,48 @@ COMMENT ON COLUMN sims.sfas_applications.application_number IS 'The unique appli
 
 COMMENT ON COLUMN sims.sfas_applications.living_arrangements IS '(Spouse/dependents/parents)|To verify information provided to SDPR for the purpose of determining or auditing eligibility (application.study_period_living_at_home_flg).';
 
-COMMENT ON COLUMN sims.sfas_applications.address_line_2 IS 'Line 2 of the applicant''s address (address_current_view_unique.address_2).';
+COMMENT ON COLUMN sims.sfas_applications.marital_status IS 'Status (single, common law, married, separated, divorced). This is a code eg. MA for married (application_assessment.student_marital_status_cde).';
 
-COMMENT ON COLUMN sims.sfas_applications.city IS 'City name the applicant''s address (address_current_view_unique.city).';
+COMMENT ON COLUMN sims.sfas_applications.marriage_date IS 'Applicant''s marriage date (applicant_spouse.marriage_dte).';
 
-COMMENT ON COLUMN sims.sfas_applications.province_state IS 'Province or State Code - only exists if in Canada or US (address_current_view_unique.prov_cde).';
+COMMENT ON COLUMN sims.sfas_applications.bc_residency_flag IS 'Immigration status for student, BC residency (application.bc_residency_flag).';
 
-COMMENT ON COLUMN sims.sfas_applications.country IS 'Country Code (address_current_view_unique.country_cde).';
+COMMENT ON COLUMN sims.sfas_applications.permanent_residency_flag IS 'Permanent residency status (application.permanent_resident_flg).';
 
-COMMENT ON COLUMN sims.sfas_applications.phone_number IS 'Phone number of the applicant (address_current_view_unique.phone_num).';
+COMMENT ON COLUMN sims.sfas_applications.gross_income_previous_year IS 'Amount declared by the applicant on the application for gross income from previous year (applicant_income.income_amt  (applicant_income.applicant_owner_cde = ''A'' and applicant_income_.income_type_cde = ''APYI'')).';
 
-COMMENT ON COLUMN sims.sfas_applications.postal_zip_code IS 'Applicant''s Postal (in Canada) or Zip code (USA), otherwise blank (address_current_view_unique.postal_or_zip_code).';
+COMMENT ON COLUMN sims.sfas_applications.institution_code IS 'The unique institution code for the institution that the applicant is attending (Institution.institution_cde).';
 
-COMMENT ON COLUMN sims.sfas_applications.lmpt_award_amount IS 'Total Labour Market Tools Grant (Individual_award.award_dlr where award_code = ''LMPT'').';
+COMMENT ON COLUMN sims.sfas_applications.application_status_code IS 'The latest Application ''status code'' (application_status.application_status_cde).';
 
-COMMENT ON COLUMN sims.sfas_applications.lmpu_award_amount IS 'Total Labour Market Unmet Need Grant (Individual_award.award_dlr where award_code = ''LMPU'').';
+COMMENT ON COLUMN sims.sfas_applications.education_period_weeks IS 'The number of study weeks used in the assessment of this application (application_assessment.NO_OF_EDUC_PERIOD_WEEKS).';
 
-COMMENT ON COLUMN sims.sfas_applications.initials IS 'Initials of applicant (individual_alias_current_view.initials).';
+COMMENT ON COLUMN sims.sfas_applications.course_load IS 'Course load in percentage (application.course_load_cde).';
 
-COMMENT ON COLUMN sims.sfas_applications.address_line_1 IS 'Line 1 of the applicant''s address (address_current_view_unique.address_1).';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_living_allowance IS 'Living allowance (Assessment_v2.SP_EXP_LIVING_ALLOWANCE + assessment_v2.SP_EXP_LIV_ALLOW_DEPENDENTS).';
 
-COMMENT ON COLUMN sims.sfas_applications.address_line_2 IS 'Line 2 of the applicant''s address (address_current_view_unique.address_2).';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_extra_shelter IS 'Extra Shelter (Assessment_v2.SP_EXP_EXT_SHELTER_APPLICANT).';
 
-COMMENT ON COLUMN sims.sfas_applications.city IS 'City name the applicant''s address (address_current_view_unique.city).';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_child_care IS 'Child Care expenses (Assessment_v2.SP_EXP_SUPERVISING_CHILDREN).';
 
-COMMENT ON COLUMN sims.sfas_applications.province_state IS 'Province or State Code - only exists if in Canada or US (address_current_view_unique.prov_cde).';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_alimony IS 'Alimony (Assessment_v2.SP_EXP_MAINTENANCE_ALIMONY).';
 
-COMMENT ON COLUMN sims.sfas_applications.country IS 'Country Code (address_current_view_unique.country_cde).';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_local_transport IS 'Local Transportation costs (Assessment_v2.SP_EXP_EXT_LOCAL_TRANSPORT).';
 
-COMMENT ON COLUMN sims.sfas_applications.phone_number IS 'Phone number of the applicant (address_current_view_unique.phone_num).';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_return_transport IS 'Return Transportation costs (Assessment_v2.SP_EXP_RETURN_TRANSPORT).';
 
-COMMENT ON COLUMN sims.sfas_applications.postal_zip_code IS 'Applicant''s Postal (in Canada) or Zip code (USA), otherwise blank (address_current_view_unique.postal_or_zip_code).';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_tuition IS 'Tuition costs (Assessment_v2.SP_EXP_EDUC_TUITION).';
 
-COMMENT ON COLUMN sims.sfas_applications.lmpt_award_amount IS 'Total Labour Market Tools Grant (Individual_award.award_dlr where award_code = ''LMPT'').';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_books_and_supplies IS 'Books and Supplies costs (Assessment_v2.SP_EXP_EDUC_BOOKS_SUPPLIES).';
 
-COMMENT ON COLUMN sims.sfas_applications.lmpu_award_amount IS 'Total Labour Market Unmet Need Grant (Individual_award.award_dlr where award_code = ''LMPU'').';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_exceptional_expenses IS 'Exceptional expenses (Assessment_v2.SP_EXP_EDUC_INST_EXCEPTIONAL).';
 
-COMMENT ON COLUMN sims.sfas_applications.country IS 'Country Code (address_current_view_unique.country_cde).';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_other IS 'Other expenses (Assessment_v2.SP_EXP_EDUC_TRANSFER + assessment_v2.SP_EXP_EDUC_OTHER + assessment_v2.SP_EXP_STUDENT_LOAN_PMTS).';
 
-COMMENT ON COLUMN sims.sfas_applications.phone_number IS 'Phone number of the applicant (address_current_view_unique.phone_num).';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_discretionary_expenses IS 'Discretionary expenses (Assessment_v2.SP_EXP_OTHER).';
 
-COMMENT ON COLUMN sims.sfas_applications.postal_zip_code IS 'Applicant''s Postal (in Canada) or Zip code (USA), otherwise blank (address_current_view_unique.postal_or_zip_code).';
+COMMENT ON COLUMN sims.sfas_applications.withdrawal_date IS 'Date of withdrawal from school (Bcslwthd.withdrawal_dte).';
 
-COMMENT ON COLUMN sims.sfas_applications.lmpt_award_amount IS 'Total Labour Market Tools Grant (Individual_award.award_dlr where award_code = ''LMPT'').';
+COMMENT ON COLUMN sims.sfas_applications.withdrawal_reason IS 'Reason for withdrawal (Bcslwthd.withdrawal_rsn_cde).';
 
-COMMENT ON COLUMN sims.sfas_applications.lmpu_award_amount IS 'Total Labour Market Unmet Need Grant (Individual_award.award_dlr where award_code = ''LMPU'').';
+COMMENT ON COLUMN sims.sfas_applications.withdrawal_active_flag IS 'Is this withdrawal reversed/canceled? (Bcslwthd).';

@@ -14,13 +14,13 @@ CREATE INDEX sfas_application_dependents_application_id ON sims.sfas_application
 -- ## Comments
 COMMENT ON TABLE sims.sfas_application_dependents IS 'These records contain data related to student Dependents (children) listed on each application in SFAS.';
 
-COMMENT ON COLUMN sims.sfas_application_dependents.id IS 'The unique key/number assigned to each dependent record(Applicant_dependent.applicant_dependent_idx).';
+COMMENT ON COLUMN sims.sfas_application_dependents.id IS 'The unique key/number assigned to each dependent record (Applicant_dependent.applicant_dependent_idx).';
 
-COMMENT ON COLUMN sims.sfas_application_dependents.application_id IS 'The unique key/number used in SFAS to identify this application(Application.application_idx).';
+COMMENT ON COLUMN sims.sfas_application_dependents.application_id IS 'The unique key/number used in SFAS to identify this application (Application.application_idx).';
 
 COMMENT ON COLUMN sims.sfas_application_dependents.dependent_name IS 'First and Last name of the child (may include other names as well) (Applicant_dependent.dep_last_name).';
 
-COMMENT ON COLUMN sims.sfas_application_dependents.dependent_birth_date IS 'Date of birth of the dependent(Applicant_dependent.dep_date_of_birth).';
+COMMENT ON COLUMN sims.sfas_application_dependents.dependent_birth_date IS 'Date of birth of the dependent (Applicant_dependent.dep_date_of_birth).';
 
 COMMENT ON COLUMN sims.sfas_application_dependents.created_at IS 'Record creation timestamp.';
 

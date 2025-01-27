@@ -138,9 +138,7 @@
       "timestamptz",
       "typeorm",
       "unparse",
-      "Zeebe",
-      "lmpt",
-      "lmpu"
+      "Zeebe"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"
