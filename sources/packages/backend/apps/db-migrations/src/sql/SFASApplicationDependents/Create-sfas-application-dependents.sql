@@ -12,7 +12,7 @@ CREATE TABLE sims.sfas_application_dependents (
 CREATE INDEX sfas_application_dependents_application_id ON sims.sfas_application_dependents(application_id);
 
 -- ## Comments
-COMMENT ON TABLE sims.sfas_application_dependents IS 'These records contain data related to student Dependents (children) listed on each application in SFAS.';
+COMMENT ON TABLE sims.sfas_application_dependents IS 'Data related to student Dependents (children) listed on each application in SFAS.';
 
 COMMENT ON COLUMN sims.sfas_application_dependents.id IS 'The unique key/number assigned to each dependent record (Applicant_dependent.applicant_dependent_idx).';
 

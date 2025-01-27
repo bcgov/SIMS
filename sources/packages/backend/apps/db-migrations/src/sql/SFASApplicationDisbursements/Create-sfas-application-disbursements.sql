@@ -14,7 +14,7 @@ CREATE TABLE sims.sfas_application_disbursements (
 CREATE INDEX sfas_application_disbursements_application_id ON sims.sfas_application_disbursements(application_id);
 
 -- ## Comments
-COMMENT ON TABLE sims.sfas_application_disbursements IS 'These records contain data related to the actual funding disbursements records in SFAS.';
+COMMENT ON TABLE sims.sfas_application_disbursements IS 'Data related to the actual funding disbursements records in SFAS.';
 
 COMMENT ON COLUMN sims.sfas_application_disbursements.id IS 'The unique key/number used in SFAS to identify specific disbursement records (Award_disbursement.award_disbursement_idx).';
 

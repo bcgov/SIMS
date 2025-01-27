@@ -34,6 +34,8 @@ export const TableNames = {
   SFASApplications: "sfas_applications",
   SFASRestrictions: "sfas_restrictions",
   SFASRestrictionMaps: "sfas_restriction_maps",
+  SFASApplicationDependents: "sfas_application_dependents",
+  SFASApplicationDisbursements: "sfas_application_disbursements",
   DisbursementSchedule: "disbursement_schedules",
   DisbursementValue: "disbursement_values",
   FederalRestrictions: "federal_restrictions",
