@@ -1,0 +1,1 @@
+DROP TYPE sims.cas_invoice_status;

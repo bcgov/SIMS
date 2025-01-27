@@ -1,0 +1,1 @@
+CREATE TYPE sims.cas_invoice_status AS ENUM ('Pending', 'Sent', 'Manual intervention');
