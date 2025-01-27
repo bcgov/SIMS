@@ -26,6 +26,7 @@ export class CASDistributionAccount extends RecordDataModel {
    */
   @Column({
     name: "offering_intensity",
+    type: "enum",
     enum: OfferingIntensity,
     enumName: "OfferingIntensity",
   })
