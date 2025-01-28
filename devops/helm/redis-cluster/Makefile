@@ -25,10 +25,10 @@ upgrade: helm-dep
 	@helm upgrade $(call arguments) --set password=${PASSWORD};
 
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.
-#.PHONY: uninstall
-#uninstall: helm-dep
-#uninstall:
-#	@helm uninstall ${NAME} . -n ${NAMESPACE}
+.PHONY: uninstall
+uninstall: helm-dep
+uninstall:
+	@helm uninstall ${NAME} . -n ${NAMESPACE}
 
 .PHONY: template
 template: helm-dep
