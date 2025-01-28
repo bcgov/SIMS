@@ -99,4 +99,4 @@ COMMENT ON COLUMN sims.sfas_applications.withdrawal_date IS 'Date of withdrawal 
 
 COMMENT ON COLUMN sims.sfas_applications.withdrawal_reason IS 'Reason for withdrawal (Bcslwthd.withdrawal_rsn_cde).';
 
-COMMENT ON COLUMN sims.sfas_applications.withdrawal_active_flag IS 'Is this withdrawal reversed/canceled? (Bcslwthd).';
+COMMENT ON COLUMN sims.sfas_applications.withdrawal_active_flag IS 'Flag stating if the withdrawal is reversed/canceled.';

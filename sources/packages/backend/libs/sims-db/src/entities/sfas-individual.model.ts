@@ -293,6 +293,9 @@ export class SFASIndividual extends BaseModel {
   })
   postalZipCode?: string;
 
+  /**
+   * Total Labour Market Tools Grant (Individual_award.award_dlr where award_code = 'LMPT').
+   */
   @Column({
     name: "lmpt_award_amount",
     type: "numeric",
@@ -301,6 +304,9 @@ export class SFASIndividual extends BaseModel {
   })
   lmptAwardAmount?: number;
 
+  /**
+   * Total Labour Market Unmet Need Grant (Individual_award.award_dlr where award_code = 'LMPU').
+   */
   @Column({
     name: "lmpu_award_amount",
     type: "numeric",
