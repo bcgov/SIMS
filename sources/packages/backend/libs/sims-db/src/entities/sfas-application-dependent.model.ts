@@ -12,7 +12,6 @@ export class SFASApplicationDependent extends BaseModel {
    */
   @PrimaryColumn()
   id: number;
-
   /**
    * The unique key/number used in SFAS to identify this application (Application.application_idx).
    */
@@ -24,7 +23,6 @@ export class SFASApplicationDependent extends BaseModel {
     referencedColumnName: ColumnNames.ID,
   })
   application: SFASApplication;
-
   /**
    * First and Last name of the child (may include other names as well) (Applicant_dependent.dep_last_name).
    */
@@ -33,7 +31,6 @@ export class SFASApplicationDependent extends BaseModel {
     nullable: true,
   })
   dependentName?: string;
-
   /**
    * Date of birth of the dependent (Applicant_dependent.dep_date_of_birth).
    */
@@ -43,7 +40,6 @@ export class SFASApplicationDependent extends BaseModel {
     nullable: true,
   })
   dependentBirthDate?: string;
-
   /**
    * Date that the record was extracted from SFAS.
    */

@@ -220,7 +220,6 @@ export class SFASIndividual extends BaseModel {
     referencedColumnName: ColumnNames.ID,
   })
   student?: Student;
-
   /**
    * Initials of applicant (individual_alias_current_view.initials).
    */
@@ -229,7 +228,6 @@ export class SFASIndividual extends BaseModel {
     nullable: true,
   })
   initials?: string;
-
   /**
    * Line 1 of the applicant's address (address_current_view_unique.address_1).
    */
@@ -238,7 +236,6 @@ export class SFASIndividual extends BaseModel {
     nullable: true,
   })
   addressLine1?: string;
-
   /**
    * Line 2 of the applicant's address (address_current_view_unique.address_2).
    */
@@ -247,7 +244,6 @@ export class SFASIndividual extends BaseModel {
     nullable: true,
   })
   addressLine2?: string;
-
   /**
    * City name the applicant's address (address_current_view_unique.city).
    */
@@ -256,7 +252,6 @@ export class SFASIndividual extends BaseModel {
     nullable: true,
   })
   city?: string;
-
   /**
    * Province or State Code - only exists if in Canada or US (address_current_view_unique.prov_cde).
    */
@@ -265,7 +260,6 @@ export class SFASIndividual extends BaseModel {
     nullable: true,
   })
   provinceState?: string;
-
   /**
    * Country Code (address_current_view_unique.country_cde).
    */
@@ -274,7 +268,6 @@ export class SFASIndividual extends BaseModel {
     nullable: true,
   })
   country?: string;
-
   /**
    * Phone number of the applicant (address_current_view_unique.phone_num).
    */
@@ -283,7 +276,6 @@ export class SFASIndividual extends BaseModel {
     nullable: true,
   })
   phoneNumber?: number;
-
   /**
    * Applicant's Postal (in Canada) or Zip code (USA), otherwise blank (address_current_view_unique.postal_or_zip_code).
    */
@@ -292,7 +284,6 @@ export class SFASIndividual extends BaseModel {
     nullable: true,
   })
   postalZipCode?: string;
-
   /**
    * Total Labour Market Tools Grant (Individual_award.award_dlr where award_code = 'LMPT').
    */
@@ -303,7 +294,6 @@ export class SFASIndividual extends BaseModel {
     transformer: numericTransformer,
   })
   lmptAwardAmount?: number;
-
   /**
    * Total Labour Market Unmet Need Grant (Individual_award.award_dlr where award_code = 'LMPU').
    */

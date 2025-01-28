@@ -29,14 +29,14 @@ COMMENT ON COLUMN sims.sfas_individuals.address_line_2 IS 'Line 2 of the applica
 
 COMMENT ON COLUMN sims.sfas_individuals.city IS 'City name the applicant''s address (address_current_view_unique.city).';
 
-COMMENT ON COLUMN sims.sfas_individuals.province_state IS 'Province or State Code - only exists if in Canada or US (address_current_view_unique.prov_cde).';
+COMMENT ON COLUMN sims.sfas_individuals.province_state IS 'Province or state code - only exists if in Canada or US (address_current_view_unique.prov_cde).';
 
-COMMENT ON COLUMN sims.sfas_individuals.country IS 'Country Code (address_current_view_unique.country_cde).';
+COMMENT ON COLUMN sims.sfas_individuals.country IS 'Country code (address_current_view_unique.country_cde).';
 
 COMMENT ON COLUMN sims.sfas_individuals.phone_number IS 'Phone number of the applicant (address_current_view_unique.phone_num).';
 
-COMMENT ON COLUMN sims.sfas_individuals.postal_zip_code IS 'Applicant''s Postal (in Canada) or Zip code (USA), otherwise blank (address_current_view_unique.postal_or_zip_code).';
+COMMENT ON COLUMN sims.sfas_individuals.postal_zip_code IS 'Applicant''s postal (in Canada) or zip code (USA), otherwise blank (address_current_view_unique.postal_or_zip_code).';
 
-COMMENT ON COLUMN sims.sfas_individuals.lmpt_award_amount IS 'Total Labour Market Tools Grant (Individual_award.award_dlr where award_code = ''LMPT'').';
+COMMENT ON COLUMN sims.sfas_individuals.lmpt_award_amount IS 'Total labour market tools grant (Individual_award.award_dlr where award_code = ''LMPT'').';
 
-COMMENT ON COLUMN sims.sfas_individuals.lmpu_award_amount IS 'Total Labour Market Unmet Need Grant (Individual_award.award_dlr where award_code = ''LMPU'').';
+COMMENT ON COLUMN sims.sfas_individuals.lmpu_award_amount IS 'Total labour market unmet need grant (Individual_award.award_dlr where award_code = ''LMPU'').';

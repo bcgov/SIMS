@@ -14,7 +14,6 @@ export class SFASApplicationDisbursement extends BaseModel {
    */
   @PrimaryColumn()
   id: number;
-
   /**
    * The unique key/number used in SFAS to identify this application (Application.application_idx).
    */
@@ -26,7 +25,6 @@ export class SFASApplicationDisbursement extends BaseModel {
     referencedColumnName: ColumnNames.ID,
   })
   application: SFASApplication;
-
   /**
    * Program code used by SFAS (award_disbursement.program_cde).
    */
@@ -35,7 +33,6 @@ export class SFASApplicationDisbursement extends BaseModel {
     nullable: true,
   })
   fundingType?: string;
-
   /**
    * Amount of funding for this specific disbursement (award_disbursement.disbursement_amt).
    */
@@ -46,7 +43,6 @@ export class SFASApplicationDisbursement extends BaseModel {
     transformer: numericTransformer,
   })
   fundingAmount?: number;
-
   /**
    * The earliest disbursement date (award_disbursement.disbursement_dte).
    */
@@ -56,7 +52,6 @@ export class SFASApplicationDisbursement extends BaseModel {
     nullable: true,
   })
   fundingDate?: string;
-
   /**
    * The date this disbursement has been sent to the service provider (Issued_document.document_issue_dte).
    */
@@ -66,7 +61,6 @@ export class SFASApplicationDisbursement extends BaseModel {
     nullable: true,
   })
   dateIssued?: string;
-
   /**
    * Date that the record was extracted from SFAS.
    */

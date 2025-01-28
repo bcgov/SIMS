@@ -160,7 +160,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     nullable: true,
   })
   maritalStatus?: string;
-
   /**
    * Applicant's marriage date (applicant_spouse.marriage_dte).
    */
@@ -170,7 +169,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     nullable: true,
   })
   marriageDate?: string;
-
   /**
    * Immigration status for student, BC residency (application.bc_residency_flag).
    */
@@ -179,7 +177,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     nullable: true,
   })
   bcResidencyFlag?: string;
-
   /**
    * Permanent residency status (application.permanent_resident_flg).
    */
@@ -188,17 +185,15 @@ export class SFASApplication extends BaseSFASApplicationModel {
     nullable: true,
   })
   permanentResidencyFlag?: string;
-
   /**
    * Amount declared by the applicant on the application for gross income from previous year
-   * (applicant_income.income_amt  (applicant_income.applicant_owner_cde = ''A'' and applicant_income_.income_type_cde = ''APYI'')).
+   * (applicant_income.income_amt  (applicant_income.applicant_owner_cde = 'A' and applicant_income_.income_type_cde = 'APYI')).
    */
   @Column({
     name: "gross_income_previous_year",
     nullable: true,
   })
   grossIncomePreviousYear?: number;
-
   /**
    * The unique institution code for the institution that the applicant is attending (Institution.institution_cde).
    */
@@ -207,7 +202,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     nullable: true,
   })
   institutionCode?: string;
-
   /**
    * The latest Application 'status code' (application_status.application_status_cde).
    */
@@ -216,25 +210,24 @@ export class SFASApplication extends BaseSFASApplicationModel {
     nullable: true,
   })
   applicationStatusCode?: string;
-
   /**
    * The number of study weeks used in the assessment of this application (application_assessment.NO_OF_EDUC_PERIOD_WEEKS).
    */
   @Column({
     name: "education_period_weeks",
+    type: "smallint",
     nullable: true,
   })
   educationPeriodWeeks?: number;
-
   /**
    * Course load in percentage (application.course_load_cde).
    */
   @Column({
     name: "course_load",
+    type: "smallint",
     nullable: true,
   })
   courseLoad?: number;
-
   /**
    * Living allowance (Assessment_v2.SP_EXP_LIVING_ALLOWANCE + assessment_v2.SP_EXP_LIV_ALLOW_DEPENDENTS).
    */
@@ -245,7 +238,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     transformer: numericTransformer,
   })
   assessedCostsLivingAllowance?: number;
-
   /**
    * Extra Shelter (Assessment_v2.SP_EXP_EXT_SHELTER_APPLICANT).
    */
@@ -256,7 +248,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     transformer: numericTransformer,
   })
   assessedCostsExtraShelter?: number;
-
   /**
    * Child Care expenses (Assessment_v2.SP_EXP_SUPERVISING_CHILDREN).
    */
@@ -267,7 +258,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     transformer: numericTransformer,
   })
   assessedCostsChildCare?: number;
-
   /**
    * Alimony (Assessment_v2.SP_EXP_MAINTENANCE_ALIMONY).
    */
@@ -278,7 +268,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     transformer: numericTransformer,
   })
   assessedCostsAlimony?: number;
-
   /**
    * Local Transportation costs (Assessment_v2.SP_EXP_EXT_LOCAL_TRANSPORT).
    */
@@ -289,7 +278,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     transformer: numericTransformer,
   })
   assessedCostsLocalTransport?: number;
-
   /**
    * Return Transportation costs (Assessment_v2.SP_EXP_RETURN_TRANSPORT).
    */
@@ -300,7 +288,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     transformer: numericTransformer,
   })
   assessedCostsReturnTransport?: number;
-
   /**
    * Tuition costs (Assessment_v2.SP_EXP_EDUC_TUITION).
    */
@@ -311,7 +298,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     transformer: numericTransformer,
   })
   assessedCostsTuition?: number;
-
   /**
    * Books and Supplies costs (Assessment_v2.SP_EXP_EDUC_BOOKS_SUPPLIES).
    */
@@ -322,7 +308,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     transformer: numericTransformer,
   })
   assessedCostsBooksAndSupplies?: number;
-
   /**
    * Exceptional expenses (Assessment_v2.SP_EXP_EDUC_INST_EXCEPTIONAL).
    */
@@ -333,7 +318,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     transformer: numericTransformer,
   })
   assessedCostsExceptionalExpenses?: number;
-
   /**
    * Other expenses (Assessment_v2.SP_EXP_EDUC_TRANSFER + assessment_v2.SP_EXP_EDUC_OTHER + assessment_v2.SP_EXP_STUDENT_LOAN_PMTS).
    */
@@ -344,7 +328,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     transformer: numericTransformer,
   })
   assessedCostsOther?: number;
-
   /**
    * Discretionary expenses (Assessment_v2.SP_EXP_OTHER).
    */
@@ -355,7 +338,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     transformer: numericTransformer,
   })
   assessedCostsDiscretionaryExpenses?: number;
-
   /**
    * Date of withdrawal from school (Bcslwthd.withdrawal_dte).
    */
@@ -365,7 +347,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     nullable: true,
   })
   withdrawalDate?: string;
-
   /**
    * Reason for withdrawal (Bcslwthd.withdrawal_rsn_cde).
    */
@@ -374,7 +355,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     nullable: true,
   })
   withdrawalReason?: string;
-
   /**
    * Flag stating if the withdrawal is reversed/canceled.
    */
