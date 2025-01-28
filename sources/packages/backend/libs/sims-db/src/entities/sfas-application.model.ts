@@ -132,7 +132,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   extractedAt: Date;
 
   /**
-   * The unique application number assigned to this application (Application_alias.application_no).
+   * The unique application number assigned to this application (application_alias.application_no).
    */
   @Column({
     name: "application_number",
@@ -195,7 +195,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   grossIncomePreviousYear?: number;
   /**
-   * The unique institution code for the institution that the applicant is attending (Institution.institution_cde).
+   * The unique institution code for the institution that the applicant is attending (institution.institution_cde).
    */
   @Column({
     name: "institution_code",
@@ -203,7 +203,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   institutionCode?: string;
   /**
-   * The latest Application 'status code' (application_status.application_status_cde).
+   * The latest application 'status code' (application_status.application_status_cde).
    */
   @Column({
     name: "application_status_code",
@@ -229,7 +229,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   courseLoad?: number;
   /**
-   * Living allowance (Assessment_v2.SP_EXP_LIVING_ALLOWANCE + assessment_v2.SP_EXP_LIV_ALLOW_DEPENDENTS).
+   * Living allowance (assessment_v2.SP_EXP_LIVING_ALLOWANCE + assessment_v2.SP_EXP_LIV_ALLOW_DEPENDENTS).
    */
   @Column({
     name: "assessed_costs_living_allowance",
@@ -239,7 +239,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsLivingAllowance?: number;
   /**
-   * Extra Shelter (Assessment_v2.SP_EXP_EXT_SHELTER_APPLICANT).
+   * Extra shelter (assessment_v2.SP_EXP_EXT_SHELTER_APPLICANT).
    */
   @Column({
     name: "assessed_costs_extra_shelter",
@@ -249,7 +249,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsExtraShelter?: number;
   /**
-   * Child Care expenses (Assessment_v2.SP_EXP_SUPERVISING_CHILDREN).
+   * Child care expenses (assessment_v2.SP_EXP_SUPERVISING_CHILDREN).
    */
   @Column({
     name: "assessed_costs_child_care",
@@ -259,7 +259,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsChildCare?: number;
   /**
-   * Alimony (Assessment_v2.SP_EXP_MAINTENANCE_ALIMONY).
+   * Alimony (assessment_v2.SP_EXP_MAINTENANCE_ALIMONY).
    */
   @Column({
     name: "assessed_costs_alimony",
@@ -269,7 +269,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsAlimony?: number;
   /**
-   * Local Transportation costs (Assessment_v2.SP_EXP_EXT_LOCAL_TRANSPORT).
+   * Local transportation costs (assessment_v2.SP_EXP_EXT_LOCAL_TRANSPORT).
    */
   @Column({
     name: "assessed_costs_local_transport",
@@ -279,7 +279,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsLocalTransport?: number;
   /**
-   * Return Transportation costs (Assessment_v2.SP_EXP_RETURN_TRANSPORT).
+   * Return transportation costs (assessment_v2.SP_EXP_RETURN_TRANSPORT).
    */
   @Column({
     name: "assessed_costs_return_transport",
@@ -289,7 +289,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsReturnTransport?: number;
   /**
-   * Tuition costs (Assessment_v2.SP_EXP_EDUC_TUITION).
+   * Tuition costs (assessment_v2.SP_EXP_EDUC_TUITION).
    */
   @Column({
     name: "assessed_costs_tuition",
@@ -299,7 +299,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsTuition?: number;
   /**
-   * Books and Supplies costs (Assessment_v2.SP_EXP_EDUC_BOOKS_SUPPLIES).
+   * Books and supplies costs (assessment_v2.SP_EXP_EDUC_BOOKS_SUPPLIES).
    */
   @Column({
     name: "assessed_costs_books_and_supplies",
@@ -309,7 +309,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsBooksAndSupplies?: number;
   /**
-   * Exceptional expenses (Assessment_v2.SP_EXP_EDUC_INST_EXCEPTIONAL).
+   * Exceptional expenses (assessment_v2.SP_EXP_EDUC_INST_EXCEPTIONAL).
    */
   @Column({
     name: "assessed_costs_exceptional_expenses",
@@ -319,7 +319,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsExceptionalExpenses?: number;
   /**
-   * Other expenses (Assessment_v2.SP_EXP_EDUC_TRANSFER + assessment_v2.SP_EXP_EDUC_OTHER + assessment_v2.SP_EXP_STUDENT_LOAN_PMTS).
+   * Other expenses (assessment_v2.SP_EXP_EDUC_TRANSFER + assessment_v2.SP_EXP_EDUC_OTHER + assessment_v2.SP_EXP_STUDENT_LOAN_PMTS).
    */
   @Column({
     name: "assessed_costs_other",
@@ -329,7 +329,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsOther?: number;
   /**
-   * Discretionary expenses (Assessment_v2.SP_EXP_OTHER).
+   * Discretionary expenses (assessment_v2.SP_EXP_OTHER).
    */
   @Column({
     name: "assessed_costs_discretionary_expenses",
@@ -339,7 +339,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsDiscretionaryExpenses?: number;
   /**
-   * Date of withdrawal from school (Bcslwthd.withdrawal_dte).
+   * Date of withdrawal from school (bcslwthd.withdrawal_dte).
    */
   @Column({
     name: "withdrawal_date",
@@ -348,7 +348,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   withdrawalDate?: string;
   /**
-   * Reason for withdrawal (Bcslwthd.withdrawal_rsn_cde).
+   * Reason for withdrawal (bcslwthd.withdrawal_rsn_cde).
    */
   @Column({
     name: "withdrawal_reason",

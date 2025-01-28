@@ -10,12 +10,12 @@ import { numericTransformer } from "../transformers/numeric.transformer";
 export class SFASApplicationDisbursement extends BaseModel {
   /**
    * The unique key/number used in SFAS
-   * to identify specific disbursement records (Award_disbursement.award_disbursement_idx).
+   * to identify specific disbursement records (award_disbursement.award_disbursement_idx).
    */
   @PrimaryColumn()
   id: number;
   /**
-   * The unique key/number used in SFAS to identify this application (Application.application_idx).
+   * The unique key/number used in SFAS to identify this application (application.application_idx).
    */
   @ManyToOne(() => SFASApplication, {
     nullable: false,
@@ -53,7 +53,7 @@ export class SFASApplicationDisbursement extends BaseModel {
   })
   fundingDate?: string;
   /**
-   * The date this disbursement has been sent to the service provider (Issued_document.document_issue_dte).
+   * The date this disbursement has been sent to the service provider (issued_document.document_issue_dte).
    */
   @Column({
     name: "date_issued",

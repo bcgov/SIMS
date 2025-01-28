@@ -253,7 +253,7 @@ export class SFASIndividual extends BaseModel {
   })
   city?: string;
   /**
-   * Province or State Code - only exists if in Canada or US (address_current_view_unique.prov_cde).
+   * Province or state code - only exists if in Canada or US (address_current_view_unique.prov_cde).
    */
   @Column({
     name: "province_state",
@@ -261,7 +261,7 @@ export class SFASIndividual extends BaseModel {
   })
   provinceState?: string;
   /**
-   * Country Code (address_current_view_unique.country_cde).
+   * Country code (address_current_view_unique.country_cde).
    */
   @Column({
     name: "country",
@@ -277,7 +277,7 @@ export class SFASIndividual extends BaseModel {
   })
   phoneNumber?: number;
   /**
-   * Applicant's Postal (in Canada) or Zip code (USA), otherwise blank (address_current_view_unique.postal_or_zip_code).
+   * Applicant's postal (in Canada) or zip code (USA), otherwise blank (address_current_view_unique.postal_or_zip_code).
    */
   @Column({
     name: "postal_zip_code",
@@ -285,7 +285,7 @@ export class SFASIndividual extends BaseModel {
   })
   postalZipCode?: string;
   /**
-   * Total Labour Market Tools Grant (Individual_award.award_dlr where award_code = 'LMPT').
+   * Total labour market tools grant (individual_award.award_dlr where award_code = 'LMPT').
    */
   @Column({
     name: "lmpt_award_amount",
@@ -295,7 +295,7 @@ export class SFASIndividual extends BaseModel {
   })
   lmptAwardAmount?: number;
   /**
-   * Total Labour Market Unmet Need Grant (Individual_award.award_dlr where award_code = 'LMPU').
+   * Total labour market unmet need grant (individual_award.award_dlr where award_code = 'LMPU').
    */
   @Column({
     name: "lmpu_award_amount",
