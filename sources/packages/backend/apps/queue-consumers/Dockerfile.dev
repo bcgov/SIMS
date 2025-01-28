@@ -20,6 +20,7 @@ RUN npm ci
 # Copying sources.
 COPY ./apps/queue-consumers ./apps/queue-consumers
 COPY ./apps/db-migrations ./apps/db-migrations
+COPY ./apps/test-db-seeding ./apps/test-db-seeding
 COPY ./libs ./libs
 
 # Building app
@@ -28,6 +29,8 @@ RUN npm run build queue-consumers
 # Exposing queue port
 EXPOSE ${PORT}
 
+# Ensure that the non-root user can build the test-db-seeding.
+RUN mkdir -p /app/dist/apps/test-db-seeding/ && chown node /app/dist/apps/test-db-seeding/
 # Ensure that the non-root user will be able to write the coverage report.
 RUN mkdir -p /app/apps/queue-consumers/coverage/ && chown node /app/apps/queue-consumers/coverage/
 
