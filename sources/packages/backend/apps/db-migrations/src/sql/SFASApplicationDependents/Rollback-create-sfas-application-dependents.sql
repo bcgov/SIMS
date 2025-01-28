@@ -1,1 +1,0 @@
-DROP TABLE sims.sfas_application_dependents;

@@ -3,12 +3,12 @@ import { ColumnNames, TableNames } from "../constant";
 import { BaseModel, SFASApplication } from ".";
 
 /**
- * Data related to student dependents (children) listed on each application in SFAS.
+ * Data related to student dependants (children) listed on each application in SFAS.
  */
-@Entity({ name: TableNames.SFASApplicationDependents })
-export class SFASApplicationDependent extends BaseModel {
+@Entity({ name: TableNames.SFASApplicationDependants })
+export class SFASApplicationDependant extends BaseModel {
   /**
-   * The unique key/number assigned to each dependent record (applicant_dependent.applicant_dependent_idx).
+   * The unique key/number assigned to each dependant record (applicant_dependent.applicant_dependent_idx).
    */
   @PrimaryColumn()
   id: number;
@@ -27,19 +27,19 @@ export class SFASApplicationDependent extends BaseModel {
    * First and last name of the child (may include other names as well) (applicant_dependent.dep_last_name).
    */
   @Column({
-    name: "dependent_name",
+    name: "dependant_name",
     nullable: true,
   })
-  dependentName?: string;
+  dependantName?: string;
   /**
-   * Date of birth of the dependent (applicant_dependent.dep_date_of_birth).
+   * Date of birth of the dependant (applicant_dependent.dep_date_of_birth).
    */
   @Column({
-    name: "dependent_birth_date",
+    name: "dependant_birth_date",
     type: "date",
     nullable: true,
   })
-  dependentBirthDate?: string;
+  dependantBirthDate?: string;
   /**
    * Date that the record was extracted from SFAS.
    */

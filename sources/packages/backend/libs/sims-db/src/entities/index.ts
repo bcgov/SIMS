@@ -38,7 +38,7 @@ export * from "./base-sfas-application.model";
 export * from "./sfas-application.model";
 export * from "./sfas-restriction.model";
 export * from "./sfas-restriction-map";
-export * from "./sfas-application-dependent.model";
+export * from "./sfas-application-dependant.model";
 export * from "./sfas-application-disbursement.model";
 export * from "./disbursement-value-type";
 export * from "./disbursement-values.model";

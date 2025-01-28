@@ -140,7 +140,8 @@
       "unparse",
       "Zeebe",
       "lmpt",
-      "lmpu"
+      "lmpu",
+      "dependants"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"
