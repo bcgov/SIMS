@@ -22,7 +22,7 @@ export class CreateCASDistributionAccounts {
   ) {}
 
   /**
-   * Create AEST users used for tests.
+   * Creates and saves CAS distribution accounts using initial data.
    */
   @DataSeedMethod()
   async createCASDistributionAccounts(): Promise<void> {
