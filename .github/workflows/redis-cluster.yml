@@ -42,5 +42,6 @@ jobs:
             make install NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
           elif [ "${{ inputs.action }}" == "upgrade" ]; then
             PASSWORD=$(oc get secret redis-cluster -n ${{ secrets.OPENSHIFT_ENV_NAMESPACE }} -o jsonpath="{.data.redis-password}" | base64 --decode)
+            echo "::add-mask::$PASSWORD"
             make upgrade NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} PASSWORD=$PASSWORD
           fi
