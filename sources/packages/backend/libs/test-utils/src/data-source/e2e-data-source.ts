@@ -57,6 +57,10 @@ import {
   BetaUsersAuthorizations,
   SFASBridgeLog,
   SFASRestrictionMap,
+  CASInvoiceBatch,
+  CASInvoice,
+  CASInvoiceDetail,
+  CASDistributionAccount,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -80,6 +84,10 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     ),
     betaUsersAuthorizations: dataSource.getRepository(BetaUsersAuthorizations),
     casSupplier: dataSource.getRepository(CASSupplier),
+    casInvoiceBatch: dataSource.getRepository(CASInvoiceBatch),
+    casInvoice: dataSource.getRepository(CASInvoice),
+    casInvoiceDetail: dataSource.getRepository(CASInvoiceDetail),
+    casDistributionAccount: dataSource.getRepository(CASDistributionAccount),
     coeDeniedReason: dataSource.getRepository(COEDeniedReason),
     craIncomeVerification: dataSource.getRepository(CRAIncomeVerification),
     designationAgreement: dataSource.getRepository(DesignationAgreement),
@@ -166,6 +174,10 @@ export interface E2EDataSources {
   applicationRestrictionBypass: Repository<ApplicationRestrictionBypass>;
   betaUsersAuthorizations: Repository<BetaUsersAuthorizations>;
   casSupplier: Repository<CASSupplier>;
+  casInvoiceBatch: Repository<CASInvoiceBatch>;
+  casInvoice: Repository<CASInvoice>;
+  casInvoiceDetail: Repository<CASInvoiceDetail>;
+  casDistributionAccount: Repository<CASDistributionAccount>;
   coeDeniedReason: Repository<COEDeniedReason>;
   craIncomeVerification: Repository<CRAIncomeVerification>;
   designationAgreement: Repository<DesignationAgreement>;
