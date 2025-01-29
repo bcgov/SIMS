@@ -130,6 +130,7 @@ export default defineComponent({
         validationResult.validationDate > lastCalculationDate
       ) {
         // Update the form component only if the API result is the most recent.
+
         setComponentValue(
           offeringForm,
           FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY,
