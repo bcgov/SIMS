@@ -11,10 +11,15 @@ import {
   NotificationMessageType,
   Notification,
   DisbursementSchedule,
+  COEStatus,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { addDays, DISABILITY_NOTIFICATION_DAYS_LIMIT } from "@sims/utilities";
+import {
+  addDays,
+  DISABILITY_NOTIFICATION_DAYS_LIMIT,
+  getISODateOnlyString,
+} from "@sims/utilities";
 
 interface SecondDisbursementStillPending {
   assessmentId: number;
@@ -286,7 +291,7 @@ export class ApplicationService {
         messageId:
           NotificationMessageType.StudentSecondDisbursementNotification,
         applicationStatusCompleted: ApplicationStatus.Completed,
-        today: "2025-02-17", //getISODateOnlyString(new Date()),
+        today: getISODateOnlyString(new Date()),
       })
       .getRawMany();
     // Filter out the second disbursements.
@@ -309,6 +314,7 @@ export class ApplicationService {
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .where("disbursement.id IN (:...disbursementIds)")
+      .andWhere("disbursement.coeStatus = :coeStatus")
       .andWhere(
         "disbursement.disbursementScheduleStatus = :disbursementScheduleStatusPending",
       )
@@ -316,6 +322,7 @@ export class ApplicationService {
         disbursementIds: secondDisbursements.map(
           (secondDisbursement) => secondDisbursement.disbursementId,
         ),
+        coeStatus: COEStatus.required,
         disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
       })
       .getRawMany();
