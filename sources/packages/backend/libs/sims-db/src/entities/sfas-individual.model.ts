@@ -220,4 +220,88 @@ export class SFASIndividual extends BaseModel {
     referencedColumnName: ColumnNames.ID,
   })
   student?: Student;
+  /**
+   * Initials of applicant (individual_alias_current_view.initials).
+   */
+  @Column({
+    name: "initials",
+    nullable: true,
+  })
+  initials?: string;
+  /**
+   * Line 1 of the applicant's address (address_current_view_unique.address_1).
+   */
+  @Column({
+    name: "address_line_1",
+    nullable: true,
+  })
+  addressLine1?: string;
+  /**
+   * Line 2 of the applicant's address.
+   */
+  @Column({
+    name: "address_line_2",
+    nullable: true,
+  })
+  addressLine2?: string;
+  /**
+   * City name the applicant's address (address_current_view_unique.city).
+   */
+  @Column({
+    name: "city",
+    nullable: true,
+  })
+  city?: string;
+  /**
+   * Province or state code - only exists if in Canada or US (address_current_view_unique.prov_cde).
+   */
+  @Column({
+    name: "province_state",
+    nullable: true,
+  })
+  provinceState?: string;
+  /**
+   * Country code (address_current_view_unique.country_cde).
+   */
+  @Column({
+    name: "country",
+    nullable: true,
+  })
+  country?: string;
+  /**
+   * Phone number of the applicant (address_current_view_unique.phone_num).
+   */
+  @Column({
+    name: "phone_number",
+    nullable: true,
+  })
+  phoneNumber?: number;
+  /**
+   * Applicant's postal (in Canada) or zip code (USA), otherwise blank (address_current_view_unique.postal_or_zip_code).
+   */
+  @Column({
+    name: "postal_zip_code",
+    nullable: true,
+  })
+  postalZipCode?: string;
+  /**
+   * Total labour market tools grant (individual_award.award_dlr where award_code = 'LMPT').
+   */
+  @Column({
+    name: "lmpt_award_amount",
+    type: "numeric",
+    nullable: true,
+    transformer: numericTransformer,
+  })
+  lmptAwardAmount?: number;
+  /**
+   * Total labour market unmet need grant (individual_award.award_dlr where award_code = 'LMPU').
+   */
+  @Column({
+    name: "lmpu_award_amount",
+    type: "numeric",
+    nullable: true,
+    transformer: numericTransformer,
+  })
+  lmpuAwardAmount?: number;
 }
