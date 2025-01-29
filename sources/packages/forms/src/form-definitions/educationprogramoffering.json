@@ -850,8 +850,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "eizjue",
-              "isNew": false
+              "id": "eizjue"
             },
             {
               "title": "Course Load Panel",
@@ -2088,8 +2087,7 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "id": "ebhbfou",
-                  "lockKey": true,
-                  "isNew": false
+                  "lockKey": true
                 }
               ],
               "placeholder": "",
@@ -2589,7 +2587,8 @@
                       "inputType": "text",
                       "id": "eufdf4l0000000",
                       "defaultValue": "",
-                      "inDataGrid": true
+                      "inDataGrid": true,
+                      "isNew": false
                     },
                     {
                       "label": "Break end date",
@@ -2779,7 +2778,9 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "inDataGrid": true,
-                      "inputType": "number"
+                      "inputType": "number",
+                      "isNew": false,
+                      "tags": []
                     },
                     {
                       "label": "Total eligible break days",
@@ -2857,7 +2858,10 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "inDataGrid": true,
-                      "inputType": "number"
+                      "inputType": "number",
+                      "isNew": false,
+                      "tags": [],
+                      "lockKey": true
                     },
                     {
                       "label": "Total ineligible break days",
@@ -2935,7 +2939,9 @@
                       "allowMultipleMasks": false,
                       "addons": [],
                       "inDataGrid": true,
-                      "inputType": "number"
+                      "inputType": "number",
+                      "isNew": false,
+                      "tags": []
                     }
                   ],
                   "placeholder": "",
@@ -3377,7 +3383,7 @@
                               "tags": [],
                               "properties": {},
                               "conditional": {
-                                "show": null,
+                                "show": "",
                                 "when": null,
                                 "eq": "",
                                 "json": ""
@@ -3400,7 +3406,7 @@
                               "addons": [],
                               "inputType": "text",
                               "id": "eo0os4i",
-                              "defaultValue": ""
+                              "defaultValue": "0"
                             }
                           ],
                           "width": 6,
@@ -3478,7 +3484,7 @@
                               "tags": [],
                               "properties": {},
                               "conditional": {
-                                "show": null,
+                                "show": "",
                                 "when": null,
                                 "eq": "",
                                 "json": ""
@@ -3501,7 +3507,7 @@
                               "addons": [],
                               "inputType": "text",
                               "id": "ec19lcc",
-                              "defaultValue": ""
+                              "defaultValue": "0"
                             }
                           ],
                           "width": 6,
@@ -3579,7 +3585,7 @@
                               "tags": [],
                               "properties": {},
                               "conditional": {
-                                "show": null,
+                                "show": "",
                                 "when": null,
                                 "eq": "",
                                 "json": ""
@@ -3602,7 +3608,7 @@
                               "addons": [],
                               "inputType": "text",
                               "id": "ejtvtkn",
-                              "defaultValue": ""
+                              "defaultValue": "0"
                             }
                           ],
                           "size": "md",
@@ -3680,7 +3686,7 @@
                               "tags": [],
                               "properties": {},
                               "conditional": {
-                                "show": null,
+                                "show": "",
                                 "when": null,
                                 "eq": "",
                                 "json": ""
@@ -3703,7 +3709,7 @@
                               "addons": [],
                               "inputType": "text",
                               "id": "e5s4px",
-                              "defaultValue": ""
+                              "defaultValue": "0"
                             }
                           ],
                           "size": "md",
@@ -3778,7 +3784,9 @@
                       "tree": false,
                       "lazyLoad": false,
                       "autoAdjust": false,
-                      "id": "ee2hu0f"
+                      "id": "ee2hu0f",
+                      "isNew": false,
+                      "tags": []
                     }
                   ],
                   "placeholder": "",
@@ -3799,8 +3807,7 @@
                   "addons": [],
                   "tree": true,
                   "lazyLoad": false,
-                  "id": "eldazl",
-                  "isNew": false
+                  "id": "eldazl"
                 },
                 {
                   "label": "Invalid funded study period length popup",
@@ -4757,8 +4764,7 @@
                   "properties": {},
                   "customClass": "banner-warning",
                   "lockKey": true,
-                  "customConditional": "show = data.validationWarnings.indexOf(component.key) !== -1;",
-                  "isNew": false
+                  "customConditional": "show = data.validationWarnings.indexOf(component.key) !== -1;"
                 }
               ],
               "placeholder": "",

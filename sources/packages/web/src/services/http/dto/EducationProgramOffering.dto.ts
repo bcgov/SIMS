@@ -177,10 +177,10 @@ export interface OfferingBulkInsertValidationResultAPIOutDTO {
 }
 
 export interface StudyPeriodBreakdownAPIOutDTO {
-  fundedStudyPeriodDays: number | string;
-  totalDays: number | string;
-  totalFundedWeeks: number | string;
-  unfundedStudyPeriodDays: number | string;
+  fundedStudyPeriodDays: number;
+  totalDays: number;
+  totalFundedWeeks: number;
+  unfundedStudyPeriodDays: number;
 }
 
 /**
