@@ -419,15 +419,15 @@ parameters:
   - name: BYPASS_CRA_INCOME_VERIFICATION
     value: "false"
   - name: REDIS_SERVICE
-    value: redis
+    value: redis-cluster
   - name: CLAMAV_SERVICE
     value: clamav
   - name: CLAMAV_PORT
     required: true
   - name: REDIS_SECRET_NAME
-    value: redis-creds
+    value: redis-cluster
   - name: REDIS_PASSWORD_KEY
-    value: password
+    value: redis-password
   - name: DASHBOARD_PASSWORD_KEY
     value: queue-dashboard-password
   - name: DASHBOARD_USER_KEY
