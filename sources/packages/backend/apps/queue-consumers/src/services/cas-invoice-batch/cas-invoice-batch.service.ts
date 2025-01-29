@@ -10,6 +10,7 @@ import {
   DisbursementReceipt,
   DisbursementValue,
   DisbursementValueType,
+  RECEIPT_FUNDING_TYPE_FEDERAL,
 } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
@@ -235,7 +236,10 @@ export class CASInvoiceBatchService {
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.student", "student")
       .innerJoin("student.casSupplier", "casSupplier")
-      .where("disbursementReceiptValue.grantType = :grantType", {
+      .where("disbursementReceipt.fundingType != :federalFundingType", {
+        federalFundingType: RECEIPT_FUNDING_TYPE_FEDERAL,
+      })
+      .andWhere("disbursementReceiptValue.grantType = :grantType", {
         grantType: BC_TOTAL_GRANT_AWARD_CODE,
       })
       .andWhere("disbursementReceiptValue.grantAmount > 0")
