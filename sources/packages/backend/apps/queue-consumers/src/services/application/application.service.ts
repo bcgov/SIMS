@@ -11,6 +11,8 @@ import {
   NotificationMessageType,
   Notification,
   DisbursementSchedule,
+  OfferingIntensity,
+  COEStatus,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -21,9 +23,7 @@ import {
 } from "@sims/utilities";
 
 interface SecondDisbursementStillPending {
-  assessmentCount: number;
   assessmentId: number;
-  disbursementId: number;
   userId: number;
   givenNames: string;
   lastName: string;
@@ -276,25 +276,23 @@ export class ApplicationService {
         "notification.metadata->>'assessmentId' = assessment.id :: text",
       )
       .getQuery();
-    const disbursements = await this.disbursementScheduleRepo
+    // Return the second disbursements.
+    return await this.disbursementScheduleRepo
       .createQueryBuilder("disbursement")
-      .select("COUNT(assessment.id)", "assessmentCount")
-      .addSelect("assessment.id", "assessmentId")
-      .addSelect("MAX(disbursement.id)", "disbursementId")
+      .select("assessment.id", "assessmentId")
       .addSelect("user.id", "userId")
       .addSelect("user.firstName", "givenNames")
       .addSelect("user.lastName", "lastName")
       .addSelect("user.email", "email")
-      .addSelect(
-        "disbursement.disbursementScheduleStatus",
-        "disbursementScheduleStatus",
-      )
       .innerJoin("disbursement.studentAssessment", "assessment")
       .innerJoin("assessment.application", "application")
+      .innerJoin("assessment.offering", "offering")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .where("application.applicationStatus = :applicationStatusCompleted")
-      .andWhere(`NOT EXISTS (${notificationExistsQuery})`)
+      .where(`NOT EXISTS (${notificationExistsQuery})`)
+      .andWhere("application.applicationStatus = :applicationStatusCompleted")
+      .andWhere("offering.offeringIntensity = :offeringIntensityFullTime")
+      .andWhere("disbursement.coeStatus = :coeStatusRequired")
       .andWhere(
         "disbursement.disbursementScheduleStatus = :disbursementScheduleStatusPending",
       )
@@ -303,16 +301,11 @@ export class ApplicationService {
         messageId:
           NotificationMessageType.StudentSecondDisbursementNotification,
         applicationStatusCompleted: ApplicationStatus.Completed,
+        offeringIntensityFullTime: OfferingIntensity.fullTime,
+        coeStatusRequired: COEStatus.required,
         disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
         today: getISODateOnlyString(new Date()),
       })
-      .groupBy("assessment.id")
-      .addGroupBy("user.id")
-      .addGroupBy("disbursement.disbursementScheduleStatus")
       .getRawMany();
-    // Return the second disbursements.
-    return disbursements.filter(
-      (disbursement) => disbursement.assessmentCount === "2",
-    );
   }
 }
