@@ -1,5 +1,4 @@
 import { CASDistributionAccount, OfferingIntensity, User } from "@sims/sims-db";
-import * as faker from "faker";
 
 /**
  * Creates a fake CAS distribution account ready to be saved to the database.
