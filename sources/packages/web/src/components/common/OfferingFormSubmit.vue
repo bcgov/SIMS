@@ -130,7 +130,14 @@ export default defineComponent({
         validationResult.validationDate > lastCalculationDate
       ) {
         // Update the form component only if the API result is the most recent.
-
+        validationResult.studyPeriodBreakdown.unfundedStudyPeriodDays =
+          validationResult.studyPeriodBreakdown.unfundedStudyPeriodDays.toString();
+        validationResult.studyPeriodBreakdown.totalDays =
+          validationResult.studyPeriodBreakdown.totalDays.toString();
+        validationResult.studyPeriodBreakdown.totalFundedWeeks =
+          validationResult.studyPeriodBreakdown.totalFundedWeeks.toString();
+        validationResult.studyPeriodBreakdown.fundedStudyPeriodDays =
+          validationResult.studyPeriodBreakdown.fundedStudyPeriodDays.toString();
         setComponentValue(
           offeringForm,
           FORMIO_STUDY_PERIOD_BREAK_DOWN_KEY,
