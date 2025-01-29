@@ -30,3 +30,4 @@ export * from "./useRules";
 export * from "./useApplicationOfferingChange";
 export * from "./useSupplierStatus";
 export * from "./useRestrictionBypass";
+export * from "./useInvoiceBatchApprovalStatus";
