@@ -1,0 +1,1 @@
+DROP TABLE sims.cas_invoice_batches;

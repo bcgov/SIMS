@@ -60,6 +60,10 @@ import {
   BetaUsersAuthorizations,
   SFASBridgeLog,
   SFASRestrictionMap,
+  CASInvoiceBatch,
+  CASInvoice,
+  CASInvoiceDetail,
+  CASDistributionAccount,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -216,6 +220,10 @@ export const DBEntities = [
   StudentLoanBalance,
   ECertFeedbackError,
   CASSupplier,
+  CASInvoiceBatch,
+  CASInvoice,
+  CASInvoiceDetail,
+  CASDistributionAccount,
   BetaUsersAuthorizations,
   SFASBridgeLog,
 ];
