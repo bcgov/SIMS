@@ -79,7 +79,7 @@ COMMENT ON COLUMN sims.sfas_applications.assessed_costs_extra_shelter IS 'Extra 
 
 COMMENT ON COLUMN sims.sfas_applications.assessed_costs_child_care IS 'Child care expenses (assessment_v2.SP_EXP_SUPERVISING_CHILDREN).';
 
-COMMENT ON COLUMN sims.sfas_applications.assessed_costs_alimony IS 'Alimony (assessment_v2.SP_EXP_MAINTENANCE_ALIMONY).';
+COMMENT ON COLUMN sims.sfas_applications.assessed_costs_alimony IS 'Alimony.';
 
 COMMENT ON COLUMN sims.sfas_applications.assessed_costs_local_transport IS 'Local transportation costs (assessment_v2.SP_EXP_EXT_LOCAL_TRANSPORT).';
 

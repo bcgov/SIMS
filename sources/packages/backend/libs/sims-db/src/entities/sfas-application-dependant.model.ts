@@ -24,7 +24,7 @@ export class SFASApplicationDependant extends BaseModel {
   })
   application: SFASApplication;
   /**
-   * First and last name of the child (may include other names as well) (applicant_dependent.dep_last_name).
+   * First and last name of the child (may include other names as well).
    */
   @Column({
     name: "dependant_name",

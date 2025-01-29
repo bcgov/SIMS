@@ -259,7 +259,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsChildCare?: number;
   /**
-   * Alimony (assessment_v2.SP_EXP_MAINTENANCE_ALIMONY).
+   * Alimony.
    */
   @Column({
     name: "assessed_costs_alimony",

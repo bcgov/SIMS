@@ -25,7 +25,7 @@ COMMENT ON COLUMN sims.sfas_individuals.initials IS 'Initials of applicant (indi
 
 COMMENT ON COLUMN sims.sfas_individuals.address_line_1 IS 'Line 1 of the applicant''s address (address_current_view_unique.address_1).';
 
-COMMENT ON COLUMN sims.sfas_individuals.address_line_2 IS 'Line 2 of the applicant''s address (address_current_view_unique.address_2).';
+COMMENT ON COLUMN sims.sfas_individuals.address_line_2 IS 'Line 2 of the applicant''s address.';
 
 COMMENT ON COLUMN sims.sfas_individuals.city IS 'City name the applicant''s address (address_current_view_unique.city).';
 

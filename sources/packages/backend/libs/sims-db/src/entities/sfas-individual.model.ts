@@ -237,7 +237,7 @@ export class SFASIndividual extends BaseModel {
   })
   addressLine1?: string;
   /**
-   * Line 2 of the applicant's address (address_current_view_unique.address_2).
+   * Line 2 of the applicant's address.
    */
   @Column({
     name: "address_line_2",

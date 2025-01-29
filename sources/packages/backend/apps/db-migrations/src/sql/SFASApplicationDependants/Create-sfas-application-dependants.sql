@@ -18,7 +18,7 @@ COMMENT ON COLUMN sims.sfas_application_dependants.id IS 'The unique key/number 
 
 COMMENT ON COLUMN sims.sfas_application_dependants.application_id IS 'The unique key/number used in SFAS to identify this application (application.application_idx).';
 
-COMMENT ON COLUMN sims.sfas_application_dependants.dependant_name IS 'First and last name of the child (may include other names as well) (applicant_dependent.dep_last_name).';
+COMMENT ON COLUMN sims.sfas_application_dependants.dependant_name IS 'First and last name of the child (may include other names as well).';
 
 COMMENT ON COLUMN sims.sfas_application_dependants.dependant_birth_date IS 'Date of birth of the dependant (applicant_dependent.dep_date_of_birth).';
 
