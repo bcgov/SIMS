@@ -74,6 +74,8 @@ describe(
         },
       });
       const student = await saveFakeStudent(db.dataSource, { casSupplier });
+      // Created a full-time application with Federal and Provincial loans and grants
+      // to ensure that only expected awards (BC grants) will have invoices generated.
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
         {
@@ -137,6 +139,20 @@ describe(
         "Batch created: SIMS-BATCH-1.",
         "Invoices created: 1.",
       ]);
+      expect(
+        mockedJob.containLogMessages([
+          "Executing CAS invoices batches creation.",
+          "Checking for pending receipts.",
+          "Found 1 pending receipts.",
+          `Creating invoice for receipt ID ${provincialDisbursementReceipt.id}.`,
+          `Invoice SIMS-INVOICE-1-${casSupplier.supplierNumber} created for receipt ID ${provincialDisbursementReceipt.id}.`,
+          `Created invoice detail for award BCAG(CR).`,
+          `Created invoice detail for award BCAG(DR).`,
+          `Created invoice detail for award SBSD(CR).`,
+          `Created invoice detail for award SBSD(DR).`,
+          `CAS invoices batches creation process executed.`,
+        ]),
+      ).toBe(true);
       // Assert the created batch on DB and its related data.
       const createdBatches = await db.casInvoiceBatch.find({
         select: {

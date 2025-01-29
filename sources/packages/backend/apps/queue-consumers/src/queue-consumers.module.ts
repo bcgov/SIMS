@@ -169,7 +169,6 @@ import { QueuesMetricsModule } from "./queues-metrics.module.module";
     CASKnownErrorsProcessor,
     CASSupplierSharedService,
     CASInvoiceBatchService,
-    CASInvoiceBatchService,
     CASInvoicesBatchesCreationScheduler,
   ],
   controllers: [HealthController, MetricsController],

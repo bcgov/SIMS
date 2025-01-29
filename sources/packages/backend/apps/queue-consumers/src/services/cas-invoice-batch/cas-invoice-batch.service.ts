@@ -22,7 +22,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
  */
 const INVOICES_CHUNK_SIZE_INSERTS = 150;
 
-Injectable();
+@Injectable()
 export class CASInvoiceBatchService {
   constructor(
     private readonly dataSource: DataSource,
@@ -182,8 +182,8 @@ export class CASInvoiceBatchService {
         return invoiceDetail;
       });
       invoice.casInvoiceDetails.push(...awardInvoiceDetails);
-      return invoice;
     }
+    return invoice;
   }
 
   /**
@@ -195,7 +195,12 @@ export class CASInvoiceBatchService {
     entityManager: EntityManager,
   ): Promise<CASDistributionAccount[]> {
     return entityManager.getRepository(CASDistributionAccount).find({
-      select: { id: true, awardValueCode: true, offeringIntensity: true },
+      select: {
+        id: true,
+        awardValueCode: true,
+        offeringIntensity: true,
+        operationCode: true,
+      },
       where: { isActive: true },
     });
   }
