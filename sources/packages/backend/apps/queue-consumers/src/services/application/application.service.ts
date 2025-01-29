@@ -14,7 +14,21 @@ import {
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { addDays, DISABILITY_NOTIFICATION_DAYS_LIMIT } from "@sims/utilities";
+import {
+  addDays,
+  DISABILITY_NOTIFICATION_DAYS_LIMIT,
+  getISODateOnlyString,
+} from "@sims/utilities";
+
+interface SecondDisbursementStillPending {
+  assessmentCount: number;
+  assessmentId: number;
+  disbursementId: number;
+  userId: number;
+  givenNames: string;
+  lastName: string;
+  email: string;
+}
 
 @Injectable()
 export class ApplicationService {
@@ -238,5 +252,67 @@ export class ApplicationService {
         disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
       })
       .getMany();
+  }
+
+  /**
+   * Retrieves second disbursements eligible for a specific notification (likely disbursement
+   * date has passed and the institution has not yet approved the second COE/disbursement).
+   * This method applies several criteria to filter eligible disbursements:
+   * - There's a pending disbursement schedule
+   * - Application status is completed
+   * - No notification of this type (messageId 30) has been sent for this assessment
+   * - Disbursement date has passed today
+   * @returns An array of eligible disbursements with relevant details for notification.
+   */
+  async getSecondDisbursementsStillPending(): Promise<
+    SecondDisbursementStillPending[]
+  > {
+    // Sub query to defined if a notification was already sent to the current assessment.
+    const notificationExistsQuery = this.notificationRepo
+      .createQueryBuilder("notification")
+      .select("1")
+      .where("notification.notificationMessage.id = :messageId")
+      .andWhere(
+        "notification.metadata->>'assessmentId' = assessment.id :: text",
+      )
+      .getQuery();
+    const disbursements = await this.disbursementScheduleRepo
+      .createQueryBuilder("disbursement")
+      .select("COUNT(assessment.id)", "assessmentCount")
+      .addSelect("assessment.id", "assessmentId")
+      .addSelect("MAX(disbursement.id)", "disbursementId")
+      .addSelect("user.id", "userId")
+      .addSelect("user.firstName", "givenNames")
+      .addSelect("user.lastName", "lastName")
+      .addSelect("user.email", "email")
+      .addSelect(
+        "disbursement.disbursementScheduleStatus",
+        "disbursementScheduleStatus",
+      )
+      .innerJoin("disbursement.studentAssessment", "assessment")
+      .innerJoin("assessment.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("application.applicationStatus = :applicationStatusCompleted")
+      .andWhere(`NOT EXISTS (${notificationExistsQuery})`)
+      .andWhere(
+        "disbursement.disbursementScheduleStatus = :disbursementScheduleStatusPending",
+      )
+      .andWhere("disbursement.disbursementDate < :today")
+      .setParameters({
+        messageId:
+          NotificationMessageType.StudentSecondDisbursementNotification,
+        applicationStatusCompleted: ApplicationStatus.Completed,
+        disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
+        today: getISODateOnlyString(new Date()),
+      })
+      .groupBy("assessment.id")
+      .addGroupBy("user.id")
+      .addGroupBy("disbursement.disbursementScheduleStatus")
+      .getRawMany();
+    // Return the second disbursements.
+    return disbursements.filter(
+      (disbursement) => disbursement.assessmentCount === "2",
+    );
   }
 }

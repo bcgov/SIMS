@@ -32,6 +32,7 @@ import {
   DailyDisbursementReportProcessingNotification,
   SupportingUserInformationNotification,
   StudentPDPPDNotification,
+  StudentSecondDisbursementNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -1283,6 +1284,42 @@ export class NotificationActionsService {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
           applicationNumber: notification.applicationNumber,
+        },
+      },
+      metadata: { assessmentId: notification.assessmentId },
+    }));
+    // Save notifications to be sent to the students into the notification table.
+    await this.notificationService.saveNotifications(
+      notificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates student application notification for student for second disbursement reminder.
+   * @param notifications notification details array.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveStudentApplicationSecondDisbursementNotification(
+    notifications: StudentSecondDisbursementNotification[],
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.StudentSecondDisbursementNotification,
+      );
+    const notificationsToSend = notifications.map((notification) => ({
+      userId: notification.userId,
+      messageType:
+        NotificationMessageType.StudentSecondDisbursementNotification,
+      messagePayload: {
+        email_address: notification.email,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
         },
       },
       metadata: { assessmentId: notification.assessmentId },

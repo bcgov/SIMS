@@ -8,9 +8,7 @@ import {
   ProcessSummary,
 } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
-import { ApplicationService } from "../../../services";
-import { StudentPDPPDNotification } from "@sims/services/notifications";
-import { NotificationActionsService } from "@sims/services";
+import { StudentApplicationNotificationService } from "../../../services/student-application-notifications/student-application-notifications.service";
 
 @Processor(QueueNames.StudentApplicationNotifications)
 export class StudentApplicationNotificationsScheduler extends BaseScheduler<void> {
@@ -18,14 +16,13 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
     @InjectQueue(QueueNames.StudentApplicationNotifications)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
-    private readonly applicationService: ApplicationService,
-    private readonly notificationActionsService: NotificationActionsService,
+    private readonly studentApplicationNotificationService: StudentApplicationNotificationService,
   ) {
     super(schedulerQueue, queueService);
   }
 
   /**
-   * Process Student for Email notification - PD/PPD Student reminder email 8 weeks before end date.
+   * Process student application notifications.
    * @param _job process job.
    * @param processSummary process summary for logging.
    * @returns processing result.
@@ -34,35 +31,9 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {
-    const eligibleApplications =
-      await this.applicationService.getApplicationWithPDPPStatusMismatch();
-
-    const notifications = eligibleApplications.map<StudentPDPPDNotification>(
-      (application) => ({
-        userId: application.student.user.id,
-        givenNames: application.student.user.firstName,
-        lastName: application.student.user.lastName,
-        email: application.student.user.email,
-        applicationNumber: application.applicationNumber,
-        assessmentId: application.currentAssessment.id,
-      }),
+    await this.studentApplicationNotificationService.notifyStudentApplication(
+      processSummary,
     );
-
-    await this.notificationActionsService.saveStudentApplicationPDPPDNotification(
-      notifications,
-    );
-
-    if (eligibleApplications.length) {
-      processSummary.info(
-        `PD/PPD mismatch assessments that generated notifications: ${eligibleApplications
-          .map((app) => app.currentAssessment.id)
-          .join(", ")}`,
-      );
-    } else {
-      processSummary.info(
-        `No assessments found to generate PD/PPD mismatch notifications.`,
-      );
-    }
     return "Process finalized with success.";
   }
 
