@@ -7,7 +7,6 @@ import {
   CASInvoiceBatchApprovalStatus,
   CASInvoiceDetail,
   CASInvoiceStatus,
-  CASSupplier,
   DisbursementReceipt,
   DisbursementValue,
   DisbursementValueType,
