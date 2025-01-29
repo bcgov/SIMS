@@ -97,15 +97,22 @@ export class CASInvoiceBatchService {
             const offeringIntensity =
               receipt.disbursementSchedule.studentAssessment.offering
                 .offeringIntensity;
-            const newInvoice = this.createInvoice(
-              invoiceBatch.id,
-              newInvoiceSequence++,
-              receipt.id,
+            // Create a new invoice for the receipt.
+            const newInvoice = new CASInvoice();
+            newInvoice.casInvoiceBatch = invoiceBatch;
+            newInvoice.disbursementReceipt = receipt;
+            newInvoice.casSupplier = student.casSupplier;
+            newInvoice.invoiceNumber = `SIMS-INVOICE-${newInvoiceSequence++}-${
+              student.casSupplier.supplierNumber
+            }`;
+            newInvoice.invoiceStatus = CASInvoiceStatus.Pending;
+            newInvoice.invoiceStatusUpdatedOn = now;
+            newInvoice.creator = this.systemUsersService.systemUser;
+            // Create invoice details.
+            newInvoice.casInvoiceDetails = this.createInvoiceDetails(
               receipt.disbursementSchedule.disbursementValues,
-              student.casSupplier,
               offeringIntensity,
               distributionAccounts,
-              now,
             );
             casInvoices.push(newInvoice);
             invoicesSummary.info(
@@ -130,41 +137,20 @@ export class CASInvoiceBatchService {
   }
 
   /**
-   * Creates a new invoice to be associated with the given batch, receipt and
-   * information related to the disbursed awards.
-   * The created invoice is ready to be saved in the database.
-   * @param batchId ID of the batch where the invoice will be associated.
-   * @param sequenceNumber sequence number to be used for the invoice number.
-   * @param receiptId ID of the receipt associated with the invoice.
+   * Creates invoice details to be associated with an invoice to be saved to the database.
    * @param disbursedAwards disbursed awards to be used for creating the invoice details.
-   * @param casSupplier CAS supplier related to the invoice. Extracted from the student and
-   * saved separately for history purposes.
    * @param offeringIntensity offering intensity used to filter the distribution accounts.
    * @param distributionAccounts list of all active distribution accounts to allow the creation of the
    * invoice details for each disbursed award.
-   * @param referenceCreationDate creation date to be used for history purposes.
-   * @returns created invoice and its details ready to be saved to the database.
+   * @returns invoice details to be associated with an invoice.
    */
-  private createInvoice(
-    batchId: number,
-    sequenceNumber: number,
-    receiptId: number,
+  private createInvoiceDetails(
     disbursedAwards: Pick<DisbursementValue, "valueCode" | "effectiveAmount">[],
-    casSupplier: Pick<CASSupplier, "id" | "supplierNumber">,
     offeringIntensity: string,
     distributionAccounts: CASDistributionAccount[],
-    referenceCreationDate: Date,
-  ): CASInvoice {
+  ): CASInvoiceDetail[] {
     // New invoice creation.
-    const invoice = new CASInvoice();
-    invoice.casInvoiceBatch = { id: batchId } as CASInvoiceBatch;
-    invoice.disbursementReceipt = { id: receiptId } as DisbursementReceipt;
-    invoice.casSupplier = { id: casSupplier.id } as CASSupplier;
-    invoice.invoiceNumber = `SIMS-INVOICE-${sequenceNumber}-${casSupplier.supplierNumber}`;
-    invoice.invoiceStatus = CASInvoiceStatus.Pending;
-    invoice.invoiceStatusUpdatedOn = referenceCreationDate;
-    invoice.creator = this.systemUsersService.systemUser;
-    invoice.casInvoiceDetails = [];
+    const invoiceDetails: CASInvoiceDetail[] = [];
     for (const disbursedAward of disbursedAwards) {
       // Find the distribution accounts for the award.
       const accounts = distributionAccounts.filter(
@@ -175,15 +161,14 @@ export class CASInvoiceBatchService {
       // Create invoice details for each distribution account.
       const awardInvoiceDetails = accounts.map((account) => {
         const invoiceDetail = new CASInvoiceDetail();
-        invoiceDetail.casInvoice = invoice;
         invoiceDetail.casDistributionAccount = account;
         invoiceDetail.valueAmount = disbursedAward.effectiveAmount;
         invoiceDetail.creator = this.systemUsersService.systemUser;
         return invoiceDetail;
       });
-      invoice.casInvoiceDetails.push(...awardInvoiceDetails);
+      invoiceDetails.push(...awardInvoiceDetails);
     }
-    return invoice;
+    return invoiceDetails;
   }
 
   /**
