@@ -15,16 +15,22 @@ export function createFakeCASDistributionAccount(
     initialValues: Partial<CASDistributionAccount>;
   },
 ): CASDistributionAccount {
-  const casDistributionAccount = new CASDistributionAccount();
-  casDistributionAccount.awardValueCode =
-    options?.initialValues?.awardValueCode ?? "BCSG";
-  casDistributionAccount.offeringIntensity =
+  const awardValueCode = options?.initialValues?.awardValueCode ?? "BCAG";
+  const offeringIntensity =
     options?.initialValues?.offeringIntensity ?? OfferingIntensity.fullTime;
-  casDistributionAccount.operationCode =
-    options?.initialValues?.operationCode ?? "DR";
-  casDistributionAccount.distributionAccount =
+  const operationCode = options?.initialValues?.operationCode ?? "DR";
+  const distributionAccount =
     options?.initialValues?.distributionAccount ??
-    faker.random.alphaNumeric(40);
+    `${awardValueCode}.${operationCode}.${
+      offeringIntensity === OfferingIntensity.fullTime
+        ? "FULL-TIME"
+        : "PART-TIME"
+    }.`.padEnd(40, "0");
+  const casDistributionAccount = new CASDistributionAccount();
+  casDistributionAccount.awardValueCode = awardValueCode;
+  casDistributionAccount.offeringIntensity = offeringIntensity;
+  casDistributionAccount.operationCode = operationCode;
+  casDistributionAccount.distributionAccount = distributionAccount;
   casDistributionAccount.isActive = options?.initialValues?.isActive ?? true;
   casDistributionAccount.creator = relations.creator;
   return casDistributionAccount;

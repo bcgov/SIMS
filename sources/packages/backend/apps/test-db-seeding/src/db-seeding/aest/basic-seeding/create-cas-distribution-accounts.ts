@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CASDistributionAccount, User } from "@sims/sims-db";
+import { CASDistributionAccount } from "@sims/sims-db";
 import {
   DataSeed,
   DataSeedMethod,
@@ -29,7 +29,9 @@ export class CreateCASDistributionAccounts {
     const accountsToSave = CAS_DISTRIBUTION_ACCOUNTS_INITIAL_DATE.map((data) =>
       createFakeCASDistributionAccount(
         { creator: this.systemUserService.systemUser },
-        { initialValues: data },
+        {
+          initialValues: data,
+        },
       ),
     );
     // Save accounts.

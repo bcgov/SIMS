@@ -227,7 +227,7 @@ describe(
                   offeringIntensity: "Full Time",
                   operationCode: "CR",
                   distributionAccount:
-                    "100.CR.FULL-TIME.00000.0000.0000000.0000",
+                    "BCAG.CR.FULL-TIME.0000000000000000000000",
                 },
               },
               {
@@ -239,7 +239,7 @@ describe(
                   offeringIntensity: "Full Time",
                   operationCode: "DR",
                   distributionAccount:
-                    "101.DR.FULL-TIME.00000.0000.0000000.0000",
+                    "BCAG.DR.FULL-TIME.0000000000000000000000",
                 },
               },
               {
@@ -251,7 +251,7 @@ describe(
                   offeringIntensity: "Full Time",
                   operationCode: "CR",
                   distributionAccount:
-                    "104.CR.FULL-TIME.00000.0000.0000000.0000",
+                    "SBSD.CR.FULL-TIME.0000000000000000000000",
                 },
               },
               {
@@ -263,7 +263,7 @@ describe(
                   offeringIntensity: "Full Time",
                   operationCode: "DR",
                   distributionAccount:
-                    "105.DR.FULL-TIME.00000.0000.0000000.0000",
+                    "SBSD.DR.FULL-TIME.0000000000000000000000",
                 },
               },
             ]),
