@@ -27,12 +27,12 @@ export class StudentSecondDisbursementReminderNotification {
 
     const notifications =
       eligibleDisbursements.map<StudentSecondDisbursementNotification>(
-        (disbursement) => ({
-          userId: disbursement.userId,
-          givenNames: disbursement.givenNames,
-          lastName: disbursement.lastName,
-          email: disbursement.email,
-          assessmentId: disbursement.assessmentId,
+        (eligibleDisbursement) => ({
+          userId: eligibleDisbursement.userId,
+          givenNames: eligibleDisbursement.givenNames,
+          lastName: eligibleDisbursement.lastName,
+          email: eligibleDisbursement.email,
+          assessmentId: eligibleDisbursement.assessmentId,
         }),
       );
 
@@ -48,7 +48,7 @@ export class StudentSecondDisbursementReminderNotification {
       );
     } else {
       processSummary.info(
-        `No disbursements found to generate second disbursement reminder notifications.`,
+        "No disbursements found to generate second disbursement reminder notifications.",
       );
     }
   }

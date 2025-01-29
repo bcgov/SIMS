@@ -47,7 +47,7 @@ export class StudentPdPpdReminderNotification {
       );
     } else {
       processSummary.info(
-        `No assessments found to generate PD/PPD mismatch notifications.`,
+        "No assessments found to generate PD/PPD mismatch notifications.",
       );
     }
   }

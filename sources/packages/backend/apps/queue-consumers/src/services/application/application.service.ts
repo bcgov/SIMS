@@ -11,16 +11,10 @@ import {
   NotificationMessageType,
   Notification,
   DisbursementSchedule,
-  OfferingIntensity,
-  COEStatus,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import {
-  addDays,
-  DISABILITY_NOTIFICATION_DAYS_LIMIT,
-  getISODateOnlyString,
-} from "@sims/utilities";
+import { addDays, DISABILITY_NOTIFICATION_DAYS_LIMIT } from "@sims/utilities";
 
 interface SecondDisbursementStillPending {
   assessmentId: number;
@@ -276,7 +270,33 @@ export class ApplicationService {
         "notification.metadata->>'assessmentId' = assessment.id :: text",
       )
       .getQuery();
-    // Return the second disbursements.
+    // Retrieves disbursements with disbursement date has passed today and notification
+    // has not been sent for completed applications.
+    const disbursements = await this.disbursementScheduleRepo
+      .createQueryBuilder("disbursement")
+      .select("COUNT(assessment.id)", "assessmentCount")
+      .addSelect("MAX(disbursement.id)", "disbursementId")
+      .innerJoin("disbursement.studentAssessment", "assessment")
+      .innerJoin("assessment.application", "application")
+      .where(`NOT EXISTS (${notificationExistsQuery})`)
+      .andWhere("application.applicationStatus = :applicationStatusCompleted")
+      .andWhere("disbursement.disbursementDate < :today")
+      .groupBy("assessment.id")
+      .setParameters({
+        messageId:
+          NotificationMessageType.StudentSecondDisbursementNotification,
+        applicationStatusCompleted: ApplicationStatus.Completed,
+        today: "2025-02-17", //getISODateOnlyString(new Date()),
+      })
+      .getRawMany();
+    // Filter out the second disbursements.
+    const secondDisbursements = disbursements.filter(
+      (disbursement) => disbursement.assessmentCount === "2",
+    );
+    if (secondDisbursements.length === 0) {
+      return [];
+    }
+    // Return second disbursements still pending.
     return await this.disbursementScheduleRepo
       .createQueryBuilder("disbursement")
       .select("assessment.id", "assessmentId")
@@ -286,25 +306,17 @@ export class ApplicationService {
       .addSelect("user.email", "email")
       .innerJoin("disbursement.studentAssessment", "assessment")
       .innerJoin("assessment.application", "application")
-      .innerJoin("assessment.offering", "offering")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .where(`NOT EXISTS (${notificationExistsQuery})`)
-      .andWhere("application.applicationStatus = :applicationStatusCompleted")
-      .andWhere("offering.offeringIntensity = :offeringIntensityFullTime")
-      .andWhere("disbursement.coeStatus = :coeStatusRequired")
+      .where("disbursement.id IN (:...disbursementIds)")
       .andWhere(
         "disbursement.disbursementScheduleStatus = :disbursementScheduleStatusPending",
       )
-      .andWhere("disbursement.disbursementDate < :today")
       .setParameters({
-        messageId:
-          NotificationMessageType.StudentSecondDisbursementNotification,
-        applicationStatusCompleted: ApplicationStatus.Completed,
-        offeringIntensityFullTime: OfferingIntensity.fullTime,
-        coeStatusRequired: COEStatus.required,
+        disbursementIds: secondDisbursements.map(
+          (secondDisbursement) => secondDisbursement.disbursementId,
+        ),
         disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
-        today: getISODateOnlyString(new Date()),
       })
       .getRawMany();
   }
