@@ -15,6 +15,5 @@ export function useInvoiceBatchApprovalStatus() {
         return StatusChipTypes.Inactive;
     }
   };
-
   return { mapInvoiceBatchApprovalStatus };
 }

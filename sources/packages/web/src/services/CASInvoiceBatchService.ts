@@ -1,5 +1,9 @@
 import ApiClient from "@/services/http/ApiClient";
-import { CASInvoiceBatchesAPIOutDTO } from "@/services/http/dto";
+import {
+  CASInvoiceBatchAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
+import { PaginationOptions } from "@/types";
 
 export class CASInvoiceBatchService {
   /**
@@ -13,9 +17,12 @@ export class CASInvoiceBatchService {
 
   /**
    * Retrieves all CAS invoice batches.
+   * @param paginationOptions: PaginationOptions,
    * @returns list of all invoice batches.
    */
-  async getInvoiceBatches(): Promise<CASInvoiceBatchesAPIOutDTO> {
-    return ApiClient.CASInvoiceBatchApi.getInvoiceBatches();
+  async getInvoiceBatches(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResultsAPIOutDTO<CASInvoiceBatchAPIOutDTO>> {
+    return ApiClient.CASInvoiceBatchApi.getInvoiceBatches(paginationOptions);
   }
 }

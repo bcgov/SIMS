@@ -118,6 +118,12 @@ export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDT
   sortField?: string;
 }
 
+export class CASInvoiceBatchesPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["batchDate"])
+  sortField?: string;
+}
+
 /**
  * Common DTO result used when an API endpoint
  * must enable pagination and search options.

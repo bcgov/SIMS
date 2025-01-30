@@ -8,7 +8,3 @@ export class CASInvoiceBatchAPIOutDTO {
   approvalStatusUpdatedOn: Date;
   approvalStatusUpdatedBy: string;
 }
-
-export class CASInvoiceBatchesAPIOutDTO {
-  batches: CASInvoiceBatchAPIOutDTO[];
-}

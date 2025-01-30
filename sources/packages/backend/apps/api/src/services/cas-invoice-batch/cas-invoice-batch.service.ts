@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CASInvoiceBatch } from "@sims/sims-db";
 import { Repository } from "typeorm";
+import { PaginatedResults, PaginationOptions } from "../../utilities";
 
 @Injectable()
 export class CASInvoiceBatchService {
@@ -12,10 +13,13 @@ export class CASInvoiceBatchService {
 
   /**
    * Retrieve all CAS invoice batches.
+   * @param paginationOptions pagination options.
    * @returns list of CAS invoice batches ordered by batch date in descending order.
    */
-  async getCASInvoiceBatches(): Promise<CASInvoiceBatch[]> {
-    return this.casInvoiceBatchRepo.find({
+  async getCASInvoiceBatches(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<CASInvoiceBatch>> {
+    const [results, count] = await this.casInvoiceBatchRepo.findAndCount({
       select: {
         id: true,
         batchName: true,
@@ -27,9 +31,12 @@ export class CASInvoiceBatchService {
       relations: {
         approvalStatusUpdatedBy: true,
       },
+      skip: paginationOptions.pageLimit * paginationOptions.page,
+      take: paginationOptions.pageLimit,
       order: {
-        batchDate: "DESC",
+        [paginationOptions.sortField]: paginationOptions.sortOrder,
       },
     });
+    return { results, count };
   }
 }

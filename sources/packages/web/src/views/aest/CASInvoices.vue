@@ -11,19 +11,21 @@
         <body-header
           title="Accounts payable invoicing"
           subTitle="Please see below the list of invoices batches."
-          :recordsCount="invoiceBatches?.length"
+          :recordsCount="paginatedBatches.count"
         />
       </template>
       <content-group>
         <toggle-content
-          :toggled="!invoiceBatches?.length && !invoiceBatchesLoading"
+          :toggled="!paginatedBatches.count && !invoiceBatchesLoading"
         >
-          <v-data-table
+          <v-data-table-server
             :headers="CASInvoicesHeaders"
-            :items="invoiceBatches"
+            :items="paginatedBatches.results"
+            :items-length="paginatedBatches.count"
             :items-per-page="DEFAULT_PAGE_LIMIT"
             :items-per-page-options="ITEMS_PER_PAGE"
             :loading="invoiceBatchesLoading"
+            @update:options="pageSortEvent"
           >
             <template #[`item.batchDate`]="{ item }">
               {{ getISODateHourMinuteString(item.batchDate) }}
@@ -53,7 +55,7 @@
                 </template>
               </check-permission-role>
             </template>
-          </v-data-table>
+          </v-data-table-server>
         </toggle-content>
       </content-group>
     </body-header-container>
@@ -64,15 +66,23 @@
 import { useFormatters, useSnackBar } from "@/composables";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { CASInvoiceBatchService } from "@/services/CASInvoiceBatchService";
-import { CASInvoiceBatchAPIOutDTO } from "@/services/http/dto";
+import {
+  CASInvoiceBatchAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
 import {
   CASInvoicesHeaders,
+  DataTableOptions,
+  DataTableSortOrder,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
+  PaginationOptions,
   Role,
 } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
 import StatusInvoiceBatchApproval from "@/components/generic/StatusInvoiceBatchApproval.vue";
+
+const DEFAULT_SORT_FIELD = "batchDate";
 
 export default defineComponent({
   components: {
@@ -83,20 +93,39 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const { getISODateHourMinuteString } = useFormatters();
     const invoiceBatchesLoading = ref(false);
-    const invoiceBatches = ref([] as CASInvoiceBatchAPIOutDTO[]);
+    /**
+     * Pagination with batch invoices and the total available.
+     */
+    const paginatedBatches = ref(
+      {} as PaginatedResultsAPIOutDTO<CASInvoiceBatchAPIOutDTO>,
+    );
+    /**
+     * Current state of the pagination.
+     */
+    const currentPagination: PaginationOptions = {
+      page: 1,
+      pageLimit: DEFAULT_PAGE_LIMIT,
+      sortField: DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortOrder.DESC,
+    };
 
     onMounted(async () => {
+      await loadInvoiceBatches();
+    });
+
+    const loadInvoiceBatches = async () => {
       try {
         invoiceBatchesLoading.value = true;
-        const { batches } =
-          await CASInvoiceBatchService.shared.getInvoiceBatches();
-        invoiceBatches.value = batches;
+        paginatedBatches.value =
+          await CASInvoiceBatchService.shared.getInvoiceBatches(
+            currentPagination,
+          );
       } catch (error: unknown) {
         snackBar.error("Unexpected error while loading CAS invoices.");
       } finally {
         invoiceBatchesLoading.value = false;
       }
-    });
+    };
 
     const downloadBatch = async (batchId: number) => {
       try {
@@ -108,6 +137,21 @@ export default defineComponent({
       }
     };
 
+    const pageSortEvent = async (event: DataTableOptions) => {
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
+      if (event.sortBy.length) {
+        const [sortBy] = event.sortBy;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
+      } else {
+        // Sorting was removed, reset to default.
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortOrder.DESC;
+      }
+      await loadInvoiceBatches();
+    };
+
     return {
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
@@ -115,8 +159,9 @@ export default defineComponent({
       CASInvoicesHeaders,
       getISODateHourMinuteString,
       invoiceBatchesLoading,
-      invoiceBatches,
+      paginatedBatches,
       downloadBatch,
+      pageSortEvent,
     };
   },
 });

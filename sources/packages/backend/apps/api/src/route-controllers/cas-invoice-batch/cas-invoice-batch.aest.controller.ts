@@ -1,12 +1,16 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Query } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties, Role, UserGroups } from "../../auth";
 import { AllowAuthorizedParty, Groups, Roles } from "../../auth/decorators";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { CASInvoiceBatchService } from "../../services";
-import { CASInvoiceBatchesAPIOutDTO } from "./models/cas-invoice-batch.dto";
+import { CASInvoiceBatchAPIOutDTO } from "./models/cas-invoice-batch.dto";
 import { getUserFullName } from "../../utilities";
+import {
+  CASInvoiceBatchesPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "..";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -23,18 +27,23 @@ export class CASInvoiceBatchAESTController extends BaseController {
    */
   @Get()
   @Roles(Role.AESTEditCASSupplierInfo) // TODO: Create a new role.
-  async getInvoiceBatches(): Promise<CASInvoiceBatchesAPIOutDTO> {
-    const invoiceBatches =
-      await this.casInvoiceBatchService.getCASInvoiceBatches();
+  async getInvoiceBatches(
+    @Query() paginationOptions: CASInvoiceBatchesPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<CASInvoiceBatchAPIOutDTO>> {
+    const pagination = await this.casInvoiceBatchService.getCASInvoiceBatches(
+      paginationOptions,
+    );
+    const batches = pagination.results.map((batch) => ({
+      id: batch.id,
+      batchName: batch.batchName,
+      batchDate: batch.batchDate,
+      approvalStatus: batch.approvalStatus,
+      approvalStatusUpdatedOn: batch.approvalStatusUpdatedOn,
+      approvalStatusUpdatedBy: getUserFullName(batch.approvalStatusUpdatedBy),
+    }));
     return {
-      batches: invoiceBatches.map((batch) => ({
-        id: batch.id,
-        batchName: batch.batchName,
-        batchDate: batch.batchDate,
-        approvalStatus: batch.approvalStatus,
-        approvalStatusUpdatedOn: batch.approvalStatusUpdatedOn,
-        approvalStatusUpdatedBy: getUserFullName(batch.approvalStatusUpdatedBy),
-      })),
+      results: batches,
+      count: pagination.count,
     };
   }
 }

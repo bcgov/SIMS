@@ -17,7 +17,7 @@
         color="primary"
         nav
       >
-        <!-- Change to the fina role. -->
+        <!-- Change to the final role. -->
         <check-permission-role :role="Role.AESTEditCASSupplierInfo">
           <template #="{ notAllowed }">
             <v-list-item

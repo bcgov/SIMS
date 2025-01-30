@@ -84,3 +84,6 @@ export * from "./application-restriction-bypass/application-restriction-bypass.a
 export * from "./audit/audit.controller";
 export * from "./student/student.external.controller";
 export * from "./cas-invoice-batch/cas-invoice-batch.aest.controller";
+export * from "./models/pagination.dto";
+export * from "./models/primary.identifier.dto";
+export * from "./models/common.dto";
