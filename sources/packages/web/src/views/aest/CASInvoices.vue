@@ -1,5 +1,5 @@
 <template>
-  <full-page-container class="overflow-visible">
+  <full-page-container :full-width="true">
     <template #header
       ><header-navigator
         title="Corporate Accounting Services"
@@ -12,7 +12,26 @@
           title="Accounts payable invoicing"
           subTitle="Please see below the list of invoices batches."
           :recordsCount="paginatedBatches.count"
-        />
+        >
+          <template #actions>
+            <v-btn-toggle
+              multiple
+              mandatory
+              class="float-right btn-toggle"
+              selected-class="selected-btn-toggle"
+            >
+              <v-btn
+                v-for="approvalStatus in CASInvoiceBatchApprovalStatus"
+                :key="approvalStatus"
+                rounded="xl"
+                color="primary"
+                :value="approvalStatus"
+                class="mr-2"
+                >{{ approvalStatus }}</v-btn
+              >
+            </v-btn-toggle>
+          </template>
+        </body-header>
       </template>
       <content-group>
         <toggle-content
@@ -42,16 +61,30 @@
             <template #[`item.approvalStatusUpdatedBy`]="{ item }">
               {{ item.approvalStatusUpdatedBy }}
             </template>
-            <template #[`item.download`]="{ item }">
+            <template #[`item.actions`]="{ item }">
+              <!-- TODO: change role -->
               <check-permission-role :role="Role.AESTEditCASSupplierInfo">
                 <template #="{ notAllowed }">
                   <v-btn
-                    color="primary"
                     :disabled="notAllowed"
                     @click="downloadBatch(item.id)"
+                    variant="text"
+                    color="primary"
                   >
-                    Download</v-btn
-                  >
+                    <span class="text-decoration-underline"
+                      ><strong>Download</strong></span
+                    >
+                  </v-btn>
+                  <v-btn :disabled="notAllowed" variant="text" color="primary">
+                    <span class="text-decoration-underline"
+                      ><strong>Approve</strong></span
+                    >
+                  </v-btn>
+                  <v-btn :disabled="notAllowed" variant="text" color="primary">
+                    <span class="text-decoration-underline"
+                      ><strong>Reject</strong></span
+                    >
+                  </v-btn>
                 </template>
               </check-permission-role>
             </template>
@@ -71,6 +104,7 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 import {
+  CASInvoiceBatchApprovalStatus,
   CASInvoicesHeaders,
   DataTableOptions,
   DataTableSortOrder,
@@ -162,6 +196,7 @@ export default defineComponent({
       paginatedBatches,
       downloadBatch,
       pageSortEvent,
+      CASInvoiceBatchApprovalStatus,
     };
   },
 });

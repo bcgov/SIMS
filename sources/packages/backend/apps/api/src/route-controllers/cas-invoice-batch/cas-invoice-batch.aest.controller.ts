@@ -23,6 +23,7 @@ export class CASInvoiceBatchAESTController extends BaseController {
 
   /**
    * Retrieves all CAS invoice batches.
+   * @param paginationOptions pagination options.
    * @returns list of all invoice batches.
    */
   @Get()
