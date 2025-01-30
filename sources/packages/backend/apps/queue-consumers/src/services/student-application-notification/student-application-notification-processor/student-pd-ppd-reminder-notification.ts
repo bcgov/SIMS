@@ -3,14 +3,14 @@ import {
   NotificationActionsService,
   StudentPDPPDNotification,
 } from "@sims/services";
-import { ApplicationService } from "../../services";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { ApplicationService } from "../..";
 
 /**
  * Creates a student email notification - PD/PPD Student reminder email 8 weeks before end date.
  */
 @Injectable()
-export class StudentPdPpdReminderNotification {
+export class StudentPDPPDReminderNotification {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly notificationActionsService: NotificationActionsService,
@@ -21,8 +21,18 @@ export class StudentPdPpdReminderNotification {
    * @param processSummary process summary for logging.
    */
   async createNotification(processSummary: ProcessSummary): Promise<void> {
+    const notificationLog = new ProcessSummary();
+    processSummary.children(notificationLog);
+
     const eligibleApplications =
-      await this.applicationService.getApplicationWithPDPPStatusMismatch();
+      await this.applicationService.getApplicationWithPDPPDStatusMismatch();
+
+    if (!eligibleApplications.length) {
+      notificationLog.info(
+        "No assessments found to generate PD/PPD mismatch notifications.",
+      );
+      return;
+    }
 
     const notifications = eligibleApplications.map<StudentPDPPDNotification>(
       (application) => ({
@@ -39,16 +49,10 @@ export class StudentPdPpdReminderNotification {
       notifications,
     );
 
-    if (eligibleApplications.length) {
-      processSummary.info(
-        `PD/PPD mismatch assessments that generated notifications: ${eligibleApplications
-          .map((app) => app.currentAssessment.id)
-          .join(", ")}`,
-      );
-    } else {
-      processSummary.info(
-        "No assessments found to generate PD/PPD mismatch notifications.",
-      );
-    }
+    notificationLog.info(
+      `PD/PPD mismatch assessments that generated notifications: ${eligibleApplications
+        .map((app) => app.currentAssessment.id)
+        .join(", ")}`,
+    );
   }
 }

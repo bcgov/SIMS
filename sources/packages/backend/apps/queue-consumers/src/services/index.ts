@@ -6,3 +6,5 @@ export * from "./student-file/student-file.service";
 export * from "./cas-supplier/cas-evaluation-result-processor";
 export * from "./metrics/metrics.service";
 export * from "./metrics/metrics.models";
+export * from "./student-application-notification/student-application-notification.service";
+export * from "./student-application-notification/student-application-notification-processor";

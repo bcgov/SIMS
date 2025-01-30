@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { StudentPdPpdReminderNotification } from "../student-application-notifications/student-pd-ppd-reminder-notification";
-import { StudentSecondDisbursementReminderNotification } from "../student-application-notifications/student-second-disbursement-reminder-notification";
+import {
+  StudentPDPPDReminderNotification,
+  StudentSecondDisbursementReminderNotification,
+} from "./student-application-notification-processor";
 
 @Injectable()
 export class StudentApplicationNotificationService {
   constructor(
-    private readonly studentPdPpdReminderNotification: StudentPdPpdReminderNotification,
+    private readonly studentPdPpdReminderNotification: StudentPDPPDReminderNotification,
     private readonly studentSecondDisbursementReminderNotification: StudentSecondDisbursementReminderNotification,
   ) {}
 
@@ -21,6 +23,6 @@ export class StudentApplicationNotificationService {
       this.studentPdPpdReminderNotification,
       this.studentSecondDisbursementReminderNotification,
     ].map((notification) => notification.createNotification(processSummary));
-    await Promise.all(notifications);
+    await Promise.allSettled(notifications);
   }
 }

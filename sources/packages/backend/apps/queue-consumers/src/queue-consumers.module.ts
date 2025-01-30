@@ -70,6 +70,9 @@ import {
   CASActiveSupplierFoundProcessor,
   CASActiveSupplierAndSiteFoundProcessor,
   CASKnownErrorsProcessor,
+  StudentApplicationNotificationService,
+  StudentPDPPDReminderNotification,
+  StudentSecondDisbursementReminderNotification,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -82,9 +85,6 @@ import { CASService } from "@sims/integrations/cas/cas.service";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { BullBoardQueuesModule } from "./bull-board/bull-board-queues.module";
 import { QueuesMetricsModule } from "./queues-metrics.module.module";
-import { StudentApplicationNotificationService } from "./services/student-application-notifications/student-application-notifications.service";
-import { StudentSecondDisbursementReminderNotification } from "./services/student-application-notifications/student-second-disbursement-reminder-notification";
-import { StudentPdPpdReminderNotification } from "./services/student-application-notifications/student-pd-ppd-reminder-notification";
 
 // TODO: Removed ATBCResponseIntegrationScheduler in providers, the queuename from enum and the decorators of the processor as part of #2539.
 @Module({
@@ -170,7 +170,7 @@ import { StudentPdPpdReminderNotification } from "./services/student-application
     CASActiveSupplierAndSiteFoundProcessor,
     CASKnownErrorsProcessor,
     CASSupplierSharedService,
-    StudentPdPpdReminderNotification,
+    StudentPDPPDReminderNotification,
     StudentSecondDisbursementReminderNotification,
   ],
   controllers: [HealthController, MetricsController],

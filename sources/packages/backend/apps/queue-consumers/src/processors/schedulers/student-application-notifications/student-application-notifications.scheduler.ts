@@ -8,7 +8,7 @@ import {
   ProcessSummary,
 } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
-import { StudentApplicationNotificationService } from "../../../services/student-application-notifications/student-application-notifications.service";
+import { StudentApplicationNotificationService } from "../../../services";
 
 @Processor(QueueNames.StudentApplicationNotifications)
 export class StudentApplicationNotificationsScheduler extends BaseScheduler<void> {

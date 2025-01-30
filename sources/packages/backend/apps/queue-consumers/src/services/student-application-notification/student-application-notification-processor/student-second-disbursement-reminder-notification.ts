@@ -3,8 +3,8 @@ import {
   NotificationActionsService,
   StudentSecondDisbursementNotification,
 } from "@sims/services";
-import { ApplicationService } from "../../services";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { ApplicationService } from "../..";
 
 /**
  * Creates a student email notification - second disbursement date has passed and
@@ -18,12 +18,23 @@ export class StudentSecondDisbursementReminderNotification {
   ) {}
 
   /**
-   * Creates a student notification for the given second disbursement.
+   * Creates a student notification for the second disbursements for which the disbursement
+   * date has passed and the institution has not yet approved the second COE/disbursement.
    * @param processSummary process summary for logging.
    */
   async createNotification(processSummary: ProcessSummary): Promise<void> {
+    const notificationLog = new ProcessSummary();
+    processSummary.children(notificationLog);
+
     const eligibleDisbursements =
       await this.applicationService.getSecondDisbursementsStillPending();
+
+    if (!eligibleDisbursements.length) {
+      notificationLog.info(
+        "No disbursements found to generate second disbursement reminder notifications.",
+      );
+      return;
+    }
 
     const notifications =
       eligibleDisbursements.map<StudentSecondDisbursementNotification>(
@@ -40,16 +51,10 @@ export class StudentSecondDisbursementReminderNotification {
       notifications,
     );
 
-    if (eligibleDisbursements.length) {
-      processSummary.info(
-        `Second disbursements with pending status that generated notifications: ${eligibleDisbursements
-          .map((disbursement) => disbursement.assessmentId)
-          .join(", ")}`,
-      );
-    } else {
-      processSummary.info(
-        "No disbursements found to generate second disbursement reminder notifications.",
-      );
-    }
+    notificationLog.info(
+      `Second disbursements with pending status that generated notifications: ${eligibleDisbursements
+        .map((disbursement) => disbursement.assessmentId)
+        .join(", ")}`,
+    );
   }
 }

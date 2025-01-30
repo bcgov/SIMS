@@ -15,11 +15,7 @@ import {
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import {
-  addDays,
-  DISABILITY_NOTIFICATION_DAYS_LIMIT,
-  getISODateOnlyString,
-} from "@sims/utilities";
+import { addDays, DISABILITY_NOTIFICATION_DAYS_LIMIT } from "@sims/utilities";
 
 interface SecondDisbursementStillPending {
   assessmentId: number;
@@ -188,7 +184,7 @@ export class ApplicationService {
    * - No notification of this type (messageId 30) has been sent for this assessment
    * @returns An array of eligible applications with relevant details for notification.
    */
-  async getApplicationWithPDPPStatusMismatch(): Promise<Application[]> {
+  async getApplicationWithPDPPDStatusMismatch(): Promise<Application[]> {
     const disabilityNotificationDateLimit = addDays(
       DISABILITY_NOTIFICATION_DAYS_LIMIT,
     );
@@ -259,7 +255,7 @@ export class ApplicationService {
    * This method applies several criteria to filter eligible disbursements:
    * - There's a pending disbursement schedule
    * - Application status is completed
-   * - No notification of this type (messageId 30) has been sent for this assessment
+   * - No notification of this type has been sent for this assessment
    * - Disbursement date has passed today
    * @returns An array of eligible disbursements with relevant details for notification.
    */
@@ -275,34 +271,33 @@ export class ApplicationService {
         "notification.metadata->>'assessmentId' = assessment.id :: text",
       )
       .getQuery();
-    // Retrieves disbursements with disbursement date has passed today and notification
-    // has not been sent for completed applications.
-    const disbursements = await this.disbursementScheduleRepo
+    // Retrieves second disbursements as a subquery with disbursement date has
+    // passed today and notification has not been sent for completed applications.
+    const secondDisbursements = await this.disbursementScheduleRepo
       .createQueryBuilder("disbursement")
-      .select("COUNT(assessment.id)", "assessmentCount")
-      .addSelect("MAX(disbursement.id)", "disbursementId")
+      .select("MAX(disbursement.id)", "disbursementId")
+      .addSelect("COUNT(assessment.id)", "assessmentCount")
       .innerJoin("disbursement.studentAssessment", "assessment")
       .innerJoin("assessment.application", "application")
       .where(`NOT EXISTS (${notificationExistsQuery})`)
       .andWhere("application.applicationStatus = :applicationStatusCompleted")
-      .andWhere("disbursement.disbursementDate < :today")
+      .andWhere("application.isArchived = false")
+      .andWhere("disbursement.disbursementDate < CURRENT_DATE")
+      .andWhere("disbursement.coeStatus IN (:...coeStatus)")
       .groupBy("assessment.id")
+      .having("COUNT(assessment.id) = 2")
       .setParameters({
         messageId:
           NotificationMessageType.StudentSecondDisbursementNotification,
         applicationStatusCompleted: ApplicationStatus.Completed,
-        today: getISODateOnlyString(new Date()),
+        coeStatus: [COEStatus.completed, COEStatus.required],
       })
       .getRawMany();
-    // Filter out the second disbursements.
-    const secondDisbursements = disbursements.filter(
-      (disbursement) => disbursement.assessmentCount === "2",
-    );
-    if (secondDisbursements.length === 0) {
+    if (!secondDisbursements.length) {
       return [];
     }
     // Return second disbursements still pending.
-    return await this.disbursementScheduleRepo
+    return this.disbursementScheduleRepo
       .createQueryBuilder("disbursement")
       .select("assessment.id", "assessmentId")
       .addSelect("user.id", "userId")
@@ -313,16 +308,14 @@ export class ApplicationService {
       .innerJoin("assessment.application", "application")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .where("disbursement.id IN (:...disbursementIds)")
-      .andWhere("disbursement.coeStatus = :coeStatus")
+      .where("disbursement.id IN (:...secondDisbursements)")
       .andWhere(
         "disbursement.disbursementScheduleStatus = :disbursementScheduleStatusPending",
       )
       .setParameters({
-        disbursementIds: secondDisbursements.map(
+        secondDisbursements: secondDisbursements.map(
           (secondDisbursement) => secondDisbursement.disbursementId,
         ),
-        coeStatus: COEStatus.required,
         disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
       })
       .getRawMany();
