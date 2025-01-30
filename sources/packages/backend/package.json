@@ -31,7 +31,7 @@
     "test:e2e:workers:local": "cross-env ENVIRONMENT=test jest --collect-coverage --verbose --config ./apps/workers/test/jest-e2e.json --forceExit",
     "test:e2e:workflow": "npm run deploy:camunda:definitions && cross-env ENVIRONMENT=test jest --verbose --config ./workflow/test/jest-e2e.json --forceExit",
     "test:e2e:workflow:local": "cross-env ENVIRONMENT=test TZ=UTC jest --verbose --config ./workflow/test/jest-e2e.json --forceExit",
-    "test:e2e:queue-consumers": "npm run migration:run && cross-env ENVIRONMENT=test jest --collect-coverage --verbose --config ./apps/queue-consumers/test/jest-e2e.json --runInBand --forceExit",
+    "test:e2e:queue-consumers": "npm run db:seed:test filter=CreateCASDistributionAccounts && cross-env ENVIRONMENT=test jest --collect-coverage --verbose --config ./apps/queue-consumers/test/jest-e2e.json --runInBand --forceExit",
     "test:e2e:queue-consumers:local": "cross-env ENVIRONMENT=test TZ=UTC jest --verbose --config ./apps/queue-consumers/test/jest-e2e.json --runInBand --forceExit",
     "migration:run": "node --abort-on-uncaught-exception --require ts-node/register apps/db-migrations/src/main.ts",
     "migration:create": "cd apps/db-migrations/src/migrations && npx typeorm-ts-node-commonjs migration:create",
