@@ -70,11 +70,13 @@ export class CASInvoiceBatchService {
       invoiceBatch.approvalStatusUpdatedOn = now;
       invoiceBatch.approvalStatusUpdatedBy = this.systemUsersService.systemUser;
       invoiceBatch.creator = this.systemUsersService.systemUser;
+      invoiceBatch.createdAt = now;
+      invoiceBatch.updatedAt = now;
       // Save the invoice batch to allow the ID to be known and associate with every new
       // invoice created. It would allow the invoices to be saved in chunks.
       await entityManager.getRepository(CASInvoiceBatch).save(invoiceBatch);
       // Accumulates the invoices to be returned later.
-      const casInvoices: CASInvoice[] = [];
+      let casInvoices: CASInvoice[];
       // Get active distribution accounts to be associated with each invoice detail.
       const distributionAccounts = await this.getActiveDistributionAccounts(
         entityManager,
@@ -83,48 +85,15 @@ export class CASInvoiceBatchService {
         "CAS_INVOICE",
         entityManager,
         async (nextSequenceNumber: number) => {
-          let newInvoiceSequence = nextSequenceNumber;
-          const invoicesSummary = new ProcessSummary();
-          processSummary.children(invoicesSummary);
-          // Start processing the invoices for each pending receipt.
-          for (const receipt of pendingReceipts) {
-            invoicesSummary.info(
-              `Creating invoice for receipt ID ${receipt.id}.`,
-            );
-            const student =
-              receipt.disbursementSchedule.studentAssessment.application
-                .student;
-            const offeringIntensity =
-              receipt.disbursementSchedule.studentAssessment.offering
-                .offeringIntensity;
-            // Create a new invoice for the receipt.
-            const newInvoice = new CASInvoice();
-            newInvoice.casInvoiceBatch = invoiceBatch;
-            newInvoice.disbursementReceipt = receipt;
-            newInvoice.casSupplier = student.casSupplier;
-            newInvoice.invoiceNumber = `SIMS-INVOICE-${newInvoiceSequence++}-${
-              student.casSupplier.supplierNumber
-            }`;
-            newInvoice.invoiceStatus = CASInvoiceStatus.Pending;
-            newInvoice.invoiceStatusUpdatedOn = now;
-            newInvoice.creator = this.systemUsersService.systemUser;
-            // Create invoice details.
-            newInvoice.casInvoiceDetails = this.createInvoiceDetails(
-              receipt.disbursementSchedule.disbursementValues,
-              offeringIntensity,
-              distributionAccounts,
-            );
-            casInvoices.push(newInvoice);
-            invoicesSummary.info(
-              `Invoice ${newInvoice.invoiceNumber} created for receipt ID ${receipt.id}.`,
-            );
-            newInvoice.casInvoiceDetails.forEach((detail) => {
-              invoicesSummary.info(
-                `Created invoice detail for award ${detail.casDistributionAccount.awardValueCode}(${detail.casDistributionAccount.operationCode}).`,
-              );
-            });
-          }
-          return newInvoiceSequence;
+          casInvoices = this.createInvoices(
+            invoiceBatch.id,
+            pendingReceipts,
+            distributionAccounts,
+            nextSequenceNumber,
+            now,
+            processSummary,
+          );
+          return nextSequenceNumber + casInvoices.length;
         },
       );
       await entityManager.getRepository(CASInvoice).save(casInvoices, {
@@ -137,17 +106,83 @@ export class CASInvoiceBatchService {
   }
 
   /**
+   * Create a list of CAS invoices from a list of pending receipts, given their
+   * distribution accounts and a new sequence number.
+   * @param invoiceBatchID ID of the invoice batch to be associated with the new invoices.
+   * @param pendingReceipts list of pending receipts to be processed.
+   * @param distributionAccounts active distribution accounts to be filtered and then
+   * associated with each invoice detail.
+   * @param newInvoiceSequence the sequence number to be used as a starting point to create the invoices.
+   * @param referenceDate date to be used to as reference for created records.
+   * @param parentProcessSummary the parent process summary to log the process.
+   * @returns the list of new CAS invoices created.
+   */
+  private createInvoices(
+    invoiceBatchID: number,
+    pendingReceipts: DisbursementReceipt[],
+    distributionAccounts: CASDistributionAccount[],
+    newInvoiceSequence: number,
+    referenceDate: Date,
+    parentProcessSummary: ProcessSummary,
+  ): CASInvoice[] {
+    const casInvoices: CASInvoice[] = [];
+    const invoicesSummary = new ProcessSummary();
+    parentProcessSummary.children(invoicesSummary);
+    // Start processing the invoices for each pending receipt.
+    for (const receipt of pendingReceipts) {
+      invoicesSummary.info(`Creating invoice for receipt ID ${receipt.id}.`);
+      const student =
+        receipt.disbursementSchedule.studentAssessment.application.student;
+      const offeringIntensity =
+        receipt.disbursementSchedule.studentAssessment.offering
+          .offeringIntensity;
+      // Create a new invoice for the receipt.
+      const newInvoice = new CASInvoice();
+      newInvoice.casInvoiceBatch = { id: invoiceBatchID } as CASInvoiceBatch;
+      newInvoice.disbursementReceipt = receipt;
+      newInvoice.casSupplier = student.casSupplier;
+      newInvoice.invoiceNumber = `SIMS-INVOICE-${newInvoiceSequence++}-${
+        student.casSupplier.supplierNumber
+      }`;
+      newInvoice.invoiceStatus = CASInvoiceStatus.Pending;
+      newInvoice.invoiceStatusUpdatedOn = referenceDate;
+      newInvoice.creator = this.systemUsersService.systemUser;
+      newInvoice.createdAt = referenceDate;
+      newInvoice.updatedAt = referenceDate;
+      // Create invoice details.
+      newInvoice.casInvoiceDetails = this.createInvoiceDetails(
+        receipt.disbursementSchedule.disbursementValues,
+        offeringIntensity,
+        distributionAccounts,
+        referenceDate,
+      );
+      casInvoices.push(newInvoice);
+      invoicesSummary.info(
+        `Invoice ${newInvoice.invoiceNumber} created for receipt ID ${receipt.id}.`,
+      );
+      newInvoice.casInvoiceDetails.forEach((detail) => {
+        invoicesSummary.info(
+          `Created invoice detail for award ${detail.casDistributionAccount.awardValueCode}(${detail.casDistributionAccount.operationCode}).`,
+        );
+      });
+    }
+    return casInvoices;
+  }
+
+  /**
    * Creates invoice details to be associated with an invoice to be saved to the database.
    * @param disbursedAwards disbursed awards to be used for creating the invoice details.
    * @param offeringIntensity offering intensity used to filter the distribution accounts.
    * @param distributionAccounts list of all active distribution accounts to allow the creation of the
    * invoice details for each disbursed award.
+   * @param referenceDate date to be used to as reference for created records.
    * @returns invoice details to be associated with an invoice.
    */
   private createInvoiceDetails(
     disbursedAwards: Pick<DisbursementValue, "valueCode" | "effectiveAmount">[],
     offeringIntensity: string,
     distributionAccounts: CASDistributionAccount[],
+    referenceDate: Date,
   ): CASInvoiceDetail[] {
     // New invoice creation.
     const invoiceDetails: CASInvoiceDetail[] = [];
@@ -164,6 +199,8 @@ export class CASInvoiceBatchService {
         invoiceDetail.casDistributionAccount = account;
         invoiceDetail.valueAmount = disbursedAward.effectiveAmount;
         invoiceDetail.creator = this.systemUsersService.systemUser;
+        invoiceDetail.createdAt = referenceDate;
+        invoiceDetail.updatedAt = referenceDate;
         return invoiceDetail;
       });
       invoiceDetails.push(...awardInvoiceDetails);
