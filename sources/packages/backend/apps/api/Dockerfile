@@ -1,5 +1,5 @@
 # Base Image
-FROM artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/nodejs-18:1-81
+FROM artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi9/nodejs-22:9.5
 
 LABEL maintainer="BC GOV"
 

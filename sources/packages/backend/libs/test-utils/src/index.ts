@@ -38,3 +38,4 @@ export * from "./factories/application-restriction-bypass";
 export * from "./factories/cas-supplier";
 export * from "./factories/sfas-restriction-maps";
 export * from "./factories/restriction";
+export * from "./factories/cas-distribution-account";

@@ -4,6 +4,8 @@ import { CleanDatabase } from "./clean-db/clean-db";
 import { TestDbSeedingModule } from "./test-db-seeding.module";
 import { SeedExecutor } from "./seed-executors/seed-executor";
 import { ConfigService } from "@sims/utilities/config";
+import { SystemUsersService } from "@sims/services";
+import { LoggerService } from "@sims/utilities/logger";
 
 /**
  * Clean db command line identifier.
@@ -21,6 +23,7 @@ const TEST_DB_NAME = "_TESTS";
 
 (async () => {
   const app = await NestFactory.create(TestDbSeedingModule);
+  const logger = await app.resolve(LoggerService);
   // Config instance.
   const configService = app.get(ConfigService);
   // Checking for CLEAN_DB parameter.
@@ -29,8 +32,9 @@ const TEST_DB_NAME = "_TESTS";
     if (
       configService.database.databaseName?.toUpperCase().includes(TEST_DB_NAME)
     ) {
+      logger.log("Starting database cleaning process.");
       await app.get(CleanDatabase).cleanDatabase();
-      console.info("Database cleaned.");
+      logger.log("Database cleaned.");
     }
     await app.close();
     return;
@@ -54,6 +58,14 @@ const TEST_DB_NAME = "_TESTS";
     testClassList = process.argv[filterClassesIndex]
       .replace(FILTER_CLASSES, "")
       .split(",");
+  }
+
+  logger.log("Loading system user.");
+  const systemUsersService = app.get(SystemUsersService);
+  await systemUsersService.loadSystemUser();
+  logger.log("Executing seed services.");
+  if (testClassList) {
+    logger.log(`Using filtered classes: ${testClassList.join(", ")}`);
   }
   await app.get(SeedExecutor).executeSeed(testClassList);
   await app.close();

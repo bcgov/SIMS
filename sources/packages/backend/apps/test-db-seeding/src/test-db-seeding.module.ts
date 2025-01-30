@@ -14,12 +14,17 @@ import {
   UserTypeRoleHelperService,
 } from "./services";
 import { ConfigModule } from "@sims/utilities/config";
-import { CreateAESTUsers } from "./db-seeding/aest";
+import {
+  CreateAESTUsers,
+  CreateCASDistributionAccounts,
+} from "./db-seeding/aest";
 import { CreateStudentUsers } from "./db-seeding/student";
 import { CreateRestrictions } from "./db-seeding/restriction";
+import { SystemUserModule } from "@sims/services";
+import { LoggerModule } from "@sims/utilities/logger";
 
 @Module({
-  imports: [DatabaseModule, ConfigModule],
+  imports: [DatabaseModule, LoggerModule, SystemUserModule, ConfigModule],
   providers: [
     DesignationAgreementService,
     SeedExecutor,
@@ -33,6 +38,7 @@ import { CreateRestrictions } from "./db-seeding/restriction";
     CreateAESTUsers,
     CreateStudentUsers,
     CreateRestrictions,
+    CreateCASDistributionAccounts,
   ],
 })
 export class TestDbSeedingModule {}
