@@ -3,19 +3,20 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import { useActiveApplication } from "@/composables";
-import { ApplicationScholasticStandingStatus } from "@/types";
+import { useInvoiceBatch } from "@/composables";
+import { CASInvoiceBatchApprovalStatus } from "@/types";
+
 export default defineComponent({
   props: {
     status: {
-      type: String as PropType<ApplicationScholasticStandingStatus>,
+      type: String as PropType<CASInvoiceBatchApprovalStatus>,
       required: true,
     },
   },
   setup(props) {
-    const { mapActiveApplicationChipStatus } = useActiveApplication();
+    const { mapInvoiceBatchApprovalStatus } = useInvoiceBatch();
     const chipStatus = computed(() =>
-      mapActiveApplicationChipStatus(props.status),
+      mapInvoiceBatchApprovalStatus(props.status),
     );
     return { chipStatus };
   },

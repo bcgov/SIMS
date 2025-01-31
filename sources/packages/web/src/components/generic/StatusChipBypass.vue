@@ -5,10 +5,8 @@
 import { computed, defineComponent, PropType } from "vue";
 import { useRestrictionBypass } from "@/composables";
 import { BypassStatusChipLabelTypes } from "@/types";
-import ChipStatus from "@/components/generic/ChipStatus.vue";
 
 export default defineComponent({
-  components: { ChipStatus },
   props: {
     isBypassActive: {
       type: Boolean as PropType<boolean>,

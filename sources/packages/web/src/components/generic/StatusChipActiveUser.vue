@@ -3,11 +3,9 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-import ChipStatus from "@/components/generic/ChipStatus.vue";
 import { StatusChipTypes } from "@/types";
 
 export default defineComponent({
-  components: { ChipStatus },
   props: {
     isActive: {
       type: String,

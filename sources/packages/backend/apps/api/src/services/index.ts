@@ -51,3 +51,4 @@ export * from "./application-restriction-bypass/application-restriction-bypass.s
 export * from "./audit/audit.service";
 export * from "./audit/audit-event.enum";
 export * from "./application-restriction-bypass/application-restriction-bypass.models";
+export * from "./cas-invoice-batch/cas-invoice-batch.service";
