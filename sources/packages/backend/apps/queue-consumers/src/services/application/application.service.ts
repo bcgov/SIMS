@@ -299,6 +299,7 @@ export class ApplicationService {
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .where(`disbursement.id IN (${secondDisbursementsQuery})`)
+      .andWhere("disbursement.coeStatus = :coeStatusRequired")
       .andWhere(
         "disbursement.disbursementScheduleStatus = :disbursementScheduleStatusPending",
       )
@@ -307,6 +308,7 @@ export class ApplicationService {
           NotificationMessageType.StudentSecondDisbursementNotification,
         applicationStatusCompleted: ApplicationStatus.Completed,
         coeStatus: [COEStatus.completed, COEStatus.required],
+        coeStatusRequired: COEStatus.required,
         disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
       })
       .getRawMany();
