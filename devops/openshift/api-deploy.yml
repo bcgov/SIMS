@@ -502,11 +502,11 @@ parameters:
     value: camunda-oauth-url
     require: true
   - name: REDIS_SERVICE
-    value: redis
+    value: redis-cluster
   - name: REDIS_SECRET_NAME
-    value: redis-creds
+    value: redis-cluster
   - name: REDIS_PASSWORD_KEY
-    value: password
+    value: redis-password
   - name: QUEUE_PREFIX
     required: true
   - name: APPLICATION_ARCHIVE_DAYS

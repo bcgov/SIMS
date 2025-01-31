@@ -30,6 +30,7 @@ import {
   ApplicationChangesReportIntegrationScheduler,
   StudentApplicationNotificationsScheduler,
   SIMSToSFASIntegrationScheduler,
+  CASInvoicesBatchesCreationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -73,6 +74,7 @@ import {
   StudentApplicationNotificationService,
   StudentPDPPDReminderNotification,
   StudentSecondDisbursementReminderNotification,
+  CASInvoiceBatchService,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -172,6 +174,8 @@ import { QueuesMetricsModule } from "./queues-metrics.module.module";
     CASSupplierSharedService,
     StudentPDPPDReminderNotification,
     StudentSecondDisbursementReminderNotification,
+    CASInvoiceBatchService,
+    CASInvoicesBatchesCreationScheduler,
   ],
   controllers: [HealthController, MetricsController],
 })

@@ -64,6 +64,8 @@ import {
   CASInvoice,
   CASInvoiceDetail,
   CASDistributionAccount,
+  SFASApplicationDependant,
+  SFASApplicationDisbursement,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -200,6 +202,8 @@ export const DBEntities = [
   SFASPartTimeApplications,
   SFASRestriction,
   SFASRestrictionMap,
+  SFASApplicationDependant,
+  SFASApplicationDisbursement,
   SINValidation,
   StudentAccountApplication,
   StudentAppealRequest,
