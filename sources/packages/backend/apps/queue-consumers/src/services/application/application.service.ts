@@ -271,12 +271,11 @@ export class ApplicationService {
         "notification.metadata->>'assessmentId' = assessment.id :: text",
       )
       .getQuery();
-    // Retrieves second disbursements as a subquery with disbursement date has
+    // Sub query to retrieve second disbursements as a with disbursement date has
     // passed today and notification has not been sent for completed applications.
-    const secondDisbursements = await this.disbursementScheduleRepo
+    const secondDisbursementsQuery = this.disbursementScheduleRepo
       .createQueryBuilder("disbursement")
-      .select("MAX(disbursement.id)", "disbursementId")
-      .addSelect("COUNT(assessment.id)", "assessmentCount")
+      .select("MAX(disbursement.id)", "id")
       .innerJoin("disbursement.studentAssessment", "assessment")
       .innerJoin("assessment.application", "application")
       .where(`NOT EXISTS (${notificationExistsQuery})`)
@@ -286,16 +285,7 @@ export class ApplicationService {
       .andWhere("disbursement.coeStatus IN (:...coeStatus)")
       .groupBy("assessment.id")
       .having("COUNT(assessment.id) = 2")
-      .setParameters({
-        messageId:
-          NotificationMessageType.StudentSecondDisbursementNotification,
-        applicationStatusCompleted: ApplicationStatus.Completed,
-        coeStatus: [COEStatus.completed, COEStatus.required],
-      })
-      .getRawMany();
-    if (!secondDisbursements.length) {
-      return [];
-    }
+      .getQuery();
     // Return second disbursements still pending.
     return this.disbursementScheduleRepo
       .createQueryBuilder("disbursement")
@@ -308,14 +298,15 @@ export class ApplicationService {
       .innerJoin("assessment.application", "application")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .where("disbursement.id IN (:...secondDisbursements)")
+      .andWhere(`disbursement.id IN (${secondDisbursementsQuery})`)
       .andWhere(
         "disbursement.disbursementScheduleStatus = :disbursementScheduleStatusPending",
       )
       .setParameters({
-        secondDisbursements: secondDisbursements.map(
-          (secondDisbursement) => secondDisbursement.disbursementId,
-        ),
+        messageId:
+          NotificationMessageType.StudentSecondDisbursementNotification,
+        applicationStatusCompleted: ApplicationStatus.Completed,
+        coeStatus: [COEStatus.completed, COEStatus.required],
         disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
       })
       .getRawMany();
