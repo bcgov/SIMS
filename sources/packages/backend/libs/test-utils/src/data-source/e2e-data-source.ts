@@ -1,4 +1,3 @@
-import { SFASPartTimeApplicationRecord } from "@sims/integrations/sfas-integration/sfas-files/sfas-part-time-application-record";
 import {
   Application,
   ApplicationException,
@@ -132,9 +131,6 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
       SFASPartTimeApplications,
     ),
     sfasIndividual: dataSource.getRepository(SFASIndividual),
-    sfasPartTimeApplicationRecord: dataSource.getRepository(
-      SFASPartTimeApplicationRecord,
-    ),
     sfasRestriction: dataSource.getRepository(SFASRestriction),
     sfasRestrictionMap: dataSource.getRepository(SFASRestrictionMap),
     sfasApplicationDependant: dataSource.getRepository(
@@ -216,7 +212,6 @@ export interface E2EDataSources {
   sfasApplication: Repository<SFASApplication>;
   sfasIndividual: Repository<SFASIndividual>;
   sfasPartTimeApplications: Repository<SFASPartTimeApplications>;
-  sfasPartTimeApplicationRecord: Repository<SFASPartTimeApplicationRecord>;
   sfasRestriction: Repository<SFASRestriction>;
   sfasRestrictionMap: Repository<SFASRestrictionMap>;
   sfasApplicationDependant: Repository<SFASApplicationDependant>;

@@ -49,7 +49,7 @@ const SFAS_INDIVIDUAL_VALID_RECORD_OVERAWARD_FILENAME =
   "SFAS-TO-SIMS-VALID-INDIVIDUAL-RECORD-OVERAWARD.txt";
 const LEGACY_RESTRICTION_EMAIL = "dummy_legacy_email@some.domain";
 const DEPENDANT_AND_DISBURSEMENT_RECORDS_FILENAME =
-  "SFAS-TO-SIMS-DEPENDANT_AND_DISBURSEMENT-RECORDS.txt";
+  "SFAS-TO-SIMS-DEPENDANT_AND_DISBURSEMENT_ALL_VALUES-RECORDS.txt";
 
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
@@ -118,9 +118,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       },
       { dateSent: new Date() },
     );
-    db.sfasIndividual.delete({});
-    db.sfasApplicationDependant.delete({});
-    db.sfasApplicationDisbursement.delete({});
+    await deleteSFASData(db);
   });
 
   it("Should create missing legacy restrictions, import two student restrictions, and send a single notification when new mapped legacy restrictions are present in the file.", async () => {
@@ -632,7 +630,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Expect the file contains 3 records.
       expect(
         mockedJob.containLogMessages([
-          "File contains 3 records.",
+          "File contains 4 records.",
           "Updating student ids for SFAS individuals.",
           "Student ids updated.",
           "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
@@ -643,6 +641,19 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       ).toBe(true);
     },
   );
+
+  /**
+   * Delete all the legacy data for clean data execution.
+   * @param db data source.
+   */
+  async function deleteSFASData(db: E2EDataSources) {
+    await db.sfasIndividual.delete({});
+    await db.sfasApplication.delete({});
+    await db.sfasPartTimeApplications.delete({});
+    await db.sfasRestriction.delete({});
+    await db.sfasApplicationDependant.delete({});
+    await db.sfasApplicationDisbursement.delete({});
+  }
 
   /**
    * Gets the restriction by the restriction code and saves the student restriction.
