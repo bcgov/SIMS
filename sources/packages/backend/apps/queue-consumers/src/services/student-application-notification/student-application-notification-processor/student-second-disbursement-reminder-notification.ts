@@ -27,7 +27,7 @@ export class StudentSecondDisbursementReminderNotification {
     processSummary.children(notificationLog);
 
     const eligibleDisbursements =
-      await this.applicationService.getSecondDisbursementsStillPending();
+      await this.applicationService.getSecondDisbursementsCOEStillPending();
 
     if (!eligibleDisbursements.length) {
       notificationLog.info(

@@ -259,7 +259,7 @@ export class ApplicationService {
    * - Disbursement date has passed today
    * @returns An array of eligible disbursements with relevant details for notification.
    */
-  async getSecondDisbursementsStillPending(): Promise<
+  async getSecondDisbursementsCOEStillPending(): Promise<
     SecondDisbursementStillPending[]
   > {
     // Sub query to defined if a notification was already sent to the current assessment.
@@ -298,7 +298,7 @@ export class ApplicationService {
       .innerJoin("assessment.application", "application")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .andWhere(`disbursement.id IN (${secondDisbursementsQuery})`)
+      .where(`disbursement.id IN (${secondDisbursementsQuery})`)
       .andWhere(
         "disbursement.disbursementScheduleStatus = :disbursementScheduleStatusPending",
       )
