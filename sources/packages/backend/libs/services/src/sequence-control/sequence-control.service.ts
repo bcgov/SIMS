@@ -81,6 +81,8 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
    * consumed in case of failure.
    * @param entityManager existing entity manager, to use the transaction from the
    * called method.
+   * @returns the sequence number to be persisted in the database or, in the case of it
+   * was not changed, the next sequence number returned by the {@link process} will be persisted.
    */
   public async consumeNextSequenceWithExistingEntityManager(
     sequenceName: string,
@@ -88,7 +90,7 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
     process: (
       sequenceNumber: number,
       entityManager: EntityManager,
-    ) => Promise<void>,
+    ) => Promise<void | number>,
   ) {
     try {
       // Select and lock the specific record only.
@@ -124,10 +126,15 @@ export class SequenceControlService extends RecordDataModelService<SequenceContr
       );
       // Even the sequence number being represented as a bigint in Postgres here
       // we are assuming that the max value will not go beyond the number safe limit.
-      await process(nextSequenceNumber, entityManager);
-      // If the external process was successfully execute
-      // update the new sequence number to the database.
-      sequenceRecord.sequenceNumber = nextSequenceNumber.toString();
+      const result = await process(nextSequenceNumber, entityManager);
+      if (typeof result === "number") {
+        // If the external process returned a number, it will be used as the new sequence number.
+        sequenceRecord.sequenceNumber = result.toString();
+      } else {
+        // If the external process was successfully executed, update the new sequence number
+        // to the database, same returned by the process callback method.
+        sequenceRecord.sequenceNumber = nextSequenceNumber.toString();
+      }
       this.logger.log("Persisting new sequence number to database...");
       await entityManager.save(sequenceRecord);
     } catch (error) {
