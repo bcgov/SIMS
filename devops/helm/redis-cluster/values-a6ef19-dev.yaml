@@ -21,10 +21,10 @@ redis:
   resources:
     requests:
       cpu: 500m
-      memory: 512Mi
+      memory: 1024Mi
     limits:
       cpu: 500m
-      memory: 512Mi
+      memory: 1024Mi
 
   # resources: {}
 ## Cluster update job settings
@@ -35,9 +35,9 @@ updateJob:
   resources:
     requests:
       cpu: 500m
-      memory: 512Mi
+      memory: 1024Mi
     limits:
       cpu: 500m
-      memory: 512Mi
+      memory: 1024Mi
 
   # resources: {}

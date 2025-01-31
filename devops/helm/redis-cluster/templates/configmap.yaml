@@ -1396,7 +1396,7 @@ data:
     #
     # Please check https://redis.io/topics/persistence for more information.
 
-    appendonly no
+    appendonly yes
 
     # The base name of the append only file.
     #
