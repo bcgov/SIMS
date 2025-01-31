@@ -1,5 +1,5 @@
 import { INestApplication } from "@nestjs/common";
-import { QueueNames } from "@sims/utilities";
+import { addDays, getISODateOnlyString, QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -17,6 +17,7 @@ import {
 import {
   ApplicationStatus,
   AssessmentTriggerType,
+  COEStatus,
   DisabilityStatus,
   DisbursementScheduleStatus,
   NotificationMessage,
@@ -291,6 +292,131 @@ describe(
           },
         });
         expect(notificationExists).toBe(true);
+      },
+    );
+
+    it(
+      "Should generate a second disbursement reminder notification for a student when the " +
+        "application is Completed and the second disbursement with Required COE status " +
+        "is still pending when its disbursement date has passed.",
+      async () => {
+        // Arrange
+        const student = await saveFakeStudent(db.dataSource);
+        // Create an application with the second disbursement still pending with Required COE
+        // status and disbursement date has passed.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          { student },
+          {
+            applicationStatus: ApplicationStatus.Completed,
+            createSecondDisbursement: true,
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+              disbursementDate: getISODateOnlyString(addDays(-10)),
+            },
+            secondDisbursementInitialValues: {
+              coeStatus: COEStatus.required,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+              disbursementDate: getISODateOnlyString(addDays(-2)),
+            },
+          },
+        );
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            `Second disbursements with pending status that generated notifications: ${application.currentAssessment.id}`,
+          ]),
+        ).toBe(true);
+        const notification = await db.notification.findOne({
+          select: {
+            id: true,
+            messagePayload: true,
+          },
+          relations: { notificationMessage: true },
+          where: {
+            notificationMessage: {
+              id: NotificationMessageType.StudentSecondDisbursementNotification,
+            },
+            dateSent: IsNull(),
+            user: { id: student.user.id },
+          },
+        });
+        expect(notification).toBeDefined();
+        expect(notification.messagePayload).toStrictEqual({
+          email_address: application.student.user.email,
+          template_id: "55fcf228-b899-49a7-ab80-9b854c0bd884",
+          personalisation: {
+            lastName: application.student.user.lastName,
+            givenNames: application.student.user.firstName,
+          },
+        });
+      },
+    );
+
+    it(
+      "Should not generate a second disbursement reminder notification for a student " +
+        "when a notification is already sent for the second disbursement still pending.",
+      async () => {
+        // Arrange
+        const student = await saveFakeStudent(db.dataSource);
+        // Create an application with the second disbursement still pending with Required COE
+        // status and disbursement date has passed.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          { student },
+          {
+            applicationStatus: ApplicationStatus.Completed,
+            createSecondDisbursement: true,
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+              disbursementDate: getISODateOnlyString(addDays(-10)),
+            },
+            secondDisbursementInitialValues: {
+              coeStatus: COEStatus.required,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+              disbursementDate: getISODateOnlyString(addDays(-2)),
+            },
+          },
+        );
+        // Create a notification for assessment associated with the second disbursement.
+        const notification = createFakeNotification(
+          {
+            user: student.user,
+            notificationMessage: await db.notificationMessage.findOne({
+              where: {
+                id: NotificationMessageType.StudentSecondDisbursementNotification,
+              },
+            }),
+          },
+          {
+            initialValue: {
+              metadata: { assessmentId: application.currentAssessment.id },
+            },
+          },
+        );
+        await db.notification.save(notification);
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            "No disbursements found to generate second disbursement reminder notifications.",
+          ]),
+        ).toBe(true);
       },
     );
   },
