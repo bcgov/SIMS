@@ -11,7 +11,7 @@ export class CASInvoiceBatchService {
    */
   private static instance: CASInvoiceBatchService;
 
-  public static get shared(): CASInvoiceBatchService {
+  static get shared(): CASInvoiceBatchService {
     return this.instance || (this.instance = new this());
   }
 
