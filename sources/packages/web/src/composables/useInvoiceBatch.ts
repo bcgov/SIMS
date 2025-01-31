@@ -1,6 +1,6 @@
 import { CASInvoiceBatchApprovalStatus, StatusChipTypes } from "@/types";
 
-export function useInvoiceBatchApprovalStatus() {
+export function useInvoiceBatch() {
   const mapInvoiceBatchApprovalStatus = (
     status: CASInvoiceBatchApprovalStatus,
   ): StatusChipTypes => {

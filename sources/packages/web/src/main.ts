@@ -37,6 +37,7 @@ import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import StatusInfoLabel from "@/components/generic/StatusInfoLabel.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
+import ChipStatus from "@/components/generic/ChipStatus.vue";
 
 AppConfigService.shared.init().then(() => {
   createApp(App)
@@ -65,5 +66,6 @@ AppConfigService.shared.init().then(() => {
     .component("HeaderTitleValue", HeaderTitleValue)
     .component("ModalDialogBase", ModalDialogBase)
     .component("ErrorSummary", ErrorSummary)
+    .component("ChipStatus", ChipStatus)
     .mount("#app");
 });

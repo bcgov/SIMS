@@ -3,12 +3,10 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import ChipStatus from "@/components/generic/ChipStatus.vue";
-import { useInvoiceBatchApprovalStatus } from "@/composables";
+import { useInvoiceBatch } from "@/composables";
 import { CASInvoiceBatchApprovalStatus } from "@/types";
 
 export default defineComponent({
-  components: { ChipStatus },
   props: {
     status: {
       type: String as PropType<CASInvoiceBatchApprovalStatus>,
@@ -16,7 +14,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { mapInvoiceBatchApprovalStatus } = useInvoiceBatchApprovalStatus();
+    const { mapInvoiceBatchApprovalStatus } = useInvoiceBatch();
     const chipStatus = computed(() =>
       mapInvoiceBatchApprovalStatus(props.status),
     );

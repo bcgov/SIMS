@@ -3,12 +3,10 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import ChipStatus from "@/components/generic/ChipStatus.vue";
 import { useDesignationAgreement } from "@/composables";
 import { DesignationAgreementStatus } from "@/services/http/dto";
 
 export default defineComponent({
-  components: { ChipStatus },
   props: {
     status: {
       type: String as PropType<DesignationAgreementStatus>,

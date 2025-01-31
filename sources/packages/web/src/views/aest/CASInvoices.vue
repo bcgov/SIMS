@@ -35,7 +35,7 @@
                 color="primary"
                 :value="approvalStatus"
                 class="mr-2"
-                >Only {{ approvalStatus }}</v-btn
+                >{{ approvalStatus }}</v-btn
               >
             </v-btn-toggle>
           </template>
@@ -180,9 +180,6 @@ export default defineComponent({
       pageLimit: DEFAULT_PAGE_LIMIT,
       sortField: DEFAULT_SORT_FIELD,
       sortOrder: DataTableSortOrder.DESC,
-      searchCriteria: {
-        approvalStatusSearch: approvalStatusFilter.value.toString(),
-      },
     };
 
     onMounted(async () => {
@@ -237,6 +234,7 @@ export default defineComponent({
     };
 
     const filterByApprovalStatus = async () => {
+      debugger;
       if (approvalStatusFilter.value.includes(ApprovalStatusFilter.All)) {
         currentPagination.searchCriteria = undefined;
       } else {
