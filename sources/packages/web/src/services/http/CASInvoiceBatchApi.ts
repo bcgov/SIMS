@@ -12,7 +12,7 @@ import { getPaginationQueryString } from "@/helpers";
 export class CASInvoiceBatchApi extends HttpBaseClient {
   /**
    * Retrieves all CAS invoice batches.
-   * @param paginationOptions options for pagination.
+   * @param paginationOptions pagination options.
    * @returns list of all invoice batches.
    */
   async getInvoiceBatches(

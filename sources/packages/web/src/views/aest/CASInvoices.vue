@@ -46,7 +46,7 @@
           :toggled="!paginatedBatches.count && !invoiceBatchesLoading"
         >
           <v-data-table-server
-            :headers="CASInvoicesHeaders"
+            :headers="CASInvoicesBatchesHeaders"
             :items="paginatedBatches.results"
             :items-length="paginatedBatches.count"
             :items-per-page="DEFAULT_PAGE_LIMIT"
@@ -135,7 +135,7 @@ import {
 } from "@/services/http/dto";
 import {
   CASInvoiceBatchApprovalStatus,
-  CASInvoicesHeaders,
+  CASInvoicesBatchesHeaders,
   DataTableOptions,
   DataTableSortOrder,
   DEFAULT_PAGE_LIMIT,
@@ -149,7 +149,7 @@ import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 
 const DEFAULT_SORT_FIELD = "batchDate";
 const ApprovalStatusFilter = {
-  All: "All statuses",
+  All: "All",
   ...CASInvoiceBatchApprovalStatus,
 };
 
@@ -251,7 +251,7 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       Role,
-      CASInvoicesHeaders,
+      CASInvoicesBatchesHeaders,
       dateOnlyLongString,
       getISODateHourMinuteString,
       invoiceBatchesLoading,
