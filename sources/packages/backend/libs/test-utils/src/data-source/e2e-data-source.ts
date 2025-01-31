@@ -61,6 +61,8 @@ import {
   CASInvoice,
   CASInvoiceDetail,
   CASDistributionAccount,
+  SFASApplicationDependant,
+  SFASApplicationDisbursement,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -135,6 +137,12 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     ),
     sfasRestriction: dataSource.getRepository(SFASRestriction),
     sfasRestrictionMap: dataSource.getRepository(SFASRestrictionMap),
+    sfasApplicationDependant: dataSource.getRepository(
+      SFASApplicationDependant,
+    ),
+    sfasApplicationDisbursement: dataSource.getRepository(
+      SFASApplicationDisbursement,
+    ),
     sinValidation: dataSource.getRepository(SINValidation),
     student: dataSource.getRepository(Student),
     studentAccountApplication: dataSource.getRepository(
@@ -211,6 +219,8 @@ export interface E2EDataSources {
   sfasPartTimeApplicationRecord: Repository<SFASPartTimeApplicationRecord>;
   sfasRestriction: Repository<SFASRestriction>;
   sfasRestrictionMap: Repository<SFASRestrictionMap>;
+  sfasApplicationDependant: Repository<SFASApplicationDependant>;
+  sfasApplicationDisbursement: Repository<SFASApplicationDisbursement>;
   sinValidation: Repository<SINValidation>;
   student: Repository<Student>;
   studentAccountApplication: Repository<StudentAccountApplication>;

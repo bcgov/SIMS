@@ -48,6 +48,8 @@ const SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME =
 const SFAS_INDIVIDUAL_VALID_RECORD_OVERAWARD_FILENAME =
   "SFAS-TO-SIMS-VALID-INDIVIDUAL-RECORD-OVERAWARD.txt";
 const LEGACY_RESTRICTION_EMAIL = "dummy_legacy_email@some.domain";
+const DEPENDANT_AND_DISBURSEMENT_RECORDS_FILENAME =
+  "SFAS-TO-SIMS-DEPENDANT_AND_DISBURSEMENT-RECORDS.txt";
 
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
@@ -116,6 +118,9 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       },
       { dateSent: new Date() },
     );
+    db.sfasIndividual.delete({});
+    db.sfasApplicationDependant.delete({});
+    db.sfasApplicationDisbursement.delete({});
   });
 
   it("Should create missing legacy restrictions, import two student restrictions, and send a single notification when new mapped legacy restrictions are present in the file.", async () => {
@@ -604,6 +609,38 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           },
         ]),
       );
+    },
+  );
+
+  it(
+    "Should import SFAS application dependant and SFAS application disbursement records along with other SFAS records " +
+      "when the SFAS file has one or more dependant and disbursement records.",
+    async () => {
+      // Arrange
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+      mockDownloadFiles(sftpClientMock, [
+        DEPENDANT_AND_DISBURSEMENT_RECORDS_FILENAME,
+      ]);
+
+      // Act
+      await processor.processQueue(mockedJob.job);
+
+      // Assert
+      // Expect the file was archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
+      // Expect the file contains 3 records.
+      expect(
+        mockedJob.containLogMessages([
+          "File contains 3 records.",
+          "Updating student ids for SFAS individuals.",
+          "Student ids updated.",
+          "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+          "New disbursement overaward balances inserted to disbursement overawards table.",
+          "Inserting student restrictions from SFAS restrictions data.",
+          "Inserted student restrictions from SFAS restrictions data.",
+        ]),
+      ).toBe(true);
     },
   );
 
