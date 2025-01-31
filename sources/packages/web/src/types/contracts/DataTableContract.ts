@@ -425,16 +425,11 @@ export const ProgramHeaders = [
 export const CASInvoicesHeaders = [
   { title: "Batch Date", sortable: true, key: "batchDate" },
   { title: "Batch Name", sortable: false, key: "batchName" },
-  { title: "Status", sortable: false, key: "Approval Status" },
+  { title: "Approval Status", sortable: false, key: "approvalStatus" },
   {
     title: "Approval Status Audit",
     sortable: false,
-    key: "approvalStatusUpdatedOn",
-  },
-  {
-    title: "Status Updated By",
-    sortable: false,
-    key: "approvalStatusUpdatedBy",
+    key: "approvalStatusAudit",
   },
   {
     title: "Actions",

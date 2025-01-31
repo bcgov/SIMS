@@ -10,7 +10,7 @@ import {
 } from "class-validator";
 import { PAGINATION_SEARCH_MAX_LENGTH } from "../../constants";
 import { FieldSortOrder } from "@sims/utilities";
-import { ProgramStatus } from "@sims/sims-db";
+import { CASInvoiceBatchApprovalStatus, ProgramStatus } from "@sims/sims-db";
 import { Transform } from "class-transformer";
 import { ToBoolean } from "../../utilities/class-transform";
 
@@ -122,6 +122,11 @@ export class CASInvoiceBatchesPaginationOptionsAPIInDTO extends PaginationOption
   @IsOptional()
   @IsIn(["batchDate"])
   sortField?: string;
+  @IsOptional()
+  @IsArray()
+  @Transform(({ value }) => value.split(","))
+  @IsEnum(CASInvoiceBatchApprovalStatus, { each: true })
+  approvalStatusSearch?: CASInvoiceBatchApprovalStatus[];
 }
 
 /**

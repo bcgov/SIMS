@@ -10,7 +10,7 @@ import { getUserFullName } from "../../utilities";
 import {
   CASInvoiceBatchesPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
-} from "..";
+} from "../models/pagination.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
