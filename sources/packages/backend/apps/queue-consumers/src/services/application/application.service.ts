@@ -11,10 +11,19 @@ import {
   NotificationMessageType,
   Notification,
   DisbursementSchedule,
+  COEStatus,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { addDays, DISABILITY_NOTIFICATION_DAYS_LIMIT } from "@sims/utilities";
+
+interface SecondDisbursementStillPending {
+  assessmentId: number;
+  userId: number;
+  givenNames: string;
+  lastName: string;
+  email: string;
+}
 
 @Injectable()
 export class ApplicationService {
@@ -175,7 +184,7 @@ export class ApplicationService {
    * - No notification of this type (messageId 30) has been sent for this assessment
    * @returns An array of eligible applications with relevant details for notification.
    */
-  async getApplicationWithPDPPStatusMismatch(): Promise<Application[]> {
+  async getApplicationWithPDPPDStatusMismatch(): Promise<Application[]> {
     const disabilityNotificationDateLimit = addDays(
       DISABILITY_NOTIFICATION_DAYS_LIMIT,
     );
@@ -238,5 +247,70 @@ export class ApplicationService {
         disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
       })
       .getMany();
+  }
+
+  /**
+   * Retrieves second disbursements eligible for a specific notification (likely disbursement
+   * date has passed and the institution has not yet approved the second COE/disbursement).
+   * This method applies several criteria to filter eligible disbursements:
+   * - There's a pending disbursement schedule
+   * - Application status is completed
+   * - No notification of this type has been sent for this assessment
+   * - Disbursement date has passed today
+   * @returns An array of eligible disbursements with relevant details for notification.
+   */
+  async getSecondDisbursementsCOEStillPending(): Promise<
+    SecondDisbursementStillPending[]
+  > {
+    // Sub query to defined if a notification was already sent to the current assessment.
+    const notificationExistsQuery = this.notificationRepo
+      .createQueryBuilder("notification")
+      .select("1")
+      .where("notification.notificationMessage.id = :messageId")
+      .andWhere(
+        "notification.metadata->>'assessmentId' = assessment.id :: text",
+      )
+      .getQuery();
+    // Sub query to retrieve second disbursements as a with disbursement date has
+    // passed today and notification has not been sent for completed applications.
+    const secondDisbursementsQuery = this.disbursementScheduleRepo
+      .createQueryBuilder("disbursement")
+      .select("MAX(disbursement.id)", "id")
+      .innerJoin("disbursement.studentAssessment", "assessment")
+      .innerJoin("assessment.application", "application")
+      .where(`NOT EXISTS (${notificationExistsQuery})`)
+      .andWhere("application.applicationStatus = :applicationStatusCompleted")
+      .andWhere("application.isArchived = false")
+      .andWhere("disbursement.disbursementDate < CURRENT_DATE")
+      .andWhere("disbursement.coeStatus IN (:...coeStatus)")
+      .groupBy("assessment.id")
+      .having("COUNT(assessment.id) = 2")
+      .getQuery();
+    // Return second disbursements still pending.
+    return this.disbursementScheduleRepo
+      .createQueryBuilder("disbursement")
+      .select("assessment.id", "assessmentId")
+      .addSelect("user.id", "userId")
+      .addSelect("user.firstName", "givenNames")
+      .addSelect("user.lastName", "lastName")
+      .addSelect("user.email", "email")
+      .innerJoin("disbursement.studentAssessment", "assessment")
+      .innerJoin("assessment.application", "application")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where(`disbursement.id IN (${secondDisbursementsQuery})`)
+      .andWhere("disbursement.coeStatus = :coeStatusRequired")
+      .andWhere(
+        "disbursement.disbursementScheduleStatus = :disbursementScheduleStatusPending",
+      )
+      .setParameters({
+        messageId:
+          NotificationMessageType.StudentSecondDisbursementNotification,
+        applicationStatusCompleted: ApplicationStatus.Completed,
+        coeStatus: [COEStatus.completed, COEStatus.required],
+        coeStatusRequired: COEStatus.required,
+        disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
+      })
+      .getRawMany();
   }
 }
