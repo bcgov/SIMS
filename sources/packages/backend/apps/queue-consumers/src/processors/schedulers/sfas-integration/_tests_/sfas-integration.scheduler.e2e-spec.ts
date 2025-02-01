@@ -26,6 +26,10 @@ import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
 import {
   DisbursementOverawardOriginType,
   NotificationMessageType,
+  SFASApplication,
+  SFASApplicationDependant,
+  SFASApplicationDisbursement,
+  SFASIndividual,
   Student,
   StudentRestriction,
 } from "@sims/sims-db";
@@ -50,7 +54,8 @@ const SFAS_INDIVIDUAL_VALID_RECORD_OVERAWARD_FILENAME =
 const LEGACY_RESTRICTION_EMAIL = "dummy_legacy_email@some.domain";
 const DEPENDANT_AND_DISBURSEMENT_RECORDS_FILENAME =
   "SFAS-TO-SIMS-DEPENDANT_AND_DISBURSEMENT_ALL_VALUES-RECORDS.txt";
-
+const INVALID_RECORD_TYPE_FILENAME =
+  "SFAS-TO-SIMS-INVALID_RECORD_TYPE-RECORD.txt";
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
   let processor: SFASIntegrationScheduler;
@@ -627,10 +632,179 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Assert
       // Expect the file was archived on SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
-      // Expect the file contains 3 records.
+      // Expect the file contains 4 records.
       expect(
         mockedJob.containLogMessages([
           "File contains 4 records.",
+          "Updating student ids for SFAS individuals.",
+          "Student ids updated.",
+          "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+          "New disbursement overaward balances inserted to disbursement overawards table.",
+          "Inserting student restrictions from SFAS restrictions data.",
+          "Inserted student restrictions from SFAS restrictions data.",
+        ]),
+      ).toBe(true);
+      // Verify the SFAS Individual created.
+      const expectedSFASIndividual: Partial<SFASIndividual> = {
+        id: 94541,
+        firstName: "BENJAMIN",
+        lastName: "FRANKLIN",
+        birthDate: "1949-11-16",
+        sin: "108796293",
+        pdStatus: false,
+        msfaaNumber: "9876543211",
+        msfaaSignedDate: "2024-07-13",
+        neb: 50,
+        bcgg: 5000,
+        lfp: 11040,
+        pal: 11040,
+        cslOveraward: 11040,
+        bcslOveraward: 11040,
+        cmsOveraward: 11040,
+        grantOveraward: 11040,
+        withdrawals: 2,
+        unsuccessfulCompletion: 2,
+        partTimeMSFAANumber: "1234567890",
+        partTimeMSFAAEffectiveDate: "2024-12-31",
+      };
+      const sfasIndividual = await db.sfasIndividual.findOne({
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          birthDate: true,
+          sin: true,
+          pdStatus: true,
+          msfaaNumber: true,
+          msfaaSignedDate: true,
+          neb: true,
+          bcgg: true,
+          lfp: true,
+          pal: true,
+          cslOveraward: true,
+          bcslOveraward: true,
+          cmsOveraward: true,
+          grantOveraward: true,
+          withdrawals: true,
+          unsuccessfulCompletion: true,
+          partTimeMSFAANumber: true,
+          partTimeMSFAAEffectiveDate: true,
+        },
+        where: { id: expectedSFASIndividual.id },
+      });
+      expect(sfasIndividual).toEqual(expectedSFASIndividual);
+
+      // Verify the SFAS Application created.
+      const expectedSFASApplication: Partial<SFASApplication> = {
+        id: 14541,
+        individual: { id: 94541 } as SFASIndividual,
+        startDate: "2024-12-01",
+        endDate: "2025-02-28",
+        programYearId: 20242025,
+        bslAward: 2500,
+        cslAward: 2500,
+        bcagAward: 0,
+        bgpdAward: 0,
+        csfgAward: 1500,
+        csgtAward: 0,
+        csgdAward: 0,
+        csgpAward: 0,
+        sbsdAward: 0,
+      };
+      const sfasApplication = await db.sfasApplication.findOne({
+        select: {
+          id: true,
+          individual: { id: true },
+          startDate: true,
+          endDate: true,
+          programYearId: true,
+          bslAward: true,
+          cslAward: true,
+          bcagAward: true,
+          bgpdAward: true,
+          csfgAward: true,
+          csgtAward: true,
+          csgdAward: true,
+          csgpAward: true,
+          sbsdAward: true,
+        },
+        relations: { individual: true },
+        where: { id: expectedSFASApplication.id },
+      });
+      expect(sfasApplication).toEqual(expectedSFASApplication);
+
+      // Verify SFAS Application Dependant created.
+      const expectedSFASApplicationDependant: Partial<SFASApplicationDependant> =
+        {
+          id: 1112833838,
+          application: { id: 14541 } as SFASApplication,
+          dependantName: "JOHN SMITH",
+          dependantBirthDate: "1970-01-31",
+        };
+      const sfasApplicationDependant =
+        await db.sfasApplicationDependant.findOne({
+          select: {
+            id: true,
+            application: { id: true },
+            dependantName: true,
+            dependantBirthDate: true,
+          },
+          relations: { application: true },
+          where: { id: expectedSFASApplicationDependant.id },
+        });
+      expect(sfasApplicationDependant).toEqual(
+        expectedSFASApplicationDependant,
+      );
+
+      // Verify SFAS Application Disbursement created.
+      const expectedSFASApplicationDisbursement: Partial<SFASApplicationDisbursement> =
+        {
+          id: 1148372345,
+          application: { id: 14541 } as SFASApplication,
+          fundingType: "CSL",
+          fundingAmount: 300,
+          fundingDate: "2025-01-20",
+          dateIssued: "2025-01-30",
+        };
+      const sfasApplicationDisbursement =
+        await db.sfasApplicationDisbursement.findOne({
+          select: {
+            id: true,
+            application: { id: true },
+            fundingType: true,
+            fundingAmount: true,
+            fundingDate: true,
+            dateIssued: true,
+          },
+          relations: { application: true },
+          where: { id: expectedSFASApplicationDisbursement.id },
+        });
+      expect(sfasApplicationDisbursement).toEqual(
+        expectedSFASApplicationDisbursement,
+      );
+    },
+  );
+
+  it(
+    "Should log warning message and proceed to process the next record " +
+      "when the SFAS file has one or more records with an invalid record type.",
+    async () => {
+      // Arrange
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+      mockDownloadFiles(sftpClientMock, [INVALID_RECORD_TYPE_FILENAME]);
+
+      // Act
+      await processor.processQueue(mockedJob.job);
+
+      // Assert
+      // Expect the file was archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
+      // Expect the warning message logged for invalid record type.
+      expect(
+        mockedJob.containLogMessages([
+          "WARN: No data importer to process the record type 700 at line number 2.",
+          "File contains 2 records.",
           "Updating student ids for SFAS individuals.",
           "Student ids updated.",
           "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
