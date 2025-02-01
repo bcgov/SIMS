@@ -786,7 +786,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   );
 
   it(
-    "Should log warning message and proceed to process the next record " +
+    "Should log process summary warning and proceed to process the next record " +
       "when the SFAS file has one or more records with an invalid record type.",
     async () => {
       // Arrange
