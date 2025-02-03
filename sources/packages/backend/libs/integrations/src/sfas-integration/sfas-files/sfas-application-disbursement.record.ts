@@ -1,4 +1,4 @@
-import { parseDate } from "./sfas-parse-utils";
+import { parseDate, parseInteger } from "./sfas-parse-utils";
 import { SFASRecordIdentification } from "./sfas-record-identification";
 
 /**
@@ -12,26 +12,26 @@ export class SFASApplicationDisbursementRecord extends SFASRecordIdentification 
    * The unique key/number used in SFAS to identify this application (application.application_idx).
    */
   get applicationId(): number {
-    return +this.line.substring(3, 3 + 10);
+    return parseInteger(this.line.substring(3, 3 + 10));
   }
   /**
    * The unique key/number used in SFAS
    * to identify specific disbursement records (award_disbursement.award_disbursement_idx).
    */
   get disbursementId(): number {
-    return +this.line.substring(13, 13 + 10);
+    return parseInteger(this.line.substring(13, 13 + 10));
   }
   /**
    * Program code used by SFAS (award_disbursement.program_cde).
    */
-  get fundingType(): string | undefined {
+  get fundingType(): string {
     return this.line.substring(23, 23 + 4)?.trim();
   }
   /**
    * Amount of funding for this specific disbursement (award_disbursement.disbursement_amt).
    */
   get fundingAmount(): number {
-    return +this.line.substring(27, 27 + 10);
+    return parseInteger(this.line.substring(27, 27 + 10), 0);
   }
   /**
    * The earliest disbursement date (award_disbursement.disbursement_dte).

@@ -1,4 +1,4 @@
-import { parseDate } from "./sfas-parse-utils";
+import { parseDate, parseInteger } from "./sfas-parse-utils";
 import { SFASRecordIdentification } from "./sfas-record-identification";
 
 /**
@@ -12,18 +12,18 @@ export class SFASApplicationDependantRecord extends SFASRecordIdentification {
    * The unique key/number used in SFAS to identify this application (application.application_idx).
    */
   get applicationId(): number {
-    return +this.line.substring(3, 3 + 10);
+    return parseInteger(this.line.substring(3, 3 + 10));
   }
   /**
    * The unique key/number assigned to each dependant record (applicant_dependent.applicant_dependent_idx).
    */
   get dependantId(): number {
-    return +this.line.substring(13, 13 + 10);
+    return parseInteger(this.line.substring(13, 13 + 10));
   }
   /**
    * First and last name of the child (may include other names as well).
    */
-  get dependantName(): string | undefined {
+  get dependantName(): string {
     return this.line.substring(23, 23 + 25)?.trim();
   }
   /**
