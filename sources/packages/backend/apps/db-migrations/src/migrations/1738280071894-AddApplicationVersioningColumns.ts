@@ -12,7 +12,10 @@ export class AddApplicationVersioningColumns1738280071894
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Drop-application-versioning-columns.sql", "Applications"),
+      getSQLFileData(
+        "Drop-add-application-versioning-columns.sql",
+        "Applications",
+      ),
     );
   }
 }
