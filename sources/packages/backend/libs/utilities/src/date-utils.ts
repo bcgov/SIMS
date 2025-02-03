@@ -246,8 +246,10 @@ export function dateEqualTo(date: Date): FindOperator<Date> {
  * mainly used to append in filename.
  * @returns timestamp.
  */
-export function getFileNameAsCurrentTimestamp(): string {
-  return dayjs(new Date()).tz(PST_TIMEZONE).format(TIMESTAMP_CONTINUOUS_FORMAT);
+export function getFileNameAsCurrentTimestamp(date?: Date): string {
+  return dayjs(date ?? new Date())
+    .tz(PST_TIMEZONE)
+    .format(TIMESTAMP_CONTINUOUS_FORMAT);
 }
 
 /**
