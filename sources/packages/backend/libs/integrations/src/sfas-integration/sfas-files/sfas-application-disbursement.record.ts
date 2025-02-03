@@ -30,8 +30,8 @@ export class SFASApplicationDisbursementRecord extends SFASRecordIdentification 
   /**
    * Amount of funding for this specific disbursement (award_disbursement.disbursement_amt).
    */
-  get fundingAmount(): number {
-    return parseInteger(this.line.substring(27, 27 + 10), 0);
+  get fundingAmount(): number | null {
+    return parseInteger(this.line.substring(27, 27 + 10));
   }
   /**
    * The earliest disbursement date (award_disbursement.disbursement_dte).
