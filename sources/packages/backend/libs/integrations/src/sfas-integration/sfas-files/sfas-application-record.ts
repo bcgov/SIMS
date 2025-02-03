@@ -117,4 +117,12 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
   get applicationCancelDate(): Date | null {
     return parseDate(this.line.substring(137, 137 + 8));
   }
+
+  get applicationNumber(): number {
+    return +this.line.substring(145, 155);
+  }
+
+  get livingArrangements(): string {
+    return this.line.substring(155, 156);
+  }
 }
