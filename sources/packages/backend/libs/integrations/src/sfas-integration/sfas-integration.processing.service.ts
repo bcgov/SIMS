@@ -12,6 +12,8 @@ import {
   SFASIndividualImportService,
   SFASRestrictionImportService,
   SFASPartTimeApplicationsImportService,
+  SFASApplicationDependantImportService,
+  SFASApplicationDisbursementImportService,
 } from "../services/sfas";
 import { ConfigService } from "@sims/utilities/config";
 import { processInParallel } from "@sims/utilities";
@@ -27,6 +29,8 @@ export class SFASIntegrationProcessingService {
     private readonly sfasApplicationImportService: SFASApplicationImportService,
     private readonly sfasRestrictionImportService: SFASRestrictionImportService,
     private readonly sfasPartTimeApplicationsImportService: SFASPartTimeApplicationsImportService,
+    private readonly sfasApplicationDependantImportService: SFASApplicationDependantImportService,
+    private readonly sfasApplicationDisbursementImportService: SFASApplicationDisbursementImportService,
     config: ConfigService,
   ) {
     this.ftpReceiveFolder = config.sfasIntegration.ftpReceiveFolder;
@@ -78,7 +82,12 @@ export class SFASIntegrationProcessingService {
     processSummary.info(`Starting records import for file ${remoteFilePath}.`);
     // Execute the import of all files records.
     await processInParallel(
-      (record) => this.importRecord(record, downloadResult.header.creationDate),
+      (record) =>
+        this.importRecord(
+          record,
+          downloadResult.header.creationDate,
+          processSummary,
+        ),
       downloadResult.records,
       {
         progress: (currentRecord: number) => {
@@ -115,16 +124,21 @@ export class SFASIntegrationProcessingService {
    * Imports a single record from SFAS into the application.
    * @param record the record to be imported.
    * @param creationDate the date and time when the record was extracted from SFAS.
+   * @param processSummary process summary for logging.
    */
   private async importRecord(
     record: SFASRecordIdentification,
     creationDate: Date,
+    processSummary: ProcessSummary,
   ): Promise<void> {
-    const dataImporter = this.getSFASDataImporterFor(record.recordType);
+    const dataImporter = this.getSFASDataImporterByRecordType(
+      record.recordType,
+    );
     if (!dataImporter) {
-      const errorDescription = `No data importer to process line number ${record.lineNumber}.`;
-      this.logger.error(errorDescription);
-      throw new Error(errorDescription);
+      const warningDescription = `No data importer to process the record type ${record.recordType} at line number ${record.lineNumber}.`;
+      this.logger.warn(warningDescription);
+      processSummary.warn(warningDescription);
+      return;
     }
     try {
       return await dataImporter.importSFASRecord(record, creationDate);
@@ -190,25 +204,25 @@ export class SFASIntegrationProcessingService {
    * @returns object responsible to import the SFAS
    * data for the specific record type.
    */
-  private getSFASDataImporterFor(
+  private getSFASDataImporterByRecordType(
     recordTypeCode: RecordTypeCodes,
-  ): SFASDataImporter {
-    let dataImporter: SFASDataImporter = undefined;
+  ): SFASDataImporter | null {
     switch (recordTypeCode) {
       case RecordTypeCodes.IndividualDataRecord:
-        dataImporter = this.sfasIndividualImportService;
-        break;
+        return this.sfasIndividualImportService;
       case RecordTypeCodes.ApplicationDataRecord:
-        dataImporter = this.sfasApplicationImportService;
-        break;
+        return this.sfasApplicationImportService;
       case RecordTypeCodes.RestrictionDataRecord:
-        dataImporter = this.sfasRestrictionImportService;
-        break;
+        return this.sfasRestrictionImportService;
       case RecordTypeCodes.PartTimeApplicationDataRecord:
-        dataImporter = this.sfasPartTimeApplicationsImportService;
-        break;
+        return this.sfasPartTimeApplicationsImportService;
+      case RecordTypeCodes.SFASApplicationDependantRecord:
+        return this.sfasApplicationDependantImportService;
+      case RecordTypeCodes.SFASApplicationDisbursementRecord:
+        return this.sfasApplicationDisbursementImportService;
+      default:
+        return null;
     }
-    return dataImporter;
   }
 
   @InjectLogger()
