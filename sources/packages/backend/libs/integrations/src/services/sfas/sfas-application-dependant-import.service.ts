@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { SFASApplication, SFASApplicationDependant } from "@sims/sims-db";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { getISODateOnlyString } from "@sims/utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -49,7 +48,4 @@ export class SFASApplicationDependantImportService implements SFASDataImporter {
       transaction: false,
     });
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

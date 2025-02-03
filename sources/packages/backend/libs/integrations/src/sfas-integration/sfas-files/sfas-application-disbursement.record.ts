@@ -11,14 +11,14 @@ export class SFASApplicationDisbursementRecord extends SFASRecordIdentification 
   /**
    * The unique key/number used in SFAS to identify this application (application.application_idx).
    */
-  get applicationId(): number {
+  get applicationId(): number | null {
     return parseInteger(this.line.substring(3, 3 + 10));
   }
   /**
    * The unique key/number used in SFAS
    * to identify specific disbursement records (award_disbursement.award_disbursement_idx).
    */
-  get disbursementId(): number {
+  get disbursementId(): number | null {
     return parseInteger(this.line.substring(13, 13 + 10));
   }
   /**
