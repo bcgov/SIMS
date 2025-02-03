@@ -821,12 +821,14 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
    * @param db data source.
    */
   async function deleteSFASData(db: E2EDataSources) {
-    await db.sfasIndividual.delete({});
-    await db.sfasApplication.delete({});
-    await db.sfasPartTimeApplications.delete({});
-    await db.sfasRestriction.delete({});
-    await db.sfasApplicationDependant.delete({});
-    await db.sfasApplicationDisbursement.delete({});
+    await Promise.all([
+      db.sfasIndividual.delete({}),
+      db.sfasApplication.delete({}),
+      db.sfasPartTimeApplications.delete({}),
+      db.sfasRestriction.delete({}),
+      db.sfasApplicationDependant.delete({}),
+      db.sfasApplicationDisbursement.delete({}),
+    ]);
   }
 
   /**
