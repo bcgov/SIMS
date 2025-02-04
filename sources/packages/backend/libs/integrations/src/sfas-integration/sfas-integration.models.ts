@@ -7,6 +7,8 @@ export enum RecordTypeCodes {
   ApplicationDataRecord = "300",
   PartTimeApplicationDataRecord = "301",
   RestrictionDataRecord = "400",
+  SFASApplicationDependantRecord = "302",
+  SFASApplicationDisbursementRecord = "303",
 }
 
 export class DownloadResult {

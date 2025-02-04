@@ -7,6 +7,8 @@ import {
   SFASRestrictionImportService,
   SFASPartTimeApplicationsImportService,
   SIMSToSFASService,
+  SFASApplicationDependantImportService,
+  SFASApplicationDisbursementImportService,
 } from "../services/sfas";
 import { SFASIntegrationService } from "./sfas-integration.service";
 import {
@@ -28,6 +30,8 @@ import {
     SIMSToSFASService,
     SIMSToSFASIntegrationService,
     SIMSToSFASProcessingService,
+    SFASApplicationDependantImportService,
+    SFASApplicationDisbursementImportService,
   ],
   exports: [
     SFASIntegrationService,
