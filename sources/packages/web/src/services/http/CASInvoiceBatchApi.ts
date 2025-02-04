@@ -30,7 +30,7 @@ export class CASInvoiceBatchApi extends HttpBaseClient {
    * Batch invoices report with information to be reviewed by the Ministry
    * to support the batch approval and allow invoices to be sent to CAS.
    * @param casInvoiceBatchId batch ID to have the report generated for.
-   * @returns file contents
+   * @returns file contents.
    */
   async getInvoiceBatchesReport(
     casInvoiceBatchId: number,

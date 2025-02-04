@@ -207,7 +207,7 @@ export default defineComponent({
     const downloadBatch = async (batch: CASInvoiceBatchModel) => {
       try {
         batch.downloadInProgress = true;
-        snackBar.success("Batch report generation started.");
+        snackBar.success(`Batch ${batch.batchName} report generation started.`);
         await CASInvoiceBatchService.shared.downloadCASInvoiceBatchesReport(
           batch.id,
         );

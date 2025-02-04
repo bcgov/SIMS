@@ -3,8 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CASInvoice, CASInvoiceBatch } from "@sims/sims-db";
 import { Repository } from "typeorm";
 import { unparse } from "papaparse";
-import { getPSTPDTDateTime } from "@sims/utilities";
+import { CustomNamedError, getPSTPDTDateTime } from "@sims/utilities";
 import { CASInvoiceBatchReport } from "./cas-invoice-batch.models";
+import { CAS_INVOICE_BATCH_NOT_FOUND } from "../../constants";
 
 @Injectable()
 export class CASInvoiceBatchReportService {
@@ -28,6 +29,12 @@ export class CASInvoiceBatchReportService {
     const reportData = await this.getCASInvoiceBatchesReportData(
       invoiceBatchId,
     );
+    if (!reportData) {
+      throw new CustomNamedError(
+        `CAS invoice batch with ID ${invoiceBatchId} not found.`,
+        CAS_INVOICE_BATCH_NOT_FOUND,
+      );
+    }
     const report = reportData.casInvoices.flatMap((invoice) => {
       // Rows for a single invoice.
       // One row per award will be generated.

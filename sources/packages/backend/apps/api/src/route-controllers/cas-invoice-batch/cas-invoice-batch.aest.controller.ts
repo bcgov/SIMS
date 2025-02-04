@@ -1,12 +1,13 @@
 import {
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Query,
   Res,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties, Role, UserGroups } from "../../auth";
 import { AllowAuthorizedParty, Groups, Roles } from "../../auth/decorators";
 import BaseController from "../BaseController";
@@ -21,7 +22,10 @@ import {
   CASInvoiceBatchesPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import { getFileNameAsCurrentTimestamp } from "@sims/utilities";
+import {
+  CustomNamedError,
+  getFileNameAsCurrentTimestamp,
+} from "@sims/utilities";
 import { Response } from "express";
 import { streamFile } from "../utils";
 
@@ -71,18 +75,29 @@ export class CASInvoiceBatchAESTController extends BaseController {
    * @returns list of all invoice batches.
    */
   @Get(":casInvoiceBatchId/report")
+  @ApiNotFoundResponse({ description: "CAS invoice batch not found." })
   async getInvoiceBatchesReport(
     @Param("casInvoiceBatchId", ParseIntPipe) casInvoiceBatchId: number,
     @Res() response: Response,
   ): Promise<void> {
-    const invoiceReport =
-      await this.casInvoiceBatchReportService.getCASInvoiceBatchesReport(
-        casInvoiceBatchId,
-      );
-    const batchDate = getFileNameAsCurrentTimestamp(invoiceReport.batchDate);
-    const filename = `${invoiceReport.batchName}_${batchDate}.csv`;
-    streamFile(response, filename, {
-      fileContent: invoiceReport.reportCSVContent,
-    });
+    try {
+      const invoiceReport =
+        await this.casInvoiceBatchReportService.getCASInvoiceBatchesReport(
+          casInvoiceBatchId,
+        );
+      const batchDate = getFileNameAsCurrentTimestamp(invoiceReport.batchDate);
+      const filename = `${invoiceReport.batchName}_${batchDate}.csv`;
+      streamFile(response, filename, {
+        fileContent: invoiceReport.reportCSVContent,
+      });
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === "CAS_INVOICE_BATCH_NOT_FOUND"
+      ) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
   }
 }
