@@ -28,6 +28,7 @@ import {
 } from "@sims/utilities";
 import { Response } from "express";
 import { streamFile } from "../utils";
+import { CAS_INVOICE_BATCH_NOT_FOUND } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Roles(Role.AESTCASInvoicing)
@@ -93,7 +94,7 @@ export class CASInvoiceBatchAESTController extends BaseController {
     } catch (error: unknown) {
       if (
         error instanceof CustomNamedError &&
-        error.name === "CAS_INVOICE_BATCH_NOT_FOUND"
+        error.name === CAS_INVOICE_BATCH_NOT_FOUND
       ) {
         throw new NotFoundException(error.message);
       }
