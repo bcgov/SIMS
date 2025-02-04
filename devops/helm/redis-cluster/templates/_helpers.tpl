@@ -167,7 +167,7 @@ Return Redis&reg; password
 {{- else if not (empty .Values.password) -}}
     {{- .Values.password -}}
 {{- else -}}
-    {{- randAlphaNum 10 -}}
+    {{- randAlphaNum 32 -}}
 {{- end -}}
 {{- end -}}
 
