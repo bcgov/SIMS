@@ -37,3 +37,17 @@ export function parseDecimal(decimalString: string): number | null {
   // Divide by 100 to convert to 2 decimal places.
   return +decimalString / 100;
 }
+
+/**
+ * Parse a number from a string with default value.
+ * @param value number string.
+ * @param defaultValue default value.
+ * @returns converted number.
+ */
+export function parseInteger(
+  value: string,
+  defaultValue: 0 | null = null,
+): number | null {
+  const numberValue = parseInt(value, 10);
+  return Number.isFinite(numberValue) ? numberValue : defaultValue;
+}

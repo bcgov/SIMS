@@ -418,3 +418,22 @@ export const ProgramHeaders = [
   { title: "Status", sortable: true, key: "programStatus" },
   { title: "Action", sortable: false, key: "action" },
 ];
+
+/**
+ * CAS invoices batches headers.
+ */
+export const CASInvoicesBatchesHeaders = [
+  { title: "Batch Date", sortable: true, key: "batchDate" },
+  { title: "Batch Name", sortable: false, key: "batchName" },
+  { title: "Approval Status", sortable: false, key: "approvalStatus" },
+  {
+    title: "Approval Status Audit",
+    sortable: false,
+    key: "approvalStatusAudit",
+  },
+  {
+    title: "Actions",
+    sortable: false,
+    key: "actions",
+  },
+];

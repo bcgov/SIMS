@@ -195,3 +195,11 @@ export interface StudentPDPPDNotification {
   email: string;
   applicationNumber: string;
 }
+
+export interface StudentSecondDisbursementNotification {
+  userId: number;
+  assessmentId: number;
+  givenNames: string;
+  lastName: string;
+  email: string;
+}

@@ -71,6 +71,9 @@ import {
   CASActiveSupplierFoundProcessor,
   CASActiveSupplierAndSiteFoundProcessor,
   CASKnownErrorsProcessor,
+  StudentApplicationNotificationService,
+  StudentPDPPDReminderNotification,
+  StudentSecondDisbursementReminderNotification,
   CASInvoiceBatchService,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
@@ -159,6 +162,7 @@ import { QueuesMetricsModule } from "./queues-metrics.module.module";
     CASSupplierIntegrationScheduler,
     CASSupplierIntegrationService,
     CASService,
+    StudentApplicationNotificationService,
     ApplicationChangesReportIntegrationScheduler,
     StudentApplicationNotificationsScheduler,
     SIMSToSFASIntegrationScheduler,
@@ -168,6 +172,8 @@ import { QueuesMetricsModule } from "./queues-metrics.module.module";
     CASActiveSupplierAndSiteFoundProcessor,
     CASKnownErrorsProcessor,
     CASSupplierSharedService,
+    StudentPDPPDReminderNotification,
+    StudentSecondDisbursementReminderNotification,
     CASInvoiceBatchService,
     CASInvoicesBatchesCreationScheduler,
   ],

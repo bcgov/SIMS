@@ -3,13 +3,11 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import ChipStatus from "@/components/generic/ChipStatus.vue";
 import { useProgram } from "@/composables";
 import { ProgramStatus } from "@/types";
 import { INACTIVE_PROGRAM } from "@/constants";
 
 export default defineComponent({
-  components: { ChipStatus },
   props: {
     status: {
       type: String as PropType<ProgramStatus>,
