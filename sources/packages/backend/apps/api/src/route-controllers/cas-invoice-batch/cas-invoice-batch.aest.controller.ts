@@ -11,10 +11,7 @@ import { AuthorizedParties, Role, UserGroups } from "../../auth";
 import { AllowAuthorizedParty, Groups, Roles } from "../../auth/decorators";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
-import {
-  CASInvoiceBatchReportService,
-  CASInvoiceBatchService,
-} from "../../services";
+import { CASInvoiceBatchService } from "../../services";
 import { CASInvoiceBatchAPIOutDTO } from "./models/cas-invoice-batch.dto";
 import { getUserFullName } from "../../utilities";
 import {
@@ -31,10 +28,7 @@ import { streamFile } from "../utils";
 @Controller("cas-invoice-batch")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-cas-invoice-batch`)
 export class CASInvoiceBatchAESTController extends BaseController {
-  constructor(
-    private readonly casInvoiceBatchService: CASInvoiceBatchService,
-    private readonly casInvoiceBatchReportService: CASInvoiceBatchReportService,
-  ) {
+  constructor(private readonly casInvoiceBatchService: CASInvoiceBatchService) {
     super();
   }
 
@@ -76,7 +70,7 @@ export class CASInvoiceBatchAESTController extends BaseController {
     @Res() response: Response,
   ): Promise<void> {
     const invoiceReport =
-      await this.casInvoiceBatchReportService.getCASInvoiceBatchesReport(
+      await this.casInvoiceBatchService.getCASInvoiceBatchesReport(
         casInvoiceBatchId,
       );
     const batchDate = getFileNameAsCurrentTimestamp(invoiceReport.batchDate);
