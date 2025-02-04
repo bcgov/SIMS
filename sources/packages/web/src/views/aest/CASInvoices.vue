@@ -68,8 +68,7 @@
               {{ dateOnlyLongString(item.approvalStatusUpdatedOn) }}
             </template>
             <template #[`item.actions`]="{ item }">
-              <!-- TODO: change role -->
-              <check-permission-role :role="Role.AESTEditCASSupplierInfo">
+              <check-permission-role :role="Role.AESTCASInvoicing">
                 <template #="{ notAllowed }">
                   <v-btn
                     :disabled="notAllowed || !!item.downloadInProgress"
