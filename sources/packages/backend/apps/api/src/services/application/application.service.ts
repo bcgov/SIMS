@@ -456,10 +456,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     const savedDraftApplication = await this.repo.save(draftApplication);
     await this.repo.update(
-      { id: savedDraftApplication.id, parentApplication: { id: null } },
+      { id: savedDraftApplication.id },
       {
-        precedingApplication: { id: applicationId } as Application,
-        parentApplication: { id: applicationId } as Application,
+        precedingApplication: { id: savedDraftApplication.id } as Application,
+        parentApplication: { id: savedDraftApplication.id } as Application,
       },
     );
     return savedDraftApplication;
@@ -789,6 +789,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .select([
         "application",
+        "parentApplication.id",
+        "precedingApplication.id",
         "programYear.id",
         "programYear.programYearPrefix",
         "studentFiles",
@@ -797,6 +799,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "currentAssessment.assessmentWorkflowId",
       ])
       .innerJoin("application.programYear", "programYear")
+      .innerJoin("application.parentApplication", "parentApplication")
+      .innerJoin("application.precedingApplication", "precedingApplication")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("application.studentFiles", "studentFiles")
       .leftJoin("studentFiles.studentFile", "studentFile")
