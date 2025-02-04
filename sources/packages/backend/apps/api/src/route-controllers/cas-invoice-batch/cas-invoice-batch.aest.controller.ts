@@ -73,7 +73,7 @@ export class CASInvoiceBatchAESTController extends BaseController {
    * Batch invoices report with information to be reviewed by the Ministry
    * to support the batch approval and allow invoices to be sent to CAS.
    * @param casInvoiceBatchId batch ID to have the report generated for.
-   * @returns list of all invoice batches.
+   * @returns list of all invoices in the batch.
    */
   @Get(":casInvoiceBatchId/report")
   @ApiNotFoundResponse({ description: "CAS invoice batch not found." })

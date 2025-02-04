@@ -21,7 +21,8 @@ export class CASInvoiceBatchReportService {
    * This report is meant to represent a snapshot of the batch data that
    * will be later submitted to CAS.
    * @param invoiceBatchId ID of the CAS invoice batch to generate the report for.
-   * @returns a CSV formatted string containing the report data for the specified invoice batch.
+   * @returns an object containing batch data and a CSV formatted string
+   * data for the specified invoice batch.
    */
   async getCASInvoiceBatchesReport(
     invoiceBatchId: number,
