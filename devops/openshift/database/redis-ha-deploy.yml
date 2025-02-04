@@ -1,0 +1,222 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  annotations:
+    description: Redis in Cluster mode, with persistent storage.
+    tags: redis
+  name: ${NAME}
+labels:
+  app: ${NAME}
+  template: ${NAME}
+objects:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: ${NAME}
+      labels:
+        app: ${NAME}
+    data:
+      update-ip.sh: |
+        #!/bin/sh
+        CLUSTER_CONFIG="/data/nodes.conf"
+        if [ -f $CLUSTER_CONFIG ]; then
+          if [ -z "$POD_IP" ]; then
+            echo "Unable to determine Pod IP address!"
+            exit 1
+          fi
+          echo "Updating my IP to $POD_IP in $CLUSTER_CONFIG"
+          sed -i.bak -e "/myself/ s/[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/$POD_IP/" ${CLUSTER_CONFIG}
+        fi
+        exec "$@"
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: ${NAME}
+    spec:
+      ports:
+        - name: client
+          port: ${{REDIS_PORT}}
+          targetPort: ${{REDIS_PORT}}
+        - name: gossip
+          port: ${{REDIS_BUS_PORT}}
+          targetPort: ${{REDIS_BUS_PORT}}
+      selector:
+        app: ${NAME}
+  - apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+      name: ${NAME}
+      labels:
+        app: ${NAME}
+        app.kubernetes.io/part-of: "shared_database"
+    spec:
+      replicas: ${{REPLICAS}}
+      revisionHistoryLimit: 10
+      selector:
+        matchLabels:
+          app: ${NAME}
+      serviceName: ${NAME}
+      template:
+        metadata:
+          labels:
+            app: ${NAME}
+        spec:
+          imagePullSecrets:
+            - name: artifactory-creds
+          containers:
+            - name: ${NAME}
+              image: ${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+              imagePullPolicy: IfNotPresent
+              command:
+                - /script/update-ip.sh
+                - redis-server
+                - /conf/redis.conf
+              env:
+                - name: POD_IP
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: status.podIP
+                - name: REDISCLI_AUTH
+                  valueFrom:
+                    secretKeyRef:
+                      key: password
+                      name: ${NAME}-creds
+              lifecycle:
+                preStop:
+                  exec:
+                    command:
+                      - /bin/sh
+                      - -c
+                      - redis-cli -h $HOSTNAME shutdown save
+              livenessProbe:
+                exec:
+                  command:
+                    - /bin/sh
+                    - -c
+                    - test "$(redis-cli -h $HOSTNAME ping)" == "PONG"
+                initialDelaySeconds: 10
+                timeoutSeconds: 1
+                failureThreshold: 3
+              ports:
+                - containerPort: ${{REDIS_PORT}}
+                  name: client
+                - containerPort: ${{REDIS_BUS_PORT}}
+                  name: gossip
+              readinessProbe:
+                exec:
+                  command:
+                    - /bin/sh
+                    - -c
+                    - test "$(redis-cli -h $HOSTNAME ping)" == "PONG"
+                initialDelaySeconds: 15
+                timeoutSeconds: 1
+                failureThreshold: 3
+              resources:
+                requests:
+                  cpu: ${CPU_REQUEST}
+                  memory: ${MEMORY_REQUEST}
+                limits:
+                  cpu: ${CPU_LIMIT}
+                  memory: ${MEMORY_LIMIT}
+              volumeMounts:
+                - name: conf
+                  mountPath: /conf
+                  readOnly: false
+                - name: data
+                  mountPath: /data
+                  readOnly: false
+                - name: script
+                  mountPath: /script
+                  readOnly: false
+          volumes:
+            - name: conf
+              secret:
+                secretName: ${NAME}-creds
+            - name: script
+              configMap:
+                name: ${NAME}
+                defaultMode: 0755
+      volumeClaimTemplates:
+        - metadata:
+            name: data
+            labels:
+              app: ${NAME}
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: ${PVC_SIZE}
+            storageClassName: ${STORAGE_CLASS}
+  - apiVersion: policy/v1
+    kind: PodDisruptionBudget
+    metadata:
+      name: ${NAME}-pdb
+    spec:
+      selector:
+        matchLabels:
+          app: ${NAME}
+      maxUnavailable: 2
+parameters:
+  - name: NAME
+    description: The name of the application for labelling all artifacts.
+    displayName: Application Name
+    required: true
+    value: redis
+  - name: REPLICAS
+    description: The number of StatefulSet replicas to use.
+    displayName: Replicas
+    required: true
+    value: "6"
+  - name: IMAGE_REGISTRY
+    description: The base docker registry
+    displayName: Docker Image Registry
+    required: true
+  - name: IMAGE_NAME
+    description: Redis Image Name
+    displayName: Image Name
+    required: true
+  - name: IMAGE_TAG
+    description: Redis Image Tag
+    displayName: Image Tag
+    required: true
+  - name: CPU_REQUEST
+    description: Starting amount of CPU the container can use.
+    displayName: CPU Request
+    required: true
+    value: 25m
+  - name: CPU_LIMIT
+    description: Maximum amount of CPU the container can use.
+    displayName: CPU Limit
+    required: true
+    value: 100m
+  - name: MEMORY_REQUEST
+    description: Starting amount of memory the container can use.
+    displayName: Memory Request
+    required: true
+    value: 256Mi
+  - name: MEMORY_LIMIT
+    description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    required: true
+    value: 256Mi
+  - name: PVC_SIZE
+    description: The size of the persistent volume to create.
+    displayName: Persistent Volume Size
+    required: true
+    value: 1Gi
+  - name: STORAGE_CLASS
+    description: The type of the persistent volume to create.
+    displayName: Persistent Volume Class
+    required: true
+    value: netapp-file-standard
+  - name: REDIS_PORT
+    description: Redis port.
+    displayName: Redis client port.
+    required: true
+    value: "6379"
+  - name: REDIS_BUS_PORT
+    description: Redis cluster bus port.
+    displayName: Redis cluster bus port used for node to node communication.
+    required: true
+    value: "16379"
