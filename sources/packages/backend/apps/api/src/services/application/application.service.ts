@@ -263,6 +263,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
     newApplication.programYear = application.programYear;
     newApplication.data = applicationData;
     newApplication.applicationStatus = ApplicationStatus.Submitted;
+    newApplication.parentApplication = {
+      id: application.parentApplication.id,
+    } as Application;
+    newApplication.precedingApplication = {
+      id: application.id,
+    } as Application;
     newApplication.applicationStatusUpdatedOn = now;
     newApplication.student = { id: application.studentId } as Student;
     newApplication.studentFiles = await this.getSyncedApplicationFiles(
@@ -448,7 +454,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
       associatedFiles,
     );
 
-    return this.repo.save(draftApplication);
+    const savedDraftApplication = await this.repo.save(draftApplication);
+    await this.repo.update(
+      { id: savedDraftApplication.id, parentApplication: { id: null } },
+      {
+        precedingApplication: { id: applicationId } as Application,
+        parentApplication: { id: applicationId } as Application,
+      },
+    );
+    return savedDraftApplication;
   }
 
   /**

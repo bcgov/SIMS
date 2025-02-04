@@ -12,15 +12,6 @@ ADD
 
 COMMENT ON COLUMN sims.applications.preceding_application_id IS 'The immediate previous application from which the current application was created.';
 
--- Set parent-application-id and preceding-application-id for existing draft applications.
-UPDATE
-  sims.applications
-SET
-  parent_application_id = id,
-  preceding_application_id = id
-WHERE
-  application_number IS NULL;
-
 -- Set parent-application-id for non-draft applications.
 UPDATE
   sims.applications
@@ -62,14 +53,16 @@ SET
 WHERE
   application_number IS NOT NULL;
 
--- Update parent-application-id and preceding-application-id columns to not null.
+-- Add constraints to ensure parent-application-id and preceding-application-id are not null for non-draft and non-cancelled applications.
 ALTER TABLE
   sims.applications
-ALTER COLUMN
-  parent_application_id
-SET
-  NOT NULL,
-ALTER COLUMN
-  preceding_application_id
-SET
-  NOT NULL;
+ADD
+  CONSTRAINT parent_application_id_contraint CHECK(
+    parent_application_id IS NOT NULL
+    OR application_status IN ('Draft', 'Cancelled')
+  ),
+ADD
+  CONSTRAINT preceding_application_id_contraint CHECK(
+    preceding_application_id IS NOT NULL
+    OR application_status IN ('Draft', 'Cancelled')
+  );
