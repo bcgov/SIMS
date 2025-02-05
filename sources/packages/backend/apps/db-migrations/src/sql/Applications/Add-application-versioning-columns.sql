@@ -12,7 +12,7 @@ ADD
 
 COMMENT ON COLUMN sims.applications.preceding_application_id IS 'The immediate previous application from which the current application was created.';
 
--- Set parent-application-id for non-draft applications.
+-- Set parent-application-id and preceding-application-id for non-draft applications when application number is present.
 UPDATE
   sims.applications
 SET
@@ -27,15 +27,7 @@ SET
       applications.submitted_date
     LIMIT
       1
-  )
-WHERE
-  application_number IS NOT NULL;
-
--- Set preceding-application-id for non-draft applications.
-UPDATE
-  sims.applications
-SET
-  preceding_application_id = COALESCE(
+  ), preceding_application_id = COALESCE(
     (
       SELECT
         id
@@ -53,16 +45,28 @@ SET
 WHERE
   application_number IS NOT NULL;
 
+UPDATE
+  sims.applications
+SET
+  parent_application_id = sims.applications.id,
+  preceding_application_id = sims.applications.id
+WHERE
+  application_number IS NULL;
+
 -- Add constraints to ensure parent-application-id and preceding-application-id are not null for non-draft and non-cancelled applications.
 ALTER TABLE
   sims.applications
 ADD
-  CONSTRAINT parent_application_id_contraint CHECK(
+  CONSTRAINT parent_application_id_constraint CHECK(
     parent_application_id IS NOT NULL
-    OR application_status IN ('Draft', 'Cancelled')
+    OR application_status IN ('Draft')
   ),
 ADD
-  CONSTRAINT preceding_application_id_contraint CHECK(
+  CONSTRAINT preceding_application_id_constraint CHECK(
     preceding_application_id IS NOT NULL
-    OR application_status IN ('Draft', 'Cancelled')
+    OR application_status IN ('Draft')
   );
+
+COMMENT ON CONSTRAINT parent_application_id_constraint ON sims.applications IS 'The parent application must be non-null for non-draft applications.';
+
+COMMENT ON CONSTRAINT preceding_application_id_constraint ON sims.applications IS 'The preceding application must be non-null for non-draft applications.';

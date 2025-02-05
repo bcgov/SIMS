@@ -434,7 +434,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const now = new Date();
     // If there is no draft application, create one
     // and initialize the necessary data.
-    if (!draftApplication) {
+    const isNewDraftApplication = !draftApplication;
+    if (isNewDraftApplication) {
       draftApplication = new Application();
       draftApplication.student = { id: studentId } as Student;
       draftApplication.programYear = { id: programYearId } as ProgramYear;
@@ -455,13 +456,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
     );
 
     const savedDraftApplication = await this.repo.save(draftApplication);
-    await this.repo.update(
-      { id: savedDraftApplication.id },
-      {
-        precedingApplication: { id: savedDraftApplication.id } as Application,
-        parentApplication: { id: savedDraftApplication.id } as Application,
-      },
-    );
+    // Update application version properties for new draft application.
+    if (isNewDraftApplication) {
+      await this.repo.update(
+        { id: savedDraftApplication.id },
+        {
+          precedingApplication: { id: savedDraftApplication.id } as Application,
+          parentApplication: { id: savedDraftApplication.id } as Application,
+        },
+      );
+    }
     return savedDraftApplication;
   }
 
@@ -799,8 +803,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "currentAssessment.assessmentWorkflowId",
       ])
       .innerJoin("application.programYear", "programYear")
-      .innerJoin("application.parentApplication", "parentApplication")
-      .innerJoin("application.precedingApplication", "precedingApplication")
+      .leftJoin("application.parentApplication", "parentApplication")
+      .leftJoin("application.precedingApplication", "precedingApplication")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("application.studentFiles", "studentFiles")
       .leftJoin("studentFiles.studentFile", "studentFile")
