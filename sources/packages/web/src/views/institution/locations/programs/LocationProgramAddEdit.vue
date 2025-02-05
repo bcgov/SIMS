@@ -35,6 +35,7 @@
           primaryLabel="Submit"
           @primaryClick="submit"
           @secondaryClick="goBack"
+          :disablePrimaryButton="isReadOnlyUser($props.locationId)"
         /> </template
     ></formio-container>
   </full-page-container>
@@ -49,7 +50,7 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { ref, computed, defineComponent, isReadonly, onMounted } from "vue";
 import { ApiProcessError, ClientIdType, FormIOForm } from "@/types";
-import { useFormioUtils, useSnackBar } from "@/composables";
+import { useFormioUtils, useInstitutionAuth, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/types/contracts/Banner";
 import {
@@ -74,6 +75,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { isReadOnlyUser } = useInstitutionAuth();
     const processing = ref(false);
     const snackBar = useSnackBar();
     const { excludeExtraneousValues } = useFormioUtils();
@@ -233,6 +235,7 @@ export default defineComponent({
     };
 
     return {
+      isReadOnlyUser,
       programData,
       submitted,
       isReadonly,

@@ -1,6 +1,7 @@
 import {
   InstitutionUserAuthRolesAndLocation,
   InstitutionUserRoles,
+  InstitutionUserTypes,
 } from "@/types";
 import { computed } from "vue";
 import { Store, useStore } from "vuex";
@@ -53,6 +54,15 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
     () => store.state.institution.institutionState?.isBCPublic,
   );
 
+  const isReadOnlyUser = (locationId?: number) => {
+    if (!locationId) return true;
+    return store.state.institution.authorizationsState?.authorizations.some(
+      (auth: InstitutionUserAuthRolesAndLocation) =>
+        auth.locationId?.toString() === locationId.toString() &&
+        auth.userType === InstitutionUserTypes.readOnlyUser,
+    );
+  };
+
   return {
     isAdmin,
     isAuthenticated,
@@ -65,5 +75,6 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
     hasLocationAccess,
     userType,
     isBCPublic,
+    isReadOnlyUser,
   };
 }

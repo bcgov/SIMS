@@ -12,8 +12,11 @@
       />
       <v-divider-vertical-opaque class="mx-2 my-0" />
       <header-title-value title="Institution name"
-        ><template #value
-          ><span class="link-primary" @click="goToInstitutionProfile()">
+        ><template #value>
+          <span v-if="isReadOnlyUser($props.locationId)">
+            {{ headerDetails.institutionName }}
+          </span>
+          <span v-else class="link-primary" @click="goToInstitutionProfile()">
             {{ headerDetails.institutionName }}
           </span>
         </template></header-title-value
@@ -73,7 +76,7 @@ import {
   ProgramOfferingApprovalLabels,
 } from "@/types";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
-import { useFormatters } from "@/composables";
+import { useFormatters, useInstitutionAuth } from "@/composables";
 import { computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
@@ -90,10 +93,15 @@ export default defineComponent({
       required: true,
       default: {} as ProgramOfferingHeader,
     },
+    locationId: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
+    const { isReadOnlyUser } = useInstitutionAuth();
     const showApprovalDetails = computed(
       () =>
         props.headerDetails.assessedBy &&
@@ -146,6 +154,7 @@ export default defineComponent({
       dateOnlyLongString,
       approvalLabel,
       showApprovalDetails,
+      isReadOnlyUser,
     };
   },
 });

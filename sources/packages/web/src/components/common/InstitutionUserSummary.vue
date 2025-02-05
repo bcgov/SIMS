@@ -30,6 +30,10 @@
                 this role.</tooltip-icon
               >
             </li>
+            <li>
+              Read-only role is any user type who is restricted to read-only
+              capabilities.
+            </li>
           </ul>
         </template>
 

@@ -67,6 +67,7 @@
         primaryLabel="Submit requested change"
         @primaryClick="submit"
         @secondaryClick="cancel"
+        :disablePrimaryButton="isReadOnlyUser($props.locationId)"
       />
     </request-a-change-form>
   </full-page-container>
@@ -86,7 +87,12 @@ import { ApplicationOfferingChangeRequestService } from "@/services/ApplicationO
 import { ApiProcessError, VForm } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { useRules, useSnackBar, useFormatters } from "@/composables";
+import {
+  useRules,
+  useSnackBar,
+  useFormatters,
+  useInstitutionAuth,
+} from "@/composables";
 import { BannerTypes } from "@/types/contracts/Banner";
 import {
   OFFERING_INTENSITY_MISMATCH,
@@ -109,6 +115,7 @@ export default defineComponent({
     const router = useRouter();
     const snackBar = useSnackBar();
     const { checkNullOrEmptyRule, checkLengthRule } = useRules();
+    const { isReadOnlyUser } = useInstitutionAuth();
     const processing = ref(false);
     // Readonly data.
     let application: ApplicationOfferingChangeSummaryDetailAPIOutDTO;
@@ -255,6 +262,7 @@ export default defineComponent({
       offeringOnChange,
       BannerTypes,
       isPastOfferingEndDate,
+      isReadOnlyUser,
     };
   },
 });

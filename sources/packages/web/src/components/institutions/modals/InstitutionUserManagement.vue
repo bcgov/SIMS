@@ -73,6 +73,11 @@
             data-cy="userAccess"
           >
             <v-radio label="User" value="user" color="primary"></v-radio>
+            <v-radio
+              label="Read-only"
+              value="read-only-user"
+              color="primary"
+            ></v-radio>
             <v-radio label="No access" value="none" color="primary"></v-radio>
           </v-radio-group>
         </v-col>

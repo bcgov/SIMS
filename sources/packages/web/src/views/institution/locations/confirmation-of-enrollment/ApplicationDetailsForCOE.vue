@@ -30,7 +30,11 @@
               color="primary"
             >
               <template v-for="(item, index) in items" :key="index">
-                <v-list-item :value="index" @click="item.command">
+                <v-list-item
+                  :value="index"
+                  @click="item.command"
+                  :disabled="isReadOnlyUser($props.locationId)"
+                >
                   <v-list-item-title>
                     <span class="label-bold">{{ item.label }}</span>
                   </v-list-item-title>
@@ -78,6 +82,7 @@ import {
   BannerTypes,
   COEApprovalPeriodStatus,
 } from "@/types";
+import { useInstitutionAuth } from "@/composables/institution/useInstitutionAuth";
 import { useSnackBar, ModalDialog, useCOE, useFormatters } from "@/composables";
 import {
   FIRST_COE_NOT_COMPLETE,
@@ -116,6 +121,7 @@ export default defineComponent({
       disabilityStatusToDisplay,
       applicationDisabilityStatusToDisplay,
     } = useFormatters();
+    const { isReadOnlyUser } = useInstitutionAuth();
     const router = useRouter();
     const snackBar = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
@@ -253,6 +259,7 @@ export default defineComponent({
     });
 
     return {
+      isReadOnlyUser,
       initialData,
       items,
       COEStatus,

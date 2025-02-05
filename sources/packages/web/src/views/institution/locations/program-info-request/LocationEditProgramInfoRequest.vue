@@ -21,6 +21,7 @@
           primaryLabel="Complete program info request"
           @primaryClick="submit"
           @secondaryClick="goBack"
+          :disablePrimaryButton="isReadOnlyUser($props.locationId)"
         /> </template
     ></formio-container>
   </full-page-container>
@@ -37,6 +38,7 @@ import {
   useSnackBar,
   useProgramInfoRequest,
   useFormioComponentLoader,
+  useInstitutionAuth,
 } from "@/composables";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
@@ -71,6 +73,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
+    const { isReadOnlyUser } = useInstitutionAuth();
     const initialData = ref({} as ProgramInfoRequestAPIOutDTO);
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
@@ -296,6 +299,7 @@ export default defineComponent({
       processing,
       goBackRouteParams,
       goBack,
+      isReadOnlyUser,
     };
   },
 });

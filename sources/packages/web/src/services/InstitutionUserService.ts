@@ -133,7 +133,8 @@ export class InstitutionUserService {
       permissions = locationAuthorizations
         .filter(
           (locationAccess) =>
-            locationAccess.userAccess === LocationUserAccess.User,
+            locationAccess.userAccess === LocationUserAccess.User ||
+            locationAccess.userAccess === LocationUserAccess.ReadOnlyUser,
         )
         .map(
           (locationAccess) =>
