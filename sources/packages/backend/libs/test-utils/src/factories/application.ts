@@ -42,6 +42,8 @@ export function createFakeApplication(
     currentStudentAssessment?: StudentAssessment;
     applicationException?: ApplicationException;
     location?: InstitutionLocation;
+    precedingApplication?: Application;
+    parentApplication?: Application;
   },
   options?: { initialValue?: Partial<Application> },
 ): Application {
@@ -54,7 +56,7 @@ export function createFakeApplication(
   application.applicationStatusUpdatedOn =
     options?.initialValue?.applicationStatusUpdatedOn ?? new Date();
   application.applicationStatus =
-    options?.initialValue?.applicationStatus ?? ApplicationStatus.Submitted;
+    options?.initialValue?.applicationStatus ?? ApplicationStatus.Draft;
   application.relationshipStatus =
     options?.initialValue?.relationshipStatus ?? RelationshipStatus.Single;
   application.currentAssessment = relations?.currentStudentAssessment;
@@ -68,6 +70,8 @@ export function createFakeApplication(
   application.pirStatus = options?.initialValue?.pirStatus;
   application.isArchived = options?.initialValue?.isArchived;
   application.submittedDate = options?.initialValue?.submittedDate;
+  application.precedingApplication = relations?.precedingApplication;
+  application.parentApplication = relations?.parentApplication;
   return application;
 }
 
@@ -258,6 +262,9 @@ export async function saveFakeApplication(
     program?: EducationProgram;
     offering?: EducationProgramOffering;
     programYear?: ProgramYear;
+    applicationException?: ApplicationException;
+    precedingApplication?: Application;
+    parentApplication?: Application;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
@@ -294,6 +301,9 @@ export async function saveFakeApplication(
       student: savedStudent,
       location: relations?.institutionLocation,
       programYear: relations?.programYear,
+      applicationException: relations?.applicationException,
+      precedingApplication: relations?.precedingApplication,
+      parentApplication: relations?.parentApplication,
     },
     {
       initialValue: {
@@ -305,8 +315,18 @@ export async function saveFakeApplication(
       },
     },
   );
-  fakeApplication.applicationStatus = applicationStatus;
+  // Perform the first save with default factory status(Draft).
   const savedApplication = await applicationRepo.save(fakeApplication);
+  // Update application status.
+  savedApplication.applicationStatus = applicationStatus;
+  // Save versioning properties.
+  savedApplication.precedingApplication =
+    relations?.precedingApplication ??
+    ({ id: savedApplication.id } as Application);
+  savedApplication.parentApplication =
+    relations?.parentApplication ??
+    ({ id: savedApplication.id } as Application);
+
   // Offering.
   let savedOffering = relations?.offering;
   if (!savedOffering) {
@@ -351,6 +371,5 @@ export async function saveFakeApplication(
   } else {
     savedApplication.location = null;
   }
-
   return applicationRepo.save(savedApplication);
 }

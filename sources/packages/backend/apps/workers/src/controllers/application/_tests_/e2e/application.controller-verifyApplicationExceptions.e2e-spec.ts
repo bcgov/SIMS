@@ -2,7 +2,6 @@ import { APPLICATION_NOT_FOUND } from "@sims/services/constants";
 import { ApplicationData, ApplicationExceptionStatus } from "@sims/sims-db";
 import {
   createE2EDataSources,
-  createFakeApplication,
   createFakeApplicationException,
   E2EDataSources,
   saveFakeApplication,
@@ -80,8 +79,7 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
 
   it("Should not create any application exception when there is no application exception in application data.", async () => {
     // Arrange
-    const fakeApplication = createFakeApplication();
-    const savedApplication = await db.application.save(fakeApplication);
+    const savedApplication = await saveFakeApplication(db.dataSource);
     const verifyApplicationExceptionsPayload =
       createFakeVerifyApplicationExceptionsPayload(savedApplication.id);
 
@@ -134,7 +132,7 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
 
   it("Should not create an application exception when there is already one for the application.", async () => {
     // Arrange
-    const fakeApplication = createFakeApplication();
+    const fakeApplication = await saveFakeApplication(db.dataSource);
     fakeApplication.data = {
       workflowName: "",
       test: {

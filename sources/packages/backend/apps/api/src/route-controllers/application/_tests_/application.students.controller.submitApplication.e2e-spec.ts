@@ -13,7 +13,6 @@ import {
   createE2EDataSources,
   E2EDataSources,
   saveFakeApplication,
-  createFakeApplication,
   getProviderInstanceForModule,
   createFakeEducationProgramOffering,
   createFakeUser,
@@ -21,14 +20,13 @@ import {
   saveFakeSFASIndividual,
 } from "@sims/test-utils";
 import {
-  Application,
+  ApplicationData,
   ApplicationStatus,
   EducationProgramOffering,
   OfferingIntensity,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { SaveApplicationAPIInDTO } from "../models/application.dto";
-import { SystemUsersService } from "@sims/services";
 import { FormNames, FormService } from "../../../services";
 import { AppStudentsModule } from "../../../app.students.module";
 import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
@@ -39,7 +37,6 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let appModule: TestingModule;
   let appDataSource: DataSource;
   let db: E2EDataSources;
-  let systemUsersService: SystemUsersService;
   let formService: FormService;
 
   beforeAll(async () => {
@@ -49,7 +46,6 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     appModule = module;
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
-    systemUsersService = nestApplication.get(SystemUsersService);
     // Program Year for the following tests.
     formService = await getProviderInstanceForModule(
       appModule,
@@ -88,27 +84,20 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       studyEndDate: getISODateOnlyString(addDays(20)),
       offeringIntensity: OfferingIntensity.partTime,
     };
-    const secondApplication = createFakeApplication(
+    const secondDraftApplication = await saveFakeApplication(
+      db.dataSource,
+      { student },
       {
-        student,
-      },
-      {
-        initialValue: {
-          data: {},
-          applicationStatus: ApplicationStatus.Draft,
-          applicationStatusUpdatedOn: new Date(),
-          creator: systemUsersService.systemUser,
-          createdAt: new Date(),
-        } as Application,
+        applicationData: {} as ApplicationData,
+        applicationStatus: ApplicationStatus.Draft,
       },
     );
-    const secondDraftApplication = await db.application.save(secondApplication);
     const auditUser = await db.user.save(createFakeUser());
     const secondApplicationOffering = await db.educationProgramOffering.save(
       createFakeEducationProgramOffering(
         {
           auditUser,
-          institutionLocation: secondApplication.location,
+          institutionLocation: secondDraftApplication.location,
         },
         {
           initialValues: secondApplicationOfferingInitialValues,
@@ -129,7 +118,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const payload = {
       associatedFiles: [],
       data: applicationData,
-      programYearId: secondApplication.programYear.id,
+      programYearId: secondDraftApplication.programYear.id,
     } as SaveApplicationAPIInDTO;
     const endpoint = `/students/application/${secondDraftApplication.id}/submit`;
     const token = await getStudentToken(
@@ -197,22 +186,14 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       },
     );
     const savedOffering = await db.educationProgramOffering.save(fakeOffering);
-    const secondApplication = createFakeApplication(
+    const secondDraftApplication = await saveFakeApplication(
+      db.dataSource,
+      { student },
       {
-        student,
-        location: fakeOffering.institutionLocation,
-      },
-      {
-        initialValue: {
-          data: {},
-          applicationStatus: ApplicationStatus.Draft,
-          applicationStatusUpdatedOn: new Date(),
-          creator: systemUsersService.systemUser,
-          createdAt: new Date(),
-        } as Application,
+        applicationData: {} as ApplicationData,
+        applicationStatus: ApplicationStatus.Draft,
       },
     );
-    const secondDraftApplication = await db.application.save(secondApplication);
     const applicationData = {
       selectedOfferingDate:
         secondApplicationOfferingInitialValues.studyStartDate,
@@ -226,7 +207,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const payload = {
       associatedFiles: [],
       data: applicationData,
-      programYearId: secondApplication.programYear.id,
+      programYearId: secondDraftApplication.programYear.id,
     } as SaveApplicationAPIInDTO;
     const endpoint = `/students/application/${secondDraftApplication.id}/submit`;
     const token = await getStudentToken(
@@ -291,22 +272,14 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       },
     );
     const savedOffering = await db.educationProgramOffering.save(fakeOffering);
-    const simsApplication = createFakeApplication(
+    const secondDraftApplication = await saveFakeApplication(
+      db.dataSource,
+      { student },
       {
-        student,
-        location: fakeOffering.institutionLocation,
-      },
-      {
-        initialValue: {
-          data: {},
-          applicationStatus: ApplicationStatus.Draft,
-          applicationStatusUpdatedOn: new Date(),
-          creator: systemUsersService.systemUser,
-          createdAt: new Date(),
-        } as Application,
+        applicationData: {} as ApplicationData,
+        applicationStatus: ApplicationStatus.Draft,
       },
     );
-    const secondDraftApplication = await db.application.save(simsApplication);
     const applicationData = {
       selectedOfferingDate: simsApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
@@ -319,7 +292,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const payload = {
       associatedFiles: [],
       data: applicationData,
-      programYearId: simsApplication.programYear.id,
+      programYearId: secondDraftApplication.programYear.id,
     } as SaveApplicationAPIInDTO;
     const endpoint = `/students/application/${secondDraftApplication.id}/submit`;
     const token = await getStudentToken(
@@ -371,27 +344,20 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       studyEndDate: getISODateOnlyString(addDays(99)),
       offeringIntensity: OfferingIntensity.partTime,
     };
-    const secondApplication = createFakeApplication(
+    const secondDraftApplication = await saveFakeApplication(
+      db.dataSource,
+      { student },
       {
-        student,
-      },
-      {
-        initialValue: {
-          data: {},
-          applicationStatus: ApplicationStatus.Draft,
-          applicationStatusUpdatedOn: new Date(),
-          creator: systemUsersService.systemUser,
-          createdAt: new Date(),
-        } as Application,
+        applicationData: {} as ApplicationData,
+        applicationStatus: ApplicationStatus.Draft,
       },
     );
-    const secondDraftApplication = await db.application.save(secondApplication);
     const auditUser = await db.user.save(createFakeUser());
     const secondApplicationOffering = await db.educationProgramOffering.save(
       createFakeEducationProgramOffering(
         {
           auditUser,
-          institutionLocation: secondApplication.location,
+          institutionLocation: secondDraftApplication.location,
         },
         {
           initialValues: secondApplicationOfferingInitialValues,
@@ -408,12 +374,12 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         secondApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: secondApplicationProgram.id,
       selectedOffering: secondApplicationOffering.id,
-      selectedLocation: secondApplication.location.id,
+      selectedLocation: secondApplicationOffering.institutionLocation.id,
     };
     const payload = {
       associatedFiles: [],
       data: applicationData,
-      programYearId: secondApplication.programYear.id,
+      programYearId: secondDraftApplication.programYear.id,
     } as SaveApplicationAPIInDTO;
     const endpoint = `/students/application/${secondDraftApplication.id}/submit`;
     const token = await getStudentToken(
@@ -468,27 +434,20 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         studyEndDate: getISODateOnlyString(addDays(90)),
         offeringIntensity: OfferingIntensity.partTime,
       };
-      const simsApplication = createFakeApplication(
+      const simsDraftApplication = await saveFakeApplication(
+        db.dataSource,
+        { student },
         {
-          student,
-        },
-        {
-          initialValue: {
-            data: {},
-            applicationStatus: ApplicationStatus.Draft,
-            applicationStatusUpdatedOn: new Date(),
-            creator: systemUsersService.systemUser,
-            createdAt: new Date(),
-          } as Application,
+          applicationData: {} as ApplicationData,
+          applicationStatus: ApplicationStatus.Draft,
         },
       );
-      const simsDraftApplication = await db.application.save(simsApplication);
       const auditUser = await db.user.save(createFakeUser());
       const simsApplicationOffering = await db.educationProgramOffering.save(
         createFakeEducationProgramOffering(
           {
             auditUser,
-            institutionLocation: simsApplication.location,
+            institutionLocation: simsDraftApplication.location,
           },
           {
             initialValues: simsApplicationOfferingInitialValues,
@@ -505,12 +464,12 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
           simsApplicationOfferingInitialValues.offeringIntensity,
         selectedProgram: secondApplicationProgram.id,
         selectedOffering: simsApplicationOffering.id,
-        selectedLocation: simsApplication.location.id,
+        selectedLocation: simsApplicationOffering.institutionLocation.id,
       };
       const payload = {
         associatedFiles: [],
         data: applicationData,
-        programYearId: simsApplication.programYear.id,
+        programYearId: simsDraftApplication.programYear.id,
       } as SaveApplicationAPIInDTO;
       const endpoint = `/students/application/${simsDraftApplication.id}/submit`;
       const token = await getStudentToken(
@@ -566,27 +525,20 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         studyEndDate: getISODateOnlyString(addDays(90)),
         offeringIntensity: OfferingIntensity.partTime,
       };
-      const simsApplication = createFakeApplication(
+      const simsDraftApplication = await saveFakeApplication(
+        db.dataSource,
+        { student },
         {
-          student,
-        },
-        {
-          initialValue: {
-            data: {},
-            applicationStatus: ApplicationStatus.Draft,
-            applicationStatusUpdatedOn: new Date(),
-            creator: systemUsersService.systemUser,
-            createdAt: new Date(),
-          } as Application,
+          applicationData: {} as ApplicationData,
+          applicationStatus: ApplicationStatus.Draft,
         },
       );
-      const simsDraftApplication = await db.application.save(simsApplication);
       const auditUser = await db.user.save(createFakeUser());
       const simsApplicationOffering = await db.educationProgramOffering.save(
         createFakeEducationProgramOffering(
           {
             auditUser,
-            institutionLocation: simsApplication.location,
+            institutionLocation: simsDraftApplication.location,
           },
           {
             initialValues: simsApplicationOfferingInitialValues,
@@ -603,12 +555,12 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
           simsApplicationOfferingInitialValues.offeringIntensity,
         selectedProgram: secondApplicationProgram.id,
         selectedOffering: simsApplicationOffering.id,
-        selectedLocation: simsApplication.location.id,
+        selectedLocation: simsApplicationOffering.institutionLocation.id,
       };
       const payload = {
         associatedFiles: [],
         data: applicationData,
-        programYearId: simsApplication.programYear.id,
+        programYearId: simsDraftApplication.programYear.id,
       } as SaveApplicationAPIInDTO;
       const endpoint = `/students/application/${simsDraftApplication.id}/submit`;
       const token = await getStudentToken(

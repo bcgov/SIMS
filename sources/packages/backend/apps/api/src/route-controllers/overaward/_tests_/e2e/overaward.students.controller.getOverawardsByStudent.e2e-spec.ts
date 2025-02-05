@@ -3,8 +3,8 @@ import * as request from "supertest";
 import {
   createFakeDisbursementOveraward,
   createFakeStudentAssessment,
-  createFakeApplication,
   saveFakeStudent,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import { DataSource, Repository } from "typeorm";
 import {
@@ -54,11 +54,9 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
     );
 
     // Prepare the student assessment to create overaward.
-    const application = await applicationRepo.save(
-      createFakeApplication({
-        student,
-      }),
-    );
+    const application = await saveFakeApplication(appDataSource, {
+      student,
+    });
     const studentAssessment = await assessmentRepo.save(
       createFakeStudentAssessment({ auditUser: student.user, application }),
     );
