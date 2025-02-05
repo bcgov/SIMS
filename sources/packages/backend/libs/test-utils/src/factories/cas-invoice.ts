@@ -18,7 +18,7 @@ import { E2EDataSources } from "..";
  * - `disbursementReceipt` disbursement receipt already saved to the database to be associated with the invoice.
  * - `casSupplier` CAS supplier already saved to the database to be associated with the invoice.
  * - `creator` user already saved to the database that will be the creator of the invoice.
- * @returns CAS invoice created from the provided {@see DisbursementReceipt}.
+ * @returns created CAS invoice.
  */
 export function createFakeCASInvoice(relations: {
   casInvoiceBatch: CASInvoiceBatch;
@@ -48,7 +48,8 @@ export function createFakeCASInvoice(relations: {
  * of the invoice and any other
  * related record.
  * - `provincialDisbursementReceipt` disbursement receipt created from the
- * E2E factory {@see saveFakeDisbursementReceiptsFromDisbursementSchedule}.
+ * E2E factory {@see saveFakeDisbursementReceiptsFromDisbursementSchedule} to ensure
+ * all nested records are created.
  * - `casSupplier` CAS supplier already saved to the database to be associated
  * with the invoice.
  * @returns invoice created from the provided {@see DisbursementReceipt}.
