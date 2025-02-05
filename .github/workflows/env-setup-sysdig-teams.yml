@@ -22,7 +22,7 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Delete Redis
+      - name: Updating Sysdig Team
         working-directory: "./devops/"
         run: |
           make update-sysdig-team
