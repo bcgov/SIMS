@@ -87,7 +87,7 @@ export async function saveFakeDisbursementReceiptsFromDisbursementSchedule(
   federalDisbursementReceipt.totalDisbursedAmount =
     disbursementSchedule.disbursementValues.find(
       (award) => award.valueType === DisbursementValueType.CanadaLoan,
-    ).valueAmount;
+    )?.valueAmount ?? 0;
   // Provincial receipt.
   const provincialDisbursementReceipt = createFakeDisbursementReceipt({
     disbursementSchedule,
