@@ -35,6 +35,7 @@ import {
   ApplicationRestrictionBypassService,
   CRAIncomeVerificationService,
   CASInvoiceBatchService,
+  CASInvoiceBatchReportService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -200,6 +201,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     SupportingUserService,
     CASSupplierSharedService,
     CASInvoiceBatchService,
+    CASInvoiceBatchReportService,
   ],
 })
 export class AppAESTModule {}

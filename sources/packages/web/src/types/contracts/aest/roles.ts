@@ -9,6 +9,7 @@ export enum Role {
   AESTReports = "aest-reports",
   AESTCreateInstitution = "aest-create-institution",
   AESTEditCASSupplierInfo = "aest-edit-cas-supplier-info",
+  AESTCASInvoicing = "aest-cas-invoicing",
   AESTBypassStudentRestriction = "aest-bypass-student-restriction",
   StudentAddRestriction = "student-add-restriction",
   StudentResolveRestriction = "student-resolve-restriction",
