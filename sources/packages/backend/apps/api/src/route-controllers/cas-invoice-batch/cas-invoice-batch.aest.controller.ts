@@ -77,13 +77,13 @@ export class CASInvoiceBatchAESTController extends BaseController {
    */
   @Get(":casInvoiceBatchId/report")
   @ApiNotFoundResponse({ description: "CAS invoice batch not found." })
-  async getInvoiceBatchesReport(
+  async getCASInvoiceBatchReport(
     @Param("casInvoiceBatchId", ParseIntPipe) casInvoiceBatchId: number,
     @Res() response: Response,
   ): Promise<void> {
     try {
       const invoiceReport =
-        await this.casInvoiceBatchReportService.getCASInvoiceBatchesReport(
+        await this.casInvoiceBatchReportService.getCASInvoiceBatchReport(
           casInvoiceBatchId,
         );
       const batchDate = getFileNameAsCurrentTimestamp(invoiceReport.batchDate);

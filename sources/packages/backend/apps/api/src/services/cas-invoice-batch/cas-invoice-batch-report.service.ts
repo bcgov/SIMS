@@ -24,7 +24,7 @@ export class CASInvoiceBatchReportService {
    * @returns an object containing batch data and a CSV formatted string
    * data for the specified invoice batch.
    */
-  async getCASInvoiceBatchesReport(
+  async getCASInvoiceBatchReport(
     invoiceBatchId: number,
   ): Promise<CASInvoiceBatchReport> {
     const reportData = await this.getCASInvoiceBatchesReportData(

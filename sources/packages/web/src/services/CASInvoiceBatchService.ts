@@ -32,10 +32,10 @@ export class CASInvoiceBatchService {
    * to support the batch approval and allow invoices to be sent to CAS.
    * @param casInvoiceBatchId batch ID to have the report generated for.
    */
-  async downloadCASInvoiceBatchesReport(
+  async downloadCASInvoiceBatchReport(
     casInvoiceBatchId: number,
   ): Promise<void> {
-    const file = await ApiClient.CASInvoiceBatchApi.getInvoiceBatchesReport(
+    const file = await ApiClient.CASInvoiceBatchApi.getCASInvoiceBatchReport(
       casInvoiceBatchId,
     );
     const { downloadFileAsBlob } = useFileUtils();

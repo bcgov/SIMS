@@ -208,7 +208,7 @@ export default defineComponent({
       try {
         batch.downloadInProgress = true;
         snackBar.success(`Batch ${batch.batchName} report generation started.`);
-        await CASInvoiceBatchService.shared.downloadCASInvoiceBatchesReport(
+        await CASInvoiceBatchService.shared.downloadCASInvoiceBatchReport(
           batch.id,
         );
       } catch (error: unknown) {

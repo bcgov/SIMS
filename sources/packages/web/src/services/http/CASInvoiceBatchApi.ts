@@ -32,7 +32,7 @@ export class CASInvoiceBatchApi extends HttpBaseClient {
    * @param casInvoiceBatchId batch ID to have the report generated for.
    * @returns file contents.
    */
-  async getInvoiceBatchesReport(
+  async getCASInvoiceBatchReport(
     casInvoiceBatchId: number,
   ): Promise<AxiosResponse<unknown>> {
     return this.downloadFile(`cas-invoice-batch/${casInvoiceBatchId}/report`);
