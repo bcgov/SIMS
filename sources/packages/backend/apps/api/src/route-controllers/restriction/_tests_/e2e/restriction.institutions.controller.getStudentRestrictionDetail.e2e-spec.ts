@@ -3,13 +3,12 @@ import {
   createFakeInstitutionLocation,
   saveFakeStudent,
   saveFakeStudentRestriction,
-  createFakeApplication,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import { DataSource, Repository } from "typeorm";
 import {
   Institution,
   InstitutionLocation,
-  Application,
   RestrictionNotificationType,
   Restriction,
 } from "@sims/sims-db";
@@ -34,7 +33,6 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictionDetail.", 
   let collegeC: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeCLocation: InstitutionLocation;
-  let applicationRepo: Repository<Application>;
   let restrictionRepo: Repository<Restriction>;
 
   beforeAll(async () => {
@@ -53,7 +51,6 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictionDetail.", 
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    applicationRepo = appDataSource.getRepository(Application);
     restrictionRepo = dataSource.getRepository(Restriction);
   });
 
@@ -101,11 +98,11 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictionDetail.", 
       collegeCLocation,
     );
     const student = await saveFakeStudent(appDataSource);
-    const application = createFakeApplication({
-      location: collegeCLocation,
+    saveFakeApplication(appDataSource, {
+      institutionLocation: collegeCLocation,
       student,
     });
-    await applicationRepo.save(application);
+
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -125,11 +122,10 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictionDetail.", 
   it("Should return a 404 Not Found error code when a BC Public Institution User gets a student restriction for a student they have access to but the restriction notification type has a value of 'No effect'.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
-    const application = createFakeApplication({
-      location: collegeFLocation,
+    const application = await saveFakeApplication(appDataSource, {
+      institutionLocation: collegeFLocation,
       student,
     });
-    await applicationRepo.save(application);
     const restriction = await restrictionRepo.findOne({
       where: {
         notificationType: RestrictionNotificationType.NoEffect,
@@ -159,11 +155,10 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictionDetail.", 
   it("Should get the student restriction when a BC Public Institution User gets a student restriction for a student they have access to and when the restriction notification type has a value other than 'No effect'.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
-    const application = createFakeApplication({
-      location: collegeFLocation,
+    const application = await saveFakeApplication(appDataSource, {
+      institutionLocation: collegeFLocation,
       student,
     });
-    await applicationRepo.save(application);
     const restriction = await restrictionRepo.findOne({
       where: {
         notificationType: RestrictionNotificationType.Warning,

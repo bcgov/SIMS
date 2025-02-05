@@ -3,14 +3,12 @@ import {
   createFakeInstitutionLocation,
   saveFakeStudent,
   saveFakeStudentRestriction,
-  createFakeApplication,
   saveFakeApplication,
 } from "@sims/test-utils";
 import { DataSource, Repository } from "typeorm";
 import {
   Institution,
   InstitutionLocation,
-  Application,
   RestrictionNotificationType,
   Restriction,
 } from "@sims/sims-db";
@@ -33,7 +31,6 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictions.", () =>
   let collegeC: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeCLocation: InstitutionLocation;
-  let applicationRepo: Repository<Application>;
   let restrictionRepo: Repository<Restriction>;
 
   beforeAll(async () => {
@@ -52,7 +49,6 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictions.", () =>
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    applicationRepo = appDataSource.getRepository(Application);
     restrictionRepo = dataSource.getRepository(Restriction);
   });
 
@@ -123,11 +119,10 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictions.", () =>
   it("Should not get the student restriction when the restriction notification type has a value of 'No effect'.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
-    const application = createFakeApplication({
-      location: collegeFLocation,
+    const application = await saveFakeApplication(appDataSource, {
+      institutionLocation: collegeFLocation,
       student,
     });
-    await applicationRepo.save(application);
     const restriction = await restrictionRepo.findOne({
       where: {
         notificationType: RestrictionNotificationType.NoEffect,
@@ -153,11 +148,10 @@ describe("RestrictionInstitutionsController(e2e)-getStudentRestrictions.", () =>
   it("Should get the student restriction when the restriction notification type has a value different from 'No effect'.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
-    const application = createFakeApplication({
-      location: collegeFLocation,
+    const application = await saveFakeApplication(appDataSource, {
+      institutionLocation: collegeFLocation,
       student,
     });
-    await applicationRepo.save(application);
     const restriction = await restrictionRepo.findOne({
       where: {
         notificationType: RestrictionNotificationType.Warning,

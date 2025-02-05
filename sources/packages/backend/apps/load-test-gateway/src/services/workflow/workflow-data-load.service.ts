@@ -12,6 +12,7 @@ import {
   createFakeApplication,
   createFakeEducationProgramOffering,
   createFakeStudentAssessment,
+  saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { DataSource } from "typeorm";
@@ -38,6 +39,9 @@ export class WorkflowDataLoadService {
     iterations: number,
   ): Promise<StudentAssessment[]> {
     const preliminaryData = await this.createApplicationPreliminaryData();
+    const parentAndPrecedingApplication = await saveFakeApplication(
+      this.dataSources.dataSource,
+    );
     const applications: Application[] = [];
     for (let i = 1; i <= iterations; i++) {
       const submittedApplicationData = {
@@ -48,6 +52,8 @@ export class WorkflowDataLoadService {
         {
           student: preliminaryData.student,
           location: preliminaryData.offering.institutionLocation,
+          precedingApplication: parentAndPrecedingApplication,
+          parentApplication: parentAndPrecedingApplication,
         },
         { initialValue: { data: submittedApplicationData } },
       );

@@ -5,9 +5,9 @@ import {
   createFakeDisbursementOveraward,
   createFakeUser,
   createFakeStudentAssessment,
-  createFakeApplication,
+  saveFakeApplication,
 } from "@sims/test-utils";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   Application,
   AssessmentTriggerType,
@@ -34,6 +34,7 @@ describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
   let assessmentRepo: Repository<StudentAssessment>;
   let applicationRepo: Repository<Application>;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
+  let appDataSource: DataSource;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -43,6 +44,7 @@ describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
     assessmentRepo = dataSource.getRepository(StudentAssessment);
     applicationRepo = dataSource.getRepository(Application);
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
+    appDataSource = dataSource;
   });
 
   it("Should return student overaward when AEST user belongs to any of the allowed groups", async () => {
@@ -82,11 +84,7 @@ describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
     const user = await userRepo.save(createFakeUser());
     const student = await studentRepo.save(createFakeStudent());
     // Prepare the student assessment to create overaward.
-    const application = await applicationRepo.save(
-      createFakeApplication({
-        student,
-      }),
-    );
+    const application = await saveFakeApplication(appDataSource, { student });
     const studentAssessment = await assessmentRepo.save(
       createFakeStudentAssessment({ auditUser: user, application }),
     );

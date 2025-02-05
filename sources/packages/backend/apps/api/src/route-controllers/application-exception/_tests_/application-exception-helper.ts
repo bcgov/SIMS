@@ -7,10 +7,10 @@ import {
   Student,
 } from "@sims/sims-db";
 import {
-  createFakeApplication,
   createFakeApplicationException,
   createFakeApplicationExceptionRequest,
   createFakeStudent,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import { AESTGroups, getAESTUser } from "../../../testHelpers";
 import { DataSource } from "typeorm";
@@ -56,13 +56,11 @@ export async function saveFakeApplicationWithApplicationException(
   applicationException = await applicationExceptionRepo.save(
     applicationException,
   );
-  const application = await applicationRepo.save(
-    createFakeApplication({
-      student,
-      applicationException,
-      location: relations?.institutionLocation,
-    }),
-  );
+  const application = await saveFakeApplication(dataSource, {
+    student,
+    applicationException,
+    institutionLocation: relations?.institutionLocation,
+  });
 
   await applicationExceptionRequestRepo.save(
     createFakeApplicationExceptionRequest({

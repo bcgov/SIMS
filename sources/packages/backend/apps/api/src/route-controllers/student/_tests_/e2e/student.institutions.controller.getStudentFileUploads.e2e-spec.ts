@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
@@ -13,12 +13,11 @@ import {
 } from "../../../../testHelpers";
 import {
   createFakeInstitutionLocation,
-  createFakeApplication,
   saveFakeStudent,
   saveFakeStudentFileUpload,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import {
-  Application,
   FileOriginType,
   Institution,
   InstitutionLocation,
@@ -30,7 +29,6 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
   let appDataSource: DataSource;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
-  let applicationRepo: Repository<Application>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -48,18 +46,16 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    applicationRepo = appDataSource.getRepository(Application);
   });
 
   it("Should get the student file uploads when student has at least one application submitted for the institution.", async () => {
     // Arrange.
     // Student who has application submitted to institution.
     const student = await saveFakeStudent(appDataSource);
-    const application = createFakeApplication({
-      location: collegeFLocation,
+    await saveFakeApplication(appDataSource, {
+      institutionLocation: collegeFLocation,
       student,
     });
-    await applicationRepo.save(application);
 
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -95,11 +91,10 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
     // Arrange.
     // Student who has application submitted to institution.
     const student = await saveFakeStudent(appDataSource);
-    const application = createFakeApplication({
-      location: collegeFLocation,
+    await saveFakeApplication(appDataSource, {
+      institutionLocation: collegeFLocation,
       student,
     });
-    await applicationRepo.save(application);
 
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
