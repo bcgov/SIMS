@@ -461,8 +461,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       await this.repo.update(
         { id: savedDraftApplication.id },
         {
-          precedingApplication: { id: savedDraftApplication.id } as Application,
-          parentApplication: { id: savedDraftApplication.id } as Application,
+          precedingApplication: { id: savedDraftApplication.id },
+          parentApplication: { id: savedDraftApplication.id },
         },
       );
     }

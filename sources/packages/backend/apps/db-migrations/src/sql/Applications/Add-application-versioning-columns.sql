@@ -45,6 +45,7 @@ SET
 WHERE
   application_number IS NOT NULL;
 
+-- Update parent-application-id and preceding-application-id for draft applications to the application id.
 UPDATE
   sims.applications
 SET
@@ -53,20 +54,20 @@ SET
 WHERE
   application_number IS NULL;
 
--- Add constraints to ensure parent-application-id and preceding-application-id are not null for non-draft and non-cancelled applications.
+-- Add constraints to ensure parent-application-id and preceding-application-id are not null for non-draft applications.
 ALTER TABLE
   sims.applications
 ADD
   CONSTRAINT parent_application_id_constraint CHECK(
     parent_application_id IS NOT NULL
-    OR application_status IN ('Draft')
+    OR application_status = 'Draft'
   ),
 ADD
   CONSTRAINT preceding_application_id_constraint CHECK(
     preceding_application_id IS NOT NULL
-    OR application_status IN ('Draft')
+    OR application_status = 'Draft'
   );
 
-COMMENT ON CONSTRAINT parent_application_id_constraint ON sims.applications IS 'The parent application must be non-null for non-draft applications.';
+COMMENT ON CONSTRAINT parent_application_id_constraint ON sims.applications IS 'The parent application must be not null for non-draft applications.';
 
-COMMENT ON CONSTRAINT preceding_application_id_constraint ON sims.applications IS 'The preceding application must be non-null for non-draft applications.';
+COMMENT ON CONSTRAINT preceding_application_id_constraint ON sims.applications IS 'The preceding application must be not null for non-draft applications.';
