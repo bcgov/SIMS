@@ -1,10 +1,10 @@
 import { EducationProgram, ProgramInfoStatus } from "@sims/sims-db";
 import {
   createE2EDataSources,
-  createFakeApplication,
   createFakeEducationProgramOffering,
   createFakeUser,
   E2EDataSources,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import { APPLICATION_NOT_FOUND } from "../../../../constants";
 import {
@@ -42,7 +42,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
       auditUser: savedUser,
     });
     const savedOffering = await db.educationProgramOffering.save(fakeOffering);
-    const fakeApplication = createFakeApplication();
+    const fakeApplication = await saveFakeApplication(db.dataSource);
     fakeApplication.pirProgram = {
       id: savedOffering.educationProgram.id,
     } as EducationProgram;
@@ -84,7 +84,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
       auditUser: savedUser,
     });
     const savedOffering = await db.educationProgramOffering.save(fakeOffering);
-    const fakeApplication = createFakeApplication();
+    const fakeApplication = await saveFakeApplication(db.dataSource);
     fakeApplication.pirProgram = {
       id: savedOffering.educationProgram.id,
     } as EducationProgram;
