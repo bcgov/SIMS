@@ -75,7 +75,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getInvoiceBatches", () => {
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK);
-      // Assert only the two most recent invoice batches are returned.
+      // Assert only the two most recent invoices batches are returned.
       expect(response.body.count).toBeGreaterThanOrEqual(3);
       expect(response.body.results).toStrictEqual([
         {

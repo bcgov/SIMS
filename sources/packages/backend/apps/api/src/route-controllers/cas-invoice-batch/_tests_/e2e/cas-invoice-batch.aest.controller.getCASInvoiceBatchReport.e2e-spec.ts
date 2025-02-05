@@ -34,7 +34,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchReport", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should generate an invoice batch report when the batch exists.", async () => {
+  it("Should generate an invoice batch report with part-time and full-time invoices when the batch exists.", async () => {
     // Arrange
     // Create invoice batch to generate the report.
     const casInvoiceBatch = await db.casInvoiceBatch.save(
@@ -42,6 +42,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchReport", () => {
         creator: systemUsersService.systemUser,
       }),
     );
+    // Creates full-time application with receipts, and invoices details.
     const fullTimeInvoicePromise = saveFakeInvoiceIntoBatchWithInvoiceDetails(
       db,
       {
@@ -89,6 +90,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchReport", () => {
         },
       },
     );
+    // Creates part-time application with receipts, and invoices details.
     const partTimeInvoicePromise = saveFakeInvoiceIntoBatchWithInvoiceDetails(
       db,
       {
@@ -139,15 +141,15 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchReport", () => {
         .application.student;
     const fullTimeDocumentNumber =
       fullTimeInvoice.disbursementReceipt.disbursementSchedule.documentNumber.toString();
-    const partTimeStudent =
-      partTimeInvoice.disbursementReceipt.disbursementSchedule.studentAssessment
-        .application.student;
-    // Part-time related variables.
-    const partTimeDocumentNumber =
-      partTimeInvoice.disbursementReceipt.disbursementSchedule.documentNumber.toString();
     const fullTimeGLDate = getPSTPDTDateTime(
       fullTimeInvoice.disbursementReceipt.createdAt,
     );
+    // Part-time related variables.
+    const partTimeStudent =
+      partTimeInvoice.disbursementReceipt.disbursementSchedule.studentAssessment
+        .application.student;
+    const partTimeDocumentNumber =
+      partTimeInvoice.disbursementReceipt.disbursementSchedule.documentNumber.toString();
     const partTimeGLDate = getPSTPDTDateTime(
       partTimeInvoice.disbursementReceipt.createdAt.toISOString(),
     );
