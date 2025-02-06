@@ -51,6 +51,43 @@ export class SFASApplicationImportService
       sfasApplication.applicationCancelDate,
     );
     application.extractedAt = getUTC(extractedDate);
+    application.applicationNumber = sfasApplication.applicationNumber;
+    application.livingArrangements = sfasApplication.livingArrangements;
+    application.maritalStatus = sfasApplication.maritalStatus;
+    application.marriageDate = getISODateOnlyString(
+      sfasApplication.marriageDate,
+    );
+    application.bcResidencyFlag = sfasApplication.bcResidencyFlag;
+    application.permanentResidencyFlag = sfasApplication.permanentResidencyFlag;
+    application.grossIncomePreviousYear =
+      sfasApplication.grossIncomePreviousYear;
+    application.institutionCode = sfasApplication.institutionCode;
+    application.applicationStatusCode = sfasApplication.applicationStatusCode;
+    application.educationPeriodWeeks = sfasApplication.educationPeriodWeeks;
+    application.courseLoad = sfasApplication.courseLoad;
+    application.assessedCostsLivingAllowance =
+      sfasApplication.assessedCostsLivingAllowance;
+    application.assessedCostsExtraShelter =
+      sfasApplication.assessedCostsExtraShelter;
+    application.assessedCostsChildCare = sfasApplication.assessedCostsChildCare;
+    application.assessedCostsAlimony = sfasApplication.assessedCostsAlimony;
+    application.assessedCostsLocalTransport =
+      sfasApplication.assessedCostsLocalTransport;
+    application.assessedCostsReturnTransport =
+      sfasApplication.assessedCostsReturnTransport;
+    application.assessedCostsTuition = sfasApplication.assessedCostsTuition;
+    application.assessedCostsBooksAndSupplies =
+      sfasApplication.assessedCostsBooksAndSupplies;
+    application.assessedCostsExceptionalExpenses =
+      sfasApplication.assessedCostsExceptionalExpenses;
+    application.assessedCostsOther = sfasApplication.assessedCostsOther;
+    application.assessedCostsDiscretionaryExpenses =
+      sfasApplication.assessedCostsDiscretionaryExpenses;
+    application.withdrawalDate = getISODateOnlyString(
+      sfasApplication.withdrawalDate,
+    );
+    application.withdrawalActiveFlag = sfasApplication.withdrawalActiveFlag;
+    application.withdrawalReason = sfasApplication.withdrawalReason;
     await this.repo.save(application, { reload: false, transaction: false });
   }
 
