@@ -41,3 +41,10 @@ updateJob:
       memory: 1024Mi
 
   # resources: {}
+
+## Prometheus Exporter / Metrics
+##
+metrics:
+  ## @param metrics.enabled Start a side-car prometheus exporter
+  ##
+  enabled: false
