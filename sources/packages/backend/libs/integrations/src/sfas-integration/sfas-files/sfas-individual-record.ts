@@ -1,4 +1,4 @@
-import { parseDate, parseDecimal } from "./sfas-parse-utils";
+import { parseDate, parseDecimal, parseInteger } from "./sfas-parse-utils";
 import { SFASRecordIdentification } from "./sfas-record-identification";
 
 /**
@@ -185,60 +185,60 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
    * Initials of applicant (individual_alias_current_view.initials).
    */
   get initials(): string {
-    return this.line.substring(249, 252)?.trim();
+    return this.line.substring(249, 252).trim();
   }
   /**
    * Line 1 of the applicant's address (address_current_view_unique.address_1).
    */
   get addressLine1(): string {
-    return this.line.substring(252, 292)?.trim();
+    return this.line.substring(252, 292).trim();
   }
   /**
    * Line 2 of the applicant's address.
    */
   get addressLine2(): string {
-    return this.line.substring(292, 332)?.trim();
+    return this.line.substring(292, 332).trim();
   }
   /**
    * City name the applicant's address (address_current_view_unique.city).
    */
   get city(): string {
-    return this.line.substring(332, 357)?.trim();
+    return this.line.substring(332, 357).trim();
   }
   /**
    * Province or state code - only exists if in Canada or US (address_current_view_unique.prov_cde).
    */
   get provinceState(): string {
-    return this.line.substring(357, 361)?.trim();
+    return this.line.substring(357, 361).trim();
   }
   /**
    * Country code (address_current_view_unique.country_cde).
    */
   get country(): string {
-    return this.line.substring(361, 365)?.trim();
+    return this.line.substring(361, 365).trim();
   }
   /**
    * Phone number of the applicant (address_current_view_unique.phone_num).
    */
-  get phoneNumber(): number {
-    return +this.line.substring(365, 381);
+  get phoneNumber(): number | null {
+    return parseInteger(this.line.substring(365, 381));
   }
   /**
    * Applicant's postal (in Canada) or zip code (USA), otherwise blank (address_current_view_unique.postal_or_zip_code).
    */
   get postalZipCode(): string {
-    return this.line.substring(381, 388)?.trim();
+    return this.line.substring(381, 388).trim();
   }
   /**
    * Total labour market tools grant (individual_award.award_dlr where award_code = 'LMPT').
    */
-  get lmptAwardAmount(): number {
+  get lmptAwardAmount(): number | null {
     return parseDecimal(this.line.substring(388, 398));
   }
   /**
    * Total labour market unmet need grant (individual_award.award_dlr where award_code = 'LMPU').
    */
-  get lmpuAwardAmount(): number {
+  get lmpuAwardAmount(): number | null {
     return parseDecimal(this.line.substring(398, 408));
   }
 }

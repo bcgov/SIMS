@@ -136,7 +136,7 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
    * This is a code eg. MA for married (application_assessment.student_marital_status_cde).
    */
   get maritalStatus(): string {
-    return this.line.substring(156, 160)?.trim();
+    return this.line.substring(156, 160).trim();
   }
   /**
    * Applicant's marriage date (applicant_spouse.marriage_dte).
