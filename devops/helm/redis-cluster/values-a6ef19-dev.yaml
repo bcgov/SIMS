@@ -1,13 +1,16 @@
+persistence:
+  size: 1Gi
+
 volumePermissions:
   # resourcesPreset: "nano"
   ## @param volumePermissions.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
   resources:
     requests:
-      cpu: 250m
-      memory: 512Mi
+      cpu: 500m
+      memory: 1024Mi
     limits:
-      cpu: 100m
+      cpu: 500m
       memory: 1024Mi
 
   # resources: {}
@@ -17,10 +20,10 @@ redis:
   ## Example:
   resources:
     requests:
-      cpu: 1
-      memory: 512Mi
+      cpu: 500m
+      memory: 1024Mi
     limits:
-      cpu: 2
+      cpu: 500m
       memory: 1024Mi
 
   # resources: {}
@@ -31,10 +34,10 @@ updateJob:
   ## Example:
   resources:
     requests:
-      cpu: 1
-      memory: 512Mi
+      cpu: 500m
+      memory: 1024Mi
     limits:
-      cpu: 2
+      cpu: 500m
       memory: 1024Mi
 
   # resources: {}

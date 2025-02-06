@@ -244,10 +244,13 @@ export function dateEqualTo(date: Date): FindOperator<Date> {
 /**
  * Return a PST timestamp with date and time in continuous format
  * mainly used to append in filename.
+ * @param date date to be converted, if not provided, the current date will be used.
  * @returns timestamp.
  */
-export function getFileNameAsCurrentTimestamp(): string {
-  return dayjs(new Date()).tz(PST_TIMEZONE).format(TIMESTAMP_CONTINUOUS_FORMAT);
+export function getFileNameAsCurrentTimestamp(date?: Date): string {
+  return dayjs(date ?? new Date())
+    .tz(PST_TIMEZONE)
+    .format(TIMESTAMP_CONTINUOUS_FORMAT);
 }
 
 /**

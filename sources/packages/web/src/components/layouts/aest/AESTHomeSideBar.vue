@@ -17,8 +17,7 @@
         color="primary"
         nav
       >
-        <!-- Change to the final role. -->
-        <check-permission-role :role="Role.AESTEditCASSupplierInfo">
+        <check-permission-role :role="Role.AESTCASInvoicing">
           <template #="{ notAllowed }">
             <v-list-item
               :to="{ name: AESTRoutesConst.CAS_INVOICES }"

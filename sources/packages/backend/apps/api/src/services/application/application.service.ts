@@ -263,6 +263,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
     newApplication.programYear = application.programYear;
     newApplication.data = applicationData;
     newApplication.applicationStatus = ApplicationStatus.Submitted;
+    newApplication.parentApplication = {
+      id: application.parentApplication.id,
+    } as Application;
+    newApplication.precedingApplication = {
+      id: application.id,
+    } as Application;
     newApplication.applicationStatusUpdatedOn = now;
     newApplication.student = { id: application.studentId } as Student;
     newApplication.studentFiles = await this.getSyncedApplicationFiles(
@@ -428,7 +434,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const now = new Date();
     // If there is no draft application, create one
     // and initialize the necessary data.
-    if (!draftApplication) {
+    const isNewDraftApplication = !draftApplication;
+    if (isNewDraftApplication) {
       draftApplication = new Application();
       draftApplication.student = { id: studentId } as Student;
       draftApplication.programYear = { id: programYearId } as ProgramYear;
@@ -448,7 +455,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
       associatedFiles,
     );
 
-    return this.repo.save(draftApplication);
+    const savedDraftApplication = await this.repo.save(draftApplication);
+    // Update application version properties for new draft application.
+    if (isNewDraftApplication) {
+      await this.repo.update(
+        { id: savedDraftApplication.id },
+        {
+          precedingApplication: { id: savedDraftApplication.id },
+          parentApplication: { id: savedDraftApplication.id },
+        },
+      );
+    }
+    return savedDraftApplication;
   }
 
   /**
@@ -775,6 +793,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .select([
         "application",
+        "parentApplication.id",
+        "precedingApplication.id",
         "programYear.id",
         "programYear.programYearPrefix",
         "studentFiles",
@@ -783,6 +803,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "currentAssessment.assessmentWorkflowId",
       ])
       .innerJoin("application.programYear", "programYear")
+      .leftJoin("application.parentApplication", "parentApplication")
+      .leftJoin("application.precedingApplication", "precedingApplication")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("application.studentFiles", "studentFiles")
       .leftJoin("studentFiles.studentFile", "studentFile")

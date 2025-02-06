@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
@@ -13,10 +13,10 @@ import {
 } from "../../../../testHelpers";
 import {
   createFakeInstitutionLocation,
-  createFakeApplication,
   saveFakeStudent,
+  saveFakeApplication,
 } from "@sims/test-utils";
-import { Application, Institution, InstitutionLocation } from "@sims/sims-db";
+import { Institution, InstitutionLocation } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
 import { saveStudentApplicationForCollegeC } from "./student.institutions.utils";
@@ -26,7 +26,6 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
   let appDataSource: DataSource;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
-  let applicationRepo: Repository<Application>;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -44,7 +43,6 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    applicationRepo = appDataSource.getRepository(Application);
   });
 
   it("Should get the student profile when student has at least one application submitted for the institution.", async () => {
@@ -52,11 +50,10 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
 
     // Student who has application submitted to institution.
     const student = await saveFakeStudent(appDataSource);
-    const application = createFakeApplication({
-      location: collegeFLocation,
+    await saveFakeApplication(appDataSource, {
+      institutionLocation: collegeFLocation,
       student,
     });
-    await applicationRepo.save(application);
     const endpoint = `/institutions/student/${student.id}`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,

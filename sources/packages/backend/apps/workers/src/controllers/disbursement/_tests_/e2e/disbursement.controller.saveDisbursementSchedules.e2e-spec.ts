@@ -11,13 +11,13 @@ import {
 } from "@sims/sims-db";
 import {
   createE2EDataSources,
-  createFakeApplication,
   createFakeDisbursementOveraward,
   createFakeEducationProgramOffering,
   createFakeStudent,
   createFakeStudentAssessment,
   createFakeUser,
   E2EDataSources,
+  saveFakeApplication,
   saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
 import { createFakeDisbursementSchedule } from "@sims/test-utils/factories/disbursement-schedule";
@@ -44,9 +44,13 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     // Arrange
     const savedUser = await db.user.save(createFakeUser());
     const savedStudent = await db.student.save(createFakeStudent(savedUser));
-    const fakeApplication = createFakeApplication({ student: savedStudent });
-    fakeApplication.applicationNumber = "OA_TEST001";
-    const savedApplication = await db.application.save(fakeApplication);
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student: savedStudent,
+      },
+      { applicationNumber: "OA_TEST001" },
+    );
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
       auditUser: savedUser,
@@ -348,12 +352,17 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     // Arrange
     const savedUser = await db.user.save(createFakeUser());
     const savedStudent = await db.student.save(createFakeStudent(savedUser));
-    const fakeApplication = createFakeApplication(
-      { student: savedStudent },
-      { initialValue: { applicationStatus: ApplicationStatus.InProgress } },
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student: savedStudent,
+      },
+      {
+        applicationStatus: ApplicationStatus.InProgress,
+        applicationNumber: "OA_TEST003",
+      },
     );
-    fakeApplication.applicationNumber = "OA_TEST003";
-    const savedApplication = await db.application.save(fakeApplication);
+
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
       auditUser: savedUser,
@@ -425,12 +434,16 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     // Arrange
     const savedUser = await db.user.save(createFakeUser());
     const savedStudent = await db.student.save(createFakeStudent(savedUser));
-    const fakeApplication = createFakeApplication(
-      { student: savedStudent },
-      { initialValue: { applicationStatus: ApplicationStatus.InProgress } },
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student: savedStudent,
+      },
+      {
+        applicationStatus: ApplicationStatus.InProgress,
+        applicationNumber: "OA_TEST003",
+      },
     );
-    fakeApplication.applicationNumber = "OA_TEST003";
-    const savedApplication = await db.application.save(fakeApplication);
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
       auditUser: savedUser,

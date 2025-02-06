@@ -244,3 +244,8 @@ export const APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE =
  * Student not found error code.
  */
 export const STUDENT_NOT_FOUND = "STUDENT_NOT_FOUND";
+
+/**
+ * CAS invoice batch not found error code.
+ */
+export const CAS_INVOICE_BATCH_NOT_FOUND = "CAS_INVOICE_BATCH_NOT_FOUND";

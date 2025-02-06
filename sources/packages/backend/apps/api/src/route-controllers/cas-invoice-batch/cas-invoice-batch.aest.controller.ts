@@ -1,23 +1,45 @@
-import { Controller, Get, Query } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Query,
+  Res,
+} from "@nestjs/common";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties, Role, UserGroups } from "../../auth";
 import { AllowAuthorizedParty, Groups, Roles } from "../../auth/decorators";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
-import { CASInvoiceBatchService } from "../../services";
+import {
+  CASInvoiceBatchReportService,
+  CASInvoiceBatchService,
+} from "../../services";
 import { CASInvoiceBatchAPIOutDTO } from "./models/cas-invoice-batch.dto";
 import { getUserFullName } from "../../utilities";
 import {
   CASInvoiceBatchesPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
+import {
+  CustomNamedError,
+  getFileNameAsCurrentTimestamp,
+} from "@sims/utilities";
+import { Response } from "express";
+import { streamFile } from "../utils";
+import { CAS_INVOICE_BATCH_NOT_FOUND } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
+@Roles(Role.AESTCASInvoicing)
 @Groups(UserGroups.AESTUser)
 @Controller("cas-invoice-batch")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-cas-invoice-batch`)
 export class CASInvoiceBatchAESTController extends BaseController {
-  constructor(private readonly casInvoiceBatchService: CASInvoiceBatchService) {
+  constructor(
+    private readonly casInvoiceBatchService: CASInvoiceBatchService,
+    private readonly casInvoiceBatchReportService: CASInvoiceBatchReportService,
+  ) {
     super();
   }
 
@@ -27,7 +49,6 @@ export class CASInvoiceBatchAESTController extends BaseController {
    * @returns list of all invoice batches.
    */
   @Get()
-  @Roles(Role.AESTEditCASSupplierInfo) // TODO: Create a new role.
   async getInvoiceBatches(
     @Query() paginationOptions: CASInvoiceBatchesPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<CASInvoiceBatchAPIOutDTO>> {
@@ -46,5 +67,38 @@ export class CASInvoiceBatchAESTController extends BaseController {
       results: batches,
       count: pagination.count,
     };
+  }
+
+  /**
+   * Batch invoices report with information to be reviewed by the Ministry
+   * to support the batch approval and allow invoices to be sent to CAS.
+   * @param casInvoiceBatchId batch ID to have the report generated for.
+   * @returns list of all invoices in the batch.
+   */
+  @Get(":casInvoiceBatchId/report")
+  @ApiNotFoundResponse({ description: "CAS invoice batch not found." })
+  async getCASInvoiceBatchReport(
+    @Param("casInvoiceBatchId", ParseIntPipe) casInvoiceBatchId: number,
+    @Res() response: Response,
+  ): Promise<void> {
+    try {
+      const invoiceReport =
+        await this.casInvoiceBatchReportService.getCASInvoiceBatchReport(
+          casInvoiceBatchId,
+        );
+      const batchDate = getFileNameAsCurrentTimestamp(invoiceReport.batchDate);
+      const filename = `${invoiceReport.batchName}_${batchDate}.csv`;
+      streamFile(response, filename, {
+        fileContent: invoiceReport.reportCSVContent,
+      });
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === CAS_INVOICE_BATCH_NOT_FOUND
+      ) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
   }
 }

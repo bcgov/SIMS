@@ -351,6 +351,26 @@ export class Application extends RecordDataModel {
     },
   )
   restrictionBypasses?: ApplicationRestrictionBypass[];
+
+  /**
+   * The parent application from which the current application was created.
+   */
+  @ManyToOne(() => Application, { eager: false, nullable: true })
+  @JoinColumn({
+    name: "parent_application_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  parentApplication?: Application;
+
+  /**
+   * The immediate previous application from which the current application was created.
+   */
+  @ManyToOne(() => Application, { eager: false, nullable: true })
+  @JoinColumn({
+    name: "preceding_application_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  precedingApplication?: Application;
 }
 
 /**

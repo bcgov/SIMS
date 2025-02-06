@@ -68,14 +68,14 @@
               {{ dateOnlyLongString(item.approvalStatusUpdatedOn) }}
             </template>
             <template #[`item.actions`]="{ item }">
-              <!-- TODO: change role -->
-              <check-permission-role :role="Role.AESTEditCASSupplierInfo">
+              <check-permission-role :role="Role.AESTCASInvoicing">
                 <template #="{ notAllowed }">
                   <v-btn
-                    :disabled="notAllowed"
-                    @click="downloadBatch(item.id)"
+                    :disabled="notAllowed || !!item.downloadInProgress"
+                    @click="downloadBatch(item)"
                     variant="text"
                     color="primary"
+                    text="Download"
                   >
                     <span class="text-decoration-underline"
                       ><strong>Download</strong></span
@@ -153,6 +153,10 @@ const ApprovalStatusFilter = {
   ...CASInvoiceBatchApprovalStatus,
 };
 
+interface CASInvoiceBatchModel extends CASInvoiceBatchAPIOutDTO {
+  downloadInProgress?: boolean;
+}
+
 export default defineComponent({
   components: {
     CheckPermissionRole,
@@ -169,7 +173,7 @@ export default defineComponent({
      * Pagination with batch invoices and the total available.
      */
     const paginatedBatches = ref(
-      {} as PaginatedResultsAPIOutDTO<CASInvoiceBatchAPIOutDTO>,
+      {} as PaginatedResultsAPIOutDTO<CASInvoiceBatchModel>,
     );
     const approvalStatusFilter = ref([ApprovalStatusFilter.All]);
     /**
@@ -200,10 +204,18 @@ export default defineComponent({
       }
     };
 
-    const downloadBatch = async (batchId: number) => {
-      snackBar.warn(
-        `Invoice batch downloaded to be implemented (Batch ID ${batchId}).`,
-      );
+    const downloadBatch = async (batch: CASInvoiceBatchModel) => {
+      try {
+        batch.downloadInProgress = true;
+        snackBar.success(`Batch ${batch.batchName} report generation started.`);
+        await CASInvoiceBatchService.shared.downloadCASInvoiceBatchReport(
+          batch.id,
+        );
+      } catch (error: unknown) {
+        snackBar.error("Unexpected error while downloading the batch.");
+      } finally {
+        batch.downloadInProgress = false;
+      }
     };
 
     const approveBatch = async (batchId: number) => {

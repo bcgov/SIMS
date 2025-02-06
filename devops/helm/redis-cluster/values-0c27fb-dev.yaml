@@ -1,40 +1,43 @@
+persistence:
+  size: 1Gi
+
 volumePermissions:
-  resourcesPreset: "nano"
+  # resourcesPreset: "nano"
   ## @param volumePermissions.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  # resources:
-  #   requests:
-  #     cpu: 250m
-  #     memory: 512Mi
-  #   limits:
-  #     cpu: 100m
-  #     memory: 1024Mi
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1024Mi
+    limits:
+      cpu: 500m
+      memory: 1024Mi
 
   # resources: {}
 redis:
-  resourcesPreset: "nano"
+  # resourcesPreset: "nano"
   ## @param redis.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  # resources:
-  #   requests:
-  #     cpu: 1
-  #     memory: 512Mi
-  #   limits:
-  #     cpu: 2
-  #     memory: 1024Mi
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1024Mi
+    limits:
+      cpu: 500m
+      memory: 1024Mi
 
   # resources: {}
 ## Cluster update job settings
 updateJob:
-  resourcesPreset: "nano"
+  # resourcesPreset: "nano"
   ## @param updateJob.resources Set container requests and limits for different resources like CPU or memory (essential for production workloads)
   ## Example:
-  # resources:
-  #   requests:
-  #     cpu: 1
-  #     memory: 512Mi
-  #   limits:
-  #     cpu: 2
-  #     memory: 1024Mi
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1024Mi
+    limits:
+      cpu: 500m
+      memory: 1024Mi
 
   # resources: {}

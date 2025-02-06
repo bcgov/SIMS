@@ -83,5 +83,6 @@ export function useFileUtils() {
     downloadStudentDocument,
     downloadReports,
     handleFileScanProcessError,
+    downloadFileAsBlob,
   };
 }

@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeApplication,
   createFakeInstitutionLocation,
   createFakeStudentScholasticStanding,
   saveFakeApplication,
@@ -81,8 +80,8 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
   it("Should get the scholastic standing summary for the provided student including the data retrieved from the sfas system when a BC Public Institution requests it.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
-    const firstApplication = createFakeApplication({
-      location: collegeFLocation,
+    const firstApplication = await saveFakeApplication(db.dataSource, {
+      institutionLocation: collegeFLocation,
       student,
     });
     const { institution } = await getAuthRelatedEntities(
@@ -90,11 +89,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       InstitutionTokenTypes.CollegeCUser,
     );
     collegeCLocation = createFakeInstitutionLocation({ institution });
-    const secondApplication = createFakeApplication({
-      location: collegeCLocation,
+    const secondApplication = await saveFakeApplication(db.dataSource, {
+      institutionLocation: collegeCLocation,
       student,
     });
-    await db.application.save([firstApplication, secondApplication]);
     const firstAppScholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application: firstApplication },
       {

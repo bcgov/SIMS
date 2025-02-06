@@ -11,13 +11,12 @@ import {
 import {
   getFileNameAsCurrentTimestamp,
   CustomNamedError,
-  appendByteOrderMark,
 } from "@sims/utilities";
 import { Response } from "express";
-import { Readable } from "stream";
 import { FormService, ProgramYearService } from "../../services";
 import { ReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
+import { streamFile } from "../utils";
 
 /**
  * Controller Service layer for reports.
@@ -71,7 +70,9 @@ export class ReportControllerService {
       const reportData = await this.reportService.getReportDataAsCSV(
         submissionResult.data.data,
       );
-      this.streamFile(response, payload.reportName, reportData);
+      const timestamp = getFileNameAsCurrentTimestamp();
+      const filename = `${payload.reportName}_${timestamp}.csv`;
+      streamFile(response, filename, { fileContent: reportData });
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
@@ -82,37 +83,5 @@ export class ReportControllerService {
       }
       throw error;
     }
-  }
-
-  /**
-   * Stream file as downloadable response.
-   * @param response http response as file.
-   * @param reportName report name.
-   * @param fileContent content of the file.
-   */
-  private streamFile(
-    response: Response,
-    reportName: string,
-    fileContent: string,
-  ) {
-    const timestamp = getFileNameAsCurrentTimestamp();
-    const filename = `${reportName}_${timestamp}.csv`;
-    // Adding byte order mark characters to the original file content as applications
-    // like excel would look for BOM characters to view the file as UTF8 encoded.
-    // Append byte order mark characters only if the file content is not empty.
-    const responseBuffer = fileContent
-      ? appendByteOrderMark(fileContent)
-      : Buffer.from("");
-    response.setHeader(
-      "Content-Disposition",
-      `attachment; filename=${filename}`,
-    );
-    response.setHeader("Content-Type", "text/csv");
-    response.setHeader("Content-Length", responseBuffer.byteLength);
-
-    const stream = new Readable();
-    stream.push(responseBuffer);
-    stream.push(null);
-    stream.pipe(response);
   }
 }
