@@ -19,7 +19,7 @@ COMMENT ON INDEX sims.preceding_application_id_idx IS 'Index created on precedin
 
 CREATE INDEX parent_application_id_idx ON sims.applications (parent_application_id);
 
-COMMENT ON INDEX sims.parent_application_id_idx IS 'Index created on parent_application_id_idx to improve the performance of data retrieval.';
+COMMENT ON INDEX sims.parent_application_id_idx IS 'Index created on parent_application_id to improve the performance of data retrieval.';
 
 -- Set parent-application-id for applications when application number is present.
 UPDATE
