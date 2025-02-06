@@ -56,6 +56,8 @@ const DEPENDANT_AND_DISBURSEMENT_RECORDS_FILENAME =
   "SFAS-TO-SIMS-DEPENDANT_AND_DISBURSEMENT_ALL_VALUES-RECORDS.txt";
 const INVALID_RECORD_TYPE_FILENAME =
   "SFAS-TO-SIMS-INVALID_RECORD_TYPE-RECORD.txt";
+const SFAS_INDIVIDUAL_AND_APPLICATION_ALL_VALUES_FILENAME =
+  "SFAS-TO-SIMS-INDIVIDUAL_AND_APPLICATION_ALL_VALUES-RECORDS.txt";
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
   let processor: SFASIntegrationScheduler;
@@ -813,6 +815,198 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           "Inserted student restrictions from SFAS restrictions data.",
         ]),
       ).toBe(true);
+    },
+  );
+
+  it.only(
+    "Should import SFAS individual and application records with all the values " +
+      "when the SFAS file has values for almost all the fields for individual and application records.",
+    async () => {
+      // Arrange
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+      mockDownloadFiles(sftpClientMock, [
+        SFAS_INDIVIDUAL_AND_APPLICATION_ALL_VALUES_FILENAME,
+      ]);
+
+      // Act
+      await processor.processQueue(mockedJob.job);
+
+      // Assert
+      // Expect the file was archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
+      // Expect the file contains 4 records.
+      expect(
+        mockedJob.containLogMessages([
+          "File contains 2 records.",
+          "Updating student ids for SFAS individuals.",
+          "Student ids updated.",
+          "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+          "New disbursement overaward balances inserted to disbursement overawards table.",
+          "Inserting student restrictions from SFAS restrictions data.",
+          "Inserted student restrictions from SFAS restrictions data.",
+        ]),
+      ).toBe(true);
+      // Verify the SFAS Individual created.
+      const expectedSFASIndividual: Partial<SFASIndividual> = {
+        id: 94541,
+        firstName: "BENJAMIN",
+        lastName: "FRANKLIN",
+        birthDate: "1949-11-16",
+        sin: "108796293",
+        pdStatus: false,
+        msfaaNumber: "9876543211",
+        msfaaSignedDate: "2024-07-13",
+        neb: 50,
+        bcgg: 5000,
+        lfp: 11040,
+        pal: 11040,
+        cslOveraward: 11040,
+        bcslOveraward: 11040,
+        cmsOveraward: 11040,
+        grantOveraward: 11040,
+        withdrawals: 2,
+        unsuccessfulCompletion: 2,
+        partTimeMSFAANumber: "1234567890",
+        partTimeMSFAAEffectiveDate: "2024-12-31",
+        initials: "A",
+        addressLine1: "1511 new street",
+        addressLine2: "My address line 2",
+        city: "Victoria",
+        provinceState: "BC",
+        country: "CAN",
+        phoneNumber: 1231231234,
+        postalZipCode: "P4K 1K0",
+        lmptAwardAmount: 350,
+        lmpuAwardAmount: 245,
+      };
+      const sfasIndividual = await db.sfasIndividual.findOne({
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          birthDate: true,
+          sin: true,
+          pdStatus: true,
+          msfaaNumber: true,
+          msfaaSignedDate: true,
+          neb: true,
+          bcgg: true,
+          lfp: true,
+          pal: true,
+          cslOveraward: true,
+          bcslOveraward: true,
+          cmsOveraward: true,
+          grantOveraward: true,
+          withdrawals: true,
+          unsuccessfulCompletion: true,
+          partTimeMSFAANumber: true,
+          partTimeMSFAAEffectiveDate: true,
+          initials: true,
+          addressLine1: true,
+          addressLine2: true,
+          city: true,
+          provinceState: true,
+          country: true,
+          phoneNumber: true,
+          postalZipCode: true,
+          lmptAwardAmount: true,
+          lmpuAwardAmount: true,
+        },
+        where: { id: expectedSFASIndividual.id },
+      });
+      expect(sfasIndividual).toEqual(expectedSFASIndividual);
+
+      // Verify the SFAS Application created.
+      const expectedSFASApplication: Partial<SFASApplication> = {
+        id: 14541,
+        individual: { id: 94541 } as SFASIndividual,
+        startDate: "2024-12-01",
+        endDate: "2025-02-28",
+        programYearId: 20242025,
+        bslAward: 2500,
+        cslAward: 2500,
+        bcagAward: 0,
+        bgpdAward: 0,
+        csfgAward: 1500,
+        csgtAward: 0,
+        csgdAward: 0,
+        csgpAward: 0,
+        sbsdAward: 0,
+        applicationCancelDate: "2025-01-30",
+        applicationNumber: 2024123456,
+        livingArrangements: "N",
+        maritalStatus: "MA",
+        marriageDate: "2003-10-24",
+        bcResidencyFlag: "Y",
+        permanentResidencyFlag: "N",
+        grossIncomePreviousYear: 72000,
+        institutionCode: "AUAA",
+        applicationStatusCode: "RECD",
+        educationPeriodWeeks: 42,
+        courseLoad: 100,
+        assessedCostsLivingAllowance: 110,
+        assessedCostsExtraShelter: 120,
+        assessedCostsChildCare: 130,
+        assessedCostsAlimony: 140,
+        assessedCostsLocalTransport: 150,
+        assessedCostsReturnTransport: 160,
+        assessedCostsTuition: 170,
+        assessedCostsBooksAndSupplies: 180,
+        assessedCostsExceptionalExpenses: 190,
+        assessedCostsOther: 210,
+        assessedCostsDiscretionaryExpenses: 220,
+        withdrawalDate: "2024-02-20",
+        withdrawalReason: "QUIT",
+        withdrawalActiveFlag: "Y",
+      };
+      const sfasApplication = await db.sfasApplication.findOne({
+        select: {
+          id: true,
+          individual: { id: true },
+          startDate: true,
+          endDate: true,
+          programYearId: true,
+          bslAward: true,
+          cslAward: true,
+          bcagAward: true,
+          bgpdAward: true,
+          csfgAward: true,
+          csgtAward: true,
+          csgdAward: true,
+          csgpAward: true,
+          sbsdAward: true,
+          applicationCancelDate: true,
+          applicationNumber: true,
+          livingArrangements: true,
+          maritalStatus: true,
+          marriageDate: true,
+          bcResidencyFlag: true,
+          permanentResidencyFlag: true,
+          grossIncomePreviousYear: true,
+          institutionCode: true,
+          applicationStatusCode: true,
+          educationPeriodWeeks: true,
+          courseLoad: true,
+          assessedCostsLivingAllowance: true,
+          assessedCostsExtraShelter: true,
+          assessedCostsChildCare: true,
+          assessedCostsAlimony: true,
+          assessedCostsLocalTransport: true,
+          assessedCostsReturnTransport: true,
+          assessedCostsTuition: true,
+          assessedCostsBooksAndSupplies: true,
+          assessedCostsExceptionalExpenses: true,
+          assessedCostsOther: true,
+          assessedCostsDiscretionaryExpenses: true,
+          withdrawalDate: true,
+          withdrawalReason: true,
+          withdrawalActiveFlag: true,
+        },
+        relations: { individual: true },
+        where: { id: expectedSFASApplication.id },
+      });
+      expect(sfasApplication).toEqual(expectedSFASApplication);
     },
   );
 

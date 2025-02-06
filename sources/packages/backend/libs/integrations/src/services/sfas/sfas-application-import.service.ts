@@ -86,8 +86,8 @@ export class SFASApplicationImportService
     application.withdrawalDate = getISODateOnlyString(
       sfasApplication.withdrawalDate,
     );
-    application.withdrawalActiveFlag = sfasApplication.withdrawalActiveFlag;
     application.withdrawalReason = sfasApplication.withdrawalReason;
+    application.withdrawalActiveFlag = sfasApplication.withdrawalActiveFlag;
     await this.repo.save(application, { reload: false, transaction: false });
   }
 
