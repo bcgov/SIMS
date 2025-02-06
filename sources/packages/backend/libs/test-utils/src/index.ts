@@ -39,3 +39,6 @@ export * from "./factories/cas-supplier";
 export * from "./factories/sfas-restriction-maps";
 export * from "./factories/restriction";
 export * from "./factories/cas-distribution-account";
+export * from "./factories/cas-invoice-batch";
+export * from "./factories/cas-invoice";
+export * from "./factories/cas-invoice-detail";

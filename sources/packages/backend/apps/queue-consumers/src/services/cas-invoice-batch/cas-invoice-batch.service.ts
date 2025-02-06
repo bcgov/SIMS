@@ -1,5 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
+import {
+  BC_TOTAL_GRANT_AWARD_CODE,
+  DATABASE_TRANSACTION_CANCELLATION,
+} from "@sims/services/constants";
 import {
   CASDistributionAccount,
   CASInvoice,
@@ -15,6 +18,7 @@ import {
 import { DataSource, EntityManager } from "typeorm";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Chunk size for inserting invoices. The invoices (and its details) will
@@ -57,8 +61,10 @@ export class CASInvoiceBatchService {
       if (!pendingReceipts.length) {
         processSummary.info("No pending receipts found.");
         // Cancels the transaction to rollback the batch number.
-        await entityManager.queryRunner.rollbackTransaction();
-        return null;
+        throw new CustomNamedError(
+          "Rollback current database for invoice batch processing.",
+          DATABASE_TRANSACTION_CANCELLATION,
+        );
       }
       processSummary.info(`Found ${pendingReceipts.length} pending receipts.`);
       const now = new Date();
@@ -193,6 +199,11 @@ export class CASInvoiceBatchService {
           account.awardValueCode === disbursedAward.valueCode &&
           account.offeringIntensity === offeringIntensity,
       );
+      if (!accounts.length) {
+        throw new Error(
+          `No distribution accounts found for award ${disbursedAward.valueCode} and offering intensity ${offeringIntensity}.`,
+        );
+      }
       // Create invoice details for each distribution account.
       const awardInvoiceDetails = accounts.map((account) => {
         const invoiceDetail = new CASInvoiceDetail();

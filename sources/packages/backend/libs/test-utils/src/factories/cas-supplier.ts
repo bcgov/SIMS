@@ -92,9 +92,9 @@ export function createFakeCASSupplier(
     casSupplier.isValid = options?.initialValues.isValid ?? false;
   }
   casSupplier.supplierName = `${faker.name.lastName()}, ${faker.name.firstName()}`;
-  casSupplier.supplierNumber = faker.datatype
-    .number({ min: 100000, max: 9999999999 })
-    .toString();
+  casSupplier.supplierNumber =
+    options?.initialValues?.supplierNumber ??
+    faker.datatype.number({ min: 100000, max: 9999999999 }).toString();
   casSupplier.supplierAddress.supplierSiteCode = faker.datatype
     .number({ min: 100, max: 999 })
     .toString();

@@ -32,3 +32,14 @@ export const UNEXPECTED_ERROR_DOWNLOADING_FILE =
 export const ECE_DISBURSEMENT_DATA_NOT_VALID =
   "ECE_DISBURSEMENT_DATA_NOT_VALID";
 export const FILE_PARSING_ERROR = "FILE_PARSING_ERROR";
+
+/**
+ * Used to cancel a database transaction started using the method as below.
+ * @example
+ * await myDataSource.transaction(async (transactionalEntityManager) => {
+ *   // execute queries using transactionalEntityManager
+ * })
+ * @see https://typeorm.io/#/transactions
+ */
+export const DATABASE_TRANSACTION_CANCELLATION =
+  "DATABASE_TRANSACTION_CANCELLATION";
