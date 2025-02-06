@@ -19,6 +19,7 @@ import { CASInvoiceBatchAPIOutDTO } from "../../models/cas-invoice-batch.dto";
  * and allow the retrieval of invoice batches to be tested.
  */
 const CAS_BATCHES_UNIQUE_START_PERIOD = new Date("2100-01-01");
+const SYSTEM_USER_NAME = "system-user";
 
 describe("CASInvoiceBatchAESTController(e2e)-getInvoiceBatches", () => {
   let app: INestApplication;
@@ -85,7 +86,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getInvoiceBatches", () => {
           approvalStatus: casInvoiceBatchThird.approvalStatus,
           approvalStatusUpdatedOn:
             casInvoiceBatchThird.approvalStatusUpdatedOn.toISOString(),
-          approvalStatusUpdatedBy: "system-user",
+          approvalStatusUpdatedBy: SYSTEM_USER_NAME,
         },
         {
           id: casInvoiceBatchSecond.id,
@@ -94,7 +95,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getInvoiceBatches", () => {
           approvalStatus: casInvoiceBatchSecond.approvalStatus,
           approvalStatusUpdatedOn:
             casInvoiceBatchSecond.approvalStatusUpdatedOn.toISOString(),
-          approvalStatusUpdatedBy: "system-user",
+          approvalStatusUpdatedBy: SYSTEM_USER_NAME,
         },
       ]);
     },

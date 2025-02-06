@@ -394,7 +394,7 @@ describe(
 
     it("Should interrupt the process when an invoice is trying to be generated but there are no distribution accounts available to create the invoice details.", async () => {
       // Arrange
-      const BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT = "BCAG";
+      const BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT = "ABCD";
       const casSupplier = await saveFakeCASSupplier(db, undefined, {
         initialValues: {
           supplierStatus: SupplierStatus.VerifiedManually,
@@ -427,14 +427,6 @@ describe(
         db,
         firstDisbursementSchedule,
       );
-      // Change the distribution account to be inactive.
-      await db.casDistributionAccount.update(
-        {
-          awardValueCode: BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT,
-          offeringIntensity: OfferingIntensity.fullTime,
-        },
-        { isActive: false },
-      );
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -442,15 +434,6 @@ describe(
       // Act/Assert
       await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
         `No distribution accounts found for award ${BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT} and offering intensity ${OfferingIntensity.fullTime}.`,
-      );
-
-      // Revert back the distribution account to be active.
-      await db.casDistributionAccount.update(
-        {
-          awardValueCode: BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT,
-          offeringIntensity: OfferingIntensity.fullTime,
-        },
-        { isActive: true },
       );
     });
 
