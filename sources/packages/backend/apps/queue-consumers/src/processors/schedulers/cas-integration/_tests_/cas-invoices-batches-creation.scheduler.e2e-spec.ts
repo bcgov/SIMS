@@ -1,11 +1,13 @@
 import { INestApplication } from "@nestjs/common";
 import {
   createE2EDataSources,
+  createFakeCASInvoiceBatch,
   createFakeDisbursementValue,
   E2EDataSources,
   saveFakeApplicationDisbursements,
   saveFakeCASSupplier,
   saveFakeDisbursementReceiptsFromDisbursementSchedule,
+  saveFakeInvoiceFromDisbursementReceipt,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { QueueNames } from "@sims/utilities";
@@ -19,6 +21,7 @@ import {
   CASInvoiceBatchApprovalStatus,
   CASInvoiceStatus,
   DisbursementValueType,
+  OfferingIntensity,
   SupplierStatus,
 } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
@@ -279,6 +282,203 @@ describe(
         },
       });
       expect(currentInvoiceSequenceNumber.sequenceNumber).toEqual("2");
+    });
+
+    it("Should create a new CAS invoice and avoid creating a second invoice when a receipt has already has an invoice associated with.", async () => {
+      // Arrange
+      const casSupplier = await saveFakeCASSupplier(db, undefined, {
+        initialValues: {
+          supplierStatus: SupplierStatus.VerifiedManually,
+        },
+      });
+      const student = await saveFakeStudent(db.dataSource, { casSupplier });
+      // Application to have a new invoice associated with.
+      const applicationWithoutInvoice = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              351,
+              { effectiveAmount: 350 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCTotalGrant,
+              "BCSG",
+              351,
+              { effectiveAmount: 350 },
+            ),
+          ],
+        },
+      );
+      const [firstDisbursementScheduleWithoutInvoice] =
+        applicationWithoutInvoice.currentAssessment.disbursementSchedules;
+      const { provincial: provincialDisbursementReceiptWithoutInvoice } =
+        await saveFakeDisbursementReceiptsFromDisbursementSchedule(
+          db,
+          firstDisbursementScheduleWithoutInvoice,
+        );
+      // Application to be skipped because already has an invoice associated with.
+      const applicationWithInvoice = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "SBSD",
+              101,
+              { effectiveAmount: 100 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCTotalGrant,
+              "BCSG",
+              101,
+              { effectiveAmount: 100 },
+            ),
+          ],
+        },
+      );
+      const [firstDisbursementScheduleWithInvoice] =
+        applicationWithInvoice.currentAssessment.disbursementSchedules;
+      const { provincial: provincialDisbursementReceiptWithInvoice } =
+        await saveFakeDisbursementReceiptsFromDisbursementSchedule(
+          db,
+          firstDisbursementScheduleWithInvoice,
+        );
+      // Create invoice batch to be associated to the already generated invoice.
+      const casInvoiceBatch = await db.casInvoiceBatch.save(
+        createFakeCASInvoiceBatch({
+          creator: systemUsersService.systemUser,
+        }),
+      );
+      // Create invoice and its details associated with th batch
+      await saveFakeInvoiceFromDisbursementReceipt(db, {
+        casInvoiceBatch: casInvoiceBatch,
+        creator: systemUsersService.systemUser,
+        provincialDisbursementReceipt: provincialDisbursementReceiptWithInvoice,
+        casSupplier,
+      });
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Batch created: SIMS-BATCH-1.",
+        "Invoices created: 1.",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          "Executing CAS invoices batches creation.",
+          "Checking for pending receipts.",
+          "Found 1 pending receipts.",
+          `Creating invoice for receipt ID ${provincialDisbursementReceiptWithoutInvoice.id}.`,
+          `Invoice SIMS-INVOICE-1-${casSupplier.supplierNumber} created for receipt ID ${provincialDisbursementReceiptWithoutInvoice.id}.`,
+          `Created invoice detail for award BCAG(CR).`,
+          `Created invoice detail for award BCAG(DR).`,
+          `CAS invoices batches creation process executed.`,
+        ]),
+      ).toBe(true);
+      expect(
+        mockedJob.containLogMessages([
+          `Creating invoice for receipt ID ${provincialDisbursementReceiptWithInvoice.id}.`,
+        ]),
+      ).toBe(false);
+    });
+
+    it("Should interrupt the process when an invoice is trying to be generated but there are no distribution accounts available to create the invoice details.", async () => {
+      // Arrange
+      const BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT = "BCAG";
+      const casSupplier = await saveFakeCASSupplier(db, undefined, {
+        initialValues: {
+          supplierStatus: SupplierStatus.VerifiedManually,
+        },
+      });
+      const student = await saveFakeStudent(db.dataSource, { casSupplier });
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT,
+              351,
+              { effectiveAmount: 350 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCTotalGrant,
+              "BCSG",
+              351,
+              { effectiveAmount: 350 },
+            ),
+          ],
+        },
+      );
+      const [firstDisbursementSchedule] =
+        application.currentAssessment.disbursementSchedules;
+      await saveFakeDisbursementReceiptsFromDisbursementSchedule(
+        db,
+        firstDisbursementSchedule,
+      );
+      // Change BCAG account to be inactive.
+      await db.casDistributionAccount.update(
+        {
+          awardValueCode: BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT,
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+        { isActive: false },
+      );
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        `No distribution accounts found for award ${BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT} and offering intensity ${OfferingIntensity.fullTime}.`,
+      );
+
+      // Revert back the BCSG distribution account to be active.
+      await db.casDistributionAccount.update(
+        {
+          awardValueCode: BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT,
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+        { isActive: true },
+      );
+    });
+
+    it("Should finalize the process nicely when there is no pending receipt to process.", async () => {
+      // Arrange
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual(["No batch was generated."]);
+      expect(
+        mockedJob.containLogMessages([
+          "Executing CAS invoices batches creation.",
+          "Checking for pending receipts.",
+          "No pending receipts found.",
+          "CAS invoices batches creation process executed.",
+        ]),
+      ).toBe(true);
+      const batchSequenceNumberExists = await db.sequenceControl.exists({
+        where: {
+          sequenceName: CAS_INVOICE_BATCH_SEQUENCE_NAME,
+        },
+      });
+      // Assert the sequence number was not created.
+      expect(batchSequenceNumberExists).toBe(false);
     });
   },
 );

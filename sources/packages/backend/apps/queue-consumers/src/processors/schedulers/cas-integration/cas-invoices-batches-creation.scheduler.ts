@@ -1,6 +1,6 @@
 import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
-import { QueueNames } from "@sims/utilities";
+import { CustomNamedError, QueueNames } from "@sims/utilities";
 import {
   InjectLogger,
   LoggerService,
@@ -9,6 +9,7 @@ import {
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { CASInvoiceBatchService } from "../../../services";
+import { DATABASE_TRANSACTION_CANCELLATION } from "@sims/services/constants";
 
 /**
  * Scheduler to generate batches for CAS invoices for e-Cert receipts.
@@ -36,17 +37,25 @@ export class CASInvoicesBatchesCreationScheduler extends BaseScheduler<void> {
     processSummary: ProcessSummary,
   ): Promise<string[] | string> {
     processSummary.info("Executing CAS invoices batches creation.");
-    const createdBatch = await this.casInvoiceBatchService.createInvoiceBatch(
-      processSummary,
-    );
-    processSummary.info("CAS invoices batches creation process executed.");
-    if (!createdBatch) {
-      return "No batch was generated.";
+    try {
+      const createdBatch = await this.casInvoiceBatchService.createInvoiceBatch(
+        processSummary,
+      );
+      return [
+        `Batch created: ${createdBatch.batchName}.`,
+        `Invoices created: ${createdBatch.casInvoices.length}.`,
+      ];
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === DATABASE_TRANSACTION_CANCELLATION
+      ) {
+        return "No batch was generated.";
+      }
+      throw error;
+    } finally {
+      processSummary.info("CAS invoices batches creation process executed.");
     }
-    return [
-      `Batch created: ${createdBatch.batchName}.`,
-      `Invoices created: ${createdBatch.casInvoices.length}.`,
-    ];
   }
 
   @InjectLogger()
