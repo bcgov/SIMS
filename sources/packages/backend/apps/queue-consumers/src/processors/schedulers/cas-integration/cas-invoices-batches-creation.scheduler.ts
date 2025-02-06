@@ -17,7 +17,7 @@ import { DATABASE_TRANSACTION_CANCELLATION } from "@sims/services/constants";
 @Processor(QueueNames.CASInvoicesBatchesCreation)
 export class CASInvoicesBatchesCreationScheduler extends BaseScheduler<void> {
   constructor(
-    @InjectQueue(QueueNames.CASSupplierIntegration)
+    @InjectQueue(QueueNames.CASInvoicesBatchesCreation)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly casInvoiceBatchService: CASInvoiceBatchService,
