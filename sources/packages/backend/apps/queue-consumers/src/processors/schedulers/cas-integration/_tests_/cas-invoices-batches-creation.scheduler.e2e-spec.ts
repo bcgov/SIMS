@@ -427,7 +427,7 @@ describe(
         db,
         firstDisbursementSchedule,
       );
-      // Change BCAG account to be inactive.
+      // Change the distribution account to be inactive.
       await db.casDistributionAccount.update(
         {
           awardValueCode: BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT,
@@ -444,7 +444,7 @@ describe(
         `No distribution accounts found for award ${BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT} and offering intensity ${OfferingIntensity.fullTime}.`,
       );
 
-      // Revert back the BCSG distribution account to be active.
+      // Revert back the distribution account to be active.
       await db.casDistributionAccount.update(
         {
           awardValueCode: BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT,
