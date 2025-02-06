@@ -284,7 +284,7 @@ describe(
       expect(currentInvoiceSequenceNumber.sequenceNumber).toEqual("2");
     });
 
-    it("Should create a new CAS invoice and avoid creating a second invoice when a receipt has already has an invoice associated with.", async () => {
+    it("Should create a new CAS invoice and avoid making a second invoice when a receipt already has an invoice associated with it.", async () => {
       // Arrange
       const casSupplier = await saveFakeCASSupplier(db, undefined, {
         initialValues: {
