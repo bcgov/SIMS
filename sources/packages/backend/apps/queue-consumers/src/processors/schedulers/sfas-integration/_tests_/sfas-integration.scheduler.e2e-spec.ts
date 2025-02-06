@@ -818,7 +818,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     },
   );
 
-  it.only(
+  it(
     "Should import SFAS individual and application records with all the values " +
       "when the SFAS file has values for almost all the fields for individual and application records.",
     async () => {
