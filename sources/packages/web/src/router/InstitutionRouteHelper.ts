@@ -97,10 +97,6 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
     }
     return true;
   }
-  // If the user is not an admin, check if user type is among the allowed route user types.
-  if (!userTypes.includes(userType.value)) {
-    return false;
-  }
 
   // If the user is non admin and the route allows non admin users, then check if the user has access
   // to the location present in route params if location exist in route params.
@@ -110,6 +106,11 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   const locationId = routParams?.locationId;
   if (!locationId) {
     return true;
+  }
+
+  // If the user is not an admin, check if user type is among the allowed route user types.
+  if (!userTypes.includes(userType(+locationId))) {
+    return false;
   }
 
   // when the location is present in route params, check if the user has access.

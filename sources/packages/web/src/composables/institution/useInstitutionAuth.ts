@@ -40,15 +40,18 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
         auth.locationId === locationId,
     );
 
-  // User type Admin | User.
-  const userType = computed(() => {
+  // Get user type User | Read-only-user.
+  const userType = (locationId: number) => {
     if (!store.state.institution.authorizationsState?.authorizations) {
       return undefined;
     }
-    const [userAuthorization] =
-      store.state.institution.authorizationsState.authorizations;
+    const userAuthorization =
+      store.state.institution.authorizationsState.authorizations.find(
+        (auth: InstitutionUserAuthRolesAndLocation) =>
+          auth.locationId === locationId,
+      );
     return userAuthorization?.userType;
-  });
+  };
 
   const isBCPublic = computed(
     () => store.state.institution.institutionState?.isBCPublic,
