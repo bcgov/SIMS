@@ -936,7 +936,7 @@ cluster:
 metrics:
   ## @param metrics.enabled Start a side-car prometheus exporter
   ##
-  enabled: true
+  enabled: false
   ## @param metrics.image.registry [default: REGISTRY_NAME] Redis&reg; exporter image registry
   ## @param metrics.image.repository [default: REPOSITORY_NAME/redis-exporter] Redis&reg; exporter image name
   ## @skip metrics.image.tag Redis&reg; exporter image tag
@@ -1028,7 +1028,7 @@ metrics:
   serviceMonitor:
     ## @param metrics.serviceMonitor.enabled If `true`, creates a Prometheus Operator ServiceMonitor (also requires `metrics.enabled` to be `true`)
     ##
-    enabled: true
+    enabled: false
     ## @param metrics.serviceMonitor.namespace Optional namespace which Prometheus is running in
     ##
     namespace: ""
