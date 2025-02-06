@@ -47,10 +47,4 @@ updateJob:
 metrics:
   ## @param metrics.enabled Start a side-car prometheus exporter
   ##
-  enabled: true
-  ## Enable this if you're using https://github.com/coreos/prometheus-operator
-  ##
-  serviceMonitor:
-    ## @param metrics.serviceMonitor.enabled If `true`, creates a Prometheus Operator ServiceMonitor (also requires `metrics.enabled` to be `true`)
-    ##
-    enabled: true
+  enabled: false
