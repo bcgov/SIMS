@@ -12,7 +12,16 @@ ADD
 
 COMMENT ON COLUMN sims.applications.preceding_application_id IS 'The immediate previous application from which the current application was created.';
 
--- Set parent-application-id and preceding-application-id for non-draft applications when application number is present.
+-- Create indexes for parent-application-id and preceding-application-id to improve the performance of data retrieval.
+CREATE INDEX preceding_application_id_idx ON sims.applications (preceding_application_id);
+
+COMMENT ON INDEX sims.preceding_application_id_idx IS 'Index created on preceding_application_id to improve the performance of data retrieval.';
+
+CREATE INDEX parent_application_id_idx ON sims.applications (parent_application_id);
+
+COMMENT ON INDEX sims.parent_application_id_idx IS 'Index created on parent_application_id to improve the performance of data retrieval.';
+
+-- Set parent-application-id for applications when application number is present.
 UPDATE
   sims.applications
 SET
@@ -27,7 +36,15 @@ SET
       applications.submitted_date
     LIMIT
       1
-  ), preceding_application_id = COALESCE(
+  )
+WHERE
+  application_number IS NOT NULL;
+
+-- Set preceding-application-id for applications when application number is present.
+UPDATE
+  sims.applications
+SET
+  preceding_application_id = COALESCE(
     (
       SELECT
         id
