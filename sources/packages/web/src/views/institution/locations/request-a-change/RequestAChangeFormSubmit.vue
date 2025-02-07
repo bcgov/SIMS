@@ -67,7 +67,7 @@
         primaryLabel="Submit requested change"
         @primaryClick="submit"
         @secondaryClick="cancel"
-        :disablePrimaryButton="isReadOnlyUser($props.locationId)"
+        :showButtons="!isReadOnlyUser(locationId)"
       />
     </request-a-change-form>
   </full-page-container>

@@ -10,7 +10,6 @@
         @primaryClick="submit"
         primaryLabel="Submit update"
         @secondaryClick="cancel"
-        :disablePrimaryButton="isReadOnlyUser($props.locationId)"
       /> </template
   ></formio-container>
 </template>
@@ -22,7 +21,6 @@ import {
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "@/services/http/dto";
 import { FormIOForm } from "@/types";
-import { useInstitutionAuth } from "@/composables";
 
 interface ScholasticStanding
   extends ScholasticStandingSubmittedDetailsAPIOutDTO {
@@ -49,13 +47,8 @@ export default defineComponent({
       required: true,
       default: false,
     },
-    locationId: {
-      type: Number,
-      required: false,
-    },
   },
   setup(props, context) {
-    const { isReadOnlyUser } = useInstitutionAuth();
     const data = ref(
       {} as ScholasticStanding | ScholasticStandingBeforeSubmission,
     );
@@ -80,7 +73,7 @@ export default defineComponent({
       context.emit("cancel");
     };
 
-    return { data, submitted, cancel, isReadOnlyUser };
+    return { data, submitted, cancel };
   },
 });
 </script>

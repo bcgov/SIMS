@@ -115,14 +115,13 @@ export default defineComponent({
       const locationAuthorization = userDetails.authorizations.find(
         (authorization) => authorization.location?.id === locationId,
       );
-      if (locationAuthorization?.authType.type === LocationUserAccess.User) {
-        return LocationUserAccess.User;
-      } else if (
-        locationAuthorization?.authType.type === LocationUserAccess.ReadOnlyUser
-      ) {
-        return LocationUserAccess.ReadOnlyUser;
-      } else {
-        return LocationUserAccess.NoAccess;
+      switch (locationAuthorization?.authType.type) {
+        case LocationUserAccess.User:
+          return LocationUserAccess.User;
+        case LocationUserAccess.ReadOnlyUser:
+          return LocationUserAccess.ReadOnlyUser;
+        default:
+          return LocationUserAccess.NoAccess;
       }
     };
 

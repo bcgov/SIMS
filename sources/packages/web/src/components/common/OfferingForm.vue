@@ -20,7 +20,7 @@
           <span>
             <v-btn
               v-if="formMode === OfferingFormModes.Editable"
-              :disabled="disabled || isReadOnlyUser($props.locationId)"
+              :disabled="disabled"
               variant="elevated"
               data-cy="offeringValidationButton"
               color="primary"
@@ -29,7 +29,7 @@
               >Validate
             </v-btn>
             <v-btn
-              :disabled="disabled || isReadOnlyUser($props.locationId)"
+              :disabled="disabled"
               class="ml-2"
               variant="elevated"
               data-cy="offeringSubmitButton"
@@ -47,7 +47,7 @@
 <script lang="ts">
 import { FormIOForm, OfferingFormModel, OfferingFormModes } from "@/types";
 import { defineComponent, PropType, computed, ref, watchEffect } from "vue";
-import { useInstitutionAuth, useOffering } from "@/composables";
+import { useOffering } from "@/composables";
 import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
@@ -94,13 +94,8 @@ export default defineComponent({
       required: true,
       default: false,
     },
-    locationId: {
-      type: Number,
-      required: false,
-    },
   },
   setup(props, context) {
-    const { isReadOnlyUser } = useInstitutionAuth();
     const offeringData = ref(
       {} as EducationProgramOfferingAPIOutDTO | OfferingFormModel,
     );
@@ -148,7 +143,6 @@ export default defineComponent({
     };
 
     return {
-      isReadOnlyUser,
       submitOffering,
       formData,
       cancel,

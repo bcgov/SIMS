@@ -11,9 +11,7 @@
         }"
         subTitle="View Financial Aid Application"
         ><template #buttons>
-          <v-menu
-            v-if="initialData.applicationCOEStatus === COEStatus.required"
-          >
+          <v-menu v-if="showApplicationActions">
             <template v-slot:activator="{ props }">
               <v-btn
                 color="primary"
@@ -30,11 +28,7 @@
               color="primary"
             >
               <template v-for="(item, index) in items" :key="index">
-                <v-list-item
-                  :value="index"
-                  @click="item.command"
-                  :disabled="isReadOnlyUser($props.locationId)"
-                >
+                <v-list-item :value="index" @click="item.command">
                   <v-list-item-title>
                     <span class="label-bold">{{ item.label }}</span>
                   </v-list-item-title>
@@ -71,7 +65,7 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref, watch, defineComponent } from "vue";
+import { onMounted, ref, watch, defineComponent, computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import {
@@ -131,6 +125,12 @@ export default defineComponent({
     );
     const confirmCOEModal = ref(
       {} as ModalDialog<ApproveConfirmEnrollmentModel | boolean>,
+    );
+
+    const showApplicationActions = computed(
+      () =>
+        initialData.value.applicationCOEStatus === COEStatus.required &&
+        !isReadOnlyUser(props.locationId),
     );
 
     const loadInitialData = async () => {
@@ -269,6 +269,7 @@ export default defineComponent({
       InstitutionRoutesConst,
       confirmCOEModal,
       BannerTypes,
+      showApplicationActions,
     };
   },
 });

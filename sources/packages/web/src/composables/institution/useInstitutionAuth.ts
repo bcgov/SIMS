@@ -57,11 +57,13 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
     () => store.state.institution.institutionState?.isBCPublic,
   );
 
-  const isReadOnlyUser = (locationId?: number) => {
-    if (!locationId) return true;
+  const isReadOnlyUser = (locationId: number) => {
+    if (store.state.institution.userState.isAdmin) {
+      return false;
+    }
     return store.state.institution.authorizationsState?.authorizations.some(
       (auth: InstitutionUserAuthRolesAndLocation) =>
-        auth.locationId?.toString() === locationId.toString() &&
+        auth.locationId === +locationId &&
         auth.userType === InstitutionUserTypes.readOnlyUser,
     );
   };

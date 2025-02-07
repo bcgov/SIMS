@@ -9,7 +9,7 @@
     </template>
     <scholastic-standing-form
       :initialData="initialData"
-      :readOnly="false"
+      :readOnly="isReadOnlyUser(locationId)"
       @submit="submit"
       :processing="processing"
       @cancel="goBack"
@@ -27,7 +27,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ScholasticStandingDataAPIInDTO,
 } from "@/services/http/dto/ScholasticStanding.dto";
-import { useFormatters, useSnackBar } from "@/composables";
+import { useFormatters, useInstitutionAuth, useSnackBar } from "@/composables";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
@@ -51,6 +51,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
+    const { isReadOnlyUser } = useInstitutionAuth();
     const initialData = ref({} as ActiveApplicationDataAPIOutDTO);
     const snackBar = useSnackBar();
     const processing = ref(false);
@@ -135,6 +136,7 @@ export default defineComponent({
       goBackRouteParams,
       processing,
       goBack,
+      isReadOnlyUser,
     };
   },
 });

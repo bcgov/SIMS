@@ -4,7 +4,6 @@
     :formMode="formMode"
     :processing="processing"
     :data="data"
-    :locationId="$props.locationId"
     @loaded="formLoaded"
     @validateOffering="validateOffering"
     @saveOffering="saveOffering"

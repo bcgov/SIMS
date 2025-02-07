@@ -35,7 +35,6 @@
           primaryLabel="Submit"
           @primaryClick="submit"
           @secondaryClick="goBack"
-          :disablePrimaryButton="isReadOnlyUser($props.locationId)"
         /> </template
     ></formio-container>
   </full-page-container>
@@ -100,7 +99,8 @@ export default defineComponent({
           isReadonly:
             isAESTUser.value ||
             !educationProgram.isActive ||
-            educationProgram.isExpired,
+            educationProgram.isExpired ||
+            isReadOnlyUser(props.locationId),
         };
       } else {
         // Initialize programData with institution profile data.
