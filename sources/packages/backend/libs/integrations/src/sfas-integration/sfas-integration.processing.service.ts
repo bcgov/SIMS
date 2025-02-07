@@ -55,7 +55,7 @@ export class SFASIntegrationProcessingService {
     }
     if (!filePaths.length) {
       processSummary.info(
-        "There are no files to be processed. But post file import operations will be executed.",
+        "There are no files to be processed, but post-file import operations will be executed.",
       );
     }
     await this.postFileImportOperations(!!filePaths.length, processSummary);
