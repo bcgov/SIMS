@@ -232,13 +232,13 @@ export class SFASIndividualRecord extends SFASRecordIdentification {
   /**
    * Total labour market tools grant (individual_award.award_dlr where award_code = 'LMPT').
    */
-  get lmptAwardAmount(): number | null {
+  get lmptAwardAmount(): number {
     return parseDecimal(this.line.substring(388, 398));
   }
   /**
    * Total labour market unmet need grant (individual_award.award_dlr where award_code = 'LMPU').
    */
-  get lmpuAwardAmount(): number | null {
+  get lmpuAwardAmount(): number {
     return parseDecimal(this.line.substring(398, 408));
   }
 }

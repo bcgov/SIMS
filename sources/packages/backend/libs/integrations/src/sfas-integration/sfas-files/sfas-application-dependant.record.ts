@@ -24,7 +24,7 @@ export class SFASApplicationDependantRecord extends SFASRecordIdentification {
    * First and last name of the child (may include other names as well).
    */
   get dependantName(): string {
-    return this.line.substring(23, 23 + 25)?.trim();
+    return this.line.substring(23, 23 + 25).trim();
   }
   /**
    * Date of birth of the dependant (applicant_dependent.dep_date_of_birth).
