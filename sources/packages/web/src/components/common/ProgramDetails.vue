@@ -36,7 +36,7 @@
                 :disabled="
                   !educationProgram.isActive ||
                   educationProgram.isExpired ||
-                  isReadOnlyUser($props.locationId) ||
+                  isReadOnlyUser(locationId) ||
                   notAllowed
                 "
                 base-color="danger"
