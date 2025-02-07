@@ -87,10 +87,9 @@ export class ApplicationAESTController extends BaseController {
     let previousReadOnlyData: ApplicationFormData;
     if (loadDynamicData) {
       // Check if a previous application exists.
-      const [previousApplicationVersion] =
-        await this.applicationService.getPreviousApplicationVersions(
-          applicationId,
-          { loadDynamicData: true, limit: 1 },
+      const previousApplicationVersion =
+        await this.applicationService.getLastApplicationVersion(
+          application.precedingApplication.id,
         );
       const currentReadOnlyDataPromise =
         this.applicationControllerService.generateApplicationFormData(

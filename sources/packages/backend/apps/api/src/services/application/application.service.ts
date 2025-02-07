@@ -606,6 +606,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationId application id.
    * @param options object that should contain:
    * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
+   * - `loadPrecedingApplication` indicates if the preceding application should be loaded.
    * - `studentId` student id.
    * - `institutionId` institution id.
    * - `allowOverwritten` indicates if overwritten application is allowed.
@@ -615,6 +616,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     options?: {
       loadDynamicData?: boolean;
+      loadPrecedingApplication?: boolean;
       studentId?: number;
       institutionId?: number;
       allowOverwritten?: boolean;
@@ -633,6 +635,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationNumber: true,
         pirDeniedOtherDesc: true,
         submittedDate: true,
+        precedingApplication: options?.loadPrecedingApplication
+          ? {
+              id: true,
+              data: true as unknown,
+            }
+          : null,
         applicationException: {
           id: true,
           exceptionStatus: true,
@@ -683,6 +691,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         pirDeniedReasonId: true,
         programYear: true,
         student: { user: true },
+        precedingApplication: true,
       },
       where: {
         id: applicationId,
@@ -712,11 +721,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .select([
         "application.applicationNumber",
         "application.id",
+        "parentApplication.id",
         "currentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
         "application.applicationStatus",
       ])
+      .innerJoin("application.parentApplication", "parentApplication")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .where("application.student.id = :studentId", { studentId })
@@ -1874,33 +1885,41 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Get previous application versions for an application.
    * @param applicationId application id.
-   * @param options method options.
-   * - `limit` number of previous application versions to be returned.
-   * - `loadDynamicData` optionally loads the dynamic data.
    * @returns previous application versions.
    */
   async getPreviousApplicationVersions(
     applicationId: number,
-    options?: { loadDynamicData?: boolean; limit?: number },
   ): Promise<Application[]> {
     const application = await this.repo.findOne({
-      select: { applicationNumber: true, submittedDate: true },
+      select: { parentApplication: { id: true }, submittedDate: true },
       where: { id: applicationId },
     });
     return this.repo.find({
       select: {
         id: true,
         submittedDate: true,
-        data: !!options?.loadDynamicData as unknown,
       },
       where: {
+        parentApplication: { id: application.parentApplication.id },
         submittedDate: LessThan(application.submittedDate),
-        applicationNumber: application.applicationNumber,
       },
       order: {
         submittedDate: "DESC",
       },
-      take: options?.limit,
+    });
+  }
+
+  /**
+   * Get last application version.
+   * @param precedingApplicationId application id of the previous application.
+   * @returns last application version.
+   */
+  async getLastApplicationVersion(
+    precedingApplicationId: number,
+  ): Promise<Application> {
+    return this.repo.findOne({
+      select: { id: true, data: true as unknown },
+      where: { id: precedingApplicationId },
     });
   }
 

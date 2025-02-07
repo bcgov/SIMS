@@ -213,6 +213,7 @@ export class ApplicationSummaryAPIOutDTO {
   applicationName: string;
   submitted?: Date;
   status: ApplicationStatus;
+  parentApplicationId: number;
 }
 
 /**
