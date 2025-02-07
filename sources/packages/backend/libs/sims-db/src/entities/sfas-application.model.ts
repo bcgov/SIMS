@@ -136,6 +136,7 @@ export class SFASApplication extends BaseSFASApplicationModel {
    */
   @Column({
     name: "application_number",
+    type: "bigint",
     nullable: true,
   })
   applicationNumber?: number;

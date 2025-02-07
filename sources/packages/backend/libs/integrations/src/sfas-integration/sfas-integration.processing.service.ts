@@ -53,6 +53,11 @@ export class SFASIntegrationProcessingService {
     for (const filePath of filePaths) {
       await this.processFile(filePath, processSummary);
     }
+    if (!filePaths.length) {
+      processSummary.info(
+        "There are no files to be processed. But post file import operations will be executed.",
+      );
+    }
     await this.postFileImportOperations(!!filePaths.length, processSummary);
   }
 
