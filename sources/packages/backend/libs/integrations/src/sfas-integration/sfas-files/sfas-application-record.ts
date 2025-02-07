@@ -1,4 +1,4 @@
-import { parseDate, parseDecimal } from "./sfas-parse-utils";
+import { parseDate, parseDecimal, parseInteger } from "./sfas-parse-utils";
 import { SFASRecordIdentification } from "./sfas-record-identification";
 
 /**
@@ -116,5 +116,159 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
    */
   get applicationCancelDate(): Date | null {
     return parseDate(this.line.substring(137, 137 + 8));
+  }
+  /**
+   * The unique application number assigned to this application (application_alias.application_no).
+   */
+  get applicationNumber(): number | null {
+    return parseInteger(this.line.substring(145, 155));
+  }
+  /**
+   * (Spouse/dependents/parents)|To verify information provided to SDPR
+   * for the purpose of determining or auditing
+   * eligibility (application.study_period_living_at_home_flg).
+   */
+  get livingArrangements(): string {
+    return this.line.substring(155, 156);
+  }
+  /**
+   * Status (single, common law, married, separated, divorced).
+   * This is a code eg. MA for married (application_assessment.student_marital_status_cde).
+   */
+  get maritalStatus(): string {
+    return this.line.substring(156, 160).trim();
+  }
+  /**
+   * Applicant's marriage date (applicant_spouse.marriage_dte).
+   */
+  get marriageDate(): Date | null {
+    return parseDate(this.line.substring(160, 168));
+  }
+  /**
+   * Immigration status for student, BC residency (application.bc_residency_flag).
+   */
+  get bcResidencyFlag(): string {
+    return this.line.substring(168, 169);
+  }
+  /**
+   * Permanent residency status (application.permanent_resident_flg).
+   */
+  get permanentResidencyFlag(): string {
+    return this.line.substring(169, 170);
+  }
+  /**
+   * Amount declared by the applicant on the application for gross income from previous year
+   * (applicant_income.income_amt  (applicant_income.applicant_owner_cde = 'A' and applicant_income_.income_type_cde = 'APYI')).
+   */
+  get grossIncomePreviousYear(): number | null {
+    return parseDecimal(this.line.substring(170, 180));
+  }
+  /**
+   * The unique institution code for the institution that the applicant is attending (institution.institution_cde).
+   */
+  get institutionCode(): string {
+    return this.line.substring(180, 184);
+  }
+  /**
+   * The latest application 'status code' (application_status.application_status_cde).
+   */
+  get applicationStatusCode(): string {
+    return this.line.substring(184, 188);
+  }
+  /**
+   * The number of study weeks used in the assessment of this application (application_assessment.NO_OF_EDUC_PERIOD_WEEKS).
+   */
+  get educationPeriodWeeks(): number | null {
+    return parseInteger(this.line.substring(188, 190));
+  }
+  /**
+   * Course load in percentage (application.course_load_cde).
+   */
+  get courseLoad(): number | null {
+    return parseInteger(this.line.substring(190, 193));
+  }
+  /**
+   * Living allowance (assessment_v2.SP_EXP_LIVING_ALLOWANCE + assessment_v2.SP_EXP_LIV_ALLOW_DEPENDENTS).
+   */
+  get assessedCostsLivingAllowance(): number | null {
+    return parseInteger(this.line.substring(193, 203));
+  }
+  /**
+   * Extra shelter (assessment_v2.SP_EXP_EXT_SHELTER_APPLICANT).
+   */
+  get assessedCostsExtraShelter(): number | null {
+    return parseInteger(this.line.substring(203, 213));
+  }
+  /**
+   * Child care expenses (assessment_v2.SP_EXP_SUPERVISING_CHILDREN).
+   */
+  get assessedCostsChildCare(): number | null {
+    return parseInteger(this.line.substring(213, 223));
+  }
+  /**
+   * Alimony.
+   */
+  get assessedCostsAlimony(): number | null {
+    return parseInteger(this.line.substring(223, 233));
+  }
+  /**
+   * Local transportation costs (assessment_v2.SP_EXP_EXT_LOCAL_TRANSPORT).
+   */
+  get assessedCostsLocalTransport(): number | null {
+    return parseInteger(this.line.substring(233, 243));
+  }
+  /**
+   * Return transportation costs (assessment_v2.SP_EXP_RETURN_TRANSPORT).
+   */
+  get assessedCostsReturnTransport(): number | null {
+    return parseInteger(this.line.substring(243, 253));
+  }
+  /**
+   * Tuition costs (assessment_v2.SP_EXP_EDUC_TUITION).
+   */
+  get assessedCostsTuition(): number | null {
+    return parseInteger(this.line.substring(253, 263));
+  }
+  /**
+   * Books and supplies costs (assessment_v2.SP_EXP_EDUC_BOOKS_SUPPLIES).
+   */
+  get assessedCostsBooksAndSupplies(): number | null {
+    return parseInteger(this.line.substring(263, 273));
+  }
+  /**
+   * Exceptional expenses (assessment_v2.SP_EXP_EDUC_INST_EXCEPTIONAL).
+   */
+  get assessedCostsExceptionalExpenses(): number | null {
+    return parseInteger(this.line.substring(273, 283));
+  }
+  /**
+   * Other expenses (assessment_v2.SP_EXP_EDUC_TRANSFER + assessment_v2.SP_EXP_EDUC_OTHER + assessment_v2.SP_EXP_STUDENT_LOAN_PMTS).
+   */
+  get assessedCostsOther(): number | null {
+    return parseInteger(this.line.substring(283, 293));
+  }
+  /**
+   * Discretionary expenses (assessment_v2.SP_EXP_OTHER).
+   */
+  get assessedCostsDiscretionaryExpenses(): number | null {
+    return parseInteger(this.line.substring(293, 303));
+  }
+  /**
+   * Date of withdrawal from school (bcslwthd.withdrawal_dte).
+   */
+  get withdrawalDate(): Date | null {
+    return parseDate(this.line.substring(303, 311));
+  }
+  /**
+   * Reason for withdrawal (bcslwthd.withdrawal_rsn_cde).
+   */
+  get withdrawalReason(): string {
+    return this.line.substring(311, 315);
+  }
+  /**
+   * Flag stating if the withdrawal is reversed/canceled.
+   */
+  get withdrawalActiveFlag(): string {
+    return this.line.substring(315, 316);
   }
 }

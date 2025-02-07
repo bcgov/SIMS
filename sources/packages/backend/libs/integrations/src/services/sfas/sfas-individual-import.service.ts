@@ -92,6 +92,16 @@ export class SFASIndividualImportService
     individual.partTimeMSFAAEffectiveDate = getISODateOnlyString(
       sfasIndividual.partTimeMSFAAEffectiveDate,
     );
+    individual.initials = sfasIndividual.initials;
+    individual.addressLine1 = sfasIndividual.addressLine1;
+    individual.addressLine2 = sfasIndividual.addressLine2;
+    individual.city = sfasIndividual.city;
+    individual.provinceState = sfasIndividual.provinceState;
+    individual.country = sfasIndividual.country;
+    individual.phoneNumber = sfasIndividual.phoneNumber;
+    individual.postalZipCode = sfasIndividual.postalZipCode;
+    individual.lmptAwardAmount = sfasIndividual.lmptAwardAmount;
+    individual.lmpuAwardAmount = sfasIndividual.lmpuAwardAmount;
     await this.repo.save(individual, { reload: false, transaction: false });
   }
 
