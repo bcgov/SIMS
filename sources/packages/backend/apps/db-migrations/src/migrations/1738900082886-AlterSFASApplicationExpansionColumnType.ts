@@ -6,14 +6,14 @@ export class AlterSFASApplicationExpansionColumnType1738900082886
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Alter-application-number-type.sql", "SFASApplications"),
+      getSQLFileData("Alter-expansion-column-type.sql", "SFASApplications"),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-alter-application-number-type.sql",
+        "Rollback-alter-expansion-column-type.sql",
         "SFASApplications",
       ),
     );
