@@ -275,6 +275,7 @@ export class SFASIndividual extends BaseModel {
     name: "phone_number",
     type: "bigint",
     nullable: true,
+    transformer: numericTransformer,
   })
   phoneNumber?: number;
   /**
