@@ -8598,7 +8598,22 @@
                 "json": ""
               },
               "customConditional": "",
-              "logic": [],
+              "logic": [
+                {
+                  "name": "Update Options",
+                  "trigger": {
+                    "type": "javascript",
+                    "javascript": "data.howWillYouBeAttendingTheProgram"
+                  },
+                  "actions": [
+                    {
+                      "name": "Update Options",
+                      "type": "customAction",
+                      "customAction": "var options = [\n  { label: 'Yes', value: 'yes' },\n  { label: 'No', value: 'no' }\n];\n\nif (data.howWillYouBeAttendingTheProgram === 'Part Time') {\n  options.push({ label: 'Prefer not to answer', value: 'preferNotToAnswer' });\n}\n\ncomponent.values = options;"
+                    }
+                  ]
+                }
+              ],
               "attributes": {
                 "data-cy": "youthInCare"
               },
