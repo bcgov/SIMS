@@ -8547,23 +8547,7 @@
               "disabled": false,
               "tableView": true,
               "modalEdit": false,
-              "values": [
-                {
-                  "value": "yes",
-                  "label": "Yes",
-                  "shortcut": ""
-                },
-                {
-                  "value": "no",
-                  "label": "No",
-                  "shortcut": ""
-                },
-                {
-                  "value": "preferNotToAnswer",
-                  "label": "Prefer not to answer",
-                  "shortcut": ""
-                }
-              ],
+              "values": [],
               "dataType": "",
               "persistent": true,
               "protected": false,
