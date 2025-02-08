@@ -25,7 +25,7 @@ export class SFASApplicationDisbursementRecord extends SFASRecordIdentification 
    * Program code used by SFAS (award_disbursement.program_cde).
    */
   get fundingType(): string {
-    return this.line.substring(23, 23 + 4)?.trim();
+    return this.line.substring(23, 23 + 4).trim();
   }
   /**
    * Amount of funding for this specific disbursement (award_disbursement.disbursement_amt).
