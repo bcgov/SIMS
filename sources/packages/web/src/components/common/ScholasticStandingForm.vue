@@ -4,12 +4,13 @@
     :formData="data"
     @submitted="submitted"
   >
-    <template #actions="{ submit }" v-if="!readOnly">
+    <template #actions="{ submit }">
       <footer-buttons
         :processing="processing"
         @primaryClick="submit"
         primaryLabel="Submit update"
         @secondaryClick="cancel"
+        :disablePrimaryButton="readOnly"
       /> </template
   ></formio-container>
 </template>
@@ -21,6 +22,7 @@ import {
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "@/services/http/dto";
 import { FormIOForm } from "@/types";
+import { useInstitutionAuth } from "@/composables";
 
 interface ScholasticStanding
   extends ScholasticStandingSubmittedDetailsAPIOutDTO {
@@ -49,6 +51,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
+    const { isReadOnlyUser } = useInstitutionAuth();
     const data = ref(
       {} as ScholasticStanding | ScholasticStandingBeforeSubmission,
     );
@@ -73,7 +76,7 @@ export default defineComponent({
       context.emit("cancel");
     };
 
-    return { data, submitted, cancel };
+    return { data, submitted, cancel, isReadOnlyUser };
   },
 });
 </script>

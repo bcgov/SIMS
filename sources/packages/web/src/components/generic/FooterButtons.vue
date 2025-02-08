@@ -1,5 +1,5 @@
 <template>
-  <v-row :justify="justify" class="mt-2 mb-1" v-if="showButtons">
+  <v-row :justify="justify" class="mt-2 mb-1">
     <v-btn
       :disabled="processing"
       :color="secondaryButtonColor"
@@ -31,11 +31,6 @@ import { defineComponent, PropType } from "vue";
 export default defineComponent({
   emits: ["primaryClick", "secondaryClick"],
   props: {
-    showButtons: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
     primaryLabel: {
       type: String,
       required: true,

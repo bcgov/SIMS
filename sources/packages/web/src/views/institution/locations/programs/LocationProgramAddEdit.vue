@@ -19,6 +19,7 @@
             color="success"
             @click="createNewProgram"
             class="btn-font-color-light"
+            v-if="!programData.isReadonly"
           >
             Create program
           </v-btn>
@@ -235,7 +236,6 @@ export default defineComponent({
     };
 
     return {
-      isReadOnlyUser,
       programData,
       submitted,
       isReadonly,

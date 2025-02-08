@@ -21,7 +21,7 @@
           primaryLabel="Complete program info request"
           @primaryClick="submit"
           @secondaryClick="goBack"
-          :showButtons="!isReadOnlyUser(locationId)"
+          :disablePrimaryButton="isReadOnlyUser(locationId)"
         /> </template
     ></formio-container>
   </full-page-container>

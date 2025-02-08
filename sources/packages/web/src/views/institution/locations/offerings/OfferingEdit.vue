@@ -176,11 +176,7 @@ export default defineComponent({
           props.programId,
           props.offeringId,
         );
-      if (isReadOnlyUser(props.locationId)) {
-        // If user is readonly, set form mode to readonly.
-        formMode.value = OfferingFormModes.Readonly;
-        return;
-      }
+
       let mode = OfferingFormModes.Readonly;
       const isReadonly = hasReadonlyStatus(programOffering.offeringStatus);
       if (!isReadonly) {
@@ -189,6 +185,10 @@ export default defineComponent({
           : OfferingFormModes.Editable;
       }
       formMode.value = mode;
+      if (isReadOnlyUser(props.locationId)) {
+        // If user is readonly, set form mode to readonly.
+        formMode.value = OfferingFormModes.Readonly;
+      }
       initialData.value = programOffering as OfferingFormModel;
     };
 

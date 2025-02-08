@@ -107,7 +107,7 @@ import {
   PaginatedResults,
 } from "@/types";
 import { EducationProgramOfferingSummaryAPIOutDTO } from "@/services/http/dto";
-import { useFormatters } from "@/composables";
+import { useFormatters, useInstitutionAuth } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 
@@ -141,6 +141,7 @@ export default defineComponent({
     const currentPage = ref();
     const currentPageLimit = ref();
     const { dateOnlyLongString } = useFormatters();
+    const { isReadOnlyUser } = useInstitutionAuth();
     const clientType = computed(() => AuthService.shared.authClientType);
 
     const isInstitutionUser = computed(() => {
@@ -148,7 +149,11 @@ export default defineComponent({
     });
 
     const allowOfferingEdit = computed(() => {
-      return isInstitutionUser.value && props.isEditAllowed;
+      return (
+        isInstitutionUser.value &&
+        props.isEditAllowed &&
+        !isReadOnlyUser(props.locationId)
+      );
     });
 
     const isAESTUser = computed(() => {

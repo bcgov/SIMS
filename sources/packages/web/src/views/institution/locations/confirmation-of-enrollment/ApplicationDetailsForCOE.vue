@@ -259,7 +259,6 @@ export default defineComponent({
     });
 
     return {
-      isReadOnlyUser,
       initialData,
       items,
       COEStatus,

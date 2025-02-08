@@ -17,7 +17,6 @@
           ...educationProgram,
           status: educationProgram.programStatus,
         }"
-        :locationId="$props.locationId"
       />
     </template>
     <manage-program-and-offering-summary
