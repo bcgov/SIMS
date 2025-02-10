@@ -1,8 +1,8 @@
 import { Injectable, LoggerService, NestMiddleware } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectLogger } from "@sims/utilities/logger";
-import { IUserToken } from "apps/api/src/auth";
-import { CLIENT_IP_HEADER_NAME } from "apps/api/src/utilities";
+import { IUserToken } from "../auth";
+import { CLIENT_IP_HEADER_NAME } from "../utilities";
 import { Request, Response, NextFunction } from "express";
 
 @Injectable()
