@@ -8572,9 +8572,9 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": true,
-                "customMessage": "",
-                "custom": "",
+                "onlyAvailableItems": false,
+                "customMessage": "Youth In Care is an invalid value.",
+                "custom": "valid = (input === 'yes' || input === 'no' || (input === 'preferNotToAnswer' && data.howWillYouBeAttendingTheProgram === 'Part Time'));",
                 "customPrivate": false,
                 "json": "",
                 "strictDateValidation": false,
