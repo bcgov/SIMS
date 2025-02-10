@@ -29,10 +29,10 @@ instances:
     storageClassName: netapp-block-standard
   requests:
     cpu: "2"
-    memory: 4Gi
+    memory: 6Gi
   limits:
     cpu: "4"
-    memory: 4Gi
+    memory: 6Gi
   replicaCertCopy:
     requests:
       cpu: 50m
