@@ -8604,7 +8604,7 @@
                     {
                       "name": "Update Youth In Care Options",
                       "type": "customAction",
-                      "customAction": "const options = [\n  { label: 'Yes', value: 'yes' },\n  { label: 'No', value: 'no' }\n];\n\nif (data.howWillYouBeAttendingTheProgram === 'Part Time') {\n  options.push({ label: 'Prefer not to answer', value: 'preferNotToAnswer' });\n}\n\ncomponent.values = options;"
+                      "customAction": "var options = [\n  { label: 'Yes', value: 'yes' },\n  { label: 'No', value: 'no' }\n];\n\nif (data.howWillYouBeAttendingTheProgram === 'Part Time') {\n  options.push({ label: 'Prefer not to answer', value: 'preferNotToAnswer' });\n}\n\ncomponent.values = options;"
                     }
                   ]
                 }
@@ -8781,9 +8781,10 @@
               "hideLabel": true,
               "tags": [],
               "conditional": {
-                "show": "true",
-                "when": "youthInCare",
-                "eq": "yes"
+                "show": "",
+                "when": null,
+                "eq": "",
+                "json": ""
               },
               "properties": {},
               "lockKey": true,
