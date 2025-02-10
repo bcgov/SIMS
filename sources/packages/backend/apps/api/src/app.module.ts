@@ -1,7 +1,7 @@
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { HealthController } from "./health.controller";
 import { AppService } from "./app.service";
-import { APP_INTERCEPTOR, RouterModule } from "@nestjs/core";
+import { RouterModule } from "@nestjs/core";
 import {
   UserService,
   BCeIDServiceProvider,
@@ -31,7 +31,7 @@ import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
 import { AppExternalModule } from "./app.external.module";
-import { AccessLoggingInterceptor } from "./interceptors";
+import { AccessLoggerMiddleware } from "./middlewares";
 
 @Module({
   imports: [
@@ -85,7 +85,10 @@ import { AccessLoggingInterceptor } from "./interceptors";
     BCeIDServiceProvider,
     FormService,
     ProgramYearService,
-    { provide: APP_INTERCEPTOR, useClass: AccessLoggingInterceptor },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AccessLoggerMiddleware).exclude("/health").forRoutes("*");
+  }
+}
