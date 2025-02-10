@@ -8547,23 +8547,7 @@
               "disabled": false,
               "tableView": true,
               "modalEdit": false,
-              "values": [
-                {
-                  "value": "yes",
-                  "label": "Yes",
-                  "shortcut": ""
-                },
-                {
-                  "value": "no",
-                  "label": "No",
-                  "shortcut": ""
-                },
-                {
-                  "value": "preferNotToAnswer",
-                  "label": "Prefer not to answer",
-                  "shortcut": ""
-                }
-              ],
+              "values": [],
               "dataType": "",
               "persistent": true,
               "protected": false,
@@ -8577,9 +8561,9 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": true,
-                "customMessage": "",
-                "custom": "",
+                "onlyAvailableItems": false,
+                "customMessage": "Youth In Care is an invalid value.",
+                "custom": "valid = (input === 'yes' || input === 'no' || (input === 'preferNotToAnswer' && data.howWillYouBeAttendingTheProgram === 'Part Time'));",
                 "customPrivate": false,
                 "json": "",
                 "strictDateValidation": false,
@@ -8598,7 +8582,22 @@
                 "json": ""
               },
               "customConditional": "",
-              "logic": [],
+              "logic": [
+                {
+                  "name": "Check Youth In Care Options",
+                  "trigger": {
+                    "type": "javascript",
+                    "javascript": "data.howWillYouBeAttendingTheProgram"
+                  },
+                  "actions": [
+                    {
+                      "name": "Update Youth In Care Options",
+                      "type": "customAction",
+                      "customAction": "var options = [\n  { label: 'Yes', value: 'yes' },\n  { label: 'No', value: 'no' }\n];\n\nif (data.howWillYouBeAttendingTheProgram === 'Part Time') {\n  options.push({ label: 'Prefer not to answer', value: 'preferNotToAnswer' });\n}\n\ncomponent.values = options;"
+                    }
+                  ]
+                }
+              ],
               "attributes": {
                 "data-cy": "youthInCare"
               },
@@ -8726,7 +8725,7 @@
                   "input": true,
                   "tableView": true,
                   "inputType": "radio",
-                  "label": "Are you, or were you at the time of your 19th birthday, in continuing care or custody of a director of child welfare in B.C.?",
+                  "label": "Are you, or were you at the time of your 19th birthday a youth in the continuing care or custody of the Government of B.C.?",
                   "key": "custodyOfChildWelfare",
                   "values": [
                     {
@@ -8771,9 +8770,10 @@
               "hideLabel": true,
               "tags": [],
               "conditional": {
-                "show": "true",
-                "when": "youthInCare",
-                "eq": "yes"
+                "show": "",
+                "when": null,
+                "eq": "",
+                "json": ""
               },
               "properties": {},
               "lockKey": true,
