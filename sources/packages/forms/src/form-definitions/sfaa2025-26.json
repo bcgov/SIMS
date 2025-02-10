@@ -8725,7 +8725,7 @@
                   "input": true,
                   "tableView": true,
                   "inputType": "radio",
-                  "label": "Are you, or were you at the time of your 19th birthday, in continuing care or custody of a director of child welfare in B.C.?",
+                  "label": "Are you, or were you at the time of your 19th birthday a youth in the continuing care or custody of the Government of B.C.?",
                   "key": "custodyOfChildWelfare",
                   "values": [
                     {
