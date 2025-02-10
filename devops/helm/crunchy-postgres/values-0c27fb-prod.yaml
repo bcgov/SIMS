@@ -29,7 +29,7 @@ instances:
     storageClassName: netapp-block-standard
   requests:
     cpu: "2"
-    memory: 2Gi
+    memory: 4Gi
   limits:
     cpu: "4"
     memory: 4Gi
