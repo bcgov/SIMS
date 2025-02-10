@@ -6,10 +6,13 @@ import {
   LoggerService,
 } from "@nestjs/common";
 import { InjectLogger } from "@sims/utilities/logger";
-import { IUserToken } from "apps/api/src/auth";
-import { CLIENT_IP_HEADER_NAME } from "apps/api/src/utilities";
+import { IUserToken } from "../auth";
+import { CLIENT_IP_HEADER_NAME } from "../utilities";
 import { Observable } from "rxjs";
 
+/**
+ * access logging details from request.
+ */
 interface AccessLoggingRequest {
   user: IUserToken;
   headers: Record<string, string>;
