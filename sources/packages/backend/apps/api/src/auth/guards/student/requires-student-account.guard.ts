@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+import { StudentUserToken } from "../../userToken.interface";
 import { REQUIRES_STUDENT_ACCOUNT_KEY } from "../../decorators";
 import { ApiProcessError } from "../../../types";
 import { MISSING_STUDENT_ACCOUNT } from "../../../constants";
@@ -26,25 +27,19 @@ export class RequiresStudentAccountGuard implements CanActivate {
     if (!requiresStudentAccount) {
       return true;
     }
-    throw new UnauthorizedException(
-      new ApiProcessError(
-        "The user does not have a student account associated.",
-        MISSING_STUDENT_ACCOUNT,
-      ),
-    );
 
-    // const { user } = context.switchToHttp().getRequest();
-    // const userToken = user as StudentUserToken;
+    const { user } = context.switchToHttp().getRequest();
+    const userToken = user as StudentUserToken;
 
-    // if (!userToken?.studentId) {
-    //   throw new UnauthorizedException(
-    //     new ApiProcessError(
-    //       "The user does not have a student account associated.",
-    //       MISSING_STUDENT_ACCOUNT,
-    //     ),
-    //   );
-    // }
+    if (!userToken?.studentId) {
+      throw new UnauthorizedException(
+        new ApiProcessError(
+          "The user does not have a student account associated.",
+          MISSING_STUDENT_ACCOUNT,
+        ),
+      );
+    }
 
-    // return true;
+    return true;
   }
 }
