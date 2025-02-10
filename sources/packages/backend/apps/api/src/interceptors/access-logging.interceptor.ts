@@ -32,12 +32,12 @@ export class AccessLoggingInterceptor implements NestInterceptor {
       .getRequest() as AccessLoggingRequest;
     // Root API url path.
     const apiRootURLPath = "/api/";
-    const [, handlerURI] = accessLoggingRequest.url.split(apiRootURLPath);
+    const [, nonHealthCheckHandlerURI] =
+      accessLoggingRequest.url.split(apiRootURLPath);
     // Log access details only for API requests to handlers excluding health check API calls.
-    if (handlerURI) {
+    if (nonHealthCheckHandlerURI) {
       this.logAccessDetails(accessLoggingRequest);
     }
-
     return next.handle();
   }
 
@@ -49,7 +49,7 @@ export class AccessLoggingInterceptor implements NestInterceptor {
     const { headers, socket, url, method, user } = accessLoggingRequest;
     const clientIP = headers[CLIENT_IP_HEADER_NAME] ?? socket.remoteAddress;
     const userGUID = user ? user.userName : "User GUID not found";
-    const userAgent = headers["user-agent"] ?? "User-Agent not found";
+    const userAgent = headers["user-agent"] ?? "User agent not found";
     const userAccessLog = `Request - ${method} ${url} From ${clientIP} | User GUID: ${userGUID} | User Agent: ${userAgent}`;
     this.logger.log(userAccessLog);
   }
