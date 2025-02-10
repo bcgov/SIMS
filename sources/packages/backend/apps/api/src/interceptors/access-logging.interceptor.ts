@@ -31,11 +31,12 @@ export class AccessLoggingInterceptor implements NestInterceptor {
       .switchToHttp()
       .getRequest() as AccessLoggingRequest;
     // Root API url path.
-    const apiRootURLPath = "/api/";
-    const [, nonHealthCheckHandlerURI] =
-      accessLoggingRequest.url.split(apiRootURLPath);
+    const healthCheckHandlerRoot = "/health";
+    const isHealthCheckRequest = accessLoggingRequest.url.includes(
+      healthCheckHandlerRoot,
+    );
     // Log access details only for API requests to handlers excluding health check API calls.
-    if (nonHealthCheckHandlerURI) {
+    if (!isHealthCheckRequest) {
       this.logAccessDetails(accessLoggingRequest);
     }
     return next.handle();

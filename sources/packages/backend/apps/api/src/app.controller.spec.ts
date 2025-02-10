@@ -1,20 +1,20 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { AppController } from "./app.controller";
+import { HealthController } from "./health.controller";
 import { AppService } from "./app.service";
 import { DatabaseModule } from "@sims/sims-db";
 
 // TODO: must mock DB dependencies.
-describe.skip("AppController", () => {
-  let appController: AppController;
+describe.skip("HealthController", () => {
+  let healthController: HealthController;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
-      controllers: [AppController],
+      controllers: [HealthController],
       providers: [AppService],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
+    healthController = app.get<HealthController>(HealthController);
   });
 
   describe("root", () => {
@@ -22,7 +22,7 @@ describe.skip("AppController", () => {
       const expected = `Hello World! The database dataSource is true and version: ${
         process.env.VERSION ?? "-1"
       }`;
-      expect(appController.getHello()).toBe(expected);
+      expect(healthController.getHello()).toBe(expected);
     });
   });
 });

@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
+import { HealthController } from "./health.controller";
 import { AppService } from "./app.service";
 import { APP_INTERCEPTOR, RouterModule } from "@nestjs/core";
 import {
@@ -73,7 +73,7 @@ import { AccessLoggingInterceptor } from "./interceptors";
     ]),
   ],
   controllers: [
-    AppController,
+    HealthController,
     ConfigController,
     DynamicFormController,
     AuditController,
