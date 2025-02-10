@@ -8,7 +8,6 @@ import { AppAllExceptionsFilter } from "./app.exception.filter";
 import { exit } from "process";
 import { setGlobalPipes } from "./utilities/auth-utils";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { Request, Response } from "express";
 import { KeycloakConfig } from "@sims/auth/config";
 import helmet from "helmet";
 import { SystemUsersService } from "@sims/services";
@@ -56,16 +55,6 @@ async function bootstrap() {
   app.enableCors({
     exposedHeaders: "Content-Disposition",
     origin: allowAnyOrigin,
-  });
-
-  // Log every request.
-  app.use((req: Request, _res: Response, next: () => void) => {
-    logger.log(
-      `Request - ${req.method} ${req.path} From ${
-        req.headers.origin ?? "unknown"
-      } | ${req.headers["user-agent"] ?? "unknown"}`,
-    );
-    next();
   });
 
   // pipes

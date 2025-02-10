@@ -10,6 +10,7 @@ import BaseController from "../BaseController";
 import { AuditService } from "../../services";
 import { Request } from "express";
 import { AuditAPIInDTO } from "./models/audit.dto";
+import { CLIENT_IP_HEADER_NAME } from "apps/api/src/utilities";
 
 @AllowAuthorizedParty(
   AuthorizedParties.institution,
@@ -38,7 +39,7 @@ export class AuditController extends BaseController {
     @Req() request: Request,
   ): void {
     const clientIP =
-      (request.headers["x-forwarded-for"] as string) ||
+      (request.headers[CLIENT_IP_HEADER_NAME] as string) ||
       request.socket.remoteAddress;
     this.auditService.audit(
       clientIP,

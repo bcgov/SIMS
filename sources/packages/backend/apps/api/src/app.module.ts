@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { RouterModule } from "@nestjs/core";
+import { APP_INTERCEPTOR, RouterModule } from "@nestjs/core";
 import {
   UserService,
   BCeIDServiceProvider,
@@ -31,6 +31,7 @@ import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
 import { AppExternalModule } from "./app.external.module";
+import { AccessLoggingInterceptor } from "apps/api/src/interceptors";
 
 @Module({
   imports: [
@@ -84,6 +85,7 @@ import { AppExternalModule } from "./app.external.module";
     BCeIDServiceProvider,
     FormService,
     ProgramYearService,
+    { provide: APP_INTERCEPTOR, useClass: AccessLoggingInterceptor },
   ],
 })
 export class AppModule {}

@@ -120,3 +120,8 @@ export const PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS: RestrictionCode[] = [
   RestrictionCode.PTSSR,
   RestrictionCode.PTWTHD,
 ];
+
+/**
+ * Header name for the client IP address.
+ */
+export const CLIENT_IP_HEADER_NAME = "x-forwarded-for";
