@@ -10,7 +10,7 @@ import BaseController from "../BaseController";
 import { AuditService } from "../../services";
 import { Request } from "express";
 import { AuditAPIInDTO } from "./models/audit.dto";
-import { CLIENT_IP_HEADER_NAME } from "../../utilities";
+import { getClientIPFromRequest } from "../../utilities";
 
 @AllowAuthorizedParty(
   AuthorizedParties.institution,
@@ -38,9 +38,7 @@ export class AuditController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Req() request: Request,
   ): void {
-    const clientIP =
-      (request.headers[CLIENT_IP_HEADER_NAME] as string) ||
-      request.socket.remoteAddress;
+    const clientIP = getClientIPFromRequest(request);
     this.auditService.audit(
       clientIP,
       userToken.userName,

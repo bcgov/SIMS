@@ -2,15 +2,15 @@ import { Injectable, LoggerService, NestMiddleware } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { InjectLogger } from "@sims/utilities/logger";
 import { IUserToken } from "../auth";
-import { CLIENT_IP_HEADER_NAME } from "../utilities";
+import { getClientIPFromRequest } from "../utilities";
 import { Request, Response, NextFunction } from "express";
 
 @Injectable()
 export class AccessLoggerMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService) {}
   use(request: Request, _response: Response, next: NextFunction) {
-    const { headers, socket, originalUrl, method } = request;
-    const clientIP = headers[CLIENT_IP_HEADER_NAME] ?? socket.remoteAddress;
+    const { headers, originalUrl, method } = request;
+    const clientIP = getClientIPFromRequest(request);
     const user = this.getUserFromBearerToken(request.headers.authorization);
     const userGUID = user ? user.userName : "User GUID not found";
     const userAgent = headers["user-agent"] ?? "User agent not found";
