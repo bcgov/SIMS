@@ -31,7 +31,7 @@ import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
 import { AppExternalModule } from "./app.external.module";
-import { AccessLoggingInterceptor } from "apps/api/src/interceptors";
+import { AccessLoggingInterceptor } from "./interceptors";
 
 @Module({
   imports: [
