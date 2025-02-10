@@ -11,9 +11,7 @@
         }"
         subTitle="View Financial Aid Application"
         ><template #buttons>
-          <v-menu
-            v-if="initialData.applicationCOEStatus === COEStatus.required"
-          >
+          <v-menu v-if="showApplicationActions">
             <template v-slot:activator="{ props }">
               <v-btn
                 color="primary"
@@ -67,7 +65,7 @@
 </template>
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref, watch, defineComponent } from "vue";
+import { onMounted, ref, watch, defineComponent, computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import {
@@ -78,6 +76,7 @@ import {
   BannerTypes,
   COEApprovalPeriodStatus,
 } from "@/types";
+import { useInstitutionAuth } from "@/composables/institution/useInstitutionAuth";
 import { useSnackBar, ModalDialog, useCOE, useFormatters } from "@/composables";
 import {
   FIRST_COE_NOT_COMPLETE,
@@ -116,6 +115,7 @@ export default defineComponent({
       disabilityStatusToDisplay,
       applicationDisabilityStatusToDisplay,
     } = useFormatters();
+    const { isReadOnlyUser } = useInstitutionAuth();
     const router = useRouter();
     const snackBar = useSnackBar();
     const initialData = ref({} as ApplicationDetailsForCOEAPIOutDTO);
@@ -125,6 +125,12 @@ export default defineComponent({
     );
     const confirmCOEModal = ref(
       {} as ModalDialog<ApproveConfirmEnrollmentModel | boolean>,
+    );
+
+    const showApplicationActions = computed(
+      () =>
+        initialData.value.applicationCOEStatus === COEStatus.required &&
+        !isReadOnlyUser(props.locationId),
     );
 
     const loadInitialData = async () => {
@@ -262,6 +268,7 @@ export default defineComponent({
       InstitutionRoutesConst,
       confirmCOEModal,
       BannerTypes,
+      showApplicationActions,
     };
   },
 });

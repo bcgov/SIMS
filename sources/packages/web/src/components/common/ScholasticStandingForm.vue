@@ -4,12 +4,13 @@
     :formData="data"
     @submitted="submitted"
   >
-    <template #actions="{ submit }" v-if="!readOnly">
+    <template #actions="{ submit }">
       <footer-buttons
         :processing="processing"
         @primaryClick="submit"
         primaryLabel="Submit update"
         @secondaryClick="cancel"
+        :disablePrimaryButton="readOnly"
       /> </template
   ></formio-container>
 </template>

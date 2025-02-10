@@ -36,6 +36,7 @@
                 :disabled="
                   !educationProgram.isActive ||
                   educationProgram.isExpired ||
+                  isReadOnlyUser(locationId) ||
                   notAllowed
                 "
                 base-color="danger"
@@ -129,7 +130,7 @@ import {
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 import EducationProgramDeactivationModal from "@/components/common/modals/EducationProgramDeactivationModal.vue";
-import { ModalDialog, useSnackBar } from "@/composables";
+import { ModalDialog, useInstitutionAuth, useSnackBar } from "@/composables";
 import ApiClient from "@/services/http/ApiClient";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
@@ -161,6 +162,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const snackBar = useSnackBar();
     const router = useRouter();
+    const { isReadOnlyUser } = useInstitutionAuth();
     const deactivateEducationProgramModal = ref(
       {} as ModalDialog<DeactivateProgramAPIInDTO | boolean>,
     );
@@ -227,6 +229,7 @@ export default defineComponent({
     };
 
     return {
+      isReadOnlyUser,
       goToProgram,
       ProgramIntensity,
       programActionLabel,

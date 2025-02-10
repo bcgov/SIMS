@@ -121,6 +121,7 @@ export interface BCeIDUser {
 export enum LocationUserAccess {
   User = "user",
   NoAccess = "none",
+  ReadOnlyUser = "read-only-user",
 }
 
 /**
