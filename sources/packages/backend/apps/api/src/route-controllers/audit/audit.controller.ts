@@ -10,7 +10,7 @@ import BaseController from "../BaseController";
 import { AuditService } from "../../services";
 import { Request } from "express";
 import { AuditAPIInDTO } from "./models/audit.dto";
-import { CLIENT_IP_HEADER_NAME } from "apps/api/src/utilities";
+import { CLIENT_IP_HEADER_NAME } from "../../utilities";
 
 @AllowAuthorizedParty(
   AuthorizedParties.institution,
