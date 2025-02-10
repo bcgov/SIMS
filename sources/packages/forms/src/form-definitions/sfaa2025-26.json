@@ -8547,7 +8547,18 @@
               "disabled": false,
               "tableView": true,
               "modalEdit": false,
-              "values": [],
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
               "dataType": "",
               "persistent": true,
               "protected": false,
@@ -8593,7 +8604,7 @@
                     {
                       "name": "Update Youth In Care Options",
                       "type": "customAction",
-                      "customAction": "var options = [\n  { label: 'Yes', value: 'yes' },\n  { label: 'No', value: 'no' }\n];\n\nif (data.howWillYouBeAttendingTheProgram === 'Part Time') {\n  options.push({ label: 'Prefer not to answer', value: 'preferNotToAnswer' });\n}\n\ncomponent.values = options;"
+                      "customAction": "const options = [\n  { label: 'Yes', value: 'yes' },\n  { label: 'No', value: 'no' }\n];\n\nif (data.howWillYouBeAttendingTheProgram === 'Part Time') {\n  options.push({ label: 'Prefer not to answer', value: 'preferNotToAnswer' });\n}\n\ncomponent.values = options;"
                     }
                   ]
                 }
