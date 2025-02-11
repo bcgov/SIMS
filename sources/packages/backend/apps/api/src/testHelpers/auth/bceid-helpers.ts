@@ -10,14 +10,12 @@ import { BCeIDService } from "../../services";
  * @param user a persisted user object.
  * @param displayName a persisted display name for user login.
  * @param institution a persisted institution object.
- * @param returnsNull indicates whether mocks a null response.
  * @returns a persisted BCeID account object.
  */
-export async function mockBCeIDAccountDetails(
+export async function mockBCeIDAccountUserFound(
   testingModule: TestingModule,
   user: User,
   institution: Institution,
-  returnsNull?: boolean,
 ): Promise<jest.SpyInstance> {
   const bceIDService = await getProviderInstanceForModule(
     testingModule,
@@ -27,21 +25,43 @@ export async function mockBCeIDAccountDetails(
   return jest
     .spyOn(bceIDService, "getAccountDetails")
     .mockImplementation(() => {
-      const response = returnsNull
-        ? null
-        : {
-            user: {
-              guid: user.userName,
-              displayName: `${user.firstName}_${user.lastName}`,
-              firstname: user.firstName,
-              surname: user.lastName,
-              email: user.email,
-            },
-            institution: {
-              guid: institution.businessGuid,
-              legalName: institution.legalOperatingName,
-            },
-          };
+      const response = {
+        user: {
+          guid: user.userName,
+          displayName: `${user.firstName}_${user.lastName}`,
+          firstname: user.firstName,
+          surname: user.lastName,
+          email: user.email,
+        },
+        institution: {
+          guid: institution.businessGuid,
+          legalName: institution.legalOperatingName,
+        },
+      };
+      return Promise.resolve(response);
+    });
+}
+
+/**
+ * Mocks BCeID account info from BCeID service to return null.
+ * @param testingModule nest testing module.
+ * @param user a persisted user object.
+ * @param displayName a persisted display name for user login.
+ * @param institution a persisted institution object.
+ * @returns a persisted BCeID account object.
+ */
+export async function mockBCeIDAccountUserNotFound(
+  testingModule: TestingModule,
+): Promise<jest.SpyInstance> {
+  const bceIDService = await getProviderInstanceForModule(
+    testingModule,
+    AppInstitutionsModule,
+    BCeIDService,
+  );
+  return jest
+    .spyOn(bceIDService, "getAccountDetails")
+    .mockImplementation(() => {
+      const response = null;
       return Promise.resolve(response);
     });
 }

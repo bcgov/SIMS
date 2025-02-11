@@ -8,7 +8,8 @@ import {
   getAuthRelatedEntities,
   getInstitutionToken,
   InstitutionTokenTypes,
-  mockBCeIDAccountDetails,
+  mockBCeIDAccountUserFound,
+  mockBCeIDAccountUserNotFound,
 } from "../../../../testHelpers";
 import {
   E2EDataSources,
@@ -70,7 +71,6 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
 
   it("Should throw an UnprocessableEntityException error when the user passed in the payload is not found on BCeID.", async () => {
     // Arrange
-    const user = createFakeUser();
     const payload = {
       bceidUserId: faker.random.alpha({ count: 5 }),
       permissions: [
@@ -82,7 +82,7 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     };
 
     // Mock BCeID account method to return null response.
-    await mockBCeIDAccountDetails(appModule, user, collegeFInstitution, true);
+    await mockBCeIDAccountUserNotFound(appModule);
 
     // Institution token.
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
@@ -121,7 +121,7 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     });
 
     // Mock BCeID account details.
-    await mockBCeIDAccountDetails(
+    await mockBCeIDAccountUserFound(
       appModule,
       user,
       collegeDLocation.institution,
@@ -163,7 +163,7 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     };
 
     // Mock get BCeID account details with the initial userName.
-    await mockBCeIDAccountDetails(
+    await mockBCeIDAccountUserFound(
       appModule,
       { ...user, userName: userGuid },
       collegeFInstitution,
@@ -203,7 +203,7 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     };
 
     // Mock get BCeID account details
-    await mockBCeIDAccountDetails(appModule, user, collegeFInstitution);
+    await mockBCeIDAccountUserFound(appModule, user, collegeFInstitution);
     // Institution token.
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
     const endpoint = "/institutions/institution-user";
