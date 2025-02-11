@@ -65,7 +65,7 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocationB,
     );
-    collegeFInstitution = collegeFLocationA.institution;
+    collegeFInstitution = collegeF;
   });
 
   it("Should throw an UnprocessableEntityException error when the user passed in the payload is not found on BCeID.", async () => {
@@ -73,7 +73,12 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     const user = createFakeUser();
     const payload = {
       bceidUserId: faker.random.alpha({ count: 5 }),
-      permissions: [{ locationId: collegeFLocationA.id, userType: "user" }],
+      permissions: [
+        {
+          locationId: collegeFLocationA.id,
+          userType: InstitutionUserTypes.user,
+        },
+      ],
     };
 
     // Mock BCeID account method to return null response.
@@ -100,7 +105,12 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     const user = createFakeUser();
     const payload = {
       bceidUserId: faker.random.alpha({ count: 5 }),
-      permissions: [{ locationId: collegeFLocationA.id, userType: "user" }],
+      permissions: [
+        {
+          locationId: collegeFLocationA.id,
+          userType: InstitutionUserTypes.user,
+        },
+      ],
     };
     const { institution: collegeD } = await getAuthRelatedEntities(
       db.dataSource,
@@ -144,7 +154,12 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
 
     const payload = {
       bceidUserId: faker.random.alpha({ count: 5 }),
-      permissions: [{ locationId: collegeFLocationA.id, userType: "user" }],
+      permissions: [
+        {
+          locationId: collegeFLocationA.id,
+          userType: InstitutionUserTypes.user,
+        },
+      ],
     };
 
     // Mock get BCeID account details with the initial userName.
@@ -176,8 +191,14 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     const payload = {
       bceidUserId: faker.random.alpha({ count: 5 }),
       permissions: [
-        { locationId: collegeFLocationA.id, userType: "user" },
-        { locationId: collegeFLocationB.id, userType: "read-only-user" },
+        {
+          locationId: collegeFLocationA.id,
+          userType: InstitutionUserTypes.user,
+        },
+        {
+          locationId: collegeFLocationB.id,
+          userType: InstitutionUserTypes.readOnlyUser,
+        },
       ],
     };
 
@@ -232,33 +253,35 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     );
     const savedInstitutionUserAuths = await db.institutionUserAuth.find({
       select: {
+        id: true,
         location: {
           id: true,
         },
-        authType: { type: true },
+        authType: { type: true, role: true },
       },
-      relations: { institutionUser: true, location: true },
+      relations: { location: true, authType: true },
       where: { institutionUser: { id: institutionUserId } },
+      loadEagerRelations: false,
     });
     expect(savedInstitutionUserAuths).toHaveLength(2);
-    expect(savedInstitutionUserAuths).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          authType: expect.objectContaining({
-            type: InstitutionUserTypes.user,
-            role: null,
-          }),
-          location: expect.objectContaining({ id: collegeFLocationA.id }),
-        }),
-        expect.objectContaining({
-          authType: expect.objectContaining({
-            type: InstitutionUserTypes.readOnlyUser,
-            role: null,
-          }),
-          location: expect.objectContaining({ id: collegeFLocationB.id }),
-        }),
-      ]),
-    );
+    expect(savedInstitutionUserAuths).toEqual([
+      {
+        id: expect.any(Number),
+        location: { id: collegeFLocationA.id },
+        authType: {
+          type: InstitutionUserTypes.user,
+          role: null,
+        },
+      },
+      {
+        id: expect.any(Number),
+        location: { id: collegeFLocationB.id },
+        authType: {
+          type: InstitutionUserTypes.readOnlyUser,
+          role: null,
+        },
+      },
+    ]);
   });
 
   afterAll(async () => {

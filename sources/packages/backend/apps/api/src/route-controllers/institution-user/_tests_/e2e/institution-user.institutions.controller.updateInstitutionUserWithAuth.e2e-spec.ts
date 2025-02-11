@@ -67,7 +67,12 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
   it("Should throw a HttpStatus Not Found (404) error when the user to be updated not found.", async () => {
     // Arrange
     const payload = {
-      permissions: [{ locationId: collegeFLocationA.id, userType: "user" }],
+      permissions: [
+        {
+          locationId: collegeFLocationA.id,
+          userType: InstitutionUserTypes.user,
+        },
+      ],
     };
 
     // Institution token.
@@ -104,7 +109,12 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     await db.institutionUserAuth.save(institutionUserAuth);
 
     const payload = {
-      permissions: [{ locationId: collegeFLocationA.id, userType: "user" }],
+      permissions: [
+        {
+          locationId: collegeFLocationA.id,
+          userType: InstitutionUserTypes.user,
+        },
+      ],
     };
 
     // Institution token.
@@ -136,7 +146,12 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     await db.institutionUserAuth.save(institutionUserAuth);
 
     const payload = {
-      permissions: [{ locationId: collegeFLocationA.id, userType: "user" }],
+      permissions: [
+        {
+          locationId: collegeFLocationA.id,
+          userType: InstitutionUserTypes.user,
+        },
+      ],
     };
 
     // Institution token.
@@ -172,8 +187,14 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     const user = institutionUser.user;
     const payload = {
       permissions: [
-        { locationId: collegeFLocationA.id, userType: "read-only-user" },
-        { locationId: collegeFLocationB.id, userType: "user" },
+        {
+          locationId: collegeFLocationA.id,
+          userType: InstitutionUserTypes.readOnlyUser,
+        },
+        {
+          locationId: collegeFLocationB.id,
+          userType: InstitutionUserTypes.user,
+        },
       ],
     };
 
@@ -220,33 +241,35 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     );
     const savedInstitutionUserAuths = await db.institutionUserAuth.find({
       select: {
+        id: true,
         location: {
           id: true,
         },
-        authType: { type: true },
+        authType: { type: true, role: true },
       },
-      relations: { institutionUser: true, location: true },
+      relations: { location: true, authType: true },
       where: { institutionUser: { id: institutionUser.id } },
+      loadEagerRelations: false,
     });
     expect(savedInstitutionUserAuths).toHaveLength(2);
-    expect(savedInstitutionUserAuths).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          authType: expect.objectContaining({
-            type: InstitutionUserTypes.readOnlyUser,
-            role: null,
-          }),
-          location: expect.objectContaining({ id: collegeFLocationA.id }),
-        }),
-        expect.objectContaining({
-          authType: expect.objectContaining({
-            type: InstitutionUserTypes.user,
-            role: null,
-          }),
-          location: expect.objectContaining({ id: collegeFLocationB.id }),
-        }),
-      ]),
-    );
+    expect(savedInstitutionUserAuths).toEqual([
+      {
+        id: expect.any(Number),
+        location: { id: collegeFLocationA.id },
+        authType: {
+          type: InstitutionUserTypes.readOnlyUser,
+          role: null,
+        },
+      },
+      {
+        id: expect.any(Number),
+        location: { id: collegeFLocationB.id },
+        authType: {
+          type: InstitutionUserTypes.user,
+          role: null,
+        },
+      },
+    ]);
   });
 
   afterAll(async () => {
