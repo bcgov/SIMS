@@ -8,7 +8,6 @@ import { BCeIDService } from "../../services";
  * Mocks BCeID account info from BCeID service to return the passed BCeID account.
  * @param testingModule nest testing module.
  * @param user a persisted user object.
- * @param displayName a persisted display name for user login.
  * @param institution a persisted institution object.
  * @returns a persisted BCeID account object.
  */
@@ -45,9 +44,6 @@ export async function mockBCeIDAccountUserFound(
 /**
  * Mocks BCeID account info from BCeID service to return null.
  * @param testingModule nest testing module.
- * @param user a persisted user object.
- * @param displayName a persisted display name for user login.
- * @param institution a persisted institution object.
  * @returns a persisted BCeID account object.
  */
 export async function mockBCeIDAccountUserNotFound(
