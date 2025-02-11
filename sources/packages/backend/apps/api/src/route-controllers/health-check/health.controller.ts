@@ -1,5 +1,5 @@
 import { Controller, Get } from "@nestjs/common";
-import { Public } from "apps/api/src/auth/decorators";
+import { Public } from "../../auth/decorators";
 import { DataSource } from "typeorm";
 
 @Controller("health")
