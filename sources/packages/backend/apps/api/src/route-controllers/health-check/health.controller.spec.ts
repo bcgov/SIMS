@@ -1,6 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { HealthController } from "./health.controller";
-import { AppService } from "./app.service";
 import { DatabaseModule } from "@sims/sims-db";
 
 // TODO: must mock DB dependencies.
@@ -11,7 +10,6 @@ describe.skip("HealthController", () => {
     const app: TestingModule = await Test.createTestingModule({
       imports: [DatabaseModule],
       controllers: [HealthController],
-      providers: [AppService],
     }).compile();
 
     healthController = app.get<HealthController>(HealthController);

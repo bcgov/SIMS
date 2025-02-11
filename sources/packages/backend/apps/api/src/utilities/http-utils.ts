@@ -8,7 +8,7 @@ const CLIENT_IP_HEADER_NAME = "x-forwarded-for";
 /**
  * Gets the client IP address from the http request.
  * @param request http request.
- * @returns client IP address..
+ * @returns client IP address.
  */
 export function getClientIPFromRequest(request: Request): string {
   return (

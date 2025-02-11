@@ -1,5 +1,4 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
-import { HealthController } from "./health.controller";
 import { AppService } from "./app.service";
 import { RouterModule } from "@nestjs/core";
 import {
@@ -13,6 +12,7 @@ import {
   AuditController,
   ConfigController,
   DynamicFormController,
+  HealthController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { AppAESTModule } from "./app.aest.module";

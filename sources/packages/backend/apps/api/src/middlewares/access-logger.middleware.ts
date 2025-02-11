@@ -8,6 +8,12 @@ import { Request, Response, NextFunction } from "express";
 @Injectable()
 export class AccessLoggerMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService) {}
+  /**
+   * Logs access information of every request.
+   * @param request http request.
+   * @param _response http request.
+   * @param next next function.
+   */
   use(request: Request, _response: Response, next: NextFunction) {
     const { headers, originalUrl, method } = request;
     const clientIP = getClientIPFromRequest(request);
@@ -18,6 +24,7 @@ export class AccessLoggerMiddleware implements NestMiddleware {
     this.logger.log(userAccessLog);
     next();
   }
+
   /**
    * Get decoded user information from bearer token.
    * @param bearerToken token to be decoded.
@@ -32,6 +39,7 @@ export class AccessLoggerMiddleware implements NestMiddleware {
     );
     return user;
   }
+
   @InjectLogger()
   logger: LoggerService;
 }

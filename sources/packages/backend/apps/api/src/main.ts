@@ -28,7 +28,7 @@ async function bootstrap() {
   await systemUsersService.loadSystemUser();
 
   // Setting global prefix
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix("api", { exclude: ["health"] });
 
   // Using helmet.
   app.use(helmet());
