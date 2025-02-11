@@ -11,7 +11,7 @@ export class AccessLoggerMiddleware implements NestMiddleware {
   /**
    * Logs access information of every request.
    * @param request http request.
-   * @param _response http request.
+   * @param _response http response.
    * @param next next function.
    */
   use(request: Request, _response: Response, next: NextFunction) {
