@@ -89,6 +89,6 @@ import { AccessLoggerMiddleware } from "./middlewares";
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AccessLoggerMiddleware).exclude("/health").forRoutes("*");
+    consumer.apply(AccessLoggerMiddleware).exclude("health").forRoutes("*");
   }
 }
