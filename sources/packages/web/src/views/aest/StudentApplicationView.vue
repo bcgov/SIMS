@@ -87,6 +87,8 @@ export default defineComponent({
       const applicationId = props.versionApplicationId ?? props.applicationId;
       const application = await ApplicationService.shared.getApplicationDetail(
         applicationId,
+        undefined,
+        true,
       );
       applicationDetail.value =
         application as ApplicationSupplementalDataAPIOutDTO;

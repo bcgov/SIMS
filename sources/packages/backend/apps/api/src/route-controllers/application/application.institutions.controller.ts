@@ -1,4 +1,12 @@
-import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
+import {
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Param,
+  ParseBoolPipe,
+  ParseIntPipe,
+  Query,
+} from "@nestjs/common";
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
 import { ApplicationSupplementalDataAPIOutDTO } from "./models/application.dto";
@@ -38,9 +46,18 @@ export class ApplicationInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("studentId", ParseIntPipe) studentId: number,
+    @Query("loadCurrentApplication", new DefaultValuePipe(true), ParseBoolPipe)
+    loadCurrentApplication: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+    let currentApplicationId: number;
+    if (loadCurrentApplication) {
+      currentApplicationId =
+        await this.applicationService.getCurrentApplicationFromApplicationId(
+          applicationId,
+        );
+    }
     const application = await this.applicationService.getApplicationById(
-      applicationId,
+      currentApplicationId,
       {
         loadDynamicData: true,
         studentId: studentId,

@@ -73,10 +73,23 @@ export class ApplicationAESTController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Query("loadDynamicData", new DefaultValuePipe(true), ParseBoolPipe)
     loadDynamicData: boolean,
+    @Query("loadCurrentApplication", new DefaultValuePipe(true), ParseBoolPipe)
+    loadCurrentApplication: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+    let currentApplicationId: number;
+    if (loadCurrentApplication) {
+      currentApplicationId =
+        await this.applicationService.getCurrentApplicationFromApplicationId(
+          applicationId,
+        );
+    }
     const application = await this.applicationService.getApplicationById(
-      applicationId,
-      { loadDynamicData, allowOverwritten: true },
+      currentApplicationId,
+      {
+        loadDynamicData,
+        loadPrecedingApplication: true,
+        allowOverwritten: true,
+      },
     );
     if (!application) {
       throw new NotFoundException(

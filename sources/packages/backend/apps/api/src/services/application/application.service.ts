@@ -1891,7 +1891,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
   ): Promise<Application[]> {
     const application = await this.repo.findOne({
-      select: { parentApplication: { id: true }, submittedDate: true },
+      select: {
+        id: true,
+        parentApplication: { id: true },
+        submittedDate: true,
+      },
+      relations: { parentApplication: true },
       where: { id: applicationId },
     });
     return this.repo.find({
@@ -1921,6 +1926,35 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: { id: true, data: true as unknown },
       where: { id: precedingApplicationId },
     });
+  }
+
+  /**
+   * Gets the latest application id for
+   * the provided application id.
+   * @param applicationId application id.
+   * @returns the application id.
+   */
+  async getCurrentApplicationFromApplicationId(
+    applicationId: number,
+  ): Promise<number> {
+    const result = await this.repo.findOne({
+      select: { parentApplication: { id: true } },
+      relations: { parentApplication: true },
+      where: {
+        id: applicationId,
+      },
+    });
+    const [application] = await this.repo.find({
+      select: { id: true, submittedDate: true },
+      where: {
+        parentApplication: { id: result.parentApplication.id },
+      },
+      order: {
+        submittedDate: "DESC",
+      },
+      take: 1,
+    });
+    return application.id;
   }
 
   @InjectLogger()
