@@ -219,7 +219,7 @@ objects:
                 failureThreshold: 3
                 successThreshold: 1
                 httpGet:
-                  path: /api/
+                  path: /health/
                   port: "${{PORT}}"
                 initialDelaySeconds: 40
                 periodSeconds: 30
@@ -228,7 +228,7 @@ objects:
                 failureThreshold: 3
                 successThreshold: 1
                 httpGet:
-                  path: /api/
+                  path: /health/
                   port: "${{PORT}}"
                   scheme: HTTP
                 initialDelaySeconds: 10

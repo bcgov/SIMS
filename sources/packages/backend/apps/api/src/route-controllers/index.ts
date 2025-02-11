@@ -86,3 +86,4 @@ export * from "./student/student.external.controller";
 export * from "./cas-invoice-batch/cas-invoice-batch.aest.controller";
 export * from "./models/primary.identifier.dto";
 export * from "./models/common.dto";
+export * from "./health-check/health.controller";

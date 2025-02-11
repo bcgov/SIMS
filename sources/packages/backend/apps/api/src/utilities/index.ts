@@ -11,3 +11,4 @@ export * from "./datatable-database-mapping-utils";
 export * from "./datatable-config";
 export * from "./pagination-utils";
 export * from "./address-utils";
+export * from "./http-utils";

@@ -1,5 +1,4 @@
-import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { AppService } from "./app.service";
 import { RouterModule } from "@nestjs/core";
 import {
@@ -13,6 +12,7 @@ import {
   AuditController,
   ConfigController,
   DynamicFormController,
+  HealthController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { AppAESTModule } from "./app.aest.module";
@@ -31,6 +31,7 @@ import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
 import { AppExternalModule } from "./app.external.module";
+import { AccessLoggerMiddleware } from "./middlewares";
 
 @Module({
   imports: [
@@ -72,7 +73,7 @@ import { AppExternalModule } from "./app.external.module";
     ]),
   ],
   controllers: [
-    AppController,
+    HealthController,
     ConfigController,
     DynamicFormController,
     AuditController,
@@ -86,4 +87,8 @@ import { AppExternalModule } from "./app.external.module";
     ProgramYearService,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AccessLoggerMiddleware).exclude("health").forRoutes("*");
+  }
+}
