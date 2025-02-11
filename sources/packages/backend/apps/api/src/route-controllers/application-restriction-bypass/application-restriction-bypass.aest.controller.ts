@@ -31,7 +31,10 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
-import { ApplicationRestrictionBypassService } from "../../services";
+import {
+  ApplicationRestrictionBypassService,
+  ApplicationService,
+} from "../../services";
 import { ApplicationRestrictionBypass } from "@sims/sims-db";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
@@ -57,22 +60,27 @@ import { getUserFullName } from "../../utilities";
 export class ApplicationRestrictionBypassAESTController extends BaseController {
   constructor(
     private readonly applicationRestrictionBypassService: ApplicationRestrictionBypassService,
+    private readonly applicationService: ApplicationService,
   ) {
     super();
   }
 
   /**
    * Get application restriction bypasses for a given application.
-   * @param applicationId id of the application to retrieve restriction bypasses.
+   * @param applicationId id of the current application to retrieve restriction bypasses.
    * @returns application restriction bypasses.
    */
   @Get("application/:applicationId")
   async getApplicationRestrictionBypasses(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ApplicationRestrictionBypassHistoryAPIOutDTO> {
+    const currentApplicationId =
+      await this.applicationService.getApplicationIdByParentApplicationId(
+        applicationId,
+      );
     const applicationRestrictionBypasses =
       await this.applicationRestrictionBypassService.getApplicationRestrictionBypasses(
-        applicationId,
+        currentApplicationId,
       );
     const bypasses = applicationRestrictionBypasses.map(
       (item: ApplicationRestrictionBypass) => ({
@@ -130,16 +138,20 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
 
   /**
    * Gets available student restrictions to bypass for a given application.
-   * @param applicationId id of the application to retrieve restriction bypasses.
+   * @param applicationId id of the current application to retrieve restriction bypasses.
    * @returns application restriction bypasses.
    */
   @Get("application/:applicationId/options-list")
   async getAvailableStudentRestrictionsToBypass(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<AvailableStudentRestrictionsAPIOutDTO> {
+    const currentApplicationId =
+      await this.applicationService.getApplicationIdByParentApplicationId(
+        applicationId,
+      );
     const availableRestrictionsToBypass =
       await this.applicationRestrictionBypassService.getAvailableStudentRestrictionsToBypass(
-        applicationId,
+        currentApplicationId,
       );
     return {
       availableRestrictionsToBypass: availableRestrictionsToBypass.map(

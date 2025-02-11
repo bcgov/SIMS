@@ -29,6 +29,7 @@
 import { onMounted, ref, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import {
+  ApplicationBaseAPIOutDTO,
   ApplicationDataChangeAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
 } from "@/services/http/dto";
@@ -85,11 +86,18 @@ export default defineComponent({
     onMounted(async () => {
       // When the application version is present load the given application version instead of the current application version.
       const applicationId = props.versionApplicationId ?? props.applicationId;
-      const application = await ApplicationService.shared.getApplicationDetail(
-        applicationId,
-        undefined,
-        true,
-      );
+      let application: ApplicationBaseAPIOutDTO;
+      if (!props.versionApplicationId) {
+        application = await ApplicationService.shared.getApplicationDetail(
+          applicationId,
+          undefined,
+          true,
+        );
+      } else {
+        application = await ApplicationService.shared.getApplicationDetail(
+          applicationId,
+        );
+      }
       applicationDetail.value =
         application as ApplicationSupplementalDataAPIOutDTO;
       selectedForm.value = applicationDetail.value.applicationFormName;

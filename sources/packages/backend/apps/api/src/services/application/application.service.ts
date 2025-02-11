@@ -1,12 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  DataSource,
-  In,
-  Not,
-  Brackets,
-  EntityManager,
-  LessThan,
-} from "typeorm";
+import { DataSource, In, Not, Brackets, EntityManager } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -1890,23 +1883,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getPreviousApplicationVersions(
     applicationId: number,
   ): Promise<Application[]> {
-    const application = await this.repo.findOne({
-      select: {
-        id: true,
-        parentApplication: { id: true },
-        submittedDate: true,
-      },
-      relations: { parentApplication: true },
-      where: { id: applicationId },
-    });
     return this.repo.find({
       select: {
         id: true,
         submittedDate: true,
       },
       where: {
-        parentApplication: { id: application.parentApplication.id },
-        submittedDate: LessThan(application.submittedDate),
+        parentApplication: { id: applicationId },
+        applicationStatus: ApplicationStatus.Overwritten,
       },
       order: {
         submittedDate: "DESC",
@@ -1929,29 +1913,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Gets the latest application id for
-   * the provided application id.
-   * @param applicationId application id.
+   * Gets the latest application by parent application id.
+   * @param parentApplicationId parent application id.
    * @returns the application id.
    */
-  async getCurrentApplicationFromApplicationId(
-    applicationId: number,
+  async getApplicationIdByParentApplicationId(
+    parentApplicationId: number,
   ): Promise<number> {
-    const result = await this.repo.findOne({
-      select: { parentApplication: { id: true } },
-      relations: { parentApplication: true },
-      where: {
-        id: applicationId,
-      },
-    });
     const [application] = await this.repo.find({
       select: { id: true, submittedDate: true },
       where: {
-        parentApplication: { id: result.parentApplication.id },
+        parentApplication: {
+          id: parentApplicationId,
+        },
+        applicationStatus: Not(ApplicationStatus.Overwritten),
       },
-      order: {
-        submittedDate: "DESC",
-      },
+      order: { submittedDate: "DESC" },
       take: 1,
     });
     return application.id;

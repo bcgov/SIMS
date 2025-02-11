@@ -91,18 +91,18 @@ export class ApplicationService {
    * Get application detail of given application.
    * @param applicationId for the application.
    * @param studentId for the student.
-   * @param loadCurrentApplication load current application if true, loads the current application.
+   * @param isParentApplication if true, loads the parent application.
    * @returns application details.
    */
   async getApplicationDetail(
     applicationId: number,
     studentId?: number,
-    loadCurrentApplication?: boolean,
+    isParentApplication?: boolean,
   ): Promise<ApplicationBaseAPIOutDTO> {
     return ApiClient.Application.getApplicationDetails(
       applicationId,
       studentId,
-      loadCurrentApplication,
+      isParentApplication,
     );
   }
 

@@ -116,7 +116,9 @@
             <span v-if="enableViewApplication">
               <v-btn
                 variant="outlined"
-                @click="$emit('goToApplication', slotProps.data.id)"
+                @click="
+                  $emit('goToApplication', slotProps.data.parentApplicationId)
+                "
                 >View</v-btn
               >
             </span>

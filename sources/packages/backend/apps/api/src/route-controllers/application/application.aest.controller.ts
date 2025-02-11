@@ -73,13 +73,13 @@ export class ApplicationAESTController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Query("loadDynamicData", new DefaultValuePipe(true), ParseBoolPipe)
     loadDynamicData: boolean,
-    @Query("loadCurrentApplication", new DefaultValuePipe(true), ParseBoolPipe)
-    loadCurrentApplication: boolean,
+    @Query("isParentApplication", new DefaultValuePipe(false), ParseBoolPipe)
+    isParentApplication: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    let currentApplicationId: number;
-    if (loadCurrentApplication) {
+    let currentApplicationId = applicationId;
+    if (isParentApplication) {
       currentApplicationId =
-        await this.applicationService.getCurrentApplicationFromApplicationId(
+        await this.applicationService.getApplicationIdByParentApplicationId(
           applicationId,
         );
     }
@@ -195,7 +195,7 @@ export class ApplicationAESTController extends BaseController {
 
   /**
    * Get details for an application at 'InProgress' status.
-   * @param applicationId application id.
+   * @param applicationId current application id.
    * @returns application details.
    */
   @Get(":applicationId/in-progress")
@@ -208,14 +208,18 @@ export class ApplicationAESTController extends BaseController {
   async getInProgressApplicationDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
+    const currentApplicationId =
+      await this.applicationService.getApplicationIdByParentApplicationId(
+        applicationId,
+      );
     return this.applicationControllerService.getInProgressApplicationDetails(
-      applicationId,
+      currentApplicationId,
     );
   }
 
   /**
    * Get status of all requests and confirmations in student application (Exception, PIR and COE).
-   * @param applicationId application id.
+   * @param applicationId current application id.
    * @returns application progress details.
    */
   @ApiNotFoundResponse({
@@ -225,14 +229,18 @@ export class ApplicationAESTController extends BaseController {
   async getApplicationProgressDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ApplicationProgressDetailsAPIOutDTO> {
+    const currentApplicationId =
+      await this.applicationService.getApplicationIdByParentApplicationId(
+        applicationId,
+      );
     return this.applicationControllerService.getApplicationProgressDetails(
-      applicationId,
+      currentApplicationId,
     );
   }
 
   /**
    * Get details for an application at 'Enrolment' status.
-   * @param applicationId student application id.
+   * @param applicationId student current application id.
    * @returns details for the application enrolment status.
    */
   @ApiNotFoundResponse({
@@ -243,14 +251,18 @@ export class ApplicationAESTController extends BaseController {
   async getEnrolmentApplicationDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<EnrolmentApplicationDetailsAPIOutDTO> {
+    const currentApplicationId =
+      await this.applicationService.getApplicationIdByParentApplicationId(
+        applicationId,
+      );
     return this.applicationControllerService.getEnrolmentApplicationDetails(
-      applicationId,
+      currentApplicationId,
     );
   }
 
   /**
    * Get details for an application at 'Completed' status.
-   * @param applicationId application id.
+   * @param applicationId current application id.
    * @returns details for an application on at completed status.
    */
   @ApiNotFoundResponse({
@@ -260,8 +272,12 @@ export class ApplicationAESTController extends BaseController {
   async getCompletedApplicationDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<CompletedApplicationDetailsAPIOutDTO> {
+    const currentApplicationId =
+      await this.applicationService.getApplicationIdByParentApplicationId(
+        applicationId,
+      );
     return this.applicationControllerService.getCompletedApplicationDetails(
-      applicationId,
+      currentApplicationId,
     );
   }
 

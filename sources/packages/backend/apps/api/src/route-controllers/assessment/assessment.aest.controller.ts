@@ -39,7 +39,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { Role, IUserToken } from "../../auth";
 import { ManualReassessmentAPIInDTO } from "../assessment/models/assessment.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { StudentAssessmentService } from "../../services";
+import { ApplicationService, StudentAssessmentService } from "../../services";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -48,6 +48,7 @@ import { StudentAssessmentService } from "../../services";
 export class AssessmentAESTController extends BaseController {
   constructor(
     private readonly assessmentControllerService: AssessmentControllerService,
+    private readonly applicationService: ApplicationService,
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super();
@@ -56,15 +57,19 @@ export class AssessmentAESTController extends BaseController {
   /**
    * Get all pending and declined requests related to an application which would result
    * a new assessment when that request is approved.
-   * @param applicationId application id.
+   * @param applicationId parent application id.
    * @returns assessment requests or exceptions for a student application.
    */
   @Get("application/:applicationId/requests")
   async getRequestedAssessmentSummary(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
+    const currentApplicationId =
+      await this.applicationService.getApplicationIdByParentApplicationId(
+        applicationId,
+      );
     return this.assessmentControllerService.requestedStudentAssessmentSummary(
-      applicationId,
+      currentApplicationId,
       {
         includeOfferingChanges: true,
       },
@@ -77,15 +82,19 @@ export class AssessmentAESTController extends BaseController {
    * student application, and all approved student
    * appeal and scholastic standings for the application
    * which will have different assessment status.
-   * @param applicationId, application number.
+   * @param applicationId parent application id.
    * @returns summary of the assessment history for a student application.
    */
   @Get("application/:applicationId/history")
   async getAssessmentHistorySummary(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
+    const currentApplicationId =
+      await this.applicationService.getApplicationIdByParentApplicationId(
+        applicationId,
+      );
     return this.assessmentControllerService.getAssessmentHistorySummary(
-      applicationId,
+      currentApplicationId,
     );
   }
 
@@ -132,7 +141,7 @@ export class AssessmentAESTController extends BaseController {
    * Triggers manual reassessment for an application.
    * Application cannot be archived or in any of the statuses 'Cancelled', 'Overwritten' or 'Draft' and original assessment must be in completed status.
    * @param payload request payload.
-   * @param applicationId application id.
+   * @param applicationId parent application id.
    * @returns id of the assessment created.
    */
   @Roles(Role.AESTManualTriggerReassessment)
@@ -150,9 +159,13 @@ export class AssessmentAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
+      const currentApplicationId =
+        await this.applicationService.getApplicationIdByParentApplicationId(
+          applicationId,
+        );
       const manualAssessment =
         await this.studentAssessmentService.createManualReassessment(
-          applicationId,
+          currentApplicationId,
           payload.note,
           userToken.userId,
         );

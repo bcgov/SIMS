@@ -98,19 +98,19 @@ export class ApplicationApi extends HttpBaseClient {
    * API Client for application detail.
    * @param applicationId for the application.
    * @param studentId for the student.
-   * @param loadCurrentApplication load current application if true, loads the current application.
+   * @param isParentApplication if true, loads the parent application.
    * @returns application details.
    */
   async getApplicationDetails(
     applicationId: number,
     studentId?: number,
-    loadCurrentApplication?: boolean,
+    isParentApplication?: boolean,
   ): Promise<ApplicationBaseAPIOutDTO> {
     let url = studentId
       ? `application/student/${studentId}/application/${applicationId}`
       : `application/${applicationId}`;
-    if (loadCurrentApplication !== undefined) {
-      url = `${url}?loadCurrentApplication=${loadCurrentApplication}`;
+    if (isParentApplication !== undefined) {
+      url = `${url}?isParentApplication=${isParentApplication}`;
     }
     return this.getCall<ApplicationBaseAPIOutDTO>(this.addClientRoot(url));
   }

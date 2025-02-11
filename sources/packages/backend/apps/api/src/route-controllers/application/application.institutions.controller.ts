@@ -46,13 +46,13 @@ export class ApplicationInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("studentId", ParseIntPipe) studentId: number,
-    @Query("loadCurrentApplication", new DefaultValuePipe(true), ParseBoolPipe)
-    loadCurrentApplication: boolean,
+    @Query("isParentApplication", new DefaultValuePipe(true), ParseBoolPipe)
+    isParentApplication: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     let currentApplicationId: number;
-    if (loadCurrentApplication) {
+    if (isParentApplication) {
       currentApplicationId =
-        await this.applicationService.getCurrentApplicationFromApplicationId(
+        await this.applicationService.getApplicationIdByParentApplicationId(
           applicationId,
         );
     }
