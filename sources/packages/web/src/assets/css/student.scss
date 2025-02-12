@@ -36,3 +36,21 @@
   height: 100%;
   min-height: 350px;
 }
+
+// Mobile-specific styles
+.mobile-view {
+  :deep(.v-container) {
+    padding: 9px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  :deep(.v-row) {
+    margin: 0 !important;
+  }
+
+  :deep(.v-col) {
+    padding: 9px !important;
+  }
+}

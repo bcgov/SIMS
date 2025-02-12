@@ -2,7 +2,7 @@
   <full-page-container
     :layout-template="layoutTemplate"
     :full-width="fullWidth"
-    :class="{ 'mobile-container': isMobile }"
+    :class="{ 'mobile-view': isMobile }"
   >
     <template #header>
       <slot name="header"></slot>
@@ -50,9 +50,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.mobile-container :deep(.v-container) {
-  padding: 5px !important;
-}
-</style>

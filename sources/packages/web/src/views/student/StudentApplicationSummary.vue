@@ -1,20 +1,18 @@
 <template>
-  <student-page-container
-    :full-width="true"
-    :class="{ 'mobile-margin': isMobile }"
-  >
+  <student-page-container :full-width="true">
     <template #header>
       <header-navigator title="Applications" subTitle="My Applications">
         <template #buttons>
-          <start-application />
+          <start-application :class="{ 'mb-2': isMobile }" />
         </template>
       </header-navigator>
     </template>
     <v-row>
-      <v-col cols="12">
+      <v-col cols="12" :class="{ 'pa-0': isMobile }">
         <student-applications
           :manage-application="true"
           :enable-view-application-on-name="true"
+          :dense="isMobile"
           @editApplicationAction="editApplicationAction"
           @openConfirmCancel="confirmCancelApplication"
           @goToApplication="goToApplication"
