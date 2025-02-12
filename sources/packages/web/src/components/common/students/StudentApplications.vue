@@ -117,7 +117,12 @@
               <v-btn
                 variant="outlined"
                 @click="
-                  $emit('goToApplication', slotProps.data.parentApplicationId)
+                  !manageApplication
+                    ? $emit(
+                        'goToApplication',
+                        slotProps.data.parentApplicationId,
+                      )
+                    : $emit('goToApplication', slotProps.data.id)
                 "
                 >View</v-btn
               >
