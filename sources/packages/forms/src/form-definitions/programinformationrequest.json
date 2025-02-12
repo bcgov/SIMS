@@ -2353,12 +2353,12 @@
           "tags": [],
           "properties": {},
           "conditional": {
-            "show": null,
+            "show": "",
             "when": null,
             "eq": "",
             "json": ""
           },
-          "customConditional": "",
+          "customConditional": "show = data['isReadOnlyUser'] !== true;",
           "logic": [],
           "attributes": {},
           "overlay": {

@@ -35,6 +35,7 @@ export interface ProgramInfoRequestAPIOutDTO {
   courseDetails?: CourseDetails[];
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
+  isReadOnlyUser?: boolean;
 }
 
 export interface PIRDeniedReasonAPIOutDTO {
