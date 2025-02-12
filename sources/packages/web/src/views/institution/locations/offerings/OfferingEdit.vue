@@ -8,7 +8,9 @@
       >
         <template #buttons>
           <v-row class="p-0 m-0">
-            <v-menu v-if="hasExistingApplication">
+            <v-menu
+              v-if="hasExistingApplication && !isReadOnlyUser(locationId)"
+            >
               <template v-slot:activator="{ props }">
                 <v-btn
                   class="ml-2"
@@ -259,6 +261,7 @@ export default defineComponent({
       processing,
       submit,
       goBack,
+      isReadOnlyUser,
     };
   },
 });
