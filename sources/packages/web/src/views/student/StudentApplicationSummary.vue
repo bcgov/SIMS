@@ -1,5 +1,8 @@
 <template>
-  <student-page-container :full-width="true">
+  <student-page-container
+    :full-width="true"
+    :class="{ 'mobile-margin': isMobile }"
+  >
     <template #header>
       <header-navigator title="Applications" subTitle="My Applications">
         <template #buttons>
@@ -33,6 +36,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplication.vue";
+import { useDisplay } from "vuetify";
 
 export default defineComponent({
   components: {
@@ -48,6 +52,7 @@ export default defineComponent({
     const showModal = ref(false);
     const reloadData = ref(false);
     const cancelApplicationModal = ref({} as ModalDialog<boolean>);
+    const { mobile: isMobile } = useDisplay();
 
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
@@ -122,7 +127,19 @@ export default defineComponent({
       reloadData,
       goToApplication,
       cancelApplicationModal,
+      isMobile,
     };
   },
 });
 </script>
+
+<style scoped>
+.mobile-margin {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-margin :deep(.v-container) {
+  padding: 0 !important;
+}
+</style>
