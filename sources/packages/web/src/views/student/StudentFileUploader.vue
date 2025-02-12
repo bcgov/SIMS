@@ -68,7 +68,8 @@ export default defineComponent({
         };
         await StudentService.shared.saveStudentFiles(payload);
         // Form reset and document list reload.
-        form.submission = {};
+        await form.resetValue();
+        form.redraw();
         reloadDocuments.value = !reloadDocuments.value;
         snackBar.success("Your documents have been submitted!");
       } catch (error: unknown) {
