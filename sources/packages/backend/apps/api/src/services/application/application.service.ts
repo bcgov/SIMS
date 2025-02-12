@@ -1926,7 +1926,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         parentApplication: {
           id: parentApplicationId,
         },
-        applicationStatus: Not(ApplicationStatus.Overwritten),
       },
       order: { submittedDate: "DESC" },
       take: 1,
