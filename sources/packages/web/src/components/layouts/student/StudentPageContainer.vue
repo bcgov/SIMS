@@ -52,7 +52,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.mobile-container :deep(.v-container.v-container--fluid.v-locale--is-ltr) {
-  padding: 0 !important;
+.mobile-container :deep(.v-container) {
+  padding: 5px !important;
 }
 </style>
