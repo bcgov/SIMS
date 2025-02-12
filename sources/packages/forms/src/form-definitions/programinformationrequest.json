@@ -2358,7 +2358,7 @@
             "eq": "",
             "json": ""
           },
-          "customConditional": "show = data['isReadOnlyUser'] !== true;",
+          "customConditional": "show = data.isReadOnlyUser !== true;",
           "logic": [],
           "attributes": {},
           "overlay": {
