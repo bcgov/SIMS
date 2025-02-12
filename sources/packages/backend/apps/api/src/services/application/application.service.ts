@@ -1931,7 +1931,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       order: { submittedDate: "DESC" },
       take: 1,
     });
-    return application.id;
+    return application?.id;
   }
 
   @InjectLogger()
