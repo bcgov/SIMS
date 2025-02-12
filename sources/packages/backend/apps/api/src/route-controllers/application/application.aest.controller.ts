@@ -68,7 +68,10 @@ export class ApplicationAESTController extends BaseController {
    * @returns Application details
    */
   @Get(":applicationId")
-  @ApiNotFoundResponse({ description: "Application not found." })
+  @ApiNotFoundResponse({
+    description:
+      "Application not found or current application for provided parent application not found.",
+  })
   async getApplication(
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Query("loadDynamicData", new DefaultValuePipe(true), ParseBoolPipe)
@@ -82,6 +85,11 @@ export class ApplicationAESTController extends BaseController {
         await this.applicationService.getApplicationIdByParentApplicationId(
           applicationId,
         );
+      if (!currentApplicationId) {
+        throw new NotFoundException(
+          `Current application for application ${applicationId} was not found.`,
+        );
+      }
     }
     const application = await this.applicationService.getApplicationById(
       currentApplicationId,
@@ -200,7 +208,8 @@ export class ApplicationAESTController extends BaseController {
    */
   @Get(":applicationId/in-progress")
   @ApiNotFoundResponse({
-    description: "Application id not found.",
+    description:
+      "Application id not found or current application for provided parent application not found.",
   })
   @ApiUnprocessableEntityResponse({
     description: `Application not in ${ApplicationStatus.InProgress} status.`,
@@ -212,6 +221,11 @@ export class ApplicationAESTController extends BaseController {
       await this.applicationService.getApplicationIdByParentApplicationId(
         applicationId,
       );
+    if (!currentApplicationId) {
+      throw new NotFoundException(
+        `Current application for application ${applicationId} was not found.`,
+      );
+    }
     return this.applicationControllerService.getInProgressApplicationDetails(
       currentApplicationId,
     );
@@ -223,7 +237,8 @@ export class ApplicationAESTController extends BaseController {
    * @returns application progress details.
    */
   @ApiNotFoundResponse({
-    description: "Application not found.",
+    description:
+      "Application not found or current application for provided parent application not found.",
   })
   @Get(":applicationId/progress-details")
   async getApplicationProgressDetails(
@@ -233,6 +248,11 @@ export class ApplicationAESTController extends BaseController {
       await this.applicationService.getApplicationIdByParentApplicationId(
         applicationId,
       );
+    if (!currentApplicationId) {
+      throw new NotFoundException(
+        `Current application for application ${applicationId} was not found.`,
+      );
+    }
     return this.applicationControllerService.getApplicationProgressDetails(
       currentApplicationId,
     );
@@ -245,7 +265,7 @@ export class ApplicationAESTController extends BaseController {
    */
   @ApiNotFoundResponse({
     description:
-      "Application not found or not in relevant status to get enrolment details.",
+      "Application not found or current application for provided parent application not found or not in relevant status to get enrolment details.",
   })
   @Get(":applicationId/enrolment")
   async getEnrolmentApplicationDetails(
@@ -255,6 +275,11 @@ export class ApplicationAESTController extends BaseController {
       await this.applicationService.getApplicationIdByParentApplicationId(
         applicationId,
       );
+    if (!currentApplicationId) {
+      throw new NotFoundException(
+        `Current application for application ${applicationId} was not found.`,
+      );
+    }
     return this.applicationControllerService.getEnrolmentApplicationDetails(
       currentApplicationId,
     );
@@ -266,7 +291,7 @@ export class ApplicationAESTController extends BaseController {
    * @returns details for an application on at completed status.
    */
   @ApiNotFoundResponse({
-    description: `Application not found or not on ${ApplicationStatus.Completed} status.`,
+    description: `Application not found or current application for provided parent application not found or not on ${ApplicationStatus.Completed} status.`,
   })
   @Get(":applicationId/completed")
   async getCompletedApplicationDetails(
@@ -276,6 +301,11 @@ export class ApplicationAESTController extends BaseController {
       await this.applicationService.getApplicationIdByParentApplicationId(
         applicationId,
       );
+    if (!currentApplicationId) {
+      throw new NotFoundException(
+        `Current application for application ${applicationId} was not found.`,
+      );
+    }
     return this.applicationControllerService.getCompletedApplicationDetails(
       currentApplicationId,
     );

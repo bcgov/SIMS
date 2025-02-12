@@ -70,6 +70,9 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
    * @param applicationId id of the current application to retrieve restriction bypasses.
    * @returns application restriction bypasses.
    */
+  @ApiNotFoundResponse({
+    description: `Current application for provided parent application not found.`,
+  })
   @Get("application/:applicationId")
   async getApplicationRestrictionBypasses(
     @Param("applicationId", ParseIntPipe) applicationId: number,
@@ -78,6 +81,11 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       await this.applicationService.getApplicationIdByParentApplicationId(
         applicationId,
       );
+    if (!currentApplicationId) {
+      throw new NotFoundException(
+        `Current application for application ${applicationId} was not found.`,
+      );
+    }
     const applicationRestrictionBypasses =
       await this.applicationRestrictionBypassService.getApplicationRestrictionBypasses(
         currentApplicationId,
@@ -141,6 +149,9 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
    * @param applicationId id of the current application to retrieve restriction bypasses.
    * @returns application restriction bypasses.
    */
+  @ApiNotFoundResponse({
+    description: `Current application for provided parent application not found.`,
+  })
   @Get("application/:applicationId/options-list")
   async getAvailableStudentRestrictionsToBypass(
     @Param("applicationId", ParseIntPipe) applicationId: number,
@@ -149,6 +160,11 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       await this.applicationService.getApplicationIdByParentApplicationId(
         applicationId,
       );
+    if (!currentApplicationId) {
+      throw new NotFoundException(
+        `Current application for application ${applicationId} was not found.`,
+      );
+    }
     const availableRestrictionsToBypass =
       await this.applicationRestrictionBypassService.getAvailableStudentRestrictionsToBypass(
         currentApplicationId,

@@ -2,6 +2,7 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  NotFoundException,
   Param,
   ParseBoolPipe,
   ParseIntPipe,
@@ -16,7 +17,7 @@ import {
   IsBCPublicInstitution,
   UserToken,
 } from "../../auth/decorators";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApplicationControllerService } from "./application.controller.service";
 import { AuthorizedParties, IInstitutionUserToken } from "../../auth";
@@ -41,6 +42,9 @@ export class ApplicationInstitutionsController extends BaseController {
    * @returns Application details.
    */
   @HasStudentDataAccess("studentId")
+  @ApiNotFoundResponse({
+    description: `Current application for provided parent application not found.`,
+  })
   @Get("student/:studentId/application/:applicationId")
   async getApplication(
     @UserToken() userToken: IInstitutionUserToken,
@@ -55,6 +59,11 @@ export class ApplicationInstitutionsController extends BaseController {
         await this.applicationService.getApplicationIdByParentApplicationId(
           applicationId,
         );
+      if (!currentApplicationId) {
+        throw new NotFoundException(
+          `Current application for application ${applicationId} was not found.`,
+        );
+      }
     }
     const application = await this.applicationService.getApplicationById(
       currentApplicationId,
