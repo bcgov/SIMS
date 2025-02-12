@@ -19403,7 +19403,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "parentalContributions",
+                  "key": "studentParentNetContribution",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
@@ -19485,7 +19485,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "totalIncome",
+                  "key": "studentParentsTotalIncome",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
@@ -19568,7 +19568,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "foreignAssets",
+                  "key": "studentParentNetAssests",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
@@ -19651,7 +19651,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "totalIncomeTaxLine43500",
+                  "key": "studentParentsTotalIncomeTaxLine43500",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
@@ -19734,7 +19734,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "cppLine30800",
+                  "key": "studentParentsCppLine30800",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
@@ -19817,7 +19817,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "cppLine31000",
+                  "key": "studentParentsCppLine31000",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
@@ -19900,7 +19900,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "eiLine31200",
+                  "key": "studentParentsEiLine31200",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
