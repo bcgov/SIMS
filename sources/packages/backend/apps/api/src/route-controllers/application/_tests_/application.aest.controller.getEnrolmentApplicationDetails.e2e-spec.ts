@@ -74,8 +74,7 @@ describe("ApplicationAESTController(e2e)-getEnrolmentApplicationDetails", () => 
       .expect(HttpStatus.NOT_FOUND)
       .expect({
         statusCode: HttpStatus.NOT_FOUND,
-        message:
-          "Application id 99999999 not found or not in relevant status to get enrolment details.",
+        message: "Current application for application 99999999 was not found.",
         error: "Not Found",
       });
   });

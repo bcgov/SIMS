@@ -165,9 +165,10 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .expect({
-          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-          message: `Application cannot have manual reassessment in any of the statuses: ${ApplicationStatus.Cancelled}, ${ApplicationStatus.Overwritten} or ${ApplicationStatus.Draft}.`,
-          error: "Unprocessable Entity",
+          statusCode: HttpStatus.NOT_FOUND,
+          message:
+            "Current application for application 99999999 was not found.",
+          error: "Not Found",
         });
     });
   }
@@ -213,7 +214,7 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
       .expect(HttpStatus.NOT_FOUND)
       .expect({
         statusCode: HttpStatus.NOT_FOUND,
-        message: "Application not found.",
+        message: "Current application for application 99999999 was not found.",
         error: "Not Found",
       });
   });

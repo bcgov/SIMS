@@ -11,7 +11,7 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { ApplicationStatus } from "@sims/sims-db";
+import { Application, ApplicationStatus } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
 
 describe("ApplicationAESTController(e2e)-getApplicationVersionHistory", () => {
@@ -42,6 +42,8 @@ describe("ApplicationAESTController(e2e)-getApplicationVersionHistory", () => {
         program: application.currentAssessment.offering.educationProgram,
         offering: application.currentAssessment.offering,
         programYear: application.programYear,
+        parentApplication: { id: application.id } as Application,
+        precedingApplication: { id: application.id } as Application,
       },
       {
         applicationStatus: ApplicationStatus.Overwritten,
