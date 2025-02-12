@@ -132,14 +132,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.mobile-margin {
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-.mobile-margin :deep(.v-container) {
-  padding: 0 !important;
-}
-</style>
