@@ -37,6 +37,11 @@
   min-height: 350px;
 }
 
+// Button styles
+span.v-btn__content {
+  white-space: normal !important;
+}
+
 // Mobile-specific styles
 .mobile-view {
   :deep(.v-container) {

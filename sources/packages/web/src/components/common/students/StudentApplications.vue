@@ -253,8 +253,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-span.v-btn__content {
-  white-space: normal !important;
-}
-</style>
