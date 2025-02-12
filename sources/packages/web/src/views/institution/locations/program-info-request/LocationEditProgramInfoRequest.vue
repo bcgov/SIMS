@@ -155,6 +155,8 @@ export default defineComponent({
             programRequestData.value.isExpiredProgram)
             ? null
             : programRequestData.value.selectedProgram,
+        // Hide the create program button for read-only user.
+        isReadOnlyUser: isReadOnlyUser(props.locationId),
       };
 
       // While loading a PIR that is in the some readonly status
