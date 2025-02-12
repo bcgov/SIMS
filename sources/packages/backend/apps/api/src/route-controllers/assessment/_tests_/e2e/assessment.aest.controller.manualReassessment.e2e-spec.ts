@@ -163,7 +163,7 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
         .post(endpoint)
         .send(payload)
         .auth(token, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect(HttpStatus.NOT_FOUND)
         .expect({
           statusCode: HttpStatus.NOT_FOUND,
           message:
@@ -200,7 +200,8 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
 
   it("Should throw not found when the application is not found.", async () => {
     // Arrange
-    const endpoint = "/aest/assessment/application/9999999/manual-reassessment";
+    const endpoint =
+      "/aest/assessment/application/99999999/manual-reassessment";
     const payload = {
       note: "Testing manual reassessment with an inexistent application.",
     };
