@@ -37,10 +37,11 @@ export enum ApplicationStatus {
    * The application was replaced by a new version due to some event like
    * an edit on Confirmation of Enrollment that forces the assessment to
    * be reevaluated. Is this case the application is cloned and and the
-   * old version is marked as 'Overwritten'.
-   * An Overwritten application should never be modified, once an application
-   * is Overwritten and a clone/new version is created all edits should take
-   * place on new record.
+   * old version is marked as 'Edited'.
+   * Another case when an Application status is set to Edited,
+   * when a student tries to edit and existing in progress
+   * (i.e, application status - submitted , inProgress , assessment , enrollment )
+   * application.
    */
-  Overwritten = "Overwritten",
+  Edited = "Edited",
 }

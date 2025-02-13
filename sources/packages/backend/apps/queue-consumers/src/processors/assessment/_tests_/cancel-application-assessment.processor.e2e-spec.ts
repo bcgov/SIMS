@@ -160,7 +160,7 @@ describe(
       const application = await saveFakeApplicationDisbursements(
         appDataSource,
         null,
-        { applicationStatus: ApplicationStatus.Overwritten },
+        { applicationStatus: ApplicationStatus.Edited },
       );
       const studentAssessment = application.currentAssessment;
       studentAssessment.studentAssessmentStatus =
@@ -216,7 +216,7 @@ describe(
 
     it("Should throw an error and call job.discard when the application is not in the expected status.", async () => {
       // Arrange
-      const errorMessage = `Application must be in the ${ApplicationStatus.Cancelled} or ${ApplicationStatus.Overwritten} state to have the assessment cancelled.`;
+      const errorMessage = `Application must be in the ${ApplicationStatus.Cancelled} or ${ApplicationStatus.Edited} state to have the assessment cancelled.`;
       const expectedError = new Error(errorMessage);
       const application = await saveFakeApplicationDisbursements(
         appDataSource,
@@ -379,19 +379,19 @@ describe(
       ).toBe(true);
     });
 
-    it("Should find an impacted application and create a reassessment when the impacted application original assessment calculation date is after the cancelled assessment date original assessment, including 'Overwritten' records.", async () => {
+    it("Should find an impacted application and create a reassessment when the impacted application original assessment calculation date is after the cancelled assessment date original assessment, including 'Edited' records.", async () => {
       // Arrange
 
       // Create the student to be shared across all these applications.
       const student = await saveFakeStudent(db.dataSource);
-      // Current application to be cancelled in Overwritten status because was edited.
-      const currentApplicationToCancelOverwritten =
+      // Current application to be cancelled in Edited status because was edited.
+      const currentApplicationToCancelEdited =
         await saveFakeApplicationDisbursements(
           db.dataSource,
           { student },
           {
             offeringIntensity: OfferingIntensity.partTime,
-            applicationStatus: ApplicationStatus.Overwritten,
+            applicationStatus: ApplicationStatus.Edited,
             currentAssessmentInitialValues: {
               assessmentWorkflowId: "some fake id",
               assessmentDate: addDays(-1),
@@ -413,11 +413,11 @@ describe(
           },
         },
       );
-      // Force pastOverwrittenApplication and pastApplication to share the same application number.
+      // Force pastEditedApplication and pastApplication to share the same application number.
       currentApplicationToCancel.applicationNumber =
-        currentApplicationToCancelOverwritten.applicationNumber;
+        currentApplicationToCancelEdited.applicationNumber;
       await db.application.save(currentApplicationToCancel);
-      // Application in the future of the currentApplicationToCancelOverwritten but before
+      // Application in the future of the currentApplicationToCancelEdited but before
       // the last assessment date from currentApplicationToCancel.
       const impactedApplication = await saveFakeApplicationDisbursements(
         db.dataSource,

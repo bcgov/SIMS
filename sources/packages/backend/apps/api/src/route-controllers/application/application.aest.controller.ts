@@ -76,7 +76,7 @@ export class ApplicationAESTController extends BaseController {
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
-      { loadDynamicData, allowOverwritten: true },
+      { loadDynamicData, allowEdited: true },
     );
     if (!application) {
       throw new NotFoundException(

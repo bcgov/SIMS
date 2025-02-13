@@ -202,7 +202,7 @@ describe(
       const application = await createDefaultApplication(
         StudentAssessmentStatus.CancellationRequested,
       );
-      application.applicationStatus = ApplicationStatus.Overwritten;
+      application.applicationStatus = ApplicationStatus.Edited;
       await db.application.save(application);
 
       // Queued job.
@@ -244,7 +244,7 @@ describe(
       cancellationRequestedAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.CancellationRequested;
       await db.studentAssessment.save(cancellationRequestedAssessment);
-      application.applicationStatus = ApplicationStatus.Overwritten;
+      application.applicationStatus = ApplicationStatus.Edited;
       await db.application.save(application);
 
       // Queued job.

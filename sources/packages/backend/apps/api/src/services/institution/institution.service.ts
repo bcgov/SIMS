@@ -989,7 +989,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       where: {
         student: { id: studentId },
         location: { institution: { id: institutionId } },
-        applicationStatus: Not(ApplicationStatus.Overwritten),
+        applicationStatus: Not(ApplicationStatus.Edited),
         id: options?.applicationId,
       },
       cache: true,

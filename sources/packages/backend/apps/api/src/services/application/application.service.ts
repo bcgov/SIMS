@@ -110,9 +110,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Submitted and applicationStatusUpdatedOn will also be update and new workflow is started.
    * If a student submit/re-submit an existing application that is not in draft state
    * (i.e existing application should be in any one of these status, submitted, In Progress,
-   * Assessment, Enrollment), then the existing application status is set to `Overwritten` and
+   * Assessment, Enrollment), then the existing application status is set to `Edited` and
    * applicationStatusUpdatedOn is updated and delete the corresponding workflow and creates a
-   * new Application with same Application Number and Program Year as that of the Overwritten
+   * new Application with same Application Number and Program Year as that of the Edited
    * Application and with newly submitted payload. And starts a new workflow for the newly created
    * Application. If the application is edited for the {@link APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION} times,
    * a notification is saved for the ministry along with the edited application as a part of the same transaction.
@@ -241,18 +241,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
      * If a student submit/re-submit and an existing application that is not in draft state,
      * (i.e existing application should be in any one of these status, submitted, In Progress,
      * Assessment, Enrollment) then the execution will come here, then the existing application
-     * status is set to `Overwritten` and applicationStatusUpdatedOn is updated and delete the
+     * status is set to `Edited` and applicationStatusUpdatedOn is updated and delete the
      * corresponding workflow and creates a new Application with same Application Number and
-     * Program Year as that of the Overwritten Application and with newly submitted payload.
+     * Program Year as that of the Edited Application and with newly submitted payload.
      */
 
     // Updating existing Application status to override
     // and updating the ApplicationStatusUpdatedOn.
-    application.applicationStatus = ApplicationStatus.Overwritten;
+    application.applicationStatus = ApplicationStatus.Edited;
     application.applicationStatusUpdatedOn = now;
 
     // Creating New Application with same Application Number and Program Year as
-    // that of the Overwritten Application and with newly submitted payload with
+    // that of the Edited Application and with newly submitted payload with
     // application status submitted.
     const newApplication = new Application();
     // Current date is set as submitted date.
@@ -594,8 +594,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.pirStatus != :pirStatus", {
         pirStatus: ProgramInfoStatus.notRequired,
       })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.Overwritten,
+      .andWhere("application.applicationStatus != :editedStatus", {
+        editedStatus: ApplicationStatus.Edited,
       })
       .getOne();
   }
@@ -608,7 +608,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
    * - `studentId` student id.
    * - `institutionId` institution id.
-   * - `allowOverwritten` indicates if overwritten application is allowed.
+   * - `allowEdited` indicates if Edited application is allowed.
    * @returns student application.
    */
   async getApplicationById(
@@ -617,12 +617,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       loadDynamicData?: boolean;
       studentId?: number;
       institutionId?: number;
-      allowOverwritten?: boolean;
+      allowEdited?: boolean;
     },
   ): Promise<Application> {
-    const applicationStatus = options?.allowOverwritten
+    const applicationStatus = options?.allowEdited
       ? undefined
-      : Not(ApplicationStatus.Overwritten);
+      : Not(ApplicationStatus.Edited);
     return this.repo.findOne({
       select: {
         id: true,
@@ -720,8 +720,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .where("application.student.id = :studentId", { studentId })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.Overwritten,
+      .andWhere("application.applicationStatus != :editedStatus", {
+        editedStatus: ApplicationStatus.Edited,
       });
     // If institution id is present, get only the applications
     // linked with the institution.
@@ -779,7 +779,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param status status is an optional parameter. if status
    * is passed, then application will be return with passed
    * status, if nothing is passed, then application with status
-   * other than completed, overwritten, cancelled will be passed.
+   * other than completed, edited, cancelled will be passed.
    * @param [applicationId] application id, when possible.
    * @returns application with the data needed to process
    * the operations related to save/submitting.
@@ -818,7 +818,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       query.andWhere("application.applicationStatus NOT IN (:...status)", {
         status: [
           ApplicationStatus.Completed,
-          ApplicationStatus.Overwritten,
+          ApplicationStatus.Edited,
           ApplicationStatus.Cancelled,
         ],
       });
@@ -868,7 +868,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .where("application.id = :applicationId", { applicationId })
         .andWhere("application.location.id = :locationId", { locationId })
         .andWhere("application.applicationStatus != :applicationStatus", {
-          applicationStatus: ApplicationStatus.Overwritten,
+          applicationStatus: ApplicationStatus.Edited,
         })
         .andWhere("application.pirStatus = :pirStatus", {
           pirStatus: ProgramInfoStatus.required,
@@ -1040,8 +1040,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .andWhere("application.pirStatus != :nonPirStatus", {
           nonPirStatus: ProgramInfoStatus.notRequired,
         })
-        .andWhere("application.applicationStatus != :overwrittenStatus", {
-          overwrittenStatus: ApplicationStatus.Overwritten,
+        .andWhere("application.applicationStatus != :editedStatus", {
+          editedStatus: ApplicationStatus.Edited,
         })
         // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
         .orderBy(
@@ -1061,7 +1061,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Update Student Application status to cancelled.
    * Only allows the update on applications that are not in a final status.
-   * The final statuses of an application are Completed, Overwritten and Cancelled.
+   * The final statuses of an application are Completed, Edited and Cancelled.
    * @param applicationId application id.
    * @param studentId student id for authorization purposes.
    * @param auditUserId user who is making the changes.
@@ -1091,7 +1091,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: Not(
           In([
             ApplicationStatus.Completed,
-            ApplicationStatus.Overwritten,
+            ApplicationStatus.Edited,
             ApplicationStatus.Cancelled,
           ]),
         ),
@@ -1186,7 +1186,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .where("application.id = :applicationId", { applicationId })
         .andWhere("application.location.id = :locationId", { locationId })
         .andWhere("application.applicationStatus != :applicationStatus", {
-          applicationStatus: ApplicationStatus.Overwritten,
+          applicationStatus: ApplicationStatus.Edited,
         })
         .andWhere("application.pirStatus = :pirStatus", {
           pirStatus: ProgramInfoStatus.required,
@@ -1365,7 +1365,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus NOT IN (:...status)", {
         status: [
           ApplicationStatus.Draft,
-          ApplicationStatus.Overwritten,
+          ApplicationStatus.Edited,
           ApplicationStatus.Cancelled,
         ],
       })
@@ -1596,7 +1596,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       where: {
         id: applicationId,
-        applicationStatus: Not(ApplicationStatus.Overwritten),
+        applicationStatus: Not(ApplicationStatus.Edited),
         student: {
           id: options?.studentId,
         },
@@ -1714,7 +1714,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         location: {
           id: locationId,
         },
-        applicationStatus: Not(ApplicationStatus.Overwritten),
+        applicationStatus: Not(ApplicationStatus.Edited),
       },
     });
   }

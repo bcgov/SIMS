@@ -82,14 +82,14 @@ export class AssessmentSequentialProcessingService {
         currentAssessment: { studentAppeal: true },
       },
       where: {
-        applicationStatus: Not(ApplicationStatus.Overwritten),
+        applicationStatus: Not(ApplicationStatus.Edited),
         currentAssessment: {
           id: assessmentId,
         },
       },
     });
     if (!application) {
-      // Assessment is not current one or the application is overwritten.
+      // Assessment is not current one or the application is edited.
       return null;
     }
     const sequencedApplications = await this.getSequencedApplications(
@@ -186,7 +186,7 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
-   * Returns the sum of all awards associated with non-overwritten applications.
+   * Returns the sum of all awards associated with non-edited applications.
    * Only pending awards or already sent awards will be considered.
    * Only federal and provincial grants are considered.
    * Grants that are common between part-time and full-time (e.g. CSGP, SBSD) applications will have
@@ -259,9 +259,9 @@ export class AssessmentSequentialProcessingService {
       .where("application.applicationNumber IN (:...applicationNumbers)", {
         applicationNumbers,
       })
-      // Overwritten application can have awards associated with and they should not be considered.
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.Overwritten,
+      // Edited application can have awards associated with and they should not be considered.
+      .andWhere("application.applicationStatus != :editedStatus", {
+        editedStatus: ApplicationStatus.Edited,
       })
       // Check for assessment completed status to avoid retrieving any cancelation status.
       .andWhere(
@@ -340,9 +340,9 @@ export class AssessmentSequentialProcessingService {
       .innerJoin("application.currentAssessment", "currentAssessment")
       .where("application.applicationNumber IN (:...applicationNumbers)", {
         applicationNumbers,
-      }) // Overwritten application can have awards associated with and they should not be considered.
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.Overwritten,
+      }) // Edited application can have awards associated with and they should not be considered.
+      .andWhere("application.applicationStatus != :editedStatus", {
+        editedStatus: ApplicationStatus.Edited,
       })
       // Check for assessment completed status to avoid retrieving any cancelation status.
       .andWhere(
@@ -442,7 +442,7 @@ export class AssessmentSequentialProcessingService {
   ): Promise<SequencedApplications> {
     const entityManager = options?.entityManager ?? this.dataSource.manager;
     // Sub query to get the first assessment calculation date for an application to be used for ordering.
-    // All applications versions should be considered, which means 'Overwritten' also.
+    // All applications versions should be considered, which means 'Edited' also.
     // This will ensure that once the application is calculated for the first time its
     // order in the sequence will never change.
     const assessmentDateSubQuery = entityManager
@@ -485,8 +485,8 @@ export class AssessmentSequentialProcessingService {
       .leftJoin("currentAssessment.studentAppeal", "currentAssessmentAppeal")
       .where("student.id = :studentId", { studentId })
       .andWhere("programYear.id = :programYearId", { programYearId })
-      .andWhere("application.applicationStatus != :overwrittenStatus", {
-        overwrittenStatus: ApplicationStatus.Overwritten,
+      .andWhere("application.applicationStatus != :editedStatus", {
+        editedStatus: ApplicationStatus.Edited,
       })
       .andWhere(
         new Brackets((qb) => {
