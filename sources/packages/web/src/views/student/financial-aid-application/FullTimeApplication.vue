@@ -186,7 +186,7 @@ export default defineComponent({
         [
           ApplicationStatus.Completed,
           ApplicationStatus.Cancelled,
-          ApplicationStatus.Overwritten,
+          ApplicationStatus.Edited,
         ].includes(applicationData.applicationStatus) || !!props.readOnly;
 
       notDraft.value =
