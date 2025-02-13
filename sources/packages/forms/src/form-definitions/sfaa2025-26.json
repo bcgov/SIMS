@@ -28103,7 +28103,7 @@
               "id": "eghibs"
             },
             {
-              "label": "Will you receive government funding (e.g., E.I. training allowance, social assistance payment intended to cover education -related costs) during your study period?",
+              "label": "Will you receive government funding (e.g., EI training allowance, social assistance payments intended to cover education-related costs?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -28359,7 +28359,7 @@
               "id": "eqfw6u"
             },
             {
-              "label": "Will you receive non-government (private sector) funding (e.g., employer) during your study period?",
+              "label": "Will you receive non-government (private sector) funding (e.g. employer)?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
