@@ -19402,7 +19402,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "studentParentNetContribution",
+                  "key": "studentParentsNetContribution",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
@@ -19567,7 +19567,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "studentParentNetAssests",
+                  "key": "studentParentsNetAssests",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
@@ -27846,7 +27846,7 @@
               "properties": {}
             },
             {
-              "label": "Will you receive government funding (e.g., EI training allowance, social assistance payments intended to cover education-related costs?",
+              "label": "Will you receive government funding (e.g., EI training allowance, social assistance payments intended to cover education-related costs)?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
