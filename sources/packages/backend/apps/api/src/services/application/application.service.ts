@@ -27,6 +27,7 @@ import {
   transformToApplicationEntitySortField,
   StudentAssessmentStatus,
   FileOriginType,
+  ApplicationEditStatus,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -263,6 +264,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     newApplication.programYear = application.programYear;
     newApplication.data = applicationData;
     newApplication.applicationStatus = ApplicationStatus.Submitted;
+    newApplication.applicationEditStatus = ApplicationEditStatus.Edited;
     newApplication.parentApplication = {
       id: application.parentApplication.id,
     } as Application;
@@ -441,6 +443,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       draftApplication.programYear = { id: programYearId } as ProgramYear;
       draftApplication.applicationStatus = ApplicationStatus.Draft;
       draftApplication.applicationStatusUpdatedOn = now;
+      draftApplication.applicationEditStatus = ApplicationEditStatus.Original;
       draftApplication.creator = auditUser;
       draftApplication.createdAt = now;
     } else {

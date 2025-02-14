@@ -9,6 +9,7 @@ import {
   RelationId,
 } from "typeorm";
 import {
+  ApplicationEditStatus,
   ApplicationOfferingChangeRequest,
   ApplicationRestrictionBypass,
   CRAIncomeVerification,
@@ -371,6 +372,14 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   precedingApplication?: Application;
+
+  @Column({
+    name: "application_edit_status",
+    type: "enum",
+    enum: ApplicationEditStatus,
+    enumName: "ApplicationEditStatus",
+  })
+  applicationEditStatus: ApplicationEditStatus;
 }
 
 /**

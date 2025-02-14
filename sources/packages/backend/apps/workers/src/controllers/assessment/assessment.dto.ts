@@ -11,6 +11,7 @@ import {
   AssessmentStatus,
   WorkflowData,
   ApplicationStatus,
+  ApplicationEditStatus,
 } from "@sims/sims-db";
 
 export interface AssociateWorkflowInstanceJobInDTO {
@@ -87,6 +88,7 @@ export interface ApplicationAssessmentJobOutDTO {
    * Current status of the application.
    */
   applicationStatus: ApplicationStatus;
+  applicationEditStatus: ApplicationEditStatus;
   /**
    * If any NOA has been approved for the application.
    */

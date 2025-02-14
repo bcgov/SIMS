@@ -518,6 +518,7 @@ export class AssessmentController {
     const institutionLocation = offering?.institutionLocation;
     return {
       applicationId: application.id,
+      applicationEditStatus: application.applicationEditStatus,
       applicationStatus: application.applicationStatus,
       hasNOAApproval,
       triggerType: assessment.triggerType,

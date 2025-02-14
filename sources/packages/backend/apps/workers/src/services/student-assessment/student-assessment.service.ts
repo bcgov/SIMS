@@ -123,6 +123,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "assessment.id",
         "assessment.triggerType",
         "application.id",
+        "application.applicationEditStatus",
         "application.data",
         "application.applicationStatus",
         "programYear.programYear",
