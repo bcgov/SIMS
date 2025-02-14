@@ -31,10 +31,7 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
-import {
-  ApplicationRestrictionBypassService,
-  ApplicationService,
-} from "../../services";
+import { ApplicationRestrictionBypassService } from "../../services";
 import { ApplicationRestrictionBypass } from "@sims/sims-db";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
@@ -60,35 +57,22 @@ import { getUserFullName } from "../../utilities";
 export class ApplicationRestrictionBypassAESTController extends BaseController {
   constructor(
     private readonly applicationRestrictionBypassService: ApplicationRestrictionBypassService,
-    private readonly applicationService: ApplicationService,
   ) {
     super();
   }
 
   /**
    * Get application restriction bypasses for a given application.
-   * @param applicationId id of the current application to retrieve restriction bypasses.
+   * @param applicationId id of the application to retrieve restriction bypasses.
    * @returns application restriction bypasses.
    */
-  @ApiNotFoundResponse({
-    description: `Current application for provided parent application not found.`,
-  })
   @Get("application/:applicationId")
   async getApplicationRestrictionBypasses(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ApplicationRestrictionBypassHistoryAPIOutDTO> {
-    const currentApplicationId =
-      await this.applicationService.getApplicationIdByParentApplicationId(
-        applicationId,
-      );
-    if (!currentApplicationId) {
-      throw new NotFoundException(
-        `Current application for application ${applicationId} was not found.`,
-      );
-    }
     const applicationRestrictionBypasses =
       await this.applicationRestrictionBypassService.getApplicationRestrictionBypasses(
-        currentApplicationId,
+        applicationId,
       );
     const bypasses = applicationRestrictionBypasses.map(
       (item: ApplicationRestrictionBypass) => ({
@@ -146,28 +130,16 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
 
   /**
    * Gets available student restrictions to bypass for a given application.
-   * @param applicationId id of the current application to retrieve restriction bypasses.
+   * @param applicationId id of the application to retrieve restriction bypasses.
    * @returns application restriction bypasses.
    */
-  @ApiNotFoundResponse({
-    description: `Current application for provided parent application not found.`,
-  })
   @Get("application/:applicationId/options-list")
   async getAvailableStudentRestrictionsToBypass(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<AvailableStudentRestrictionsAPIOutDTO> {
-    const currentApplicationId =
-      await this.applicationService.getApplicationIdByParentApplicationId(
-        applicationId,
-      );
-    if (!currentApplicationId) {
-      throw new NotFoundException(
-        `Current application for application ${applicationId} was not found.`,
-      );
-    }
     const availableRestrictionsToBypass =
       await this.applicationRestrictionBypassService.getAvailableStudentRestrictionsToBypass(
-        currentApplicationId,
+        applicationId,
       );
     return {
       availableRestrictionsToBypass: availableRestrictionsToBypass.map(

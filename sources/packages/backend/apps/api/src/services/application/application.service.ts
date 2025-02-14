@@ -1900,15 +1900,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Get last application version.
-   * @param precedingApplicationId application id of the previous application.
+   * @param applicationId application id.
    * @returns last application version.
    */
-  async getLastApplicationVersion(
-    precedingApplicationId: number,
-  ): Promise<Application> {
+  async getLastApplicationVersion(applicationId: number): Promise<Application> {
     return this.repo.findOne({
       select: { id: true, data: true as unknown },
-      where: { id: precedingApplicationId },
+      where: { id: applicationId },
     });
   }
 
