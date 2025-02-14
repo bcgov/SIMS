@@ -19402,7 +19402,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "studentParentNetContribution",
+                  "key": "studentParentsNetContribution",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
@@ -19567,7 +19567,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "studentParentNetAssests",
+                  "key": "studentParentsNetAssests",
                   "type": "currency",
                   "input": true,
                   "delimiter": true,
