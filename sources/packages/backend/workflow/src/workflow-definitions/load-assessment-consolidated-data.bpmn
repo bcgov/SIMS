@@ -60,7 +60,7 @@
           <zeebe:header key="parent1CppSelfemploymentOther" value="$.supportingUsers.Parent1.supportingData.cppLine31000" />
           <zeebe:header key="parent1DependentTable" value="$.supportingUsers.Parent1.supportingData.parentDependentTable" />
           <zeebe:header key="parent1Ei" value="$.supportingUsers.Parent1.supportingData.eiLine31200" />
-          <zeebe:header key="parent1NetAssests" value="$.supportingUsers.Parent1.supportingData.foreignAssets" />
+          <zeebe:header key="parent1ForeignAssets" value="$.supportingUsers.Parent1.supportingData.foreignAssets" />
           <zeebe:header key="parent1Tax" value="$.supportingUsers.Parent1.supportingData.totalIncomeTaxLine43500" />
           <zeebe:header key="parent1TotalIncome" value="$.supportingUsers.Parent1.supportingData.totalIncome" />
           <zeebe:header key="parent2SupportingUserId" value="$.supportingUsers.Parent2.id" />
