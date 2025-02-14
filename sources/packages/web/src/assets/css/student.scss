@@ -43,19 +43,28 @@ span.v-btn__content {
 }
 
 // Mobile-specific styles
+.v-container.v-container--fluid.v-locale--is-ltr {
+  &:has(> .mobile-view) {
+    padding: 0px !important;
+  }
+}
+
 .mobile-view {
-  :deep(.v-container) {
-    padding: 9px !important;
+  margin-right: 0px !important;
+  margin-left: 0px !important;
+
+  .v-container {
+    padding: 5px !important;
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
   }
 
-  :deep(.v-row) {
+  .v-row {
     margin: 0 !important;
   }
 
-  :deep(.v-col) {
+  .v-col {
     padding: 9px !important;
   }
 }
