@@ -42,7 +42,9 @@
             {{ dateOnlyLongString(item.studyEndPeriod) }}
           </template>
           <template #[`item.status`]="{ item }">
-            <status-chip-application :status="item.status" />
+            <status-chip-application
+              :status="item.status as ApplicationStatus"
+            />
           </template>
           <template #[`item.actions`]="{ item }">
             <span v-if="manageApplication">
@@ -114,6 +116,7 @@ import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
+import { useDisplay } from "vuetify";
 
 export default defineComponent({
   components: { StatusChipApplication },
@@ -141,6 +144,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const loading = ref(false);
+    const { mobile: isMobile } = useDisplay();
     const applicationsAndCount = ref(
       {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
     );
@@ -219,6 +223,7 @@ export default defineComponent({
       emitCancel,
       StudentApplicationsSummaryHeaders,
       ITEMS_PER_PAGE,
+      isMobile,
     };
   },
 });

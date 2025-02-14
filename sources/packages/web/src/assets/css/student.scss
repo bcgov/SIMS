@@ -53,6 +53,10 @@ span.v-btn__content {
   margin-right: 0px !important;
   margin-left: 0px !important;
 
+  .v-card.v-theme--light.v-card--density-default.v-card--variant-elevated.mt-4.p-4.w-100 {
+    padding: 0px !important;
+  }
+
   .v-container {
     padding: 5px !important;
     width: 100% !important;
