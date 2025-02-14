@@ -8,76 +8,49 @@
       ></body-header>
     </template>
     <content-group>
-      <DataTable
-        :value="applicationsAndCount.results"
-        :lazy="true"
-        :paginator="true"
-        :rows="DEFAULT_PAGE_LIMIT"
-        :rowsPerPageOptions="PAGINATION_LIST"
-        :totalRecords="applicationsAndCount.count"
-        @page="paginationAndSortEvent($event)"
-        @sort="paginationAndSortEvent($event)"
-        :loading="loading"
+      <toggle-content
+        :toggled="!applicationsAndCount.results?.length"
+        message="No applications are currently available."
       >
-        <template #empty>
-          <p class="text-center font-weight-bold">No records found.</p>
-        </template>
-        <Column
-          :field="StudentApplicationFields.ApplicationNumber"
-          :sortable="true"
-          header="Application #"
+        <v-data-table
+          :headers="StudentApplicationsSummaryHeaders"
+          :items="applicationsAndCount.results"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
         >
-        </Column>
-        <Column :field="StudentApplicationFields.ApplicationName" header="Name">
-          <template #body="slotProps">
+          <template #[`item.applicationNumber`]="{ item }">
+            {{ item.applicationNumber }}
+          </template>
+          <template #[`item.applicationName`]="{ item }">
             <v-btn
               v-if="enableViewApplicationOnName"
               variant="plain"
-              @click="$emit('goToApplication', slotProps.data.id)"
+              @click="$emit('goToApplication', item.id)"
               color="primary"
-              >{{ slotProps.data.applicationName }}
+              >{{ item.applicationName }}
               <v-tooltip activator="parent" location="start"
                 >Click To View this Application</v-tooltip
               >
             </v-btn>
-
             <span v-if="!enableViewApplicationOnName"
-              >{{ slotProps.data.applicationName }}
+              >{{ item.applicationName }}
             </span>
           </template>
-        </Column>
-        <Column
-          :field="StudentApplicationFields.Submitted"
-          header="Submitted"
-        ></Column>
-        <Column
-          :field="StudentApplicationFields.StudyPeriod"
-          header="Study Period"
-        >
-          <template #body="slotProps">
-            <span>
-              {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
-              {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
-            </span>
-          </template></Column
-        >
-        <Column
-          :field="StudentApplicationFields.Status"
-          header="Status"
-          :sortable="true"
-        >
-          <template #body="slotProps">
-            <status-chip-application :status="slotProps.data.status" />
+          <template #[`item.studyStartPeriod`]="{ item }">
+            {{ dateOnlyLongString(item.studyStartPeriod) }} -
+            {{ dateOnlyLongString(item.studyEndPeriod) }}
           </template>
-        </Column>
-        <Column :field="StudentApplicationFields.Actions" header="Actions">
-          <template #body="slotProps">
+          <template #[`item.status`]="{ item }">
+            <status-chip-application :status="item.status" />
+          </template>
+          <template #[`item.actions`]="{ item }">
             <span v-if="manageApplication">
               <span
                 v-if="
                   !(
-                    slotProps.data.status === ApplicationStatus.Cancelled ||
-                    slotProps.data.status === ApplicationStatus.Completed
+                    item.status === ApplicationStatus.Cancelled ||
+                    item.status === ApplicationStatus.Completed
                   )
                 "
               >
@@ -86,26 +59,19 @@
                   variant="plain"
                   color="primary"
                   class="label-bold"
-                  @click="
-                    $emit(
-                      'editApplicationAction',
-                      slotProps.data.status,
-                      slotProps.data.id,
-                    )
-                  "
+                  @click="$emit('editApplicationAction', item.status, item.id)"
                   append-icon="mdi-pencil-outline"
                   ><span class="label-bold">Edit</span>
                   <v-tooltip activator="parent" location="start"
                     >Click To Edit this Application</v-tooltip
                   >
                 </v-btn>
-
                 <v-btn
                   :disabled="sinValidStatus !== SINStatusEnum.VALID"
                   variant="plain"
                   color="primary"
                   class="label-bold"
-                  @click="emitCancel(slotProps.data.id)"
+                  @click="emitCancel(item.id)"
                   ><span class="label-bold">Cancel</span>
                   <v-tooltip activator="parent" location="start"
                     >Click To Cancel this Application</v-tooltip
@@ -116,13 +82,13 @@
             <span v-if="enableViewApplication">
               <v-btn
                 variant="outlined"
-                @click="$emit('goToApplication', slotProps.data.id)"
+                @click="$emit('goToApplication', item.id)"
                 >View</v-btn
               >
             </span>
           </template>
-        </Column>
-      </DataTable>
+        </v-data-table>
+      </toggle-content>
     </content-group>
   </body-header-container>
 </template>
@@ -137,6 +103,8 @@ import {
   PAGINATION_LIST,
   StudentApplicationFields,
   SINStatusEnum,
+  StudentApplicationsSummaryHeaders,
+  ITEMS_PER_PAGE,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
@@ -249,6 +217,8 @@ export default defineComponent({
       SINStatusEnum,
       sinValidStatus,
       emitCancel,
+      StudentApplicationsSummaryHeaders,
+      ITEMS_PER_PAGE,
     };
   },
 });
