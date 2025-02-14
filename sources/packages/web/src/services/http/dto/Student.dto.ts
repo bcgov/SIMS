@@ -144,6 +144,7 @@ export interface ApplicationSummaryAPIOutDTO {
   applicationName: string;
   submitted?: Date;
   status: string;
+  parentApplicationId: number;
 }
 
 /**

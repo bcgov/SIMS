@@ -109,9 +109,10 @@ export class ApplicationAESTController extends BaseController {
     if (loadDynamicData) {
       // Check if a previous application exists.
       const previousApplicationVersion =
-        await this.applicationService.getLastApplicationVersion(
+        application.id !== application.precedingApplication.id &&
+        (await this.applicationService.getLastApplicationVersion(
           application.precedingApplication.id,
-        );
+        ));
       const currentReadOnlyDataPromise =
         this.applicationControllerService.generateApplicationFormData(
           application.data,
@@ -203,13 +204,12 @@ export class ApplicationAESTController extends BaseController {
 
   /**
    * Get details for an application at 'InProgress' status.
-   * @param applicationId current application id.
+   * @param applicationId application id.
    * @returns application details.
    */
   @Get(":applicationId/in-progress")
   @ApiNotFoundResponse({
-    description:
-      "Application id not found or current application for provided parent application not found.",
+    description: "Application id not found.",
   })
   @ApiUnprocessableEntityResponse({
     description: `Application not in ${ApplicationStatus.InProgress} status.`,
@@ -217,97 +217,60 @@ export class ApplicationAESTController extends BaseController {
   async getInProgressApplicationDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
-    const currentApplicationId =
-      await this.applicationService.getApplicationIdByParentApplicationId(
-        applicationId,
-      );
-    if (!currentApplicationId) {
-      throw new NotFoundException(
-        `Current application for application ${applicationId} was not found.`,
-      );
-    }
     return this.applicationControllerService.getInProgressApplicationDetails(
-      currentApplicationId,
+      applicationId,
     );
   }
 
   /**
    * Get status of all requests and confirmations in student application (Exception, PIR and COE).
-   * @param applicationId current application id.
+   * @param applicationId application id.
    * @returns application progress details.
    */
   @ApiNotFoundResponse({
-    description:
-      "Application not found or current application for provided parent application not found.",
+    description: "Application not found.",
   })
   @Get(":applicationId/progress-details")
   async getApplicationProgressDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ApplicationProgressDetailsAPIOutDTO> {
-    const currentApplicationId =
-      await this.applicationService.getApplicationIdByParentApplicationId(
-        applicationId,
-      );
-    if (!currentApplicationId) {
-      throw new NotFoundException(
-        `Current application for application ${applicationId} was not found.`,
-      );
-    }
     return this.applicationControllerService.getApplicationProgressDetails(
-      currentApplicationId,
+      applicationId,
     );
   }
 
   /**
    * Get details for an application at 'Enrolment' status.
-   * @param applicationId student current application id.
+   * @param applicationId student application id.
    * @returns details for the application enrolment status.
    */
   @ApiNotFoundResponse({
     description:
-      "Application not found or current application for provided parent application not found or not in relevant status to get enrolment details.",
+      "Application not found or not in relevant status to get enrolment details.",
   })
   @Get(":applicationId/enrolment")
   async getEnrolmentApplicationDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<EnrolmentApplicationDetailsAPIOutDTO> {
-    const currentApplicationId =
-      await this.applicationService.getApplicationIdByParentApplicationId(
-        applicationId,
-      );
-    if (!currentApplicationId) {
-      throw new NotFoundException(
-        `Current application for application ${applicationId} was not found.`,
-      );
-    }
     return this.applicationControllerService.getEnrolmentApplicationDetails(
-      currentApplicationId,
+      applicationId,
     );
   }
 
   /**
    * Get details for an application at 'Completed' status.
-   * @param applicationId current application id.
+   * @param applicationId application id.
    * @returns details for an application on at completed status.
    */
   @ApiNotFoundResponse({
-    description: `Application not found or current application for provided parent application not found or not on ${ApplicationStatus.Completed} status.`,
+    description: `Application not found or not on ${ApplicationStatus.Completed} status.`,
   })
   @Get(":applicationId/completed")
   async getCompletedApplicationDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<CompletedApplicationDetailsAPIOutDTO> {
-    const currentApplicationId =
-      await this.applicationService.getApplicationIdByParentApplicationId(
-        applicationId,
-      );
-    if (!currentApplicationId) {
-      throw new NotFoundException(
-        `Current application for application ${applicationId} was not found.`,
-      );
-    }
     return this.applicationControllerService.getCompletedApplicationDetails(
-      currentApplicationId,
+      applicationId,
     );
   }
 

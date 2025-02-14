@@ -39,7 +39,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { Role, IUserToken } from "../../auth";
 import { ManualReassessmentAPIInDTO } from "../assessment/models/assessment.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { ApplicationService, StudentAssessmentService } from "../../services";
+import { StudentAssessmentService } from "../../services";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -48,7 +48,6 @@ import { ApplicationService, StudentAssessmentService } from "../../services";
 export class AssessmentAESTController extends BaseController {
   constructor(
     private readonly assessmentControllerService: AssessmentControllerService,
-    private readonly applicationService: ApplicationService,
     private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super();
@@ -57,27 +56,15 @@ export class AssessmentAESTController extends BaseController {
   /**
    * Get all pending and declined requests related to an application which would result
    * a new assessment when that request is approved.
-   * @param applicationId parent application id.
+   * @param applicationId application id.
    * @returns assessment requests or exceptions for a student application.
    */
-  @ApiNotFoundResponse({
-    description: `Current application for provided parent application not found.`,
-  })
   @Get("application/:applicationId/requests")
   async getRequestedAssessmentSummary(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
-    const currentApplicationId =
-      await this.applicationService.getApplicationIdByParentApplicationId(
-        applicationId,
-      );
-    if (!currentApplicationId) {
-      throw new NotFoundException(
-        `Current application for application ${applicationId} was not found.`,
-      );
-    }
     return this.assessmentControllerService.requestedStudentAssessmentSummary(
-      currentApplicationId,
+      applicationId,
       {
         includeOfferingChanges: true,
       },
@@ -90,27 +77,15 @@ export class AssessmentAESTController extends BaseController {
    * student application, and all approved student
    * appeal and scholastic standings for the application
    * which will have different assessment status.
-   * @param applicationId parent application id.
+   * @param applicationId, application number.
    * @returns summary of the assessment history for a student application.
    */
-  @ApiNotFoundResponse({
-    description: `Current application for provided parent application not found.`,
-  })
   @Get("application/:applicationId/history")
   async getAssessmentHistorySummary(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
-    const currentApplicationId =
-      await this.applicationService.getApplicationIdByParentApplicationId(
-        applicationId,
-      );
-    if (!currentApplicationId) {
-      throw new NotFoundException(
-        `Current application for application ${applicationId} was not found.`,
-      );
-    }
     return this.assessmentControllerService.getAssessmentHistorySummary(
-      currentApplicationId,
+      applicationId,
     );
   }
 
@@ -157,15 +132,12 @@ export class AssessmentAESTController extends BaseController {
    * Triggers manual reassessment for an application.
    * Application cannot be archived or in any of the statuses 'Cancelled', 'Overwritten' or 'Draft' and original assessment must be in completed status.
    * @param payload request payload.
-   * @param applicationId parent application id.
+   * @param applicationId application id.
    * @returns id of the assessment created.
    */
   @Roles(Role.AESTManualTriggerReassessment)
   @Post("application/:applicationId/manual-reassessment")
-  @ApiNotFoundResponse({
-    description:
-      "Application id not found or current application for provided parent application not found.",
-  })
+  @ApiNotFoundResponse({ description: "Application id not found." })
   @ApiUnprocessableEntityResponse({
     description:
       `Application original assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment or ` +
@@ -178,18 +150,9 @@ export class AssessmentAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
-      const currentApplicationId =
-        await this.applicationService.getApplicationIdByParentApplicationId(
-          applicationId,
-        );
-      if (!currentApplicationId) {
-        throw new NotFoundException(
-          `Current application for application ${applicationId} was not found.`,
-        );
-      }
       const manualAssessment =
         await this.studentAssessmentService.createManualReassessment(
-          currentApplicationId,
+          applicationId,
           payload.note,
           userToken.userId,
         );
