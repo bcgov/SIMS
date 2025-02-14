@@ -49,12 +49,9 @@ export class ApplicationService {
    */
   async getApplication(
     applicationId: number,
-    loadDynamicData?: boolean,
+    options: { loadDynamicData: boolean; isParentApplication: boolean },
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    return ApiClient.Application.getApplicationData(
-      applicationId,
-      loadDynamicData,
-    );
+    return ApiClient.Application.getApplicationData(applicationId, options);
   }
 
   async createApplicationDraft(

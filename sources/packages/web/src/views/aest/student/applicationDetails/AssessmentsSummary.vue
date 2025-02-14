@@ -9,11 +9,11 @@
         }"
         subTitle="Assessments"
       />
-      <application-header-title :application-id="applicationId" />
+      <application-header-title :application-id="currentApplication.id" />
     </template>
     <request-assessment
       class="mb-5"
-      :applicationId="applicationId"
+      :applicationId="currentApplication.id"
       @viewStudentAppeal="goToStudentAppeal"
       @viewStudentApplicationOfferingChange="
         goToStudentApplicationOfferingChangeRequest
@@ -23,12 +23,12 @@
     />
     <manual-reassessment
       class="mb-5"
-      :applicationId="applicationId"
+      :applicationId="currentApplication.id"
       @reassessmentTriggered="reloadHistory"
     />
     <history-assessment
       class="mb-5"
-      :applicationId="applicationId"
+      :applicationId="currentApplication.id"
       :viewRequestTypes="assessmentRequestTypes"
       @viewStudentAppeal="goToStudentAppeal"
       @viewStudentApplicationOfferingChange="
@@ -46,12 +46,14 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { AssessmentTriggerType } from "@/types";
 import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
 import ManualReassessment from "@/components/aest/students/assessment/ManualReassessment.vue";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
+import { ApplicationBaseAPIOutDTO } from "@/services/http/dto";
+import { ApplicationService } from "@/services/ApplicationService";
 
 export default defineComponent({
   components: {
@@ -73,6 +75,17 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const historyKey = ref(0);
+    const currentApplication = ref<ApplicationBaseAPIOutDTO>(
+      {} as ApplicationBaseAPIOutDTO,
+    );
+
+    onMounted(async () => {
+      // Get current application for the parent application.
+      currentApplication.value = await ApplicationService.shared.getApplication(
+        props.applicationId,
+        { loadDynamicData: false, isParentApplication: true },
+      );
+    });
 
     // The assessment trigger types for which the request form must be visible by default.
     const assessmentRequestTypes = [
@@ -164,6 +177,7 @@ export default defineComponent({
       goToStudentApplicationOfferingChangeRequest,
       historyKey,
       reloadHistory,
+      currentApplication,
     };
   },
 });

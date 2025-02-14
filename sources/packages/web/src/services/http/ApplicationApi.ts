@@ -31,16 +31,23 @@ export class ApplicationApi extends HttpBaseClient {
 
   async getApplicationData(
     applicationId: number,
-    loadDynamicData?: boolean,
+    options: { loadDynamicData: boolean; isParentApplication: boolean },
   ): Promise<ApplicationSupplementalDataAPIOutDTO>;
 
   async getApplicationData(
     applicationId: number,
-    loadDynamicData?: boolean,
+    options?: { loadDynamicData: boolean; isParentApplication: boolean },
   ): Promise<ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO> {
     let url = this.addClientRoot(`application/${applicationId}`);
-    if (loadDynamicData !== undefined) {
-      url = `${url}?loadDynamicData=${loadDynamicData}`;
+    const isLoadDynamicDataPresent = options?.loadDynamicData !== undefined;
+    if (isLoadDynamicDataPresent) {
+      url = `${url}?loadDynamicData=${options?.loadDynamicData}`;
+    }
+    if (options?.isParentApplication) {
+      const query = isLoadDynamicDataPresent
+        ? `&isParentApplication=${options?.isParentApplication}`
+        : `?isParentApplication=${options?.isParentApplication}`;
+      url = `${url}${query}`;
     }
     return this.getCall<
       ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO
