@@ -37,6 +37,16 @@
             />
           </template>
         </check-permission-role>
+        <check-permission-role :role="Role.AESTCASInvoicing">
+          <template #="{ notAllowed }">
+            <v-list-item
+              @click="redirectToQueuesDashboard"
+              prepend-icon="mdi-invoice-outline"
+              title="Queues Dashboard"
+              :disabled="notAllowed"
+            />
+          </template>
+        </check-permission-role>
       </v-list>
     </template>
   </v-navigation-drawer>
@@ -46,6 +56,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, Role } from "@/types";
 import { ref, defineComponent } from "vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { QueuesDashboardService } from "@/services/QueuesDashboardService";
 
 export default defineComponent({
   components: { CheckPermissionRole },
@@ -141,10 +152,22 @@ export default defineComponent({
         },
       },
     ]);
+
+    const redirectToQueuesDashboard = async () => {
+      await QueuesDashboardService.shared.authenticate();
+      // TODO: Create a Github config for the queues dashboard URL?
+      // window.open(
+      //   `${API_URL}/queues-dashboard/ui`,
+      //   "_blank",
+      //   "noopener,noreferrer",
+      // );
+    };
+
     return {
       menuItems,
       AESTRoutesConst,
       Role,
+      redirectToQueuesDashboard,
     };
   },
 });

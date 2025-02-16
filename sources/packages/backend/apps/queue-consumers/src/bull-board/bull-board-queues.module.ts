@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
 import { BullBoardModule, BullBoardModuleOptions } from "@bull-board/nestjs";
 import { ConfigModule, ConfigService } from "@sims/utilities/config";
-import * as basicAuth from "express-basic-auth";
 import { ExpressAdapter } from "@bull-board/express";
 import { BULL_BOARD_ROUTE } from "../constants";
 import { BullBoardQueuesRegistrationModule } from "./bull-board-queues-registration.module";
+import { BullDashboardAuthMiddleware } from "./bull-dashboard.middleware";
+import { JwtModule } from "@nestjs/jwt";
 
 /**
  * Bull board related modules to allow the dashboard to be registered.
@@ -12,7 +13,7 @@ import { BullBoardQueuesRegistrationModule } from "./bull-board-queues-registrat
 @Module({
   imports: [
     BullBoardModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule, JwtModule],
       useFactory: bullBoardModuleFactory,
       inject: [ConfigService],
     }),
@@ -34,14 +35,10 @@ async function bullBoardModuleFactory(
   const queueDashboardUsers = {};
   queueDashboardUsers[configService.queueDashboardCredential.userName] =
     configService.queueDashboardCredential.password;
-  const authMiddleware = basicAuth({
-    users: queueDashboardUsers,
-    challenge: true,
-  });
   return {
     route: BULL_BOARD_ROUTE,
     adapter: ExpressAdapter,
-    middleware: authMiddleware,
+    middleware: BullDashboardAuthMiddleware,
     boardOptions: {
       uiConfig: {
         boardTitle: "SIMS-Queues",
