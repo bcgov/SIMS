@@ -56,7 +56,8 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, Role } from "@/types";
 import { ref, defineComponent } from "vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { QueuesDashboardService } from "@/services/QueuesDashboardService";
+import { UserService } from "@/services/UserService";
+import { AppConfigService } from "@/services/AppConfigService";
 
 export default defineComponent({
   components: { CheckPermissionRole },
@@ -153,14 +154,13 @@ export default defineComponent({
       },
     ]);
 
+    /**
+     * Acquire a new token to allow the user to have access to the queues admin.
+     */
     const redirectToQueuesDashboard = async () => {
-      await QueuesDashboardService.shared.authenticate();
-      // TODO: Create a Github config for the queues dashboard URL?
-      // window.open(
-      //   `${API_URL}/queues-dashboard/ui`,
-      //   "_blank",
-      //   "noopener,noreferrer",
-      // );
+      await UserService.shared.queueAdminTokenExchange();
+      const { queueDashboardURL } = await AppConfigService.shared.config();
+      window.open(queueDashboardURL, "_blank", "noopener,noreferrer");
     };
 
     return {

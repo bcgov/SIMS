@@ -40,4 +40,12 @@ export class UserService {
   async syncAESTUser(): Promise<boolean> {
     return ApiClient.User.syncAESTUser();
   }
+
+  /**
+   * Allows a token creation to provide access to the queues admin
+   * for already authorized users with a role that allow the access.
+   */
+  async queueAdminTokenExchange(): Promise<void> {
+    await ApiClient.User.queueAdminTokenExchange();
+  }
 }

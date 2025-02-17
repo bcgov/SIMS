@@ -15,6 +15,7 @@ import {
   UserPasswordCredential,
   CASIntegrationConfig,
   S3Configuration,
+  QueueDashboardAccess,
 } from "./config.models";
 
 @Injectable()
@@ -291,6 +292,20 @@ export class ConfigService {
     return this.getCachedConfig("queueDashboardCredentialConfig", {
       userName: process.env.QUEUE_DASHBOARD_USER,
       password: process.env.QUEUE_DASHBOARD_PASSWORD,
+    });
+  }
+
+  /**
+   * Queue dashboard access configurations.
+   */
+  get queueDashboardAccess(): QueueDashboardAccess {
+    return this.getCachedConfig("queueDashboardAccessConfig", {
+      tokenSecret: process.env.QUEUE_DASHBOARD_TOKEN_SECRET,
+      tokenExpirationSeconds:
+        +process.env.QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS,
+      maxSessionInactivity:
+        process.env.QUEUE_DASHBOARD_MAX_SESSION_INACTIVITY_SECONDS,
+      baseURL: process.env.QUEUE_DASHBOARD_BASE_URL,
     });
   }
 
