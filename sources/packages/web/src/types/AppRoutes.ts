@@ -121,7 +121,6 @@ export enum AppRoutes {
   NoticeOfAssessmentView = "assessment/:assessmentId/notice-of-assessment",
   Reports = "reports",
   CASInvoices = "invoices",
-  QueuesDashboard = "queues-dashboard",
   ApplicationRestrictionsManagement = "application-restrictions-management",
   ApplicationStatusTracker = "application-status-tracker",
 }
