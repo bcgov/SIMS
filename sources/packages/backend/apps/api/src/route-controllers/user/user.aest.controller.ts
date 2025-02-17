@@ -41,7 +41,7 @@ export class UserAESTController extends BaseController {
   constructor(
     private readonly userService: UserService,
     private readonly userControllerService: UserControllerService,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {
     super();
@@ -92,6 +92,10 @@ export class UserAESTController extends BaseController {
     );
   }
 
+  /**
+   * Allows a token creation to provide access to the queues admin
+   * for already authorized users with a role that allow the access.
+   */
   @Post("queue-admin-token-exchange")
   async queueAdminTokenExchange(
     @UserToken() userToken: IUserToken,
