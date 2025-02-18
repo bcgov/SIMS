@@ -125,7 +125,7 @@ export interface S3Configuration {
 }
 
 export interface QueueDashboardAccess {
-  tokenSecret: string;
+  tokenSecret: Buffer;
   tokenExpirationSeconds: number;
   baseURL: string;
 }

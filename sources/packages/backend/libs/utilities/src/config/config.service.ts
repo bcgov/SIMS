@@ -289,7 +289,10 @@ export class ConfigService {
    */
   get queueDashboardAccess(): QueueDashboardAccess {
     return this.getCachedConfig("queueDashboardAccessConfig", {
-      tokenSecret: process.env.QUEUE_DASHBOARD_TOKEN_SECRET,
+      tokenSecret: Buffer.from(
+        process.env.QUEUE_DASHBOARD_TOKEN_SECRET,
+        "base64",
+      ),
       tokenExpirationSeconds:
         +process.env.QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS,
       baseURL: process.env.QUEUE_DASHBOARD_BASE_URL,

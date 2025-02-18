@@ -79,7 +79,7 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
         .status(HttpStatusCode.Forbidden)
         .send(`Not possible to authenticate: ${forbiddenError}.`);
     } finally {
-      this.logAccess(request, { userGuid: user.sub, forbiddenError });
+      this.logAccess(request, { userGuid: user?.sub, forbiddenError });
     }
   }
 
