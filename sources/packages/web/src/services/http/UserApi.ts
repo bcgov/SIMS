@@ -75,4 +75,15 @@ export class UserApi extends HttpBaseClient {
       { withCredentials: true },
     );
   }
+
+  /**
+   * Clear the cookie that stores the queues admin access token.
+   * Useful to remove the access to the queues admin when the user is no longer authorized.
+   */
+  async removeAdminTokenExchange(): Promise<void> {
+    await this.deleteCallFullResponse(
+      this.addClientRoot("user/queue-admin-token-exchange"),
+      { withCredentials: true },
+    );
+  }
 }

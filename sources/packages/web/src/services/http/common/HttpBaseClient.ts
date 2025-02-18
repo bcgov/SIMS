@@ -86,6 +86,26 @@ export default abstract class HttpBaseClient {
   }
 
   /**
+   * Executes the DELETE call and returns Axios complete response.
+   * @param url url to execute the DELETE call.
+   * @param config axios request config.
+   */
+  protected async deleteCallFullResponse(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<void> {
+    try {
+      await this.apiClient.delete(url, {
+        ...this.addAuthHeader(),
+        ...config,
+      });
+    } catch (error: unknown) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
    * Http call to download a file as response from API.
    ** When payload is passed, the file is downloaded on post call
    ** otherwise it is downloaded as get call.

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Post,
@@ -117,13 +118,12 @@ export class UserAESTController extends BaseController {
       secret: this.configService.queueDashboardAccess.tokenSecret,
       expiresIn: tokenExpiresIn,
     });
-    // Cookie creation to store the exchange token.
-    const cookieExpires = dayjs().add(tokenExpiresIn, "seconds").toDate();
+    // Session cookie creation to store the exchange token.
+    // This cookie is removed when the browser is closed because it does not have an expiration set.
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      expires: cookieExpires,
     };
     if (process.env.NODE_ENV !== "production") {
       cookieOptions.secure = false;
@@ -131,6 +131,19 @@ export class UserAESTController extends BaseController {
     }
     // Save the exchange token in a cookie to sent and stored in the client.
     response.cookie(QUEUE_DASHBOARD_AUTH_COOKIE, signedToken, cookieOptions);
-    response.status(HttpStatus.CREATED).send();
+    response.status(HttpStatus.NO_CONTENT).send();
+  }
+
+  /**
+   * Clear the cookie that stores the queues admin access token.
+   * Useful to remove the access to the queues admin when the user is no longer authorized.
+   */
+  @Delete("queue-admin-token-exchange")
+  @Roles(Role.AESTQueueDashboardAdmin)
+  async removeAdminTokenExchange(
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
+    response.clearCookie(QUEUE_DASHBOARD_AUTH_COOKIE);
+    response.status(HttpStatus.NO_CONTENT).send();
   }
 }

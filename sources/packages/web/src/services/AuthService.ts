@@ -4,7 +4,12 @@ import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
-import { ApiProcessError, IdentityProviders, ApplicationToken } from "@/types";
+import {
+  ApiProcessError,
+  IdentityProviders,
+  ApplicationToken,
+  Role,
+} from "@/types";
 import { RouteHelper } from "@/helpers";
 import { LocationAsRelativeRaw } from "vue-router";
 import {
@@ -13,7 +18,7 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
-import { useStudentStore, useInstitutionState } from "@/composables";
+import { useStudentStore, useInstitutionState, useAuth } from "@/composables";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 import { INVALID_BETA_USER, MISSING_STUDENT_ACCOUNT } from "@/constants";
 import { StudentAccountApplicationService } from "./StudentAccountApplicationService";
@@ -301,6 +306,10 @@ export class AuthService {
         break;
       }
       case ClientIdType.AEST: {
+        const { hasRole } = useAuth();
+        if (hasRole(Role.AESTQueueDashboardAdmin)) {
+          await UserService.shared.removeAdminTokenExchange();
+        }
         if (options?.notAllowedUser) {
           redirectUri += "/login/not-allowed-user";
         }

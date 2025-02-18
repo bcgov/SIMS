@@ -48,4 +48,12 @@ export class UserService {
   async queueAdminTokenExchange(): Promise<void> {
     await ApiClient.User.queueAdminTokenExchange();
   }
+
+  /**
+   * Clear the cookie that stores the queues admin access token.
+   * Useful to remove the access to the queues admin when the user is no longer authorized.
+   */
+  async removeAdminTokenExchange(): Promise<void> {
+    await ApiClient.User.removeAdminTokenExchange();
+  }
 }
