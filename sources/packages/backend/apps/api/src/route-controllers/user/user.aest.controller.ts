@@ -34,9 +34,7 @@ import {
 } from "@sims/auth/constants";
 import { ConfigService } from "@sims/utilities/config";
 import { JwtService } from "@nestjs/jwt";
-import * as dayjs from "dayjs";
 import { Role } from "../../auth";
-import { BULL_BOARD_ROUTE } from "@sims/services/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -125,7 +123,6 @@ export class UserAESTController extends BaseController {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      path: `/${BULL_BOARD_ROUTE}`,
     };
     if (process.env.NODE_ENV !== "production") {
       cookieOptions.secure = false;
