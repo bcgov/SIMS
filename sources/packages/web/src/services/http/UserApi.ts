@@ -81,7 +81,7 @@ export class UserApi extends HttpBaseClient {
    * Useful to remove the access to the queues admin when the user is no longer authorized.
    */
   async removeAdminTokenExchange(): Promise<void> {
-    await this.deleteCallFullResponse(
+    await this.deleteCall(
       this.addClientRoot("user/queue-admin-token-exchange"),
       { withCredentials: true },
     );

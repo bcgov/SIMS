@@ -65,7 +65,7 @@ export default abstract class HttpBaseClient {
    * Executes the POST call and returns Axios complete response.
    * @param url url to execute the POST call.
    * @param payload payload to be send.
-   * @param config axios request config.
+   * @param config optional axios request config.
    * @returns complete Axios response.
    */
   protected async postCallFullResponse<T, TResult = PrimaryIdentifierAPIOutDTO>(
@@ -86,11 +86,11 @@ export default abstract class HttpBaseClient {
   }
 
   /**
-   * Executes the DELETE call and returns Axios complete response.
+   * Executes a DELETE call.
    * @param url url to execute the DELETE call.
-   * @param config axios request config.
+   * @param config optional axios request config.
    */
-  protected async deleteCallFullResponse(
+  protected async deleteCall(
     url: string,
     config?: AxiosRequestConfig,
   ): Promise<void> {
