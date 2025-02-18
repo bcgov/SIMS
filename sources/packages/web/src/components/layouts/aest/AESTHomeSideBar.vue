@@ -37,13 +37,13 @@
             />
           </template>
         </check-permission-role>
-        <check-permission-role :role="Role.AESTCASInvoicing">
-          <template #="{ notAllowed }">
+        <check-permission-role :role="Role.AESTQueueDashboardAdmin">
+          <template #="{ isAllowed }">
             <v-list-item
+              v-if="isAllowed"
               @click="redirectToQueuesDashboard"
-              prepend-icon="mdi-invoice-outline"
+              prepend-icon="mdi-monitor-dashboard"
               title="Queues Dashboard"
-              :disabled="notAllowed"
             />
           </template>
         </check-permission-role>

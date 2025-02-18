@@ -527,7 +527,7 @@ parameters:
   - name: QUEUE_DASHBOARD_TOKEN_SECRET_KEY
     value: queue-dashboard-token-secret
   - name: QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS_KEY
-    value: queue-dashboard-token-expiration-SECONDS
+    value: queue-dashboard-token-expiration-seconds
   - name: QUEUE_DASHBOARD_BASE_URL_KEY
     value: queue-dashboard-base-url
   - name: APPLICATION_ARCHIVE_DAYS

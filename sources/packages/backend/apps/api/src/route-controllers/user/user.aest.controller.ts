@@ -18,6 +18,7 @@ import {
   AllowAuthorizedParty,
   Groups,
   RequiresUserAccount,
+  Roles,
 } from "../../auth/decorators";
 import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { UserControllerService } from "..";
@@ -32,6 +33,7 @@ import {
 import { ConfigService } from "@sims/utilities/config";
 import { JwtService } from "@nestjs/jwt";
 import * as dayjs from "dayjs";
+import { Role } from "../../auth";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -97,6 +99,7 @@ export class UserAESTController extends BaseController {
    * for already authorized users with a role that allow the access.
    */
   @Post("queue-admin-token-exchange")
+  @Roles(Role.AESTQueueDashboardAdmin)
   async queueAdminTokenExchange(
     @UserToken() userToken: IUserToken,
     @Res({ passthrough: true }) response: Response,
