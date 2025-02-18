@@ -28,6 +28,7 @@ import { CookieOptions, Response } from "express";
 import { QueueDashboardToken } from "@sims/auth/services/queues-dashboard/queue-dashboard.models";
 import {
   QUEUE_DASHBOARD_AUDIENCE,
+  QUEUE_DASHBOARD_AUTH_COOKIE,
   QUEUE_DASHBOARD_ISSUER,
 } from "@sims/auth/constants";
 import { ConfigService } from "@sims/utilities/config";
@@ -129,7 +130,7 @@ export class UserAESTController extends BaseController {
       cookieOptions.sameSite = "lax";
     }
     // Save the exchange token in a cookie to sent and stored in the client.
-    response.cookie("queues-dashboard-auth", signedToken, cookieOptions);
+    response.cookie(QUEUE_DASHBOARD_AUTH_COOKIE, signedToken, cookieOptions);
     response.status(HttpStatus.CREATED).send();
   }
 }

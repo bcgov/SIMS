@@ -11,6 +11,7 @@ import {
 } from "@nestjs/jwt";
 import {
   QUEUE_DASHBOARD_AUDIENCE,
+  QUEUE_DASHBOARD_AUTH_COOKIE,
   QUEUE_DASHBOARD_ISSUER,
 } from "@sims/auth/constants";
 import { QueueDashboardToken } from "@sims/auth/services/queues-dashboard/queue-dashboard.models";
@@ -37,8 +38,16 @@ export class BullDashboardAuthMiddleware implements NestMiddleware {
     };
   }
 
+  /**
+   * Checks if the user has a valid authentication cookie, verifies it
+   * and logs the user if the token is valid.
+   * @param request express request object.
+   * @param _response express response object.
+   * @param next next function to be called after this middleware.
+   * @throws UnauthorizedException when the token is missing, expired or invalid.
+   */
   use(request: Request, _response: Response, next: NextFunction) {
-    const token = request.cookies["queues-dashboard-auth"];
+    const token = request.cookies[QUEUE_DASHBOARD_AUTH_COOKIE];
     if (!token) {
       throw new UnauthorizedException("Authentication cookie not found.");
     }
