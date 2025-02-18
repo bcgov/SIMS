@@ -1,10 +1,13 @@
+/**
+ * Token issues by SIMS-API that allow access to the queues admin dashboard.
+ */
 export interface QueueDashboardToken {
   /**
    * Issuer of the JWT.
    */
   iss: string;
   /**
-   * Subject of the JWT (the user).
+   * Subject of the JWT (the Ministry user guid).
    */
   sub: string;
   /**

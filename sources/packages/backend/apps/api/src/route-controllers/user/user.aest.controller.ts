@@ -25,7 +25,7 @@ import { UserControllerService } from "..";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { MISSING_USER_INFO } from "../../constants";
 import { CookieOptions, Response } from "express";
-import { QueueDashboardToken } from "@sims/auth/services/queues-dashboard/queue-dashboard.models";
+import { QueueDashboardToken } from "@sims/auth/services";
 import {
   QUEUE_DASHBOARD_AUDIENCE,
   QUEUE_DASHBOARD_AUTH_COOKIE,
