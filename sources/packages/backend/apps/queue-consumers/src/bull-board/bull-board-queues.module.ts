@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
 import { BullBoardModule, BullBoardModuleOptions } from "@bull-board/nestjs";
-import { ConfigModule, ConfigService } from "@sims/utilities/config";
+import { ConfigModule } from "@sims/utilities/config";
 import { ExpressAdapter } from "@bull-board/express";
 import { BULL_BOARD_ROUTE } from "../constants";
 import { BullBoardQueuesRegistrationModule } from "./bull-board-queues-registration.module";
-import { BullDashboardAuthMiddleware } from "./bull-dashboard.middleware";
 import { JwtModule } from "@nestjs/jwt";
+import { BullBoardAuthenticationMiddleware } from "./bull-board-authentication.middleware";
 
 /**
  * Bull board related modules to allow the dashboard to be registered.
@@ -31,7 +31,7 @@ async function bullBoardModuleFactory(): Promise<BullBoardModuleOptions> {
   return {
     route: BULL_BOARD_ROUTE,
     adapter: ExpressAdapter,
-    middleware: BullDashboardAuthMiddleware,
+    middleware: BullBoardAuthenticationMiddleware,
     boardOptions: {
       uiConfig: {
         boardTitle: "SIMS-Queues",

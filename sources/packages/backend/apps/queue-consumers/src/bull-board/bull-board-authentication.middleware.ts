@@ -20,7 +20,7 @@ import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { NextFunction, Request, Response } from "express";
 
 @Injectable()
-export class BullDashboardAuthMiddleware implements NestMiddleware {
+export class BullBoardAuthenticationMiddleware implements NestMiddleware {
   /**
    * JWT configuration used to validate the token.
    */
@@ -49,14 +49,15 @@ export class BullDashboardAuthMiddleware implements NestMiddleware {
   use(request: Request, _response: Response, next: NextFunction) {
     const token = request.cookies[QUEUE_DASHBOARD_AUTH_COOKIE];
     if (!token) {
+      this.logAccess(request);
       throw new UnauthorizedException("Authentication cookie not found.");
     }
+    let user: QueueDashboardToken;
     try {
-      const user = this.jwtService.verify(
+      user = this.jwtService.verify<QueueDashboardToken>(
         token,
         this.jwtVerifyOptions,
-      ) as QueueDashboardToken;
-      this.logger.log(`Queues-dashboard authenticated user ${user.sub}`);
+      );
     } catch (error: unknown) {
       if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException("Token expired.");
@@ -66,8 +67,31 @@ export class BullDashboardAuthMiddleware implements NestMiddleware {
       }
       this.logger.error("Queues dashboard authentication error.", error);
       throw new UnauthorizedException("Authentication failed.");
+    } finally {
+      this.logAccess(request, user.sub);
     }
     next();
+  }
+
+  /**
+   * Logs access information of every request considering an
+   * authenticated user or not.
+   * @param request express request object.
+   * @param userGuid optional user GUID from the authentication token.
+   */
+  private logAccess(request: Request, userGuid?: string) {
+    // TODO: reuse some code from API.
+    const userAccessLogs: string[] = [];
+    const { originalUrl, method } = request;
+    const clientIP =
+      (request.headers["x-forwarded-for"] as string) ??
+      request.socket.remoteAddress;
+    const userAccessLog = `Request - ${method} ${originalUrl} From ${clientIP}`;
+    userAccessLogs.push(userAccessLog);
+    if (userGuid) {
+      userAccessLogs.push(`User GUID: ${userGuid}`);
+    }
+    this.logger.log(userAccessLogs.join(" | "));
   }
 
   @InjectLogger()
