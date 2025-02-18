@@ -9,37 +9,39 @@
         }"
         subTitle="Assessments"
       />
-      <application-header-title :application-id="currentApplication.id" />
+      <application-header-title
+        v-if="currentApplicationId"
+        :application-id="currentApplicationId"
+      />
     </template>
-    <request-assessment
-      class="mb-5"
-      :applicationId="currentApplication.id"
-      @viewStudentAppeal="goToStudentAppeal"
-      @viewStudentApplicationOfferingChange="
-        goToStudentApplicationOfferingChangeRequest
-      "
-      @viewApplicationException="goToApplicationException"
-      @viewOfferingRequest="goToOfferingRequest"
-    />
-    <manual-reassessment
-      class="mb-5"
-      :applicationId="currentApplication.id"
-      @reassessmentTriggered="reloadHistory"
-    />
-    <history-assessment
-      class="mb-5"
-      :applicationId="currentApplication.id"
-      :viewRequestTypes="assessmentRequestTypes"
-      @viewStudentAppeal="goToStudentAppeal"
-      @viewStudentApplicationOfferingChange="
-        goToStudentApplicationOfferingChangeRequest
-      "
-      @viewAssessment="gotToViewAssessment"
-      @viewOfferingRequest="goToOfferingRequest"
-      @viewApplicationException="goToApplicationException"
-      @viewScholasticStandingChange="goToScholasticStanding"
-      :key="historyKey"
-    />
+    <template v-if="currentApplicationId">
+      <request-assessment
+        class="mb-5"
+        :applicationId="currentApplicationId"
+        @viewStudentAppeal="goToStudentAppeal"
+        @viewStudentApplicationOfferingChange="
+          goToStudentApplicationOfferingChangeRequest
+        "
+        @viewApplicationException="goToApplicationException"
+        @viewOfferingRequest="goToOfferingRequest" />
+      <manual-reassessment
+        class="mb-5"
+        :applicationId="currentApplicationId"
+        @reassessmentTriggered="reloadHistory" />
+      <history-assessment
+        class="mb-5"
+        :applicationId="currentApplicationId"
+        :viewRequestTypes="assessmentRequestTypes"
+        @viewStudentAppeal="goToStudentAppeal"
+        @viewStudentApplicationOfferingChange="
+          goToStudentApplicationOfferingChangeRequest
+        "
+        @viewAssessment="gotToViewAssessment"
+        @viewOfferingRequest="goToOfferingRequest"
+        @viewApplicationException="goToApplicationException"
+        @viewScholasticStandingChange="goToScholasticStanding"
+        :key="historyKey"
+    /></template>
   </full-page-container>
 </template>
 
@@ -52,7 +54,6 @@ import RequestAssessment from "@/components/aest/students/assessment/Request.vue
 import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
 import ManualReassessment from "@/components/aest/students/assessment/ManualReassessment.vue";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
-import { ApplicationBaseAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
 
 export default defineComponent({
@@ -75,16 +76,15 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const historyKey = ref(0);
-    const currentApplication = ref<ApplicationBaseAPIOutDTO>(
-      {} as ApplicationBaseAPIOutDTO,
-    );
+    const currentApplicationId = ref<number>(0);
 
     onMounted(async () => {
       // Get current application for the parent application.
-      currentApplication.value = await ApplicationService.shared.getApplication(
+      const currentApplication = await ApplicationService.shared.getApplication(
         props.applicationId,
         { loadDynamicData: false, isParentApplication: true },
       );
+      currentApplicationId.value = currentApplication.id;
     });
 
     // The assessment trigger types for which the request form must be visible by default.
@@ -177,7 +177,7 @@ export default defineComponent({
       goToStudentApplicationOfferingChangeRequest,
       historyKey,
       reloadHistory,
-      currentApplication,
+      currentApplicationId,
     };
   },
 });
