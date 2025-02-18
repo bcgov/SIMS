@@ -200,6 +200,7 @@ init-secrets:
 		-p S3_ENDPOINT=$(S3_ENDPOINT) \
 		-p S3_DEFAULT_BUCKET=$(S3_DEFAULT_BUCKET) \
 		-p S3_REGION=$(S3_REGION) \
+		-p QUEUE_DASHBOARD_BASE_URL=$(HOST) \
 		| oc -n $(NAMESPACE) apply -f -
 
 init-zone-b-sftp-secret:

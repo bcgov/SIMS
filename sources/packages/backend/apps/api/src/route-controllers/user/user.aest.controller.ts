@@ -127,6 +127,6 @@ export class UserAESTController extends BaseController {
     }
     // Save the exchange token in a cookie to sent and stored in the client.
     response.cookie("queues-dashboard-auth", signedToken, cookieOptions);
-    response.status(HttpStatus.CREATED).send("Queues-dashboard authenticated.");
+    response.status(HttpStatus.CREATED).send();
   }
 }

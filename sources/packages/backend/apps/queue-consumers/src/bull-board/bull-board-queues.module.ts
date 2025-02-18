@@ -15,7 +15,6 @@ import { JwtModule } from "@nestjs/jwt";
     BullBoardModule.forRootAsync({
       imports: [ConfigModule, JwtModule],
       useFactory: bullBoardModuleFactory,
-      inject: [ConfigService],
     }),
     BullBoardQueuesRegistrationModule,
   ],
@@ -25,16 +24,10 @@ export class BullBoardQueuesModule {}
 
 /**
  * Builds the Bull Board module options to register the dashboard in a dynamic way.
- * @param configService service with the configuration of the application.
  * @returns Bull Board module options with the dashboard route,
  * authentication middleware and the board options.
  */
-async function bullBoardModuleFactory(
-  configService: ConfigService,
-): Promise<BullBoardModuleOptions> {
-  const queueDashboardUsers = {};
-  queueDashboardUsers[configService.queueDashboardCredential.userName] =
-    configService.queueDashboardCredential.password;
+async function bullBoardModuleFactory(): Promise<BullBoardModuleOptions> {
   return {
     route: BULL_BOARD_ROUTE,
     adapter: ExpressAdapter,
