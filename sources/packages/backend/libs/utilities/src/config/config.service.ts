@@ -12,7 +12,6 @@ import {
   SFTPConfig,
   DatabaseConfiguration,
   RedisConfiguration,
-  UserPasswordCredential,
   CASIntegrationConfig,
   S3Configuration,
   QueueDashboardAccess,
