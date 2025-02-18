@@ -97,7 +97,7 @@ export class UserAESTController extends BaseController {
 
   /**
    * Allows a token creation to provide access to the queues admin
-   * for already authorized users with a role that allow the access.
+   * for an already authorized users with a role that allow the access.
    */
   @Post("queue-admin-token-exchange")
   @Roles(Role.AESTQueueDashboardAdmin)
