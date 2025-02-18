@@ -101,8 +101,12 @@
           <zeebe:header key="studentDataPartnerEmploymentInsurance" value="$.data.partnerEmploymentInsurance" />
           <zeebe:header key="studentDataPartnerFedralProvincialPDReceiptCost" value="$.data.partnerFedralProvincialPDReceiptCost" />
           <zeebe:header key="studentDataParentDependentTable" value="$.data.parentDependentTable" />
-          <zeebe:header key="studentDataStudentParentNetAssests" value="$.data.studentParentNetAssests" />
-          <zeebe:header key="studentDataStudentParentNetContribution" value="$.data.studentParentNetContribution" />
+          <zeebe:header key="studentDataStudentParentNetAssests" value="$.data.studentParentsNetAssests" />
+          <zeebe:header key="studentDataStudentParentNetContribution" value="$.data.studentParentsNetContribution" />
+          <zeebe:header key="studentDataStudentParentsTotalIncomeTaxLine43500" value="$.data.studentParentsTotalIncomeTaxLine43500" />
+          <zeebe:header key="studentDataStudentParentsCppLine30800" value="$.data.studentParentsCppLine30800" />
+          <zeebe:header key="studentDataStudentParentsCppLine31000" value="$.data.studentParentsCppLine31000" />
+          <zeebe:header key="studentDataStudentParentsEiLine31200" value="$.data.studentParentsEiLine31200" />
           <zeebe:header key="studentDataPartnerTotalIncomeAssistance" value="$.data.partnertotalincomeAssistance" />
           <zeebe:header key="studentDataPartTimeAwardTypesToBeConsidered" value="$.data.partTimeAwardTypesToBeConsidered" />
           <zeebe:header key="studentDataAdditionalTransportRequested" value="$.data.additionalTransportRequested" />
