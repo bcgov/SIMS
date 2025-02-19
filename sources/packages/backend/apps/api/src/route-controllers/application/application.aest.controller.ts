@@ -64,7 +64,9 @@ export class ApplicationAESTController extends BaseController {
   /**
    * API to fetch application details by applicationId.
    * This API will be used by ministry users.
-   * @param applicationId
+   * @param applicationId application id.
+   * @param loadDynamicData flag for if dynamic data should be loaded.
+   * @param isParentApplication flag for if the application is a parent application.
    * @returns Application details
    */
   @Get(":applicationId")
@@ -81,21 +83,20 @@ export class ApplicationAESTController extends BaseController {
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     let currentApplicationId = applicationId;
     if (isParentApplication) {
-      currentApplicationId =
-        await this.applicationService.getApplicationIdByParentApplicationId(
-          applicationId,
-        );
-      if (!currentApplicationId) {
-        throw new NotFoundException(
-          `Current application for application ${applicationId} was not found.`,
-        );
+      try {
+        const currentApplication =
+          await this.applicationService.getCurrentApplicationByParent(
+            applicationId,
+          );
+        currentApplicationId = currentApplication.id;
+      } catch (error) {
+        throw new NotFoundException(error.message);
       }
     }
     const application = await this.applicationService.getApplicationById(
       currentApplicationId,
       {
         loadDynamicData,
-        loadPrecedingApplication: true,
         allowOverwritten: true,
       },
     );
@@ -107,10 +108,10 @@ export class ApplicationAESTController extends BaseController {
     let currentReadOnlyData: ApplicationFormData;
     let previousReadOnlyData: ApplicationFormData;
     if (loadDynamicData) {
-      // Check if a previous application exists.
+      // Check if a previous application exists and get its data.
       const previousApplicationVersion =
         application.id !== application.precedingApplication.id &&
-        (await this.applicationService.getLastApplicationVersion(
+        (await this.applicationService.getApplicationData(
           application.precedingApplication.id,
         ));
       const currentReadOnlyDataPromise =
@@ -276,25 +277,26 @@ export class ApplicationAESTController extends BaseController {
 
   /**
    * Get application overall details for an application.
-   * @param applicationId application Id.
+   * @param parentApplicationId parent application Id.
    * @returns application overall details.
    */
   @ApiNotFoundResponse({
-    description: "Application not found.",
+    description: "Parent application not found.",
   })
-  @Get(":applicationId/overall-details")
+  @Get(":parentApplicationId/overall-details")
   async getApplicationOverallDetails(
-    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @Param("parentApplicationId", ParseIntPipe) parentApplicationId: number,
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
-    const application = await this.applicationService.doesApplicationExist({
-      applicationId,
-    });
-    if (!application) {
-      throw new NotFoundException("Application not found.");
+    const parentApplication =
+      await this.applicationService.doesApplicationExist({
+        applicationId: parentApplicationId,
+      });
+    if (!parentApplication) {
+      throw new NotFoundException("Parent application not found.");
     }
     const applications =
       await this.applicationService.getPreviousApplicationVersions(
-        applicationId,
+        parentApplicationId,
       );
     return {
       previousVersions: applications.map((application) => ({

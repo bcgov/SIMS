@@ -39,6 +39,7 @@ export class ApplicationInstitutionsController extends BaseController {
    * This API will be used by institution users.
    * @param applicationId for the application.
    * @param studentId for the student.
+   * @param isParentApplication flag for if the application is a parent application.
    * @returns Application details.
    */
   @HasStudentDataAccess("studentId")
@@ -50,19 +51,19 @@ export class ApplicationInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("studentId", ParseIntPipe) studentId: number,
-    @Query("isParentApplication", new DefaultValuePipe(true), ParseBoolPipe)
+    @Query("isParentApplication", new DefaultValuePipe(false), ParseBoolPipe)
     isParentApplication: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    let currentApplicationId: number;
+    let currentApplicationId = applicationId;
     if (isParentApplication) {
-      currentApplicationId =
-        await this.applicationService.getApplicationIdByParentApplicationId(
-          applicationId,
-        );
-      if (!currentApplicationId) {
-        throw new NotFoundException(
-          `Current application for application ${applicationId} was not found.`,
-        );
+      try {
+        const currentApplication =
+          await this.applicationService.getCurrentApplicationByParent(
+            applicationId,
+          );
+        currentApplicationId = currentApplication.id;
+      } catch (error) {
+        throw new NotFoundException(error.message);
       }
     }
     const application = await this.applicationService.getApplicationById(

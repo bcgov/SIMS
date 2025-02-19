@@ -41,7 +41,7 @@ export default defineComponent({
     const loadApplicationValues = async () => {
       applicationData.value = await ApplicationService.shared.getApplication(
         props.applicationId,
-        { loadDynamicData: false, isParentApplication: false },
+        { loadDynamicData: false },
       );
 
       headerMap.value = mapApplicationHeader(applicationData.value);

@@ -31,12 +31,12 @@ export class ApplicationApi extends HttpBaseClient {
 
   async getApplicationData(
     applicationId: number,
-    options: { loadDynamicData: boolean; isParentApplication: boolean },
+    options: { loadDynamicData?: boolean; isParentApplication?: boolean },
   ): Promise<ApplicationSupplementalDataAPIOutDTO>;
 
   async getApplicationData(
     applicationId: number,
-    options?: { loadDynamicData: boolean; isParentApplication: boolean },
+    options?: { loadDynamicData?: boolean; isParentApplication?: boolean },
   ): Promise<ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO> {
     let url = this.addClientRoot(`application/${applicationId}`);
     const isLoadDynamicDataPresent = options?.loadDynamicData !== undefined;
@@ -104,20 +104,23 @@ export class ApplicationApi extends HttpBaseClient {
   /**
    * API Client for application detail.
    * @param applicationId for the application.
-   * @param studentId for the student.
-   * @param isParentApplication if true, loads the parent application.
+   * @param options related options.
+   * - `studentId` student id for the student.
+   * - `isParentApplication` is parent application if true, loads the parent application.
    * @returns application details.
    */
   async getApplicationDetails(
     applicationId: number,
-    studentId?: number,
-    isParentApplication?: boolean,
+    options?: {
+      studentId?: number;
+      isParentApplication?: boolean;
+    },
   ): Promise<ApplicationBaseAPIOutDTO> {
-    let url = studentId
-      ? `application/student/${studentId}/application/${applicationId}`
+    let url = options?.studentId
+      ? `application/student/${options?.studentId}/application/${applicationId}`
       : `application/${applicationId}`;
-    if (isParentApplication !== undefined) {
-      url = `${url}?isParentApplication=${isParentApplication}`;
+    if (options?.isParentApplication !== undefined) {
+      url = `${url}?isParentApplication=${options?.isParentApplication}`;
     }
     return this.getCall<ApplicationBaseAPIOutDTO>(this.addClientRoot(url));
   }

@@ -53,6 +53,7 @@ import {
   OFFERING_PROGRAM_YEAR_MISMATCH,
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   EDUCATION_PROGRAM_IS_EXPIRED,
+  CURRENT_APPLICATION_NOT_FOUND,
 } from "../../constants";
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
@@ -599,7 +600,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationId application id.
    * @param options object that should contain:
    * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
-   * - `loadPrecedingApplication` indicates if the preceding application should be loaded.
    * - `studentId` student id.
    * - `institutionId` institution id.
    * - `allowOverwritten` indicates if overwritten application is allowed.
@@ -609,7 +609,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     options?: {
       loadDynamicData?: boolean;
-      loadPrecedingApplication?: boolean;
       studentId?: number;
       institutionId?: number;
       allowOverwritten?: boolean;
@@ -628,12 +627,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationNumber: true,
         pirDeniedOtherDesc: true,
         submittedDate: true,
-        precedingApplication: options?.loadPrecedingApplication
-          ? {
-              id: true,
-              data: true as unknown,
-            }
-          : null,
+        precedingApplication: { id: true },
         applicationException: {
           id: true,
           exceptionStatus: true,
@@ -695,6 +689,27 @@ export class ApplicationService extends RecordDataModelService<Application> {
         location: { institution: { id: options?.institutionId } },
       },
     });
+  }
+
+  /**
+   * Gets the current application by parent application id.
+   * @param parentApplicationId parent application id.
+   * @returns current application.
+   */
+  async getCurrentApplicationByParent(
+    parentApplicationId: number,
+  ): Promise<Application> {
+    const currentApplication =
+      await this.getCurrentApplicationByParentApplicationId(
+        parentApplicationId,
+      );
+    if (!currentApplication) {
+      throw new CustomNamedError(
+        `Current application for provided parent application ${parentApplicationId} was not found.`,
+        CURRENT_APPLICATION_NOT_FOUND,
+      );
+    }
+    return currentApplication;
   }
 
   /**
@@ -1877,11 +1892,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Get previous application versions for an application.
-   * @param applicationId application id.
+   * @param parentApplicationId parent application id.
    * @returns previous application versions.
    */
   async getPreviousApplicationVersions(
-    applicationId: number,
+    parentApplicationId: number,
   ): Promise<Application[]> {
     return this.repo.find({
       select: {
@@ -1889,7 +1904,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         submittedDate: true,
       },
       where: {
-        parentApplication: { id: applicationId },
+        parentApplication: { id: parentApplicationId },
         applicationStatus: ApplicationStatus.Overwritten,
       },
       order: {
@@ -1899,11 +1914,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get last application version.
+   * Get application data.
    * @param applicationId application id.
-   * @returns last application version.
+   * @returns the application data.
    */
-  async getLastApplicationVersion(applicationId: number): Promise<Application> {
+  async getApplicationData(applicationId: number): Promise<Application> {
     return this.repo.findOne({
       select: { id: true, data: true as unknown },
       where: { id: applicationId },
@@ -1911,14 +1926,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Gets the latest application by parent application id.
+   * Gets the current application by parent application id.
    * @param parentApplicationId parent application id.
    * @returns the application id.
    */
-  async getApplicationIdByParentApplicationId(
+  async getCurrentApplicationByParentApplicationId(
     parentApplicationId: number,
-  ): Promise<number> {
-    const [application] = await this.repo.find({
+  ): Promise<Application> {
+    return this.repo.findOne({
       select: { id: true, submittedDate: true },
       where: {
         parentApplication: {
@@ -1927,9 +1942,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: Not(ApplicationStatus.Overwritten),
       },
       order: { submittedDate: "DESC" },
-      take: 1,
     });
-    return application?.id;
   }
 
   @InjectLogger()

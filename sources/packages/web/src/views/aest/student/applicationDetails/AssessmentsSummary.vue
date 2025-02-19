@@ -76,7 +76,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const historyKey = ref(0);
-    const currentApplicationId = ref<number>(0);
+    const currentApplicationId = ref<number>();
 
     onMounted(async () => {
       // Get current application for the parent application.

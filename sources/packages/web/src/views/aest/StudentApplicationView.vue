@@ -87,11 +87,12 @@ export default defineComponent({
       // When the application version is present load the given application version instead of the current application version.
       const applicationId = props.versionApplicationId ?? props.applicationId;
       let application: ApplicationBaseAPIOutDTO;
+      // When the application version is not present, load the current application from the parent application.
+      // Otherwise, load the given application version details.
       if (!props.versionApplicationId) {
         application = await ApplicationService.shared.getApplicationDetail(
           applicationId,
-          undefined,
-          true,
+          { isParentApplication: true },
         );
       } else {
         application = await ApplicationService.shared.getApplicationDetail(
