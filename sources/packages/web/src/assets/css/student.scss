@@ -53,10 +53,6 @@ span.v-btn__content {
   margin-right: 0px !important;
   margin-left: 0px !important;
 
-  header {
-    margin: 0 10px;
-  }
-
   .v-card.v-theme--light.v-card--density-default.v-card--variant-elevated.mt-4.p-4.w-100 {
     padding: 0px !important;
   }
@@ -74,19 +70,5 @@ span.v-btn__content {
 
   .v-col {
     padding: 9px !important;
-  }
-
-  // Stepper progress slider mobile styles
-  .stepper-progress-slider {
-    .v-slider-track__ticks {
-      .v-slider-track__tick {
-        display: none !important;
-
-        // Only show the active tick (filled)
-        &.v-slider-track__tick--filled {
-          display: block !important;
-        }
-      }
-    }
   }
 }
