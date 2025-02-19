@@ -318,7 +318,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         ].includes(application.applicationStatus)
       ) {
         throw new CustomNamedError(
-          `Application cannot have manual reassessment in any of the statuses: ${ApplicationStatus.Cancelled} or ${ApplicationStatus.Draft}.`,
+          `Application cannot have manual reassessment in any of the statuses: ${ApplicationStatus.Cancelled}, ${ApplicationStatus.Overwritten} or ${ApplicationStatus.Draft}.`,
           INVALID_OPERATION_IN_THE_CURRENT_STATUS,
         );
       }
