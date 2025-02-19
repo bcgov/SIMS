@@ -9,15 +9,9 @@
         }"
         subTitle="Application Restriction Management"
       />
-      <application-header-title
-        v-if="currentApplicationId"
-        :application-id="currentApplicationId"
-      />
+      <application-header-title :application-id="currentApplicationId" />
     </template>
-    <history-bypassed-restrictions
-      v-if="currentApplicationId"
-      :applicationId="currentApplicationId"
-    />
+    <history-bypassed-restrictions :applicationId="currentApplicationId" />
   </full-page-container>
 </template>
 

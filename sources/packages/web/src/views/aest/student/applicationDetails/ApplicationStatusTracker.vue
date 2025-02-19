@@ -9,13 +9,9 @@
         }"
         subTitle="Application Status"
       />
-      <application-header-title
-        v-if="currentApplicationId"
-        :application-id="currentApplicationId"
-      />
+      <application-header-title :application-id="currentApplicationId" />
     </template>
     <application-progress-bar
-      v-if="currentApplicationId"
       :application-id="currentApplicationId"
     ></application-progress-bar>
   </full-page-container>
