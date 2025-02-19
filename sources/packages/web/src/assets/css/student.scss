@@ -1,4 +1,4 @@
-@import "./global-style-variables.scss";
+@use "./global-style-variables.scss" as *;
 .application-info-border {
   padding: 2%;
   border-style: solid;

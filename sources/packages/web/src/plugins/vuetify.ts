@@ -1,39 +1,30 @@
 import "@mdi/font/css/materialdesignicons.css";
 import "@fortawesome/fontawesome-free/css/all.css";
-import "vuetify/lib/styles/main.sass";
+import "vuetify/styles";
 import { createVuetify } from "vuetify";
-import * as components from "vuetify/lib/components";
-import * as directives from "vuetify/lib/directives";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
 import { aliases, fa } from "vuetify/iconsets/fa";
 import { mdi } from "vuetify/iconsets/mdi";
-import { VDivider, VDataTableServer, VDataTable } from "vuetify/lib/components";
 
 export default createVuetify({
   components: {
     ...components,
-    VDataTableServer,
-    VDataTable,
-  },
-  aliases: {
-    VDividerOpaque: VDivider,
-    VDividerInsetOpaque: VDivider,
-    VDividerVerticalOpaque: VDivider,
   },
   directives,
-  default: {},
   defaults: {
-    VDividerOpaque: {
+    VDivider: {
       class: "border-opacity-100",
       thickness: 2,
       color: "secondary",
     },
-    VDividerInsetOpaque: {
+    VDividerInset: {
       class: "border-opacity-100",
       thickness: 2,
       color: "secondary",
       inset: true,
     },
-    VDividerVerticalOpaque: {
+    VDividerVertical: {
       class: "border-opacity-100",
       thickness: 2,
       color: "secondary",
