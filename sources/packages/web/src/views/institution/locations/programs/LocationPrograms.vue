@@ -21,6 +21,7 @@
             hide-details="auto"
           />
           <v-btn
+            v-if="!isReadOnlyUser(locationId)"
             class="ml-2"
             color="primary"
             @click="goToAddNewProgram()"
@@ -98,7 +99,7 @@ import {
 } from "@/types";
 import { ref, watch, computed, defineComponent } from "vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
-import { useInstitutionState } from "@/composables";
+import { useInstitutionAuth, useInstitutionState } from "@/composables";
 
 export default defineComponent({
   components: { StatusChipProgram },
@@ -110,6 +111,7 @@ export default defineComponent({
   },
   setup(props) {
     const { getLocationName } = useInstitutionState();
+    const { isReadOnlyUser } = useInstitutionAuth();
     const router = useRouter();
     const programAndCount = ref(
       {} as PaginatedResults<EducationProgramsSummary> | undefined,
@@ -229,6 +231,7 @@ export default defineComponent({
       ProgramSummaryFields,
       locationName,
       ProgramSummaryHeaders,
+      isReadOnlyUser,
     };
   },
 });

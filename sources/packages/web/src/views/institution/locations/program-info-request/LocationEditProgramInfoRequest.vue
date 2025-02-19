@@ -21,6 +21,7 @@
           primaryLabel="Complete program info request"
           @primaryClick="submit"
           @secondaryClick="goBack"
+          :disablePrimaryButton="isReadOnlyUser(locationId)"
         /> </template
     ></formio-container>
   </full-page-container>
@@ -37,6 +38,7 @@ import {
   useSnackBar,
   useProgramInfoRequest,
   useFormioComponentLoader,
+  useInstitutionAuth,
 } from "@/composables";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
@@ -71,6 +73,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
+    const { isReadOnlyUser } = useInstitutionAuth();
     const initialData = ref({} as ProgramInfoRequestAPIOutDTO);
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
@@ -152,6 +155,8 @@ export default defineComponent({
             programRequestData.value.isExpiredProgram)
             ? null
             : programRequestData.value.selectedProgram,
+        // Hide the create program button for read-only user.
+        isReadOnlyUser: isReadOnlyUser(props.locationId),
       };
 
       // While loading a PIR that is in the some readonly status
@@ -296,6 +301,7 @@ export default defineComponent({
       processing,
       goBackRouteParams,
       goBack,
+      isReadOnlyUser,
     };
   },
 });

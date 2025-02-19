@@ -8,7 +8,9 @@
       >
         <template #buttons>
           <v-row class="p-0 m-0">
-            <v-menu v-if="hasExistingApplication">
+            <v-menu
+              v-if="hasExistingApplication && !isReadOnlyUser(locationId)"
+            >
               <template v-slot:activator="{ props }">
                 <v-btn
                   class="ml-2"
@@ -82,7 +84,12 @@ import {
   OfferingStatus,
 } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
+import {
+  ModalDialog,
+  useFormioUtils,
+  useInstitutionAuth,
+  useSnackBar,
+} from "@/composables";
 import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingBasicDataAPIInDTO,
@@ -119,6 +126,7 @@ export default defineComponent({
     const router = useRouter();
     const snackBar = useSnackBar();
     const { excludeExtraneousValues } = useFormioUtils();
+    const { isReadOnlyUser } = useInstitutionAuth();
     const processing = ref(false);
     const formMode = ref(OfferingFormModes.Readonly);
     const items = [
@@ -179,6 +187,10 @@ export default defineComponent({
           : OfferingFormModes.Editable;
       }
       formMode.value = mode;
+      if (isReadOnlyUser(props.locationId)) {
+        // If user is readonly, set form mode to readonly.
+        formMode.value = OfferingFormModes.Readonly;
+      }
       initialData.value = programOffering as OfferingFormModel;
     };
 
@@ -249,6 +261,7 @@ export default defineComponent({
       processing,
       submit,
       goBack,
+      isReadOnlyUser,
     };
   },
 });

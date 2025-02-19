@@ -19,6 +19,7 @@
             color="success"
             @click="createNewProgram"
             class="btn-font-color-light"
+            v-if="!programData.isReadonly"
           >
             Create program
           </v-btn>
@@ -49,7 +50,7 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { ref, computed, defineComponent, isReadonly, onMounted } from "vue";
 import { ApiProcessError, ClientIdType, FormIOForm } from "@/types";
-import { useFormioUtils, useSnackBar } from "@/composables";
+import { useFormioUtils, useInstitutionAuth, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/types/contracts/Banner";
 import {
@@ -74,6 +75,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { isReadOnlyUser } = useInstitutionAuth();
     const processing = ref(false);
     const snackBar = useSnackBar();
     const { excludeExtraneousValues } = useFormioUtils();
@@ -98,7 +100,8 @@ export default defineComponent({
           isReadonly:
             isAESTUser.value ||
             !educationProgram.isActive ||
-            educationProgram.isExpired,
+            educationProgram.isExpired ||
+            isReadOnlyUser(props.locationId),
         };
       } else {
         // Initialize programData with institution profile data.

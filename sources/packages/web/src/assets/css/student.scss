@@ -36,3 +36,39 @@
   height: 100%;
   min-height: 350px;
 }
+
+// Button styles
+span.v-btn__content {
+  white-space: normal !important;
+}
+
+// Mobile-specific styles
+.v-container.v-container--fluid.v-locale--is-ltr {
+  &:has(> .mobile-view) {
+    padding: 0px !important;
+  }
+}
+
+.mobile-view {
+  margin-right: 0px !important;
+  margin-left: 0px !important;
+
+  .v-card.v-theme--light.v-card--density-default.v-card--variant-elevated.mt-4.p-4.w-100 {
+    padding: 0px !important;
+  }
+
+  .v-container {
+    padding: 5px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .v-row {
+    margin: 0 !important;
+  }
+
+  .v-col {
+    padding: 9px !important;
+  }
+}

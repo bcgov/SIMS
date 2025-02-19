@@ -115,9 +115,14 @@ export default defineComponent({
       const locationAuthorization = userDetails.authorizations.find(
         (authorization) => authorization.location?.id === locationId,
       );
-      return locationAuthorization?.authType.type === LocationUserAccess.User
-        ? LocationUserAccess.User
-        : LocationUserAccess.NoAccess;
+      switch (locationAuthorization?.authType.type) {
+        case LocationUserAccess.User:
+          return LocationUserAccess.User;
+        case LocationUserAccess.ReadOnlyUser:
+          return LocationUserAccess.ReadOnlyUser;
+        default:
+          return LocationUserAccess.NoAccess;
+      }
     };
 
     // Show the modal and loads the user information.

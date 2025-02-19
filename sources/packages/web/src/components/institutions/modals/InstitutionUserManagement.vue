@@ -73,6 +73,11 @@
             data-cy="userAccess"
           >
             <v-radio label="User" value="user" color="primary"></v-radio>
+            <v-radio
+              label="Read-only"
+              value="read-only-user"
+              color="primary"
+            ></v-radio>
             <v-radio label="No access" value="none" color="primary"></v-radio>
           </v-radio-group>
         </v-col>
@@ -142,14 +147,15 @@ export default defineComponent({
       return true;
     };
     // UI validation to ensure that the user has access to at least
-    // on location when admin is not selected.
+    // one location when admin is not selected.
     const hasLocationAuthorizationValidationRule = (): boolean | string => {
       if (formModel.isAdmin) {
         return true;
       }
       const hasSomeLocationAccess = formModel.locationAuthorizations.some(
         (locationAccess) =>
-          locationAccess.userAccess === LocationUserAccess.User,
+          locationAccess.userAccess === LocationUserAccess.User ||
+          locationAccess.userAccess === LocationUserAccess.ReadOnlyUser,
       );
       if (!hasSomeLocationAccess) {
         return "Select at least one location for non-admin users.";

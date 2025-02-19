@@ -136,7 +136,9 @@ export class SFASApplication extends BaseSFASApplicationModel {
    */
   @Column({
     name: "application_number",
+    type: "bigint",
     nullable: true,
+    transformer: numericTransformer,
   })
   applicationNumber?: number;
 
@@ -191,7 +193,9 @@ export class SFASApplication extends BaseSFASApplicationModel {
    */
   @Column({
     name: "gross_income_previous_year",
+    type: "numeric",
     nullable: true,
+    transformer: numericTransformer,
   })
   grossIncomePreviousYear?: number;
   /**

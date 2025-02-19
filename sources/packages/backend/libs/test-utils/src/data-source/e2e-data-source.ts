@@ -62,6 +62,7 @@ import {
   CASDistributionAccount,
   SFASApplicationDependant,
   SFASApplicationDisbursement,
+  InstitutionUser,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -114,6 +115,7 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     institutionLocation: dataSource.getRepository(InstitutionLocation),
     institutionType: dataSource.getRepository(InstitutionType),
     institutionRestriction: dataSource.getRepository(InstitutionRestriction),
+    institutionUser: dataSource.getRepository(InstitutionUser),
     institutionUserAuth: dataSource.getRepository(InstitutionUserAuth),
     institutionUserTypeAndRole: dataSource.getRepository(
       InstitutionUserTypeAndRole,
@@ -199,6 +201,7 @@ export interface E2EDataSources {
   institutionLocation: Repository<InstitutionLocation>;
   institutionType: Repository<InstitutionType>;
   institutionRestriction: Repository<InstitutionRestriction>;
+  institutionUser: Repository<InstitutionUser>;
   institutionUserAuth: Repository<InstitutionUserAuth>;
   institutionUserTypeAndRole: Repository<InstitutionUserTypeAndRole>;
   msfaaNumber: Repository<MSFAANumber>;

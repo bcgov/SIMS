@@ -3,15 +3,16 @@
     <template #header>
       <header-navigator title="Applications" subTitle="My Applications">
         <template #buttons>
-          <start-application />
+          <start-application :class="{ 'mb-2': isMobile }" />
         </template>
       </header-navigator>
     </template>
     <v-row>
-      <v-col cols="12">
+      <v-col cols="12" :class="{ 'pa-0': isMobile }">
         <student-applications
           :manage-application="true"
           :enable-view-application-on-name="true"
+          :dense="isMobile"
           @editApplicationAction="editApplicationAction"
           @openConfirmCancel="confirmCancelApplication"
           @goToApplication="goToApplication"
@@ -33,6 +34,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, ModalDialog } from "@/composables";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplication.vue";
+import { useDisplay } from "vuetify";
 
 export default defineComponent({
   components: {
@@ -48,6 +50,7 @@ export default defineComponent({
     const showModal = ref(false);
     const reloadData = ref(false);
     const cancelApplicationModal = ref({} as ModalDialog<boolean>);
+    const { mobile: isMobile } = useDisplay();
 
     const showHideCancelApplication = () => {
       showModal.value = !showModal.value;
@@ -122,6 +125,7 @@ export default defineComponent({
       reloadData,
       goToApplication,
       cancelApplicationModal,
+      isMobile,
     };
   },
 });
