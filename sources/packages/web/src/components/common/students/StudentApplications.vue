@@ -12,12 +12,15 @@
         :toggled="!applicationsAndCount.results?.length"
         message="No applications are currently available."
       >
-        <v-data-table
+        <v-data-table-server
           :headers="StudentApplicationsSummaryHeaders"
           :items="applicationsAndCount.results"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
+          :items-length="applicationsAndCount.count"
+          :loading="loading"
           :mobile="isMobile"
+          @update:options="paginationAndSortEvent"
         >
           <template #[`item.applicationNumber`]="{ item }">
             {{ item.applicationNumber }}
@@ -89,7 +92,7 @@
               >
             </span>
           </template>
-        </v-data-table>
+        </v-data-table-server>
       </toggle-content>
     </content-group>
   </body-header-container>
@@ -100,13 +103,13 @@ import { onMounted, ref, computed, defineComponent } from "vue";
 import {
   ApplicationStatus,
   DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
   DataTableSortOrder,
-  PAGINATION_LIST,
   StudentApplicationFields,
   SINStatusEnum,
   StudentApplicationsSummaryHeaders,
   ITEMS_PER_PAGE,
+  DataTableOptions,
+  PaginationOptions,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
@@ -148,37 +151,35 @@ export default defineComponent({
     const applicationsAndCount = ref(
       {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
     );
-    const defaultSortOrder = -1;
-    const currentPage = ref();
-    const currentPageLimit = ref();
     const { dateOnlyLongString } = useFormatters();
     const store = useStore();
+
+    const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
+    const currentPagination = ref<PaginationOptions>({
+      page: 1,
+      pageLimit: DEFAULT_PAGE_LIMIT,
+      sortField: DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortOrder.DESC,
+    });
 
     const sinValidStatus = computed(
       () => store.state.student.sinValidStatus.sinStatus,
     );
 
-    /**
-     * function to load applicationListAndCount respective to the client type
-     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
-     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT
-     * @param sortField sort field, if nothing passed then StudentApplicationFields.status
-     * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.ASC
-     */
-    const getStudentApplications = async (
-      page = DEFAULT_PAGE_NUMBER,
-      pageCount = DEFAULT_PAGE_LIMIT,
-      sortField = StudentApplicationFields.Status,
-      sortOrder = DataTableSortOrder.ASC,
-    ) => {
-      applicationsAndCount.value =
-        await ApplicationService.shared.getStudentApplicationSummary(
-          page,
-          pageCount,
-          sortField,
-          sortOrder,
-          props.studentId,
-        );
+    const getStudentApplications = async () => {
+      try {
+        loading.value = true;
+        applicationsAndCount.value =
+          await ApplicationService.shared.getStudentApplicationSummary(
+            currentPagination.value.page - 1,
+            currentPagination.value.pageLimit,
+            currentPagination.value.sortField as StudentApplicationFields,
+            currentPagination.value.sortOrder as DataTableSortOrder,
+            props.studentId,
+          );
+      } finally {
+        loading.value = false;
+      }
     };
 
     const reloadApplications = async () => {
@@ -187,18 +188,23 @@ export default defineComponent({
 
     onMounted(reloadApplications);
 
-    // pagination sort event callback
-    const paginationAndSortEvent = async (event: any) => {
-      loading.value = true;
-      currentPage.value = event?.page;
-      currentPageLimit.value = event?.rows;
-      await getStudentApplications(
-        event.page,
-        event.rows,
-        event.sortField,
-        event.sortOrder,
-      );
-      loading.value = false;
+    const paginationAndSortEvent = async (event: DataTableOptions) => {
+      currentPagination.value.page = event.page;
+      currentPagination.value.pageLimit = event.itemsPerPage;
+      if (event.sortBy.length) {
+        const [sortBy] = event.sortBy;
+        currentPagination.value.sortField =
+          sortBy.key as StudentApplicationFields;
+        currentPagination.value.sortOrder =
+          sortBy.order === "desc"
+            ? DataTableSortOrder.DESC
+            : DataTableSortOrder.ASC;
+      } else {
+        // Sorting was removed, reset to default
+        currentPagination.value.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.value.sortOrder = DataTableSortOrder.DESC;
+      }
+      await getStudentApplications();
     };
 
     const emitCancel = (applicationId: number) => {
@@ -210,20 +216,16 @@ export default defineComponent({
       ApplicationStatus,
       applicationsAndCount,
       DEFAULT_PAGE_LIMIT,
-      DEFAULT_PAGE_NUMBER,
-      DataTableSortOrder,
-      PAGINATION_LIST,
-      paginationAndSortEvent,
+      ITEMS_PER_PAGE,
       loading,
-      defaultSortOrder,
       StudentApplicationFields,
       reloadApplications,
       SINStatusEnum,
       sinValidStatus,
       emitCancel,
       StudentApplicationsSummaryHeaders,
-      ITEMS_PER_PAGE,
       isMobile,
+      paginationAndSortEvent,
     };
   },
 });
