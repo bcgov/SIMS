@@ -444,8 +444,8 @@ export const CASInvoicesBatchesHeaders = [
 export const StudentApplicationsSummaryHeaders = [
   { title: "Application Number", sortable: true, key: "applicationNumber" },
   { title: "Name", sortable: false, key: "applicationName" },
-  { title: "Submitted", sortable: true, key: "submitted" },
-  { title: "Study Period", sortable: true, key: "studyStartPeriod" },
+  { title: "Submitted", sortable: false, key: "submitted" },
+  { title: "Study Period", sortable: false, key: "studyStartPeriod" },
   { title: "Status", sortable: true, key: "status" },
   { title: "Actions", sortable: false, key: "actions" },
 ];
