@@ -11,11 +11,11 @@ export interface QueueDashboardToken {
    */
   sub: string;
   /**
-   * Recipient for which the JWT is intended
+   * Recipient for which the JWT is intended.
    */
   aud: string;
   /**
-   * Time after which the JWT expires
+   * Time after which the JWT expires.
    */
   exp: number;
   /**
