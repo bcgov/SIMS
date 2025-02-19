@@ -82,7 +82,7 @@ import {
   PAGINATION_LIST,
   AssessmentTriggerType,
 } from "@/types";
-import { ref, onMounted, PropType, defineComponent } from "vue";
+import { ref, PropType, defineComponent, watchEffect } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
@@ -104,6 +104,8 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: true,
+      // The value could be null on load of the component and updated later.
+      default: null,
     },
     // Assessment trigger types for which request form is available to view.
     viewRequestTypes: {
@@ -118,12 +120,17 @@ export default defineComponent({
   setup(props, context) {
     const { dateOnlyLongString, getISODateHourMinuteString } = useFormatters();
     const assessmentHistory = ref([] as AssessmentHistorySummaryAPIOutDTO[]);
-    onMounted(async () => {
-      assessmentHistory.value =
-        await StudentAssessmentsService.shared.getAssessmentHistory(
-          props.applicationId,
-          props.studentId,
-        );
+
+    // Adding watch effect instead of onMounted because
+    // applicationId may not be not available on load.
+    watchEffect(async () => {
+      if (props.applicationId) {
+        assessmentHistory.value =
+          await StudentAssessmentsService.shared.getAssessmentHistory(
+            props.applicationId,
+            props.studentId,
+          );
+      }
     });
 
     const viewRequest = (data: AssessmentHistorySummaryAPIOutDTO) => {

@@ -9,39 +9,38 @@
         }"
         subTitle="Assessments"
       />
-      <application-header-title
-        v-if="currentApplicationId"
-        :application-id="currentApplicationId"
-      />
+      <application-header-title :application-id="currentApplicationId" />
     </template>
-    <template v-if="currentApplicationId">
-      <request-assessment
-        class="mb-5"
-        :applicationId="currentApplicationId"
-        @viewStudentAppeal="goToStudentAppeal"
-        @viewStudentApplicationOfferingChange="
-          goToStudentApplicationOfferingChangeRequest
-        "
-        @viewApplicationException="goToApplicationException"
-        @viewOfferingRequest="goToOfferingRequest" />
-      <manual-reassessment
-        class="mb-5"
-        :applicationId="currentApplicationId"
-        @reassessmentTriggered="reloadHistory" />
-      <history-assessment
-        class="mb-5"
-        :applicationId="currentApplicationId"
-        :viewRequestTypes="assessmentRequestTypes"
-        @viewStudentAppeal="goToStudentAppeal"
-        @viewStudentApplicationOfferingChange="
-          goToStudentApplicationOfferingChangeRequest
-        "
-        @viewAssessment="gotToViewAssessment"
-        @viewOfferingRequest="goToOfferingRequest"
-        @viewApplicationException="goToApplicationException"
-        @viewScholasticStandingChange="goToScholasticStanding"
-        :key="historyKey"
-    /></template>
+
+    <request-assessment
+      class="mb-5"
+      :applicationId="currentApplicationId"
+      @viewStudentAppeal="goToStudentAppeal"
+      @viewStudentApplicationOfferingChange="
+        goToStudentApplicationOfferingChangeRequest
+      "
+      @viewApplicationException="goToApplicationException"
+      @viewOfferingRequest="goToOfferingRequest"
+    />
+    <manual-reassessment
+      class="mb-5"
+      :applicationId="currentApplicationId"
+      @reassessmentTriggered="reloadHistory"
+    />
+    <history-assessment
+      class="mb-5"
+      :applicationId="currentApplicationId"
+      :viewRequestTypes="assessmentRequestTypes"
+      @viewStudentAppeal="goToStudentAppeal"
+      @viewStudentApplicationOfferingChange="
+        goToStudentApplicationOfferingChangeRequest
+      "
+      @viewAssessment="gotToViewAssessment"
+      @viewOfferingRequest="goToOfferingRequest"
+      @viewApplicationException="goToApplicationException"
+      @viewScholasticStandingChange="goToScholasticStanding"
+      :key="historyKey"
+    />
   </full-page-container>
 </template>
 

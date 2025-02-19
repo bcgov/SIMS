@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, ref, watchEffect } from "vue";
 import { ApplicationSupplementalDataAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
@@ -15,6 +15,8 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: true,
+      // The value could be null on load of the component and updated later.
+      default: null,
     },
   },
   setup(props) {
@@ -46,7 +48,11 @@ export default defineComponent({
 
       headerMap.value = mapApplicationHeader(applicationData.value);
     };
-    onMounted(loadApplicationValues);
+    // Adding watch effect instead of onMounted because
+    // applicationId may not be not available on load.
+    watchEffect(
+      async () => props.applicationId && (await loadApplicationValues()),
+    );
 
     return {
       applicationData,
