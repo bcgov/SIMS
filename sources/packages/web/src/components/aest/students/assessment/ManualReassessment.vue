@@ -25,7 +25,7 @@
   </body-header-container>
 </template>
 <script lang="ts">
-import { ref, defineComponent, onMounted } from "vue";
+import { ref, defineComponent, watchEffect } from "vue";
 import { ModalDialog, useSnackBar } from "@/composables";
 import { ManualReassessmentAPIInDTO } from "@/services/http/dto";
 import TriggerReassessmentModal from "@/components/aest/students/modals/TriggerReassessmentModal.vue";
@@ -46,6 +46,8 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: true,
+      // The value could be null on load of the component and updated later.
+      default: null,
     },
   },
   setup(props, { emit }) {
@@ -55,20 +57,24 @@ export default defineComponent({
     );
     const openModalButtonDisabled = ref(true);
 
-    onMounted(async () => {
-      const applicationAssessmentStatusDetails =
-        await ApplicationService.shared.getApplicationAssessmentStatusDetails(
-          props.applicationId,
-        );
-      openModalButtonDisabled.value =
-        applicationAssessmentStatusDetails.originalAssessmentStatus !==
-          StudentAssessmentStatus.Completed ||
-        applicationAssessmentStatusDetails.isApplicationArchived ||
-        [
-          ApplicationStatus.Cancelled,
-          ApplicationStatus.Overwritten,
-          ApplicationStatus.Draft,
-        ].includes(applicationAssessmentStatusDetails.applicationStatus);
+    // Adding watch effect instead of onMounted because
+    // applicationId may not be not available on load.
+    watchEffect(async () => {
+      if (props.applicationId) {
+        const applicationAssessmentStatusDetails =
+          await ApplicationService.shared.getApplicationAssessmentStatusDetails(
+            props.applicationId,
+          );
+        openModalButtonDisabled.value =
+          applicationAssessmentStatusDetails.originalAssessmentStatus !==
+            StudentAssessmentStatus.Completed ||
+          applicationAssessmentStatusDetails.isApplicationArchived ||
+          [
+            ApplicationStatus.Cancelled,
+            ApplicationStatus.Overwritten,
+            ApplicationStatus.Draft,
+          ].includes(applicationAssessmentStatusDetails.applicationStatus);
+      }
     });
 
     const openTriggerReassessmentModal = async () => {
