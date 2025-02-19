@@ -202,7 +202,7 @@ export default defineComponent({
       } else {
         // Sorting was removed, reset to default
         currentPagination.value.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.value.sortOrder = DataTableSortOrder.DESC;
+        currentPagination.value.sortOrder = DataTableSortOrder.ASC;
       }
       await getStudentApplications();
     };
