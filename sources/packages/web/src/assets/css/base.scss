@@ -1,5 +1,4 @@
-@use "./global-style-variables.scss" as *;
-
+@import "./global-style-variables.scss";
 html * {
   font-family: "BCSans", "Noto Sans", Verdana, Arial, sans-serif;
   font-style: $font-style-normal;

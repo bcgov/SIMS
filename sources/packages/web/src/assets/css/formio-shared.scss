@@ -1,4 +1,4 @@
-@use "./global-style-variables.scss" as *;
+@import "./global-style-variables.scss";
 @import "./base.scss";
 
 /** Primary theme color of the application**/

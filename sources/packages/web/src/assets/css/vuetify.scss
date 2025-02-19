@@ -1,15 +1,4 @@
-@use "./global-style-variables.scss" as *;
-@use "./base.scss" as base;
-
-// Tooltip main style
-.tooltip-style {
-  padding: 0.75em 1em;
-  border-radius: 8px;
-  font-size: $font-size-xsmall;
-  font-weight: $font-weight-normal;
-  color: #fff;
-  background-color: rgba(51, 51, 51, 0.95);
-}
+@import "./base.scss";
 
 .v-btn {
   text-transform: none !important;
@@ -180,7 +169,7 @@
 }
 
 .v-overlay-container .v-tooltip .v-overlay__content {
-  @extend .tooltip-style !optional;
+  @extend .tooltip-style;
 }
 
 // Changes the background of readonly inputs.
@@ -195,8 +184,5 @@
 }
 
 .label-bold-menu .v-list-item .v-list-item-title {
-  @extend .label-bold !optional;
-  font-size: $font-size-content !important;
-  line-height: $line-height-header-sm !important;
-  font-weight: $font-weight-bold !important;
+  @extend .label-bold;
 }
