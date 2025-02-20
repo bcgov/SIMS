@@ -14,11 +14,12 @@ import {
   RequiresUserAccount,
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
-import { StudentService } from "../../services";
+import { StudentInformationService } from "../../services";
 import {
   ExternalSearchStudentAPIInDTO,
-  StudentDetailsAPIOutDTO,
+  StudentAndApplicationDetailsAPIOutDTO,
 } from "./models/student.dto";
+import { Student } from "@sims/sims-db";
 
 /**
  * Student controller for external client.
@@ -28,7 +29,9 @@ import {
 @Controller("student")
 @ApiTags(`${ClientTypeBaseRoute.External}-student`)
 export class StudentExternalController extends BaseController {
-  constructor(private readonly studentService: StudentService) {
+  constructor(
+    private readonly studentInformationService: StudentInformationService,
+  ) {
     super();
   }
 
@@ -43,16 +46,36 @@ export class StudentExternalController extends BaseController {
   @HttpCode(HttpStatus.OK)
   async searchStudentDetails(
     @Body() payload: ExternalSearchStudentAPIInDTO,
-  ): Promise<StudentDetailsAPIOutDTO> {
-    const student = await this.studentService.getStudentBySIN(payload.sin);
-    if (!student) {
+  ): Promise<StudentAndApplicationDetailsAPIOutDTO> {
+    const studentPromise = this.studentInformationService.getStudentBySIN(
+      payload.sin,
+    );
+    const sfasIndividualPromise =
+      await this.studentInformationService.getSFASIndividualBySIN(payload.sin);
+    const [student, sfasIndividual] = await Promise.all([
+      studentPromise,
+      sfasIndividualPromise,
+    ]);
+    if (!student && !sfasIndividual) {
       throw new NotFoundException("Student not found.");
     }
+    return this.transformStudentDetails(student);
+  }
+
+  /**
+   * Transform to student and application details format.
+   * @param student
+   * @returns
+   */
+  private transformStudentDetails(
+    student: Student,
+  ): StudentAndApplicationDetailsAPIOutDTO {
     return {
-      firstName: student.user.firstName,
+      givenNames: student.user.firstName,
       lastName: student.user.lastName,
       sin: student.sinValidation.sin,
       dateOfBirth: student.birthDate,
+      phoneNumber: student.contactInfo.phone,
       address: {
         addressLine1: student.contactInfo.address.addressLine1,
         addressLine2: student.contactInfo.address.addressLine2,
@@ -61,7 +84,7 @@ export class StudentExternalController extends BaseController {
         country: student.contactInfo.address.country,
         postalCode: student.contactInfo.address.postalCode,
       },
-      applicationNumbers: student.applications.map((a) => a.applicationNumber),
+      applications: [],
     };
   }
 }

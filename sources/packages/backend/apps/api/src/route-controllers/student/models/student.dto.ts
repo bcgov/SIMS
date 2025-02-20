@@ -301,16 +301,24 @@ export class UpdateStudentDetailsAPIInDTO {
   noteDescription: string;
 }
 
+export class ApplicationDetailsAPIOutDTO {
+  isLegacy: boolean;
+  applicationNumber: string;
+  studyStartPeriod: string;
+  studyEndPeriod: string;
+}
+
 /**
- * Student details.
+ * Student and application details.
  */
-export class StudentDetailsAPIOutDTO {
-  firstName: string;
+export class StudentAndApplicationDetailsAPIOutDTO {
+  givenNames: string;
   lastName: string;
   sin: string;
   dateOfBirth: string;
+  phoneNumber: string;
   address: AddressAPIOutDTO;
-  applicationNumbers: string[];
+  applications: ApplicationDetailsAPIOutDTO[];
 }
 
 /**
