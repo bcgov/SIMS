@@ -81,7 +81,7 @@ export class SFASApplicationImportService
     application.assessedCostsExceptionalExpenses =
       sfasApplication.assessedCostsExceptionalExpenses;
     application.assessedCostsOther = sfasApplication.assessedCostsOther;
-    application.eligibleNeed = sfasApplication.eligibleNeed;
+    application.assessedEligibleNeed = sfasApplication.assessedEligibleNeed;
     application.withdrawalDate = getISODateOnlyString(
       sfasApplication.withdrawalDate,
     );

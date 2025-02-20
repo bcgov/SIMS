@@ -333,15 +333,15 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsOther?: number;
   /**
-   * Eligible need.
+   * Assessed eligible need (Application_assessment.student_eligible_award).
    */
   @Column({
-    name: "eligible_need",
+    name: "assessed_eligible_need",
     type: "numeric",
     nullable: true,
     transformer: numericTransformer,
   })
-  eligibleNeed?: number;
+  assessedEligibleNeed?: number;
   /**
    * Date of withdrawal from school (bcslwthd.withdrawal_dte).
    */
