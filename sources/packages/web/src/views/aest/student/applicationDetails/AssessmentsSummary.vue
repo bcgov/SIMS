@@ -11,7 +11,6 @@
       />
       <application-header-title :application-id="currentApplicationId" />
     </template>
-
     <request-assessment
       class="mb-5"
       :applicationId="currentApplicationId"

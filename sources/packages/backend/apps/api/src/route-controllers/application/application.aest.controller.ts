@@ -81,18 +81,11 @@ export class ApplicationAESTController extends BaseController {
     @Query("isParentApplication", new DefaultValuePipe(false), ParseBoolPipe)
     isParentApplication: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    let currentApplicationId = applicationId;
-    if (isParentApplication) {
-      try {
-        const currentApplication =
-          await this.applicationService.getCurrentApplicationByParent(
-            applicationId,
-          );
-        currentApplicationId = currentApplication.id;
-      } catch (error) {
-        throw new NotFoundException(error.message);
-      }
-    }
+    const currentApplicationId =
+      await this.applicationControllerService.getCurrentApplicationByParent(
+        applicationId,
+        isParentApplication,
+      );
     const application = await this.applicationService.getApplicationById(
       currentApplicationId,
       {

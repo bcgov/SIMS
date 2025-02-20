@@ -241,11 +241,6 @@ export const APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE =
   "APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE";
 
 /**
- * Current application not found.
- */
-export const CURRENT_APPLICATION_NOT_FOUND = "CURRENT_APPLICATION_NOT_FOUND";
-
-/**
  * Student not found error code.
  */
 export const STUDENT_NOT_FOUND = "STUDENT_NOT_FOUND";

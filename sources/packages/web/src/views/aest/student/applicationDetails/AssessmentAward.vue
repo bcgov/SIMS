@@ -9,10 +9,7 @@
           params: { applicationId, studentId },
         }"
       />
-      <application-header-title
-        v-if="currentApplicationId"
-        :application-id="currentApplicationId"
-      />
+      <application-header-title :application-id="currentApplicationId" />
     </template>
     <assessment-award
       :assessment-award-data="assessmentAwardData"

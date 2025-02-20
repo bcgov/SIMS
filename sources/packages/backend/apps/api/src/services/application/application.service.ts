@@ -53,7 +53,6 @@ import {
   OFFERING_PROGRAM_YEAR_MISMATCH,
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   EDUCATION_PROGRAM_IS_EXPIRED,
-  CURRENT_APPLICATION_NOT_FOUND,
 } from "../../constants";
 import { SequenceControlService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
@@ -689,27 +688,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         location: { institution: { id: options?.institutionId } },
       },
     });
-  }
-
-  /**
-   * Gets the current application by parent application id.
-   * @param parentApplicationId parent application id.
-   * @returns current application.
-   */
-  async getCurrentApplicationByParent(
-    parentApplicationId: number,
-  ): Promise<Application> {
-    const currentApplication =
-      await this.getCurrentApplicationByParentApplicationId(
-        parentApplicationId,
-      );
-    if (!currentApplication) {
-      throw new CustomNamedError(
-        `Current application for provided parent application ${parentApplicationId} was not found.`,
-        CURRENT_APPLICATION_NOT_FOUND,
-      );
-    }
-    return currentApplication;
   }
 
   /**
