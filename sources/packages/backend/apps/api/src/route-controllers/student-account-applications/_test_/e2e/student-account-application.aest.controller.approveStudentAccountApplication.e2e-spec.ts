@@ -13,6 +13,7 @@ import {
   createFakeUser,
   getProviderInstanceForModule,
   saveFakeSFASIndividual,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import { AppAESTModule } from "../../../../app.aest.module";
 import { FormNames, FormService } from "../../../../services";
@@ -249,6 +250,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     // Arrange
     const user = await db.user.save(createFakeUser());
     const submittedData = createFakeSubmittedData(user);
+    const student = await saveFakeStudent(db.dataSource, { user });
 
     // Save the fake student account application to be later approved by the Ministry
     // and create the Student Account.
@@ -264,6 +266,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
         lastName: user.lastName,
         birthDate: submittedData.dateOfBirth,
         sin: submittedData.sinNumber,
+        student,
         cslOveraward: 1000,
         bcslOveraward: 2000,
       },
