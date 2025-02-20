@@ -167,10 +167,7 @@ objects:
                       key: ${QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS_KEY}
                       name: ${API_SECRET_NAME}
                 - name: QUEUE_DASHBOARD_BASE_URL
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${QUEUE_DASHBOARD_BASE_URL_KEY}
-                      name: ${API_SECRET_NAME}
+                  value: "${QUEUE_DASHBOARD_BASE_URL}"
                 - name: ZEEBE_ADDRESS
                   valueFrom:
                     secretKeyRef:
@@ -528,8 +525,8 @@ parameters:
     value: queue-dashboard-token-secret
   - name: QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS_KEY
     value: queue-dashboard-token-expiration-seconds
-  - name: QUEUE_DASHBOARD_BASE_URL_KEY
-    value: queue-dashboard-base-url
+  - name: QUEUE_DASHBOARD_BASE_URL
+    required: true
   - name: APPLICATION_ARCHIVE_DAYS
     require: true
   - name: S3_ACCESS_KEY_ID_KEY

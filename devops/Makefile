@@ -203,7 +203,6 @@ init-secrets:
 		-p S3_ENDPOINT=$(S3_ENDPOINT) \
 		-p S3_DEFAULT_BUCKET=$(S3_DEFAULT_BUCKET) \
 		-p S3_REGION=$(S3_REGION) \
-		-p QUEUE_DASHBOARD_BASE_URL=https://$(HOST) \
 		| oc -n $(NAMESPACE) apply -f -
 
 init-zone-b-sftp-secret:
@@ -339,6 +338,7 @@ deploy-api:
 	test -n "$(ATBC_ENDPOINT)"
 	test -n "$(API)"
 	test -n "$(API_SECRET_NAME)"
+	test -n "$(HOST)"
 	test -n "$(SWAGGER_NAME)"
 	test -n "$(QUEUE_PREFIX)"
 	test -n "$(API_PORT)"
@@ -374,7 +374,8 @@ deploy-api:
 		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
 		-p TLS_KEY=$(TLS_KEY) \
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
-    -p ALLOW_BETA_USERS_ONLY=$(ALLOW_BETA_USERS_ONLY) \
+		-p ALLOW_BETA_USERS_ONLY=$(ALLOW_BETA_USERS_ONLY) \
+		-p QUEUE_DASHBOARD_BASE_URL=https://$(HOST) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(API))
 
