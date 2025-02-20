@@ -1906,7 +1906,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Gets the current application by parent application id.
    * @param parentApplicationId parent application id.
-   * @returns the application id.
+   * @returns the application.
    */
   async getCurrentApplicationByParentApplicationId(
     parentApplicationId: number,
