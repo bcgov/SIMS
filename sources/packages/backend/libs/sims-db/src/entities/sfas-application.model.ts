@@ -333,15 +333,15 @@ export class SFASApplication extends BaseSFASApplicationModel {
   })
   assessedCostsOther?: number;
   /**
-   * Discretionary expenses (assessment_v2.SP_EXP_OTHER).
+   * Eligible need.
    */
   @Column({
-    name: "assessed_costs_discretionary_expenses",
+    name: "eligible_need",
     type: "numeric",
     nullable: true,
     transformer: numericTransformer,
   })
-  assessedCostsDiscretionaryExpenses?: number;
+  eligibleNeed?: number;
   /**
    * Date of withdrawal from school (bcslwthd.withdrawal_dte).
    */
