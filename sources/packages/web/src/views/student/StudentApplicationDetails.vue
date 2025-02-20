@@ -208,13 +208,18 @@ export default defineComponent({
         ApplicationStatus.Completed
       ) {
         items.value.push({
-          label: "Request a change",
+          label: "Request a change (bananas)",
           icon: "fa:fas fa-hand-paper",
           command: () => {
             router.push({
               name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
             });
           },
+        });
+        items.value.push({
+          label: "Request a change (edit after COE)",
+          icon: "fa:fas fa-hand-paper",
+          command: editApplication,
         });
       }
       // Default value in menu items.

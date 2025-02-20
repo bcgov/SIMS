@@ -5,17 +5,25 @@ import {
   ApplicationService,
 } from "../../services";
 import {
+  ApplicationEditApprovalJobInDTO,
+  ApplicationEditApprovalJobOutDTO,
   ApplicationExceptionsJobInDTO,
   ApplicationExceptionsJobOutDTO,
   ApplicationUpdateStatusJobHeaderDTO,
   ApplicationUpdateStatusJobInDTO,
 } from "..";
-import { ApplicationExceptionStatus } from "@sims/sims-db";
+import {
+  ApplicationEditStatus,
+  ApplicationExceptionStatus,
+} from "@sims/sims-db";
 import {
   APPLICATION_NOT_FOUND,
   APPLICATION_STATUS_NOT_UPDATED,
 } from "../../constants";
-import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
+import {
+  APPLICATION_EDIT_STATUS,
+  APPLICATION_ID,
+} from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
 import { createUnexpectedJobFail } from "../../utilities";
@@ -161,6 +169,59 @@ export class ApplicationController {
       jobLogger.log("Verified application exception. No exceptions created.");
       return job.complete({
         applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+      });
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
+  }
+
+  @ZeebeWorker(Workers.ApplicationEditApproval, {
+    fetchVariable: [APPLICATION_ID],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
+  })
+  async applicationEditApproval(
+    job: Readonly<
+      ZeebeJob<
+        ApplicationEditApprovalJobInDTO,
+        ICustomHeaders,
+        ApplicationEditApprovalJobOutDTO
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
+    try {
+      const application = await this.applicationService.getApplicationById(
+        job.variables.applicationId,
+        { loadDynamicData: false },
+      );
+      if (!application) {
+        const message = "Application id not found.";
+        jobLogger.error(message);
+        return job.error(APPLICATION_NOT_FOUND, message);
+      }
+      if (
+        application.applicationEditStatus ===
+        ApplicationEditStatus.EditInprogress
+      ) {
+        jobLogger.log(
+          `Setting the applications edit status to ${ApplicationEditStatus.EditPendingApproval}`,
+        );
+        await this.applicationService.updateApplicationEditStatus(
+          application.id,
+          ApplicationEditStatus.EditInprogress,
+          ApplicationEditStatus.EditPendingApproval,
+        );
+        return job.complete({
+          [APPLICATION_EDIT_STATUS]: ApplicationEditStatus.EditPendingApproval,
+        });
+      }
+      jobLogger.log(
+        "Applications edit status not updated, returning the current status only.",
+      );
+      return job.complete({
+        [APPLICATION_EDIT_STATUS]: application.applicationEditStatus,
       });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {

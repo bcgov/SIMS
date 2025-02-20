@@ -16,7 +16,7 @@
 "Edit in progress" to "Edit pending approval".</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_17tw6q4">
-      <bpmn:text>Waits till a decision in made and the edit status is updated to
+      <bpmn:text>Waits till a decision is made and the edit status is updated to
 "Edited with approval" or "Edit declined".</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_110g427" associationDirection="None" sourceRef="TextAnnotation_1qwxwaf" targetRef="Activity_09c4eyp" />
@@ -767,8 +767,8 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationHasNOAApproval = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
-    <bpmn:sequenceFlow id="Flow_1wkpr1a" name="Application Completed" sourceRef="Gateway_1xse027" targetRef="update-noa-status-to-not-required-application-completed-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationStatus = "Completed"</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_1wkpr1a" name="Application &#34;Completed&#34; or &#34;Edited with approval&#34;" sourceRef="Gateway_1xse027" targetRef="update-noa-status-to-not-required-application-completed-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationStatus = "Completed" or applicationEditStatus = "Edited with approval"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1o87o98" sourceRef="update-noa-status-to-not-required-application-completed-task" targetRef="Gateway_0f9knk0" />
     <bpmn:sequenceFlow id="Flow_1cb5fpw" name="Application Not Completed" sourceRef="Gateway_1xse027" targetRef="Gateway_1m2js1c" />
@@ -834,13 +834,13 @@
       <bpmn:incoming>Flow_053b5rk</bpmn:incoming>
       <bpmn:outgoing>Flow_16vbz4u</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_1i58pfa">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
     <bpmn:intermediateCatchEvent id="Event_04cdl1d">
       <bpmn:incoming>Flow_14o7l76</bpmn:incoming>
       <bpmn:outgoing>Flow_1jylefx</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1c36euj" messageRef="Message_2t9i9o7" />
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1c36euj" messageRef="Message_3767lhe" />
     </bpmn:intermediateCatchEvent>
     <bpmn:eventBasedGateway id="Gateway_1tuschv">
       <bpmn:incoming>Flow_16xfwdc</bpmn:incoming>
@@ -858,9 +858,9 @@
       <bpmn:outgoing>Flow_16xfwdc</bpmn:outgoing>
       <bpmn:outgoing>Flow_1wp7dvh</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Activity_09c4eyp" name="Wait for Ministry Approval">
+    <bpmn:serviceTask id="Activity_09c4eyp" name="Application edit approval">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="verify-application-exceptions" />
+        <zeebe:taskDefinition type="application-edit-approval" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_16vbz4u</bpmn:incoming>
       <bpmn:incoming>Flow_1pvu71m</bpmn:incoming>
@@ -881,7 +881,7 @@
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_10nfd6c" sourceRef="Activity_09c4eyp" targetRef="Gateway_1pqdzae" />
     <bpmn:sequenceFlow id="Flow_1pvu71m" name="Edit in progress" sourceRef="Gateway_1a2uz77" targetRef="Activity_09c4eyp">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationStatus = "In Progress"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Edit in progress"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="applicationInProgressFlow" name="Application in progress" sourceRef="Gateway_1a2uz77" targetRef="Gateway_0w5bllv">
       <bpmn:extensionElements />
@@ -930,6 +930,11 @@
   <bpmn:category id="Category_0e4jiqi">
     <bpmn:categoryValue id="CategoryValue_02lw2sm" value="Assessment sequence verification" />
   </bpmn:category>
+  <bpmn:message id="Message_3767lhe" name="application-edit-approval-provided">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=applicationId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0z9wj8q">
       <bpmndi:BPMNShape id="Participant_0y53svc_di" bpmnElement="application-in-progress" isHorizontal="true">
@@ -1629,7 +1634,7 @@
         <di:waypoint x="3610" y="1780" />
         <di:waypoint x="3940" y="1780" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3613" y="1746" width="54" height="27" />
+          <dc:Bounds x="3612" y="1723" width="76" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1o87o98_di" bpmnElement="Flow_1o87o98">
@@ -1833,14 +1838,6 @@
           <dc:Bounds x="2797" y="736" width="66" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
-        <di:waypoint x="3223" y="715" />
-        <di:waypoint x="3120" y="774" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
-        <di:waypoint x="3222" y="809" />
-        <di:waypoint x="3077" y="882" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1k2osho_di" bpmnElement="Group_1k2osho">
         <dc:Bounds x="1700" y="150" width="750" height="340" />
         <bpmndi:BPMNLabel>
@@ -1875,10 +1872,6 @@
         <dc:Bounds x="2010" y="1630" width="188" height="110" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
-        <di:waypoint x="2230" y="1634" />
-        <di:waypoint x="2198" y="1643" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0m4ufpe" bpmnElement="TextAnnotation_1qwxwaf">
         <dc:Bounds x="3177" y="670" width="259" height="45" />
         <bpmndi:BPMNLabel />
@@ -1887,6 +1880,18 @@
         <dc:Bounds x="3180" y="750" width="253" height="59" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
+        <di:waypoint x="2230" y="1634" />
+        <di:waypoint x="2198" y="1643" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
+        <di:waypoint x="3223" y="715" />
+        <di:waypoint x="3120" y="774" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
+        <di:waypoint x="3222" y="809" />
+        <di:waypoint x="3077" y="882" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

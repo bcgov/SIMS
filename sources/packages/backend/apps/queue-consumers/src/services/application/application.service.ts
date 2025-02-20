@@ -12,6 +12,7 @@ import {
   Notification,
   DisbursementSchedule,
   COEStatus,
+  ApplicationEditStatus,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -116,15 +117,27 @@ export class ApplicationService {
             );
           }),
         )
-        .andWhere("application.applicationStatus IN (:...status)", {
-          status: [
-            ApplicationStatus.Submitted,
-            ApplicationStatus.InProgress,
-            ApplicationStatus.Assessment,
-            ApplicationStatus.Enrolment,
-            ApplicationStatus.Completed,
-          ],
-        })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where("application.applicationStatus IN (:...status)", {
+              status: [
+                ApplicationStatus.Submitted,
+                ApplicationStatus.InProgress,
+                ApplicationStatus.Assessment,
+                ApplicationStatus.Enrolment,
+                ApplicationStatus.Completed,
+              ],
+            }).orWhere(
+              new Brackets((qb) => {
+                qb.where(
+                  "application.applicationStatus = :editedStatus",
+                ).andWhere(
+                  "application.applicationEditStatus = :editInProgressStatus",
+                );
+              }),
+            );
+          }),
+        )
         .andWhere(
           "studentAssessment.studentAssessmentStatus = :submittedStatus",
           {
@@ -132,15 +145,19 @@ export class ApplicationService {
           },
         )
         .andWhere(`NOT EXISTS (${this.inProgressStatusesExistsQuery})`)
-        .setParameter("inProgressStatuses", [
-          StudentAssessmentStatus.Queued,
-          StudentAssessmentStatus.InProgress,
-          // This conditions may not be directly related to the current application logic but has been added to ensure that
-          // at any given time now or future the queue does not pick an application to cancel when there is already an
-          // assessment for that application which is queued for cancellation.
-          StudentAssessmentStatus.CancellationRequested,
-          StudentAssessmentStatus.CancellationQueued,
-        ])
+        .setParameters({
+          editedStatus: ApplicationStatus.Edited,
+          editInProgressStatus: ApplicationEditStatus.EditInprogress,
+          inProgressStatuses: [
+            StudentAssessmentStatus.Queued,
+            StudentAssessmentStatus.InProgress,
+            // This conditions may not be directly related to the current application logic but has been added to ensure that
+            // at any given time now or future the queue does not pick an application to cancel when there is already an
+            // assessment for that application which is queued for cancellation.
+            StudentAssessmentStatus.CancellationRequested,
+            StudentAssessmentStatus.CancellationQueued,
+          ],
+        })
         .orderBy("studentAssessment.createdAt")
         .getMany()
     );

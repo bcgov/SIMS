@@ -24,6 +24,13 @@ export const STUDENT_DATA_SELECTED_PROGRAM = "studentDataSelectedProgram";
  * the workflow.
  */
 export const APPLICATION_EXCEPTION_STATUS = "applicationExceptionStatus";
+
+/**
+ * Edit status of a Student Application executing a edit post-COE which
+ * requires Ministry approval.
+ */
+export const APPLICATION_EDIT_STATUS = "applicationEditStatus";
+
 /**
  * Created during the student Program Info Request executed by the Institution.
  * Declared inside assessment-gateway and updated during the regular timer

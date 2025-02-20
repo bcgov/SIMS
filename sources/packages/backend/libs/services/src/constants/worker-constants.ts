@@ -1,6 +1,7 @@
 export enum Workers {
   AssociateWorkflowInstance = "associate-workflow-instance",
   VerifyApplicationExceptions = "verify-application-exceptions",
+  ApplicationEditApproval = "application-edit-approval",
   ProgramInfoRequest = "program-info-request",
   CreateIncomeRequest = "create-income-request",
   CheckIncomeRequest = "check-income-request",

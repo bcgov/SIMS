@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
+import { SystemUsersService } from "@sims/services";
 import {
   Application,
+  ApplicationEditStatus,
   ApplicationStatus,
   ProgramInfoStatus,
   RecordDataModelService,
@@ -9,7 +11,10 @@ import { DataSource, In, UpdateResult } from "typeorm";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    private readonly systemUserService: SystemUsersService,
+  ) {
     super(dataSource.getRepository(Application));
   }
 
@@ -74,6 +79,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: {
         id: true,
         applicationNumber: true,
+        applicationEditStatus: true,
         pirStatus: true,
         student: {
           id: true,
@@ -99,5 +105,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
         id: applicationId,
       },
     });
+  }
+
+  async updateApplicationEditStatus(
+    applicationId: number,
+    fromStatus: ApplicationEditStatus,
+    toStatus: ApplicationEditStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: applicationId,
+        applicationEditStatus: fromStatus,
+      },
+      {
+        applicationEditStatus: toStatus,
+        modifier: this.systemUserService.systemUser,
+      },
+    );
   }
 }

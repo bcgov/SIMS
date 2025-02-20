@@ -77,6 +77,16 @@ export class ApplicationService {
     await ApiClient.Application.submitApplication(applicationId, payload);
   }
 
+  async submitApplicationChangeRequest(
+    applicationId: number,
+    payload: SaveApplicationAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Application.submitApplicationChangeRequest(
+      applicationId,
+      payload,
+    );
+  }
+
   async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,

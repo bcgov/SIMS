@@ -237,6 +237,61 @@ export class ApplicationStudentsController extends BaseController {
     };
   }
 
+  @CheckSinValidation()
+  @Patch(":applicationId/submit-change-request")
+  @ApiBadRequestResponse({
+    description:
+      "Not able to start a changed request due to an invalid request.",
+  })
+  @ApiNotFoundResponse({ description: "Application not found." })
+  @ApiForbiddenResponse({
+    description: "You have a restriction on your account.",
+  })
+  async submitApplicationChangeRequest(
+    @Body() payload: SaveApplicationAPIInDTO,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<void> {
+    const programYear = await this.programYearService.getActiveProgramYear(
+      payload.programYearId,
+    );
+    if (!programYear) {
+      throw new UnprocessableEntityException(
+        "Program Year is not active. Not able to create an application invalid request.",
+      );
+    }
+    // Execute form.io validation.
+    const submissionResult =
+      await this.formService.dryRunSubmission<ApplicationData>(
+        programYear.formName,
+        payload.data,
+      );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to start a changed request due to an invalid request.",
+      );
+    }
+    try {
+      await this.applicationService.submitApplicationChangeRequest(
+        applicationId,
+        studentToken.userId,
+        studentToken.studentId,
+        submissionResult.data.data,
+        payload.associatedFiles,
+      );
+    } catch (error) {
+      switch (error.name) {
+        case APPLICATION_NOT_VALID:
+        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+        default:
+          // TODO: add logger.
+          throw new InternalServerErrorException(
+            "Unexpected error while submitting the application.",
+          );
+      }
+    }
+  }
+
   /**
    * Submit an existing student application changing the status
    * to submitted and triggering the necessary processes.

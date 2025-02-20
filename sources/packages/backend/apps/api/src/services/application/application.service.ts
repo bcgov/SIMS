@@ -193,6 +193,47 @@ export class ApplicationService extends RecordDataModelService<Application> {
       originalAssessment.offering = offering;
     }
 
+    if (application.applicationStatus === ApplicationStatus.Completed) {
+      application.applicationNumber = await this.generateApplicationNumber(
+        application.programYear.programYearPrefix,
+      );
+      application.data = applicationData;
+      application.applicationStatus = ApplicationStatus.Submitted;
+      application.relationshipStatus = applicationData.relationshipStatus;
+      application.studentNumber = applicationData.studentNumber;
+      application.applicationStatusUpdatedOn = now;
+      application.studentFiles = await this.getSyncedApplicationFiles(
+        studentId,
+        application.studentFiles,
+        associatedFiles,
+      );
+      application.modifier = auditUser;
+      application.updatedAt = now;
+      application.studentAssessments = [originalAssessment];
+      application.currentAssessment = originalAssessment;
+      application.submittedDate = now;
+      application.location = institutionLocation;
+
+      // When application and assessment are saved, assess for SIN restriction.
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
+        await transactionalEntityManager
+          .getRepository(Application)
+          .save(application);
+
+        // If the offering will be set in the assessment check for possible SIN restrictions.
+        if (originalAssessment.offering) {
+          await this.studentRestrictionService.assessSINRestrictionForOfferingId(
+            studentId,
+            originalAssessment.offering.id,
+            application.id,
+            auditUserId,
+            transactionalEntityManager,
+          );
+        }
+      });
+      return { application, createdAssessment: originalAssessment };
+    }
+
     if (application.applicationStatus === ApplicationStatus.Draft) {
       /**
        * Generate the application number with respect to the programYearPrefix.
@@ -279,6 +320,109 @@ export class ApplicationService extends RecordDataModelService<Application> {
       associatedFiles,
     );
     newApplication.location = institutionLocation;
+    // While editing an application, a new application record is created and a new
+    // assessment record is also created to be the used as a "current Assessment" record.
+    // The application and the assessment records have a DB relationship and the
+    // assessment record also has a second relationship to the application that
+    // keeps its history. Due to this double relationships the application record
+    // and the assessment cannot be create at the same moment what causes a
+    // "cyclic dependency error" on Typeorm. Saving the application record and later
+    // having it associated with the assessment solves the issue.
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const applicationRepository =
+        transactionalEntityManager.getRepository(Application);
+      await applicationRepository.save(newApplication);
+      newApplication.creator = auditUser;
+      newApplication.studentAssessments = [originalAssessment];
+      newApplication.currentAssessment = originalAssessment;
+
+      // Updates the current assessment status to cancellation requested.
+      application.currentAssessment.studentAssessmentStatus =
+        StudentAssessmentStatus.CancellationRequested;
+      application.currentAssessment.modifier = auditUser;
+      application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+      application.currentAssessment.updatedAt = now;
+      await applicationRepository.save([application, newApplication]);
+      await this.saveApplicationEditedTooManyTimesNotification(
+        newApplication.applicationNumber,
+        application.studentId,
+        transactionalEntityManager,
+      );
+    });
+    return { application, createdAssessment: originalAssessment };
+  }
+
+  async submitApplicationChangeRequest(
+    applicationId: number,
+    auditUserId: number,
+    studentId: number,
+    applicationData: ApplicationData,
+    associatedFiles: string[],
+  ): Promise<ApplicationSubmissionResult> {
+    const application = await this.getApplicationById(applicationId, {
+      studentId,
+      loadDynamicData: true,
+    });
+    if (!application) {
+      throw new CustomNamedError(
+        "Student application not found.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+    if (application.applicationStatus !== ApplicationStatus.Completed) {
+      throw new CustomNamedError(
+        "Student Application not in the correct status to be receive a change request.",
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
+    }
+    // Ensure the offering-related data in the application did not change.
+    // TODO: Do we need to display to the student the application with the most recent offering data from the most recent reassessment?
+    if (
+      applicationData.selectedOffering !== application.data.selectedOffering ||
+      applicationData.selectedOfferingDate !==
+        application.data.selectedOfferingDate ||
+      applicationData.selectedOfferingEndDate !==
+        application.data.selectedOfferingEndDate
+    ) {
+      throw new CustomNamedError(
+        "Student application had its offering-related data updated and it is not allowed for a change request.",
+        APPLICATION_NOT_VALID,
+      );
+    }
+    // Create the new assessment to be associated with the new edited application.
+    const offering = application.currentAssessment.offering;
+    const now = new Date();
+    const auditUser = { id: auditUserId } as User;
+    const originalAssessment = new StudentAssessment();
+    originalAssessment.triggerType = AssessmentTriggerType.OriginalAssessment;
+    originalAssessment.submittedBy = auditUser;
+    originalAssessment.submittedDate = now;
+    originalAssessment.creator = auditUser;
+    originalAssessment.offering = application.currentAssessment.offering;
+    // Create the new edited application to be processed and later assessed by the Ministry.
+    const newApplication = new Application();
+    newApplication.submittedDate = now;
+    newApplication.applicationNumber = application.applicationNumber;
+    newApplication.relationshipStatus = applicationData.relationshipStatus;
+    newApplication.studentNumber = applicationData.studentNumber;
+    newApplication.programYear = application.programYear;
+    newApplication.data = applicationData;
+    newApplication.applicationStatus = ApplicationStatus.Edited;
+    newApplication.applicationEditStatus = ApplicationEditStatus.EditInprogress;
+    newApplication.parentApplication = {
+      id: application.parentApplication.id,
+    } as Application;
+    newApplication.precedingApplication = {
+      id: application.id,
+    } as Application;
+    newApplication.applicationStatusUpdatedOn = now;
+    newApplication.student = { id: application.student.id } as Student;
+    newApplication.studentFiles = await this.getSyncedApplicationFiles(
+      studentId,
+      [],
+      associatedFiles,
+    );
+    newApplication.location = offering.institutionLocation;
     // While editing an application, a new application record is created and a new
     // assessment record is also created to be the used as a "current Assessment" record.
     // The application and the assessment records have a DB relationship and the
@@ -678,6 +822,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
             lastName: true,
           },
         },
+        parentApplication: { id: true },
       },
       relations: {
         applicationException: true,
@@ -686,6 +831,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         pirDeniedReasonId: true,
         programYear: true,
         student: { user: true },
+        parentApplication: true,
       },
       where: {
         id: applicationId,

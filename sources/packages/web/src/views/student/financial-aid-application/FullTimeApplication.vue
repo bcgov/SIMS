@@ -25,6 +25,16 @@
           >
             {{ submittingApplication ? "Submitting..." : "Submit application" }}
           </v-btn>
+          <v-btn
+            v-if="isEditPostCOE && isLastPage"
+            class="ml-2"
+            :disabled="submittingApplication"
+            color="primary"
+            @click="wizardSubmit()"
+            :loading="submittingApplication"
+          >
+            {{ submittingApplication ? "Submitting..." : "Request a change" }}
+          </v-btn>
         </template>
       </header-navigator>
     </template>
@@ -151,6 +161,7 @@ export default defineComponent({
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const isReadOnly = ref(false);
+    let isEditPostCOE = ref(false);
     const notDraft = ref(false);
     const existingApplication = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
@@ -192,6 +203,9 @@ export default defineComponent({
       notDraft.value =
         !!props.readOnly ||
         ![ApplicationStatus.Draft].includes(applicationData.applicationStatus);
+
+      isEditPostCOE.value =
+        applicationData.applicationStatus === ApplicationStatus.Completed;
 
       const address = studentInfo.contact;
 
@@ -260,11 +274,22 @@ export default defineComponent({
       submittingApplication.value = true;
       try {
         const associatedFiles = formioUtils.getAssociatedFiles(form);
-        await ApplicationService.shared.submitApplication(props.id, {
-          programYearId: props.programYearId,
-          data: args,
-          associatedFiles,
-        });
+        if (isEditPostCOE.value) {
+          await ApplicationService.shared.submitApplicationChangeRequest(
+            props.id,
+            {
+              programYearId: props.programYearId,
+              data: args,
+              associatedFiles,
+            },
+          );
+        } else {
+          await ApplicationService.shared.submitApplication(props.id, {
+            programYearId: props.programYearId,
+            data: args,
+            associatedFiles,
+          });
+        }
         router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         });
@@ -352,6 +377,7 @@ export default defineComponent({
         applicationWizard.submit();
       }
     };
+
     return {
       initialData,
       isStudyEndDateWithinDeadline,
@@ -372,6 +398,7 @@ export default defineComponent({
       isLastPage,
       conditionsAccepted,
       BannerTypes,
+      isEditPostCOE,
     };
   },
 });
