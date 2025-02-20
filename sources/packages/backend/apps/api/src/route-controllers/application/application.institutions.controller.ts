@@ -53,8 +53,10 @@ export class ApplicationInstitutionsController extends BaseController {
     @Query("isParentApplication", new DefaultValuePipe(false), ParseBoolPipe)
     isParentApplication: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+    // When the application is a parent application, get the current application by parent application id.
+    // Otherwise, set the current application id to the provided application id.
     const currentApplicationId =
-      await this.applicationControllerService.getCurrentApplicationByParent(
+      await this.applicationControllerService.getCurrentApplicationId(
         applicationId,
         isParentApplication,
       );

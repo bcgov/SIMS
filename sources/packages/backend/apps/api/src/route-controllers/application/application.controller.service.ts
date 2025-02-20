@@ -351,12 +351,12 @@ export class ApplicationControllerService {
   }
 
   /**
-   * Gets the current application by parent application id.
+   * Gets the current application id.
    * @param applicationId application id.
    * @param isParentApplication is parent application.
    * @returns the current application id.
    */
-  async getCurrentApplicationByParent(
+  async getCurrentApplicationId(
     applicationId: number,
     isParentApplication: boolean,
   ): Promise<number> {
