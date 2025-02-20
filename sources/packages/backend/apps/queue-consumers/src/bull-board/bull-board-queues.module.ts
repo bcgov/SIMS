@@ -2,10 +2,10 @@ import { Module } from "@nestjs/common";
 import { BullBoardModule, BullBoardModuleOptions } from "@bull-board/nestjs";
 import { ConfigModule } from "@sims/utilities/config";
 import { ExpressAdapter } from "@bull-board/express";
-import { BULL_BOARD_ROUTE } from "../constants";
 import { BullBoardQueuesRegistrationModule } from "./bull-board-queues-registration.module";
 import { JwtModule } from "@nestjs/jwt";
 import { BullBoardAuthenticationMiddleware } from "./bull-board-authentication.middleware";
+import { BULL_BOARD_ROUTE } from "@sims/services/constants";
 
 /**
  * Bull board related modules to allow the dashboard to be registered.
