@@ -20,30 +20,23 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
 
   /**
    * Validates before an application submission to see if there is an overlapping SFAS part-time application existing.
-   * @param sin Student SIN number.
-   * @param birthDate Student date of birth.
-   * @param lastName Student last name.
+   * @param studentId Student id.
    * @param studyStartDate Study period start date.
    * @param studyEndDate Study period end date.
    * @returns SFAS part-time application.
    */
   async validateDateOverlap(
-    sin: string,
-    birthDate: string,
-    lastName: string,
+    studentId: number,
     studyStartDate: string,
     studyEndDate: string,
   ): Promise<SFASPartTimeApplications> {
     return this.repo
       .createQueryBuilder("sfasPTApplication")
       .select(["sfasPTApplication.id"])
-      .innerJoin("sfasPTApplication.individual", "sfasPTstudent")
+      .innerJoin("sfasPTApplication.individual", "sfasIndividual")
+      .innerJoin("sfasIndividual.student", "student")
       .where("sfasPTApplication.applicationCancelDate IS NULL")
-      .andWhere("lower(sfasPTstudent.lastName) = lower(:lastName)", {
-        lastName,
-      })
-      .andWhere("sfasPTstudent.sin = :sin", { sin })
-      .andWhere("sfasPTstudent.birthDate = :birthDate", { birthDate })
+      .andWhere("student.id = :studentId", { studentId })
       .andWhere(
         new Brackets((qb) => {
           qb.where(

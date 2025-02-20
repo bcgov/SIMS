@@ -232,10 +232,7 @@ export class StudentService extends RecordDataModelService<Student> {
 
       if (sfasIndividual) {
         await this.importSFASOverawards(
-          student.id,
-          student.user.lastName,
-          student.birthDate,
-          studentSIN,
+          sfasIndividual.student.id,
           auditUserId,
           entityManager,
         );
@@ -760,16 +757,11 @@ export class StudentService extends RecordDataModelService<Student> {
    */
   async importSFASOverawards(
     studentId: number,
-    lastName: string,
-    birthDate: string,
-    sinNumber: string,
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
     const sfasIndividual = await this.sfasIndividualService.getSFASOverawards(
-      lastName,
-      birthDate,
-      sinNumber,
+      studentId,
     );
     if (!sfasIndividual) {
       return;

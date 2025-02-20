@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, Raw, Repository } from "typeorm";
+import { Brackets, Repository } from "typeorm";
 import { SFASIndividual, Student } from "@sims/sims-db";
 import { SFASIndividualDataSummary } from "./sfas-individual.model";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -35,7 +35,9 @@ export class SFASIndividualService {
         "individual.pdStatus",
         "individual.ppdStatus",
         "individual.ppdStatusDate",
+        "student.id",
       ])
+      .innerJoin("individual.student", "student")
       .where("lower(individual.lastName) = :lastName", {
         lastName: lastName.toLowerCase(),
       })
@@ -94,16 +96,10 @@ export class SFASIndividualService {
 
   /**
    * Search for a record in SFAS table using student details.
-   * @param lastName student's last name.
-   * @param birthDate student's birth date.
-   * @param sin student's sin.
+   * @param studentId Student id.
    * @returns SFAS individual details.
    */
-  async getSFASOverawards(
-    lastName: string,
-    birthDate: string,
-    sin: string,
-  ): Promise<SFASIndividual> {
+  async getSFASOverawards(studentId: number): Promise<SFASIndividual> {
     return await this.sfasIndividualRepo.findOne({
       select: {
         id: true,
@@ -111,11 +107,7 @@ export class SFASIndividualService {
         bcslOveraward: true,
       },
       where: {
-        lastName: Raw((alias) => `LOWER(${alias}) = LOWER(:lastName)`, {
-          lastName,
-        }),
-        sin: sin,
-        birthDate: birthDate,
+        student: { id: studentId },
       },
     });
   }

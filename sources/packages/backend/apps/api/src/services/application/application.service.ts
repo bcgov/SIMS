@@ -1456,20 +1456,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Validation for application overlapping dates or Pending PIR.
    * This validation can be disabled by setting BYPASS_APPLICATION_SUBMIT_VALIDATIONS to true in .env file.
-   * @param applicationId
-   * @param lastName
-   * @param userId
-   * @param sin
-   * @param birthDate
-   * @param studyStartDate
-   * @param studyEndDate
+   * @param applicationId application id.
+   * @param userId user id.
+   * @param studentId student id.
+   * @param studyStartDate study start date.
+   * @param studyEndDate study end date.
    */
   async validateOverlappingDates(
     applicationId: number,
-    lastName: string,
     userId: number,
-    sin: string,
-    birthDate: string,
+    studentId: number,
     studyStartDate: string,
     studyEndDate: string,
   ): Promise<void> {
@@ -1483,18 +1479,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
       const existingSFASFTApplication =
         this.sfasApplicationService.validateDateOverlap(
-          sin,
-          birthDate,
-          lastName,
+          studentId,
           studyStartDate,
           studyEndDate,
         );
 
       const existingSFASPTApplication =
         this.sfasPartTimeApplicationsService.validateDateOverlap(
-          sin,
-          birthDate,
-          lastName,
+          studentId,
           studyStartDate,
           studyEndDate,
         );
@@ -1779,10 +1771,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Validate possible overlaps with exists applications.
     await this.validateOverlappingDates(
       application.id,
-      application.student.user.lastName,
       application.student.user.id,
-      application.student.sinValidation.sin,
-      application.student.birthDate,
+      application.student.id,
       offering.studyStartDate,
       offering.studyEndDate,
     );

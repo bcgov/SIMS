@@ -316,10 +316,8 @@ export class ApplicationStudentsController extends BaseController {
     try {
       await this.applicationService.validateOverlappingDates(
         applicationId,
-        student.user.lastName,
         studentToken.userId,
-        student.sinValidation.sin,
-        student.birthDate,
+        student.id,
         referenceStudyStartDate,
         referencedStudyEndDate,
       );
