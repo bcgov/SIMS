@@ -123,3 +123,9 @@ export interface S3Configuration {
   region: string;
   defaultBucket: string;
 }
+
+export interface QueueDashboardAccess {
+  tokenSecret: Buffer;
+  tokenExpirationSeconds: number;
+  baseURL: string;
+}

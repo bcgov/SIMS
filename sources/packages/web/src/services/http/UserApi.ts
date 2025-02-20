@@ -63,4 +63,27 @@ export class UserApi extends HttpBaseClient {
       throw error;
     }
   }
+
+  /**
+   * Allows a token creation to provide access to the queues admin
+   * for an already authorized users with a role that allow the access.
+   */
+  async queueAdminTokenExchange(): Promise<void> {
+    await this.postCallFullResponse(
+      this.addClientRoot("user/queue-admin-token-exchange"),
+      null,
+      { withCredentials: true },
+    );
+  }
+
+  /**
+   * Clear the cookie that stores the queues admin access token.
+   * Useful to remove the access to the queues admin when the user is no longer authorized.
+   */
+  async removeAdminTokenExchange(): Promise<void> {
+    await this.deleteCall(
+      this.addClientRoot("user/queue-admin-token-exchange"),
+      { withCredentials: true },
+    );
+  }
 }

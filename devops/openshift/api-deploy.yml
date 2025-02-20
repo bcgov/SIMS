@@ -156,6 +156,18 @@ objects:
                       name: ${REDIS_SECRET_NAME}
                 - name: QUEUE_PREFIX
                   value: "${QUEUE_PREFIX}"
+                - name: QUEUE_DASHBOARD_TOKEN_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${QUEUE_DASHBOARD_TOKEN_SECRET_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS_KEY}
+                      name: ${API_SECRET_NAME}
+                - name: QUEUE_DASHBOARD_BASE_URL
+                  value: "${QUEUE_DASHBOARD_BASE_URL}"
                 - name: ZEEBE_ADDRESS
                   valueFrom:
                     secretKeyRef:
@@ -508,6 +520,12 @@ parameters:
   - name: REDIS_PASSWORD_KEY
     value: redis-password
   - name: QUEUE_PREFIX
+    required: true
+  - name: QUEUE_DASHBOARD_TOKEN_SECRET_KEY
+    value: queue-dashboard-token-secret
+  - name: QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS_KEY
+    value: queue-dashboard-token-expiration-seconds
+  - name: QUEUE_DASHBOARD_BASE_URL
     required: true
   - name: APPLICATION_ARCHIVE_DAYS
     require: true
