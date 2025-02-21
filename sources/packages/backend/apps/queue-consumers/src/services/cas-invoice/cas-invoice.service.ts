@@ -120,9 +120,7 @@ export class CASInvoiceService {
     summary.info(
       `Processing pending invoice: ${pendingInvoice.invoiceNumber}.`,
     );
-    const pendingInvoicePayload = await this.getPendingInvoicePayload(
-      pendingInvoice,
-    );
+    const pendingInvoicePayload = this.getPendingInvoicePayload(pendingInvoice);
     summary.info(`Pending invoice payload: ${pendingInvoicePayload}.`);
     try {
       const response = await this.casService.sendPendingInvoices(
@@ -149,9 +147,9 @@ export class CASInvoiceService {
    * @param pendingInvoice pending invoice.
    * @returns pending invoice payload.
    */
-  private async getPendingInvoicePayload(
+  private getPendingInvoicePayload(
     pendingInvoice: CASInvoice,
-  ): Promise<PendingInvoicePayload> {
+  ): PendingInvoicePayload {
     // Fixed values as constants
     const INVOICE_TYPE = "Standard";
     const INVOICE_AMOUNT = 0;

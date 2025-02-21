@@ -136,25 +136,21 @@ export class CASService {
     pendingInvoicePayload: PendingInvoicePayload,
   ): Promise<SendPendingInvoicesResponse> {
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/apinvoice/`;
+    let response;
     try {
       const config = await this.getAuthConfig();
-      const response = await this.httpService.axiosRef.post(
+      response = await this.httpService.axiosRef.post(
         url,
         pendingInvoicePayload,
         config,
       );
-      return {
-        response: {
-          invoice_number: response.data.invoice_number,
-          CAS_RETURNED_MESSAGES: response.data[CAS_RETURNED_MESSAGES],
-        },
-      };
     } catch (error: unknown) {
       this.handleBadRequestError(
         error,
         "Error while sending pending invoices to CAS.",
       );
     }
+    return response?.data;
   }
 
   /**
