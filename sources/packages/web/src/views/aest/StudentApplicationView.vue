@@ -42,7 +42,11 @@
                 @click="approveChangeRequest"
               />
               <v-divider-inset-opaque />
-              <v-list-item base-color="danger" title="Decline change request" />
+              <v-list-item
+                base-color="danger"
+                title="Decline change request"
+                @click="declineChangeRequest"
+              />
             </v-list>
           </v-menu>
         </template>
@@ -294,6 +298,16 @@ export default defineComponent({
       if (props.versionApplicationId) {
         await ApplicationService.shared.assessApplicationChangeRequest(
           props.versionApplicationId,
+          { editStatus: ApplicationEditStatus.EditedWithApproval },
+        );
+      }
+    };
+
+    const declineChangeRequest = async () => {
+      if (props.versionApplicationId) {
+        await ApplicationService.shared.assessApplicationChangeRequest(
+          props.versionApplicationId,
+          { editStatus: ApplicationEditStatus.EditDeclined },
         );
       }
     };
@@ -308,6 +322,7 @@ export default defineComponent({
       ApplicationEditStatus,
       BannerTypes,
       approveChangeRequest,
+      declineChangeRequest,
       changeRequestModel,
     };
   },

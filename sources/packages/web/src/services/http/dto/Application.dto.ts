@@ -182,3 +182,9 @@ export interface ApplicationVersionAPIOutDTO {
 export interface ApplicationOverallDetailsAPIOutDTO {
   previousVersions: ApplicationVersionAPIOutDTO[];
 }
+
+export interface AssessApplicationChangeRequestAPIInDTO {
+  editStatus:
+    | ApplicationEditStatus.EditDeclined
+    | ApplicationEditStatus.EditedWithApproval;
+}

@@ -28,6 +28,7 @@ import {
   StudentAssessmentStatus,
   FileOriginType,
   ApplicationEditStatus,
+  DisbursementScheduleStatus,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -2056,7 +2057,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   async assessApplicationChangeRequest(
     applicationId: number,
-    applicationEditStatus: ApplicationEditStatus,
+    applicationEditStatus:
+      | ApplicationEditStatus.EditDeclined
+      | ApplicationEditStatus.EditedWithApproval,
     auditUserId: number,
   ): Promise<void> {
     await this.dataSource.transaction(async (entityManager) => {

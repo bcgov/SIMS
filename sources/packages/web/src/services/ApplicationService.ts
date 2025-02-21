@@ -21,6 +21,7 @@ import {
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
+  AssessApplicationChangeRequestAPIInDTO,
 } from "@/services/http/dto";
 
 export class ApplicationService {
@@ -224,7 +225,13 @@ export class ApplicationService {
     return ApiClient.Application.getApplicationOverallDetails(applicationId);
   }
 
-  async assessApplicationChangeRequest(applicationId: number): Promise<void> {
-    await ApiClient.Application.assessApplicationChangeRequest(applicationId);
+  async assessApplicationChangeRequest(
+    applicationId: number,
+    payload: AssessApplicationChangeRequestAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Application.assessApplicationChangeRequest(
+      applicationId,
+      payload,
+    );
   }
 }

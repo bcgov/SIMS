@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   DefaultValuePipe,
   Get,
@@ -22,6 +23,7 @@ import {
   InProgressApplicationDetailsAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
   ApplicationFormData,
+  AssessApplicationChangeRequestAPIInDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -287,12 +289,13 @@ export class ApplicationAESTController extends BaseController {
   @Patch(":applicationId/change-request-approval")
   async assessApplicationChangeRequest(
     @Param("applicationId", ParseIntPipe) applicationId: number,
+    @Body() payload: AssessApplicationChangeRequestAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
       await this.applicationService.assessApplicationChangeRequest(
         applicationId,
-        ApplicationEditStatus.EditedWithApproval,
+        payload.editStatus,
         userToken.userId,
       );
     } catch (error: unknown) {

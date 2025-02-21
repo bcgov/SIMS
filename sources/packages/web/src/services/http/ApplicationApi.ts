@@ -22,6 +22,7 @@ import {
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
+  AssessApplicationChangeRequestAPIInDTO,
 } from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
@@ -248,8 +249,11 @@ export class ApplicationApi extends HttpBaseClient {
     );
   }
 
-  async assessApplicationChangeRequest(applicationId: number): Promise<void> {
+  async assessApplicationChangeRequest(
+    applicationId: number,
+    payload: AssessApplicationChangeRequestAPIInDTO,
+  ): Promise<void> {
     const endpoint = `application/${applicationId}/change-request-approval`;
-    await this.patchCall(this.addClientRoot(endpoint), null);
+    await this.patchCall(this.addClientRoot(endpoint), payload);
   }
 }

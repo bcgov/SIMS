@@ -1,5 +1,11 @@
 import { IntersectionType } from "@nestjs/swagger";
-import { IsObject, IsOptional, IsPositive, Length } from "class-validator";
+import {
+  IsIn,
+  IsObject,
+  IsOptional,
+  IsPositive,
+  Length,
+} from "class-validator";
 import {
   ApplicationExceptionStatus,
   ApplicationStatus,
@@ -230,4 +236,14 @@ export class ApplicationVersionAPIOutDTO {
 
 export class ApplicationOverallDetailsAPIOutDTO {
   previousVersions: ApplicationVersionAPIOutDTO[];
+}
+
+export class AssessApplicationChangeRequestAPIInDTO {
+  @IsIn([
+    ApplicationEditStatus.EditDeclined,
+    ApplicationEditStatus.EditedWithApproval,
+  ])
+  editStatus:
+    | ApplicationEditStatus.EditDeclined
+    | ApplicationEditStatus.EditedWithApproval;
 }
