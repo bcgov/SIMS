@@ -35,9 +35,7 @@ export class SFASIndividualService {
         "individual.pdStatus",
         "individual.ppdStatus",
         "individual.ppdStatusDate",
-        "student.id",
       ])
-      .innerJoin("individual.student", "student")
       .where("lower(individual.lastName) = :lastName", {
         lastName: lastName.toLowerCase(),
       })
@@ -92,24 +90,6 @@ export class SFASIndividualService {
         }),
       )
       .getOne();
-  }
-
-  /**
-   * Search for a record in SFAS table using student details.
-   * @param studentId Student id.
-   * @returns SFAS individual details.
-   */
-  async getSFASOverawards(studentId: number): Promise<SFASIndividual> {
-    return await this.sfasIndividualRepo.findOne({
-      select: {
-        id: true,
-        cslOveraward: true,
-        bcslOveraward: true,
-      },
-      where: {
-        student: { id: studentId },
-      },
-    });
   }
 
   /**

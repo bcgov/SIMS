@@ -10,8 +10,6 @@ import {
   SINValidation,
   StudentAccountApplication,
   StudentUser,
-  DisbursementOveraward,
-  DisbursementOverawardOriginType,
   RestrictionNotificationType,
   StudentRestriction,
   DisabilityStatus,
@@ -43,10 +41,6 @@ import {
   NotificationActionsService,
   SystemUsersService,
 } from "@sims/services";
-import {
-  BC_STUDENT_LOAN_AWARD_CODE,
-  CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
-} from "@sims/services/constants";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -231,11 +225,6 @@ export class StudentService extends RecordDataModelService<Student> {
       }
 
       if (sfasIndividual) {
-        await this.importSFASOverawards(
-          sfasIndividual.student.id,
-          auditUserId,
-          entityManager,
-        );
         // For the newly created student, update the Processed status in the
         // SFAS Restrictions table to false. This will enable for the SFAS
         // Restrictions from previous imports that were originally marked as
@@ -745,49 +734,6 @@ export class StudentService extends RecordDataModelService<Student> {
 
   @InjectLogger()
   logger: LoggerService;
-
-  /**
-   * Search for the student's SFAS data and update overaward values in
-   * disbursement overawards table if any overaward values for BCSL or CSLF exist.
-   * @param studentId student id for finding a SFAS individual.
-   * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param entityManager entityManager to be used to perform the query.
-   */
-  async importSFASOverawards(
-    studentId: number,
-    auditUserId: number,
-    entityManager: EntityManager,
-  ): Promise<void> {
-    const sfasIndividual = await this.sfasIndividualService.getSFASOverawards(
-      studentId,
-    );
-    if (!sfasIndividual) {
-      return;
-    }
-    const overawards: DisbursementOveraward[] = [];
-    if (sfasIndividual.bcslOveraward !== 0) {
-      overawards.push({
-        student: { id: studentId } as Student,
-        disbursementValueCode: BC_STUDENT_LOAN_AWARD_CODE,
-        overawardValue: sfasIndividual.bcslOveraward,
-        originType: DisbursementOverawardOriginType.LegacyOveraward,
-        creator: { id: auditUserId } as User,
-      } as DisbursementOveraward);
-    }
-    if (sfasIndividual.cslOveraward !== 0) {
-      overawards.push({
-        student: { id: studentId } as Student,
-        disbursementValueCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
-        overawardValue: sfasIndividual.cslOveraward,
-        originType: DisbursementOverawardOriginType.LegacyOveraward,
-        creator: { id: auditUserId },
-      } as DisbursementOveraward);
-    }
-    await this.disbursementOverawardService.addLegacyOverawards(
-      overawards,
-      entityManager,
-    );
-  }
 
   /**
    * Get student disability status.

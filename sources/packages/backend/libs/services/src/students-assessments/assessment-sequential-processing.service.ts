@@ -532,9 +532,8 @@ export class AssessmentSequentialProcessingService {
       .addSelect("SUM(sfasApplication.csgdAward)", "CSGD")
       .addSelect("SUM(sfasApplication.bcagAward)", "BCAG")
       .innerJoin("sfasApplication.individual", "sfasIndividual")
-      .innerJoin("sfasIndividual.student", "student")
       .where("sfasApplication.applicationCancelDate IS NULL")
-      .andWhere("student.id = :studentId", { studentId })
+      .andWhere("sfasIndividual.student.id = :studentId", { studentId })
       .andWhere("sfasApplication.startDate >= :startDate", {
         startDate: programYearStartDate,
       })
@@ -577,9 +576,8 @@ export class AssessmentSequentialProcessingService {
       .addSelect("SUM(sfasPTApplication.bcagAward)", "BCAG")
       .addSelect("SUM(sfasPTApplication.csptAward)", "CSPT")
       .innerJoin("sfasPTApplication.individual", "sfasIndividual")
-      .innerJoin("sfasIndividual.student", "student")
       .where("sfasPTApplication.applicationCancelDate IS NULL")
-      .andWhere("student.id = :studentId", { studentId })
+      .andWhere("sfasIndividual.student.id = :studentId", { studentId })
       .andWhere("sfasPTApplication.startDate >= :startDate", {
         startDate: programYearStartDate,
       })
