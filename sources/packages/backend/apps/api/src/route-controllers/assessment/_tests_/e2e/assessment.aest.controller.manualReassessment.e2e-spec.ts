@@ -171,6 +171,7 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
         });
     });
   }
+
   it("Should throw unprocessable entity when the application is archived.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource);
@@ -199,7 +200,8 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
 
   it("Should throw not found when the application is not found.", async () => {
     // Arrange
-    const endpoint = "/aest/assessment/application/9999999/manual-reassessment";
+    const endpoint =
+      "/aest/assessment/application/99999999/manual-reassessment";
     const payload = {
       note: "Testing manual reassessment with an inexistent application.",
     };

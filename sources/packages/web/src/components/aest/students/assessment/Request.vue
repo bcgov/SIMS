@@ -55,7 +55,7 @@
 </template>
 <script lang="ts">
 import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
-import { ref, onMounted, defineComponent } from "vue";
+import { ref, defineComponent, watchEffect } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
@@ -78,6 +78,8 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: true,
+      // The value could be null on load of the component and updated later.
+      default: null,
     },
     showWhenEmpty: {
       type: Boolean,
@@ -93,12 +95,16 @@ export default defineComponent({
     const { dateOnlyLongString } = useFormatters();
 
     const requestedAssessment = ref([] as RequestAssessmentSummaryAPIOutDTO[]);
-    onMounted(async () => {
-      requestedAssessment.value =
-        await StudentAssessmentsService.shared.getAssessmentRequest(
-          props.applicationId,
-          props.studentId,
-        );
+    // Adding watch effect instead of onMounted because
+    // applicationId may not be not available on load.
+    watchEffect(async () => {
+      if (props.applicationId) {
+        requestedAssessment.value =
+          await StudentAssessmentsService.shared.getAssessmentRequest(
+            props.applicationId,
+            props.studentId,
+          );
+      }
     });
 
     const viewRequestForm = (data: RequestAssessmentSummaryAPIOutDTO) => {

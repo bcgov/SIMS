@@ -362,6 +362,7 @@ export class StudentControllerService {
       applicationName: "Financial Aid Application",
       submitted: application.currentAssessment?.submittedDate,
       status: application.applicationStatus,
+      parentApplicationId: application.parentApplication.id,
     };
   };
 
