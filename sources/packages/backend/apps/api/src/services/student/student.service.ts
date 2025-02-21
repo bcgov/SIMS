@@ -749,9 +749,7 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Search for the student's SFAS data and update overaward values in
    * disbursement overawards table if any overaward values for BCSL or CSLF exist.
-   * @param studentId student id for the disbursement overaward record.
-   * @param lastName last name for sfas individuals.
-   * @param sinNumber student's sin number.
+   * @param studentId student id for finding a SFAS individual.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager entityManager to be used to perform the query.
    */

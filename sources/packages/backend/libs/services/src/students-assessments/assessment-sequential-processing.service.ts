@@ -10,7 +10,6 @@ import {
   DisbursementValueType,
   OfferingIntensity,
   SFASApplication,
-  SFASIndividual,
   SFASPartTimeApplications,
   StudentAppeal,
   StudentAssessment,
@@ -43,8 +42,6 @@ export class AssessmentSequentialProcessingService {
     private readonly sfasApplicationsRepo: Repository<SFASApplication>,
     @InjectRepository(SFASPartTimeApplications)
     private readonly sfasPartTimeApplicationsRepo: Repository<SFASPartTimeApplications>,
-    @InjectRepository(SFASIndividual)
-    private readonly sfasIndividualRepo: Repository<SFASIndividual>,
   ) {}
 
   /**

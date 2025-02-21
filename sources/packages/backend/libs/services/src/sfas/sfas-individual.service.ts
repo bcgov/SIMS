@@ -120,33 +120,14 @@ export class SFASIndividualService {
   async getSFASTotalUnsuccessfulCompletionWeeks(
     studentId: number,
   ): Promise<number | null> {
-    const studentData = await this.studentRepo.findOne({
-      select: {
-        id: true,
-        birthDate: true,
-        sinValidation: { sin: true },
-        user: { lastName: true },
-      },
-      relations: {
-        sinValidation: true,
-        user: true,
-      },
-      where: {
-        id: studentId,
-      },
-    });
-    const sin = studentData.sinValidation.sin;
-    const birthDate = studentData.birthDate;
-    const lastName = studentData.user.lastName;
     const sfasIndividualData = await this.sfasIndividualRepo
       .createQueryBuilder("sfasIndividual")
       .select(
         "SUM(sfasIndividual.unsuccessfulCompletion)::int",
         "totalUnsuccessfulWeeks",
       )
-      .where("sin = :sin", { sin })
-      .andWhere("birth_date = :birthDate", { birthDate })
-      .andWhere("LOWER(last_name) = LOWER(:lastName)", { lastName })
+      .innerJoin("sfasIndividual.student", "student")
+      .where("student.id = :studentId", { studentId })
       .getRawOne<SFASIndividualDataSummary>();
     return sfasIndividualData?.totalUnsuccessfulWeeks;
   }

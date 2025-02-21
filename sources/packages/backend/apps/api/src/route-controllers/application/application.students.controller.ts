@@ -300,9 +300,6 @@ export class ApplicationStudentsController extends BaseController {
       submissionResult.data.data.howWillYouBeAttendingTheProgram,
     );
 
-    const student = await this.studentService.getStudentById(
-      studentToken.studentId,
-    );
     // If offering is present, the selected offering's start and end dates will be used.
     let referenceStudyStartDate =
       submissionResult.data.data.selectedOfferingDate;
@@ -317,14 +314,14 @@ export class ApplicationStudentsController extends BaseController {
       await this.applicationService.validateOverlappingDates(
         applicationId,
         studentToken.userId,
-        student.id,
+        studentToken.studentId,
         referenceStudyStartDate,
         referencedStudyEndDate,
       );
       await this.applicationService.submitApplication(
         applicationId,
         studentToken.userId,
-        student.id,
+        studentToken.studentId,
         programYear.id,
         submissionResult.data.data,
         payload.associatedFiles,

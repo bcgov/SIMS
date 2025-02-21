@@ -34,9 +34,8 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
       .createQueryBuilder("sfasPTApplication")
       .select(["sfasPTApplication.id"])
       .innerJoin("sfasPTApplication.individual", "sfasIndividual")
-      .innerJoin("sfasIndividual.student", "student")
       .where("sfasPTApplication.applicationCancelDate IS NULL")
-      .andWhere("student.id = :studentId", { studentId })
+      .andWhere("sfasIndividual.student.id = :studentId", { studentId })
       .andWhere(
         new Brackets((qb) => {
           qb.where(
