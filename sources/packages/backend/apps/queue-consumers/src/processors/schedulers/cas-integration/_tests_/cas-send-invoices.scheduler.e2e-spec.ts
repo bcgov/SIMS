@@ -125,14 +125,10 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     );
     // Creating variables to provide easy access to some nested values.
     // Full-time related variables.
-    const fullTimeStudent =
-      fullTimeInvoice.disbursementReceipt.disbursementSchedule.studentAssessment
-        .application.student;
-    const fullTimeDocumentNumber =
-      fullTimeInvoice.disbursementReceipt.disbursementSchedule.documentNumber.toString();
-    const fullTimeGLDate = getPSTPDTDateTime(
-      fullTimeInvoice.disbursementReceipt.createdAt,
-    );
+    fullTimeInvoice.disbursementReceipt.disbursementSchedule.studentAssessment
+      .application.student;
+    fullTimeInvoice.disbursementReceipt.disbursementSchedule.documentNumber.toString();
+    getPSTPDTDateTime(fullTimeInvoice.disbursementReceipt.createdAt);
 
     // Queued job.
     const mockedJob = mockBullJob<void>();

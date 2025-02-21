@@ -22,8 +22,8 @@ import { DataSource } from "typeorm";
 @Injectable()
 export class CASInvoiceService {
   constructor(
-    private readonly dataSource: DataSource,
     private readonly casService: CASService,
+    private readonly dataSource: DataSource,
   ) {}
   /**
    * Get the list of pending invoices to be sent from the approved batch.
