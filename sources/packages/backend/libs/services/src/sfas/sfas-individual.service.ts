@@ -106,8 +106,7 @@ export class SFASIndividualService {
         "SUM(sfasIndividual.unsuccessfulCompletion)::int",
         "totalUnsuccessfulWeeks",
       )
-      .innerJoin("sfasIndividual.student", "student")
-      .where("student.id = :studentId", { studentId })
+      .where("sfasIndividual.student.id = :studentId", { studentId })
       .getRawOne<SFASIndividualDataSummary>();
     return sfasIndividualData?.totalUnsuccessfulWeeks;
   }
