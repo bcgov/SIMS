@@ -27,18 +27,23 @@ const tokenCache: Record<string, TokenCacheResponse> = {};
  * cache key when there are variations of a token under the same client.
  * For instance, for the Ministry, a token for each group can be acquired.
  * @param authorizedParty Keycloak client.
- * @param credentials user and password to acquire the token (the user must have
- * a hardcoded password to bypass the Keycloak identity provider).
- * @param uniqueTokenCache different cache key when there are variations of
- * a token under the same client
+ * @param options options
+ * - `userPasswordCredential` credential to obtain authentication token.
+ * - `clientSecret` client secret to obtain authentication token.
+ * - `uniqueTokenCache` different cache key when there are variations of
+ *    a token under the same client.
  * @returns a token that can be used to perform a API call. Intended to be
  * used only for E2E tests.
  */
 export async function getCachedToken(
   authorizedParty: AuthorizedParties,
-  credentials: UserPasswordCredential,
-  uniqueTokenCache = "",
+  options: {
+    userPasswordCredential?: UserPasswordCredential;
+    clientSecret?: string;
+    uniqueTokenCache?: string;
+  },
 ): Promise<string> {
+  const uniqueTokenCache = options.uniqueTokenCache ?? "";
   const tokenCacheKey = `e2e_token_cache_${authorizedParty}${uniqueTokenCache}`;
   if (
     !tokenCache[tokenCacheKey] ||
@@ -49,9 +54,8 @@ export async function getCachedToken(
   ) {
     await KeycloakConfig.load();
     const aestToken = await KeycloakService.shared.getToken(
-      credentials.userName,
-      credentials.password,
       authorizedParty,
+      options,
     );
     const decodedToken = jwtService.decode(aestToken.access_token);
     tokenCache[tokenCacheKey] = {
