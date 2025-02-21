@@ -46,7 +46,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { IUserToken, Role } from "../../auth";
-import { ApplicationStatus } from "@sims/sims-db";
+import { ApplicationEditStatus, ApplicationStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -281,5 +281,29 @@ export class ApplicationAESTController extends BaseController {
         submittedDate: application.submittedDate,
       })),
     };
+  }
+
+  @Post(":applicationId/change-request-approval")
+  async assessApplicationChangeRequest(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    try {
+      await this.applicationService.assessApplicationChangeRequest(
+        applicationId,
+        ApplicationEditStatus.EditedWithApproval,
+        userToken.userId,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case APPLICATION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+            throw new UnprocessableEntityException(error.message);
+        }
+      }
+      throw error;
+    }
   }
 }

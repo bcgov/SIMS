@@ -777,6 +777,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: true,
         pirStatus: true,
         applicationStatusUpdatedOn: true,
+        applicationEditStatus: true,
         applicationNumber: true,
         pirDeniedOtherDesc: true,
         submittedDate: true,
@@ -2050,6 +2051,85 @@ export class ApplicationService extends RecordDataModelService<Application> {
         submittedDate: "DESC",
       },
       take: options?.limit,
+    });
+  }
+
+  async assessApplicationChangeRequest(
+    applicationId: number,
+    applicationEditStatus: ApplicationEditStatus,
+    auditUserId: number,
+  ): Promise<void> {
+    await this.dataSource.transaction(async (entityManager) => {
+      const applicationRepo = entityManager.getRepository(Application);
+      const application = await applicationRepo.findOne({
+        select: {
+          id: true,
+          applicationStatus: true,
+          applicationEditStatus: true,
+          currentAssessment: {
+            id: true,
+          },
+          precedingApplication: {
+            id: true,
+            applicationStatus: true,
+            currentAssessment: {
+              id: true,
+              offering: {
+                id: true,
+              },
+              studentAppeal: {
+                id: true,
+              },
+            },
+          },
+        },
+        relations: {
+          currentAssessment: true,
+          precedingApplication: {
+            currentAssessment: { offering: true, studentAppeal: true },
+          },
+        },
+        where: {
+          id: applicationId,
+        },
+      });
+      if (!application) {
+        throw new CustomNamedError(
+          "Application not found.",
+          APPLICATION_NOT_FOUND,
+        );
+      }
+      if (
+        application.applicationEditStatus !==
+        ApplicationEditStatus.EditPendingApproval
+      ) {
+        throw new CustomNamedError(
+          `Application should have its edit status defined as ${ApplicationEditStatus.EditPendingApproval} to allow a decision to be updated.`,
+          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+        );
+      }
+      // TODO: add audit columns.
+      const now = new Date();
+      const auditUser = { id: auditUserId } as User;
+      application.applicationEditStatus = applicationEditStatus;
+      application.modifier = auditUser;
+      application.updatedAt = now;
+
+      if (applicationEditStatus === ApplicationEditStatus.EditedWithApproval) {
+        // Update application being replaced.
+        const applicationToBeReplaced = application.precedingApplication;
+        applicationToBeReplaced.applicationStatus = ApplicationStatus.Edited;
+        applicationToBeReplaced.applicationStatusUpdatedOn = now;
+        // Update application taking over, copying some values from application being replaced.
+        application.applicationStatus = ApplicationStatus.Completed;
+        application.applicationStatusUpdatedOn = now;
+        // Copy the most recent values from offering and student appeals.
+        application.currentAssessment.offering =
+          applicationToBeReplaced.currentAssessment.offering;
+        application.currentAssessment.studentAppeal =
+          applicationToBeReplaced.currentAssessment.studentAppeal;
+      }
+      await applicationRepo.save(application);
     });
   }
 

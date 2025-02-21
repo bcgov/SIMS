@@ -469,6 +469,7 @@ export class ApplicationControllerService {
       data: application.data,
       id: application.id,
       applicationStatus: application.applicationStatus,
+      applicationEditStatus: application.applicationEditStatus,
       applicationNumber: application.applicationNumber,
       applicationFormName: application.programYear.formName,
       applicationProgramYearID: application.programYear.id,

@@ -767,8 +767,8 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationHasNOAApproval = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
-    <bpmn:sequenceFlow id="Flow_1wkpr1a" name="Application &#34;Completed&#34; or &#34;Edited with approval&#34;" sourceRef="Gateway_1xse027" targetRef="update-noa-status-to-not-required-application-completed-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationStatus = "Completed" or applicationEditStatus = "Edited with approval"</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_1wkpr1a" name="Application &#34;Completed&#34;" sourceRef="Gateway_1xse027" targetRef="update-noa-status-to-not-required-application-completed-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationStatus = "Completed"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1o87o98" sourceRef="update-noa-status-to-not-required-application-completed-task" targetRef="Gateway_0f9knk0" />
     <bpmn:sequenceFlow id="Flow_1cb5fpw" name="Application Not Completed" sourceRef="Gateway_1xse027" targetRef="Gateway_1m2js1c" />
@@ -1634,7 +1634,7 @@
         <di:waypoint x="3610" y="1780" />
         <di:waypoint x="3940" y="1780" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3612" y="1723" width="76" height="53" />
+          <dc:Bounds x="3620" y="1736" width="62" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1o87o98_di" bpmnElement="Flow_1o87o98">

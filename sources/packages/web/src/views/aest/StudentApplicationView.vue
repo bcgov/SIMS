@@ -11,6 +11,44 @@
       >
       </header-navigator>
     </template>
+    <template
+      #alerts
+      v-if="
+        applicationDetail.applicationEditStatus ===
+        ApplicationEditStatus.EditPendingApproval
+      "
+      ><banner
+        class="mb-2"
+        :type="BannerTypes.Success"
+        header="Change request approved"
+        summary="This application had a change request approved by Doe, John on Feb 20th 2025."
+      >
+        <template #actions>
+          <v-menu class="label-bold-menu" v-if="false">
+            <template v-slot:activator="{ props }">
+              <v-btn
+                color="primary"
+                v-bind="props"
+                prepend-icon="fa:fa fa-chevron-circle-down"
+                class="float-right"
+              >
+                Actions
+              </v-btn>
+            </template>
+            <v-list
+              active-class="active-list-item"
+              density="compact"
+              bg-color="default"
+              color="primary"
+            >
+              <v-list-item title="Approve change request" />
+              <v-divider-inset-opaque />
+              <v-list-item base-color="danger" title="Decline change request" />
+            </v-list>
+          </v-menu>
+        </template>
+      </banner>
+    </template>
     <h2 class="color-blue pb-4">
       Student Application Details
       {{ emptyStringFiller(applicationDetail.applicationNumber) }}
@@ -37,6 +75,8 @@ import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { useFormioUtils } from "@/composables";
 import {
+  ApplicationEditStatus,
+  BannerTypes,
   ChangeTypes,
   FormIOComponent,
   FormIOForm,
@@ -211,6 +251,8 @@ export default defineComponent({
       selectedForm,
       AESTRoutesConst,
       emptyStringFiller,
+      ApplicationEditStatus,
+      BannerTypes,
     };
   },
 });
