@@ -29,6 +29,42 @@ const tokenCache: Record<string, TokenCacheResponse> = {};
  * @param authorizedParty Keycloak client.
  * @param options options
  * - `userPasswordCredential` credential to obtain authentication token.
+ * - `uniqueTokenCache` different cache key when there are variations of
+ *    a token under the same client.
+ */
+export async function getCachedToken(
+  authorizedParty: AuthorizedParties,
+  options: {
+    userPasswordCredential: UserPasswordCredential;
+    uniqueTokenCache?: string;
+  },
+): Promise<string>;
+
+/**
+ * Get a token for a Keycloak client optionally using a different
+ * cache key when there are variations of a token under the same client.
+ * For instance, for the Ministry, a token for each group can be acquired.
+ * @param authorizedParty keycloak client.
+ * @param options options
+ * - `clientSecret` client secret to obtain authentication token.
+ * - `uniqueTokenCache` different cache key when there are variations of
+ *    a token under the same client.
+ */
+export async function getCachedToken(
+  authorizedParty: AuthorizedParties,
+  options: {
+    clientSecret: string;
+    uniqueTokenCache?: string;
+  },
+): Promise<string>;
+
+/**
+ * Get a token for a Keycloak client optionally using a different
+ * cache key when there are variations of a token under the same client.
+ * For instance, for the Ministry, a token for each group can be acquired.
+ * @param authorizedParty Keycloak client.
+ * @param options options
+ * - `userPasswordCredential` credential to obtain authentication token.
  * - `clientSecret` client secret to obtain authentication token.
  * - `uniqueTokenCache` different cache key when there are variations of
  *    a token under the same client.
