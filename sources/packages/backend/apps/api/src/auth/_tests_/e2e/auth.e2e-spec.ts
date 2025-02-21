@@ -12,7 +12,11 @@ import {
   E2EDataSources,
   getProviderInstanceForModule,
 } from "@sims/test-utils";
-import { ConfigModule, ConfigService } from "@sims/utilities/config";
+import {
+  ConfigModule,
+  ConfigService,
+  UserPasswordCredential,
+} from "@sims/utilities/config";
 import { createZeebeModuleMock } from "@sims/test-utils/mocks";
 import { AppModule } from "../../../app.module";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
@@ -52,27 +56,29 @@ describe("Authentication (e2e)", () => {
 
   beforeAll(async () => {
     await KeycloakConfig.load();
-    const studentToken = await KeycloakService.shared.getToken(
-      process.env.E2E_TEST_STUDENT_USERNAME,
-      process.env.E2E_TEST_STUDENT_PASSWORD,
-      "student",
-    );
+    const userPasswordCredentialStudent: UserPasswordCredential = {
+      userName: process.env.E2E_TEST_STUDENT_USERNAME,
+      password: process.env.E2E_TEST_STUDENT_PASSWORD,
+    };
+    const studentToken = await KeycloakService.shared.getToken("student", {
+      userPasswordCredential: userPasswordCredentialStudent,
+    });
     studentAccessToken = studentToken.access_token;
     const jwtService = new JwtService();
     studentDecodedToken = jwtService.decode(studentAccessToken);
 
-    const aestToken = await KeycloakService.shared.getToken(
-      process.env.E2E_TEST_STUDENT_USERNAME,
-      process.env.E2E_TEST_STUDENT_PASSWORD,
-      "aest",
-    );
+    const aestToken = await KeycloakService.shared.getToken("aest", {
+      userPasswordCredential: userPasswordCredentialStudent,
+    });
     aestAccessToken = aestToken.access_token;
 
-    const collegEToken = await KeycloakService.shared.getToken(
-      SIMS2_COLLE_USER,
-      process.env.E2E_TEST_PASSWORD,
-      "institution",
-    );
+    const userPasswordCredentialInstitution: UserPasswordCredential = {
+      userName: SIMS2_COLLE_USER,
+      password: process.env.E2E_TEST_PASSWORD,
+    };
+    const collegEToken = await KeycloakService.shared.getToken("institution", {
+      userPasswordCredential: userPasswordCredentialInstitution,
+    });
     collegEInstitutionReadOnlyUserAccessToken = collegEToken.access_token;
 
     moduleFixture = await Test.createTestingModule({
