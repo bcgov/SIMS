@@ -309,9 +309,10 @@ export class ApplicationDetailsAPIOutDTO {
 }
 
 /**
- * Student and application details.
+ * Student search result.
  */
-export class StudentAndApplicationDetailsAPIOutDTO {
+export class StudentSearchResultAPIOutDTO {
+  isLegacy: boolean;
   givenNames: string;
   lastName: string;
   sin: string;

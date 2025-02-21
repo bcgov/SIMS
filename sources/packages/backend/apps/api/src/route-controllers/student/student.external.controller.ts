@@ -17,9 +17,10 @@ import BaseController from "../BaseController";
 import { StudentInformationService } from "../../services";
 import {
   ExternalSearchStudentAPIInDTO,
-  StudentAndApplicationDetailsAPIOutDTO,
+  StudentSearchResultAPIOutDTO,
 } from "./models/student.dto";
-import { Student } from "@sims/sims-db";
+import { SFASIndividual, Student } from "@sims/sims-db";
+type StudentDetails = Omit<StudentSearchResultAPIOutDTO, "applications">;
 
 /**
  * Student controller for external client.
@@ -46,7 +47,7 @@ export class StudentExternalController extends BaseController {
   @HttpCode(HttpStatus.OK)
   async searchStudentDetails(
     @Body() payload: ExternalSearchStudentAPIInDTO,
-  ): Promise<StudentAndApplicationDetailsAPIOutDTO> {
+  ): Promise<StudentSearchResultAPIOutDTO> {
     const studentPromise = this.studentInformationService.getStudentBySIN(
       payload.sin,
     );
@@ -59,18 +60,26 @@ export class StudentExternalController extends BaseController {
     if (!student && !sfasIndividual) {
       throw new NotFoundException("Student not found.");
     }
-    return this.transformStudentDetails(student);
+    // If the student is found in SIMS, return the student details.
+    // Otherwise, return the legacy student details.
+    const studentDetails = student
+      ? this.transformStudentDetails(student)
+      : this.transformLegacyStudentDetails(sfasIndividual);
+
+    return {
+      ...studentDetails,
+      applications: [],
+    };
   }
 
   /**
-   * Transform to student and application details format.
-   * @param student
-   * @returns
+   * Transform to student details.
+   * @param student student.
+   * @returns student details.
    */
-  private transformStudentDetails(
-    student: Student,
-  ): StudentAndApplicationDetailsAPIOutDTO {
+  private transformStudentDetails(student: Student): StudentDetails {
     return {
+      isLegacy: false,
       givenNames: student.user.firstName,
       lastName: student.user.lastName,
       sin: student.sinValidation.sin,
@@ -84,7 +93,32 @@ export class StudentExternalController extends BaseController {
         country: student.contactInfo.address.country,
         postalCode: student.contactInfo.address.postalCode,
       },
-      applications: [],
+    };
+  }
+
+  /**
+   * Transform sfas individual to student details.
+   * @param student student.
+   * @returns student details.
+   */
+  private transformLegacyStudentDetails(
+    sfasIndividual: SFASIndividual,
+  ): StudentDetails {
+    return {
+      isLegacy: true,
+      givenNames: sfasIndividual.firstName,
+      lastName: sfasIndividual.lastName,
+      sin: sfasIndividual.sin,
+      dateOfBirth: sfasIndividual.birthDate,
+      phoneNumber: sfasIndividual.phoneNumber?.toString(),
+      address: {
+        addressLine1: sfasIndividual.addressLine1,
+        addressLine2: sfasIndividual.addressLine2,
+        city: sfasIndividual.city,
+        provinceState: sfasIndividual.provinceState,
+        country: sfasIndividual.country,
+        postalCode: sfasIndividual.postalZipCode,
+      },
     };
   }
 }

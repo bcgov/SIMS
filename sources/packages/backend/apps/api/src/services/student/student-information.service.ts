@@ -26,6 +26,7 @@ export class StudentInformationService {
         sinValidation: { id: true, sin: true },
         user: { id: true, firstName: true, lastName: true, email: true },
       },
+      relations: { sinValidation: true, user: true },
       where: { sinValidation: { sin, isValidSIN: true } },
     });
   }
