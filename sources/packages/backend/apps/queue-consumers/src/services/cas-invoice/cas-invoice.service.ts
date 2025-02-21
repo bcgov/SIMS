@@ -13,10 +13,10 @@ import {
 import {
   processInParallel,
   CustomNamedError,
-  getISODateOnlyString,
+  getAbbreviatedDateOnlyFormat,
 } from "@sims/utilities";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { PendingInvoiceResult } from "apps/queue-consumers/src/services/cas-invoice/cas-invoice.models";
+import { PendingInvoiceResult } from "./cas-invoice.models";
 import { DataSource } from "typeorm";
 
 @Injectable()
@@ -64,6 +64,11 @@ export class CASInvoiceService {
         },
         relations: {
           casInvoiceBatch: true,
+          disbursementReceipt: true,
+          casSupplier: true,
+          casInvoiceDetails: {
+            casDistributionAccount: true,
+          },
         },
         where: {
           casInvoiceBatch: {
@@ -88,8 +93,8 @@ export class CASInvoiceService {
   ): Promise<number> {
     // Process each invoice in parallel.
     const processesResults = await processInParallel(
-      (studentSupplier) =>
-        this.processInvoice(studentSupplier, parentProcessSummary),
+      (pendingInvoice) =>
+        this.processInvoice(pendingInvoice, parentProcessSummary),
       pendingInvoices,
     );
     // Get the number of updated invoices.
@@ -120,7 +125,7 @@ export class CASInvoiceService {
     );
     summary.info(`Pending invoice payload: ${pendingInvoicePayload}.`);
     try {
-      const response = this.casService.sendPendingInvoices(
+      const response = await this.casService.sendPendingInvoices(
         pendingInvoicePayload,
       );
     } catch (error: unknown) {
@@ -144,7 +149,7 @@ export class CASInvoiceService {
    * @param pendingInvoice pending invoice.
    * @returns pending invoice payload.
    */
-  async getPendingInvoicePayload(
+  private async getPendingInvoicePayload(
     pendingInvoice: CASInvoice,
   ): Promise<PendingInvoicePayload> {
     // Fixed values as constants
@@ -173,11 +178,13 @@ export class CASInvoiceService {
       supplierNumber: pendingInvoice.casSupplier.supplierNumber,
       supplierSiteNumber:
         pendingInvoice.casSupplier.supplierAddress.supplierSiteCode,
-      invoiceDate: pendingInvoice.disbursementReceipt.createdAt.toISOString(),
+      invoiceDate: getAbbreviatedDateOnlyFormat(
+        pendingInvoice.disbursementReceipt.createdAt,
+      ),
       invoiceNumber: pendingInvoice.invoiceNumber,
       invoiceAmount: INVOICE_AMOUNT,
       payGroup: PAY_GROUP,
-      dateInvoiceReceived: getISODateOnlyString(
+      dateInvoiceReceived: getAbbreviatedDateOnlyFormat(
         pendingInvoice.disbursementReceipt.fileDate,
       ),
       remittanceCode: REMITTANCE_CODE,
@@ -185,7 +192,9 @@ export class CASInvoiceService {
       terms: TERMS,
       remittanceMessage1: EMPTY_STRING,
       remittanceMessage2: EMPTY_STRING,
-      glDate: getISODateOnlyString(pendingInvoice.casInvoiceBatch.createdAt),
+      glDate: getAbbreviatedDateOnlyFormat(
+        pendingInvoice.casInvoiceBatch.createdAt,
+      ),
       invoiceBatchName: pendingInvoice.casInvoiceBatch.batchName,
       currencyCode: CURRENCY_CODE,
       invoiceLineDetails: invoiceLineDetails,

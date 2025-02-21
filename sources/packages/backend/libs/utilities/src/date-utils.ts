@@ -25,6 +25,7 @@ export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 export const TIMESTAMP_CONTINUOUS_FORMAT = "YYYY-MM-DD_HH.mm.ss";
 export const TIMESTAMP_CONTINUOUS_EXTENDED_FORMAT = "YYYYMMDD-HHmmssSSS";
 export const PST_TIMEZONE = "America/Vancouver";
+export const ABBREVIATED_MONTH_DATE_FORMAT = "DD-MMM-YYYY";
 
 /**
  * get utc date time now
@@ -168,6 +169,20 @@ export function getISODateOnlyString(date?: Date | string): string | null {
 export function getDateOnlyFormat(date?: string | Date): string | undefined {
   if (date) {
     return dayjs(date).format(DATE_ONLY_FORMAT);
+  }
+  return undefined;
+}
+
+/**
+ * Get the abbreviated date format(22 Mar 2021) for the date given
+ * @param date date to be formatted.
+ * @returns abbreviated date format like 22 Mar 2021
+ */
+export function getAbbreviatedDateOnlyFormat(
+  date?: string | Date,
+): string | undefined {
+  if (date) {
+    return dayjs(date).format(ABBREVIATED_MONTH_DATE_FORMAT);
   }
   return undefined;
 }
