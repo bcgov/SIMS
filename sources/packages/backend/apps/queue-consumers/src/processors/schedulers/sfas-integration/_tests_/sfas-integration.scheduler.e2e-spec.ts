@@ -529,30 +529,21 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       "where the record type is the individual data record.",
     async () => {
       // Arrange
-      let student = await db.student.findOne({
-        where: {
-          birthDate: getISODateOnlyString(new Date("1966-07-21")),
-          user: { lastName: "INNAVOIG" },
-          sinValidation: { sin: "121380175" },
+      const user = createFakeUser();
+      user.lastName = "INNAVOIG";
+      const student = await saveFakeStudent(
+        db.dataSource,
+        { user },
+        { initialValue: { birthDate: "1966-07-21" } },
+      );
+      const sinValidation = createFakeSINValidation(
+        {
+          student,
         },
-      });
-      if (!student) {
-        const user = createFakeUser();
-        user.lastName = "INNAVOIG";
-        student = await saveFakeStudent(
-          db.dataSource,
-          { user },
-          { initialValue: { birthDate: "1966-07-21" } },
-        );
-        const sinValidation = createFakeSINValidation(
-          {
-            student,
-          },
-          { initialValue: { sin: "121380175" } },
-        );
-        student.sinValidation = sinValidation;
-        await db.student.save(student);
-      }
+        { initialValue: { sin: "121380175" } },
+      );
+      student.sinValidation = sinValidation;
+      await db.student.save(student);
       // Queued job.
       const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [
