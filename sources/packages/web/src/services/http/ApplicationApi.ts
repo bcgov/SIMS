@@ -247,4 +247,9 @@ export class ApplicationApi extends HttpBaseClient {
       this.addClientRoot(endpoint),
     );
   }
+
+  async assessApplicationChangeRequest(applicationId: number): Promise<void> {
+    const endpoint = `application/${applicationId}/change-request-approval`;
+    await this.patchCall(this.addClientRoot(endpoint), null);
+  }
 }

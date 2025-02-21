@@ -2044,8 +2044,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         data: !!options?.loadDynamicData as unknown,
       },
       where: {
-        submittedDate: LessThan(application.submittedDate),
         applicationNumber: application.applicationNumber,
+        id: Not(applicationId),
       },
       order: {
         submittedDate: "DESC",

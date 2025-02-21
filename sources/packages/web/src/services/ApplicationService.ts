@@ -223,4 +223,8 @@ export class ApplicationService {
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
     return ApiClient.Application.getApplicationOverallDetails(applicationId);
   }
+
+  async assessApplicationChangeRequest(applicationId: number): Promise<void> {
+    await ApiClient.Application.assessApplicationChangeRequest(applicationId);
+  }
 }

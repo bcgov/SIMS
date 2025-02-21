@@ -11,20 +11,16 @@
       >
       </header-navigator>
     </template>
-    <template
-      #alerts
-      v-if="
-        applicationDetail.applicationEditStatus ===
-        ApplicationEditStatus.EditPendingApproval
-      "
+    <template #alerts
       ><banner
+        v-if="changeRequestModel.hasChangeRequest"
         class="mb-2"
-        :type="BannerTypes.Success"
-        header="Change request approved"
-        summary="This application had a change request approved by Doe, John on Feb 20th 2025."
+        :type="changeRequestModel.bannerType"
+        :header="changeRequestModel.bannerHeader"
+        :summary="changeRequestModel.bannerSummary"
       >
         <template #actions>
-          <v-menu class="label-bold-menu" v-if="false">
+          <v-menu class="label-bold-menu" v-if="changeRequestModel.showActions">
             <template v-slot:activator="{ props }">
               <v-btn
                 color="primary"
@@ -41,7 +37,10 @@
               bg-color="default"
               color="primary"
             >
-              <v-list-item title="Approve change request" />
+              <v-list-item
+                title="Approve change request"
+                @click="approveChangeRequest"
+              />
               <v-divider-inset-opaque />
               <v-list-item base-color="danger" title="Decline change request" />
             </v-list>
@@ -64,7 +63,7 @@
   <router-view />
 </template>
 <script lang="ts">
-import { onMounted, ref, defineComponent } from "vue";
+import { onMounted, ref, defineComponent, reactive } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import {
   ApplicationDataChangeAPIOutDTO,
@@ -82,6 +81,14 @@ import {
   FormIOForm,
   FromIOComponentTypes,
 } from "@/types";
+
+interface ChangeRequestModel {
+  hasChangeRequest: boolean;
+  bannerType: BannerTypes;
+  bannerHeader: string;
+  bannerSummary: string;
+  showActions: boolean;
+}
 
 export default defineComponent({
   components: {
@@ -108,6 +115,10 @@ export default defineComponent({
     const initialData = ref({});
     const selectedForm = ref();
     let applicationWizard: FormIOForm;
+    const changeRequestModel = reactive({
+      hasChangeRequest: false,
+      showActions: false,
+    } as ChangeRequestModel);
 
     /**
      * Happens when all the form components are rendered, including lists.
@@ -135,6 +146,41 @@ export default defineComponent({
         ...applicationDetail.value.data,
         isReadOnly: true,
       };
+      // Set change request values.
+      switch (applicationDetail.value.applicationEditStatus) {
+        case ApplicationEditStatus.EditPendingApproval:
+          changeRequestModel.bannerHeader = "Change request pending approval";
+          changeRequestModel.bannerSummary =
+            "Please assess the application changes and provide a decision using the available actions.";
+          changeRequestModel.bannerType = BannerTypes.Warning;
+          changeRequestModel.showActions = true;
+          changeRequestModel.hasChangeRequest = true;
+          break;
+        case ApplicationEditStatus.EditInprogress:
+          changeRequestModel.bannerHeader = "Change request in progress";
+          changeRequestModel.bannerSummary =
+            "The requested change is being processed right now and it will be available for Ministry approval once it is ready.";
+          changeRequestModel.bannerType = BannerTypes.Info;
+          changeRequestModel.showActions = false;
+          changeRequestModel.hasChangeRequest = true;
+          break;
+        case ApplicationEditStatus.EditedWithApproval:
+          changeRequestModel.bannerHeader = "Change request approved";
+          changeRequestModel.bannerSummary =
+            "This application is a result of a change request approved by the Ministry on some date by someone.";
+          changeRequestModel.bannerType = BannerTypes.Success;
+          changeRequestModel.showActions = false;
+          changeRequestModel.hasChangeRequest = true;
+          break;
+        case ApplicationEditStatus.EditDeclined:
+          changeRequestModel.bannerHeader = "Change request declined";
+          changeRequestModel.bannerSummary =
+            "This change request was declined by the Ministry on some date by someone.";
+          changeRequestModel.bannerType = BannerTypes.Error;
+          changeRequestModel.showActions = false;
+          changeRequestModel.hasChangeRequest = true;
+          break;
+      }
     });
 
     /**
@@ -244,6 +290,14 @@ export default defineComponent({
       document.getElementById(component.id)?.classList.add(cssClass);
     }
 
+    const approveChangeRequest = async () => {
+      if (props.versionApplicationId) {
+        await ApplicationService.shared.assessApplicationChangeRequest(
+          props.versionApplicationId,
+        );
+      }
+    };
+
     return {
       formRender,
       applicationDetail,
@@ -253,6 +307,8 @@ export default defineComponent({
       emptyStringFiller,
       ApplicationEditStatus,
       BannerTypes,
+      approveChangeRequest,
+      changeRequestModel,
     };
   },
 });

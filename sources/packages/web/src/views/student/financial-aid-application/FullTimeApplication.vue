@@ -41,7 +41,7 @@
     <StudentApplication
       :selectedForm="selectedForm"
       :initialData="initialData"
-      :isReadOnly="isReadOnly"
+      :isReadOnly="isReadOnly && !isEditPostCOE"
       :programYearId="programYearId"
       @formLoadedCallback="loadForm"
       @submitApplication="submitApplication"

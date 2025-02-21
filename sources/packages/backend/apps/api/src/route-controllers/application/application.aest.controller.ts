@@ -6,6 +6,7 @@ import {
   Param,
   ParseBoolPipe,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
   UnprocessableEntityException,
@@ -283,7 +284,7 @@ export class ApplicationAESTController extends BaseController {
     };
   }
 
-  @Post(":applicationId/change-request-approval")
+  @Patch(":applicationId/change-request-approval")
   async assessApplicationChangeRequest(
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: IUserToken,
