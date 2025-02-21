@@ -137,3 +137,67 @@ export class CreateExistingSupplierSiteResponse {
   submittedData: CreateExistingSupplierAndSiteSubmittedData;
   response: CreateSupplierAndSiteResult;
 }
+
+/**
+ * Invoice payload used during the creation of a pending invoice sent to CAS
+ */
+export class PendingInvoicePayload {
+  invoiceType: string; // Using constant
+  supplierNumber: string; // Retrieved from cas_supplier_id
+  supplierSiteNumber: string; // Retrieved from cas_supplier_id
+  invoiceDate: string; // Batch creation date or approval date
+  invoiceNumber: string; // Supplier number concatenated with record id
+  invoiceAmount: number; // Using constant
+  payGroup: string; // Using constant
+  dateInvoiceReceived: string; // Disbursement receipt file date
+  dateGoodsReceived?: string; // Optional, not provided
+  remittanceCode: string; // Using constant
+  specialHandling: string; // Using constant
+  nameLine1?: string; // Optional, not provided
+  nameLine2?: string; // Optional, not provided
+  addressLine1?: string; // Optional, not provided
+  addressLine2?: string; // Optional, not provided
+  addressLine3?: string; // Optional, not provided
+  city?: string; // Optional, not provided
+  country?: string; // Optional, not provided
+  province?: string; // Optional, not provided
+  postalCode?: string; // Optional, not provided
+  qualifiedReceiver?: string; // Optional, not provided
+  terms: string; // Using constant
+  payAloneFlag?: string; // Optional, not provided
+  paymentAdviceComments?: string; // Optional, not provided
+  remittanceMessage1: string; // Using constant
+  remittanceMessage2: string; // Using constant
+  remittanceMessage3?: string; // Optional, not provided
+  glDate: string; // Batch creation date
+  invoiceBatchName: string; // SIMSBATCH + sequence number
+  currencyCode: string; // Using constant
+  invoiceLineDetails: InvoiceLineDetail[]; // Array of InvoiceLineDetail objects
+}
+
+/**
+ * Invoice line detail used during the creation of a pending invoice sent to CAS
+ */
+export class InvoiceLineDetail {
+  invoiceLineNumber: number; // Mandatory, incremental number
+  invoiceLineType: string; // Using constant
+  lineCode: string; // DR or CR
+  invoiceLineAmount: number; // Award(grant) value
+  defaultDistributionAccount: string; // Specific for an award(grant) plus operation type
+  description?: string; // Optional, not provided
+  taxClassificationCode?: string; // Optional, not provided
+  distributionSupplier?: string; // Optional, not provided
+  info1?: string; // Optional, not provided
+  info2?: string; // Optional, not provided
+  info3?: string; // Optional, not provided
+}
+
+/**
+ * Response from CAS when sending pending invoices.
+ */
+export class SendPendingInvoicesResponse {
+  response: {
+    invoice_number?: string;
+    CAS_RETURNED_MESSAGES: string | string[];
+  };
+}

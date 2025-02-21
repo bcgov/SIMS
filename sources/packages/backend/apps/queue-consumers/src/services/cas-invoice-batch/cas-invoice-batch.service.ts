@@ -19,6 +19,7 @@ import { DataSource, EntityManager } from "typeorm";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { CustomNamedError } from "@sims/utilities";
+import { CASService } from "@sims/integrations/cas";
 
 /**
  * Chunk size for inserting invoices. The invoices (and its details) will
@@ -32,6 +33,7 @@ export class CASInvoiceBatchService {
     private readonly dataSource: DataSource,
     private readonly sequenceControlService: SequenceControlService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly casService: CASService,
   ) {}
 
   /**
