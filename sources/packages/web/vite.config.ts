@@ -42,6 +42,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ["vuetify", "@formio/js"],
     exclude: ["vuetify/lib/labs/components.mjs"],
+    force: true,
   },
   server: {
     port: 8080,
@@ -51,10 +52,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          group1: ["@formio/js", "@mdi/font", "@mdi/js"],
+          group1: ["@formio/js"],
           group2: ["vue", "vue-router", "vuex", "vuetify"],
         },
       },
+    },
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true,
     },
   },
 });
