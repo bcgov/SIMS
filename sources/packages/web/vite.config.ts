@@ -1,26 +1,14 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vuetify from "vite-plugin-vuetify";
-import { fileURLToPath } from "url";
+import { fileURLToPath, URL } from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue({
-      template: {
-        transformAssetUrls: {
-          base: null,
-          includeAbsolute: false,
-          tags: {
-            img: ["src"],
-            "v-img": ["src"],
-          },
-        },
-      },
-    }),
+    vue(),
     vuetify({
       autoImport: true,
-      styles: { configFile: "" },
     }),
   ],
   resolve: {
@@ -36,9 +24,7 @@ export default defineConfig({
     ],
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
-      "@assets": fileURLToPath(new URL("./src/assets", import.meta.url)),
-      "~assets": fileURLToPath(new URL("./src/assets", import.meta.url)),
-      "~@": fileURLToPath(new URL("./src", import.meta.url)),
+      formiojs: "formiojs/dist/formio.full.min.js",
     },
   },
   css: {
@@ -59,7 +45,7 @@ export default defineConfig({
     "process.env": process.env,
   },
   optimizeDeps: {
-    include: ["vuetify", "@formio/js"],
+    include: ["vuetify", "@formio/js", "formiojs"],
     exclude: ["vuetify/lib/labs/components.mjs"],
   },
   server: {
