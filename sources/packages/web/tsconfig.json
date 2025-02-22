@@ -16,7 +16,7 @@
     "useUnknownInCatchVariables": false,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["vite/client", "vitest/globals", "node"],
+    "types": ["vite/client", "vitest/globals"],
     "paths": {
       "@/*": ["src/*"]
     },

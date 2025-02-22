@@ -1,9 +1,9 @@
 @import "./base.scss";
 
-// Custom Vuetify styles
 .v-btn {
   text-transform: none !important;
   white-space: nowrap;
+  //TODO: Remove this style once vuetify is stable and appears without black border on button click.
   outline: none !important;
 }
 
