@@ -83,7 +83,7 @@ export class StudentExternalController extends BaseController {
       givenNames: student.user.firstName,
       lastName: student.user.lastName,
       sin: student.sinValidation.sin,
-      dateOfBirth: student.birthDate,
+      birthDate: student.birthDate,
       phoneNumber: student.contactInfo.phone,
       address: {
         addressLine1: student.contactInfo.address.addressLine1,
@@ -109,7 +109,7 @@ export class StudentExternalController extends BaseController {
       givenNames: sfasIndividual.firstName,
       lastName: sfasIndividual.lastName,
       sin: sfasIndividual.sin,
-      dateOfBirth: sfasIndividual.birthDate,
+      birthDate: sfasIndividual.birthDate,
       phoneNumber: sfasIndividual.phoneNumber?.toString(),
       address: {
         addressLine1: sfasIndividual.addressLine1,

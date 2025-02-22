@@ -16,7 +16,7 @@ import { COUNTRY_CANADA, getISODateOnlyString } from "@sims/utilities";
 export function createFakeStudent(
   user?: User,
   relations?: { casSupplier?: CASSupplier },
-  options?: { initialValue: Partial<Student> },
+  options?: { initialValue: Partial<Student>; includeAddressLine2?: boolean },
 ): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();
@@ -36,6 +36,9 @@ export function createFakeStudent(
     },
     phone: faker.phone.phoneNumber(),
   };
+  if (options?.includeAddressLine2) {
+    student.contactInfo.address.addressLine2 = faker.address.secondaryAddress();
+  }
   student.sinConsent = true;
   student.disabilityStatus =
     options?.initialValue?.disabilityStatus ?? DisabilityStatus.NotRequested;
@@ -53,6 +56,7 @@ export function createFakeStudent(
  * @param options student options.
  * - `initialValue` student initial values.
  * - `sinValidationInitialValue` sinValidation initial value.
+ * - `includeAddressLine2` include address line 2.
  * @returns persisted student with relations provided.
  */
 export async function saveFakeStudent(
@@ -66,6 +70,7 @@ export async function saveFakeStudent(
   options?: {
     initialValue?: Partial<Student>;
     sinValidationInitialValue?: Partial<SINValidation>;
+    includeAddressLine2?: boolean;
   },
 ): Promise<Student> {
   const studentRepo = dataSource.getRepository(Student);
@@ -76,6 +81,7 @@ export async function saveFakeStudent(
         { casSupplier: relations?.casSupplier },
         {
           initialValue: options?.initialValue,
+          includeAddressLine2: options?.includeAddressLine2,
         },
       ),
   );

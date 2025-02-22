@@ -316,7 +316,7 @@ export class StudentSearchResultAPIOutDTO {
   givenNames: string;
   lastName: string;
   sin: string;
-  dateOfBirth: string;
+  birthDate: string;
   phoneNumber: string;
   address: AddressAPIOutDTO;
   applications: ApplicationDetailsAPIOutDTO[];
