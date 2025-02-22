@@ -1,4 +1,4 @@
-@use "./global-style-variables.scss" as *;
+@import "./global-style-variables.scss";
 /** Styles for the note component overriding the color and typography of timeline */
 
 .content-header {
