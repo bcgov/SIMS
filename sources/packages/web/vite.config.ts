@@ -5,18 +5,9 @@ import { fileURLToPath, URL } from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  root: "Web UI/public",
+
   plugins: [
-    vue({
-      template: {
-        compilerOptions: {
-          // ...
-        },
-        transformAssetUrls: {
-          // ...
-        },
-      },
-    }),
+    vue(),
     vuetify({
       autoImport: true,
     }),
