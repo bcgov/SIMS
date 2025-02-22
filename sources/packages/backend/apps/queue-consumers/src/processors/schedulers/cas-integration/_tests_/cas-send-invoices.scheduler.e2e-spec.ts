@@ -137,16 +137,9 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     const result = await processor.processQueue(mockedJob.job);
 
     // Assert
-    expect(result).toStrictEqual([
-      "Batch created: SIMS-BATCH-1.",
-      "Invoices created: 1.",
-    ]);
-    expect(
-      mockedJob.containLogMessages([
-        "Executing CAS invoices batches creation.",
-        "Checking for pending receipts.",
-        "Found 1 pending receipts.",
-      ]),
-    ).toBe(true);
+    expect(result).toStrictEqual(["Process finalized with success."]);
+    expect(mockedJob.containLogMessages(["CAS send invoices executed."])).toBe(
+      true,
+    );
   });
 });
