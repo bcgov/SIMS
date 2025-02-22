@@ -5,7 +5,6 @@ import { fileURLToPath, URL } from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-
   plugins: [
     vue(),
     vuetify({
@@ -52,7 +51,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          group1: ["@bcgov/bc-sans", "@formio/js", "@mdi/font", "@mdi/js"],
+          group1: ["@formio/js", "@mdi/font", "@mdi/js"],
           group2: ["vue", "vue-router", "vuex", "vuetify"],
         },
       },
