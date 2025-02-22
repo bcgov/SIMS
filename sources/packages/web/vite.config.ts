@@ -6,25 +6,66 @@ import { fileURLToPath } from "url";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
+    vue({
+      template: {
+        transformAssetUrls: {
+          base: null,
+          includeAbsolute: false,
+          tags: {
+            img: ["src"],
+            "v-img": ["src"],
+          },
+        },
+      },
+    }),
     vuetify({
       autoImport: true,
+      styles: {
+        configFile: "src/assets/css/global-style-variables.scss",
+      },
     }),
   ],
   resolve: {
+    extensions: [
+      ".mjs",
+      ".js",
+      ".ts",
+      ".jsx",
+      ".tsx",
+      ".json",
+      ".vue",
+      ".scss",
+    ],
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "@assets": fileURLToPath(new URL("./src/assets", import.meta.url)),
+      "~assets": fileURLToPath(new URL("./src/assets", import.meta.url)),
+      "~@": fileURLToPath(new URL("./src", import.meta.url)),
     },
-  },
-  define: {
-    "process.env": process.env,
   },
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "sass:math";`,
+        additionalData: `
+          @use "sass:math";
+        `,
+        charset: false,
+        includePaths: [
+          "src/assets/css",
+          "node_modules/@formio/js/dist/formio.full.css",
+        ],
+        quietDeps: true,
+        outputStyle: "compressed",
       },
     },
+    devSourcemap: true,
+  },
+  define: {
+    "process.env": process.env,
+  },
+  optimizeDeps: {
+    include: ["vuetify", "@formio/js"],
+    exclude: ["vuetify/lib/labs/components.mjs"],
   },
   server: {
     port: 8080,
