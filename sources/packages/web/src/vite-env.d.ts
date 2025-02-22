@@ -4,17 +4,6 @@ declare module "*.scss" {
   const content: Record<string, string>;
   export default content;
 }
-
-declare module "*.sass" {
-  const content: Record<string, string>;
-  export default content;
-}
-
-declare module "*.css" {
-  const content: Record<string, string>;
-  export default content;
-}
-
 // Form.io style declarations
 declare module "@formio/js/dist/formio.full.css" {
   const content: any;

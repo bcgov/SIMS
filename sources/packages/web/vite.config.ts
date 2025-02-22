@@ -20,9 +20,7 @@ export default defineConfig({
     }),
     vuetify({
       autoImport: true,
-      styles: {
-        configFile: "src/assets/css/global-style-variables.scss",
-      },
+      styles: { configFile: "" },
     }),
   ],
   resolve: {
@@ -46,9 +44,6 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `
-          @use "sass:math";
-        `,
         charset: false,
         includePaths: [
           "src/assets/css",

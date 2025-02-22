@@ -6,25 +6,34 @@ import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { aliases, fa } from "vuetify/iconsets/fa";
 import { mdi } from "vuetify/iconsets/mdi";
+import { VDivider, VDataTableServer, VDataTable } from "vuetify/components";
 
 export default createVuetify({
   components: {
     ...components,
+    VDataTableServer,
+    VDataTable,
+  },
+  aliases: {
+    VDividerOpaque: VDivider,
+    VDividerInsetOpaque: VDivider,
+    VDividerVerticalOpaque: VDivider,
   },
   directives,
+  default: {},
   defaults: {
-    VDivider: {
+    VDividerOpaque: {
       class: "border-opacity-100",
       thickness: 2,
       color: "secondary",
     },
-    VDividerInset: {
+    VDividerInsetOpaque: {
       class: "border-opacity-100",
       thickness: 2,
       color: "secondary",
       inset: true,
     },
-    VDividerVertical: {
+    VDividerVerticalOpaque: {
       class: "border-opacity-100",
       thickness: 2,
       color: "secondary",

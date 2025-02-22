@@ -1,12 +1,7 @@
 import "@bcgov/bc-sans/css/BCSans.css";
-import "vuetify/styles";
-import "./assets/css/global-style-variables.scss";
 import "./assets/css/base.scss";
 import "./assets/css/formio-shared.scss";
 import "./assets/css/vuetify.scss";
-import "./assets/css/student.scss";
-import "./assets/css/institution.scss";
-import "./assets/css/notes.scss";
 import "primevue/resources/themes/md-light-indigo/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
