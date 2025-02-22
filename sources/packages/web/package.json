@@ -30,7 +30,6 @@
     "primevue": "^3.8.2",
     "roboto-fontface": "*",
     "s-vuex-class": "^0.4.1",
-    "ts-jest": "^27.1.5",
     "uuid": "^9.0.1",
     "vee-validate": "^4.5.10",
     "vue": "^3.2.31",
