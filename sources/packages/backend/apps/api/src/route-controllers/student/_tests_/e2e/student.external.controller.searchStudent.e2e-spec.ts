@@ -12,9 +12,9 @@ import {
   getExternalUserToken,
 } from "../../../../testHelpers";
 import {
-  ExternalSearchStudentAPIInDTO,
+  StudentSearchAPIInDTO,
   StudentSearchResultAPIOutDTO,
-} from "../../models/student.dto";
+} from "../../models/student-external-search.dto";
 
 describe("StudentExternalController(e2e)-searchStudents", () => {
   let app: INestApplication;
@@ -49,7 +49,7 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
       });
       const studentSIN = student.sinValidation.sin;
       const address = student.contactInfo.address;
-      const searchPayload: ExternalSearchStudentAPIInDTO = {
+      const searchPayload: StudentSearchAPIInDTO = {
         sin: studentSIN,
       };
       const token = await getExternalUserToken();

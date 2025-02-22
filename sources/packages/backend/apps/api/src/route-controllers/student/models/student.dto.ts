@@ -300,32 +300,3 @@ export class UpdateStudentDetailsAPIInDTO {
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
 }
-
-export class ApplicationDetailsAPIOutDTO {
-  isLegacy: boolean;
-  applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
-}
-
-/**
- * Student search result.
- */
-export class StudentSearchResultAPIOutDTO {
-  isLegacy: boolean;
-  givenNames: string;
-  lastName: string;
-  sin: string;
-  birthDate: string;
-  phoneNumber: string;
-  address: AddressAPIOutDTO;
-  applications: ApplicationDetailsAPIOutDTO[];
-}
-
-/**
- * Student external search parameters.
- */
-export class ExternalSearchStudentAPIInDTO {
-  @IsValidSIN()
-  sin: string;
-}

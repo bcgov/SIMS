@@ -16,9 +16,9 @@ import {
 import BaseController from "../BaseController";
 import { StudentInformationService } from "../../services";
 import {
-  ExternalSearchStudentAPIInDTO,
+  StudentSearchAPIInDTO,
   StudentSearchResultAPIOutDTO,
-} from "./models/student.dto";
+} from "./models/student-external-search.dto";
 import { SFASIndividual, Student } from "@sims/sims-db";
 type StudentDetails = Omit<StudentSearchResultAPIOutDTO, "applications">;
 
@@ -46,7 +46,7 @@ export class StudentExternalController extends BaseController {
   @ApiNotFoundResponse({ description: "Student not found." })
   @HttpCode(HttpStatus.OK)
   async searchStudentDetails(
-    @Body() payload: ExternalSearchStudentAPIInDTO,
+    @Body() payload: StudentSearchAPIInDTO,
   ): Promise<StudentSearchResultAPIOutDTO> {
     const studentPromise = this.studentInformationService.getStudentBySIN(
       payload.sin,
