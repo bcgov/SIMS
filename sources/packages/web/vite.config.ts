@@ -21,20 +21,15 @@ export default defineConfig({
       ".json",
       ".vue",
       ".scss",
+      ".svg",
     ],
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
-      formiojs: "formiojs/dist/formio.full.min.js",
     },
   },
   css: {
     preprocessorOptions: {
       scss: {
-        charset: false,
-        includePaths: [
-          "src/assets/css",
-          "node_modules/@formio/js/dist/formio.full.css",
-        ],
         quietDeps: true,
         outputStyle: "compressed",
       },
@@ -45,7 +40,7 @@ export default defineConfig({
     "process.env": process.env,
   },
   optimizeDeps: {
-    include: ["vuetify", "@formio/js", "formiojs"],
+    include: ["vuetify", "@formio/js"],
     exclude: ["vuetify/lib/labs/components.mjs"],
   },
   server: {
