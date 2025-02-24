@@ -1,5 +1,4 @@
 import "@bcgov/bc-sans/css/BCSans.css";
-import "@mdi/font/css/materialdesignicons.css";
 import "./assets/css/base.scss";
 import "./assets/css/formio-shared.scss";
 import "./assets/css/vuetify.scss";
