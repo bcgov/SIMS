@@ -217,22 +217,15 @@ export class AssessmentSequentialProcessingService {
     const formattedReferenceAssessmentDate = getISODateOnlyString(
       referenceAssessmentDate,
     );
-    const lastName = assessment.application.student.user.lastName;
-    const sin = assessment.application.student.sinValidation.sin;
-    const birthDate = assessment.application.student.birthDate;
     const programYearStartDate = assessment.application.programYear.startDate;
     const [sfasAwardsTotals, sfasPartTimeAwardsTotals] = await Promise.all([
       this.getProgramYearSFASAwardsTotals(
-        lastName,
-        birthDate,
-        sin,
+        assessment.application.student.id,
         programYearStartDate,
         formattedReferenceAssessmentDate,
       ),
       this.getProgramYearSFASPartTimeAwardsTotals(
-        lastName,
-        birthDate,
-        sin,
+        assessment.application.student.id,
         programYearStartDate,
         formattedReferenceAssessmentDate,
       ),
@@ -522,17 +515,13 @@ export class AssessmentSequentialProcessingService {
 
   /**
    * Get SFAS application awards totals.
-   * @param lastName last name of the student.
-   * @param birthDate birth date of the student.
-   * @param sin: SIN number of the student.
+   * @param studentId student id.
    * @param programYearStartDate: the start date of the program year.
    * @param referenceAssessmentDate  date of the first assessment date of the current application.
    * @returns SFAS application awards totals.
    */
   private async getProgramYearSFASAwardsTotals(
-    lastName: string,
-    birthDate: string,
-    sin: string,
+    studentId: number,
     programYearStartDate: string,
     referenceAssessmentDate: string,
   ): Promise<AwardTotal[]> {
@@ -542,11 +531,9 @@ export class AssessmentSequentialProcessingService {
       .addSelect("SUM(sfasApplication.sbsdAward)", "SBSD")
       .addSelect("SUM(sfasApplication.csgdAward)", "CSGD")
       .addSelect("SUM(sfasApplication.bcagAward)", "BCAG")
-      .innerJoin("sfasApplication.individual", "sfasStudent")
+      .innerJoin("sfasApplication.individual", "sfasIndividual")
       .where("sfasApplication.applicationCancelDate IS NULL")
-      .andWhere("lower(sfasStudent.lastName) = lower(:lastName)", { lastName })
-      .andWhere("sfasStudent.sin = :sin", { sin })
-      .andWhere("sfasStudent.birthDate = :birthDate", { birthDate })
+      .andWhere("sfasIndividual.student.id = :studentId", { studentId })
       .andWhere("sfasApplication.startDate >= :startDate", {
         startDate: programYearStartDate,
       })
@@ -571,17 +558,13 @@ export class AssessmentSequentialProcessingService {
 
   /**
    * Get SFAS part-time application awards totals.
-   * @param lastName last name of the student.
-   * @param birthDate birth date of the student.
-   * @param sin: SIN number of the student.
+   * @param studentId student id.
    * @param programYearStartDate: the start date of the program year.
    * @param referenceAssessmentDate  date of the first assessment date of the current application.
    * @returns SFAS application part-time awards totals.
    */
   private async getProgramYearSFASPartTimeAwardsTotals(
-    lastName: string,
-    birthDate: string,
-    sin: string,
+    studentId: number,
     programYearStartDate: string,
     referenceAssessmentDate: string,
   ): Promise<AwardTotal[]> {
@@ -592,11 +575,9 @@ export class AssessmentSequentialProcessingService {
       .addSelect("SUM(sfasPTApplication.csgdAward)", "CSGD")
       .addSelect("SUM(sfasPTApplication.bcagAward)", "BCAG")
       .addSelect("SUM(sfasPTApplication.csptAward)", "CSPT")
-      .innerJoin("sfasPTApplication.individual", "sfasStudent")
+      .innerJoin("sfasPTApplication.individual", "sfasIndividual")
       .where("sfasPTApplication.applicationCancelDate IS NULL")
-      .andWhere("lower(sfasStudent.lastName) = lower(:lastName)", { lastName })
-      .andWhere("sfasStudent.sin = :sin", { sin })
-      .andWhere("sfasStudent.birthDate = :birthDate", { birthDate })
+      .andWhere("sfasIndividual.student.id = :studentId", { studentId })
       .andWhere("sfasPTApplication.startDate >= :startDate", {
         startDate: programYearStartDate,
       })

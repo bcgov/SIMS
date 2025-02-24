@@ -149,9 +149,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const student = await saveFakeStudent(db.dataSource);
     const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
       initialValues: {
-        lastName: student.user.lastName,
-        birthDate: student.birthDate,
-        sin: student.sinValidation.sin,
+        student,
       },
     });
     // First offering created with start date 30 days after the
@@ -203,6 +201,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         secondApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: savedOffering.educationProgram.id,
       selectedOffering: savedOffering.id,
+      selectedLocation: savedOffering.institutionLocation.id,
     };
     const payload = {
       associatedFiles: [],
@@ -238,9 +237,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const student = await saveFakeStudent(db.dataSource);
     const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
       initialValues: {
-        lastName: student.user.lastName,
-        birthDate: student.birthDate,
-        sin: student.sinValidation.sin,
+        student,
       },
     });
 
@@ -288,6 +285,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         simsApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: savedOffering.educationProgram.id,
       selectedOffering: savedOffering.id,
+      selectedLocation: savedOffering.institutionLocation.id,
     };
     const payload = {
       associatedFiles: [],
@@ -408,11 +406,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);
       const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
-        initialValues: {
-          lastName: student.user.lastName,
-          birthDate: student.birthDate,
-          sin: student.sinValidation.sin,
-        },
+        initialValues: { student },
       });
       // Cancelled SFAS full time application with overlapping study dates.
       const sfasFullTimeApplication = createFakeSFASApplication(
@@ -499,11 +493,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);
       const sfasIndividual = await saveFakeSFASIndividual(db.dataSource, {
-        initialValues: {
-          lastName: student.user.lastName,
-          birthDate: student.birthDate,
-          sin: student.sinValidation.sin,
-        },
+        initialValues: { student },
       });
       // Cancelled SFAS full time application with overlapping study dates.
       const sfasPartTimeApplication = createFakeSFASPartTimeApplication(

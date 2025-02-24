@@ -34,11 +34,11 @@ import {
   StudentRestriction,
 } from "@sims/sims-db";
 import { In, IsNull, Not } from "typeorm";
-import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 import {
   BC_STUDENT_LOAN_AWARD_CODE,
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
 } from "@sims/services/constants";
+import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
 // SFAS received file mocks.
 const SFAS_ALL_RESTRICTIONS_FILENAME =
@@ -544,7 +544,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       );
       student.sinValidation = sinValidation;
       await db.student.save(student);
-
       // Queued job.
       const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [
@@ -581,10 +580,13 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           sin: true,
           cslOveraward: true,
           bcslOveraward: true,
+          student: { id: true },
         },
+        relations: { student: true },
         where: {
           id: 83543,
         },
+        loadEagerRelations: false,
       });
       expect(sFASIndividual).toEqual({
         id: 83543,
@@ -594,6 +596,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         sin: "121380175",
         bcslOveraward: 714.3,
         cslOveraward: 741.3,
+        student: { id: student.id },
       });
       const disbursementOverawards = await db.disbursementOveraward.find({
         select: { disbursementValueCode: true, overawardValue: true },
