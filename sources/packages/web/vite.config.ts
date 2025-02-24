@@ -30,9 +30,13 @@ export default defineConfig({
     "process.env": process.env,
   },
   optimizeDeps: {
-    include: ["vuetify", "@formio/js"],
-    exclude: ["vuetify/lib/labs/components.mjs"],
-    force: true,
+    exclude: [
+      "vuetify",
+      "vuetify/lib/labs/components.mjs",
+      "@formio/js",
+      "vue-router",
+      "vuex",
+    ],
   },
   server: {
     port: 8080,
