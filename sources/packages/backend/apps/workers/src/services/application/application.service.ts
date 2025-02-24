@@ -79,6 +79,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: {
         id: true,
         applicationNumber: true,
+        applicationStatus: true,
         applicationEditStatus: true,
         pirStatus: true,
         student: {

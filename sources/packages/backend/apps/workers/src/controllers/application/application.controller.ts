@@ -23,6 +23,7 @@ import {
 import {
   APPLICATION_EDIT_STATUS,
   APPLICATION_ID,
+  APPLICATION_STATUS,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
@@ -220,7 +221,10 @@ export class ApplicationController {
       jobLogger.log(
         "Applications edit status not updated, returning the current status only.",
       );
+      // Returns the most updated status for the application.
+      // The status is expected to be 'Completed' if the edit was approved, otherwise it should remain as 'Edited'.
       return job.complete({
+        [APPLICATION_STATUS]: application.applicationStatus,
         [APPLICATION_EDIT_STATUS]: application.applicationEditStatus,
       });
     } catch (error: unknown) {

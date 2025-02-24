@@ -30,6 +30,10 @@ export const APPLICATION_EXCEPTION_STATUS = "applicationExceptionStatus";
  * requires Ministry approval.
  */
 export const APPLICATION_EDIT_STATUS = "applicationEditStatus";
+/**
+ * Applications status.
+ */
+export const APPLICATION_STATUS = "applicationStatus";
 
 /**
  * Created during the student Program Info Request executed by the Institution.
