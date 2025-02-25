@@ -8,10 +8,12 @@ import { createFakeStudent } from "@sims/test-utils/factories/student";
  * Create fake sfas individual.
  * @param options sfas individual options.
  * - `initialValues` sfas individual initial values.
+ * - `includeAddressLine2` include address line 2.
  * @returns created sfas individual.
  */
 function createFakeSFASIndividual(options?: {
   initialValues?: Partial<SFASIndividual>;
+  includeAddressLine2?: boolean;
 }) {
   const fakeMSFAANumber = faker.datatype
     .number({
@@ -33,6 +35,8 @@ function createFakeSFASIndividual(options?: {
     options?.initialValues?.msfaaNumber ?? fakeMSFAANumber;
   sfasIndividual.partTimeMSFAANumber =
     options?.initialValues?.partTimeMSFAANumber ?? fakeMSFAANumber;
+  sfasIndividual.firstName =
+    options?.initialValues?.firstName ?? faker.name.firstName();
   sfasIndividual.lastName =
     options?.initialValues?.lastName ?? faker.name.lastName();
   sfasIndividual.sin = options?.initialValues?.sin ?? fakeSIN;
@@ -50,6 +54,19 @@ function createFakeSFASIndividual(options?: {
   sfasIndividual.extractedAt = new Date();
   sfasIndividual.student =
     options?.initialValues?.student ?? createFakeStudent();
+  sfasIndividual.phoneNumber =
+    options?.initialValues?.phoneNumber ?? +faker.datatype.number(9999999999);
+  sfasIndividual.addressLine1 =
+    options?.initialValues?.addressLine1 ?? faker.address.streetAddress();
+  sfasIndividual.city = options?.initialValues?.city ?? faker.address.city();
+  sfasIndividual.provinceState = options?.initialValues?.provinceState ?? "BC";
+  sfasIndividual.country = options?.initialValues?.country ?? "CAN";
+  sfasIndividual.postalZipCode =
+    options?.initialValues?.postalZipCode ?? "A1A 1A1";
+  if (options?.includeAddressLine2) {
+    sfasIndividual.addressLine2 =
+      options?.initialValues?.addressLine2 ?? faker.address.secondaryAddress();
+  }
   return sfasIndividual;
 }
 
@@ -58,15 +75,19 @@ function createFakeSFASIndividual(options?: {
  * @param dataSource data source to persist the sfas individual.
  * @param options sfas individual options.
  * - `initialValues` sfas individual initial values.
+ * - `includeAddressLine2` include address line 2.
  * @returns persisted sfas individual.
  */
 export async function saveFakeSFASIndividual(
   dataSource: DataSource,
-  options?: { initialValues?: Partial<SFASIndividual> },
+  options?: {
+    initialValues?: Partial<SFASIndividual>;
+    includeAddressLine2?: boolean;
+  },
 ): Promise<SFASIndividual> {
   const sfasIndividualRepo = dataSource.getRepository(SFASIndividual);
   const sfasIndividual = await sfasIndividualRepo.save(
-    createFakeSFASIndividual({ initialValues: options?.initialValues }),
+    createFakeSFASIndividual(options),
   );
   return sfasIndividualRepo.save(sfasIndividual);
 }

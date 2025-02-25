@@ -18,7 +18,7 @@ import {
   CASSupplier,
   SupplierStatus,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, IsNull, Not, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, UpdateResult } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
@@ -805,44 +805,6 @@ export class StudentService extends RecordDataModelService<Student> {
           updatedAt: now,
         },
       );
-    });
-  }
-
-  /**
-   * Gets student by SIN.
-   * The current assessment id should not be null to ensure the application has an application number and
-   * application status should be not `Overwritten` to ensure distinct application numbers.
-   * @param sin student's SIN.
-   * @returns student.
-   */
-  async getStudentBySIN(sin: string): Promise<Student> {
-    return this.repo.findOne({
-      select: {
-        id: true,
-        sinValidation: { id: true, sin: true },
-        user: { id: true, firstName: true, lastName: true, email: true },
-        birthDate: true,
-        contactInfo: true as unknown,
-        applications: { id: true, applicationNumber: true },
-      },
-      relations: {
-        sinValidation: true,
-        user: true,
-        applications: true,
-      },
-      where: {
-        sinValidation: { sin },
-        applications: {
-          currentAssessment: { id: Not(IsNull()) },
-          applicationStatus: Not(ApplicationStatus.Overwritten),
-        },
-      },
-      order: {
-        applications: {
-          id: "DESC",
-        },
-      },
-      loadEagerRelations: false,
     });
   }
 

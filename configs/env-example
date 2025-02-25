@@ -41,6 +41,7 @@ E2E_TEST_AEST_OPERATIONS_ADMINISTRATORS_USER=ministry-user-aest-operations-admin
 E2E_TEST_AEST_MOF_OPERATIONS_USER=ministry-user-mof-operations@e2e-tests
 E2E_TEST_AEST_READ_ONLY_USER=ministry-user-read-only@e2e-tests
 
+E2E_TEST_EXTERNAL_USER_CLIENT_SECRET=ADD_THE_PASSWORD_HERE_TO_RUN_LOCALLY
 # BCeID Web Service - These variables are used only to run the application locally.
 BCeID_WEB_SERVICE_WSDL=https://gws1.test.bceid.ca/webservices/Client/V10/BCeIDService.asmx?wsdl
 BCeID_WEB_SERVICE_ONLINE_SERVICE_ID=

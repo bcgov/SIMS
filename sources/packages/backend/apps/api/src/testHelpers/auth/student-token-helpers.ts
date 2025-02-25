@@ -27,11 +27,10 @@ export async function getStudentToken(
       password: process.env.E2E_TEST_STUDENT_PASSWORD,
     };
   }
-  return getCachedToken(
-    AuthorizedParties.student,
-    credential,
-    fakeStudentTestUser.toString(),
-  );
+  return getCachedToken(AuthorizedParties.student, {
+    userPasswordCredential: credential,
+    uniqueTokenCache: fakeStudentTestUser.toString(),
+  });
 }
 
 /**

@@ -301,23 +301,3 @@ export class UpdateStudentDetailsAPIInDTO {
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
 }
-
-/**
- * Student details.
- */
-export class StudentDetailsAPIOutDTO {
-  firstName: string;
-  lastName: string;
-  sin: string;
-  dateOfBirth: string;
-  address: AddressAPIOutDTO;
-  applicationNumbers: string[];
-}
-
-/**
- * Student external search parameters.
- */
-export class ExternalSearchStudentAPIInDTO {
-  @IsValidSIN()
-  sin: string;
-}
