@@ -1,0 +1,23 @@
+.p-datatable {
+  .p-datatable-thead > tr > th {
+    padding: 1rem !important;
+    text-align: left !important;
+  }
+
+  .p-datatable-tbody > tr > td {
+    padding: 1rem !important;
+  }
+}
+
+.p-component * {
+  box-sizing: border-box !important;
+}
+
+.p-datatable-wrapper,
+.p-datatable-table,
+.p-datatable-thead,
+.p-datatable-tbody,
+.p-datatable-tfoot {
+  padding: initial !important;
+  margin: initial !important;
+}
