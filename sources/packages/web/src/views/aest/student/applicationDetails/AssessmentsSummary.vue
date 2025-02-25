@@ -48,8 +48,8 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { defineComponent, onMounted, ref } from "vue";
 import { AssessmentTriggerType } from "@/types";
-import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
-import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
+import RequestAssessment from "@/components/common/students/assessment/Request.vue";
+import HistoryAssessment from "@/components/common/students/assessment/History.vue";
 import ManualReassessment from "@/components/aest/students/assessment/ManualReassessment.vue";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -99,7 +99,7 @@ export default defineComponent({
         name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
         params: {
           studentId: props.studentId,
-          applicationId: props.applicationId,
+          applicationId: currentApplicationId.value,
           appealId,
         },
       });
@@ -110,7 +110,7 @@ export default defineComponent({
         name: AESTRoutesConst.APPLICATION_EXCEPTIONS_APPROVAL,
         params: {
           studentId: props.studentId,
-          applicationId: props.applicationId,
+          applicationId: currentApplicationId.value,
           exceptionId,
         },
       });
@@ -121,7 +121,7 @@ export default defineComponent({
         name: AESTRoutesConst.ASSESSMENT_AWARD_VIEW,
         params: {
           studentId: props.studentId,
-          applicationId: props.applicationId,
+          applicationId: currentApplicationId.value,
           assessmentId,
         },
       });
@@ -132,7 +132,7 @@ export default defineComponent({
         name: AESTRoutesConst.SCHOLASTIC_STANDING_VIEW,
         params: {
           studentId: props.studentId,
-          applicationId: props.applicationId,
+          applicationId: currentApplicationId.value,
           scholasticStandingId,
         },
       });
@@ -153,7 +153,7 @@ export default defineComponent({
         name: AESTRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST,
         params: {
           applicationOfferingChangeRequestId,
-          applicationId: props.applicationId,
+          applicationId: currentApplicationId.value,
           studentId: props.studentId,
         },
       });

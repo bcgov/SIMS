@@ -36,9 +36,18 @@ export class ApplicationApi extends HttpBaseClient {
 
   async getApplicationData(
     applicationId: number,
-    options?: { loadDynamicData?: boolean; isParentApplication?: boolean },
+    options?: {
+      studentId?: number;
+      loadDynamicData?: boolean;
+      isParentApplication?: boolean;
+    },
   ): Promise<ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO> {
-    let url = this.addClientRoot(`application/${applicationId}`);
+    let url = this.addClientRoot("application");
+    if (options?.studentId) {
+      url = `${url}/student/${options?.studentId}/application/${applicationId}`;
+    } else {
+      url = `${url}/${applicationId}`;
+    }
     const isLoadDynamicDataPresent = options?.loadDynamicData !== undefined;
     if (isLoadDynamicDataPresent) {
       url = `${url}?loadDynamicData=${options?.loadDynamicData}`;
