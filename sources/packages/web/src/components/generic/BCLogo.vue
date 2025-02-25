@@ -5,7 +5,7 @@
       class="ml-5"
       width="57px"
       height="40px"
-      :src="logoImage"
+      src="../../assets/images/bc_gov_logo_header.svg"
       alt="StudentAid BC logo"
     />
   </span>
@@ -22,8 +22,6 @@
 <script lang="ts">
 import { useAuth } from "@/composables";
 import { defineComponent } from "vue";
-import logoImage from "../../../src/assets/images/bc_gov_logo_header.svg";
-
 export default defineComponent({
   props: {
     subtitle: {
@@ -40,7 +38,6 @@ export default defineComponent({
     return {
       executeLogout,
       logoClick,
-      logoImage,
     };
   },
 });
