@@ -26,14 +26,11 @@ export default defineConfig({
     },
     devSourcemap: true,
   },
-  define: {
-    "process.env": process.env,
-  },
   optimizeDeps: {
+    include: ["@formio/js"],
     exclude: [
       "vuetify",
       "vuetify/lib/labs/components.mjs",
-      "@formio/js",
       "vue-router",
       "vuex",
     ],

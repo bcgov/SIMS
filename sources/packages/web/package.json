@@ -5,10 +5,10 @@
   "scripts": {
     "serve": "vite",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --port 8080",
     "test:unit": "vitest",
     "lint": "eslint ./src --ext .vue,.js,.ts --fix",
-    "build-local": "vite build --mode development"
+    "build-local": "NODE_ENV=development vite build"
   },
   "dependencies": {
     "@bcgov/bc-sans": "^2.1.0",
