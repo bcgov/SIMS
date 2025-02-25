@@ -1,4 +1,4 @@
-import { AddressAPIOutDTO } from "../../models/common.dto";
+import { AddressAPIOutDTO } from "../..";
 import { IsValidSIN } from "../../../utilities/class-validation";
 
 /**
