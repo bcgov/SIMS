@@ -34,11 +34,4 @@ export default defineConfig({
   server: {
     port: 8080,
   },
-  build: {
-    chunkSizeWarningLimit: 1600,
-    commonjsOptions: {
-      include: [/node_modules/],
-      transformMixedEsModules: true,
-    },
-  },
 });
