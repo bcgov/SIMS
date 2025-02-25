@@ -24,8 +24,8 @@ import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { AssessmentTriggerType } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
-import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
+import HistoryAssessment from "@/components/common/students/assessment/History.vue";
+import RequestAssessment from "@/components/common/students/assessment/Request.vue";
 
 export default defineComponent({
   components: {

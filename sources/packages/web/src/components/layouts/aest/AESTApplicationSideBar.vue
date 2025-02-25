@@ -99,6 +99,7 @@ export default defineComponent({
     const { getISODateHourMinuteString } = useFormatters();
     const relatedParentPartners = ref([] as MenuItemModel[]);
     const applicationHistory = ref([] as MenuItemModel[]);
+    const currentApplicationId = ref<number>();
     const studentMenu = ref<StudentApplicationMenu>({
       studentApplication: {
         title: "Application",
@@ -158,7 +159,6 @@ export default defineComponent({
       router.push({
         name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
         params: {
-          applicationId: props.applicationId,
           studentId: props.studentId,
           supportingUserId: supportingUserId,
         },
@@ -166,9 +166,15 @@ export default defineComponent({
     };
 
     onMounted(async () => {
+      // Get current application for the parent application.
+      const currentApplication = await ApplicationService.shared.getApplication(
+        props.applicationId,
+        { loadDynamicData: false, isParentApplication: true },
+      );
+      currentApplicationId.value = currentApplication.id;
       const supportingUsers =
         await SupportingUsersService.shared.getSupportingUsersForSideBar(
-          props.applicationId,
+          currentApplicationId.value,
         );
       supportingUsers.forEach((supportingUser, index) => {
         if (supportingUser.supportingUserType === SupportingUserType.Parent) {

@@ -9,13 +9,13 @@
     </template>
     <request-assessment
       class="mb-5"
-      :applicationId="applicationId"
+      :applicationId="currentApplicationId"
       :studentId="studentId"
       @viewStudentAppeal="goToStudentAppeal"
       @viewApplicationException="goToApplicationException"
     />
     <history-assessment
-      :applicationId="applicationId"
+      :applicationId="currentApplicationId"
       :studentId="studentId"
       :viewRequestTypes="assessmentRequestViewTypes"
       @viewStudentAppeal="goToStudentAppeal"
@@ -28,10 +28,11 @@
 <script lang="ts">
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, onMounted, ref } from "vue";
 import { AssessmentTriggerType } from "@/types";
-import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
-import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
+import RequestAssessment from "@/components/common/students/assessment/Request.vue";
+import HistoryAssessment from "@/components/common/students/assessment/History.vue";
+import { ApplicationService } from "@/services/ApplicationService";
 
 export default defineComponent({
   components: {
@@ -50,6 +51,20 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
+    const currentApplicationId = ref<number>();
+
+    onMounted(async () => {
+      // Get current application for the parent application.
+      const currentApplication = await ApplicationService.shared.getApplication(
+        props.applicationId,
+        {
+          studentId: props.studentId,
+          isParentApplication: true,
+        },
+      );
+      currentApplicationId.value = currentApplication.id;
+    });
+
     // The assessment trigger types for which the request form must be visible by default.
     const assessmentRequestViewTypes = [
       AssessmentTriggerType.StudentAppeal,
@@ -61,7 +76,7 @@ export default defineComponent({
         name: InstitutionRoutesConst.STUDENT_APPEAL_REQUEST,
         params: {
           studentId: props.studentId,
-          applicationId: props.applicationId,
+          applicationId: currentApplicationId.value,
           appealId,
         },
       });
@@ -72,7 +87,7 @@ export default defineComponent({
         name: InstitutionRoutesConst.APPLICATION_EXCEPTION,
         params: {
           studentId: props.studentId,
-          applicationId: props.applicationId,
+          applicationId: currentApplicationId.value,
           exceptionId,
         },
       });
@@ -83,7 +98,7 @@ export default defineComponent({
         name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
         params: {
           studentId: props.studentId,
-          applicationId: props.applicationId,
+          applicationId: currentApplicationId.value,
           assessmentId,
         },
       });
@@ -103,6 +118,7 @@ export default defineComponent({
       goToApplicationException,
       assessmentRequestViewTypes,
       backRoute,
+      currentApplicationId,
     };
   },
 });
