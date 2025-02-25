@@ -46,6 +46,9 @@ class AssessedCostDetailsAPIOutDTO {
   totalNeed: number;
 }
 
+/**
+ * Disbursement details.
+ */
 class DisbursementDetailsAPIOutDTO {
   awardCode: string;
   awardAmount: number;
