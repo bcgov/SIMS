@@ -17,6 +17,9 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  define: {
+    "process.env": process.env,
+  },
   css: {
     preprocessorOptions: {
       scss: {
@@ -26,28 +29,11 @@ export default defineConfig({
     },
     devSourcemap: true,
   },
-  optimizeDeps: {
-    include: ["@formio/js"],
-    exclude: [
-      "vuetify",
-      "vuetify/lib/labs/components.mjs",
-      "vue-router",
-      "vuex",
-    ],
-  },
   server: {
     port: 8080,
   },
   build: {
     chunkSizeWarningLimit: 1600,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          group1: ["@formio/js"],
-          group2: ["vue", "vue-router", "vuex", "vuetify"],
-        },
-      },
-    },
     commonjsOptions: {
       include: [/node_modules/],
       transformMixedEsModules: true,
