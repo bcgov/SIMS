@@ -61,6 +61,29 @@ export class ApplicationService {
     return ApiClient.Application.getApplicationData(applicationId, options);
   }
 
+  /**
+   * Get current application from parent.
+   * @param parentApplicationId parent application id.
+   * @param options options for the request.
+   * - `studentId` student id for the student.
+   * @returns application information.
+   */
+  async getCurrentApplicationFromParent(
+    parentApplicationId: number,
+    options?: { studentId: number },
+  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+    if (options?.studentId) {
+      return this.getApplication(parentApplicationId, {
+        studentId: options?.studentId,
+        isParentApplication: true,
+      });
+    }
+    return this.getApplication(parentApplicationId, {
+      loadDynamicData: false,
+      isParentApplication: true,
+    });
+  }
+
   async createApplicationDraft(
     payload: SaveApplicationAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {

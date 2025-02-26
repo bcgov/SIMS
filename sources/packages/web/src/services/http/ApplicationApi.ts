@@ -44,13 +44,13 @@ export class ApplicationApi extends HttpBaseClient {
   ): Promise<ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO> {
     let url = this.addClientRoot("application");
     if (options?.studentId) {
-      url = `${url}/student/${options?.studentId}/application/${applicationId}`;
+      url = `${url}/student/${options.studentId}/application/${applicationId}`;
     } else {
       url = `${url}/${applicationId}`;
     }
     const isLoadDynamicDataPresent = options?.loadDynamicData !== undefined;
     if (isLoadDynamicDataPresent) {
-      url = `${url}?loadDynamicData=${options?.loadDynamicData}`;
+      url = `${url}?loadDynamicData=${options.loadDynamicData}`;
     }
     if (options?.isParentApplication) {
       const query = isLoadDynamicDataPresent

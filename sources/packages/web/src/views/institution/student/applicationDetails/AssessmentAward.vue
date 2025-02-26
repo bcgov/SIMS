@@ -48,10 +48,10 @@ export default defineComponent({
 
     onMounted(async () => {
       // Get current application for the parent application.
-      const currentApplication = await ApplicationService.shared.getApplication(
-        props.applicationId,
-        { loadDynamicData: false, isParentApplication: true },
-      );
+      const currentApplication =
+        await ApplicationService.shared.getCurrentApplicationFromParent(
+          props.applicationId,
+        );
       currentApplicationId.value = currentApplication.id;
       loadAssessmentAwardValues(currentApplicationId.value);
     });

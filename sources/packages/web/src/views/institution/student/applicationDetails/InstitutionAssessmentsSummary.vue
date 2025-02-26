@@ -55,13 +55,13 @@ export default defineComponent({
 
     onMounted(async () => {
       // Get current application for the parent application.
-      const currentApplication = await ApplicationService.shared.getApplication(
-        props.applicationId,
-        {
-          studentId: props.studentId,
-          isParentApplication: true,
-        },
-      );
+      const currentApplication =
+        await ApplicationService.shared.getCurrentApplicationFromParent(
+          props.applicationId,
+          {
+            studentId: props.studentId,
+          },
+        );
       currentApplicationId.value = currentApplication.id;
     });
 

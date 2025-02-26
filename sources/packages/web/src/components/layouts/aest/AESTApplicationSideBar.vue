@@ -99,7 +99,6 @@ export default defineComponent({
     const { getISODateHourMinuteString } = useFormatters();
     const relatedParentPartners = ref([] as MenuItemModel[]);
     const applicationHistory = ref([] as MenuItemModel[]);
-    const currentApplicationId = ref<number>();
     const studentMenu = ref<StudentApplicationMenu>({
       studentApplication: {
         title: "Application",
@@ -167,14 +166,14 @@ export default defineComponent({
 
     onMounted(async () => {
       // Get current application for the parent application.
-      const currentApplication = await ApplicationService.shared.getApplication(
-        props.applicationId,
-        { loadDynamicData: false, isParentApplication: true },
-      );
-      currentApplicationId.value = currentApplication.id;
+      const currentApplication =
+        await ApplicationService.shared.getCurrentApplicationFromParent(
+          props.applicationId,
+        );
+      const currentApplicationId = currentApplication.id;
       const supportingUsers =
         await SupportingUsersService.shared.getSupportingUsersForSideBar(
-          currentApplicationId.value,
+          currentApplicationId,
         );
       supportingUsers.forEach((supportingUser, index) => {
         if (supportingUser.supportingUserType === SupportingUserType.Parent) {
