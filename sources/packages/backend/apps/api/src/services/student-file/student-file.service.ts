@@ -153,6 +153,19 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   /**
+   * Gets student files by a list of unique names.
+   * @param uniqueFileNames unique file names.
+   * @returns student files.
+   */
+  async getStudentFilesByUniqueNames(
+    uniqueFileNames: string[],
+  ): Promise<StudentFile[]> {
+    return this.repo.find({
+      where: { uniqueFileName: In(uniqueFileNames) },
+    });
+  }
+
+  /**
    * Gets a list of student files using the unique names for search them.
    * @param studentId student id.
    * @param uniqueFileNames list of unique file names.

@@ -86,7 +86,6 @@ export class StudentFileUploaderInfoAPIInDTO {
 export interface StudentFileUploaderAPIInDTO {
   submittedForm: StudentFileUploaderInfoAPIInDTO;
   associatedFiles: string[];
-  originalFileNames: string[];
 }
 
 export interface AESTFileUploadToStudentAPIInDTO {

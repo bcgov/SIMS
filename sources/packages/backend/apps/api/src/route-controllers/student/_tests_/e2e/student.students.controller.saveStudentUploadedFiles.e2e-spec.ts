@@ -79,7 +79,6 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
         studentFile1.uniqueFileName,
         studentFile2.uniqueFileName,
       ],
-      originalFileNames: [studentFile1.fileName, studentFile2.fileName],
     };
 
     const notificationMessage = await db.notificationMessage.findOne({
@@ -146,7 +145,7 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
         dateTime: expect.any(String),
         lastName: student.user.lastName,
         birthDate: getDateOnlyFormat(student.birthDate),
-        fileNames: payload.originalFileNames,
+        fileNames: [studentFile1.fileName, studentFile2.fileName],
         givenNames: student.user.firstName,
         studentEmail: student.user.email,
         documentPurpose: payload.submittedForm.documentPurpose,
