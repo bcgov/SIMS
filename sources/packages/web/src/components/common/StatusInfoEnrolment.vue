@@ -19,6 +19,10 @@ export default defineComponent({
       type: Object as PropType<COEStatus>,
       required: true,
     },
+    enrolmentDate: {
+      type: String,
+      required: false,
+    },
   },
   setup(props) {
     const enrollmentStatus = computed<EnrollmentStatusInfo>(() => {
@@ -26,7 +30,7 @@ export default defineComponent({
         case COEStatus.completed:
           return {
             status: StatusInfo.Completed,
-            header: "Enrolment confirmed",
+            header: `Enrolment confirmed on ${props.enrolmentDate}`,
           };
         case COEStatus.required:
           return {

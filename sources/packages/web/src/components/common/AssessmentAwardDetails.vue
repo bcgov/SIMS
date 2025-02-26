@@ -43,6 +43,11 @@
               :coeStatus="
                 assessmentAwardData.estimatedAward.disbursement1COEStatus as COEStatus
               "
+              :enrolmentDate="
+                dateOnlyLongString(
+                  assessmentAwardData.estimatedAward.disbursement1EnrolmentDate as Date,
+                )
+              "
             />
             <confirm-enrolment
               v-if="allowConfirmEnrolment"
@@ -179,6 +184,11 @@
             <status-info-enrolment
               :coeStatus="
                 assessmentAwardData.estimatedAward.disbursement2COEStatus as COEStatus
+              "
+              :enrolmentDate="
+                dateOnlyLongString(
+                  assessmentAwardData.estimatedAward.disbursement2EnrolmentDate as Date,
+                )
               "
             />
             <confirm-enrolment
