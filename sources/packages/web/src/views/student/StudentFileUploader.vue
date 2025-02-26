@@ -62,7 +62,6 @@ export default defineComponent({
           form.data,
         );
         const associatedFiles = formioUtils.getAssociatedFiles(form);
-
         const payload: StudentFileUploaderAPIInDTO = {
           submittedForm,
           associatedFiles,
