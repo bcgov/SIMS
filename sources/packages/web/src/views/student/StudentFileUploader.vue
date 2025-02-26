@@ -62,11 +62,10 @@ export default defineComponent({
           form.data,
         );
         const associatedFiles = formioUtils.getAssociatedFiles(form);
-        const originalFileNames = formioUtils.getOriginalFileNames(form);
+
         const payload: StudentFileUploaderAPIInDTO = {
           submittedForm,
           associatedFiles,
-          originalFileNames,
         };
         await StudentService.shared.saveStudentFiles(payload);
         // Form reset and document list reload.
