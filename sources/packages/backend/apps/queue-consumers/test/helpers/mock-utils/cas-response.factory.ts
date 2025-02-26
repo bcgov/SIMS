@@ -88,8 +88,7 @@ export function createFakeCASNotFoundSupplierResponse(): CASSupplierResponse {
 
 export function createFakePendingInvoicesResponse(): SendPendingInvoicesResponse {
   return {
-    invoice_number: "1234567",
-    CAS_RETURNED_MESSAGES: "SUCCEEDED",
+    invoiceNumber: "1234567",
   };
 }
 

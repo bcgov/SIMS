@@ -37,18 +37,17 @@ export class CASSendInvoicesScheduler extends BaseScheduler<void> {
   ): Promise<string[]> {
     processSummary.info("Checking for pending invoices.");
     const pendingInvoices = await this.casInvoiceService.getPendingInvoices();
-    let invoicesUpdated = 0;
     if (!pendingInvoices.length) {
       processSummary.info("No pending invoices found.");
     }
     processSummary.info("Executing CAS send invoices.");
     const serviceProcessSummary = new ProcessSummary();
     processSummary.children(serviceProcessSummary);
-    invoicesUpdated = await this.casInvoiceService.sendInvoices(
+    const updatedInvoices = await this.casInvoiceService.sendInvoices(
       serviceProcessSummary,
       pendingInvoices,
     );
-    processSummary.info("CAS send invoices executed.");
+    processSummary.info(`${updatedInvoices} CAS invoice(s) sent.`);
     return ["Process finalized with success."];
   }
 

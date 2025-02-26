@@ -144,13 +144,16 @@ export class CASService {
         pendingInvoicePayload,
         config,
       );
+      return {
+        invoiceNumber: response.data.invoice_number,
+        casReturnedMessages: response.data[CAS_RETURNED_MESSAGES],
+      };
     } catch (error: unknown) {
       this.handleBadRequestError(
         error,
         "Error while sending pending invoices to CAS.",
       );
     }
-    return response?.data;
   }
 
   /**

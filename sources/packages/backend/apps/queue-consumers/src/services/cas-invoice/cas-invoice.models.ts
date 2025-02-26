@@ -1,4 +1,4 @@
 export class PendingInvoiceResult {
-  isInvoiceUpdated: boolean;
-  knownErrors?: string[];
+  invoiceNumber?: string;
+  casReturnedMessages: string[] | string;
 }
