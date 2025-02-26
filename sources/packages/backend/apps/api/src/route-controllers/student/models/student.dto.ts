@@ -152,6 +152,8 @@ export class StudentFileUploaderAPIInDTO {
   submittedForm: StudentFileUploaderInfoAPIInDTO;
   @ArrayMinSize(1)
   associatedFiles: string[];
+  @ArrayMinSize(1)
+  originalFileNames: string[];
 }
 
 /**

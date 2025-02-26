@@ -311,6 +311,7 @@ export class StudentStudentsController extends BaseController {
           documentPurpose: payload.submittedForm.documentPurpose,
           applicationNumber: payload.submittedForm.applicationNumber,
           userId: student.user.id,
+          fileNames: payload.originalFileNames,
         },
         studentUserToken.userId,
         entityManager,

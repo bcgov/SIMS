@@ -43,7 +43,7 @@
           >
           <Column field="updatedAt" header="Date Submitted"
             ><template #body="slotProps">{{
-              dateOnlyLongString(slotProps.data.updatedAt)
+              getISODateHourMinuteString(slotProps.data.createdAt)
             }}</template></Column
           >
           <Column field="updatedAt" header="File">
@@ -138,7 +138,7 @@ export default defineComponent({
   setup(props, context) {
     const studentFileUploads = ref([] as StudentUploadFileAPIOutDTO[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
-    const { dateOnlyLongString, emptyStringFiller } = useFormatters();
+    const { getISODateHourMinuteString, emptyStringFiller } = useFormatters();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
     const formioUtils = useFormioUtils();
@@ -171,7 +171,7 @@ export default defineComponent({
       fileUtils,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
-      dateOnlyLongString,
+      getISODateHourMinuteString,
       emptyStringFiller,
       uploadFile,
       Role,

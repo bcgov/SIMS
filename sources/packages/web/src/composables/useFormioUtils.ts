@@ -164,6 +164,21 @@ export function useFormioUtils() {
     return associatedFiles;
   };
 
+  // Get all original file names from all file components.
+  const getOriginalFileNames = (form: any): string[] => {
+    const fileComponents = getComponentsOfType(form, "file");
+    const originalFileNames: string[] = [];
+    fileComponents.forEach((fileComponent) => {
+      const fileComponentValue = fileComponent.getValue();
+      if (fileComponentValue) {
+        fileComponentValue.forEach((file: any) => {
+          originalFileNames.push(file.originalName);
+        });
+      }
+    });
+    return originalFileNames;
+  };
+
   const setButtonSettings = (
     form: any,
     settings?: {
@@ -248,6 +263,7 @@ export function useFormioUtils() {
     getComponentValueByKey,
     getComponentsOfType,
     getAssociatedFiles,
+    getOriginalFileNames,
     recursiveSearch,
     setButtonSettings,
     disableWizardButtons,
