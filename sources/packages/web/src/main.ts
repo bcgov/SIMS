@@ -7,6 +7,7 @@ import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "@formio/js/dist/formio.full.min.css";
+import "./assets/css/primevue-override.scss";
 
 import "reflect-metadata";
 import { createApp } from "vue";

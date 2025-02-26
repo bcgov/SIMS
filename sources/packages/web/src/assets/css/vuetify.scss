@@ -1,4 +1,5 @@
-@import "./base.scss";
+@use "./base.scss" as *;
+@use "./global-style-variables.scss" as *;
 
 .v-btn {
   text-transform: none !important;
