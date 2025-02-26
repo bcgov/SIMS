@@ -1,6 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { Student, SFASIndividual } from "@sims/sims-db";
-import { Repository } from "typeorm";
+import {
+  Student,
+  SFASIndividual,
+  ApplicationStatus,
+  StudentAssessmentStatus,
+} from "@sims/sims-db";
+import { Brackets, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
@@ -13,22 +18,50 @@ export class StudentInformationService {
   ) {}
 
   /**
-   * Get student by valid SIN.
+   * Get student by valid SIN and student applications.
    * @param sin student sin number.
-   * @returns student.
+   * @returns student and applications.
    */
-  async getStudentBySIN(sin: string): Promise<Student> {
-    return this.studentRepo.findOne({
-      select: {
-        id: true,
-        birthDate: true,
-        contactInfo: true as unknown,
-        sinValidation: { id: true, sin: true },
-        user: { id: true, firstName: true, lastName: true, email: true },
-      },
-      relations: { sinValidation: true, user: true },
-      where: { sinValidation: { sin, isValidSIN: true } },
-    });
+  async getStudentAndApplicationsBySIN(sin: string): Promise<Student> {
+    return this.studentRepo
+      .createQueryBuilder("student")
+      .select([
+        "student.id",
+        "student.birthDate",
+        "student.contactInfo",
+        "sinValidation.sin",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+        "application.id",
+        "application.data",
+        "application.applicationNumber",
+      ])
+      .innerJoin("student.user", "user")
+      .innerJoin("student.sinValidation", "sinValidation")
+      .leftJoin("student.applications", "application")
+      .leftJoin("application.currentAssessment", "currentAssessment")
+      .where("sinValidation.sin = :sin")
+      .andWhere("sinValidation.isValidSIN = true")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            new Brackets((qb) => {
+              qb.where(
+                "application.applicationStatus != :overwritten",
+              ).andWhere(
+                "currentAssessment.studentAssessmentStatus = :assessmentStatusCompleted",
+              );
+            }),
+          ).orWhere("application.id IS NULL");
+        }),
+      )
+      .setParameters({
+        sin,
+        overwritten: ApplicationStatus.Overwritten,
+        assessmentStatusCompleted: StudentAssessmentStatus.Completed,
+      })
+      .getOne();
   }
 
   /**

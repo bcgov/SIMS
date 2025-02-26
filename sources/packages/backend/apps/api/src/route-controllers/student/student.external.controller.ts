@@ -48,9 +48,10 @@ export class StudentExternalController extends BaseController {
   async searchStudentDetails(
     @Body() payload: StudentSearchAPIInDTO,
   ): Promise<StudentSearchResultAPIOutDTO> {
-    const studentPromise = this.studentInformationService.getStudentBySIN(
-      payload.sin,
-    );
+    const studentPromise =
+      this.studentInformationService.getStudentAndApplicationsBySIN(
+        payload.sin,
+      );
     const sfasIndividualPromise =
       await this.studentInformationService.getSFASIndividualBySIN(payload.sin);
     const [student, sfasIndividual] = await Promise.all([
