@@ -169,7 +169,7 @@ export class StudentUploadFileAPIOutDTO {
 export class StudentFileDetailsAPIOutDTO extends StudentUploadFileAPIOutDTO {
   metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
-  updatedAt: Date;
+  createdAt: Date;
 }
 
 export class StudentFileMetadataAPIOutDTO {

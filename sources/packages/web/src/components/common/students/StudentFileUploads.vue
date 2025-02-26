@@ -41,12 +41,12 @@
               emptyStringFiller(slotProps.data.metadata?.applicationNumber)
             }}</template></Column
           >
-          <Column field="updatedAt" header="Date Submitted"
+          <Column field="createdAt" header="Date Submitted"
             ><template #body="slotProps">{{
               getISODateHourMinuteString(slotProps.data.createdAt)
             }}</template></Column
           >
-          <Column field="updatedAt" header="File">
+          <Column header="File">
             <template #body="slotProps">
               <div
                 v-if="canDownloadFiles"

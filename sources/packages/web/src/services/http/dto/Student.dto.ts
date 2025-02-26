@@ -108,7 +108,7 @@ export interface StudentFileDetailsAPIOutDTO
   extends StudentUploadFileAPIOutDTO {
   metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
-  updatedAt: Date;
+  createdAt: Date;
 }
 
 export interface StudentFileMetadataAPIOutDTO {

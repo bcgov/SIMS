@@ -299,7 +299,8 @@ export class StudentStudentsController extends BaseController {
       studentUserToken.studentId,
     );
 
-    const uploadedFiles = await this.fileService.getStudentFilesByUniqueNames(
+    const uploadedFiles = await this.fileService.getStudentFiles(
+      studentUserToken.studentId,
       payload.associatedFiles,
     );
     const uploadedFileNames = uploadedFiles.map((file) => file.fileName);

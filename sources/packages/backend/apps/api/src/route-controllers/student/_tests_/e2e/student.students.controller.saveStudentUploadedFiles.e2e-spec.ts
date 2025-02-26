@@ -15,8 +15,6 @@ import {
   saveFakeStudentFileUpload,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
-import { NotificationActionsService } from "@sims/services";
-import { Raw } from "typeorm";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { FileOriginType, NotificationMessageType } from "@sims/sims-db";
 
@@ -24,7 +22,6 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
-  let notificationActionsService: NotificationActionsService;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -32,12 +29,11 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
     app = nestApplication;
     db = createE2EDataSources(dataSource);
 
-    notificationActionsService = await module.get(NotificationActionsService);
     appModule = module;
-  });
-
-  beforeEach(() => {
-    jest.resetAllMocks();
+    await db.notificationMessage.update(
+      { id: NotificationMessageType.StudentFileUpload },
+      { emailContacts: ["test@test.com"] },
+    );
   });
 
   it("Should save all uploaded files when a proper student file upload request is made.", async () => {
@@ -85,16 +81,6 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
       where: { id: NotificationMessageType.StudentFileUpload },
     });
 
-    jest
-      .spyOn(
-        notificationActionsService as any,
-        "assertNotificationMessageDetails",
-      )
-      .mockReturnValue({
-        templateId: notificationMessage.templateId,
-        emailContacts: ["test@test.com"],
-      });
-
     const endpoint = "/students/student/save-uploaded-files";
 
     // Mock user service to return the saved student.
@@ -128,14 +114,12 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
     });
 
     const notification = await db.notification.findOne({
+      select: {
+        id: true,
+        messagePayload: true,
+      },
       where: {
-        messagePayload: Raw((alias) => `${alias} @> :jsonValue`, {
-          jsonValue: JSON.stringify({
-            personalisation: {
-              applicationNumber: application.applicationNumber,
-            },
-          }),
-        }),
+        user: { id: student.user.id },
       },
     });
     expect(notification.messagePayload).toEqual({
