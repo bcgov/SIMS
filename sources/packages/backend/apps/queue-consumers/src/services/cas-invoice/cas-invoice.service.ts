@@ -107,9 +107,9 @@ export class CASInvoiceService {
       pendingInvoices,
     );
     // Get the invoices sent.
-    const sentInvoices = processesResults.map(
-      (processResult) => processResult.invoiceNumber,
-    );
+    const sentInvoices = processesResults
+      .filter((processResult) => !!processResult.invoiceNumber)
+      .map((processResult) => processResult.invoiceNumber);
     if (sentInvoices.length > 0) {
       await this.dataSource.getRepository(CASInvoice).update(
         {
@@ -150,6 +150,16 @@ export class CASInvoiceService {
       response = await this.casService.sendPendingInvoices(
         pendingInvoicePayload,
       );
+      if (response.invoiceNumber) {
+        summary.info(`Invoice sent to CAS ${response.casReturnedMessages}.`);
+        return {
+          invoiceNumber: response.invoiceNumber,
+          casReturnedMessages: response.casReturnedMessages,
+        };
+      }
+      summary.warn(
+        `Invoice ${pendingInvoicePayload.invoiceNumber} send to CAS did not succeed. Reason: ${response.casReturnedMessages}.`,
+      );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         if (error.name === CAS_BAD_REQUEST) {
@@ -163,16 +173,9 @@ export class CASInvoiceService {
         }
       }
     }
-    if (response.invoiceNumber) {
-      summary.info(`Invoice sent to CAS ${response.casReturnedMessages}.`);
-      return {
-        invoiceNumber: response.invoiceNumber,
-        casReturnedMessages: response.casReturnedMessages,
-      };
-    }
-    summary.warn(
-      `Invoice ${pendingInvoicePayload.invoiceNumber} send to CAS did not succeed. Reason: ${response.casReturnedMessages}.`,
-    );
+    return {
+      casReturnedMessages: response.casReturnedMessages,
+    };
   }
 
   /**
@@ -205,7 +208,7 @@ export class CASInvoiceService {
         },
       );
       summary.info(
-        `Set invoice status to ${CASInvoiceStatus.ManualIntervention} due to error.`,
+        `Set invoice status to ${CASInvoiceStatus.ManualIntervention} due to Error(s):${error}.`,
       );
     } catch (error: unknown) {
       summary.error(
@@ -214,7 +217,6 @@ export class CASInvoiceService {
       );
     }
     return {
-      invoiceNumber: invoiceNumber,
       casReturnedMessages: error,
     };
   }
