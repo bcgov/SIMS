@@ -4,6 +4,7 @@ import {
   SFASIndividual,
   ApplicationStatus,
   StudentAssessmentStatus,
+  ProgramYear,
 } from "@sims/sims-db";
 import { Brackets, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -15,6 +16,8 @@ export class StudentInformationService {
     private readonly studentRepo: Repository<Student>,
     @InjectRepository(SFASIndividual)
     private readonly sfasIndividualRepo: Repository<SFASIndividual>,
+    @InjectRepository(ProgramYear)
+    private readonly programYearRepo: Repository<ProgramYear>,
   ) {}
 
   /**
@@ -23,6 +26,16 @@ export class StudentInformationService {
    * @returns student and applications.
    */
   async getStudentAndApplicationsBySIN(sin: string): Promise<Student> {
+    // Get the SQL to get last 3 active program years including the current program year.
+    const programYearQuery = this.programYearRepo
+      .createQueryBuilder("programYear")
+      .select(["programYear.id"])
+      .where("programYear.active = true")
+      .andWhere("programYear.startDate <= NOW()")
+      .orderBy("programYear.startDate", "DESC")
+      .limit(3)
+      .getSql();
+
     return this.studentRepo
       .createQueryBuilder("student")
       .select([
@@ -47,11 +60,11 @@ export class StudentInformationService {
         new Brackets((qb) => {
           qb.where(
             new Brackets((qb) => {
-              qb.where(
-                "application.applicationStatus != :overwritten",
-              ).andWhere(
-                "currentAssessment.studentAssessmentStatus = :assessmentStatusCompleted",
-              );
+              qb.where("application.applicationStatus != :overwritten")
+                .andWhere(`application.programYear.id IN (${programYearQuery})`)
+                .andWhere(
+                  "currentAssessment.studentAssessmentStatus = :assessmentStatusCompleted",
+                );
             }),
           ).orWhere("application.id IS NULL");
         }),
