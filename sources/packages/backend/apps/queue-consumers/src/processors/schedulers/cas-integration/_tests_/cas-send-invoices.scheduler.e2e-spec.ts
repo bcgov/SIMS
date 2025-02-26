@@ -130,9 +130,25 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     const result = await processor.processQueue(mockedJob.job);
 
     // Assert
+    const casInvoice = await db.casInvoice.findOne({
+      select: {
+        id: true,
+        invoiceNumber: true,
+      },
+      where: {
+        casInvoiceBatch: { id: casInvoiceBatch.id },
+      },
+    });
     expect(result).toStrictEqual(["Process finalized with success."]);
-    expect(mockedJob.containLogMessages(["CAS send invoices executed."])).toBe(
-      true,
-    );
+    expect(
+      mockedJob.containLogMessages([
+        "Checking for pending invoices.",
+        "Executing CAS send invoices.",
+        `Processing pending invoice: ${casInvoice.invoiceNumber}.`,
+        `Pending invoice payload invoice number: ${casInvoice.invoiceNumber}.`,
+        "Invoice sent to CAS undefined.",
+        "1 CAS invoice(s) sent.",
+      ]),
+    ).toBe(true);
   });
 });
