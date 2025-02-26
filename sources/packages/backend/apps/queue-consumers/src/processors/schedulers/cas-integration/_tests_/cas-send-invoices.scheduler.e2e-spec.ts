@@ -13,7 +13,7 @@ import {
   createFakeCASInvoiceBatch,
   saveFakeInvoiceIntoBatchWithInvoiceDetails,
 } from "@sims/test-utils";
-import { getPSTPDTDateTime, QueueNames } from "@sims/utilities";
+import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -76,7 +76,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       ),
     );
     // Creates full-time application with receipts, and invoices details.
-    const fullTimeInvoice = await saveFakeInvoiceIntoBatchWithInvoiceDetails(
+    await saveFakeInvoiceIntoBatchWithInvoiceDetails(
       db,
       {
         casInvoiceBatch,
@@ -123,13 +123,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
         },
       },
     );
-    // Creating variables to provide easy access to some nested values.
-    // Full-time related variables.
-    fullTimeInvoice.disbursementReceipt.disbursementSchedule.studentAssessment
-      .application.student;
-    fullTimeInvoice.disbursementReceipt.disbursementSchedule.documentNumber.toString();
-    getPSTPDTDateTime(fullTimeInvoice.disbursementReceipt.createdAt);
-
     // Queued job.
     const mockedJob = mockBullJob<void>();
 
