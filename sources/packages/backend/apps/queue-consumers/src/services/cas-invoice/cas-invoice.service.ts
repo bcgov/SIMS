@@ -160,6 +160,10 @@ export class CASInvoiceService {
       summary.warn(
         `Invoice ${pendingInvoicePayload.invoiceNumber} send to CAS did not succeed. Reason: ${response.casReturnedMessages}.`,
       );
+      return {
+        invoiceNumber: pendingInvoice.invoiceNumber,
+        casReturnedMessages: response.casReturnedMessages,
+      };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         if (error.name === CAS_BAD_REQUEST) {
@@ -173,9 +177,6 @@ export class CASInvoiceService {
         }
       }
     }
-    return {
-      casReturnedMessages: response.casReturnedMessages,
-    };
   }
 
   /**
