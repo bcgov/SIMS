@@ -46,7 +46,7 @@ const DISBURSED_STATUSES = [
  * - One assessment/reassessment will have one or two dates to be disbursed, a.k.a. disbursement schedule.
  * - Awards are the loans/grants associated with one disbursement schedule (e.g. CSLF, CSPT, BCSL).
  * - The same award can be present in one or two schedules. If it is present in only one it does not mean that it will be in the first one.
- * - A student debt can be a value already received by the student for the same application (application itself and its versions, for instance, overwritten ones).
+ * - A student debt can be a value already received by the student for the same application (application itself and its versions, for instance, edited ones).
  *     - Values already paid(sent/disbursed): sum of all the awards already disbursed for that application number grouped by its code value (e.g. CSLF, CSPT, BCSL).
  *     - During a reassessment, the new award calculated will be deducted from all the values already paid for that particular application.
  *     - If there is a student debt, the priority is to deduct the value as much as possible from the sooner disbursement schedule. This means that,

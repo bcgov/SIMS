@@ -1,0 +1,1 @@
+ALTER TYPE sims.application_status RENAME VALUE 'Overwritten' TO 'Edited';

@@ -90,10 +90,7 @@ export class ApplicationAESTController extends BaseController {
       );
     const application = await this.applicationService.getApplicationById(
       currentApplicationId,
-      {
-        loadDynamicData,
-        allowOverwritten: true,
-      },
+      { loadDynamicData, allowEdited: true },
     );
     if (!application) {
       throw new NotFoundException(
