@@ -18,8 +18,7 @@ import {
   getAbbreviatedDateOnlyFormat,
 } from "@sims/utilities";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { PendingInvoiceResult } from "./cas-invoice.models";
-import { DataSource, In, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 
@@ -93,56 +92,35 @@ export class CASInvoiceService {
    * Send pending invoices to CAS.
    * @param parentProcessSummary parent process summary for logging.
    * @param pendingInvoices pending invoices.
-   * @returns number of updated invoices.
    */
 
   async sendInvoices(
     parentProcessSummary: ProcessSummary,
     pendingInvoices: CASInvoice[],
-  ): Promise<number> {
+  ): Promise<void> {
     // Process each invoice in parallel.
-    const processesResults = await processInParallel(
+    await processInParallel(
       (pendingInvoice) =>
         this.processInvoice(pendingInvoice, parentProcessSummary),
       pendingInvoices,
     );
-    // Get the invoices sent.
-    const sentInvoices = processesResults
-      .filter((processResult) => !!processResult.invoiceNumber)
-      .map((processResult) => processResult.invoiceNumber);
-    if (sentInvoices.length > 0) {
-      await this.dataSource.getRepository(CASInvoice).update(
-        {
-          invoiceNumber: In(sentInvoices),
-        },
-        {
-          invoiceStatus: CASInvoiceStatus.Sent,
-          invoiceStatusUpdatedOn: new Date(),
-          modifier: { id: this.systemUsersService.systemUser.id },
-        },
-      );
-    }
-    return sentInvoices.length;
   }
 
   /**
    * Process and send an invoice to CAS.
    * @param pendingInvoice pending invoice.
    * @param parentProcessSummary parent process summary for logging.
-   * @returns processor result.
    */
   private async processInvoice(
     pendingInvoice: CASInvoice,
     parentProcessSummary: ProcessSummary,
-  ): Promise<PendingInvoiceResult> {
-    const summary = new ProcessSummary();
-    parentProcessSummary.children(summary);
+  ): Promise<void> {
     // Log information about the pending invoice being processed.
-    summary.info(
+    parentProcessSummary.info(
       `Processing pending invoice: ${pendingInvoice.invoiceNumber}.`,
     );
     const pendingInvoicePayload = this.getPendingInvoicePayload(pendingInvoice);
-    summary.info(
+    parentProcessSummary.info(
       `Pending invoice payload invoice number: ${pendingInvoicePayload.invoiceNumber}.`,
     );
     let response: SendPendingInvoicesResponse;
@@ -150,27 +128,30 @@ export class CASInvoiceService {
       response = await this.casService.sendPendingInvoices(
         pendingInvoicePayload,
       );
-      if (response.invoiceNumber) {
-        summary.info(`Invoice sent to CAS ${response.casReturnedMessages}.`);
-        return {
-          invoiceNumber: response.invoiceNumber,
-          casReturnedMessages: response.casReturnedMessages,
-        };
-      }
-      summary.warn(
-        `Invoice ${pendingInvoicePayload.invoiceNumber} send to CAS did not succeed. Reason: ${response.casReturnedMessages}.`,
+      response.invoiceNumber
+        ? parentProcessSummary.info(
+            `Invoice sent to CAS ${response.casReturnedMessages}.`,
+          )
+        : parentProcessSummary.warn(
+            `Invoice ${pendingInvoicePayload.invoiceNumber} send to CAS did not succeed. Reason: ${response.casReturnedMessages}.`,
+          );
+      await this.dataSource.getRepository(CASInvoice).update(
+        {
+          id: pendingInvoice.id,
+        },
+        {
+          invoiceStatus: CASInvoiceStatus.Sent,
+          invoiceStatusUpdatedOn: new Date(),
+          modifier: { id: this.systemUsersService.systemUser.id },
+        },
       );
-      return {
-        invoiceNumber: pendingInvoice.invoiceNumber,
-        casReturnedMessages: response.casReturnedMessages,
-      };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         if (error.name === CAS_BAD_REQUEST) {
-          summary.warn("Known CAS error while sending invoice.");
-          return this.processBadRequestErrors(
-            pendingInvoicePayload.invoiceNumber,
-            summary,
+          parentProcessSummary.warn("Known CAS error while sending invoice.");
+          await this.processBadRequestErrors(
+            pendingInvoice.id,
+            parentProcessSummary,
             error.objectInfo as string[],
             this.systemUsersService.systemUser.id,
           );
@@ -181,25 +162,24 @@ export class CASInvoiceService {
 
   /**
    * Process bad request errors from CAS API during invoice sending.
-   * @param invoiceNumber invoice number.
+   * @param invoiceId invoice id.
    * @param summary summary for logging.
    * @param error error object.
    * @param auditUserId audit user id.
-   * @returns processor result.
    */
   async processBadRequestErrors(
-    invoiceNumber: string,
+    invoiceId: number,
     summary: ProcessSummary,
     error: string[],
     auditUserId: number,
-  ): Promise<PendingInvoiceResult> {
+  ): Promise<void> {
     summary.warn("A known error occurred during processing.");
     const now = new Date();
     const auditUser = { id: auditUserId } as User;
     try {
       await this.casInvoiceRepo.update(
         {
-          invoiceNumber: invoiceNumber,
+          id: invoiceId,
         },
         {
           invoiceStatus: CASInvoiceStatus.ManualIntervention,
@@ -217,9 +197,6 @@ export class CASInvoiceService {
         error,
       );
     }
-    return {
-      casReturnedMessages: error,
-    };
   }
 
   /**
@@ -230,7 +207,7 @@ export class CASInvoiceService {
   private getPendingInvoicePayload(
     pendingInvoice: CASInvoice,
   ): PendingInvoicePayload {
-    // Fixed values as constants
+    // Fixed values as constants.
     const INVOICE_TYPE = "Standard";
     const INVOICE_AMOUNT = 0;
     const PAY_GROUP = "GEN GLP";

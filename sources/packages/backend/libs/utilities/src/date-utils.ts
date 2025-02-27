@@ -174,9 +174,9 @@ export function getDateOnlyFormat(date?: string | Date): string | undefined {
 }
 
 /**
- * Get the abbreviated date format(22 Mar 2021) for the date given
+ * Get the abbreviated date format(22-Mar-2021) for the date given
  * @param date date to be formatted.
- * @returns abbreviated date format like 22 Mar 2021
+ * @returns abbreviated date format like 22-Mar-2021
  */
 export function getAbbreviatedDateOnlyFormat(
   date?: string | Date,
