@@ -170,6 +170,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       })
       .select("studentFile.id")
       .addSelect("studentFile.uniqueFileName")
+      .addSelect("studentFile.fileName")
       .getMany();
   }
 
@@ -231,7 +232,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         "studentFile.fileName",
         "studentFile.metadata",
         "studentFile.groupName",
-        "studentFile.updatedAt",
+        "studentFile.createdAt",
         "studentFile.fileOrigin",
       ])
       .where("studentFile.student.id = :studentId", { studentId })

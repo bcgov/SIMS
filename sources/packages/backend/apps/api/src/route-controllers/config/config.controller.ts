@@ -4,6 +4,7 @@ import { Public } from "../../auth/decorators/public.decorator";
 import { ConfigService } from "@sims/utilities/config";
 import BaseController from "../BaseController";
 import { ConfigAPIOutDTO } from "./models/config.dto";
+import { BULL_BOARD_ROUTE } from "@sims/services/constants";
 
 @Controller("config")
 @ApiTags("config")
@@ -38,6 +39,7 @@ export class ConfigController extends BaseController {
       maximumIdleTimeForWarningAEST:
         this.configService.maximumIdleTimeForWarningAEST,
       appEnv: this.configService.appEnv,
+      queueDashboardURL: `${process.env.QUEUE_DASHBOARD_BASE_URL}/${BULL_BOARD_ROUTE}`,
     };
   }
 }

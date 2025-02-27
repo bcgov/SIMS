@@ -58,7 +58,7 @@ export class SFASIntegrationProcessingService {
         "There are no files to be processed, but post-file import operations will be executed.",
       );
     }
-    await this.postFileImportOperations(!!filePaths.length, processSummary);
+    await this.postFileImportOperations(processSummary);
   }
 
   /**
@@ -158,12 +158,10 @@ export class SFASIntegrationProcessingService {
    * Responsible for completing the post file import operations.
    * These include updating the student ids, disbursement overawards
    * and inserting student restrictions.
-   * @param executeDisbursementOverawardsUpdate boolean indicating if the disbursement overawards update should execute or not.
    * @param processSummary process summary for logging.
    * @returns postFileImportResult process sftp response result object.
    */
   private async postFileImportOperations(
-    executeDisbursementOverawardsUpdate: boolean,
     processSummary: ProcessSummary,
   ): Promise<void> {
     // The following sequence of actions take place after the files have been imported and processed.
@@ -178,15 +176,13 @@ export class SFASIntegrationProcessingService {
       await this.sfasIndividualImportService.updateStudentId();
       processSummary.info("Student ids updated.");
       // Update the disbursement overawards if there is at least one file to process.
-      if (executeDisbursementOverawardsUpdate) {
-        processSummary.info(
-          "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
-        );
-        await this.sfasIndividualImportService.updateDisbursementOverawards();
-        processSummary.info(
-          "New disbursement overaward balances inserted to disbursement overawards table.",
-        );
-      }
+      processSummary.info(
+        "Updating and inserting new disbursement overaward balances from sfas to disbursement overawards table.",
+      );
+      await this.sfasIndividualImportService.updateDisbursementOverawards();
+      processSummary.info(
+        "New disbursement overaward balances inserted to disbursement overawards table.",
+      );
       processSummary.info(
         "Inserting student restrictions from SFAS restrictions data.",
       );

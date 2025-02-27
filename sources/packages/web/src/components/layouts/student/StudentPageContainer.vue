@@ -2,6 +2,7 @@
   <full-page-container
     :layout-template="layoutTemplate"
     :full-width="fullWidth"
+    :class="{ 'mobile-view': isMobile }"
   >
     <template #header>
       <slot name="header"></slot>
@@ -21,6 +22,7 @@ import CheckValidSINBanner from "@/views/student/CheckValidSINBanner.vue";
 import { LayoutTemplates } from "@/types";
 import { PropType, defineComponent } from "vue";
 import { useStudentStore } from "@/composables";
+import { useDisplay } from "vuetify";
 
 export default defineComponent({
   components: { RestrictionBanner, CheckValidSINBanner },
@@ -43,7 +45,8 @@ export default defineComponent({
   },
   setup() {
     const { hasStudentAccount } = useStudentStore();
-    return { hasStudentAccount };
+    const { mobile: isMobile } = useDisplay();
+    return { hasStudentAccount, isMobile };
   },
 });
 </script>

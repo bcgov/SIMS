@@ -1,8 +1,7 @@
 /*
  * After all the SFAS individuals are imported, this update
  * associates all the students ids that matches with the students
- * currently on the database. This will be used for all subsequent
- * bulk operations to update the data on the table sims.disbursement-overawards.
+ * currently on the database.
  */
 UPDATE
     sims.sfas_individuals
@@ -15,4 +14,5 @@ FROM
 WHERE
     students.birth_date = sims.sfas_individuals.birth_date
     AND sin_validations.sin = sims.sfas_individuals.sin
-    AND lower(users.last_name) = lower(sims.sfas_individuals.last_name);
+    AND lower(users.last_name) = lower(sims.sfas_individuals.last_name)
+    AND sims.sfas_individuals.student_id IS NULL;

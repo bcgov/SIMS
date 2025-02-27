@@ -24,4 +24,5 @@ export interface AppConfig {
   maximumIdleTimeForWarningInstitution: number;
   maximumIdleTimeForWarningAEST: number;
   appEnv: string;
+  queueDashboardURL: string;
 }

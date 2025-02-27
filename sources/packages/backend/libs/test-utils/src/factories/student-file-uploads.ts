@@ -25,6 +25,7 @@ export function createFakeStudentFileUpload(
   },
   options?: {
     fileOrigin?: FileOriginType;
+    groupName?: string;
   },
 ): StudentFile {
   const studentFile = new StudentFile();
@@ -34,7 +35,7 @@ export function createFakeStudentFileUpload(
     faker.datatype.uuid() +
     "." +
     faker.system.fileType();
-  studentFile.groupName = "Ministry communications";
+  studentFile.groupName = options?.groupName ?? "Ministry communications";
   studentFile.student = relations?.student ?? createFakeStudent();
   studentFile.creator = relations?.creator;
   studentFile.fileOrigin = options?.fileOrigin ?? FileOriginType.Ministry;
@@ -55,7 +56,7 @@ export function createFakeStudentFileUpload(
 export async function saveFakeStudentFileUpload(
   dataSource: DataSource,
   relations?: { student?: Student; creator?: User },
-  options?: { fileOrigin: FileOriginType },
+  options?: { fileOrigin: FileOriginType; groupName?: string },
 ): Promise<StudentFile> {
   const studentFile = createFakeStudentFileUpload(relations, options);
   const studentFileRepo = dataSource.getRepository(StudentFile);

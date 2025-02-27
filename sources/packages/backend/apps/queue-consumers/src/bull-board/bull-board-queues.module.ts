@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
 import { BullBoardModule, BullBoardModuleOptions } from "@bull-board/nestjs";
-import { ConfigModule, ConfigService } from "@sims/utilities/config";
-import * as basicAuth from "express-basic-auth";
+import { ConfigModule } from "@sims/utilities/config";
 import { ExpressAdapter } from "@bull-board/express";
-import { BULL_BOARD_ROUTE } from "../constants";
 import { BullBoardQueuesRegistrationModule } from "./bull-board-queues-registration.module";
+import { JwtModule } from "@nestjs/jwt";
+import { BullBoardAuthenticationMiddleware } from "./bull-board-authentication.middleware";
+import { BULL_BOARD_ROUTE } from "@sims/services/constants";
 
 /**
  * Bull board related modules to allow the dashboard to be registered.
@@ -12,9 +13,8 @@ import { BullBoardQueuesRegistrationModule } from "./bull-board-queues-registrat
 @Module({
   imports: [
     BullBoardModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule, JwtModule],
       useFactory: bullBoardModuleFactory,
-      inject: [ConfigService],
     }),
     BullBoardQueuesRegistrationModule,
   ],
@@ -24,24 +24,14 @@ export class BullBoardQueuesModule {}
 
 /**
  * Builds the Bull Board module options to register the dashboard in a dynamic way.
- * @param configService service with the configuration of the application.
  * @returns Bull Board module options with the dashboard route,
  * authentication middleware and the board options.
  */
-async function bullBoardModuleFactory(
-  configService: ConfigService,
-): Promise<BullBoardModuleOptions> {
-  const queueDashboardUsers = {};
-  queueDashboardUsers[configService.queueDashboardCredential.userName] =
-    configService.queueDashboardCredential.password;
-  const authMiddleware = basicAuth({
-    users: queueDashboardUsers,
-    challenge: true,
-  });
+async function bullBoardModuleFactory(): Promise<BullBoardModuleOptions> {
   return {
     route: BULL_BOARD_ROUTE,
     adapter: ExpressAdapter,
-    middleware: authMiddleware,
+    middleware: BullBoardAuthenticationMiddleware,
     boardOptions: {
       uiConfig: {
         boardTitle: "SIMS-Queues",

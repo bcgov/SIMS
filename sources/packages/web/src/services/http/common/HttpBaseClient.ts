@@ -65,19 +65,40 @@ export default abstract class HttpBaseClient {
    * Executes the POST call and returns Axios complete response.
    * @param url url to execute the POST call.
    * @param payload payload to be send.
+   * @param config optional axios request config.
    * @returns complete Axios response.
    */
   protected async postCallFullResponse<T, TResult = PrimaryIdentifierAPIOutDTO>(
     url: string,
     payload: T,
+    config?: AxiosRequestConfig,
   ): Promise<AxiosResponse<TResult>> {
     try {
-      const response = await this.apiClient.post(
-        url,
-        payload,
-        this.addAuthHeader(),
-      );
+      const response = await this.apiClient.post(url, payload, {
+        ...this.addAuthHeader(),
+        ...config,
+      });
       return response as AxiosResponse<TResult>;
+    } catch (error: unknown) {
+      this.handleRequestError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Executes a DELETE call.
+   * @param url url to execute the DELETE call.
+   * @param config optional axios request config.
+   */
+  protected async deleteCall(
+    url: string,
+    config?: AxiosRequestConfig,
+  ): Promise<void> {
+    try {
+      await this.apiClient.delete(url, {
+        ...this.addAuthHeader(),
+        ...config,
+      });
     } catch (error: unknown) {
       this.handleRequestError(error);
       throw error;

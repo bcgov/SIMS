@@ -81,7 +81,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
   AssessmentTriggerType,
 } from "@/types";
-import { ref, defineComponent, computed, onMounted } from "vue";
+import { ref, defineComponent, computed, watchEffect } from "vue";
 import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 import { ApplicationService } from "@/services/ApplicationService";
 import StepperProgressBar from "@/components/common/StepperProgressBar.vue";
@@ -132,6 +132,8 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: true,
+      // The value could be null on load of the component and updated later.
+      default: null,
     },
     areApplicationActionsAllowed: {
       type: Boolean,
@@ -160,45 +162,50 @@ export default defineComponent({
       return "warning";
     });
 
-    onMounted(async () => {
-      applicationProgressDetails.value =
-        await ApplicationService.shared.getApplicationProgressDetails(
-          props.applicationId,
-        );
+    // Adding watch effect instead of onMounted because
+    // applicationId may not be not available on load.
+    watchEffect(async () => {
+      if (props.applicationId) {
+        applicationProgressDetails.value =
+          await ApplicationService.shared.getApplicationProgressDetails(
+            props.applicationId,
+          );
 
-      if (
-        applicationProgressDetails.value.scholasticStandingChangeType ===
-          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram ||
-        applicationProgressDetails.value.pirStatus ===
-          ProgramInfoStatus.declined ||
-        applicationProgressDetails.value.exceptionStatus ===
-          ApplicationExceptionStatus.Declined ||
-        applicationProgressDetails.value.firstCOEStatus ===
-          COEStatus.declined ||
-        applicationProgressDetails.value.secondCOEStatus === COEStatus.declined
-      ) {
-        // One of the requests or confirmations is declined.
-        statusIconDetails.value = STATUS_ICON_ERROR;
-      } else if (
-        applicationProgressDetails.value.appealStatus ===
-          StudentAppealStatus.Pending ||
-        applicationProgressDetails.value
-          .applicationOfferingChangeRequestStatus ===
-          ApplicationOfferingChangeRequestStatus.InProgressWithSABC ||
-        applicationProgressDetails.value
-          .applicationOfferingChangeRequestStatus ===
-          ApplicationOfferingChangeRequestStatus.InProgressWithStudent ||
-        applicationProgressDetails.value.hasBlockFundingFeedbackError ||
-        applicationProgressDetails.value.hasECertFailedValidations
-      ) {
-        // Application is completed but has warnings.
-        statusIconDetails.value = STATUS_ICON_WARNING;
-      } else if (
-        // Application is completed.
-        applicationProgressDetails.value.applicationStatus ===
-        ApplicationStatus.Completed
-      ) {
-        statusIconDetails.value = STATUS_ICON_SUCCESS;
+        if (
+          applicationProgressDetails.value.scholasticStandingChangeType ===
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram ||
+          applicationProgressDetails.value.pirStatus ===
+            ProgramInfoStatus.declined ||
+          applicationProgressDetails.value.exceptionStatus ===
+            ApplicationExceptionStatus.Declined ||
+          applicationProgressDetails.value.firstCOEStatus ===
+            COEStatus.declined ||
+          applicationProgressDetails.value.secondCOEStatus ===
+            COEStatus.declined
+        ) {
+          // One of the requests or confirmations is declined.
+          statusIconDetails.value = STATUS_ICON_ERROR;
+        } else if (
+          applicationProgressDetails.value.appealStatus ===
+            StudentAppealStatus.Pending ||
+          applicationProgressDetails.value
+            .applicationOfferingChangeRequestStatus ===
+            ApplicationOfferingChangeRequestStatus.InProgressWithSABC ||
+          applicationProgressDetails.value
+            .applicationOfferingChangeRequestStatus ===
+            ApplicationOfferingChangeRequestStatus.InProgressWithStudent ||
+          applicationProgressDetails.value.hasBlockFundingFeedbackError ||
+          applicationProgressDetails.value.hasECertFailedValidations
+        ) {
+          // Application is completed but has warnings.
+          statusIconDetails.value = STATUS_ICON_WARNING;
+        } else if (
+          // Application is completed.
+          applicationProgressDetails.value.applicationStatus ===
+          ApplicationStatus.Completed
+        ) {
+          statusIconDetails.value = STATUS_ICON_SUCCESS;
+        }
       }
     });
 

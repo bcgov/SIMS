@@ -12,9 +12,9 @@ import {
   SFTPConfig,
   DatabaseConfiguration,
   RedisConfiguration,
-  UserPasswordCredential,
   CASIntegrationConfig,
   S3Configuration,
+  QueueDashboardAccess,
 } from "./config.models";
 
 @Injectable()
@@ -285,12 +285,17 @@ export class ConfigService {
   }
 
   /**
-   * Queue dashboard configuration.
+   * Queue dashboard access configurations.
    */
-  get queueDashboardCredential(): UserPasswordCredential {
-    return this.getCachedConfig("queueDashboardCredentialConfig", {
-      userName: process.env.QUEUE_DASHBOARD_USER,
-      password: process.env.QUEUE_DASHBOARD_PASSWORD,
+  get queueDashboardAccess(): QueueDashboardAccess {
+    return this.getCachedConfig("queueDashboardAccessConfig", {
+      tokenSecret: Buffer.from(
+        process.env.QUEUE_DASHBOARD_TOKEN_SECRET,
+        "base64",
+      ),
+      tokenExpirationSeconds:
+        +process.env.QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS,
+      baseURL: process.env.QUEUE_DASHBOARD_BASE_URL,
     });
   }
 

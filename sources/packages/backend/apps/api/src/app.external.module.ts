@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { StudentExternalController } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { StudentService } from "./services";
+import { StudentInformationService, StudentService } from "./services";
 import {
   DisbursementOverawardService,
   NoteSharedService,
@@ -16,6 +16,7 @@ import {
     SFASIndividualService,
     DisbursementOverawardService,
     NoteSharedService,
+    StudentInformationService,
   ],
 })
 export class AppExternalModule {}

@@ -43,6 +43,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
         lastName: student.user.lastName,
         birthDate: student.birthDate,
         sin: student.sinValidation.sin,
+        student,
         unsuccessfulCompletion: 12,
       },
     });

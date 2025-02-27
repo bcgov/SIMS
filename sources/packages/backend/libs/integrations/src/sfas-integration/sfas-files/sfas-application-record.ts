@@ -248,9 +248,9 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
     return parseInteger(this.line.substring(283, 293));
   }
   /**
-   * Discretionary expenses (assessment_v2.SP_EXP_OTHER).
+   * Assessed eligible need (Application_assessment.student_eligible_award).
    */
-  get assessedCostsDiscretionaryExpenses(): number | null {
+  get assessedEligibleNeed(): number | null {
     return parseInteger(this.line.substring(293, 303));
   }
   /**

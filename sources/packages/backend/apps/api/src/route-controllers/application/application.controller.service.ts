@@ -351,6 +351,32 @@ export class ApplicationControllerService {
   }
 
   /**
+   * Gets the current application id.
+   * @param applicationId application id.
+   * @param isParentApplication is parent application.
+   * @returns the current application id.
+   */
+  async getCurrentApplicationId(
+    applicationId: number,
+    isParentApplication: boolean,
+  ): Promise<number> {
+    let currentApplicationId = applicationId;
+    if (isParentApplication) {
+      const currentApplication =
+        await this.applicationService.getCurrentApplicationByParentApplicationId(
+          applicationId,
+        );
+      if (!currentApplication) {
+        throw new NotFoundException(
+          `Current application for provided parent application ${applicationId} was not found.`,
+        );
+      }
+      currentApplicationId = currentApplication.id;
+    }
+    return currentApplicationId;
+  }
+
+  /**
    * Check whether the selected location is designated or not.
    * If selected location is not designated, then make the
    * selectedLocation null.

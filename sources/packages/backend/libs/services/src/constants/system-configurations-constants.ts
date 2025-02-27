@@ -90,3 +90,8 @@ export const BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL = 7;
  * Represents the maximum number of disbursement blocked notifications to send.
  * */
 export const BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND = 3;
+
+/**
+ * Bull Dashboard route.
+ */
+export const BULL_BOARD_ROUTE = "admin/queues";

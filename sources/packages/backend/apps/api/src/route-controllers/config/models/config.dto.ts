@@ -7,6 +7,7 @@ export class ConfigAPIOutDTO {
   maximumIdleTimeForWarningInstitution: number;
   maximumIdleTimeForWarningAEST: number;
   appEnv: string;
+  queueDashboardURL: string;
 }
 
 export class AuthConfigAPIOutDTO {

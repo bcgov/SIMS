@@ -433,6 +433,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         lastName: student.user.lastName,
         birthDate: student.birthDate,
         sin: student.sinValidation.sin,
+        student,
       },
     });
     // First SFAS application with the start date before the first assessment date of the current application.
@@ -586,6 +587,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           lastName: student.user.lastName,
           birthDate: student.birthDate,
           sin: student.sinValidation.sin,
+          student,
         },
       });
       // Past SFAS application with the start date before the first assessment date of the current application and cancelled.
@@ -729,6 +731,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         lastName: student.user.lastName,
         birthDate: student.birthDate,
         sin: student.sinValidation.sin,
+        student,
       },
     });
     // First SFAS application with the start date before the first assessment date of the current application.
@@ -879,6 +882,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         lastName: student.user.lastName,
         birthDate: student.birthDate,
         sin: student.sinValidation.sin,
+        student,
       },
     });
 

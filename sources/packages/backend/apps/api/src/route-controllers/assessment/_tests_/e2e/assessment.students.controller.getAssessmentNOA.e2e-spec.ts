@@ -25,7 +25,7 @@ import {
 } from "@sims/sims-db";
 import { TestingModule } from "@nestjs/testing";
 import { getUserFullName } from "../../../../utilities";
-import { getDateOnlyFullMonthFormat } from "@sims/utilities";
+import { addDays, getDateOnlyFullMonthFormat } from "@sims/utilities";
 
 describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
   let app: INestApplication;
@@ -42,7 +42,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
 
   it("Should get the student NOA details for an eligible application when the student tries to access it.", async () => {
     // Arrange
-
+    const enrolmentDate1 = addDays(1);
     // Create the new student to be mocked as the authenticated one.
     const student = await saveFakeStudent(db.dataSource);
     // Mock user services to return the saved student.
@@ -84,22 +84,25 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
     application.currentAssessment = newCurrentAssessment;
     await db.application.save(application);
     // Create and save a new disbursement schedule for the new assessment.
-    const newAssessmentDisbursement = createFakeDisbursementSchedule({
-      studentAssessment: newCurrentAssessment,
-      msfaaNumber,
-      disbursementValues: [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaLoan,
-          "CSLF",
-          1250,
-        ),
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaGrant,
-          "CSGP",
-          1500,
-        ),
-      ],
-    });
+    const newAssessmentDisbursement = createFakeDisbursementSchedule(
+      {
+        studentAssessment: newCurrentAssessment,
+        msfaaNumber,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1250,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGP",
+            1500,
+          ),
+        ],
+      },
+      { initialValues: { coeUpdatedAt: enrolmentDate1 } },
+    );
     await db.disbursementSchedule.save(newAssessmentDisbursement);
 
     const assessment = application.currentAssessment;
@@ -145,6 +148,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           newAssessmentDisbursement.tuitionRemittanceRequestedAmount,
         disbursement1cslf: 1250,
         disbursement1csgp: 1500,
+        disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
       },
       offeringName: assessment.offering.name,
     };
@@ -158,6 +162,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
 
   it("Should exclude BC Total Grant from eligible amount calculation when getting NOA details", async () => {
     // Arrange
+    const enrolmentDate1 = addDays(1);
     const student = await saveFakeStudent(db.dataSource);
     await mockUserLoginInfo(appModule, student);
 
@@ -213,6 +218,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       },
       {
         offeringIntensity: OfferingIntensity.fullTime,
+        firstDisbursementInitialValues: { coeUpdatedAt: enrolmentDate1 },
       },
     );
 
@@ -262,6 +268,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         disbursement1csgf: 2520,
         disbursement1bcag: 140,
         disbursement1sbsd: 400,
+        disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
       },
       offeringName: assessment.offering.name,
     };

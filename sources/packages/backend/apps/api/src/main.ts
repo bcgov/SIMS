@@ -55,6 +55,7 @@ async function bootstrap() {
   app.enableCors({
     exposedHeaders: "Content-Disposition",
     origin: allowAnyOrigin,
+    credentials: true,
   });
 
   // pipes

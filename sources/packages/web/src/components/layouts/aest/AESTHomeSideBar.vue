@@ -37,6 +37,16 @@
             />
           </template>
         </check-permission-role>
+        <check-permission-role :role="Role.AESTQueueDashboardAdmin">
+          <template #="{ isAllowed }">
+            <v-list-item
+              v-if="isAllowed"
+              @click="redirectToQueuesDashboard"
+              prepend-icon="mdi-monitor-dashboard"
+              title="Queues Dashboard"
+            />
+          </template>
+        </check-permission-role>
       </v-list>
     </template>
   </v-navigation-drawer>
@@ -46,6 +56,8 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, Role } from "@/types";
 import { ref, defineComponent } from "vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { UserService } from "@/services/UserService";
+import { AppConfigService } from "@/services/AppConfigService";
 
 export default defineComponent({
   components: { CheckPermissionRole },
@@ -141,10 +153,21 @@ export default defineComponent({
         },
       },
     ]);
+
+    /**
+     * Acquire a new token to allow the user to have access to the queues admin.
+     */
+    const redirectToQueuesDashboard = async () => {
+      await UserService.shared.queueAdminTokenExchange();
+      const { queueDashboardURL } = await AppConfigService.shared.config();
+      window.open(queueDashboardURL, "_blank", "noopener,noreferrer");
+    };
+
     return {
       menuItems,
       AESTRoutesConst,
       Role,
+      redirectToQueuesDashboard,
     };
   },
 });

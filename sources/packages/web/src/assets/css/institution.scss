@@ -1,4 +1,4 @@
-@import "./global-style-variables.scss";
+@use "./global-style-variables.scss" as *;
 
 .color-blue {
   color: $brand-blue;

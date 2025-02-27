@@ -7,3 +7,11 @@ export interface TokenResponse {
   session_state: string;
   scope: string;
 }
+
+export interface TokenRequest {
+  grant_type: "password" | "client_credentials";
+  client_id: string;
+  username?: string;
+  password?: string;
+  client_secret?: string;
+}

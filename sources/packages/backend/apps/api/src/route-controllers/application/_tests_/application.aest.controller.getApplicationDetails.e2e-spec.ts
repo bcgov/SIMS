@@ -12,6 +12,7 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
+  Application,
   ApplicationData,
   ApplicationStatus,
   EducationProgramOffering,
@@ -178,7 +179,10 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
     );
     const currentApplication = await saveFakeApplication(
       db.dataSource,
-      {},
+      {
+        parentApplication: { id: previousApplication.id } as Application,
+        precedingApplication: { id: previousApplication.id } as Application,
+      },
       {
         applicationStatus: ApplicationStatus.Completed,
         applicationNumber: previousApplication.applicationNumber,

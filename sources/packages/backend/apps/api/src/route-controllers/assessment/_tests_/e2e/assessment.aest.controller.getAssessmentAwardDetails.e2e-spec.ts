@@ -55,6 +55,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
   it("Should get the student assessment award summary containing all federal and provincial estimated and final awards for a full-time application with two disbursements when the receipts are available.", async () => {
     // Arrange
     const [dateSent1, dateSent2] = [addDays(-30), addDays(-1)];
+    const [enrolmentDate1, enrolmentDate2] = [addDays(1), addDays(30)];
     // First disbursement values.
     const firstDisbursementValues = [
       createFakeDisbursementValue(DisbursementValueType.CanadaLoan, "CSLF", 1),
@@ -126,11 +127,13 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           dateSent: dateSent1,
           tuitionRemittanceRequestedAmount: 1099,
+          coeUpdatedAt: enrolmentDate1,
         },
         secondDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           coeStatus: COEStatus.completed,
           dateSent: dateSent2,
+          coeUpdatedAt: enrolmentDate2,
         },
       },
     );
@@ -183,6 +186,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1bcag: 7,
           disbursement1bgpd: 8,
           disbursement1sbsd: 9,
+          disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
           // Second disbursement schedule dynamic properties.
           disbursement2Date: getDateOnlyFullMonthFormat(
             secondSchedule.disbursementDate,
@@ -206,6 +210,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement2bcag: 700,
           disbursement2bgpd: 800,
           disbursement2sbsd: 900,
+          disbursement2EnrolmentDate: enrolmentDate2.toISOString(),
         },
         finalAward: {
           // First disbursement schedule receipt dynamic properties.
@@ -235,6 +240,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
   it("Should get the student assessment award summary containing estimated and final awards for a part-time application with two disbursements when e-Cert was sent.", async () => {
     // Arrange
     const [dateSent1, dateSent2] = [addDays(-60), addDays(-5)];
+    const [enrolmentDate1, enrolmentDate2] = [addDays(1), addDays(30)];
     // First disbursement values.
     const firstDisbursementValues = [
       createFakeDisbursementValue(
@@ -331,12 +337,14 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
         firstDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           dateSent: dateSent1,
+          coeUpdatedAt: enrolmentDate1,
         },
         secondDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           coeStatus: COEStatus.completed,
           tuitionRemittanceRequestedAmount: 9876,
           dateSent: dateSent2,
+          coeUpdatedAt: enrolmentDate2,
         },
       },
     );
@@ -386,6 +394,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1csgd: 444,
           disbursement1bcag: 555,
           disbursement1sbsd: 666,
+          disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
           // Second disbursement schedule dynamic properties.
           disbursement2Date: getDateOnlyFullMonthFormat(
             secondSchedule.disbursementDate,
@@ -406,6 +415,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement2csgd: 1212,
           disbursement2bcag: 1313,
           disbursement2sbsd: 1414,
+          disbursement2EnrolmentDate: enrolmentDate2.toISOString(),
         },
         finalAward: {
           // First disbursement schedule receipt dynamic properties.

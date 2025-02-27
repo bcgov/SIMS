@@ -17,6 +17,7 @@ export interface StudentFileUploadNotification {
   applicationNumber?: string;
   documentPurpose: string;
   userId: number;
+  fileNames: string[];
 }
 
 export interface MinistryStudentFileUploadNotification {

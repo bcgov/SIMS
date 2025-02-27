@@ -2,6 +2,7 @@ module.exports = {
   root: true,
   env: {
     node: true,
+    es2022: true,
   },
   extends: [
     "plugin:vue/vue3-essential",
@@ -11,7 +12,7 @@ module.exports = {
     "@vue/prettier/@typescript-eslint",
   ],
   parserOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 2022,
     tsconfigRootDir: __dirname,
   },
   rules: {

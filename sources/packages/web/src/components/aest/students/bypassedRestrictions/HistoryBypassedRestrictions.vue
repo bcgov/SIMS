@@ -100,7 +100,7 @@ import {
   RestrictionStatus,
   Role,
 } from "@/types";
-import { ref, onMounted, defineComponent } from "vue";
+import { ref, defineComponent, watchEffect } from "vue";
 import StatusChipBypass from "@/components/generic/StatusChipBypass.vue";
 import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
 import { ApplicationRestrictionBypassHistoryAPIOutDTO } from "@/services/http/dto";
@@ -122,6 +122,8 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: true,
+      // The value could be null on load of the component and updated later.
+      default: null,
     },
   },
   setup(props) {
@@ -130,9 +132,13 @@ export default defineComponent({
     const bypassedRestrictions = ref({
       bypasses: [],
     } as ApplicationRestrictionBypassHistoryAPIOutDTO);
-    onMounted(async () => {
-      await reloadBypassedRestrictionsHistory();
-    });
+
+    // Adding watch effect instead of onMounted because
+    // applicationId may not be not available on load.
+    watchEffect(
+      async () =>
+        props.applicationId && (await reloadBypassedRestrictionsHistory()),
+    );
 
     const getRemoveBypassLabel = (isBypassActive: boolean): string => {
       return isBypassActive ? "Remove Bypass" : "Bypass Removed";

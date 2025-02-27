@@ -114,6 +114,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
         lastName: student.user.lastName,
         birthDate: student.birthDate,
         sin: student.sinValidation.sin,
+        student,
         unsuccessfulCompletion: 12,
       },
     });

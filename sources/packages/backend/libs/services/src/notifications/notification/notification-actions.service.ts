@@ -83,6 +83,7 @@ export class NotificationActionsService {
           studentEmail: notification.email,
           documentPurpose: notification.documentPurpose,
           dateTime: this.getDateTimeOnPSTTimeZone(),
+          fileNames: notification.fileNames,
         },
       },
     }));

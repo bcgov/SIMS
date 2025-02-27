@@ -71,7 +71,7 @@ describe(
 
     beforeAll(async () => {
       // Env variable required for querying the eligible e-Cert records.
-      process.env.APPLICATION_ARCHIVE_DAYS = "42";
+      process.env.APPLICATION_ARCHIVE_DAYS = "365";
       const { nestApplication, dataSource, sshClientMock } =
         await createTestingAppModule();
       app = nestApplication;

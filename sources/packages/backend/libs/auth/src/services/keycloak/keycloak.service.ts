@@ -1,11 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { stringify } from "qs";
-import { TokenResponse } from "./token-response.model";
+import { TokenRequest, TokenResponse } from "./token.model";
 import { RealmConfig } from "./realm-config.model";
 import { OpenIdConfig } from "./openid-config.model";
 import { KeycloakConfig } from "../../config";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { AuthConfig, ConfigService } from "@sims/utilities/config";
+import {
+  AuthConfig,
+  ConfigService,
+  UserPasswordCredential,
+} from "@sims/utilities/config";
 import { HttpService } from "@nestjs/axios";
 
 /**
@@ -89,22 +93,35 @@ export class KeycloakService {
 
   /**
    * Retrieve an token from Keycloak using a provided user name and password.
-   * @param username User name.
-   * @param password Password.
    * @param clientId Client ID.
-   * @returns token
+   * @param options options
+   * - `userPasswordCredential` credential to obtain authentication token.
+   * - `clientSecret` client secret to obtain authentication token.
+   * @returns token.
    */
-  public async getToken(
-    username: string,
-    password: string,
+  async getToken(
     clientId: string,
+    options: {
+      userPasswordCredential?: UserPasswordCredential;
+      clientSecret?: string;
+    },
   ): Promise<TokenResponse> {
-    const payload = {
-      grant_type: "password",
-      client_id: clientId,
-      username,
-      password,
-    };
+    let payload: TokenRequest;
+    if (options.userPasswordCredential) {
+      payload = {
+        grant_type: "password",
+        client_id: clientId,
+        username: options.userPasswordCredential.userName,
+        password: options.userPasswordCredential.password,
+      };
+    } else {
+      payload = {
+        grant_type: "client_credentials",
+        client_id: clientId,
+        client_secret: options.clientSecret,
+      };
+    }
+
     return this.getKeyCloakToken(payload);
   }
 
@@ -113,7 +130,9 @@ export class KeycloakService {
    * @param payload Payload request (e.g. password or client_credentials).
    * @returns token
    */
-  private async getKeyCloakToken(payload: any): Promise<TokenResponse> {
+  private async getKeyCloakToken(
+    payload: TokenRequest,
+  ): Promise<TokenResponse> {
     try {
       const data = stringify(payload);
       const response = await this.httpService.axiosRef.post(

@@ -55,5 +55,8 @@ export async function getAESTToken(group?: AESTGroups): Promise<string> {
         password: process.env.E2E_TEST_PASSWORD,
       };
   }
-  return getCachedToken(AuthorizedParties.aest, credential, group?.toString());
+  return getCachedToken(AuthorizedParties.aest, {
+    userPasswordCredential: credential,
+    uniqueTokenCache: group?.toString(),
+  });
 }

@@ -81,7 +81,7 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
           uniqueFileName: studentUploadedFile.uniqueFileName,
           metadata: studentUploadedFile.metadata,
           groupName: "Ministry communications",
-          updatedAt: studentUploadedFile.updatedAt.toISOString(),
+          createdAt: studentUploadedFile.updatedAt.toISOString(),
           fileOrigin: studentUploadedFile.fileOrigin,
         },
       ]);

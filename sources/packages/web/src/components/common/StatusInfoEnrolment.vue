@@ -7,6 +7,7 @@
 <script lang="ts">
 import { PropType, computed, defineComponent } from "vue";
 import { StatusInfo, COEStatus } from "@/types";
+import { useFormatters } from "@/composables";
 
 export interface EnrollmentStatusInfo {
   status: StatusInfo;
@@ -19,14 +20,21 @@ export default defineComponent({
       type: Object as PropType<COEStatus>,
       required: true,
     },
+    enrolmentDate: {
+      type: Date,
+      required: false,
+    },
   },
   setup(props) {
+    const { dateOnlyLongString } = useFormatters();
     const enrollmentStatus = computed<EnrollmentStatusInfo>(() => {
       switch (props.coeStatus) {
         case COEStatus.completed:
           return {
             status: StatusInfo.Completed,
-            header: "Enrolment confirmed",
+            header: `Enrolment confirmed on ${dateOnlyLongString(
+              props.enrolmentDate,
+            )}`,
           };
         case COEStatus.required:
           return {

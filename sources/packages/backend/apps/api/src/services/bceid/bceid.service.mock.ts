@@ -8,6 +8,7 @@ import getAccountDetailsMock from "./mockups/getAccountDetails.mock";
 import searchBCeIDAccountsMock from "./mockups/searchBCeIDAccounts.mock";
 import { HttpService } from "@nestjs/axios";
 import { KeycloakService } from "@sims/auth/services";
+import { UserPasswordCredential } from "@sims/utilities/config";
 
 // This service is intended to return only fake data for development purposes only.
 // It allows the simulation of the response from BCeID Web Service.
@@ -28,11 +29,13 @@ export class BCeIDServiceMock {
     }
     const baseURL = "https://dev-aest-sims.apps.silver.devops.gov.bc.ca/api";
     try {
-      const token = await KeycloakService.shared.getToken(
-        process.env.E2E_TEST_INSTITUTION_USERNAME,
-        process.env.E2E_TEST_INSTITUTION_PASSWORD,
-        "institution",
-      );
+      const userPasswordCredentialBCeID: UserPasswordCredential = {
+        userName: process.env.E2E_TEST_INSTITUTION_USERNAME,
+        password: process.env.E2E_TEST_INSTITUTION_PASSWORD,
+      };
+      const token = await KeycloakService.shared.getToken("institution", {
+        userPasswordCredential: userPasswordCredentialBCeID,
+      });
 
       if (token) {
         const resp = await this.httpService.axiosRef.get(`${baseURL}${path}`, {

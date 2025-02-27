@@ -28,7 +28,11 @@ import {
   Institution,
   InstitutionLocation,
 } from "@sims/sims-db";
-import { getDateOnlyFormat, getDateOnlyFullMonthFormat } from "@sims/utilities";
+import {
+  addDays,
+  getDateOnlyFormat,
+  getDateOnlyFullMonthFormat,
+} from "@sims/utilities";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
 import { MASKED_MSFAA_NUMBER } from "../../../../../src/services";
 
@@ -57,7 +61,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
 
   it("Should get the student award details for an eligible application when an eligible public institution user tries to access it.", async () => {
     // Arrange
-
+    const enrolmentDate1 = addDays(1);
     // Student has an application to the institution with award details.
     const student = await saveFakeStudent(db.dataSource);
 
@@ -80,6 +84,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
         applicationStatus: ApplicationStatus.Completed,
         firstDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          coeUpdatedAt: enrolmentDate1,
         },
       },
     );
@@ -157,6 +162,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
             firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
           disbursement1Id: firstDisbursementSchedule.id,
           disbursement1DocumentNumber: firstDisbursementSchedule.documentNumber,
+          disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
           ...awards,
         },
         finalAward: finalAwards,

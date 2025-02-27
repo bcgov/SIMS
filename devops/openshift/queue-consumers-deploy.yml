@@ -70,18 +70,13 @@ objects:
                     secretKeyRef:
                       key: ${REDIS_PASSWORD_KEY}
                       name: ${REDIS_SECRET_NAME}
-                - name: QUEUE_DASHBOARD_USER
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${DASHBOARD_USER_KEY}
-                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
-                - name: QUEUE_DASHBOARD_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${DASHBOARD_PASSWORD_KEY}
-                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: QUEUE_PREFIX
                   value: "${QUEUE_PREFIX}"
+                - name: QUEUE_DASHBOARD_TOKEN_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${QUEUE_DASHBOARD_TOKEN_SECRET_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: ZEEBE_ADDRESS
                   valueFrom:
                     secretKeyRef:
@@ -433,13 +428,15 @@ parameters:
   - name: DASHBOARD_USER_KEY
     value: queue-dashboard-user
   - name: PATH
-    value: "/admin/queues/"
+    value: "/admin/queues"
   - name: PORT
     required: true
   - name: HOST_NAME
     required: true
   - name: QUEUE_PREFIX
     required: true
+  - name: QUEUE_DASHBOARD_TOKEN_SECRET_KEY
+    value: queue-dashboard-token-secret
   - name: IS_FULLTIME_ALLOWED
     required: true
   - name: ZONE_B_SFTP_SECRET_NAME

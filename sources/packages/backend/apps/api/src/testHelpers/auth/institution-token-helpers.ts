@@ -110,9 +110,8 @@ export async function getInstitutionToken(
       };
       break;
   }
-  return getCachedToken(
-    AuthorizedParties.institution,
-    credential,
-    userType.toString(),
-  );
+  return getCachedToken(AuthorizedParties.institution, {
+    userPasswordCredential: credential,
+    uniqueTokenCache: userType.toString(),
+  });
 }
