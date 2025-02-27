@@ -44,9 +44,7 @@
                 assessmentAwardData.estimatedAward.disbursement1COEStatus as COEStatus
               "
               :enrolmentDate="
-                dateOnlyLongString(
-                  assessmentAwardData.estimatedAward.disbursement1EnrolmentDate as Date,
-                )
+                assessmentAwardData.estimatedAward.disbursement1EnrolmentDate as Date
               "
             />
             <confirm-enrolment
@@ -186,9 +184,7 @@
                 assessmentAwardData.estimatedAward.disbursement2COEStatus as COEStatus
               "
               :enrolmentDate="
-                dateOnlyLongString(
-                  assessmentAwardData.estimatedAward.disbursement2EnrolmentDate as Date,
-                )
+                assessmentAwardData.estimatedAward.disbursement2EnrolmentDate as Date
               "
             />
             <confirm-enrolment
