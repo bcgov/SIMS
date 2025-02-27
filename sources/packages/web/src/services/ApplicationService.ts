@@ -72,15 +72,10 @@ export class ApplicationService {
     parentApplicationId: number,
     options?: { studentId: number },
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    if (options?.studentId) {
-      return this.getApplication(parentApplicationId, {
-        studentId: options?.studentId,
-        isParentApplication: true,
-      });
-    }
     return this.getApplication(parentApplicationId, {
-      loadDynamicData: false,
+      studentId: options?.studentId,
       isParentApplication: true,
+      loadDynamicData: false,
     });
   }
 
