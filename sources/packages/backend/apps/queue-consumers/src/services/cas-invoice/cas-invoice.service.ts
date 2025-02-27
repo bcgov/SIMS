@@ -156,6 +156,12 @@ export class CASInvoiceService {
             this.systemUsersService.systemUser.id,
           );
         }
+      } else {
+        parentProcessSummary.error(
+          "Unexpected error while sending invoice to CAS.",
+          error,
+        );
+        return null;
       }
     }
   }
