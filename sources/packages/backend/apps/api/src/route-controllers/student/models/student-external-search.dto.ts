@@ -71,6 +71,7 @@ export class ApplicationDetailsAPIOutDTO {
   maritalStatus: string;
   marriageDate?: string;
   income: number;
+  livingArrangement: string;
   estimatedTotalAward: string;
   dependants: DependantDetailsAPIOutDTO[];
   program: ProgramOfferingDetailsAPIOutDTO;

@@ -5,6 +5,7 @@ import {
   ApplicationStatus,
   StudentAssessmentStatus,
   ProgramYear,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { Brackets, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -48,12 +49,53 @@ export class StudentInformationService {
         "user.email",
         "application.id",
         "application.data",
+        "currentAssessment.id",
+        "currentAssessment.workflowData",
+        "currentAssessment.assessmentData",
         "application.applicationNumber",
+        "application.applicationStatus",
+        "application.applicationStatusUpdatedOn",
+        "scholasticStanding.id",
+        "scholasticStanding.changeType",
+        "scholasticStanding.submittedData",
+        "offering.id",
+        "offering.studyBreaks",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "location.id",
+        "location.institutionCode",
+        "location.name",
+        "location.primaryContact",
+        "disbursementSchedule.id",
+        "disbursementSchedule.disbursementDate",
+        "disbursementSchedule.dateSent",
+        "disbursementSchedule.disbursementScheduleStatus",
+        "disbursementValue.id",
+        "disbursementValue.valueCode",
+        "disbursementValue.valueAmount",
+        "disbursementValue.effectiveAmount",
       ])
       .innerJoin("student.user", "user")
       .innerJoin("student.sinValidation", "sinValidation")
       .leftJoin("student.applications", "application")
+      .leftJoin("application.location", "location")
+      .leftJoin("location.institution", "institution")
       .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin(
+        "currentAssessment.studentScholasticStanding",
+        "scholasticStanding",
+        "scholasticStanding.changeType = :withdrawal",
+        {
+          withdrawal:
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+        },
+      )
+      .leftJoin("currentAssessment.offering", "offering")
+      .leftJoin(
+        "currentAssessment.disbursementSchedules",
+        "disbursementSchedule",
+      )
+      .leftJoin("disbursementSchedule.disbursementValues", "disbursementValue")
       .where("sinValidation.sin = :sin")
       .andWhere("sinValidation.isValidSIN = true")
       .andWhere(
