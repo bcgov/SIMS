@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  NotFoundException,
-  Post,
-} from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -58,9 +51,6 @@ export class StudentExternalController extends BaseController {
       studentPromise,
       sfasIndividualPromise,
     ]);
-    if (!student && !sfasIndividual) {
-      throw new NotFoundException("Student not found.");
-    }
     return this.studentExternalControllerService.getStudentSearchResult(
       student,
       sfasIndividual,

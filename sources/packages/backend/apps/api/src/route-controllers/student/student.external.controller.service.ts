@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { Student, SFASIndividual } from "@sims/sims-db";
 import {
   ApplicationDetailsAPIOutDTO,
@@ -8,10 +8,20 @@ import {
 type StudentDetails = Omit<StudentSearchResultAPIOutDTO, "applications">;
 @Injectable()
 export class StudentExternalControllerService {
+  /**
+   * Get student search result.
+   * @param student student.
+   * @param sfasIndividual sfas individual.
+   * @throws NotFoundException.
+   * @returns student search result.
+   */
   getStudentSearchResult(
     student?: Student,
     sfasIndividual?: SFASIndividual,
   ): StudentSearchResultAPIOutDTO {
+    if (!student && !sfasIndividual) {
+      throw new NotFoundException("Student not found.");
+    }
     // If the student is found in SIMS, return the student details.
     // Otherwise, return the legacy student details.
     const studentDetails = student
