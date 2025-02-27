@@ -239,7 +239,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
      * Program Year as that of the Edited Application and with newly submitted payload.
      */
 
-    // Updating existing Application status to override
+    // Updating existing Application status to edited
     // and updating the ApplicationStatusUpdatedOn.
     application.applicationStatus = ApplicationStatus.Edited;
     application.applicationStatusUpdatedOn = now;
