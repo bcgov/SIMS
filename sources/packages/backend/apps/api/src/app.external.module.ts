@@ -7,6 +7,7 @@ import {
   NoteSharedService,
   SFASIndividualService,
 } from "@sims/services";
+import { StudentExternalControllerService } from "apps/api/src/route-controllers/student/student.external.controller.service";
 
 @Module({
   imports: [AuthModule],
@@ -17,6 +18,7 @@ import {
     DisbursementOverawardService,
     NoteSharedService,
     StudentInformationService,
+    StudentExternalControllerService,
   ],
 })
 export class AppExternalModule {}

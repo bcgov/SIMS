@@ -19,8 +19,7 @@ import {
   StudentSearchAPIInDTO,
   StudentSearchResultAPIOutDTO,
 } from "./models/student-external-search.dto";
-import { SFASIndividual, Student } from "@sims/sims-db";
-type StudentDetails = Omit<StudentSearchResultAPIOutDTO, "applications">;
+import { StudentExternalControllerService } from "./student.external.controller.service";
 
 /**
  * Student controller for external client.
@@ -32,6 +31,7 @@ type StudentDetails = Omit<StudentSearchResultAPIOutDTO, "applications">;
 export class StudentExternalController extends BaseController {
   constructor(
     private readonly studentInformationService: StudentInformationService,
+    private readonly studentExternalControllerService: StudentExternalControllerService,
   ) {
     super();
   }
@@ -61,65 +61,9 @@ export class StudentExternalController extends BaseController {
     if (!student && !sfasIndividual) {
       throw new NotFoundException("Student not found.");
     }
-    // If the student is found in SIMS, return the student details.
-    // Otherwise, return the legacy student details.
-    const studentDetails = student
-      ? this.transformStudentDetails(student)
-      : this.transformLegacyStudentDetails(sfasIndividual);
-
-    return {
-      ...studentDetails,
-      applications: [],
-    };
-  }
-
-  /**
-   * Transform to student details.
-   * @param student student.
-   * @returns student details.
-   */
-  private transformStudentDetails(student: Student): StudentDetails {
-    return {
-      isLegacy: false,
-      givenNames: student.user.firstName,
-      lastName: student.user.lastName,
-      sin: student.sinValidation.sin,
-      birthDate: student.birthDate,
-      phoneNumber: student.contactInfo.phone,
-      address: {
-        addressLine1: student.contactInfo.address.addressLine1,
-        addressLine2: student.contactInfo.address.addressLine2,
-        city: student.contactInfo.address.city,
-        provinceState: student.contactInfo.address.provinceState,
-        country: student.contactInfo.address.country,
-        postalCode: student.contactInfo.address.postalCode,
-      },
-    };
-  }
-
-  /**
-   * Transform sfas individual to student details.
-   * @param student student.
-   * @returns student details.
-   */
-  private transformLegacyStudentDetails(
-    sfasIndividual: SFASIndividual,
-  ): StudentDetails {
-    return {
-      isLegacy: true,
-      givenNames: sfasIndividual.firstName,
-      lastName: sfasIndividual.lastName,
-      sin: sfasIndividual.sin,
-      birthDate: sfasIndividual.birthDate,
-      phoneNumber: sfasIndividual.phoneNumber?.toString(),
-      address: {
-        addressLine1: sfasIndividual.addressLine1,
-        addressLine2: sfasIndividual.addressLine2,
-        city: sfasIndividual.city,
-        provinceState: sfasIndividual.provinceState,
-        country: sfasIndividual.country,
-        postalCode: sfasIndividual.postalZipCode,
-      },
-    };
+    return this.studentExternalControllerService.getStudentSearchResult(
+      student,
+      sfasIndividual,
+    );
   }
 }

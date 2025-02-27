@@ -18,9 +18,10 @@ export class AccessLoggerMiddleware implements NestMiddleware {
     const { headers, originalUrl, method } = request;
     const clientIP = getClientIPFromRequest(request);
     const user = this.getUserFromBearerToken(request.headers.authorization);
-    const userGUID = user ? user.userName : "User GUID not found";
+    const userGUID = user?.userName ? user.userName : "User GUID not found";
+    const clientId = user?.client_id ? user.client_id : "Client ID not found";
     const userAgent = headers["user-agent"] ?? "User agent not found";
-    const userAccessLog = `Request - ${method} ${originalUrl} From ${clientIP} | User GUID: ${userGUID} | User Agent: ${userAgent}`;
+    const userAccessLog = `Request - ${method} ${originalUrl} From ${clientIP} | User GUID: ${userGUID} | Client ID: ${clientId} | User Agent: ${userAgent}`;
     this.logger.log(userAccessLog);
     next();
   }
