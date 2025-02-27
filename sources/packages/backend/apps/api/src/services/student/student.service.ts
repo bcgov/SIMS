@@ -10,8 +10,6 @@ import {
   SINValidation,
   StudentAccountApplication,
   StudentUser,
-  DisbursementOveraward,
-  DisbursementOverawardOriginType,
   RestrictionNotificationType,
   StudentRestriction,
   DisabilityStatus,
@@ -20,7 +18,7 @@ import {
   CASSupplier,
   SupplierStatus,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, IsNull, Not, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, UpdateResult } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
@@ -43,10 +41,6 @@ import {
   NotificationActionsService,
   SystemUsersService,
 } from "@sims/services";
-import {
-  BC_STUDENT_LOAN_AWARD_CODE,
-  CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
-} from "@sims/services/constants";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -231,14 +225,6 @@ export class StudentService extends RecordDataModelService<Student> {
       }
 
       if (sfasIndividual) {
-        await this.importSFASOverawards(
-          student.id,
-          student.user.lastName,
-          student.birthDate,
-          studentSIN,
-          auditUserId,
-          entityManager,
-        );
         // For the newly created student, update the Processed status in the
         // SFAS Restrictions table to false. This will enable for the SFAS
         // Restrictions from previous imports that were originally marked as
@@ -750,56 +736,6 @@ export class StudentService extends RecordDataModelService<Student> {
   logger: LoggerService;
 
   /**
-   * Search for the student's SFAS data and update overaward values in
-   * disbursement overawards table if any overaward values for BCSL or CSLF exist.
-   * @param studentId student id for the disbursement overaward record.
-   * @param lastName last name for sfas individuals.
-   * @param sinNumber student's sin number.
-   * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param entityManager entityManager to be used to perform the query.
-   */
-  async importSFASOverawards(
-    studentId: number,
-    lastName: string,
-    birthDate: string,
-    sinNumber: string,
-    auditUserId: number,
-    entityManager: EntityManager,
-  ): Promise<void> {
-    const sfasIndividual = await this.sfasIndividualService.getSFASOverawards(
-      lastName,
-      birthDate,
-      sinNumber,
-    );
-    if (!sfasIndividual) {
-      return;
-    }
-    const overawards: DisbursementOveraward[] = [];
-    if (sfasIndividual.bcslOveraward !== 0) {
-      overawards.push({
-        student: { id: studentId } as Student,
-        disbursementValueCode: BC_STUDENT_LOAN_AWARD_CODE,
-        overawardValue: sfasIndividual.bcslOveraward,
-        originType: DisbursementOverawardOriginType.LegacyOveraward,
-        creator: { id: auditUserId } as User,
-      } as DisbursementOveraward);
-    }
-    if (sfasIndividual.cslOveraward !== 0) {
-      overawards.push({
-        student: { id: studentId } as Student,
-        disbursementValueCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
-        overawardValue: sfasIndividual.cslOveraward,
-        originType: DisbursementOverawardOriginType.LegacyOveraward,
-        creator: { id: auditUserId },
-      } as DisbursementOveraward);
-    }
-    await this.disbursementOverawardService.addLegacyOverawards(
-      overawards,
-      entityManager,
-    );
-  }
-
-  /**
    * Get student disability status.
    * @param pdStatus SFAS PD status.
    * @param ppdStatus SFAS PPD status.
@@ -869,44 +805,6 @@ export class StudentService extends RecordDataModelService<Student> {
           updatedAt: now,
         },
       );
-    });
-  }
-
-  /**
-   * Gets student by SIN.
-   * The current assessment id should not be null to ensure the application has an application number and
-   * application status should be not `Overwritten` to ensure distinct application numbers.
-   * @param sin student's SIN.
-   * @returns student.
-   */
-  async getStudentBySIN(sin: string): Promise<Student> {
-    return this.repo.findOne({
-      select: {
-        id: true,
-        sinValidation: { id: true, sin: true },
-        user: { id: true, firstName: true, lastName: true, email: true },
-        birthDate: true,
-        contactInfo: true as unknown,
-        applications: { id: true, applicationNumber: true },
-      },
-      relations: {
-        sinValidation: true,
-        user: true,
-        applications: true,
-      },
-      where: {
-        sinValidation: { sin },
-        applications: {
-          currentAssessment: { id: Not(IsNull()) },
-          applicationStatus: Not(ApplicationStatus.Overwritten),
-        },
-      },
-      order: {
-        applications: {
-          id: "DESC",
-        },
-      },
-      loadEagerRelations: false,
     });
   }
 

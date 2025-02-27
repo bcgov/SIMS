@@ -31,16 +31,23 @@ export class ApplicationApi extends HttpBaseClient {
 
   async getApplicationData(
     applicationId: number,
-    loadDynamicData?: boolean,
+    options: { loadDynamicData?: boolean; isParentApplication?: boolean },
   ): Promise<ApplicationSupplementalDataAPIOutDTO>;
 
   async getApplicationData(
     applicationId: number,
-    loadDynamicData?: boolean,
+    options?: { loadDynamicData?: boolean; isParentApplication?: boolean },
   ): Promise<ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO> {
     let url = this.addClientRoot(`application/${applicationId}`);
-    if (loadDynamicData !== undefined) {
-      url = `${url}?loadDynamicData=${loadDynamicData}`;
+    const isLoadDynamicDataPresent = options?.loadDynamicData !== undefined;
+    if (isLoadDynamicDataPresent) {
+      url = `${url}?loadDynamicData=${options?.loadDynamicData}`;
+    }
+    if (options?.isParentApplication) {
+      const query = isLoadDynamicDataPresent
+        ? `&isParentApplication=${options?.isParentApplication}`
+        : `?isParentApplication=${options?.isParentApplication}`;
+      url = `${url}${query}`;
     }
     return this.getCall<
       ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO
@@ -97,16 +104,24 @@ export class ApplicationApi extends HttpBaseClient {
   /**
    * API Client for application detail.
    * @param applicationId for the application.
-   * @param studentId for the student.
+   * @param options related options.
+   * - `studentId` student id for the student.
+   * - `isParentApplication` is parent application if true, loads the parent application.
    * @returns application details.
    */
   async getApplicationDetails(
     applicationId: number,
-    studentId?: number,
+    options?: {
+      studentId?: number;
+      isParentApplication?: boolean;
+    },
   ): Promise<ApplicationBaseAPIOutDTO> {
-    const url = studentId
-      ? `application/student/${studentId}/application/${applicationId}`
+    let url = options?.studentId
+      ? `application/student/${options?.studentId}/application/${applicationId}`
       : `application/${applicationId}`;
+    if (options?.isParentApplication !== undefined) {
+      url = `${url}?isParentApplication=${options?.isParentApplication}`;
+    }
     return this.getCall<ApplicationBaseAPIOutDTO>(this.addClientRoot(url));
   }
 

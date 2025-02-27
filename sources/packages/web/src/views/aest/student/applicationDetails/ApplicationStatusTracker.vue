@@ -9,19 +9,20 @@
         }"
         subTitle="Application Status"
       />
-      <application-header-title :application-id="applicationId" />
+      <application-header-title :application-id="currentApplicationId" />
     </template>
     <application-progress-bar
-      :application-id="applicationId"
+      :application-id="currentApplicationId"
     ></application-progress-bar>
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 import ApplicationProgressBar from "@/components/common/applicationTracker/ApplicationProgressBar.vue";
+import { ApplicationService } from "@/services/ApplicationService";
 
 export default defineComponent({
   components: {
@@ -38,9 +39,20 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(props) {
+    const currentApplicationId = ref<number>();
+
+    onMounted(async () => {
+      // Get current application for the parent application.
+      const currentApplication = await ApplicationService.shared.getApplication(
+        props.applicationId,
+        { loadDynamicData: false, isParentApplication: true },
+      );
+      currentApplicationId.value = currentApplication.id;
+    });
     return {
       AESTRoutesConst,
+      currentApplicationId,
     };
   },
 });

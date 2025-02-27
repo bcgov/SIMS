@@ -169,7 +169,7 @@ export class StudentUploadFileAPIOutDTO {
 export class StudentFileDetailsAPIOutDTO extends StudentUploadFileAPIOutDTO {
   metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
-  updatedAt: Date;
+  createdAt: Date;
 }
 
 export class StudentFileMetadataAPIOutDTO {
@@ -213,6 +213,7 @@ export class ApplicationSummaryAPIOutDTO {
   applicationName: string;
   submitted?: Date;
   status: ApplicationStatus;
+  parentApplicationId: number;
 }
 
 /**
@@ -299,24 +300,4 @@ export class UpdateStudentDetailsAPIInDTO {
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
-}
-
-/**
- * Student details.
- */
-export class StudentDetailsAPIOutDTO {
-  firstName: string;
-  lastName: string;
-  sin: string;
-  dateOfBirth: string;
-  address: AddressAPIOutDTO;
-  applicationNumbers: string[];
-}
-
-/**
- * Student external search parameters.
- */
-export class ExternalSearchStudentAPIInDTO {
-  @IsValidSIN()
-  sin: string;
 }

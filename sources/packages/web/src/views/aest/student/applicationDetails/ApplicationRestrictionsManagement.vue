@@ -9,18 +9,19 @@
         }"
         subTitle="Application Restriction Management"
       />
-      <application-header-title :application-id="applicationId" />
+      <application-header-title :application-id="currentApplicationId" />
     </template>
-    <history-bypassed-restrictions :applicationId="applicationId" />
+    <history-bypassed-restrictions :applicationId="currentApplicationId" />
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { useFormatters } from "@/composables";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 import HistoryBypassedRestrictions from "@/components/aest/students/bypassedRestrictions/HistoryBypassedRestrictions.vue";
+import { ApplicationService } from "@/services/ApplicationService";
 
 export default defineComponent({
   components: {
@@ -37,12 +38,23 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(props) {
     const { emptyStringFiller } = useFormatters();
+    const currentApplicationId = ref<number>();
+
+    onMounted(async () => {
+      // Get current application for the parent application.
+      const currentApplication = await ApplicationService.shared.getApplication(
+        props.applicationId,
+        { loadDynamicData: false, isParentApplication: true },
+      );
+      currentApplicationId.value = currentApplication.id;
+    });
 
     return {
       AESTRoutesConst,
       emptyStringFiller,
+      currentApplicationId,
     };
   },
 });

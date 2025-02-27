@@ -16,7 +16,7 @@
     "useUnknownInCatchVariables": false,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": ["webpack-env", "jest"],
+    "types": ["vite/client", "vitest/globals", "vue"],
     "paths": {
       "@/*": ["src/*"]
     },

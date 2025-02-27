@@ -4,6 +4,7 @@ import * as request from "supertest";
 import { AppModule } from "../src/app.module";
 import { KeycloakConfig } from "@sims/auth/config";
 import { KeycloakService } from "@sims/auth/services";
+import { UserPasswordCredential } from "@sims/utilities/config";
 
 describe("Institution controller (e2e)", () => {
   const clientId = "student";
@@ -17,11 +18,13 @@ describe("Institution controller (e2e)", () => {
 
   beforeAll(async () => {
     await KeycloakConfig.load();
-    const token = await KeycloakService.shared.getToken(
-      process.env.E2E_TEST_STUDENT_USERNAME,
-      process.env.E2E_TEST_STUDENT_PASSWORD,
-      clientId,
-    );
+    const userPasswordCredential: UserPasswordCredential = {
+      userName: process.env.E2E_TEST_STUDENT_USERNAME,
+      password: process.env.E2E_TEST_STUDENT_PASSWORD,
+    };
+    const token = await KeycloakService.shared.getToken(clientId, {
+      userPasswordCredential,
+    });
     accessToken = token.access_token;
 
     const moduleFixture: TestingModule = await Test.createTestingModule({

@@ -45,6 +45,7 @@ jobs:
       E2E_TEST_AEST_MOF_OPERATIONS_USER: ministry-user-mof-operations@e2e-tests
       E2E_TEST_AEST_READ_ONLY_USER: ministry-user-read-only@e2e-tests
       E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+      E2E_TEST_EXTERNAL_USER_CLIENT_SECRET: ${{ secrets.E2E_TEST_EXTERNAL_USER_CLIENT_SECRET }}
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch

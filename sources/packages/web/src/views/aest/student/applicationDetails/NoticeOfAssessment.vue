@@ -9,7 +9,7 @@
           params: { applicationId, studentId, assessmentId },
         }"
       />
-      <application-header-title :application-id="applicationId" />
+      <application-header-title :application-id="currentApplicationId" />
     </template>
     <notice-of-assessment-form-view
       :assessment-id="assessmentId"
@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -47,10 +47,20 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(props) {
     const snackBar = useSnackBar();
     const { hasRole } = useAuth();
     const hasStudentReissueMSFAARole = hasRole(Role.StudentReissueMSFAA);
+    const currentApplicationId = ref<number>();
+
+    onMounted(async () => {
+      // Get current application for the parent application.
+      const currentApplication = await ApplicationService.shared.getApplication(
+        props.applicationId,
+        { loadDynamicData: false, isParentApplication: true },
+      );
+      currentApplicationId.value = currentApplication.id;
+    });
     const reissueMSFAA = async (
       applicationId: number,
       reloadNOA: () => Promise<void>,
@@ -68,7 +78,12 @@ export default defineComponent({
       }
     };
 
-    return { reissueMSFAA, AESTRoutesConst, hasStudentReissueMSFAARole };
+    return {
+      reissueMSFAA,
+      AESTRoutesConst,
+      hasStudentReissueMSFAARole,
+      currentApplicationId,
+    };
   },
 });
 </script>

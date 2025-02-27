@@ -1,12 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  DataSource,
-  In,
-  Not,
-  Brackets,
-  EntityManager,
-  LessThan,
-} from "typeorm";
+import { DataSource, In, Not, Brackets, EntityManager } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -633,6 +626,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationNumber: true,
         pirDeniedOtherDesc: true,
         submittedDate: true,
+        precedingApplication: { id: true },
         applicationException: {
           id: true,
           exceptionStatus: true,
@@ -683,6 +677,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         pirDeniedReasonId: true,
         programYear: true,
         student: { user: true },
+        precedingApplication: true,
       },
       where: {
         id: applicationId,
@@ -712,11 +707,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .select([
         "application.applicationNumber",
         "application.id",
+        "parentApplication.id",
         "currentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
         "application.applicationStatus",
       ])
+      .innerJoin("application.parentApplication", "parentApplication")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .where("application.student.id = :studentId", { studentId })
@@ -1456,20 +1453,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Validation for application overlapping dates or Pending PIR.
    * This validation can be disabled by setting BYPASS_APPLICATION_SUBMIT_VALIDATIONS to true in .env file.
-   * @param applicationId
-   * @param lastName
-   * @param userId
-   * @param sin
-   * @param birthDate
-   * @param studyStartDate
-   * @param studyEndDate
+   * @param applicationId application id.
+   * @param userId user id.
+   * @param studentId student id.
+   * @param studyStartDate study start date.
+   * @param studyEndDate study end date.
    */
   async validateOverlappingDates(
     applicationId: number,
-    lastName: string,
     userId: number,
-    sin: string,
-    birthDate: string,
+    studentId: number,
     studyStartDate: string,
     studyEndDate: string,
   ): Promise<void> {
@@ -1483,18 +1476,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
       const existingSFASFTApplication =
         this.sfasApplicationService.validateDateOverlap(
-          sin,
-          birthDate,
-          lastName,
+          studentId,
           studyStartDate,
           studyEndDate,
         );
 
       const existingSFASPTApplication =
         this.sfasPartTimeApplicationsService.validateDateOverlap(
-          sin,
-          birthDate,
-          lastName,
+          studentId,
           studyStartDate,
           studyEndDate,
         );
@@ -1779,10 +1768,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Validate possible overlaps with exists applications.
     await this.validateOverlappingDates(
       application.id,
-      application.student.user.lastName,
       application.student.user.id,
-      application.student.sinValidation.sin,
-      application.student.birthDate,
+      application.student.id,
       offering.studyStartDate,
       offering.studyEndDate,
     );
@@ -1873,34 +1860,56 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Get previous application versions for an application.
-   * @param applicationId application id.
-   * @param options method options.
-   * - `limit` number of previous application versions to be returned.
-   * - `loadDynamicData` optionally loads the dynamic data.
+   * @param parentApplicationId parent application id.
    * @returns previous application versions.
    */
   async getPreviousApplicationVersions(
-    applicationId: number,
-    options?: { loadDynamicData?: boolean; limit?: number },
+    parentApplicationId: number,
   ): Promise<Application[]> {
-    const application = await this.repo.findOne({
-      select: { applicationNumber: true, submittedDate: true },
-      where: { id: applicationId },
-    });
     return this.repo.find({
       select: {
         id: true,
         submittedDate: true,
-        data: !!options?.loadDynamicData as unknown,
       },
       where: {
-        submittedDate: LessThan(application.submittedDate),
-        applicationNumber: application.applicationNumber,
+        parentApplication: { id: parentApplicationId },
+        applicationStatus: ApplicationStatus.Overwritten,
       },
       order: {
         submittedDate: "DESC",
       },
-      take: options?.limit,
+    });
+  }
+
+  /**
+   * Get application data.
+   * @param applicationId application id.
+   * @returns the application data.
+   */
+  async getApplicationData(applicationId: number): Promise<Application> {
+    return this.repo.findOne({
+      select: { id: true, data: true as unknown },
+      where: { id: applicationId },
+    });
+  }
+
+  /**
+   * Gets the current application by parent application id.
+   * @param parentApplicationId parent application id.
+   * @returns the application.
+   */
+  async getCurrentApplicationByParentApplicationId(
+    parentApplicationId: number,
+  ): Promise<Application> {
+    return this.repo.findOne({
+      select: { id: true, submittedDate: true },
+      where: {
+        parentApplication: {
+          id: parentApplicationId,
+        },
+        applicationStatus: Not(ApplicationStatus.Overwritten),
+      },
+      order: { submittedDate: "DESC" },
     });
   }
 

@@ -697,7 +697,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_1iix0z3" name="calculate CSGD total limit">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=min(&#10;	max(&#10;	    if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDIncomeCap)&#10;		then &#10;			dmnPartTimeAwardAllowableLimits.limitAwardCSGD2OrLessChildAmount * offeringWeeks&#10;		else&#10;			max(dmnPartTimeAwardAllowableLimits.limitAwardCSGD2OrLessChildAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardCSGD2OrLessChildSlope), 0) * offeringWeeks&#10;        ,&#10;        dmnPartTimeAwardAllowableLimits.limitAwardCSGD2OrLessChildAmount&#10;    ),&#10;	dmnPartTimeAwardAllowableLimits.limitAwardCSGDAmount&#10;)" target="federalAwardCSGDAmount" />
+          <zeebe:output source="=min(&#10;	max(&#10;	    if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDIncomeCap)&#10;		then &#10;			dmnPartTimeAwardAllowableLimits.limitAwardCSGD2OrLessChildAmount * offeringWeeks&#10;		else&#10;			max(dmnPartTimeAwardAllowableLimits.limitAwardCSGD2OrLessChildAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardCSGD2OrLessChildSlope), 0) * offeringWeeks&#10;        ,&#10;        dmnPartTimeAwardAllowableLimits.limitAwardCSGD2OrLessChildAmount&#10;    ),&#10;	dmnPartTimeAwardAllowableLimits.limitAwardCSGDAmount&#10;)" target="federalAwardMaxCSGDAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1lswqbt</bpmn:incoming>
@@ -706,7 +706,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_10par1m" name="calculate CSGD total limit">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=min(&#10;	max(&#10;	    if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDIncomeCap)&#10;		then &#10;			dmnPartTimeAwardAllowableLimits.limitAwardCSGD3OrMoreChildAmount * offeringWeeks&#10;		else&#10;			max(dmnPartTimeAwardAllowableLimits.limitAwardCSGD3OrMoreChildAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardCSGD3OrMoreChildSlope), 0) * offeringWeeks&#10;        ,&#10;        dmnPartTimeAwardAllowableLimits.limitAwardCSGD3OrMoreChildAmount&#10;    ),&#10;	dmnPartTimeAwardAllowableLimits.limitAwardCSGDAmount&#10;)" target="federalAwardCSGDAmount" />
+          <zeebe:output source="=min(&#10;	max(&#10;	    if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDIncomeCap)&#10;		then &#10;			dmnPartTimeAwardAllowableLimits.limitAwardCSGD3OrMoreChildAmount * offeringWeeks&#10;		else&#10;			max(dmnPartTimeAwardAllowableLimits.limitAwardCSGD3OrMoreChildAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardCSGD3OrMoreChildSlope), 0) * offeringWeeks&#10;        ,&#10;        dmnPartTimeAwardAllowableLimits.limitAwardCSGD3OrMoreChildAmount&#10;    ),&#10;	dmnPartTimeAwardAllowableLimits.limitAwardCSGDAmount&#10;)" target="federalAwardMaxCSGDAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0luqxk1</bpmn:incoming>
@@ -732,7 +732,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_1eaa23y" name="calculate CSGD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=//Deduct the total CSGD consumed amount for current Program Year from the derived CSGD total limit.&#10;if (awardEligibilityCSGD = true)&#10;then&#10;  max(min(calculatedDataTotalRemainingNeed2, federalAwardCSGDAmount - programYearTotalPartTimeCSGD),0)&#10;else&#10;0" target="federalAwardNetCSGDAmount" />
+          <zeebe:output source="=//Deduct the total CSGD consumed amount for current Program Year from the derived CSGD total limit.&#10;if (awardEligibilityCSGD = true)&#10;then&#10;  max(min(calculatedDataTotalRemainingNeed2, federalAwardMaxCSGDAmount,  dmnPartTimeAwardAllowableLimits.limitAwardCSGDAmount-programYearTotalPartTimeCSGD),0)&#10;else&#10;0" target="federalAwardNetCSGDAmount" />
           <zeebe:output source="=max(0,(calculatedDataTotalRemainingNeed2 - federalAwardNetCSGDAmount))" target="calculatedDataTotalRemainingNeed3" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>

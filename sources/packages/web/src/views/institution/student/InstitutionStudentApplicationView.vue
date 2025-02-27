@@ -54,7 +54,10 @@ export default defineComponent({
       applicationDetail.value =
         await ApplicationService.shared.getApplicationDetail(
           props.applicationId,
-          props.studentId,
+          {
+            studentId: props.studentId,
+            isParentApplication: true,
+          },
         );
       selectedForm.value = applicationDetail.value.applicationFormName;
       initialData.value = {
