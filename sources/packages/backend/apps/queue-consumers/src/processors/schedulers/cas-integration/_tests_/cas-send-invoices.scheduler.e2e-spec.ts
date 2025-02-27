@@ -143,11 +143,11 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     expect(
       mockedJob.containLogMessages([
         "Checking for pending invoices.",
-        "Executing CAS send invoices.",
+        "Executing 1 pending invoice(s) sent to CAS.",
         `Processing pending invoice: ${casInvoice.invoiceNumber}.`,
         `Pending invoice payload invoice number: ${casInvoice.invoiceNumber}.`,
-        "Invoice sent to CAS undefined.",
-        "1 CAS invoice(s) sent.",
+        "Invoice sent to CAS SUCCEEDED.",
+        "CAS invoice(s) sent job completed.",
       ]),
     ).toBe(true);
   });
