@@ -122,7 +122,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     ).toBe(true);
   });
 
-  it("Should contain log no pending invoices when there are no pending invoices found.", async () => {
+  it("Should contain log 'No pending invoices found' when there are no pending invoices found.  ", async () => {
     // Arrange
     // Queued job.
     const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
