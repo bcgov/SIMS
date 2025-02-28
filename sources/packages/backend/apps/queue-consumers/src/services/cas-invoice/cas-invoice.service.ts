@@ -86,6 +86,12 @@ export class CASInvoiceService {
       },
       order: {
         createdAt: "ASC",
+        casInvoiceDetails: {
+          casDistributionAccount: {
+            awardValueCode: "ASC",
+            operationCode: "ASC",
+          },
+        },
       },
       take: pollingRecordsLimit,
     });
