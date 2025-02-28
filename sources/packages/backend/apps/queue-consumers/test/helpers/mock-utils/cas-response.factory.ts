@@ -87,12 +87,14 @@ export function createFakeCASNotFoundSupplierResponse(): CASSupplierResponse {
 }
 
 /**
- * Creates a fake SendPendingInvoicesResponse.
+ * Creates a fake {@link SendPendingInvoicesResponse} service model.
  * @returns a fake SendPendingInvoicesResponse.
  */
 export function createFakePendingInvoicesResponse(): SendPendingInvoicesResponse {
   return {
-    invoiceNumber: "1234567",
+    invoiceNumber: faker.datatype
+      .number({ min: 1000000, max: 9999999 })
+      .toString(),
     casReturnedMessages: ["SUCCEEDED"],
   };
 }

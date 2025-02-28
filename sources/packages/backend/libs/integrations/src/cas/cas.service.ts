@@ -129,17 +129,16 @@ export class CASService {
 
   /**
    * Send pending invoices to CAS.
-   * @param supplierData data to be used for supplier and site creation.
-   * @returns submitted data and CAS response.
+   * @param pendingInvoicePayload payload data to be sent to CAS.
+   * @returns submitted invoice number and CAS returned messages.
    */
   async sendPendingInvoices(
     pendingInvoicePayload: PendingInvoicePayload,
   ): Promise<SendPendingInvoicesResponse> {
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/apinvoice/`;
-    let response;
     try {
       const config = await this.getAuthConfig();
-      response = await this.httpService.axiosRef.post(
+      const response = await this.httpService.axiosRef.post(
         url,
         pendingInvoicePayload,
         config,
