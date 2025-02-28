@@ -151,7 +151,6 @@ export class CASInvoiceService {
             pendingInvoice.id,
             summary,
             error.objectInfo as string[],
-            this.systemUsersService.systemUser.id,
           );
           return;
         }
@@ -164,18 +163,16 @@ export class CASInvoiceService {
    * Process bad request errors from CAS API during invoice sending.
    * @param invoiceId invoice id.
    * @param summary summary for logging.
-   * @param error error object.
-   * @param auditUserId audit user id.
+   * @param errors error object.
    */
-  async processBadRequestErrors(
+  private async processBadRequestErrors(
     invoiceId: number,
     summary: ProcessSummary,
-    error: string[],
-    auditUserId: number,
+    errors: string[],
   ): Promise<void> {
     summary.warn("A known error occurred during processing.");
     const now = new Date();
-    const auditUser = { id: auditUserId } as User;
+    const auditUser = { id: this.systemUsersService.systemUser.id } as User;
     try {
       await this.casInvoiceRepo.update(
         {
@@ -185,11 +182,11 @@ export class CASInvoiceService {
           invoiceStatus: CASInvoiceStatus.ManualIntervention,
           invoiceStatusUpdatedOn: now,
           modifier: auditUser,
-          errors: error,
+          errors,
         },
       );
       summary.info(
-        `Set invoice status to ${CASInvoiceStatus.ManualIntervention} due to Error(s):${error}.`,
+        `Set invoice status to ${CASInvoiceStatus.ManualIntervention} due to error(s): ${errors}.`,
       );
     } catch (error: unknown) {
       summary.error(
