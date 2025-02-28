@@ -67,10 +67,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
   it("Should send invoices to CAS when there are pending invoices.", async () => {
     //Arrange
     // Create invoice batch to generate the report.
-    const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper(
-      db,
-      systemUsersService,
-    );
+    const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper();
     // Queued job.
     const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
       pollingRecordsLimit: 1,
@@ -100,7 +97,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     ).toBe(true);
   });
 
-  it("Should contain log 'No pending invoices found' when there are no pending invoices found.  ", async () => {
+  it("Should contain log 'No pending invoices found' when there are no pending invoices found.", async () => {
     // Arrange
     // Queued job.
     const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
@@ -123,10 +120,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
   it("Should capture the error in invoices when sent to CAS and known errors are returned.", async () => {
     //Arrange
     // Create invoice batch to generate the report.
-    const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper(
-      db,
-      systemUsersService,
-    );
+    const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper();
     // Configure CAS mock to return a custom named Bad Request error.
     casServiceMock.sendInvoice = jest.fn().mockImplementation(() => {
       throw new CustomNamedError("CAS Bad Request Errors", CAS_BAD_REQUEST, [
@@ -172,10 +166,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       .mockRejectedValueOnce("Unknown error");
 
     // Create invoice batch to generate the report.
-    const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper(
-      db,
-      systemUsersService,
-    );
+    const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper();
     // Queued job.
     const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
       pollingRecordsLimit: 1,
@@ -212,8 +203,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     // Arrange
     // Create invoice batch to generate the report.
     const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper(
-      db,
-      systemUsersService,
       CASInvoiceBatchApprovalStatus.Rejected,
     );
     // Queued job.
@@ -245,13 +234,11 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       ]),
     ).toBe(true);
   });
+
   it("Should send invoices to CAS when there are pending invoices.", async () => {
     //Arrange
     // Create invoice batch to generate the report.
-    const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper(
-      db,
-      systemUsersService,
-    );
+    const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper();
     // Queued job.
     const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
       pollingRecordsLimit: 1,
@@ -281,13 +268,10 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     ).toBe(true);
   });
 
-  it("Should should return 'Duplicate Submission' message when the invoice is sent to CAS was already sent and in Pending status.", async () => {
+  it("Should return 'Duplicate Submission' message when the invoice sent to CAS was already sent and it is in the Pending status.", async () => {
     //Arrange
     // Create invoice batch to generate the report.
-    const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper(
-      db,
-      systemUsersService,
-    );
+    const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper();
     // Configure CAS mock to return a custom named Bad Request error.
     casServiceMock.sendInvoice = jest.fn(() =>
       Promise.resolve({
@@ -325,48 +309,46 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       ]),
     ).toBe(true);
   });
-});
 
-/**
- * Helper method to create fake invoice batch.
- * @param db data source.
- * @param systemUsersService system users service.
- * @param casInvoiceBatchApprovalStatus invoice batch approval status.
- * @returns cas invoice batch id.
- */
-async function createFakeCASInvoiceBatchHelper(
-  db: E2EDataSources,
-  systemUsersService: SystemUsersService,
-  casInvoiceBatchApprovalStatus?: CASInvoiceBatchApprovalStatus,
-) {
-  const casInvoiceBatch = await db.casInvoiceBatch.save(
-    createFakeCASInvoiceBatch(
+  /**
+   * Helper method to create fake invoice batch.
+   * @param db data source.
+   * @param systemUsersService system users service.
+   * @param casInvoiceBatchApprovalStatus invoice batch approval status.
+   * @returns cas invoice batch id.
+   */
+  async function createFakeCASInvoiceBatchHelper(
+    casInvoiceBatchApprovalStatus?: CASInvoiceBatchApprovalStatus,
+  ) {
+    const casInvoiceBatch = await db.casInvoiceBatch.save(
+      createFakeCASInvoiceBatch(
+        {
+          creator: systemUsersService.systemUser,
+        },
+        {
+          initialValue: {
+            approvalStatus:
+              casInvoiceBatchApprovalStatus ??
+              CASInvoiceBatchApprovalStatus.Approved,
+          },
+        },
+      ),
+    );
+    // Creates full-time application with receipts, and invoices details.
+    await saveFakeInvoiceIntoBatchWithInvoiceDetails(
+      db,
       {
+        casInvoiceBatch,
         creator: systemUsersService.systemUser,
       },
       {
-        initialValue: {
-          approvalStatus:
-            casInvoiceBatchApprovalStatus ??
-            CASInvoiceBatchApprovalStatus.Approved,
+        offeringIntensity: OfferingIntensity.fullTime,
+        casSupplierInitialValues: {
+          supplierStatus: SupplierStatus.VerifiedManually,
+          supplierNumber: "111111",
         },
       },
-    ),
-  );
-  // Creates full-time application with receipts, and invoices details.
-  await saveFakeInvoiceIntoBatchWithInvoiceDetails(
-    db,
-    {
-      casInvoiceBatch,
-      creator: systemUsersService.systemUser,
-    },
-    {
-      offeringIntensity: OfferingIntensity.fullTime,
-      casSupplierInitialValues: {
-        supplierStatus: SupplierStatus.VerifiedManually,
-        supplierNumber: "111111",
-      },
-    },
-  );
-  return casInvoiceBatch.id;
-}
+    );
+    return casInvoiceBatch.id;
+  }
+});

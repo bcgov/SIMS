@@ -26,11 +26,11 @@ export class CASSendInvoicesScheduler extends BaseScheduler<CASIntegrationQueueI
   }
 
   protected async payload(): Promise<CASIntegrationQueueInDTO> {
-    const queuePollingRecordsLimit =
+    const pollingRecordsLimit =
       await this.queueService.getQueuePollingRecordLimit(
         this.schedulerQueue.name as QueueNames,
       );
-    return { pollingRecordsLimit: queuePollingRecordsLimit };
+    return { pollingRecordsLimit };
   }
 
   /**
@@ -44,8 +44,6 @@ export class CASSendInvoicesScheduler extends BaseScheduler<CASIntegrationQueueI
     job: Job<CASIntegrationQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string> {
-    const serviceProcessSummary = new ProcessSummary();
-    processSummary.children(serviceProcessSummary);
     await this.casInvoiceService.sendInvoices(
       job.data.pollingRecordsLimit,
       processSummary,

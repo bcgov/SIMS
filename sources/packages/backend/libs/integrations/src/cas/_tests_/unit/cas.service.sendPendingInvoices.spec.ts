@@ -1,4 +1,4 @@
-import { CASService } from "@sims/integrations/cas";
+import { CASService, PendingInvoicePayload } from "@sims/integrations/cas";
 import { Mocked } from "@suites/unit";
 import { HttpService } from "@nestjs/axios";
 import {
@@ -74,33 +74,7 @@ describe("CASService-sendPendingInvoices", () => {
         "CAS-Returned-Messages": "SUCCEEDED",
       },
     });
-    const pendingInvoicesPayload = {
-      invoiceType: "Standard",
-      supplierNumber: "DUMMY_SUPPLIER_NUMBER",
-      supplierSiteNumber: "DUMMY_SUPPLIER_SITE_NUMBER",
-      invoiceDate: "21-FEB-2025",
-      invoiceNumber: "DUMMY_INVOICE_NUMBER",
-      invoiceAmount: 0,
-      payGroup: "GEN GLP",
-      dateInvoiceReceived: "21-FEB-2025",
-      remittanceCode: "01",
-      specialHandling: "N",
-      terms: "Immediate",
-      remittanceMessage1: "",
-      remittanceMessage2: "",
-      glDate: "21-FEB-2025",
-      invoiceBatchName: "Dummy invoice batch name",
-      currencyCode: "CAD",
-      invoiceLineDetails: [
-        {
-          invoiceLineNumber: 1,
-          invoiceLineType: "Item",
-          lineCode: "DUMMY_LINE_CODE",
-          invoiceLineAmount: 0,
-          defaultDistributionAccount: "DUMMY_DEFAULT_DISTRIBUTION_ACCOUNT",
-        },
-      ],
-    };
+    const pendingInvoicesPayload = {} as PendingInvoicePayload;
     //Act
     httpService.axiosRef.post = jest.fn().mockImplementationOnce(() => {
       const error = new AxiosError(

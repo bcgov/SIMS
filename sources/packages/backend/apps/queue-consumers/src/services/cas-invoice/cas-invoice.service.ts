@@ -3,7 +3,6 @@ import {
   CASService,
   PendingInvoicePayload,
   InvoiceLineDetail,
-  SendInvoicesResponse,
 } from "@sims/integrations/cas";
 import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
 import {
@@ -18,7 +17,7 @@ import {
   getAbbreviatedDateOnlyFormat,
 } from "@sims/utilities";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { DataSource, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SystemUsersService } from "@sims/services";
 
@@ -29,7 +28,6 @@ export class CASInvoiceService {
     private readonly casService: CASService,
     @InjectRepository(CASInvoice)
     private readonly casInvoiceRepo: Repository<CASInvoice>,
-    private readonly dataSource: DataSource,
   ) {}
 
   /**
@@ -139,16 +137,15 @@ export class CASInvoiceService {
     summary.info(
       `Processing pending invoice: ${pendingInvoice.invoiceNumber}.`,
     );
-    const pendingInvoicePayload = this.getPendingInvoicePayload(pendingInvoice);
     try {
-      const response: SendInvoicesResponse = await this.casService.sendInvoice(
-        pendingInvoicePayload,
-      );
+      const pendingInvoicePayload =
+        this.getPendingInvoicePayload(pendingInvoice);
+      const response = await this.casService.sendInvoice(pendingInvoicePayload);
       if (response.invoiceNumber) {
         summary.info(`Invoice sent to CAS ${response.casReturnedMessages}.`);
       } else {
         summary.warn(
-          `Invoice ${pendingInvoicePayload.invoiceNumber} set to CAS was considered successful but returned additional message(s): ${response.casReturnedMessages}.`,
+          `Invoice ${pendingInvoicePayload.invoiceNumber} sent to CAS was considered successful but returned additional message(s): ${response.casReturnedMessages}.`,
         );
       }
       await this.casInvoiceRepo.update(
