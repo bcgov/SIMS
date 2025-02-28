@@ -21,7 +21,6 @@ import { CASSendInvoicesScheduler } from "../cas-send-invoices.scheduler";
 import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
 import { CASService } from "@sims/integrations/cas";
 import { resetCASServiceMock } from "../../../../../test/helpers/mock-utils/cas-service.mock";
-import { createFakePendingInvoicesResponse } from "../../../../../test/helpers/mock-utils/cas-response.factory";
 import { CASIntegrationQueueInDTO } from "../models/cas-integration.dto";
 
 const CAS_INVOICE_BATCH_SEQUENCE_NAME = "CAS_INVOICE_BATCH";
@@ -66,9 +65,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
 
   it("Should send invoices to CAS when there are pending invoices.", async () => {
     //Arrange
-    casServiceMock.sendInvoice = jest.fn(() =>
-      Promise.resolve(createFakePendingInvoicesResponse()),
-    );
     // Create invoice batch to generate the report.
     const casInvoiceBatch = await db.casInvoiceBatch.save(
       createFakeCASInvoiceBatch(
