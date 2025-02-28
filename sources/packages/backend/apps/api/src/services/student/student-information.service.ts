@@ -68,7 +68,6 @@ export class StudentInformationService {
       .createQueryBuilder("searchApplication")
       .select([
         "searchApplication.id",
-        "searchApplication.data",
         "searchApplication.applicationNumber",
         "searchApplication.applicationStatus",
         "searchApplication.applicationStatusUpdatedOn",
