@@ -66,32 +66,9 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
   it("Should send invoices to CAS when there are pending invoices.", async () => {
     //Arrange
     // Create invoice batch to generate the report.
-    const casInvoiceBatch = await db.casInvoiceBatch.save(
-      createFakeCASInvoiceBatch(
-        {
-          creator: systemUsersService.systemUser,
-        },
-        {
-          initialValue: {
-            approvalStatus: CASInvoiceBatchApprovalStatus.Approved,
-          },
-        },
-      ),
-    );
-    // Creates full-time application with receipts, and invoices details.
-    await saveFakeInvoiceIntoBatchWithInvoiceDetails(
+    const casInvoiceBatchId = await createFakeInvoiceBatch(
       db,
-      {
-        casInvoiceBatch,
-        creator: systemUsersService.systemUser,
-      },
-      {
-        offeringIntensity: OfferingIntensity.fullTime,
-        casSupplierInitialValues: {
-          supplierStatus: SupplierStatus.VerifiedManually,
-          supplierNumber: "111111",
-        },
-      },
+      systemUsersService,
     );
     // Queued job.
     const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
@@ -108,7 +85,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
         invoiceNumber: true,
       },
       where: {
-        casInvoiceBatch: { id: casInvoiceBatch.id },
+        casInvoiceBatch: { id: casInvoiceBatchId },
       },
     });
     expect(result).toStrictEqual(["Process finalized with success."]);
@@ -145,32 +122,9 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
   it("Should capture the error in invoices when sent to CAS and known errors are returned.", async () => {
     //Arrange
     // Create invoice batch to generate the report.
-    const casInvoiceBatch = await db.casInvoiceBatch.save(
-      createFakeCASInvoiceBatch(
-        {
-          creator: systemUsersService.systemUser,
-        },
-        {
-          initialValue: {
-            approvalStatus: CASInvoiceBatchApprovalStatus.Approved,
-          },
-        },
-      ),
-    );
-    // Creates full-time application with receipts, and invoices details.
-    await saveFakeInvoiceIntoBatchWithInvoiceDetails(
+    const casInvoiceBatchId = await createFakeInvoiceBatch(
       db,
-      {
-        casInvoiceBatch,
-        creator: systemUsersService.systemUser,
-      },
-      {
-        offeringIntensity: OfferingIntensity.fullTime,
-        casSupplierInitialValues: {
-          supplierStatus: SupplierStatus.VerifiedManually,
-          supplierNumber: "111111",
-        },
-      },
+      systemUsersService,
     );
     // Configure CAS mock to return a custom named Bad Request error.
     casServiceMock.sendInvoice = jest.fn().mockImplementation(() => {
@@ -200,7 +154,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
         errors: true,
       },
       where: {
-        casInvoiceBatch: { id: casInvoiceBatch.id },
+        casInvoiceBatch: { id: casInvoiceBatchId },
       },
     });
 
@@ -217,32 +171,9 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       .mockRejectedValueOnce("Unknown error");
 
     // Create invoice batch to generate the report.
-    const casInvoiceBatch = await db.casInvoiceBatch.save(
-      createFakeCASInvoiceBatch(
-        {
-          creator: systemUsersService.systemUser,
-        },
-        {
-          initialValue: {
-            approvalStatus: CASInvoiceBatchApprovalStatus.Approved,
-          },
-        },
-      ),
-    );
-    // Creates full-time application with receipts, and invoices details.
-    await saveFakeInvoiceIntoBatchWithInvoiceDetails(
+    const casInvoiceBatchId = await createFakeInvoiceBatch(
       db,
-      {
-        casInvoiceBatch,
-        creator: systemUsersService.systemUser,
-      },
-      {
-        offeringIntensity: OfferingIntensity.fullTime,
-        casSupplierInitialValues: {
-          supplierStatus: SupplierStatus.VerifiedManually,
-          supplierNumber: "111111",
-        },
-      },
+      systemUsersService,
     );
     // Queued job.
     const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
@@ -263,7 +194,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
         invoiceNumber: true,
       },
       where: {
-        casInvoiceBatch: { id: casInvoiceBatch.id },
+        casInvoiceBatch: { id: casInvoiceBatchId },
       },
     });
     expect(
@@ -276,3 +207,43 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     ).toBe(true);
   });
 });
+
+/**
+ * Helper method to create fake invoice batch.
+ * @param db data source.
+ * @param systemUsersService system users service.
+ * @returns cas invoice batch id.
+ */
+async function createFakeInvoiceBatch(
+  db: E2EDataSources,
+  systemUsersService: SystemUsersService,
+) {
+  const casInvoiceBatch = await db.casInvoiceBatch.save(
+    createFakeCASInvoiceBatch(
+      {
+        creator: systemUsersService.systemUser,
+      },
+      {
+        initialValue: {
+          approvalStatus: CASInvoiceBatchApprovalStatus.Approved,
+        },
+      },
+    ),
+  );
+  // Creates full-time application with receipts, and invoices details.
+  await saveFakeInvoiceIntoBatchWithInvoiceDetails(
+    db,
+    {
+      casInvoiceBatch,
+      creator: systemUsersService.systemUser,
+    },
+    {
+      offeringIntensity: OfferingIntensity.fullTime,
+      casSupplierInitialValues: {
+        supplierStatus: SupplierStatus.VerifiedManually,
+        supplierNumber: "111111",
+      },
+    },
+  );
+  return casInvoiceBatch.id;
+}
