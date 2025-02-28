@@ -1,4 +1,4 @@
-# Running the scheduler for cas send invoice every day Monday to Friday at 1 am, 1 pm and 8 pm UTC / at 5 am, 5 pm and 12 am PST.
+-- Running the scheduler for cas send invoice every day Monday to Friday at 1 am, 1 pm and 8 pm UTC / at 5 am, 5 pm and 12 am PST.
 INSERT INTO
   sims.queue_configurations(queue_name, queue_configuration, queue_settings)
 VALUES
