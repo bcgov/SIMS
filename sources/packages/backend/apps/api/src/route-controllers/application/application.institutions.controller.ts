@@ -52,6 +52,8 @@ export class ApplicationInstitutionsController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
     @Query("isParentApplication", new DefaultValuePipe(false), ParseBoolPipe)
     isParentApplication: boolean,
+    @Query("loadDynamicData", new DefaultValuePipe(true), ParseBoolPipe)
+    loadDynamicData: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     // When the application is a parent application, get the current application by parent application id.
     // Otherwise, set the current application id to the provided application id.
@@ -63,15 +65,17 @@ export class ApplicationInstitutionsController extends BaseController {
     const application = await this.applicationService.getApplicationById(
       currentApplicationId,
       {
-        loadDynamicData: true,
+        loadDynamicData,
         studentId: studentId,
         institutionId: userToken.authorizations.institutionId,
       },
     );
-    application.data =
-      await this.applicationControllerService.generateApplicationFormData(
-        application.data,
-      );
+    if (loadDynamicData) {
+      application.data =
+        await this.applicationControllerService.generateApplicationFormData(
+          application.data,
+        );
+    }
     return this.applicationControllerService.transformToApplicationDTO(
       application,
     );

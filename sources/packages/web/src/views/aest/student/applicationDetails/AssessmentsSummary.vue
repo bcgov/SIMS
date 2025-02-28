@@ -48,8 +48,8 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { defineComponent, onMounted, ref } from "vue";
 import { AssessmentTriggerType } from "@/types";
-import RequestAssessment from "@/components/aest/students/assessment/Request.vue";
-import HistoryAssessment from "@/components/aest/students/assessment/History.vue";
+import RequestAssessment from "@/components/common/students/assessment/Request.vue";
+import HistoryAssessment from "@/components/common/students/assessment/History.vue";
 import ManualReassessment from "@/components/aest/students/assessment/ManualReassessment.vue";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -78,10 +78,10 @@ export default defineComponent({
 
     onMounted(async () => {
       // Get current application for the parent application.
-      const currentApplication = await ApplicationService.shared.getApplication(
-        props.applicationId,
-        { loadDynamicData: false, isParentApplication: true },
-      );
+      const currentApplication =
+        await ApplicationService.shared.getCurrentApplicationFromParent(
+          props.applicationId,
+        );
       currentApplicationId.value = currentApplication.id;
     });
 
