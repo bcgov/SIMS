@@ -194,7 +194,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     expect(result).toStrictEqual([
       "Process finalized with success.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 2, Info: 9",
+      "Error(s): 0, Warning(s): 1, Info: 9",
     ]);
 
     // Assert DB was updated.

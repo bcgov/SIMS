@@ -147,7 +147,6 @@ export class CASInvoiceService {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         if (error.name === CAS_BAD_REQUEST) {
-          summary.warn("Known CAS error while sending invoice.");
           await this.processBadRequestErrors(
             pendingInvoice.id,
             summary,
