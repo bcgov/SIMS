@@ -66,7 +66,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
 
   it("Should send invoices to CAS when there are pending invoices.", async () => {
     //Arrange
-    casServiceMock.sendPendingInvoices = jest.fn(() =>
+    casServiceMock.sendInvoice = jest.fn(() =>
       Promise.resolve(createFakePendingInvoicesResponse()),
     );
     // Create invoice batch to generate the report.
@@ -177,7 +177,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       },
     );
     // Configure CAS mock to return a custom named Bad Request error.
-    casServiceMock.sendPendingInvoices = jest.fn().mockImplementation(() => {
+    casServiceMock.sendInvoice = jest.fn().mockImplementation(() => {
       throw new CustomNamedError("CAS Bad Request Errors", CAS_BAD_REQUEST, [
         "[036] GL Date is blank, not in an open period or formatted incorrectly.",
       ]);
@@ -216,7 +216,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
   it("Should throw error when an unexpected error happen during pending invoice sent to CAS.", async () => {
     // Arrange
     // Create mock where it will throw an error.
-    casServiceMock.sendPendingInvoices = jest
+    casServiceMock.sendInvoice = jest
       .fn()
       .mockRejectedValueOnce("Unknown error");
 

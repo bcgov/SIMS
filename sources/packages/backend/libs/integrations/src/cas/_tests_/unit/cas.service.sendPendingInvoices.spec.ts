@@ -55,7 +55,7 @@ describe("CASService-sendPendingInvoices", () => {
       ],
     };
     // Act
-    await casService.sendPendingInvoices(pendingInvoicesPayload);
+    await casService.sendInvoice(pendingInvoicesPayload);
     // Assert
     expect(httpService.axiosRef.post).toHaveBeenCalledWith(
       "cas-url/cfs/apinvoice/",

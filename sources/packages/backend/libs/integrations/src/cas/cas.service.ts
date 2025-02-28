@@ -132,7 +132,7 @@ export class CASService {
    * @param pendingInvoicePayload payload data to be sent to CAS.
    * @returns submitted invoice number and CAS returned messages.
    */
-  async sendPendingInvoices(
+  async sendInvoice(
     pendingInvoicePayload: PendingInvoicePayload,
   ): Promise<SendPendingInvoicesResponse> {
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/apinvoice/`;

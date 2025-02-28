@@ -132,7 +132,7 @@ export class CASInvoiceService {
     const pendingInvoicePayload = this.getPendingInvoicePayload(pendingInvoice);
     try {
       const response: SendPendingInvoicesResponse =
-        await this.casService.sendPendingInvoices(pendingInvoicePayload);
+        await this.casService.sendInvoice(pendingInvoicePayload);
       if (response.invoiceNumber) {
         summary.info(`Invoice sent to CAS ${response.casReturnedMessages}.`);
       } else {

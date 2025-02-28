@@ -37,7 +37,7 @@ export function resetCASServiceMock(mockedCASService: CASService): void {
   mockedCASService.getSupplierInfoFromCAS = jest.fn(() =>
     Promise.resolve(SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT),
   );
-  mockedCASService.sendPendingInvoices = jest.fn(() =>
+  mockedCASService.sendInvoice = jest.fn(() =>
     Promise.resolve(SEND_PENDING_INVOICES_MOCKED_RESULT),
   );
 }
