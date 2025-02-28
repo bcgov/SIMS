@@ -51,6 +51,9 @@ export default defineComponent({
       const currentApplication =
         await ApplicationService.shared.getCurrentApplicationFromParent(
           props.applicationId,
+          {
+            studentId: props.studentId,
+          },
         );
       currentApplicationId.value = currentApplication.id;
       loadAssessmentAwardValues(currentApplicationId.value);

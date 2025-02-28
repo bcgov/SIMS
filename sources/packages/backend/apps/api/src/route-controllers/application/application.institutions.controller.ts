@@ -70,10 +70,12 @@ export class ApplicationInstitutionsController extends BaseController {
         institutionId: userToken.authorizations.institutionId,
       },
     );
-    application.data =
-      await this.applicationControllerService.generateApplicationFormData(
-        application.data,
-      );
+    if (loadDynamicData) {
+      application.data =
+        await this.applicationControllerService.generateApplicationFormData(
+          application.data,
+        );
+    }
     return this.applicationControllerService.transformToApplicationDTO(
       application,
     );
