@@ -50,13 +50,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     resetCASServiceMock(casServiceMock);
-    // Update existing records to avoid conflicts between tests.
-    await db.disbursementReceiptValue.update(
-      {
-        grantType: "BCSG",
-      },
-      { grantAmount: 0 },
-    );
     // Delete all existing invoices and related data.
     await db.casInvoiceDetail.delete({});
     await db.casInvoice.delete({});
