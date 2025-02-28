@@ -44,23 +44,12 @@ export class CASSendInvoicesScheduler extends BaseScheduler<CASIntegrationQueueI
     job: Job<CASIntegrationQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string> {
-    processSummary.info("Checking for pending invoices.");
-    const pendingInvoices = await this.casInvoiceService.getPendingInvoices(
+    const serviceProcessSummary = new ProcessSummary();
+    processSummary.children(serviceProcessSummary);
+    await this.casInvoiceService.sendInvoices(
       job.data.pollingRecordsLimit,
+      processSummary,
     );
-    if (pendingInvoices.length === 0) {
-      processSummary.info("No pending invoices found.");
-    } else {
-      processSummary.info(
-        `Executing ${pendingInvoices.length} pending invoice(s) sent to CAS.`,
-      );
-      const serviceProcessSummary = new ProcessSummary();
-      processSummary.children(serviceProcessSummary);
-      await this.casInvoiceService.sendInvoices(
-        serviceProcessSummary,
-        pendingInvoices,
-      );
-    }
     return "Process finalized with success.";
   }
 

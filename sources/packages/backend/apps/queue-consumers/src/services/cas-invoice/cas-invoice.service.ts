@@ -37,7 +37,9 @@ export class CASInvoiceService {
    * @param pollingRecordsLimit maximum number of records to be returned.
    * @returns list of pending invoices.
    */
-  async getPendingInvoices(pollingRecordsLimit: number): Promise<CASInvoice[]> {
+  private async getPendingInvoices(
+    pollingRecordsLimit: number,
+  ): Promise<CASInvoice[]> {
     return this.casInvoiceRepo.find({
       select: {
         id: true,
@@ -99,19 +101,27 @@ export class CASInvoiceService {
 
   /**
    * Send pending invoices to CAS.
-   * @param parentProcessSummary parent process summary for logging.
-   * @param pendingInvoices pending invoices.
+   * @param pollingRecordsLimit maximum number of records to be returned.
+   * @param processSummary parent process summary for logging.
    */
   async sendInvoices(
-    parentProcessSummary: ProcessSummary,
-    pendingInvoices: CASInvoice[],
+    pollingRecordsLimit: number,
+    processSummary: ProcessSummary,
   ): Promise<void> {
-    // Process each invoice in parallel.
-    await processInParallel(
-      (pendingInvoice) =>
-        this.processInvoice(pendingInvoice, parentProcessSummary),
-      pendingInvoices,
-    );
+    processSummary.info("Checking for pending invoices.");
+    const pendingInvoices = await this.getPendingInvoices(pollingRecordsLimit);
+    if (pendingInvoices.length === 0) {
+      processSummary.info("No pending invoices found.");
+    } else {
+      processSummary.info(
+        `Found ${pendingInvoices.length} pending invoice(s) sent to CAS.`,
+      );
+      // Process each invoice in parallel.
+      await processInParallel(
+        (pendingInvoice) => this.processInvoice(pendingInvoice, processSummary),
+        pendingInvoices,
+      );
+    }
   }
 
   /**

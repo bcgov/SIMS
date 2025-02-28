@@ -115,7 +115,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     expect(
       mockedJob.containLogMessages([
         "Checking for pending invoices.",
-        "Executing 1 pending invoice(s) sent to CAS.",
+        "Found 1 pending invoice(s) sent to CAS.",
         `Processing pending invoice: ${casInvoice.invoiceNumber}.`,
         "Invoice sent to CAS SUCCEEDED.",
       ]),
@@ -190,7 +190,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     expect(result).toStrictEqual([
       "Process finalized with success.",
       "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-      "Error(s): 0, Warning(s): 1, Info: 9",
+      "Error(s): 0, Warning(s): 1, Info: 8",
     ]);
 
     // Assert DB was updated.
@@ -269,7 +269,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     expect(
       mockedJob.containLogMessages([
         "Checking for pending invoices.",
-        "Executing 1 pending invoice(s) sent to CAS.",
+        "Found 1 pending invoice(s) sent to CAS.",
         `Processing pending invoice: ${casInvoice.invoiceNumber}.`,
         "Unexpected error while sending invoice to CAS.",
       ]),
