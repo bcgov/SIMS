@@ -199,7 +199,7 @@
     </decisionTable>
   </decision>
   <decision id="dmnFullTimeApplicationBooksMaximum" name="dmnFullTimeApplicationBooksMaximum">
-    <decisionTable id="DecisionTable_0okv6wx" hitPolicy="COLLECT">
+    <decisionTable id="DecisionTable_0okv6wx">
       <input id="InputClause_06rd4pc" label="programYear">
         <inputExpression id="LiteralExpression_1bgo7gt" typeRef="string">
           <text>programYear</text>
@@ -335,7 +335,7 @@
     </decisionTable>
   </decision>
   <decision id="dmnFullTimeApplicationReturnTransportation" name="dmnFullTimeApplicationReturnTransportation">
-    <decisionTable id="DecisionTable_0rutev3" hitPolicy="COLLECT">
+    <decisionTable id="DecisionTable_0rutev3">
       <input id="InputClause_02c9ycy" label="programYear">
         <inputExpression id="LiteralExpression_0y6gngq" typeRef="string">
           <text>programYear</text>
