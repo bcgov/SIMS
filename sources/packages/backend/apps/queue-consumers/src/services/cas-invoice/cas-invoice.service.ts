@@ -33,9 +33,10 @@ export class CASInvoiceService {
   ) {}
   /**
    * Get the list of pending invoices to be sent from the approved batch.
+   * @param pollingRecordsLimit maximum number of records to be returned.
    * @returns list of pending invoices.
    */
-  async getPendingInvoices(): Promise<CASInvoice[]> {
+  async getPendingInvoices(pollingRecordsLimit: number): Promise<CASInvoice[]> {
     const pendingInvoices = await this.dataSource
       .getRepository(CASInvoice)
       .find({
@@ -84,6 +85,7 @@ export class CASInvoiceService {
           },
           invoiceStatus: CASInvoiceStatus.Pending,
         },
+        take: pollingRecordsLimit,
       });
     return pendingInvoices;
   }
