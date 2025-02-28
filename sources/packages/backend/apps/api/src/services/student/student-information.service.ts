@@ -6,6 +6,7 @@ import {
   StudentAssessmentStatus,
   ProgramYear,
   StudentScholasticStandingChangeType,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import { Brackets, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -108,7 +109,10 @@ export class StudentInformationService {
                 )
                 .andWhere(
                   "currentAssessment.studentAssessmentStatus = :assessmentStatusCompleted",
-                );
+                )
+                .andWhere("offering.offeringIntensity = :fullTime", {
+                  fullTime: OfferingIntensity.fullTime,
+                });
             }),
           ).orWhere("studentApplication.id IS NULL");
         }),

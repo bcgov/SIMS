@@ -59,6 +59,7 @@ export class StudentExternalControllerService {
           withdrawalDate: scholasticStanding?.submittedData?.dateOfWithdrawal,
           withdrawalReason: scholasticStanding?.changeType,
           immigrationStatus: workflowData.studentData.citizenship,
+          bcResidency: workflowData.studentData.bcResident,
           maritalStatus: workflowData.studentData.relationshipStatus,
           income: workflowData.studentData.taxReturnIncome,
           livingArrangement: ["SDA", "SIA"].includes(

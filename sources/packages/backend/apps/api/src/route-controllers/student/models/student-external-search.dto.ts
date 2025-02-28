@@ -69,13 +69,14 @@ export class ApplicationDetailsAPIOutDTO {
   // TODO: To be implemented in SIMS.
   withdrawalActiveFlag?: string;
   immigrationStatus: string;
+  bcResidency: string;
   maritalStatus: string;
   // This field is only available for legacy students.
   marriageDate?: string;
   income: number;
   livingArrangement: "Home" | "Away";
   estimatedTotalAward: number;
-  dependants: DependantDetailsAPIOutDTO[];
+  dependants?: DependantDetailsAPIOutDTO[];
   program: ProgramOfferingDetailsAPIOutDTO;
   institution: InstitutionDetailsAPIOutDTO;
   costs: AssessedCostDetailsAPIOutDTO;
