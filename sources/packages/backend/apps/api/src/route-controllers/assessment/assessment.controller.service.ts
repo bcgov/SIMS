@@ -174,6 +174,8 @@ export class AssessmentControllerService {
         schedule.msfaaNumber.dateSigned;
       disbursementDetails[`${disbursementIdentifier}TuitionRemittance`] =
         schedule.tuitionRemittanceRequestedAmount;
+      disbursementDetails[`${disbursementIdentifier}EnrolmentDate`] =
+        schedule.coeUpdatedAt;
       disbursementDetails[`${disbursementIdentifier}Id`] = schedule.id;
       if (includeDateSent) {
         disbursementDetails[`${disbursementIdentifier}DateSent`] =

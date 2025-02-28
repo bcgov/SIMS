@@ -158,7 +158,6 @@ export default defineComponent({
       router.push({
         name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
         params: {
-          applicationId: props.applicationId,
           studentId: props.studentId,
           supportingUserId: supportingUserId,
         },
@@ -166,9 +165,15 @@ export default defineComponent({
     };
 
     onMounted(async () => {
+      // Get current application for the parent application.
+      const currentApplication =
+        await ApplicationService.shared.getCurrentApplicationFromParent(
+          props.applicationId,
+        );
+      const currentApplicationId = currentApplication.id;
       const supportingUsers =
         await SupportingUsersService.shared.getSupportingUsersForSideBar(
-          props.applicationId,
+          currentApplicationId,
         );
       supportingUsers.forEach((supportingUser, index) => {
         if (supportingUser.supportingUserType === SupportingUserType.Parent) {

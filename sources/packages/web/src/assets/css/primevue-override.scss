@@ -1,0 +1,136 @@
+.p-datatable {
+  .p-datatable-thead > tr > th {
+    padding: 1rem;
+    text-align: left;
+  }
+
+  .p-datatable-tbody > tr > td {
+    padding: 1rem;
+  }
+}
+
+.p-component * {
+  box-sizing: border-box;
+}
+
+.p-datatable-wrapper,
+.p-datatable-table,
+.p-datatable-thead,
+.p-datatable-tbody,
+.p-datatable-tfoot {
+  padding: initial;
+  margin: initial;
+}
+
+.p-paginator {
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  border: solid #e4e4e4;
+  border-width: 0;
+  border-radius: 4px;
+}
+
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-last,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-prev {
+  background-color: transparent;
+  border: 0 none;
+  color: rgba(0, 0, 0, 0.6);
+  min-width: 3rem;
+  height: 3rem;
+  margin: 0.143rem;
+  transition: none;
+  border-radius: 50%;
+}
+
+.p-paginator .p-paginator-first:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-last:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-next:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-prev:not(.p-disabled):not(.p-highlight):hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: transparent;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.p-paginator .p-paginator-first {
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+}
+
+.p-paginator .p-paginator-last {
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.p-paginator .p-dropdown {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  height: 3rem;
+  padding: 5px;
+}
+
+.p-paginator .p-dropdown .p-dropdown-label {
+  padding-right: 0;
+}
+
+.p-paginator .p-paginator-page-input {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.p-paginator .p-paginator-page-input .p-inputtext {
+  max-width: 3rem;
+}
+
+.p-paginator .p-paginator-current {
+  padding: 0 0.5rem;
+}
+
+.p-paginator .p-paginator-current,
+.p-paginator .p-paginator-pages .p-paginator-page {
+  background-color: transparent;
+  border: 0 none;
+  color: rgba(0, 0, 0, 0.6);
+  min-width: 3rem;
+  height: 3rem;
+  margin: 0.143rem;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page {
+  transition: none;
+  border-radius: 50%;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: rgba(63, 81, 181, 0.12);
+  border-color: rgba(63, 81, 181, 0.12);
+  color: #3f51b5;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page:not(.p-highlight):hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: transparent;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.p-picklist .p-picklist-buttons {
+  padding: 1rem;
+}
+
+.p-picklist .p-picklist-buttons .p-button {
+  margin-bottom: 0.5rem;
+}
+
+.p-picklist .p-picklist-header {
+  background: #fff;
+  color: rgba(0, 0, 0, 0.87);
+  border: 1px solid #e0e0e0;
+  padding: 1rem;
+  font-weight: 500;
+  border-bottom: 0 none;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+}
