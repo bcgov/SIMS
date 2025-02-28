@@ -259,7 +259,7 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
                 bcResident: FormYesNoOptions.Yes,
                 relationshipStatus: RelationshipStatus.Single,
               },
-              dmnValues: { fullTimeLivingCategory: "SIH" },
+              dmnValues: { livingCategory: "SIH" },
             } as WorkflowData,
             studentAssessmentStatus: StudentAssessmentStatus.Completed,
           },

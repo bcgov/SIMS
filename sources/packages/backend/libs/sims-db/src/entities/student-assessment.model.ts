@@ -365,7 +365,7 @@ export interface WorkflowData {
   };
   dmnValues?: {
     lifetimeMaximumCSLP?: number;
-    fullTimeLivingCategory?: string;
+    livingCategory?: string;
   };
   calculatedData: {
     parentalAssets?: number;

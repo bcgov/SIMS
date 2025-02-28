@@ -14,6 +14,7 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ApplicationDetail } from "../../services";
 
+const MAX_PAST_PROGRAM_YEARS_INCLUDING_CURRENT = 3;
 @Injectable()
 export class StudentInformationService {
   constructor(
@@ -57,11 +58,11 @@ export class StudentInformationService {
     // Get the SQL to get last 3 active program years including the current program year.
     const programYearQuery = this.programYearRepo
       .createQueryBuilder("programYear")
-      .select(["programYear.id"])
+      .select("programYear.id")
       .where("programYear.active = true")
       .andWhere("programYear.startDate <= NOW()")
       .orderBy("programYear.startDate", "DESC")
-      .limit(3)
+      .limit(MAX_PAST_PROGRAM_YEARS_INCLUDING_CURRENT)
       .getSql();
 
     const queryResult = await this.applicationRepo

@@ -72,7 +72,7 @@ export class StudentExternalControllerService {
         maritalStatus: workflowData.studentData.relationshipStatus,
         income: workflowData.studentData.taxReturnIncome,
         livingArrangement: ["SDA", "SIA"].includes(
-          workflowData.dmnValues.fullTimeLivingCategory,
+          workflowData.dmnValues.livingCategory,
         )
           ? "Away"
           : "Home",
