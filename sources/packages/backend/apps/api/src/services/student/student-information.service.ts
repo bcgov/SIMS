@@ -44,17 +44,17 @@ export class StudentInformationService {
         "student.birthDate",
         "student.contactInfo",
         "sinValidation.sin",
-        "user.firstName",
-        "user.lastName",
-        "user.email",
-        "application.id",
-        "application.data",
+        "studentUser.firstName",
+        "studentUser.lastName",
+        "studentUser.email",
+        "studentApplication.id",
+        "studentApplication.data",
         "currentAssessment.id",
         "currentAssessment.workflowData",
         "currentAssessment.assessmentData",
-        "application.applicationNumber",
-        "application.applicationStatus",
-        "application.applicationStatusUpdatedOn",
+        "studentApplication.applicationNumber",
+        "studentApplication.applicationStatus",
+        "studentApplication.applicationStatusUpdatedOn",
         "scholasticStanding.id",
         "scholasticStanding.changeType",
         "scholasticStanding.submittedData",
@@ -75,12 +75,12 @@ export class StudentInformationService {
         "disbursementValue.valueAmount",
         "disbursementValue.effectiveAmount",
       ])
-      .innerJoin("student.user", "user")
+      .innerJoin("student.user", "studentUser")
       .innerJoin("student.sinValidation", "sinValidation")
-      .leftJoin("student.applications", "application")
-      .leftJoin("application.location", "location")
+      .leftJoin("student.applications", "studentApplication")
+      .leftJoin("studentApplication.location", "location")
       .leftJoin("location.institution", "institution")
-      .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("studentApplication.currentAssessment", "currentAssessment")
       .leftJoin(
         "currentAssessment.studentScholasticStanding",
         "scholasticStanding",
@@ -102,13 +102,15 @@ export class StudentInformationService {
         new Brackets((qb) => {
           qb.where(
             new Brackets((qb) => {
-              qb.where("application.applicationStatus != :overwritten")
-                .andWhere(`application.programYear.id IN (${programYearQuery})`)
+              qb.where("studentApplication.applicationStatus != :overwritten")
+                .andWhere(
+                  `studentApplication.programYear.id IN (${programYearQuery})`,
+                )
                 .andWhere(
                   "currentAssessment.studentAssessmentStatus = :assessmentStatusCompleted",
                 );
             }),
-          ).orWhere("application.id IS NULL");
+          ).orWhere("studentApplication.id IS NULL");
         }),
       )
       .setParameters({
