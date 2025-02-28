@@ -43,7 +43,7 @@ export class CASSendInvoicesScheduler extends BaseScheduler<CASIntegrationQueueI
   protected async process(
     job: Job<CASIntegrationQueueInDTO>,
     processSummary: ProcessSummary,
-  ): Promise<string[]> {
+  ): Promise<string> {
     processSummary.info("Checking for pending invoices.");
     const pendingInvoices = await this.casInvoiceService.getPendingInvoices(
       job.data.pollingRecordsLimit,
@@ -61,10 +61,15 @@ export class CASSendInvoicesScheduler extends BaseScheduler<CASIntegrationQueueI
         pendingInvoices,
       );
     }
-    processSummary.info("CAS invoice(s) sent job completed.");
-    return ["Process finalized with success."];
+    return "Process finalized with success.";
   }
 
+  /**
+   * Setting the logger here allows the correct context to be set
+   * during the property injection.
+   * Even if the logger is not used, it is required to be set, to
+   * allow the base classes to write logs using the correct context.
+   */
   @InjectLogger()
   logger: LoggerService;
 }
