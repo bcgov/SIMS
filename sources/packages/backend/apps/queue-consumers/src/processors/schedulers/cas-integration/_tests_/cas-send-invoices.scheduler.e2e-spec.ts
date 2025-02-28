@@ -146,7 +146,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     ).toBe(true);
   });
 
-  it("Should capture the error in invoices when sent to CAS and know errors are returned.", async () => {
+  it("Should capture the error in invoices when sent to CAS and known errors are returned.", async () => {
     //Arrange
     // Create invoice batch to generate the report.
     const casInvoiceBatch = await db.casInvoiceBatch.save(
