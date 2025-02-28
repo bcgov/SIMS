@@ -473,7 +473,7 @@ export interface ApplicationData {
   /**
    * Dependant details.
    */
-  dependants: unknown[];
+  dependants?: unknown[];
 }
 
 /**
