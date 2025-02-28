@@ -173,9 +173,9 @@ export class InvoiceLineDetail {
 }
 
 /**
- * Response from CAS when sending pending invoices.
+ * Response from CAS when sending invoices.
  */
-export class SendPendingInvoicesResponse {
+export class SendInvoicesResponse {
   invoiceNumber?: string;
   casReturnedMessages?: string[];
 }

@@ -8,7 +8,7 @@ import {
   CreateExistingSupplierSiteResponse,
   CreateSupplierAddressSubmittedData,
   CreateSupplierAndSiteResponse,
-  SendPendingInvoicesResponse,
+  SendInvoicesResponse,
 } from "@sims/integrations/cas/models/cas-service.model";
 import { CASSupplierRecordStatus, SupplierAddress } from "@sims/sims-db";
 import * as faker from "faker";
@@ -87,10 +87,10 @@ export function createFakeCASNotFoundSupplierResponse(): CASSupplierResponse {
 }
 
 /**
- * Creates a fake {@link SendPendingInvoicesResponse} service model.
+ * Creates a fake {@link SendInvoicesResponse} service model.
  * @returns a fake SendPendingInvoicesResponse.
  */
-export function createFakePendingInvoicesResponse(): SendPendingInvoicesResponse {
+export function createFakePendingInvoicesResponse(): SendInvoicesResponse {
   return {
     invoiceNumber: faker.datatype
       .number({ min: 1000000, max: 9999999 })

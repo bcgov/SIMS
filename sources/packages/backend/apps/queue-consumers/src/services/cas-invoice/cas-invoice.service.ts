@@ -3,7 +3,7 @@ import {
   CASService,
   PendingInvoicePayload,
   InvoiceLineDetail,
-  SendPendingInvoicesResponse,
+  SendInvoicesResponse,
 } from "@sims/integrations/cas";
 import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
 import {
@@ -131,8 +131,9 @@ export class CASInvoiceService {
     );
     const pendingInvoicePayload = this.getPendingInvoicePayload(pendingInvoice);
     try {
-      const response: SendPendingInvoicesResponse =
-        await this.casService.sendInvoice(pendingInvoicePayload);
+      const response: SendInvoicesResponse = await this.casService.sendInvoice(
+        pendingInvoicePayload,
+      );
       if (response.invoiceNumber) {
         summary.info(`Invoice sent to CAS ${response.casReturnedMessages}.`);
       } else {
