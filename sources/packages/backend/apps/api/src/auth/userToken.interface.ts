@@ -107,7 +107,6 @@ export interface IUserToken {
    * these are the only clients using the bceidboth IDP.
    */
   bceidBusinessGuid?: string;
-
   /**
    * Client id of the Keycloak client used for the authentication.
    */

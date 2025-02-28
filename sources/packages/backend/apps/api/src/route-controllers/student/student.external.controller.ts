@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+  Post,
+} from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -50,11 +57,15 @@ export class StudentExternalController extends BaseController {
       student &&
       this.studentInformationService.getStudentApplications(student.id);
     const sfasIndividualPromise =
-      await this.studentInformationService.getSFASIndividualBySIN(payload.sin);
+      this.studentInformationService.getSFASIndividualBySIN(payload.sin);
     const [studentApplications, sfasIndividual] = await Promise.all([
       studentApplicationsPromise,
       sfasIndividualPromise,
     ]);
+    // Student not found in SIMS and SFAS.
+    if (!student && !sfasIndividual) {
+      throw new NotFoundException("Student not found.");
+    }
     // Transform student details.
     const studentDetails =
       this.studentExternalControllerService.transformStudentSearchResult(
