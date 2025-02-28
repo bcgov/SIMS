@@ -9,7 +9,7 @@ import {
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { CASInvoiceService } from "../../../services";
-import { CASIntegrationQueueInDTO } from "../../../processors/schedulers/cas-integration/models/cas-integration.dto";
+import { CASIntegrationQueueInDTO } from "./models/cas-integration.dto";
 
 /**
  * Scheduler to send invoices to CAS.

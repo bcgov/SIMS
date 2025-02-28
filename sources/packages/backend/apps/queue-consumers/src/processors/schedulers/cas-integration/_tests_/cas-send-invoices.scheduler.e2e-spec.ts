@@ -22,6 +22,7 @@ import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
 import { CASService } from "@sims/integrations/cas";
 import { resetCASServiceMock } from "../../../../../test/helpers/mock-utils/cas-service.mock";
 import { createFakePendingInvoicesResponse } from "../../../../../test/helpers/mock-utils/cas-response.factory";
+import { CASIntegrationQueueInDTO } from "../models/cas-integration.dto";
 
 const CAS_INVOICE_BATCH_SEQUENCE_NAME = "CAS_INVOICE_BATCH";
 const CAS_INVOICE_SEQUENCE_NAME = "CAS_INVOICE";
@@ -97,7 +98,9 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       },
     );
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
+      pollingRecordsLimit: 1,
+    });
 
     // Act
     const result = await processor.processQueue(mockedJob.job);
@@ -128,7 +131,9 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
   it("Should contain log no pending invoices when there are no pending invoices found.", async () => {
     // Arrange
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
+      pollingRecordsLimit: 1,
+    });
 
     // Act
     const result = await processor.processQueue(mockedJob.job);
@@ -181,7 +186,9 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       ]);
     });
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
+      pollingRecordsLimit: 1,
+    });
 
     // Act
     const result = await processor.processQueue(mockedJob.job);
@@ -245,7 +252,9 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       },
     );
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
+      pollingRecordsLimit: 1,
+    });
 
     // Act
     await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
