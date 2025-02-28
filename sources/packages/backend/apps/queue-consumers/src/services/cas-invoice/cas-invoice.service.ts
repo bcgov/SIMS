@@ -112,7 +112,7 @@ export class CASInvoiceService {
       processSummary.info("No pending invoices found.");
     } else {
       processSummary.info(
-        `Found ${pendingInvoices.length} pending invoice(s) sent to CAS.`,
+        `Found ${pendingInvoices.length} pending invoice(s) to be sent to CAS.`,
       );
       // Process each invoice in parallel.
       await processInParallel(

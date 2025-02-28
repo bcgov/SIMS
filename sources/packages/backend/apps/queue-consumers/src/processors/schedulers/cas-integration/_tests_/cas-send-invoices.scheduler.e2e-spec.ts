@@ -90,7 +90,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     expect(
       mockedJob.containLogMessages([
         "Checking for pending invoices.",
-        "Found 1 pending invoice(s) sent to CAS.",
+        "Found 1 pending invoice(s) to be sent to CAS.",
         `Processing pending invoice: ${casInvoice.invoiceNumber}.`,
         "Invoice sent to CAS SUCCEEDED.",
       ]),
@@ -192,7 +192,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     expect(
       mockedJob.containLogMessages([
         "Checking for pending invoices.",
-        "Found 1 pending invoice(s) sent to CAS.",
+        "Found 1 pending invoice(s) to be sent to CAS.",
         `Processing pending invoice: ${casInvoice.invoiceNumber}.`,
         "Unexpected error while sending invoice to CAS.",
       ]),
@@ -261,7 +261,7 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     expect(
       mockedJob.containLogMessages([
         "Checking for pending invoices.",
-        "Found 1 pending invoice(s) sent to CAS.",
+        "Found 1 pending invoice(s) to be sent to CAS.",
         `Processing pending invoice: ${casInvoice.invoiceNumber}.`,
         "Invoice sent to CAS SUCCEEDED.",
       ]),
@@ -304,8 +304,8 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     expect(
       mockedJob.containLogMessages([
         "Checking for pending invoices.",
-        "Found 1 pending invoice(s) sent to CAS.",
-        `Invoice ${invoice.invoiceNumber} set to CAS was considered successful but returned additional message(s): Duplicate Submission.`,
+        "Found 1 pending invoice(s) to be sent to CAS.",
+        `Invoice ${invoice.invoiceNumber} sent to CAS was considered successful but returned additional message(s): Duplicate Submission.`,
       ]),
     ).toBe(true);
   });
