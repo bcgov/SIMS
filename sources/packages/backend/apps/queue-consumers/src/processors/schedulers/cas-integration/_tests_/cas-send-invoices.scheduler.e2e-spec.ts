@@ -121,7 +121,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
         "Checking for pending invoices.",
         "Executing 1 pending invoice(s) sent to CAS.",
         `Processing pending invoice: ${casInvoice.invoiceNumber}.`,
-        `Pending invoice payload invoice number: ${casInvoice.invoiceNumber}.`,
         "Invoice sent to CAS SUCCEEDED.",
       ]),
     ).toBe(true);
@@ -276,7 +275,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
         "Checking for pending invoices.",
         "Executing 1 pending invoice(s) sent to CAS.",
         `Processing pending invoice: ${casInvoice.invoiceNumber}.`,
-        `Pending invoice payload invoice number: ${casInvoice.invoiceNumber}.`,
         "Unexpected error while sending invoice to CAS.",
       ]),
     ).toBe(true);

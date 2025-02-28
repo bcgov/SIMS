@@ -31,63 +31,64 @@ export class CASInvoiceService {
     private readonly casInvoiceRepo: Repository<CASInvoice>,
     private readonly dataSource: DataSource,
   ) {}
+
   /**
    * Get the list of pending invoices to be sent from the approved batch.
    * @param pollingRecordsLimit maximum number of records to be returned.
    * @returns list of pending invoices.
    */
   async getPendingInvoices(pollingRecordsLimit: number): Promise<CASInvoice[]> {
-    const pendingInvoices = await this.dataSource
-      .getRepository(CASInvoice)
-      .find({
-        select: {
+    return this.casInvoiceRepo.find({
+      select: {
+        id: true,
+        casSupplier: {
           id: true,
-          casSupplier: {
-            id: true,
-            supplierNumber: true,
-            supplierAddress: { supplierSiteCode: true },
-          },
+          supplierNumber: true,
+          supplierAddress: true as unknown,
+        },
+        createdAt: true,
+        invoiceNumber: true,
+        disbursementReceipt: {
+          id: true,
+          fileDate: true,
           createdAt: true,
-          invoiceNumber: true,
-          disbursementReceipt: {
+        },
+        casInvoiceBatch: {
+          id: true,
+          batchName: true,
+          batchDate: true,
+          createdAt: true,
+        },
+        casInvoiceDetails: {
+          id: true,
+          valueAmount: true,
+          casDistributionAccount: {
             id: true,
-            fileDate: true,
-            createdAt: true,
-          },
-          casInvoiceBatch: {
-            id: true,
-            batchName: true,
-            batchDate: true,
-            createdAt: true,
-          },
-          casInvoiceDetails: {
-            id: true,
-            valueAmount: true,
-            casDistributionAccount: {
-              id: true,
-              operationCode: true,
-              awardValueCode: true,
-              distributionAccount: true,
-            },
+            operationCode: true,
+            awardValueCode: true,
+            distributionAccount: true,
           },
         },
-        relations: {
-          casInvoiceBatch: true,
-          disbursementReceipt: true,
-          casSupplier: true,
-          casInvoiceDetails: {
-            casDistributionAccount: true,
-          },
+      },
+      relations: {
+        casInvoiceBatch: true,
+        disbursementReceipt: true,
+        casSupplier: true,
+        casInvoiceDetails: {
+          casDistributionAccount: true,
         },
-        where: {
-          casInvoiceBatch: {
-            approvalStatus: CASInvoiceBatchApprovalStatus.Approved,
-          },
-          invoiceStatus: CASInvoiceStatus.Pending,
+      },
+      where: {
+        casInvoiceBatch: {
+          approvalStatus: CASInvoiceBatchApprovalStatus.Approved,
         },
-        take: pollingRecordsLimit,
-      });
-    return pendingInvoices;
+        invoiceStatus: CASInvoiceStatus.Pending,
+      },
+      order: {
+        createdAt: "ASC",
+      },
+      take: pollingRecordsLimit,
+    });
   }
 
   /**
@@ -95,7 +96,6 @@ export class CASInvoiceService {
    * @param parentProcessSummary parent process summary for logging.
    * @param pendingInvoices pending invoices.
    */
-
   async sendInvoices(
     parentProcessSummary: ProcessSummary,
     pendingInvoices: CASInvoice[],
@@ -117,27 +117,24 @@ export class CASInvoiceService {
     pendingInvoice: CASInvoice,
     parentProcessSummary: ProcessSummary,
   ): Promise<void> {
+    const summary = new ProcessSummary();
+    parentProcessSummary.children(summary);
     // Log information about the pending invoice being processed.
-    parentProcessSummary.info(
+    summary.info(
       `Processing pending invoice: ${pendingInvoice.invoiceNumber}.`,
     );
     const pendingInvoicePayload = this.getPendingInvoicePayload(pendingInvoice);
-    parentProcessSummary.info(
-      `Pending invoice payload invoice number: ${pendingInvoicePayload.invoiceNumber}.`,
-    );
-    let response: SendPendingInvoicesResponse;
     try {
-      response = await this.casService.sendPendingInvoices(
-        pendingInvoicePayload,
-      );
-      response.invoiceNumber
-        ? parentProcessSummary.info(
-            `Invoice sent to CAS ${response.casReturnedMessages}.`,
-          )
-        : parentProcessSummary.warn(
-            `Invoice ${pendingInvoicePayload.invoiceNumber} send to CAS did not succeed. Reason: ${response.casReturnedMessages}.`,
-          );
-      await this.dataSource.getRepository(CASInvoice).update(
+      const response: SendPendingInvoicesResponse =
+        await this.casService.sendPendingInvoices(pendingInvoicePayload);
+      if (response.invoiceNumber) {
+        summary.info(`Invoice sent to CAS ${response.casReturnedMessages}.`);
+      } else {
+        summary.warn(
+          `Invoice ${pendingInvoicePayload.invoiceNumber} set to CAS was considered successful but returned additional message(s): ${response.casReturnedMessages}.`,
+        );
+      }
+      await this.casInvoiceRepo.update(
         {
           id: pendingInvoice.id,
         },
@@ -150,21 +147,17 @@ export class CASInvoiceService {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         if (error.name === CAS_BAD_REQUEST) {
-          parentProcessSummary.warn("Known CAS error while sending invoice.");
+          summary.warn("Known CAS error while sending invoice.");
           await this.processBadRequestErrors(
             pendingInvoice.id,
-            parentProcessSummary,
+            summary,
             error.objectInfo as string[],
             this.systemUsersService.systemUser.id,
           );
+          return;
         }
-      } else {
-        parentProcessSummary.error(
-          "Unexpected error while sending invoice to CAS.",
-          error,
-        );
-        return null;
       }
+      summary.error("Unexpected error while sending invoice to CAS.", error);
     }
   }
 
