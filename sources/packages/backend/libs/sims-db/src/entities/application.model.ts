@@ -470,6 +470,10 @@ export interface ApplicationData {
    * Dependant Status.
    */
   dependantstatus?: string;
+  /**
+   * Dependant details.
+   */
+  dependants: unknown[];
 }
 
 /**

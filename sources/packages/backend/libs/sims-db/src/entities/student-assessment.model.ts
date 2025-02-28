@@ -359,9 +359,13 @@ export interface WorkflowData {
     relationshipStatus: RelationshipStatus;
     livingWithParents: FormYesNoOptions;
     numberOfParents?: number;
+    citizenship: string;
+    taxReturnIncome: number;
+    bcResident?: FormYesNoOptions;
   };
   dmnValues?: {
     lifetimeMaximumCSLP?: number;
+    fullTimeLivingCategory?: string;
   };
   calculatedData: {
     parentalAssets?: number;

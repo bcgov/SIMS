@@ -38,7 +38,11 @@ import {
   AssessmentAPIOutDTO,
 } from "./models/assessment.dto";
 import { getUserFullName } from "../../utilities";
-import { getDateOnlyFormat, getDateOnlyFullMonthFormat } from "@sims/utilities";
+import {
+  getDateOnlyFormat,
+  getDateOnlyFullMonthFormat,
+  getTotalDisbursementAmountFromSchedules,
+} from "@sims/utilities";
 import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
 
 /**
@@ -118,7 +122,7 @@ export class AssessmentControllerService {
       offeringStudyEndDate: getDateOnlyFullMonthFormat(
         assessment.offering.studyEndDate,
       ),
-      eligibleAmount: this.sumDisbursementValueAmounts(
+      eligibleAmount: getTotalDisbursementAmountFromSchedules(
         assessment.disbursementSchedules,
       ),
       disbursement: this.populateDisbursementAwardValues(
@@ -189,29 +193,6 @@ export class AssessmentControllerService {
       });
     });
     return disbursementDetails;
-  }
-
-  /**
-   * Calculate the sum of value amount for each disbursement value within the disbursement schedules.
-   * @param disbursementSchedules disbursement schedule details.
-   * @returns The total sum of value amount across all disbursement schedules.
-   */
-  private sumDisbursementValueAmounts(
-    disbursementSchedules: DisbursementSchedule[],
-  ): number {
-    return disbursementSchedules
-      .flatMap(
-        (disbursementSchedule) => disbursementSchedule.disbursementValues,
-      )
-      .filter(
-        (disbursementValue) =>
-          disbursementValue.valueType !== DisbursementValueType.BCTotalGrant,
-      )
-      .reduce(
-        (accumulator, disbursementValue) =>
-          accumulator + disbursementValue.valueAmount,
-        0,
-      );
   }
 
   /**
