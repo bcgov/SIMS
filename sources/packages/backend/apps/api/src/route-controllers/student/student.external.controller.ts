@@ -41,19 +41,35 @@ export class StudentExternalController extends BaseController {
   async searchStudentDetails(
     @Body() payload: StudentSearchAPIInDTO,
   ): Promise<StudentSearchResultAPIOutDTO> {
-    const studentPromise =
-      this.studentInformationService.getStudentAndApplicationsBySIN(
-        payload.sin,
-      );
+    // Get student from SIMS.
+    const student = await this.studentInformationService.getStudentBySIN(
+      payload.sin,
+    );
+    // Get student applications from SIMS.
+    const studentApplicationsPromise =
+      student &&
+      this.studentInformationService.getStudentApplications(student.id);
     const sfasIndividualPromise =
       await this.studentInformationService.getSFASIndividualBySIN(payload.sin);
-    const [student, sfasIndividual] = await Promise.all([
-      studentPromise,
+    const [studentApplications, sfasIndividual] = await Promise.all([
+      studentApplicationsPromise,
       sfasIndividualPromise,
     ]);
-    return this.studentExternalControllerService.getStudentSearchResult(
-      student,
-      sfasIndividual,
-    );
+    // Transform student details.
+    const studentDetails =
+      this.studentExternalControllerService.transformStudentSearchResult(
+        student,
+        sfasIndividual,
+      );
+    // Transform application details.
+    const applications =
+      this.studentExternalControllerService.transformApplicationSearchResult(
+        studentApplications,
+      );
+
+    return {
+      ...studentDetails,
+      applications,
+    };
   }
 }

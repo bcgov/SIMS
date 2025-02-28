@@ -8,39 +8,49 @@ import {
 } from "@sims/sims-db";
 import {
   ApplicationDetailsAPIOutDTO,
-  StudentSearchResultAPIOutDTO,
+  StudentSearchDetails,
 } from "./models/student-external-search.dto";
 import {
   getISODateOnlyString,
   getTotalDisbursementAmountFromSchedules,
 } from "@sims/utilities";
+import { ApplicationDetail } from "../../services";
 
-type StudentDetails = Omit<StudentSearchResultAPIOutDTO, "applications">;
 @Injectable()
 export class StudentExternalControllerService {
   /**
-   * Get student search result.
+   * Transform student search result.
    * @param student student.
    * @param sfasIndividual sfas individual.
    * @throws NotFoundException.
    * @returns student search result.
    */
-  getStudentSearchResult(
+  transformStudentSearchResult(
     student?: Student,
     sfasIndividual?: SFASIndividual,
-  ): StudentSearchResultAPIOutDTO {
+  ): StudentSearchDetails {
     if (!student && !sfasIndividual) {
       throw new NotFoundException("Student not found.");
     }
     // If the student is found in SIMS, return the student details.
     // Otherwise, return the legacy student details.
-    const studentDetails = student
+    return student
       ? this.transformStudentDetails(student)
       : this.transformLegacyStudentDetails(sfasIndividual);
-    const applications: ApplicationDetailsAPIOutDTO[] = [];
+  }
 
-    if (student) {
-      for (const application of student.applications) {
+  /**
+   * Transform student application search result.
+   * @param studentApplications student applications.
+   * @returns student application search result.
+   */
+  transformApplicationSearchResult(
+    studentApplications?: ApplicationDetail[],
+  ): ApplicationDetailsAPIOutDTO[] {
+    const applications: ApplicationDetailsAPIOutDTO[] = [];
+    // TODO: move this transformation and the upcoming legacy transformations to a separate methods.
+    if (studentApplications?.length) {
+      for (const application of studentApplications) {
         const assessment = application.currentAssessment;
         const scholasticStanding = assessment.studentScholasticStanding;
         const assessmentData = assessment.assessmentData as FullTimeAssessment;
@@ -70,7 +80,7 @@ export class StudentExternalControllerService {
           estimatedTotalAward: getTotalDisbursementAmountFromSchedules(
             assessment.disbursementSchedules,
           ),
-          dependants: application.data.dependants?.map(
+          dependants: application.dependants?.map(
             (dependant: { fullName: string; dateOfBirth: string }) => ({
               fullName: dependant.fullName,
               birthDate: dependant.dateOfBirth,
@@ -121,21 +131,14 @@ export class StudentExternalControllerService {
         });
       }
     }
-    if (sfasIndividual) {
-      //TODO: Get student applications from SFAS.
-    }
-
-    return {
-      ...studentDetails,
-      applications,
-    };
+    return applications;
   }
   /**
    * Transform to student details.
    * @param student student.
    * @returns student details.
    */
-  transformStudentDetails(student: Student): StudentDetails {
+  private transformStudentDetails(student: Student): StudentSearchDetails {
     return {
       isLegacy: false,
       givenNames: student.user.firstName,
@@ -159,9 +162,9 @@ export class StudentExternalControllerService {
    * @param student student.
    * @returns student details.
    */
-  transformLegacyStudentDetails(
+  private transformLegacyStudentDetails(
     sfasIndividual: SFASIndividual,
-  ): StudentDetails {
+  ): StudentSearchDetails {
     return {
       isLegacy: true,
       givenNames: sfasIndividual.firstName,

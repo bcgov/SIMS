@@ -104,3 +104,8 @@ export class StudentSearchAPIInDTO {
   @IsValidSIN()
   sin: string;
 }
+
+export type StudentSearchDetails = Omit<
+  StudentSearchResultAPIOutDTO,
+  "applications"
+>;

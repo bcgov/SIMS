@@ -6,10 +6,13 @@ import {
   StudentAssessmentStatus,
   ProgramYear,
   StudentScholasticStandingChangeType,
+  Application,
   OfferingIntensity,
+  mapFromRawAndEntities,
 } from "@sims/sims-db";
-import { Brackets, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
+import { ApplicationDetail } from "../../services";
 
 @Injectable()
 export class StudentInformationService {
@@ -20,14 +23,37 @@ export class StudentInformationService {
     private readonly sfasIndividualRepo: Repository<SFASIndividual>,
     @InjectRepository(ProgramYear)
     private readonly programYearRepo: Repository<ProgramYear>,
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
   ) {}
 
   /**
-   * Get student by valid SIN and student applications.
+   * Get student by valid SIN.
    * @param sin student sin number.
-   * @returns student and applications.
+   * @returns student.
    */
-  async getStudentAndApplicationsBySIN(sin: string): Promise<Student> {
+  async getStudentBySIN(sin: string): Promise<Student> {
+    return this.studentRepo.findOne({
+      select: {
+        id: true,
+        birthDate: true,
+        contactInfo: true as unknown,
+        sinValidation: { id: true, sin: true },
+        user: { id: true, firstName: true, lastName: true, email: true },
+      },
+      relations: { sinValidation: true, user: true },
+      where: { sinValidation: { sin, isValidSIN: true } },
+    });
+  }
+
+  /**
+   * Get student applications.
+   * @param studentId student id.
+   * @returns applications.
+   */
+  async getStudentApplications(
+    studentId: number,
+  ): Promise<ApplicationDetail[]> {
     // Get the SQL to get last 3 active program years including the current program year.
     const programYearQuery = this.programYearRepo
       .createQueryBuilder("programYear")
@@ -38,24 +64,17 @@ export class StudentInformationService {
       .limit(3)
       .getSql();
 
-    return this.studentRepo
-      .createQueryBuilder("student")
+    const queryResult = await this.applicationRepo
+      .createQueryBuilder("searchApplication")
       .select([
-        "student.id",
-        "student.birthDate",
-        "student.contactInfo",
-        "sinValidation.sin",
-        "studentUser.firstName",
-        "studentUser.lastName",
-        "studentUser.email",
-        "studentApplication.id",
-        "studentApplication.data",
+        "searchApplication.id",
+        "searchApplication.data",
+        "searchApplication.applicationNumber",
+        "searchApplication.applicationStatus",
+        "searchApplication.applicationStatusUpdatedOn",
         "currentAssessment.id",
         "currentAssessment.workflowData",
         "currentAssessment.assessmentData",
-        "studentApplication.applicationNumber",
-        "studentApplication.applicationStatus",
-        "studentApplication.applicationStatusUpdatedOn",
         "scholasticStanding.id",
         "scholasticStanding.changeType",
         "scholasticStanding.submittedData",
@@ -76,53 +95,39 @@ export class StudentInformationService {
         "disbursementValue.valueAmount",
         "disbursementValue.effectiveAmount",
       ])
-      .innerJoin("student.user", "studentUser")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .leftJoin("student.applications", "studentApplication")
-      .leftJoin("studentApplication.location", "location")
-      .leftJoin("location.institution", "institution")
-      .leftJoin("studentApplication.currentAssessment", "currentAssessment")
+      .addSelect("searchApplication.data ->> 'dependants'", "dependants")
+      .innerJoin("searchApplication.student", "searchStudent")
+      .innerJoin("searchApplication.location", "location")
+      .innerJoin("searchApplication.currentAssessment", "currentAssessment")
       .leftJoin(
         "currentAssessment.studentScholasticStanding",
         "scholasticStanding",
         "scholasticStanding.changeType = :withdrawal",
-        {
-          withdrawal:
-            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-        },
       )
-      .leftJoin("currentAssessment.offering", "offering")
-      .leftJoin(
+      .innerJoin("currentAssessment.offering", "offering")
+      .innerJoin(
         "currentAssessment.disbursementSchedules",
         "disbursementSchedule",
       )
       .leftJoin("disbursementSchedule.disbursementValues", "disbursementValue")
-      .where("sinValidation.sin = :sin")
-      .andWhere("sinValidation.isValidSIN = true")
+      .where("searchStudent.id = :studentId")
+      .andWhere("searchApplication.applicationStatus != :overwritten")
+      .andWhere(`searchApplication.programYear.id IN (${programYearQuery})`)
       .andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            new Brackets((qb) => {
-              qb.where("studentApplication.applicationStatus != :overwritten")
-                .andWhere(
-                  `studentApplication.programYear.id IN (${programYearQuery})`,
-                )
-                .andWhere(
-                  "currentAssessment.studentAssessmentStatus = :assessmentStatusCompleted",
-                )
-                .andWhere("offering.offeringIntensity = :fullTime", {
-                  fullTime: OfferingIntensity.fullTime,
-                });
-            }),
-          ).orWhere("studentApplication.id IS NULL");
-        }),
+        "currentAssessment.studentAssessmentStatus = :assessmentStatusCompleted",
       )
+      .andWhere("offering.offeringIntensity = :fullTime")
       .setParameters({
-        sin,
+        studentId,
         overwritten: ApplicationStatus.Overwritten,
         assessmentStatusCompleted: StudentAssessmentStatus.Completed,
+        fullTime: OfferingIntensity.fullTime,
+        withdrawal:
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
       })
-      .getOne();
+      .getRawAndEntities();
+
+    return mapFromRawAndEntities<Application>(queryResult, "dependants");
   }
 
   /**

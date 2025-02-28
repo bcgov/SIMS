@@ -4,6 +4,7 @@ import {
   createE2EDataSources,
   createFakeDisbursementValue,
   E2EDataSources,
+  ensureProgramYearExists,
   saveFakeApplicationDisbursements,
   saveFakeSFASIndividual,
   saveFakeStudent,
@@ -14,6 +15,7 @@ import {
   FormYesNoOptions,
   FullTimeAssessment,
   OfferingIntensity,
+  ProgramYear,
   RelationshipStatus,
   StudentAssessmentStatus,
   WorkflowData,
@@ -32,6 +34,8 @@ import { In } from "typeorm";
 describe("StudentExternalController(e2e)-searchStudents", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let currentProgramYear: ProgramYear;
+  let oldProgramYear: ProgramYear;
   const endpoint = "/external/student";
   const VALID_SIN = "656173713";
   const searchPayload: StudentSearchAPIInDTO = {
@@ -42,6 +46,12 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    // Get the current program year.
+    currentProgramYear = await db.programYear
+      .createQueryBuilder("py")
+      .where("NOW() BETWEEN py.startDate AND py.endDate")
+      .getOne();
+    oldProgramYear = await ensureProgramYearExists(db, 2000);
   });
 
   beforeEach(async () => {
@@ -74,7 +84,7 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
 
   it(
     "Should return student information from SIMS when the student with provided SIN exist in SIMS" +
-      ` but not in SFAS and the student does not have any ${OfferingIntensity.fullTime} applications.`,
+      ` but not in SFAS and the student does not have any ${OfferingIntensity.fullTime} applications within past 2 program years.`,
     async () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource, undefined, {
@@ -82,6 +92,11 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
         includeAddressLine2: true,
       });
       const address = student.contactInfo.address;
+      // Application from old program year.
+      await saveFakeApplicationDisbursements(db.dataSource, {
+        student,
+        programYear: oldProgramYear,
+      });
 
       const token = await getExternalUserToken();
       const expectedStudentServiceResult: StudentSearchResultAPIOutDTO = {
@@ -204,11 +219,6 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
         sinValidationInitialValue: { sin: VALID_SIN },
         includeAddressLine2: true,
       });
-      // Get previous program year.
-      const currentProgramYear = await db.programYear
-        .createQueryBuilder("py")
-        .where("NOW() BETWEEN py.startDate AND py.endDate")
-        .getOne();
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
         {
