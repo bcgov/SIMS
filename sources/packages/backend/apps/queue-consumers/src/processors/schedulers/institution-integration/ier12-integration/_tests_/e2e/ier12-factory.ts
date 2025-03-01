@@ -10,6 +10,7 @@ import {
   ProgramYear,
   Student,
   StudentAssessment,
+  WorkflowData,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -248,7 +249,7 @@ async function saveIER12AssessmentFromTestInput(
     testInputAssessment.assessmentDate ?? addDays(1, referenceSubmission);
   assessment.assessmentData =
     testInputAssessment.assessmentData as FullTimeAssessment;
-  assessment.workflowData = testInputAssessment.workflowData;
+  assessment.workflowData = testInputAssessment.workflowData as WorkflowData;
   // Schedules and awards mapping.
   const [firstDisbursement, secondDisbursement] =
     assessment.disbursementSchedules;

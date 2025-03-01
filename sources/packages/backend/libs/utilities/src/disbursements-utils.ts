@@ -1,5 +1,5 @@
 import { Award } from "@sims/integrations/esdc-integration/e-cert-integration/models/e-cert-integration-model";
-import { DisbursementValueType } from "@sims/sims-db";
+import { DisbursementSchedule, DisbursementValueType } from "@sims/sims-db";
 
 /**
  * Round a number or string to the nearest integer (0.5 rounds up).
@@ -84,4 +84,25 @@ export function getDisbursementEffectiveAmountByValueCode(
     return +award.effectiveAmount;
   }
   return 0;
+}
+
+/**
+ * Get the sum of value amount for each disbursement value within the disbursement schedules.
+ * @param disbursementSchedules  disbursement schedules.
+ * @returns total sum of value amount across all disbursement schedules.
+ */
+export function getTotalDisbursementAmountFromSchedules(
+  disbursementSchedules: DisbursementSchedule[],
+): number {
+  return disbursementSchedules
+    .flatMap((disbursementSchedule) => disbursementSchedule.disbursementValues)
+    .filter(
+      (disbursementValue) =>
+        disbursementValue.valueType !== DisbursementValueType.BCTotalGrant,
+    )
+    .reduce(
+      (accumulator, disbursementValue) =>
+        accumulator + disbursementValue.valueAmount,
+      0,
+    );
 }

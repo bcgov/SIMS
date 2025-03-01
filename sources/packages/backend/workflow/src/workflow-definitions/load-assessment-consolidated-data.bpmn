@@ -38,6 +38,8 @@
           <zeebe:header key="studentDataScholarshipAmount" value="$.data.scholarshipsreceviedCosts" />
           <zeebe:header key="studentDataYouthInCare" value="$.data.youthInCare" />
           <zeebe:header key="studentDataApplicationPDPPDStatus" value="$.data.applicationPDPPDStatus" />
+          <zeebe:header key="studentDataCitizenship" value="$.data.citizenship" />
+          <zeebe:header key="studentDataBCResident" value="$.data.bcResident" />
           <zeebe:header key="programYear" value="$.programYear.programYear" />
           <zeebe:header key="programLocation" value="BC" />
           <zeebe:header key="institutionLocationProvince" value="$.location.institutionLocationProvince" />

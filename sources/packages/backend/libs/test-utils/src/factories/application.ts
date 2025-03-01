@@ -197,6 +197,8 @@ export async function saveFakeApplicationDisbursements(
       relationshipStatus: RelationshipStatus.Single,
       livingWithParents: FormYesNoOptions.Yes,
       numberOfParents: 2,
+      citizenship: "Canadian",
+      taxReturnIncome: 20000,
     },
     calculatedData: {
       familySize: 2,
