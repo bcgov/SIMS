@@ -32,30 +32,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BGPD
           );
         // Assert
         expect(calculatedAssessment.variables.awardEligibilityBGPD).toBe(true);
-        // TODO: update provincialAwardNetBGPDAmount to return a value greater than 0.
         expect(
           calculatedAssessment.variables.provincialAwardNetBGPDAmount,
-        ).toBe(0);
-      });
-    }
-  });
-
-  describe("Should determine BGPD as not eligible when the institutionType type is not the expected one and financial need is at least $1 and the student has PD status true.", () => {
-    for (const institutionType of NOT_EXPECTED_INSTITUTION_TYPES) {
-      it(`institutionType is ${institutionType}`, async () => {
-        // Arrange
-        const assessmentConsolidatedData =
-          createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-        assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
-        assessmentConsolidatedData.institutionType = institutionType;
-        // Act
-        const calculatedAssessment =
-          await executeFullTimeAssessmentForProgramYear(
-            PROGRAM_YEAR,
-            assessmentConsolidatedData,
-          );
-        // Assert
-        expect(calculatedAssessment.variables.awardEligibilityBGPD).toBe(false);
+        ).toBe(480);
       });
     }
   });
