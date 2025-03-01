@@ -1,5 +1,8 @@
 import { CASService } from "@sims/integrations/cas/cas.service";
-import { createFakeCASSupplierResponse } from "./cas-response.factory";
+import {
+  createFakeCASSupplierResponse,
+  createFakePendingInvoicesResponse,
+} from "./cas-response.factory";
 
 export const CAS_LOGON_MOCKED_RESULT = {
   access_token: "token123",
@@ -9,6 +12,9 @@ export const CAS_LOGON_MOCKED_RESULT = {
 
 export const SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT =
   createFakeCASSupplierResponse();
+
+export const SEND_PENDING_INVOICES_MOCKED_RESULT =
+  createFakePendingInvoicesResponse();
 
 /**
  * Creates a CAS service mock.
@@ -30,5 +36,8 @@ export function resetCASServiceMock(mockedCASService: CASService): void {
   );
   mockedCASService.getSupplierInfoFromCAS = jest.fn(() =>
     Promise.resolve(SUPPLIER_INFO_FROM_CAS_MOCKED_RESULT),
+  );
+  mockedCASService.sendInvoice = jest.fn(() =>
+    Promise.resolve(SEND_PENDING_INVOICES_MOCKED_RESULT),
   );
 }

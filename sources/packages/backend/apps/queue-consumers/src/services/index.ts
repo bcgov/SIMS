@@ -9,3 +9,4 @@ export * from "./metrics/metrics.models";
 export * from "./student-application-notification/student-application-notification.service";
 export * from "./student-application-notification/student-application-notification-processor";
 export * from "./cas-invoice-batch/cas-invoice-batch.service";
+export * from "./cas-invoice/cas-invoice.service";

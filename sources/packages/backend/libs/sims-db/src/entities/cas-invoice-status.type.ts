@@ -14,5 +14,5 @@ export enum CASInvoiceStatus {
    * Some error happened while trying to send the invoice to CAS
    * and a manual intervention is required.
    */
-  Rejected = "Manual intervention",
+  ManualIntervention = "Manual intervention",
 }
