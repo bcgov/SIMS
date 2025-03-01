@@ -10,15 +10,9 @@
         :routeLocation="{ name: StudentRoutesConst.STUDENT_DASHBOARD }"
       />
     </template>
-    <tab-container :enableCardView="false" class="mb-6">
-      <student-account-restrictions
-    /></tab-container>
-    <tab-container :enableCardView="false" class="mb-6">
-      <student-scholastic-standing-limited-history
-    /></tab-container>
-    <formio-container
+    <student-account-restrictions />
+    <student-scholastic-standing-limited-history /><formio-container
       formName="studentAccountActivity"
-      :formData="initialData"
     />
   </student-page-container>
 </template>

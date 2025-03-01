@@ -5,9 +5,7 @@
     </template>
     <template v-if="restrictions.length > 0">
       <p>
-        <span class="label-bold-normal"
-          >Please resolve the items below soon</span
-        >
+        <span class="font-bold">Please resolve the items below soon</span>
         to minimize the disruption and impact.
       </p>
       <content-group
