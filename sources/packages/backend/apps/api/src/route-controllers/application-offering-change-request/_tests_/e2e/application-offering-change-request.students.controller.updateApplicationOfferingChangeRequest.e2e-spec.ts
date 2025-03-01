@@ -85,7 +85,7 @@ describe("ApplicationOfferingChangeRequestStudentsController(e2e)-updateApplicat
       {
         student,
       },
-      { applicationStatus: ApplicationStatus.Overwritten },
+      { applicationStatus: ApplicationStatus.Edited },
     );
     const applicationOfferingChangeRequest =
       await saveFakeApplicationOfferingRequestChange(db, {

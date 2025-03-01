@@ -154,7 +154,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       });
   });
 
-  it("Should not get the student application details when the application status is overwritten.", async () => {
+  it("Should not get the student application details when the application status is edited.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(
       appDataSource,
@@ -162,7 +162,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         institutionLocation: collegeFLocation,
       },
       {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
       },
     );
 

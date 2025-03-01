@@ -296,7 +296,7 @@ export class ApplicationRestrictionBypassService {
   /**
    * Checks if the application is in a valid state for bypass creation.
    * Throws an error if the application is in a Draft, Cancelled,
-   * or Overwritten state.
+   * or Edited state.
    * @param applicationId id of the application to check.
    */
   private async checkForApplicationInValidState(
@@ -314,7 +314,7 @@ export class ApplicationRestrictionBypassService {
       [
         ApplicationStatus.Draft,
         ApplicationStatus.Cancelled,
-        ApplicationStatus.Overwritten,
+        ApplicationStatus.Edited,
       ].includes(application.applicationStatus)
     ) {
       throw new CustomNamedError(

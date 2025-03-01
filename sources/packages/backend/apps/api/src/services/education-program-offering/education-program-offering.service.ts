@@ -1170,7 +1170,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         {
           invalidOfferingChangeStatus: [
             ApplicationStatus.Cancelled,
-            ApplicationStatus.Overwritten,
+            ApplicationStatus.Edited,
           ],
         },
       )
@@ -1209,7 +1209,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         {
           invalidOfferingChangeStatus: [
             ApplicationStatus.Cancelled,
-            ApplicationStatus.Overwritten,
+            ApplicationStatus.Edited,
           ],
         },
       )

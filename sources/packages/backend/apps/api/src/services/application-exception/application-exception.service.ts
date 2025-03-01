@@ -155,7 +155,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         .innerJoin("student.user", "user")
         .where("exception.id = :exceptionId", { exceptionId })
         .andWhere("application.applicationStatus != :applicationStatus", {
-          applicationStatus: ApplicationStatus.Overwritten,
+          applicationStatus: ApplicationStatus.Edited,
         })
         .getOne();
 
@@ -245,7 +245,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         exceptionStatus: ApplicationExceptionStatus.Pending,
       })
       .andWhere("application.applicationStatus != :applicationStatus", {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
       });
 
     if (paginationOptions.searchCriteria) {

@@ -12,6 +12,9 @@ export interface CreateApplicationDraftResult {
 
 /**
  * Possible status of a Student Application.
+ * Applications with the same parent ID can have multiple edited versions and only one of its versions
+ * should have a status other than 'Edited', which represents its current state.
+ * Edited applications waiting for the Ministry approval are not considered 'current' till approved.
  */
 export enum ApplicationStatus {
   /**
@@ -46,19 +49,11 @@ export enum ApplicationStatus {
    */
   Cancelled = "Cancelled",
   /**
-   * The application was replaced by a new version due to some event like
-   * an edit on Confirmation of Enrollment that forces the assessment to
-   * be reevaluated. Is this case the application is cloned and and the
-   * old version is marked as 'Overwritten'.
-   * Another case when an Application status is set to overwritten,
-   * when a student tries to edit and existing in progress
-   * (i.e, application status - submitted , inProgress , assessment , enrollment )
-   * application.
-   * An Overwritten application should never be modified, once an application
-   * is Overwritten and a clone/new version is created all edits should take
-   * place on new record.
+   * The application was modified in some way and a new version was created.
+   * This can happen when a student edits an application prior to COE confirmation or
+   * when a change request is made by the student (after COE approval) and is approved by the Ministry.
    */
-  Overwritten = "Overwritten",
+  Edited = "Edited",
 }
 
 /**
