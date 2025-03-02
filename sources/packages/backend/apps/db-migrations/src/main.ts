@@ -38,15 +38,16 @@ enum InitArguments {
   }
   const app = await NestFactory.createApplicationContext(DBMigrationsModule);
   await app.init();
+  const migrationsService = app.get(DBMigrationsService);
   switch (initArg) {
     case InitArguments.Run:
-      await app.get(DBMigrationsService).run();
+      await migrationsService.run();
       break;
     case InitArguments.Revert:
-      await app.get(DBMigrationsService).revert();
+      await migrationsService.revert();
       break;
     case InitArguments.List:
-      await app.get(DBMigrationsService).list();
+      await migrationsService.list();
       break;
     default:
       logger.warn(
