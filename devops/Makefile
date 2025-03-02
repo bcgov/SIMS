@@ -246,7 +246,7 @@ build-db-migrations-repl:
 	test -n "$(BUILD_REF)"
 	test -n "$(DB_MIGRATIONS_REPL_BUILD_REF)"
 	@echo "+\n++ BUILDING DB migrations REPL with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/db-migrations/Dockerfile.repl -p NAME=$(DB_MIGRATIONS_REPL_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/db-migrations/Dockerfile -p NAME=$(DB_MIGRATIONS_REPL_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(DB_MIGRATIONS_REPL_BUILD_REF) --wait
 
 build-api:

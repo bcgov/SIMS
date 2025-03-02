@@ -1,7 +1,7 @@
 import { NestFactory, repl } from "@nestjs/core";
 import { REPLModule } from "./repl.module";
 import { DBMigrationsModule } from "./db-migrations.module";
-import { DBMigrationsService } from "./db-migrations.service";
+//import { DBMigrationsService } from "./db-migrations.service";
 import { Logger } from "@nestjs/common";
 
 (async () => {
@@ -10,6 +10,7 @@ import { Logger } from "@nestjs/common";
   // One and only one argument is expected at this time.
   // Slice to remove 'node' and script path.
   const [initArg] = process.argv.slice(2);
+  logger.log(`Argument received: ${initArg}`);
   if (initArg === "repl") {
     await repl(REPLModule);
     return;
@@ -18,13 +19,13 @@ import { Logger } from "@nestjs/common";
   await app.init();
   switch (initArg) {
     case "run":
-      await app.get(DBMigrationsService).run();
+      //await app.get(DBMigrationsService).run();
       break;
     case "revert":
-      await app.get(DBMigrationsService).revert();
+      //await app.get(DBMigrationsService).revert();
       break;
     case "list":
-      await app.get(DBMigrationsService).list();
+      //await app.get(DBMigrationsService).list();
       break;
     default:
       logger.warn("Invalid argument. Please use run, revert, or list.");

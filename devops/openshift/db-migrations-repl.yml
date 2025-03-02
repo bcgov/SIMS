@@ -51,6 +51,7 @@ objects:
                       key: ${SIMS_DB_NAME}
                       name: ${DB_MIGRATIONS_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
+              command: ["npm", "run", "migration:repl"]
               imagePullPolicy: Always
               name: ${NAME}
               tty: true
