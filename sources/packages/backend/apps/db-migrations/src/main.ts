@@ -36,7 +36,7 @@ enum InitArguments {
     await repl(REPLModule);
     return;
   }
-  const app = await NestFactory.create(DBMigrationsModule);
+  const app = await NestFactory.createApplicationContext(DBMigrationsModule);
   await app.init();
   switch (initArg) {
     case InitArguments.Run:

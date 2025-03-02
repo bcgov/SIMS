@@ -34,10 +34,13 @@ export class DBMigrationsService {
   async revert(): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
       this.logger.log("Running rollback.");
+      this.logger.warn("The below is the migration being reverted.");
       await this.list(1);
       this.logger.log(`Reverting migration.`);
-      await dataSource.undoLastMigration({ fake: true });
+      await dataSource.undoLastMigration();
       this.logger.log("Migration reverted.");
+      this.logger.warn("The below is the latest migration now.");
+      await this.list(1);
     });
   }
 
@@ -47,11 +50,6 @@ export class DBMigrationsService {
    */
   async list(limit = 5): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
-      if (limit === 1) {
-        this.logger.log("Latest migration executed.");
-      } else {
-        this.logger.log(`List of latest ${limit} migrations.`);
-      }
       const mostRecentMigrations = await this.getRecentMigrationRecords(
         dataSource,
         limit,

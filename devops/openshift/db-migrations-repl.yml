@@ -99,4 +99,4 @@ parameters:
   - name: NODE_ENV
     value: "production"
   - name: BUILD_TAG
-    value: "0"
+    required: true
