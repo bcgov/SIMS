@@ -1,5 +1,4 @@
 import "../../../env-setup";
-import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
 export const ormConfig: PostgresConnectionOptions = {
@@ -12,14 +11,5 @@ export const ormConfig: PostgresConnectionOptions = {
   schema: process.env.DB_SCHEMA || "sims",
   synchronize: false,
   migrations: ["apps/db-migrations/src/migrations/*{.ts,.js}"],
-  logging: ["error", "warn"],
-};
-
-/**
- * Data source exposed to be used by the migrations revert script.
- * Required by Typeorm to execute the revert.
- */
-export const migrationsDataSource = new DataSource({
-  ...ormConfig,
   logging: ["error", "warn", "info"],
-});
+};

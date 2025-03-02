@@ -241,7 +241,7 @@ workers:
 	@docker compose -f docker-compose.yml build workers
 	@docker compose -f docker-compose.yml up -d workers
 
-# Runs workers application
+# Runs db-migrations in REPL mode
 db-migrations-repl:
 	@echo "+\n++ Make: Database migrations REPL"
 	@docker compose -f docker-compose.yml build db-migrations-repl

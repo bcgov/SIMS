@@ -3,10 +3,17 @@ import { DataSource } from "typeorm";
 import { ormConfig } from "./data-source";
 import { inspect } from "util";
 
+/**
+ * DB migrations options available.
+ * Each operation is executed in a isolated data source.
+ */
 @Injectable()
 export class DBMigrationsService {
   private readonly logger = new Logger("DB Migration Command");
 
+  /**
+   * Run all pending migrations.
+   */
   async run(): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
       this.logger.log("Setting up data source to execute migrations.");
@@ -21,6 +28,9 @@ export class DBMigrationsService {
     });
   }
 
+  /**
+   * Revert the last migration.
+   */
   async revert(): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
       this.logger.log("Running rollback.");
@@ -31,6 +41,10 @@ export class DBMigrationsService {
     });
   }
 
+  /**
+   * List the latest migrations.
+   * @param limit number of latest migrations to list.
+   */
   async list(limit = 5): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
       if (limit === 1) {
@@ -46,6 +60,10 @@ export class DBMigrationsService {
     });
   }
 
+  /**
+   * Executes a database operation within a data source context.
+   * @param operation the operation to execute.
+   */
   private async executeDBOperation(
     operation: (sataSource: DataSource) => Promise<void>,
   ): Promise<void> {
@@ -60,7 +78,16 @@ export class DBMigrationsService {
     }
   }
 
-  private async getRecentMigrationRecords(dataSource: DataSource, limit = 5) {
+  /**
+   * Retrieves recent migration records from the database.
+   * @param dataSource data source to execute the query.
+   * @param limit number of latest migrations to return.
+   * @returns database results.
+   */
+  private async getRecentMigrationRecords(
+    dataSource: DataSource,
+    limit = 5,
+  ): Promise<unknown> {
     return dataSource.query<string[]>(
       `SELECT * FROM ${ormConfig.schema}.migrations ORDER BY id DESC LIMIT ${limit}`,
     );
