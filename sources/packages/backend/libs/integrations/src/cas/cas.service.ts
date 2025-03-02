@@ -10,6 +10,8 @@ import {
   CreateSupplierAndSiteResponse,
   CreateSupplierAndSiteSubmittedData,
   CreateSupplierSite,
+  PendingInvoicePayload,
+  SendInvoicesResponse,
 } from "./models/cas-service.model";
 import { AxiosError, AxiosRequestConfig } from "axios";
 import { HttpService } from "@nestjs/axios";
@@ -123,6 +125,31 @@ export class CASService {
       );
     }
     return response?.data;
+  }
+
+  /**
+   * Send pending invoices to CAS.
+   * @param pendingInvoicePayload payload data to be sent to CAS.
+   * @returns submitted invoice number and CAS returned messages.
+   */
+  async sendInvoice(
+    pendingInvoicePayload: PendingInvoicePayload,
+  ): Promise<SendInvoicesResponse> {
+    const url = `${this.casIntegrationConfig.baseUrl}/cfs/apinvoice/`;
+    try {
+      const config = await this.getAuthConfig();
+      const response = await this.httpService.axiosRef.post(
+        url,
+        pendingInvoicePayload,
+        config,
+      );
+      return {
+        invoiceNumber: response.data.invoice_number,
+        casReturnedMessages: response.data[CAS_RETURNED_MESSAGES],
+      };
+    } catch (error: unknown) {
+      this.handleBadRequestError(error, "Error while sending invoice to CAS.");
+    }
   }
 
   /**

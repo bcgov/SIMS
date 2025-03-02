@@ -137,3 +137,45 @@ export class CreateExistingSupplierSiteResponse {
   submittedData: CreateExistingSupplierAndSiteSubmittedData;
   response: CreateSupplierAndSiteResult;
 }
+
+/**
+ * Invoice payload used during the creation of a pending invoice sent to CAS.
+ */
+export class PendingInvoicePayload {
+  invoiceType: string;
+  supplierNumber: string;
+  supplierSiteNumber: string;
+  invoiceDate: string;
+  invoiceNumber: string;
+  invoiceAmount: number;
+  payGroup: string;
+  dateInvoiceReceived: string;
+  remittanceCode: string;
+  specialHandling: string;
+  terms: string;
+  remittanceMessage1: string;
+  remittanceMessage2: string;
+  glDate: string;
+  invoiceBatchName: string;
+  currencyCode: string;
+  invoiceLineDetails: InvoiceLineDetail[];
+}
+
+/**
+ * Invoice line detail used during the creation of a pending invoice sent to CAS.
+ */
+export class InvoiceLineDetail {
+  invoiceLineNumber: number;
+  invoiceLineType: string;
+  lineCode: string;
+  invoiceLineAmount: number;
+  defaultDistributionAccount: string;
+}
+
+/**
+ * Response from CAS when sending invoices.
+ */
+export class SendInvoicesResponse {
+  invoiceNumber?: string;
+  casReturnedMessages?: string[];
+}
