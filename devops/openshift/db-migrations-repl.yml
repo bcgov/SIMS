@@ -49,7 +49,7 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${SIMS_DB_NAME}
-                      name: ${API_SECRET_NAME}
+                      name: ${DB_MIGRATIONS_SECRET_NAME}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -75,6 +75,8 @@ parameters:
     value: "0.1"
   - name: MEMORY_REQUEST
     value: "200M"
+  - name: DB_MIGRATIONS_SECRET_NAME
+    required: true
   - name: DB_SERVICE_KEY
     value: pgbouncer-host
   - name: DB_SECRET_NAME

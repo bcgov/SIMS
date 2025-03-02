@@ -341,14 +341,17 @@ delete-db-migrations:
 deploy-db-migrations-repl:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(DB_MIGRATIONS_BUILD_REF)"
+	test -n "$(DB_MIGRATIONS_SECRET_NAME)"
+	test -n "$(HOST_PREFIX)"
+	test -n "$(DB_MIGRATIONS_REPL_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(DB_MIGRATIONS_REPL)"
 	@echo "+\n++ Deploying DB migrations REPL with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/db-migrations-repl.yml \
 		-p NAME=$(DB_MIGRATIONS_REPL) \
-		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \		
-		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
+		-p DB_MIGRATIONS_SECRET_NAME=$(DB_MIGRATIONS_SECRET_NAME) \
+		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
+		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_REPL_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(DB_MIGRATIONS_REPL))
