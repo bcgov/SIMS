@@ -1,40 +1,42 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { ormConfig } from "../data-source";
+import { ormConfig } from "./data-source";
 import { inspect } from "util";
 
 @Injectable()
 export class DBMigrationsService {
+  private readonly logger = new Logger("DB Migration Command");
+
   async run(): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
-      console.info("Setting up data source to execute migrations.");
+      this.logger.log("Setting up data source to execute migrations.");
       await dataSource.query(
         `CREATE SCHEMA IF NOT EXISTS ${ormConfig.schema};`,
       );
       await dataSource.query(`SET search_path TO ${ormConfig.schema}, public;`);
       await dataSource.query(`SET SCHEMA '${ormConfig.schema}';`);
-      console.info("Running migrations.");
+      this.logger.log("Running migrations.");
       await dataSource.runMigrations();
-      console.info("All migrations executed.");
+      this.logger.log("All migrations executed.");
     });
   }
 
-  async rollback(): Promise<void> {
+  async revert(): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
-      console.info("Running rollback.");
+      this.logger.log("Running rollback.");
       await this.list(1);
-      console.info(`Reverting migration.`);
+      this.logger.log(`Reverting migration.`);
       await dataSource.undoLastMigration({ fake: true });
-      console.info("Migration reverted.");
+      this.logger.log("Migration reverted.");
     });
   }
 
   async list(limit = 5): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
       if (limit === 1) {
-        console.info("Latest migration executed.");
+        this.logger.log("Latest migration executed.");
       } else {
-        console.info(`List of latest ${limit} migrations.`);
+        this.logger.log(`List of latest ${limit} migrations.`);
       }
       const mostRecentMigrations = await this.getRecentMigrationRecords(
         dataSource,
@@ -52,7 +54,7 @@ export class DBMigrationsService {
     try {
       await operation(dataSource);
     } catch (error: unknown) {
-      console.error("Error listing migrations.", inspect(error));
+      this.logger.error("Error listing migrations.", inspect(error));
     } finally {
       await dataSource.destroy();
     }
