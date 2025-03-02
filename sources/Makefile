@@ -241,6 +241,12 @@ workers:
 	@docker compose -f docker-compose.yml build workers
 	@docker compose -f docker-compose.yml up -d workers
 
+# Runs workers application
+db-migrations-repl:
+	@echo "+\n++ Make: Database migrations REPL"
+	@docker compose -f docker-compose.yml build db-migrations-repl
+	@docker compose -f docker-compose.yml up -d db-migrations-repl
+
 # Enable local DB connection to Openshift DEV/TEST/STG/PROD
 connect-dev-db:
 	@echo "Forward local port 5454 to Openshift simsdb-pgbouncer default port."

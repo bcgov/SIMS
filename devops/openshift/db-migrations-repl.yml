@@ -1,0 +1,100 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ${NAME}
+labels:
+  project: ${PROJECT}
+  service: ${SERVICE_NAME}
+objects:
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: ${NAME}
+      name: ${NAME}
+    spec:
+      replicas: 1
+      revisionHistoryLimit: 10
+      selector:
+        matchLabels:
+          app: ${NAME}
+      strategy:
+        type: RollingUpdate
+      template:
+        metadata:
+          labels:
+            app: ${NAME}
+        spec:
+          containers:
+            - env:
+                - name: VERSION
+                  value: ${BUILD_TAG}
+                - name: NODE_ENV
+                  value: ${NODE_ENV}
+                - name: POSTGRES_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_SERVICE_KEY}
+                      name: ${DB_SECRET_NAME}
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_USERNAME_KEY}
+                      name: ${DB_SECRET_NAME}
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${DB_PASSWORD_KEY}
+                      name: ${DB_SECRET_NAME}
+                - name: POSTGRES_DB
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${SIMS_DB_NAME}
+                      name: ${API_SECRET_NAME}
+              image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
+              imagePullPolicy: Always
+              name: ${NAME}
+              stdin: true
+              tty: true
+              resources:
+                limits:
+                  cpu: ${CPU_LIMIT}
+                  memory: ${MEMORY_LIMIT}
+                requests:
+                  cpu: ${CPU_REQUEST}
+                  memory: ${MEMORY_REQUEST}
+parameters:
+  - name: NAME
+    required: true
+  - name: PROJECT
+    value: sims
+  - name: SERVICE_NAME
+    value: workers
+  - name: CPU_LIMIT
+    value: "0.2"
+  - name: MEMORY_LIMIT
+    value: "200M"
+  - name: CPU_REQUEST
+    value: "0.2"
+  - name: MEMORY_REQUEST
+    value: "200M"
+  - name: DB_SERVICE_KEY
+    value: pgbouncer-host
+  - name: DB_SECRET_NAME
+    value: simsdb-pguser-app-database-user
+  - name: DB_USERNAME_KEY
+    value: user
+  - name: DB_PASSWORD_KEY
+    value: password
+  - name: SIMS_DB_NAME
+    value: sims-db-name
+  - name: IMAGE_STREAM_TAG
+    required: true
+  - name: BUILD_NAMESPACE
+    required: true
+  - name: IMAGE_REGISTRY
+    value: image-registry.openshift-image-registry.svc:5000
+  - name: NODE_ENV
+    value: "production"
+  - name: BUILD_TAG
+    value: "0"

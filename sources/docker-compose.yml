@@ -305,6 +305,32 @@ services:
     networks:
       - local-network
   # - Redis
+  # DB Migrations REPL
+  db-migrations-repl:
+    image: db-migrations-repl-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+    tty: true
+    stdin_open: true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    container_name: db-migrations-repl-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    build:
+      context: ./packages/backend
+      dockerfile: ./apps/db-migrations/DockerfileREPL.dev
+    environment:
+      - NODE_ENV=docker
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - local-network
+    restart: always
+    depends_on:
+      - postgres
+  # - DB Migrations REPL
   # - services
   # Networks
 networks:
