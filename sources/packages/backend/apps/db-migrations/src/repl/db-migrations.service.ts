@@ -5,46 +5,62 @@ import { inspect } from "util";
 
 @Injectable()
 export class DBMigrationsService {
+  async run(): Promise<void> {
+    await this.executeDBOperation(async (dataSource) => {
+      console.info("Setting up data source to execute migrations.");
+      await dataSource.query(
+        `CREATE SCHEMA IF NOT EXISTS ${ormConfig.schema};`,
+      );
+      await dataSource.query(`SET search_path TO ${ormConfig.schema}, public;`);
+      await dataSource.query(`SET SCHEMA '${ormConfig.schema}';`);
+      console.info("Running migrations.");
+      await dataSource.runMigrations();
+      console.info("All migrations executed.");
+    });
+  }
+
   async rollback(): Promise<void> {
-    try {
+    await this.executeDBOperation(async (dataSource) => {
       console.info("Running rollback.");
-      const dataSource = await this.createDataSource();
       await this.list(1);
       console.info(`Reverting migration.`);
       await dataSource.undoLastMigration({ fake: true });
-      await dataSource.destroy();
       console.info("Migration reverted.");
-    } catch (error: unknown) {
-      console.error("Error rolling back migration.", inspect(error));
-    }
+    });
   }
 
-  async list(limit = 10): Promise<void> {
-    try {
-      const dataSource = await this.createDataSource();
-      console.info(`Last ${limit} migration(s).`);
+  async list(limit = 5): Promise<void> {
+    await this.executeDBOperation(async (dataSource) => {
+      if (limit === 1) {
+        console.info("Latest migration executed.");
+      } else {
+        console.info(`List of latest ${limit} migrations.`);
+      }
       const mostRecentMigrations = await this.getRecentMigrationRecords(
         dataSource,
         limit,
       );
       console.table(mostRecentMigrations);
-      await dataSource.destroy();
+    });
+  }
+
+  private async executeDBOperation(
+    operation: (sataSource: DataSource) => Promise<void>,
+  ): Promise<void> {
+    const migrationDataSource = new DataSource(ormConfig);
+    const dataSource = await migrationDataSource.initialize();
+    try {
+      await operation(dataSource);
     } catch (error: unknown) {
       console.error("Error listing migrations.", inspect(error));
+    } finally {
+      await dataSource.destroy();
     }
   }
 
-  private async createDataSource() {
-    const migrationDataSource = new DataSource({
-      ...ormConfig,
-      logging: ["error"],
-    });
-    return migrationDataSource.initialize();
-  }
-
   private async getRecentMigrationRecords(dataSource: DataSource, limit = 5) {
-    return await dataSource.query<string[]>(
-      `SELECT * FROM sims.migrations ORDER BY id DESC LIMIT ${limit}`,
+    return dataSource.query<string[]>(
+      `SELECT * FROM ${ormConfig.schema}.migrations ORDER BY id DESC LIMIT ${limit}`,
     );
   }
 }

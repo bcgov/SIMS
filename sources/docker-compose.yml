@@ -317,7 +317,7 @@ services:
     container_name: db-migrations-repl-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
       context: ./packages/backend
-      dockerfile: ./apps/db-migrations/DockerfileREPL.dev
+      dockerfile: ./apps/db-migrations/Dockerfile.repl.dev
     environment:
       - NODE_ENV=docker
       - POSTGRES_HOST=postgres

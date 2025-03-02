@@ -53,6 +53,8 @@ objects:
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
+              tty: true
+              stdin: true
               resources:
                 limits:
                   cpu: ${CPU_LIMIT}
@@ -68,13 +70,13 @@ parameters:
   - name: SERVICE_NAME
     value: db-migrations-repl
   - name: CPU_LIMIT
-    value: "0.1"
+    value: "0.5"
   - name: MEMORY_LIMIT
-    value: "200M"
+    value: "512M"
   - name: CPU_REQUEST
-    value: "0.1"
+    value: "0.5"
   - name: MEMORY_REQUEST
-    value: "200M"
+    value: "512M"
   - name: DB_MIGRATIONS_SECRET_NAME
     required: true
   - name: DB_SERVICE_KEY
