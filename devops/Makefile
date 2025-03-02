@@ -48,6 +48,10 @@ define DB_MIGRATIONS
 "$(HOST_PREFIX)db-migrations-$(APP_NAME)"
 endef
 
+define DB_MIGRATIONS_REPL
+"$(HOST_PREFIX)db-migrations-repl-$(APP_NAME)"
+endef
+
 define DB_MIGRATIONS_JOB_NAME
 "$(HOST_PREFIX)db.migrations"
 endef
@@ -334,6 +338,20 @@ delete-db-migrations:
 		echo "Job not found."; \
 	fi
 
+deploy-db-migrations-repl:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(DB_MIGRATIONS_BUILD_REF)"
+	test -n "$(BUILD_REF)"
+	test -n "$(DB_MIGRATIONS_REPL)"
+	@echo "+\n++ Deploying DB migrations REPL with tag: $(BUILD_REF)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/db-migrations-repl.yml \
+		-p NAME=$(DB_MIGRATIONS_REPL) \
+		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \		
+		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
+		-p BUILD_TAG=$(BUILD_REF) \
+		| oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,deployment/$(DB_MIGRATIONS_REPL))
 
 deploy-api:
 	test -n "$(NAMESPACE)"

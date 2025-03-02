@@ -14,7 +14,6 @@ objects:
       name: ${NAME}
     spec:
       replicas: 1
-      revisionHistoryLimit: 10
       selector:
         matchLabels:
           app: ${NAME}
@@ -54,8 +53,6 @@ objects:
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
-              stdin: true
-              tty: true
               resources:
                 limits:
                   cpu: ${CPU_LIMIT}
@@ -69,19 +66,19 @@ parameters:
   - name: PROJECT
     value: sims
   - name: SERVICE_NAME
-    value: workers
+    value: db-migrations-repl
   - name: CPU_LIMIT
-    value: "0.2"
+    value: "0.1"
   - name: MEMORY_LIMIT
     value: "200M"
   - name: CPU_REQUEST
-    value: "0.2"
+    value: "0.1"
   - name: MEMORY_REQUEST
     value: "200M"
   - name: DB_SERVICE_KEY
     value: pgbouncer-host
   - name: DB_SECRET_NAME
-    value: simsdb-pguser-app-database-user
+    value: simsdb-pguser-non-super-user
   - name: DB_USERNAME_KEY
     value: user
   - name: DB_PASSWORD_KEY
