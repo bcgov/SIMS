@@ -317,10 +317,10 @@ services:
     container_name: db-migrations-repl-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     build:
       context: ./packages/backend
-      dockerfile: ./apps/db-migrations/Dockerfile.repl.dev
+      dockerfile: ./apps/db-migrations/Dockerfile.dev
     environment:
       - NODE_ENV=docker
-      - VERSION=v1.0.0
+      - VERSION=v1.0.0-docker
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_DB=${POSTGRES_DB}
