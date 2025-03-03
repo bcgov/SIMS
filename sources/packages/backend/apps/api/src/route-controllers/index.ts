@@ -82,6 +82,7 @@ export * from "./program-year/program-year.controller.service";
 export * from "./cas-supplier/cas-supplier.aest.controller";
 export * from "./application-restriction-bypass/application-restriction-bypass.aest.controller";
 export * from "./audit/audit.controller";
+export * from "./student/student.external.controller.service";
 export * from "./student/student.external.controller";
 export * from "./cas-invoice-batch/cas-invoice-batch.aest.controller";
 export * from "./models/primary.identifier.dto";
