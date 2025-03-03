@@ -45,12 +45,18 @@ export class StudentExternalControllerService {
     studentApplications?: ApplicationDetail[],
     legacyStudentApplications?: LegacyApplicationDetail[],
   ): ApplicationDetailsAPIOutDTO[] {
-    if (!studentApplications?.length && !legacyStudentApplications?.length) {
-      return [];
-    }
     const applications: ApplicationDetailsAPIOutDTO[] = [];
-    for (const application of studentApplications) {
-      applications.push(this.transformApplicationDetails(application));
+    if (studentApplications?.length) {
+      // Transform application details for search result.
+      for (const application of studentApplications) {
+        applications.push(this.transformApplicationDetails(application));
+      }
+    }
+    if (legacyStudentApplications?.length) {
+      // Transform legacy application details for search result.
+      for (const application of legacyStudentApplications) {
+        applications.push(this.transformLegacyApplicationDetails(application));
+      }
     }
     return applications;
   }
@@ -188,7 +194,11 @@ export class StudentExternalControllerService {
       ),
     };
   }
-
+  /**
+   * Transform legacy application details.
+   * @param application legacy application.
+   * @returns legacy application details.
+   */
   private transformLegacyApplicationDetails(
     application: LegacyApplicationDetail,
   ): ApplicationDetailsAPIOutDTO {
@@ -199,6 +209,7 @@ export class StudentExternalControllerService {
       cancelDate: application.applicationCancelDate,
       withdrawalDate: application.withdrawalDate,
       withdrawalReason: application.withdrawalReason,
+      withdrawalActiveFlag: application.withdrawalActiveFlag,
       bcResidency: application.bcResidencyFlag,
       legacyPermanentResident: application.permanentResidencyFlag,
       maritalStatus: application.maritalStatus,
@@ -219,18 +230,18 @@ export class StudentExternalControllerService {
       },
       institution: {
         locationCode: application.institutionCode,
-        locationName: "",
-        primaryContactFirstName: "",
-        primaryContactLastName: "",
-        primaryContactEmail: "",
-        primaryContactPhone: "",
+        locationName: application.locationName,
+        primaryContactFirstName: application.locationPrimaryContact?.firstName,
+        primaryContactLastName: application.locationPrimaryContact?.lastName,
+        primaryContactEmail: application.locationPrimaryContact?.email,
+        primaryContactPhone: application.locationPrimaryContact?.phone,
       },
       costs: {
         tuition: application.assessedCostsTuition,
         booksAndSupplies: application.assessedCostsBooksAndSupplies,
         exceptionalExpenses: application.assessedCostsExceptionalExpenses,
         livingAllowance: application.assessedCostsLivingAllowance,
-        secondResidence: application.assessedCostsLivingAllowance,
+        secondResidence: application.assessedCostsExtraShelter,
         childCare: application.assessedCostsChildCare,
         alimony: application.assessedCostsAlimony,
         totalTransportation:

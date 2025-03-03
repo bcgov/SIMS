@@ -14,7 +14,7 @@ import {
 } from "@sims/sims-db";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ApplicationDetail } from "../../services";
+import { ApplicationDetail, LegacyApplicationDetail } from "../../services";
 
 const MAX_PAST_PROGRAM_YEARS_INCLUDING_CURRENT = 3;
 @Injectable()
@@ -164,14 +164,15 @@ export class StudentInformationService {
       .where("legacyStudent.sin = :sin", { sin });
     // When student id is provided, match alternatively by student id and give priority to student id match over SIN match.
     if (studentId) {
-      sfasIndividualQuery
-        .orWhere("legacyStudent.student.id = :studentId", {
-          studentId,
-        })
-        .orderBy("legacyStudent.student.id", "DESC", "NULLS LAST")
-        .limit(1);
+      sfasIndividualQuery.orWhere("legacyStudent.student.id = :studentId", {
+        studentId,
+      });
     }
-    return sfasIndividualQuery.getOne();
+    return sfasIndividualQuery
+      .orderBy("legacyStudent.student.id", "DESC", "NULLS LAST")
+      .addOrderBy("legacyStudent.id", "DESC")
+      .limit(1)
+      .getOne();
   }
 
   /**
@@ -181,7 +182,7 @@ export class StudentInformationService {
    */
   async getSFASApplications(
     sfasIndividualId: number,
-  ): Promise<SFASApplication[]> {
+  ): Promise<LegacyApplicationDetail[]> {
     // Get the SQL to get last 3 active program years including the current program year.
     const legacyProgramYearQuery = this.programYearRepo
       .createQueryBuilder("programYear")
@@ -239,9 +240,6 @@ export class StudentInformationService {
         "disbursement.fundingAmount",
         "disbursement.fundingDate",
         "disbursement.dateIssued",
-        "location.id",
-        "location.name",
-        "location.primaryContact",
       ])
       .addSelect(
         "(legacyApplication.bslAward + legacyApplication.cslAward + legacyApplication.bcagAward +" +
@@ -249,6 +247,9 @@ export class StudentInformationService {
           " legacyApplication.csgdAward + legacyApplication.csgpAward + legacyApplication.sbsdAward)",
         "estimatedTotalAward",
       )
+      .addSelect("location.id", "locationId")
+      .addSelect("location.name", "locationName")
+      .addSelect("location.primaryContact", "locationPrimaryContact")
       .leftJoin("legacyApplication.dependants", "dependant")
       .leftJoin("legacyApplication.disbursements", "disbursement")
       .leftJoin(
@@ -264,9 +265,12 @@ export class StudentInformationService {
       )
       .getRawAndEntities();
 
-    return mapFromRawAndEntities<SFASApplication>(
+    return mapFromRawAndEntities<LegacyApplicationDetail>(
       queryResult,
       "estimatedTotalAward",
+      "locationId",
+      "locationName",
+      "locationPrimaryContact",
     );
   }
 }

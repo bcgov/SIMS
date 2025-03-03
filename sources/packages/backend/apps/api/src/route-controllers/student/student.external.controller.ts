@@ -14,7 +14,10 @@ import {
   RequiresUserAccount,
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
-import { StudentInformationService } from "../../services";
+import {
+  LegacyApplicationDetail,
+  StudentInformationService,
+} from "../../services";
 import {
   StudentSearchAPIInDTO,
   StudentSearchResultAPIOutDTO,
@@ -75,18 +78,19 @@ export class StudentExternalController extends BaseController {
         student,
         sfasIndividual,
       );
-
+    let legacyApplications: LegacyApplicationDetail[];
+    // Get legacy applications from SFAS.
     if (sfasIndividual) {
-      const sfasApplications =
+      legacyApplications =
         await this.studentInformationService.getSFASApplications(
           sfasIndividual.id,
         );
-      console.log(sfasApplications);
     }
     // Transform application details.
     const applications =
       this.studentExternalControllerService.transformApplicationSearchResult(
         studentApplications,
+        legacyApplications,
       );
 
     return {
