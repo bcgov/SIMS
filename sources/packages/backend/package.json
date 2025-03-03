@@ -12,7 +12,6 @@
     "start": "nest start",
     "start:dev": "npm run migration:run && nest start --watch --preserveWatchOutput",
     "start:debug": "cross-env DEBUG=true nest start --debug --watch --preserveWatchOutput",
-    "start:prod:db-migrations": "npm run migration:run",
     "start:prod:api": "node --enable-source-maps --max-old-space-size=250 dist/apps/api/main.js",
     "docker:start:api": "node --enable-source-maps --max-old-space-size=250 dist/apps/api/main.js",
     "start:prod:workers": "node --enable-source-maps --max-old-space-size=250 dist/apps/workers/main.js",

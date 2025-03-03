@@ -5,7 +5,7 @@ import { inspect } from "util";
 
 /**
  * DB migrations options available.
- * Each operation is executed in a isolated data source.
+ * Each operation is executed in an isolated data source.
  */
 @Injectable()
 export class DBMigrationsService {
