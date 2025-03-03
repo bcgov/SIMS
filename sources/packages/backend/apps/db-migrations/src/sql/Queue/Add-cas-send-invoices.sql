@@ -5,7 +5,7 @@ VALUES
   (
     'cas-send-invoices',
     '{
-        "cron": "0 11,23,20 * * 1-5",
+        "cron": "0 2,15,20 * * 1-5",
         "retry": 3,
         "cleanUpPeriod": 2592000000,
         "retryInterval": 180000,
