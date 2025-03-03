@@ -19,7 +19,6 @@ RUN npm ci
 
 # Copying sources.
 COPY ./apps/api ./apps/api
-COPY ./apps/db-migrations ./apps/db-migrations
 COPY ./apps/test-db-seeding ./apps/test-db-seeding
 COPY ./libs ./libs
 
