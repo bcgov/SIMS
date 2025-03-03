@@ -12,9 +12,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BGPD
     InstitutionTypes.BCPublic,
     InstitutionTypes.BCPrivate,
   ];
-  const NOT_EXPECTED_INSTITUTION_TYPES = Object.values(InstitutionTypes).filter(
-    (type) => !EXPECTED_INSTITUTION_TYPES.includes(type),
-  );
 
   describe("Should determine BGPD as eligible when the institutionType type is the expected one and financial need is at least $1 and the student has PD status true.", () => {
     for (const institutionType of EXPECTED_INSTITUTION_TYPES) {
