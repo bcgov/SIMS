@@ -30,6 +30,8 @@ objects:
                   value: ${BUILD_TAG}
                 - name: NODE_ENV
                   value: ${NODE_ENV}
+                - name: LOG_ALL
+                  value: ${LOG_ALL}
                 - name: POSTGRES_HOST
                   valueFrom:
                     secretKeyRef:
@@ -100,3 +102,6 @@ parameters:
     value: "production"
   - name: BUILD_TAG
     required: true
+  - name: LOG_ALL
+    description: "Allow enable logs for all operations for troubleshooting."
+    value: "false"
