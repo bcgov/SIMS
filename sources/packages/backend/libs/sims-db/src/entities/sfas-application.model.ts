@@ -1,7 +1,11 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import { BaseSFASApplicationModel } from "./base-sfas-application.model";
 import { TableNames } from "../constant";
 import { numericTransformer } from "@sims/sims-db/transformers/numeric.transformer";
+import {
+  SFASApplicationDependant,
+  SFASApplicationDisbursement,
+} from "@sims/sims-db";
 
 /**
  * Data related to a Student Application on SFAS.
@@ -367,4 +371,30 @@ export class SFASApplication extends BaseSFASApplicationModel {
     nullable: true,
   })
   withdrawalActiveFlag?: string;
+
+  /**
+   * Student application dependants.
+   */
+  @OneToMany(
+    () => SFASApplicationDependant,
+    (dependant) => dependant.application,
+    {
+      eager: false,
+      cascade: false,
+    },
+  )
+  dependants?: SFASApplicationDependant[];
+
+  /**
+   * Student application disbursements.
+   */
+  @OneToMany(
+    () => SFASApplicationDisbursement,
+    (disbursement) => disbursement.application,
+    {
+      eager: false,
+      cascade: false,
+    },
+  )
+  disbursements?: SFASApplicationDisbursement[];
 }

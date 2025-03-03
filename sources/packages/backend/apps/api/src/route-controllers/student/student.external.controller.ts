@@ -57,7 +57,10 @@ export class StudentExternalController extends BaseController {
       student &&
       this.studentInformationService.getStudentApplications(student.id);
     const sfasIndividualPromise =
-      this.studentInformationService.getSFASIndividualBySIN(payload.sin);
+      this.studentInformationService.getSFASIndividualByEitherStudentOrSIN(
+        payload.sin,
+        student?.id,
+      );
     const [studentApplications, sfasIndividual] = await Promise.all([
       studentApplicationsPromise,
       sfasIndividualPromise,
@@ -72,6 +75,14 @@ export class StudentExternalController extends BaseController {
         student,
         sfasIndividual,
       );
+
+    if (sfasIndividual) {
+      const sfasApplications =
+        await this.studentInformationService.getSFASApplications(
+          sfasIndividual.id,
+        );
+      console.log(sfasApplications);
+    }
     // Transform application details.
     const applications =
       this.studentExternalControllerService.transformApplicationSearchResult(

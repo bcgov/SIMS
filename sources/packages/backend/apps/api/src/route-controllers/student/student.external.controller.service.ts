@@ -14,7 +14,7 @@ import {
   getISODateOnlyString,
   getTotalDisbursementAmountFromSchedules,
 } from "@sims/utilities";
-import { ApplicationDetail } from "../../services";
+import { ApplicationDetail, LegacyApplicationDetail } from "../../services";
 
 @Injectable()
 export class StudentExternalControllerService {
@@ -38,93 +38,19 @@ export class StudentExternalControllerService {
   /**
    * Transform student application search result.
    * @param studentApplications student applications.
+   * @param legacyStudentApplications legacy student applications.
    * @returns student application search result.
    */
   transformApplicationSearchResult(
     studentApplications?: ApplicationDetail[],
+    legacyStudentApplications?: LegacyApplicationDetail[],
   ): ApplicationDetailsAPIOutDTO[] {
-    if (!studentApplications?.length) {
+    if (!studentApplications?.length && !legacyStudentApplications?.length) {
       return [];
     }
     const applications: ApplicationDetailsAPIOutDTO[] = [];
-    // TODO: move this transformation and the upcoming legacy transformations to a separate methods.
-
     for (const application of studentApplications) {
-      const assessment = application.currentAssessment;
-      const scholasticStanding = assessment.studentScholasticStanding;
-      const assessmentData = assessment.assessmentData as FullTimeAssessment;
-      const workflowData = assessment.workflowData;
-      const offering = assessment.offering;
-      const institutionLocation = application.location;
-
-      applications.push({
-        isLegacy: false,
-        applicationNumber: application.applicationNumber,
-        applicationStatus: application.applicationStatus,
-        cancelDate:
-          application.applicationStatus === ApplicationStatus.Cancelled
-            ? getISODateOnlyString(application.applicationStatusUpdatedOn)
-            : null,
-        withdrawalDate: scholasticStanding?.submittedData?.dateOfWithdrawal,
-        withdrawalReason: scholasticStanding?.changeType,
-        immigrationStatus: workflowData.studentData.citizenship,
-        bcResidency: workflowData.studentData.bcResident,
-        maritalStatus: workflowData.studentData.relationshipStatus,
-        income: workflowData.studentData.taxReturnIncome,
-        livingArrangement: ["SDA", "SIA"].includes(
-          workflowData.dmnValues.livingCategory,
-        )
-          ? "Away"
-          : "Home",
-        estimatedTotalAward: getTotalDisbursementAmountFromSchedules(
-          assessment.disbursementSchedules,
-        ),
-        dependants: application.dependants?.map(
-          (dependant: { fullName: string; dateOfBirth: string }) => ({
-            fullName: dependant.fullName,
-            birthDate: dependant.dateOfBirth,
-          }),
-        ),
-        program: {
-          startDate: offering.studyStartDate,
-          endDate: offering.studyEndDate,
-          lengthInWeeks: offering.studyBreaks.totalFundedWeeks,
-          courseLoad: "FT",
-        },
-        institution: {
-          locationCode: institutionLocation.institutionCode,
-          locationName: institutionLocation.name,
-          primaryContactFirstName: institutionLocation.primaryContact.firstName,
-          primaryContactLastName: institutionLocation.primaryContact.lastName,
-          primaryContactEmail: institutionLocation.primaryContact.email,
-          primaryContactPhone: institutionLocation.primaryContact.phone,
-        },
-        costs: {
-          tuition: assessmentData.tuitionCost,
-          booksAndSupplies: assessmentData.booksAndSuppliesCost,
-          exceptionalExpenses: assessmentData.exceptionalEducationCost,
-          livingAllowance: assessmentData.livingAllowance,
-          secondResidence: assessmentData.secondResidenceCost,
-          childCare: assessmentData.childcareCost,
-          alimony: assessmentData.alimonyOrChildSupport,
-          totalTransportation: assessmentData.transportationCost,
-          totalNeed: assessmentData.provincialAssessmentNeed,
-        },
-        disbursements: assessment.disbursementSchedules.flatMap(
-          (disbursement) => {
-            return disbursement.disbursementValues.map((disbursementValue) => ({
-              awardCode: disbursementValue.valueCode,
-              awardAmount:
-                disbursement.disbursementScheduleStatus ===
-                DisbursementScheduleStatus.Sent
-                  ? disbursementValue.effectiveAmount
-                  : disbursementValue.valueAmount,
-              fundingDate: disbursement.disbursementDate,
-              requestDate: getISODateOnlyString(disbursement.dateSent),
-            }));
-          },
-        ),
-      });
+      applications.push(this.transformApplicationDetails(application));
     }
     return applications;
   }
@@ -175,6 +101,149 @@ export class StudentExternalControllerService {
         country: sfasIndividual.country,
         postalCode: sfasIndividual.postalZipCode,
       },
+    };
+  }
+
+  /**
+   * Transform application details.
+   * @param application application.
+   * @returns application details.
+   */
+  private transformApplicationDetails(
+    application: ApplicationDetail,
+  ): ApplicationDetailsAPIOutDTO {
+    const assessment = application.currentAssessment;
+    const scholasticStanding = assessment.studentScholasticStanding;
+    const assessmentData = assessment.assessmentData as FullTimeAssessment;
+    const workflowData = assessment.workflowData;
+    const offering = assessment.offering;
+    const institutionLocation = application.location;
+
+    return {
+      isLegacy: false,
+      applicationNumber: application.applicationNumber,
+      applicationStatus: application.applicationStatus,
+      cancelDate:
+        application.applicationStatus === ApplicationStatus.Cancelled
+          ? getISODateOnlyString(application.applicationStatusUpdatedOn)
+          : null,
+      withdrawalDate: scholasticStanding?.submittedData?.dateOfWithdrawal,
+      withdrawalReason: scholasticStanding?.changeType,
+      immigrationStatus: workflowData.studentData.citizenship,
+      bcResidency: workflowData.studentData.bcResident,
+      maritalStatus: workflowData.studentData.relationshipStatus,
+      income: workflowData.studentData.taxReturnIncome,
+      livingArrangement: ["SDA", "SIA"].includes(
+        workflowData.dmnValues.livingCategory,
+      )
+        ? "Away"
+        : "Home",
+      estimatedTotalAward: getTotalDisbursementAmountFromSchedules(
+        assessment.disbursementSchedules,
+      ),
+      dependants: application.dependants?.map(
+        (dependant: { fullName: string; dateOfBirth: string }) => ({
+          fullName: dependant.fullName,
+          birthDate: dependant.dateOfBirth,
+        }),
+      ),
+      program: {
+        startDate: offering.studyStartDate,
+        endDate: offering.studyEndDate,
+        lengthInWeeks: offering.studyBreaks.totalFundedWeeks,
+        courseLoad: "FT",
+      },
+      institution: {
+        locationCode: institutionLocation.institutionCode,
+        locationName: institutionLocation.name,
+        primaryContactFirstName: institutionLocation.primaryContact.firstName,
+        primaryContactLastName: institutionLocation.primaryContact.lastName,
+        primaryContactEmail: institutionLocation.primaryContact.email,
+        primaryContactPhone: institutionLocation.primaryContact.phone,
+      },
+      costs: {
+        tuition: assessmentData.tuitionCost,
+        booksAndSupplies: assessmentData.booksAndSuppliesCost,
+        exceptionalExpenses: assessmentData.exceptionalEducationCost,
+        livingAllowance: assessmentData.livingAllowance,
+        secondResidence: assessmentData.secondResidenceCost,
+        childCare: assessmentData.childcareCost,
+        alimony: assessmentData.alimonyOrChildSupport,
+        totalTransportation: assessmentData.transportationCost,
+        totalNeed: assessmentData.provincialAssessmentNeed,
+      },
+      disbursements: assessment.disbursementSchedules.flatMap(
+        (disbursement) => {
+          return disbursement.disbursementValues.map((disbursementValue) => ({
+            awardCode: disbursementValue.valueCode,
+            awardAmount:
+              disbursement.disbursementScheduleStatus ===
+              DisbursementScheduleStatus.Sent
+                ? disbursementValue.effectiveAmount
+                : disbursementValue.valueAmount,
+            fundingDate: disbursement.disbursementDate,
+            requestDate: getISODateOnlyString(disbursement.dateSent),
+          }));
+        },
+      ),
+    };
+  }
+
+  private transformLegacyApplicationDetails(
+    application: LegacyApplicationDetail,
+  ): ApplicationDetailsAPIOutDTO {
+    return {
+      isLegacy: true,
+      applicationNumber: application.applicationNumber?.toString(),
+      applicationStatus: application.applicationStatusCode,
+      cancelDate: application.applicationCancelDate,
+      withdrawalDate: application.withdrawalDate,
+      withdrawalReason: application.withdrawalReason,
+      bcResidency: application.bcResidencyFlag,
+      legacyPermanentResident: application.permanentResidencyFlag,
+      maritalStatus: application.maritalStatus,
+      legacyMaritalDate: application.marriageDate,
+      income: application.grossIncomePreviousYear,
+      livingArrangement:
+        application.livingArrangements === "Y" ? "Home" : "Away",
+      estimatedTotalAward: application.estimatedTotalAward,
+      dependants: application.dependants?.map((dependant) => ({
+        fullName: dependant.dependantName,
+        birthDate: dependant.dependantBirthDate,
+      })),
+      program: {
+        startDate: application.startDate,
+        endDate: application.endDate,
+        lengthInWeeks: application.educationPeriodWeeks,
+        courseLoad: application.courseLoad?.toString(),
+      },
+      institution: {
+        locationCode: application.institutionCode,
+        locationName: "",
+        primaryContactFirstName: "",
+        primaryContactLastName: "",
+        primaryContactEmail: "",
+        primaryContactPhone: "",
+      },
+      costs: {
+        tuition: application.assessedCostsTuition,
+        booksAndSupplies: application.assessedCostsBooksAndSupplies,
+        exceptionalExpenses: application.assessedCostsExceptionalExpenses,
+        livingAllowance: application.assessedCostsLivingAllowance,
+        secondResidence: application.assessedCostsLivingAllowance,
+        childCare: application.assessedCostsChildCare,
+        alimony: application.assessedCostsAlimony,
+        totalTransportation:
+          (application.assessedCostsLocalTransport ?? 0) +
+          (application.assessedCostsReturnTransport ?? 0),
+        totalNeed: application.assessedEligibleNeed,
+      },
+      disbursements: application.disbursements?.map((disbursement) => ({
+        awardCode: disbursement.fundingType,
+        awardAmount: disbursement.fundingAmount,
+        fundingDate: disbursement.fundingDate,
+        requestDate: disbursement.dateIssued,
+      })),
     };
   }
 }
