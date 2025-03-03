@@ -22,14 +22,10 @@ import { computed, onMounted, defineComponent } from "vue";
 import { StudentRestriction } from "@/store/modules/student/student";
 import { useStudentStore } from "@/composables";
 
-interface StudentAccountActivityFormModel {
-  restrictions: StudentRestriction[];
-}
-
 export default defineComponent({
   setup() {
     const { activeRestrictions, updateRestrictions } = useStudentStore();
-    const restrictions = computed<StudentAccountActivityFormModel>(
+    const restrictions = computed<StudentRestriction[]>(
       () => activeRestrictions.value,
     );
     onMounted(async () => {

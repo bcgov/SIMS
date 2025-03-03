@@ -11,9 +11,8 @@
       />
     </template>
     <student-account-restrictions />
-    <student-scholastic-standing-limited-history /><formio-container
-      formName="studentAccountActivity"
-    />
+    <student-scholastic-standing-limited-history />
+    <formio-container formName="studentAccountActivity" />
   </student-page-container>
 </template>
 <script lang="ts">
