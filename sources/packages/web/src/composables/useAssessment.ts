@@ -6,6 +6,7 @@ import {
   StatusChipTypes,
   StatusChipLabelTypes,
   ApplicationOfferingChangeRequestStatus,
+  OfferingStatus,
 } from "@/types";
 
 export function useAssessment() {
@@ -13,7 +14,8 @@ export function useAssessment() {
     status:
       | StudentAppealStatus
       | ApplicationExceptionStatus
-      | ApplicationOfferingChangeRequestStatus,
+      | ApplicationOfferingChangeRequestStatus
+      | OfferingStatus,
   ): StatusChipTypes => {
     switch (status) {
       case StudentAppealStatus.Approved:
@@ -39,7 +41,8 @@ export function useAssessment() {
     status:
       | StudentAppealStatus
       | ApplicationExceptionStatus
-      | ApplicationOfferingChangeRequestStatus,
+      | ApplicationOfferingChangeRequestStatus
+      | OfferingStatus,
   ): StatusChipLabelTypes | string => {
     switch (status) {
       case StudentAppealStatus.Approved:
@@ -56,8 +59,8 @@ export function useAssessment() {
       case ApplicationOfferingChangeRequestStatus.DeclinedByStudent:
       case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
         return StatusChipLabelTypes.Declined;
-      case ApplicationOfferingChangeRequestStatus.ChangeAwaitingApproval:
-        return ApplicationOfferingChangeRequestStatus.ChangeAwaitingApproval;
+      case OfferingStatus.ChangeAwaitingApproval:
+        return OfferingStatus.ChangeAwaitingApproval;
       default:
         return "";
     }
