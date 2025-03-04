@@ -1,6 +1,12 @@
+import { LogLevel } from "typeorm";
 import "../../../env-setup";
-import { DataSource } from "typeorm";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
+
+/**
+ * Allow enable the log for all operations for troubleshooting.
+ */
+const logging =
+  process.env.LOG_ALL === "true" ? "all" : (["error", "warn"] as LogLevel[]);
 
 export const ormConfig: PostgresConnectionOptions = {
   type: "postgres",
@@ -12,13 +18,5 @@ export const ormConfig: PostgresConnectionOptions = {
   schema: process.env.DB_SCHEMA || "sims",
   synchronize: false,
   migrations: ["apps/db-migrations/src/migrations/*{.ts,.js}"],
+  logging,
 };
-
-/**
- * Data source exposed to be used by the migrations revert script.
- * Required by Typeorm to execute the revert.
- */
-export const migrationsDataSource = new DataSource({
-  ...ormConfig,
-  logging: ["error", "warn", "info"],
-});

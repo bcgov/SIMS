@@ -44,14 +44,39 @@ export class ApplicationService {
   /**
    * Get application information for a specified application.
    * @param applicationId the ID of the application to fetch.
-   * @param loadDynamicData flag for if dynamic data should be loaded.
+   * @param options options for the request.
+   * - `studentId` student id for the student.
+   * - `loadDynamicData` flag for if dynamic data should be loaded.
+   * - `isParentApplication` true if the application is a parent application.
    * @returns application information.
    */
   async getApplication(
     applicationId: number,
-    options: { loadDynamicData?: boolean; isParentApplication?: boolean },
+    options: {
+      studentId?: number;
+      loadDynamicData?: boolean;
+      isParentApplication?: boolean;
+    },
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     return ApiClient.Application.getApplicationData(applicationId, options);
+  }
+
+  /**
+   * Get current application from parent.
+   * @param parentApplicationId parent application id.
+   * @param options options for the request.
+   * - `studentId` student id for the student.
+   * @returns application information.
+   */
+  async getCurrentApplicationFromParent(
+    parentApplicationId: number,
+    options?: { studentId: number },
+  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+    return this.getApplication(parentApplicationId, {
+      studentId: options?.studentId,
+      isParentApplication: true,
+      loadDynamicData: false,
+    });
   }
 
   async createApplicationDraft(

@@ -1,25 +1,62 @@
-import { DataSource } from "typeorm";
-import { ormConfig } from "./data-source";
+import { NestFactory, repl } from "@nestjs/core";
+import { REPLModule } from "./repl.module";
+import { DBMigrationsModule } from "./db-migrations.module";
+import { DBMigrationsService } from "./db-migrations.service";
+import { Logger } from "@nestjs/common";
+
+/**
+ * Available arguments to execute the DB Migrations.
+ */
+enum InitArguments {
+  /**
+   * Read-Eval-Print-Loop (REPL) mode.
+   */
+  REPL = "repl",
+  /**
+   * Execute all pending migrations.
+   */
+  Run = "run",
+  /**
+   * Revert the last migration
+   */
+  Revert = "revert",
+  /**
+   * List the latest migrations.
+   */
+  List = "list",
+}
 
 (async () => {
-  const migrationDataSource = new DataSource({
-    ...ormConfig,
-    logging: ["error", "warn", "info"],
-  });
-  const dataSource = await migrationDataSource.initialize();
-  try {
-    console.info("**** Running setupDB ****");
-    await dataSource.query(`CREATE SCHEMA IF NOT EXISTS ${ormConfig.schema};`);
-    await dataSource.query(`SET search_path TO ${ormConfig.schema}, public;`);
-    await dataSource.query(`SET SCHEMA '${ormConfig.schema}';`);
-    console.info(`**** Running migration ****`);
-    await dataSource.runMigrations();
-    console.info(`**** Running setupDB: [Complete] ****`);
-  } catch (error) {
-    console.error(`Exception occurs during setup db process: ${error}`);
-    console.dir(ormConfig);
-    throw error;
-  } finally {
-    await dataSource.destroy();
+  const logger = new Logger("DB Migration");
+  logger.log("DB Migrations started.");
+  // One and only one argument is expected at this time.
+  // Slice to remove 'node' and script path.
+  const [initArg] = process.argv.slice(2);
+  if (initArg === InitArguments.REPL) {
+    await repl(REPLModule);
+    return;
   }
+  const app = await NestFactory.createApplicationContext(DBMigrationsModule);
+  await app.init();
+  const migrationsService = app.get(DBMigrationsService);
+  switch (initArg) {
+    case InitArguments.Run:
+      await migrationsService.run();
+      break;
+    case InitArguments.Revert:
+      await migrationsService.revert();
+      break;
+    case InitArguments.List:
+      await migrationsService.list();
+      break;
+    default:
+      logger.warn(
+        `Invalid argument. Available arguments are: ${Object.values(
+          InitArguments,
+        )}.`,
+      );
+      break;
+  }
+  await app.close();
+  logger.log("DB Migrations closed.");
 })();

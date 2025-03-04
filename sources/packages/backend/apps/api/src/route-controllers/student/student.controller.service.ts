@@ -310,8 +310,8 @@ export class StudentControllerService {
       groupName: options?.extendedDetails
         ? studentDocument.groupName
         : undefined,
-      updatedAt: options?.extendedDetails
-        ? studentDocument.updatedAt
+      createdAt: options?.extendedDetails
+        ? studentDocument.createdAt
         : undefined,
     }));
   }

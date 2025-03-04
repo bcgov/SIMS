@@ -1,0 +1,46 @@
+name: Release - Deploy DB Migrations REPL
+run-name: Release - Deploy DB Migrations REPL ${{ github.ref_name }} to ${{ inputs.environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment"
+        required: true
+        type: environment
+
+env:
+  NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+  BUILD_REF: ${{ github.ref_name }}
+  HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+  DOMAIN_PREFIX: ${{ vars.DOMAIN_PREFIX }}
+  BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
+  DB_MIGRATIONS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+
+jobs:
+  deploy-db-migrations-repl:
+    name: Deploy db-migrations REPL
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "4"
+      - name: Print env
+        run: |
+          echo Deploy Environment: ${{ inputs.environment }}
+          echo GIT REF: ${{ github.ref_name }}
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo OC CLI Version: $(oc version)
+      - name: Checkout Target Branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      - name: Run db-migrations using REPL mode
+        working-directory: "./devops/"
+        run: |
+          make deploy-db-migrations-repl

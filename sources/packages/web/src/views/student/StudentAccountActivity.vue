@@ -10,42 +10,25 @@
         :routeLocation="{ name: StudentRoutesConst.STUDENT_DASHBOARD }"
       />
     </template>
-    <tab-container :enableCardView="false" class="mb-6">
-      <student-scholastic-standing-limited-history
-    /></tab-container>
-    <formio-container
-      formName="studentAccountActivity"
-      :formData="initialData"
-    />
+    <student-account-restrictions />
+    <student-scholastic-standing-limited-history />
+    <formio-container formName="studentAccountActivity" />
   </student-page-container>
 </template>
 <script lang="ts">
-import { computed, onMounted, defineComponent } from "vue";
+import { defineComponent } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { StudentRestriction } from "@/store/modules/student/student";
-import { useStudentStore } from "@/composables";
 import StudentScholasticStandingLimitedHistory from "@/components/common/students/StudentScholasticStandingLimitedHistory.vue";
-
-interface StudentAccountActivityFormModel {
-  restrictions: StudentRestriction[];
-}
+import StudentAccountRestrictions from "@/components/common/students/StudentAccountRestrictions.vue";
 
 export default defineComponent({
-  components: { StudentScholasticStandingLimitedHistory },
+  components: {
+    StudentAccountRestrictions,
+    StudentScholasticStandingLimitedHistory,
+  },
   setup() {
-    const { activeRestrictions, updateRestrictions } = useStudentStore();
-
-    const initialData = computed<StudentAccountActivityFormModel>(() => {
-      return {
-        restrictions: activeRestrictions.value,
-      };
-    });
-    onMounted(async () => {
-      await updateRestrictions();
-    });
     return {
       StudentRoutesConst,
-      initialData,
     };
   },
 });

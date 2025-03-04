@@ -299,6 +299,12 @@ export class StudentStudentsController extends BaseController {
       studentUserToken.studentId,
     );
 
+    const uploadedFiles = await this.fileService.getStudentFiles(
+      studentUserToken.studentId,
+      payload.associatedFiles,
+    );
+    const uploadedFileNames = uploadedFiles.map((file) => file.fileName);
+
     // This method will be executed alongside with the transaction during the
     // execution of the method updateStudentFiles.
     const saveFileUploadNotification = (entityManager: EntityManager) =>
@@ -311,6 +317,7 @@ export class StudentStudentsController extends BaseController {
           documentPurpose: payload.submittedForm.documentPurpose,
           applicationNumber: payload.submittedForm.applicationNumber,
           userId: student.user.id,
+          fileNames: uploadedFileNames,
         },
         studentUserToken.userId,
         entityManager,
