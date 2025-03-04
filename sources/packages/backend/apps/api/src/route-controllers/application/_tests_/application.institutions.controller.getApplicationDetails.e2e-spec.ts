@@ -156,7 +156,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       });
   });
 
-  it("Should not get the student application details when the application status is overwritten.", async () => {
+  it("Should not get the student application details when the application status is edited.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(
       db.dataSource,
@@ -164,7 +164,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         institutionLocation: collegeFLocation,
       },
       {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
       },
     );
 
@@ -198,7 +198,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       db.dataSource,
       { institutionLocation: collegeFLocation },
       {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
         offeringInitialValues: offeringInitialValues,
       },
     );
@@ -217,7 +217,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         parentApplication: { id: savedFirstApplication.id } as Application,
       },
       {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
         applicationNumber: savedFirstApplication.applicationNumber,
         offeringInitialValues: offeringInitialValues,
       },

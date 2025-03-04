@@ -87,7 +87,7 @@ export class SIMSToSFASService {
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("student.casSupplier", "casSupplier")
       .leftJoin("student.overawards", "overaward")
-      .where("application.applicationStatus != :overwritten")
+      .where("application.applicationStatus != :edited")
       .andWhere("application.currentAssessment is not null")
       // Check if the student data was updated in the given period.
       .andWhere(
@@ -110,7 +110,7 @@ export class SIMSToSFASService {
         }),
       )
       .setParameters({
-        overwritten: ApplicationStatus.Overwritten,
+        edited: ApplicationStatus.Edited,
         modifiedSince,
         modifiedUntil,
       })
@@ -180,7 +180,7 @@ export class SIMSToSFASService {
           "disbursementSchedule.disbursementValues",
           "disbursementValues",
         )
-        .where("application.applicationStatus != :overwritten")
+        .where("application.applicationStatus != :edited")
         .andWhere(
           new Brackets((qb) => {
             // Check if the application data was updated in the given period.
@@ -194,7 +194,7 @@ export class SIMSToSFASService {
           }),
         )
         .setParameters({
-          overwritten: ApplicationStatus.Overwritten,
+          edited: ApplicationStatus.Edited,
           cancelled: ApplicationStatus.Cancelled,
           modifiedSince,
           modifiedUntil,

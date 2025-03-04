@@ -161,14 +161,14 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       });
   });
 
-  it(`Should not be able to approve application exception when the application has ${ApplicationStatus.Overwritten} and exception is in ${ApplicationExceptionStatus.Pending} status.`, async () => {
+  it(`Should not be able to approve application exception when the application has ${ApplicationStatus.Edited} and exception is in ${ApplicationExceptionStatus.Pending} status.`, async () => {
     // Arrange
     const application = await saveFakeApplicationWithApplicationException(
       appDataSource,
       undefined,
       { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
     );
-    application.applicationStatus = ApplicationStatus.Overwritten;
+    application.applicationStatus = ApplicationStatus.Edited;
     await db.application.save(application);
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Approved,

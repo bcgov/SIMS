@@ -130,7 +130,7 @@ export class AssessmentAESTController extends BaseController {
 
   /**
    * Triggers manual reassessment for an application.
-   * Application cannot be archived or in any of the statuses 'Cancelled', 'Overwritten' or 'Draft' and original assessment must be in completed status.
+   * Application cannot be archived or in any of the statuses 'Cancelled', 'Edited' or 'Draft' and original assessment must be in completed status.
    * @param payload request payload.
    * @param applicationId application id.
    * @returns id of the assessment created.
@@ -142,7 +142,7 @@ export class AssessmentAESTController extends BaseController {
     description:
       `Application original assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment or ` +
       "application cannot have manual reassessment after being archived or " +
-      `application cannot have manual reassessment in any of the statuses: ${ApplicationStatus.Cancelled}, ${ApplicationStatus.Overwritten} or ${ApplicationStatus.Draft}.`,
+      `application cannot have manual reassessment in any of the statuses: ${ApplicationStatus.Cancelled}, ${ApplicationStatus.Edited} or ${ApplicationStatus.Draft}.`,
   })
   async manualReassessment(
     @Body() payload: ManualReassessmentAPIInDTO,
