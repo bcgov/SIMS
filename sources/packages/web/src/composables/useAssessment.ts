@@ -21,16 +21,21 @@ export function useAssessment() {
       case StudentAppealStatus.Approved:
       case ApplicationExceptionStatus.Approved:
       case ApplicationOfferingChangeRequestStatus.Approved:
+      case OfferingStatus.Approved:
         return StatusChipTypes.Success;
       case StudentAppealStatus.Pending:
       case ApplicationExceptionStatus.Pending:
       case ApplicationOfferingChangeRequestStatus.InProgressWithStudent:
       case ApplicationOfferingChangeRequestStatus.InProgressWithSABC:
+      case OfferingStatus.CreationPending:
+      case OfferingStatus.ChangeUnderReview:
         return StatusChipTypes.Warning;
       case StudentAppealStatus.Declined:
       case ApplicationExceptionStatus.Declined:
       case ApplicationOfferingChangeRequestStatus.DeclinedByStudent:
       case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
+      case OfferingStatus.CreationDeclined:
+      case OfferingStatus.ChangeDeclined:
         return StatusChipTypes.Error;
       default:
         return StatusChipTypes.Inactive;
