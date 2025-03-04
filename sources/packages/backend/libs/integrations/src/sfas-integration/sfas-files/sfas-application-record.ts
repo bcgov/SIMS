@@ -263,12 +263,12 @@ export class SFASApplicationRecord extends SFASRecordIdentification {
    * Reason for withdrawal (bcslwthd.withdrawal_rsn_cde).
    */
   get withdrawalReason(): string {
-    return this.line.substring(311, 315);
+    return this.line.substring(311, 315).trim();
   }
   /**
    * Flag stating if the withdrawal is reversed/canceled.
    */
   get withdrawalActiveFlag(): string {
-    return this.line.substring(315, 316);
+    return this.line.substring(315, 316).trim();
   }
 }

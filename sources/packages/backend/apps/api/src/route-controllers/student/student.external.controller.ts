@@ -20,6 +20,7 @@ import {
   StudentSearchResultAPIOutDTO,
 } from "./models/student-external-search.dto";
 import { StudentExternalControllerService } from "./student.external.controller.service";
+import { SFASApplication } from "@sims/sims-db";
 
 /**
  * Student controller for external client.
@@ -57,7 +58,10 @@ export class StudentExternalController extends BaseController {
       student &&
       this.studentInformationService.getStudentApplications(student.id);
     const sfasIndividualPromise =
-      this.studentInformationService.getSFASIndividualBySIN(payload.sin);
+      this.studentInformationService.getSFASIndividualByEitherStudentOrSIN(
+        payload.sin,
+        student?.id,
+      );
     const [studentApplications, sfasIndividual] = await Promise.all([
       studentApplicationsPromise,
       sfasIndividualPromise,
@@ -72,10 +76,19 @@ export class StudentExternalController extends BaseController {
         student,
         sfasIndividual,
       );
+    let legacyApplications: SFASApplication[];
+    // Get legacy applications from SFAS.
+    if (sfasIndividual) {
+      legacyApplications =
+        await this.studentInformationService.getSFASApplications(
+          sfasIndividual.id,
+        );
+    }
     // Transform application details.
     const applications =
       this.studentExternalControllerService.transformApplicationSearchResult(
         studentApplications,
+        legacyApplications,
       );
 
     return {
