@@ -8,6 +8,7 @@ import * as faker from "faker";
  * - `SFASIndividual` related SFAS individual.
  * @param options SFAS application options.
  * - `initialValues` SFAS application initial values.
+ * - `isMarried` Whether the student is married.
  * @returns persisted SFAS application.
  */
 export function createFakeSFASApplication(

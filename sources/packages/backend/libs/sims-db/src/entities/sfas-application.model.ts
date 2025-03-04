@@ -379,7 +379,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     nullable: true,
   })
   withdrawalActiveFlag?: string;
-
   /**
    * Student application dependants.
    */
@@ -387,12 +386,10 @@ export class SFASApplication extends BaseSFASApplicationModel {
     () => SFASApplicationDependant,
     (dependant) => dependant.application,
     {
-      eager: false,
-      cascade: false,
+      nullable: true,
     },
   )
   dependants?: SFASApplicationDependant[];
-
   /**
    * Student application disbursements.
    */
@@ -400,12 +397,10 @@ export class SFASApplication extends BaseSFASApplicationModel {
     () => SFASApplicationDisbursement,
     (disbursement) => disbursement.application,
     {
-      eager: false,
-      cascade: false,
+      nullable: true,
     },
   )
   disbursements?: SFASApplicationDisbursement[];
-
   /**
    * Institution location.
    */
@@ -413,8 +408,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
     () => InstitutionLocation,
     (institutionLocation) => institutionLocation.institutionCode,
     {
-      eager: false,
-      cascade: false,
       nullable: true,
     },
   )

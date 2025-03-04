@@ -46,20 +46,17 @@ export class StudentExternalControllerService {
     studentApplications?: Application[],
     legacyStudentApplications?: SFASApplication[],
   ): ApplicationDetailsAPIOutDTO[] {
-    const applications: ApplicationDetailsAPIOutDTO[] = [];
-    if (studentApplications?.length) {
-      // Transform application details for search result.
-      for (const application of studentApplications) {
-        applications.push(this.transformApplicationDetails(application));
-      }
-    }
-    if (legacyStudentApplications?.length) {
-      // Transform legacy application details for search result.
-      for (const application of legacyStudentApplications) {
-        applications.push(this.transformLegacyApplicationDetails(application));
-      }
-    }
-    return applications;
+    // Transform application details for search result.
+    const applications =
+      studentApplications?.map((application) =>
+        this.transformApplicationDetails(application),
+      ) ?? [];
+    // Transform legacy application details for search result.
+    const legacyApplications =
+      legacyStudentApplications?.map((application) =>
+        this.transformLegacyApplicationDetails(application),
+      ) ?? [];
+    return applications.concat(legacyApplications);
   }
   /**
    * Transform to student details.
@@ -195,6 +192,7 @@ export class StudentExternalControllerService {
       ),
     };
   }
+
   /**
    * Transform legacy application details.
    * @param application legacy application.
@@ -269,16 +267,16 @@ export class StudentExternalControllerService {
    * @returns legacy total estimated award.
    */
   private getLegacyTotalEstimatedAward(application: SFASApplication): number {
-    return (
-      (application.bslAward ?? 0) +
-      (application.cslAward ?? 0) +
-      (application.bcagAward ?? 0) +
-      (application.bgpdAward ?? 0) +
-      (application.csfgAward ?? 0) +
-      (application.csgtAward ?? 0) +
-      (application.csgdAward ?? 0) +
-      (application.csgpAward ?? 0) +
-      (application.sbsdAward ?? 0)
-    );
+    return [
+      application.bslAward,
+      application.cslAward,
+      application.bcagAward,
+      application.bgpdAward,
+      application.csfgAward,
+      application.csgtAward,
+      application.csgdAward,
+      application.csgpAward,
+      application.sbsdAward,
+    ].reduce((total, award) => total + (award ?? 0), 0);
   }
 }

@@ -22,6 +22,7 @@ import {
   OfferingIntensity,
   ProgramYear,
   RelationshipStatus,
+  SFASApplication,
   SFASIndividual,
   Student,
   StudentAssessmentStatus,
@@ -43,9 +44,9 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let currentProgramYear: ProgramYear;
-  let currentProgramYearId: number;
+  let currentLegacyProgramYearId: number;
   let oldProgramYear: ProgramYear;
-  let oldProgramYearId: number;
+  let oldLegacyProgramYearId: number;
   const endpoint = "/external/student";
   const VALID_SIN = "656173713";
   const searchPayload: StudentSearchAPIInDTO = {
@@ -61,9 +62,12 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
       .createQueryBuilder("py")
       .where("NOW() BETWEEN py.startDate AND py.endDate")
       .getOne();
-    currentProgramYearId = +currentProgramYear.programYear.replace("-", "");
+    currentLegacyProgramYearId = +currentProgramYear.programYear.replace(
+      "-",
+      "",
+    );
     oldProgramYear = await ensureProgramYearExists(db, 2000);
-    oldProgramYearId = +oldProgramYear.programYear.replace("-", "");
+    oldLegacyProgramYearId = +oldProgramYear.programYear.replace("-", "");
   });
 
   beforeEach(async () => {
@@ -358,7 +362,7 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
       // This application is expected to be ignored in the search result.
       await createLegacyStudentApplicationSearchData(individual, {
         institutionCode: location.institutionCode,
-        programYearId: oldProgramYearId,
+        legacyProgramYearId: oldLegacyProgramYearId,
       });
       const [sfasApplicationDisbursement] = sfasApplication.disbursements;
 
@@ -514,6 +518,12 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
         },
       );
       const [sfasApplicationDisbursement] = sfasApplication.disbursements;
+      // Create an application for same individual from old program year.
+      // This application is expected to be ignored in the search result.
+      await createLegacyStudentApplicationSearchData(individual, {
+        institutionCode: location.institutionCode,
+        legacyProgramYearId: oldLegacyProgramYearId,
+      });
 
       const token = await getExternalUserToken();
       const expectedStudentServiceResult: StudentSearchResultAPIOutDTO = {
@@ -698,7 +708,7 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
    * Create legacy application search data.
    * @param individual legacy student.
    * @param options related options.
-   * - `programYearId` program year id.
+   * - `legacyProgramYearId` program year id.
    * - `institutionCode` whether the student is married.
    * - `hasDependants` whether the student has dependants.
    * @returns application search data.
@@ -706,16 +716,17 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
   async function createLegacyStudentApplicationSearchData(
     individual: SFASIndividual,
     options?: {
-      programYearId?: number;
+      legacyProgramYearId?: number;
       institutionCode?: string;
       hasDependants?: boolean;
     },
-  ) {
+  ): Promise<SFASApplication> {
     const sfasApplication = createFakeSFASApplication(
       { individual },
       {
         initialValues: {
-          programYearId: options?.programYearId ?? currentProgramYearId,
+          programYearId:
+            options?.legacyProgramYearId ?? currentLegacyProgramYearId,
           grossIncomePreviousYear: 1000,
           bslAward: 100,
           cslAward: 100,
@@ -758,6 +769,7 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
     }
     return sfasApplication;
   }
+
   afterAll(async () => {
     await app?.close();
   });
