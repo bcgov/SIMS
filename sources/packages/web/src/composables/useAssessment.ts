@@ -56,6 +56,8 @@ export function useAssessment() {
       case ApplicationOfferingChangeRequestStatus.DeclinedByStudent:
       case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
         return StatusChipLabelTypes.Declined;
+      case ApplicationOfferingChangeRequestStatus.ChangeAwaitingApproval:
+        return ApplicationOfferingChangeRequestStatus.ChangeAwaitingApproval;
       default:
         return "";
     }
