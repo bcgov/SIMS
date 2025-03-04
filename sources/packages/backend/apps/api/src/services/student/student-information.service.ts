@@ -8,12 +8,10 @@ import {
   StudentScholasticStandingChangeType,
   Application,
   OfferingIntensity,
-  mapFromRawAndEntities,
   SFASApplication,
 } from "@sims/sims-db";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ApplicationDetail } from "../../services";
 
 const MAX_PAST_PROGRAM_YEARS_INCLUDING_CURRENT = 3;
 @Injectable()
@@ -55,9 +53,7 @@ export class StudentInformationService {
    * @param studentId student id.
    * @returns applications.
    */
-  async getStudentApplications(
-    studentId: number,
-  ): Promise<ApplicationDetail[]> {
+  async getStudentApplications(studentId: number): Promise<Application[]> {
     // Get the SQL to get last 3 active program years including the current program year.
     const programYearQuery = this.programYearRepo
       .createQueryBuilder("programYear")
@@ -68,13 +64,14 @@ export class StudentInformationService {
       .limit(MAX_PAST_PROGRAM_YEARS_INCLUDING_CURRENT)
       .getSql();
 
-    const queryResult = await this.applicationRepo
+    return this.applicationRepo
       .createQueryBuilder("searchApplication")
       .select([
         "searchApplication.id",
         "searchApplication.applicationNumber",
         "searchApplication.applicationStatus",
         "searchApplication.applicationStatusUpdatedOn",
+        "searchApplication.data",
         "currentAssessment.id",
         "currentAssessment.workflowData",
         "currentAssessment.assessmentData",
@@ -98,7 +95,6 @@ export class StudentInformationService {
         "disbursementValue.valueAmount",
         "disbursementValue.effectiveAmount",
       ])
-      .addSelect("searchApplication.data ->> 'dependants'", "dependants")
       .innerJoin("searchApplication.student", "searchStudent")
       .innerJoin("searchApplication.location", "location")
       .innerJoin("searchApplication.currentAssessment", "currentAssessment")
@@ -128,9 +124,7 @@ export class StudentInformationService {
         withdrawal:
           StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
       })
-      .getRawAndEntities();
-
-    return mapFromRawAndEntities<Application>(queryResult, "dependants");
+      .getMany();
   }
 
   /**

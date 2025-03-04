@@ -14,6 +14,7 @@ export function createFakeSFASApplication(
   relations: { individual: SFASIndividual },
   options?: {
     initialValues?: Partial<SFASApplication>;
+    isMarried?: boolean;
   },
 ): SFASApplication {
   const sfasApplication = new SFASApplication();
@@ -21,6 +22,7 @@ export function createFakeSFASApplication(
     min: 100000000,
     max: 999999999,
   });
+  sfasApplication.programYearId = options?.initialValues?.programYearId;
   sfasApplication.startDate =
     options?.initialValues.startDate ??
     getISODateOnlyString(faker.date.past(18));
@@ -41,5 +43,59 @@ export function createFakeSFASApplication(
   sfasApplication.extractedAt = faker.date.past(18);
   sfasApplication.applicationCancelDate =
     options?.initialValues?.applicationCancelDate ?? null;
+  sfasApplication.applicationNumber =
+    options?.initialValues?.applicationNumber ??
+    faker.datatype.number({
+      max: 9999999999,
+      min: 1000000000,
+    });
+  sfasApplication.applicationStatusCode =
+    options?.initialValues?.applicationStatusCode ??
+    faker.random.alpha({ count: 4, upcase: true });
+  sfasApplication.withdrawalDate = options?.initialValues?.withdrawalDate;
+  sfasApplication.withdrawalReason = options?.initialValues?.withdrawalReason;
+  sfasApplication.withdrawalActiveFlag =
+    options?.initialValues?.withdrawalActiveFlag;
+  sfasApplication.bcResidencyFlag =
+    options?.initialValues?.bcResidencyFlag ?? "Y";
+  sfasApplication.permanentResidencyFlag =
+    options?.initialValues?.permanentResidencyFlag ?? "Y";
+  sfasApplication.maritalStatus = options?.initialValues?.maritalStatus ?? "SI";
+  sfasApplication.marriageDate = options?.initialValues?.marriageDate;
+  sfasApplication.grossIncomePreviousYear =
+    options?.initialValues?.grossIncomePreviousYear;
+  sfasApplication.livingArrangements =
+    options?.initialValues?.livingArrangements ?? "N";
+  sfasApplication.institutionCode = options?.initialValues?.institutionCode;
+  sfasApplication.assessedCostsTuition =
+    options?.initialValues?.assessedCostsTuition;
+  sfasApplication.assessedCostsBooksAndSupplies =
+    options?.initialValues?.assessedCostsBooksAndSupplies;
+  sfasApplication.assessedCostsExceptionalExpenses =
+    options?.initialValues?.assessedCostsExceptionalExpenses;
+  sfasApplication.assessedCostsLivingAllowance =
+    options?.initialValues?.assessedCostsLivingAllowance;
+  sfasApplication.assessedCostsChildCare =
+    options?.initialValues?.assessedCostsChildCare;
+  sfasApplication.assessedCostsExtraShelter =
+    options?.initialValues?.assessedCostsExtraShelter;
+  sfasApplication.assessedCostsAlimony =
+    options?.initialValues?.assessedCostsAlimony;
+  sfasApplication.assessedCostsLocalTransport =
+    options?.initialValues?.assessedCostsLocalTransport;
+  sfasApplication.assessedCostsReturnTransport =
+    options?.initialValues?.assessedCostsReturnTransport;
+  sfasApplication.assessedEligibleNeed =
+    options?.initialValues?.assessedEligibleNeed;
+  sfasApplication.educationPeriodWeeks =
+    options?.initialValues?.educationPeriodWeeks;
+  sfasApplication.courseLoad = options?.initialValues?.courseLoad ?? 100;
+  if (options?.isMarried) {
+    sfasApplication.maritalStatus =
+      options?.initialValues?.maritalStatus ?? "MA";
+    sfasApplication.marriageDate =
+      options?.initialValues?.marriageDate ??
+      getISODateOnlyString(faker.date.past(18));
+  }
   return sfasApplication;
 }

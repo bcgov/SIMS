@@ -6,6 +6,7 @@ import {
   FullTimeAssessment,
   DisbursementScheduleStatus,
   SFASApplication,
+  Application,
 } from "@sims/sims-db";
 import {
   ApplicationDetailsAPIOutDTO,
@@ -15,7 +16,6 @@ import {
   getISODateOnlyString,
   getTotalDisbursementAmountFromSchedules,
 } from "@sims/utilities";
-import { ApplicationDetail } from "../../services";
 
 @Injectable()
 export class StudentExternalControllerService {
@@ -43,7 +43,7 @@ export class StudentExternalControllerService {
    * @returns student application search result.
    */
   transformApplicationSearchResult(
-    studentApplications?: ApplicationDetail[],
+    studentApplications?: Application[],
     legacyStudentApplications?: SFASApplication[],
   ): ApplicationDetailsAPIOutDTO[] {
     const applications: ApplicationDetailsAPIOutDTO[] = [];
@@ -117,7 +117,7 @@ export class StudentExternalControllerService {
    * @returns application details.
    */
   private transformApplicationDetails(
-    application: ApplicationDetail,
+    application: Application,
   ): ApplicationDetailsAPIOutDTO {
     const assessment = application.currentAssessment;
     const scholasticStanding = assessment.studentScholasticStanding;
@@ -148,7 +148,7 @@ export class StudentExternalControllerService {
       estimatedTotalAward: getTotalDisbursementAmountFromSchedules(
         assessment.disbursementSchedules,
       ),
-      dependants: application.dependants?.map(
+      dependants: application.data?.dependants?.map(
         (dependant: { fullName: string; dateOfBirth: string }) => ({
           fullName: dependant.fullName,
           birthDate: dependant.dateOfBirth,
