@@ -51,6 +51,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         .limitAwardCSGDIncomeCap,
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(1260);
+    expect(calculatedAssessment.variables.federalAwardMaxCSGDAmount).toBe(1260);
   });
 
   it("Should determine federalAwardCSGDAmount for 3 or more dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
