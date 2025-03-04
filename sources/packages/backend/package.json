@@ -12,7 +12,6 @@
     "start": "nest start",
     "start:dev": "npm run migration:run && nest start --watch --preserveWatchOutput",
     "start:debug": "cross-env DEBUG=true nest start --debug --watch --preserveWatchOutput",
-    "start:prod:db-migrations": "npm run migration:run",
     "start:prod:api": "node --enable-source-maps --max-old-space-size=250 dist/apps/api/main.js",
     "docker:start:api": "node --enable-source-maps --max-old-space-size=250 dist/apps/api/main.js",
     "start:prod:workers": "node --enable-source-maps --max-old-space-size=250 dist/apps/workers/main.js",
@@ -33,9 +32,12 @@
     "test:e2e:workflow:local": "cross-env ENVIRONMENT=test TZ=UTC jest --verbose --config ./workflow/test/jest-e2e.json --forceExit",
     "test:e2e:queue-consumers": "npm run db:seed:test filter=CreateCASDistributionAccounts && cross-env ENVIRONMENT=test jest --collect-coverage --verbose --config ./apps/queue-consumers/test/jest-e2e.json --runInBand --forceExit",
     "test:e2e:queue-consumers:local": "cross-env ENVIRONMENT=test TZ=UTC jest --verbose --config ./apps/queue-consumers/test/jest-e2e.json --runInBand --forceExit",
-    "migration:run": "node --abort-on-uncaught-exception --require ts-node/register apps/db-migrations/src/main.ts",
+    "migration": "ts-node -r tsconfig-paths/register --transpile-only apps/db-migrations/src/main.ts",
+    "migration:run": "npm run migration run",
+    "migration:list": "npm run migration list",
+    "migration:revert": "npm run migration revert",
+    "migration:repl": "npm run migration repl",
     "migration:create": "cd apps/db-migrations/src/migrations && npx typeorm-ts-node-commonjs migration:create",
-    "migration:revert": "npx typeorm-ts-node-commonjs migration:revert -d apps/db-migrations/src/data-source.ts",
     "db:seed:test": "npm run build test-db-seeding && npm run migration:run && node dist/apps/test-db-seeding/main.js",
     "//db:seed:test:clean": "Drops the database and all its data. Be careful with this command on production since this command will erase all your database tables and their data.",
     "db:seed:test:clean": "npm run build test-db-seeding && node dist/apps/test-db-seeding/main.js task=clean-db",
@@ -131,8 +133,8 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.1",
     "ts-loader": "^9.3.1",
-    "ts-node": "^10.9.1",
-    "tsconfig-paths": "^3.9.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^4.5.5"
   }
 }
