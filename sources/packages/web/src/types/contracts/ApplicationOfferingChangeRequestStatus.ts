@@ -27,4 +27,9 @@ export enum ApplicationOfferingChangeRequestStatus {
    * specific offering change request.
    */
   DeclinedBySABC = "Declined by SABC",
+  /**
+   * The status is set when the institution requests a change for the
+   * education program offering for the student's application.
+   */
+  ChangeAwaitingApproval = "Change awaiting approval",
 }
