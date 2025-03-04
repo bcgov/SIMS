@@ -64,67 +64,74 @@ export class StudentInformationService {
       .limit(MAX_PAST_PROGRAM_YEARS_INCLUDING_CURRENT)
       .getSql();
 
-    return this.applicationRepo
-      .createQueryBuilder("searchApplication")
-      .select([
-        "searchApplication.id",
-        "searchApplication.applicationNumber",
-        "searchApplication.applicationStatus",
-        "searchApplication.applicationStatusUpdatedOn",
-        "searchApplication.data",
-        "currentAssessment.id",
-        "currentAssessment.workflowData",
-        "currentAssessment.assessmentData",
-        "scholasticStanding.id",
-        "scholasticStanding.changeType",
-        "scholasticStanding.submittedData",
-        "offering.id",
-        "offering.studyBreaks",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "location.id",
-        "location.institutionCode",
-        "location.name",
-        "location.primaryContact",
-        "disbursementSchedule.id",
-        "disbursementSchedule.disbursementDate",
-        "disbursementSchedule.dateSent",
-        "disbursementSchedule.disbursementScheduleStatus",
-        "disbursementValue.id",
-        "disbursementValue.valueCode",
-        "disbursementValue.valueAmount",
-        "disbursementValue.effectiveAmount",
-      ])
-      .innerJoin("searchApplication.student", "searchStudent")
-      .innerJoin("searchApplication.location", "location")
-      .innerJoin("searchApplication.currentAssessment", "currentAssessment")
-      .leftJoin(
-        "currentAssessment.studentScholasticStanding",
-        "scholasticStanding",
-        "scholasticStanding.changeType = :withdrawal",
-      )
-      .innerJoin("currentAssessment.offering", "offering")
-      .innerJoin(
-        "currentAssessment.disbursementSchedules",
-        "disbursementSchedule",
-      )
-      .leftJoin("disbursementSchedule.disbursementValues", "disbursementValue")
-      .where("searchStudent.id = :studentId")
-      .andWhere("searchApplication.applicationStatus != :overwritten")
-      .andWhere(`searchApplication.programYear.id IN (${programYearQuery})`)
-      .andWhere(
-        "currentAssessment.studentAssessmentStatus = :assessmentStatusCompleted",
-      )
-      .andWhere("offering.offeringIntensity = :fullTime")
-      .setParameters({
-        studentId,
-        overwritten: ApplicationStatus.Overwritten,
-        assessmentStatusCompleted: StudentAssessmentStatus.Completed,
-        fullTime: OfferingIntensity.fullTime,
-        withdrawal:
-          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-      })
-      .getMany();
+    return (
+      this.applicationRepo
+        .createQueryBuilder("searchApplication")
+        .select([
+          "searchApplication.id",
+          "searchApplication.applicationNumber",
+          "searchApplication.applicationStatus",
+          "searchApplication.applicationStatusUpdatedOn",
+          "searchApplication.data",
+          "currentAssessment.id",
+          "currentAssessment.workflowData",
+          "currentAssessment.assessmentData",
+          "scholasticStanding.id",
+          "scholasticStanding.changeType",
+          "scholasticStanding.submittedData",
+          "offering.id",
+          "offering.studyBreaks",
+          "offering.studyStartDate",
+          "offering.studyEndDate",
+          "location.id",
+          "location.institutionCode",
+          "location.name",
+          "location.primaryContact",
+          "disbursementSchedule.id",
+          "disbursementSchedule.disbursementDate",
+          "disbursementSchedule.dateSent",
+          "disbursementSchedule.disbursementScheduleStatus",
+          "disbursementValue.id",
+          "disbursementValue.valueCode",
+          "disbursementValue.valueAmount",
+          "disbursementValue.effectiveAmount",
+        ])
+        .innerJoin("searchApplication.student", "searchStudent")
+        .innerJoin("searchApplication.location", "location")
+        .innerJoin("searchApplication.currentAssessment", "currentAssessment")
+        .leftJoin(
+          "currentAssessment.studentScholasticStanding",
+          "scholasticStanding",
+          "scholasticStanding.changeType = :withdrawal",
+        )
+        .innerJoin("currentAssessment.offering", "offering")
+        .innerJoin(
+          "currentAssessment.disbursementSchedules",
+          "disbursementSchedule",
+        )
+        .leftJoin(
+          "disbursementSchedule.disbursementValues",
+          "disbursementValue",
+        )
+        .where("searchStudent.id = :studentId")
+        .andWhere("searchApplication.applicationStatus != :overwritten")
+        .andWhere(`searchApplication.programYear.id IN (${programYearQuery})`)
+        .andWhere(
+          "currentAssessment.studentAssessmentStatus = :assessmentStatusCompleted",
+        )
+        .andWhere("offering.offeringIntensity = :fullTime")
+        .setParameters({
+          studentId,
+          overwritten: ApplicationStatus.Overwritten,
+          assessmentStatusCompleted: StudentAssessmentStatus.Completed,
+          fullTime: OfferingIntensity.fullTime,
+          withdrawal:
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+        })
+        // Ensuring data is sorted in some way. Not a business requirement.
+        .orderBy("searchApplication.id")
+        .getMany()
+    );
   }
 
   /**
@@ -160,12 +167,13 @@ export class StudentInformationService {
       sfasIndividualQuery.orWhere("legacyStudent.student.id = :studentId", {
         studentId,
       });
+      sfasIndividualQuery
+        .orderBy("legacyStudent.student.id", "DESC", "NULLS LAST")
+        .addOrderBy("legacyStudent.id", "DESC");
+    } else {
+      sfasIndividualQuery.orderBy("legacyStudent.id", "DESC");
     }
-    return sfasIndividualQuery
-      .orderBy("legacyStudent.student.id", "DESC", "NULLS LAST")
-      .addOrderBy("legacyStudent.id", "DESC")
-      .limit(1)
-      .getOne();
+    return sfasIndividualQuery.limit(1).getOne();
   }
 
   /**
@@ -189,71 +197,75 @@ export class StudentInformationService {
       .limit(MAX_PAST_PROGRAM_YEARS_INCLUDING_CURRENT)
       .getSql();
 
-    return this.sfasApplicationRepo
-      .createQueryBuilder("legacyApplication")
-      .select([
-        "legacyApplication.id",
-        "legacyApplication.startDate",
-        "legacyApplication.endDate",
-        "legacyApplication.educationPeriodWeeks",
-        "legacyApplication.courseLoad",
-        "legacyApplication.applicationNumber",
-        "legacyApplication.applicationStatusCode",
-        "legacyApplication.applicationCancelDate",
-        "legacyApplication.withdrawalDate",
-        "legacyApplication.withdrawalReason",
-        "legacyApplication.withdrawalActiveFlag",
-        "legacyApplication.bcResidencyFlag",
-        "legacyApplication.permanentResidencyFlag",
-        "legacyApplication.maritalStatus",
-        "legacyApplication.marriageDate",
-        "legacyApplication.grossIncomePreviousYear",
-        "legacyApplication.livingArrangements",
-        "legacyApplication.bslAward",
-        "legacyApplication.cslAward",
-        "legacyApplication.bcagAward",
-        "legacyApplication.bgpdAward",
-        "legacyApplication.csfgAward",
-        "legacyApplication.csgtAward",
-        "legacyApplication.csgdAward",
-        "legacyApplication.csgpAward",
-        "legacyApplication.sbsdAward",
-        "legacyApplication.assessedCostsTuition",
-        "legacyApplication.assessedCostsBooksAndSupplies",
-        "legacyApplication.assessedCostsExceptionalExpenses",
-        "legacyApplication.assessedCostsLivingAllowance",
-        "legacyApplication.assessedCostsExtraShelter",
-        "legacyApplication.assessedCostsChildCare",
-        "legacyApplication.assessedCostsAlimony",
-        "legacyApplication.assessedCostsLocalTransport",
-        "legacyApplication.assessedCostsReturnTransport",
-        "legacyApplication.assessedEligibleNeed",
-        "legacyApplication.institutionCode",
-        "dependant.id",
-        "dependant.dependantName",
-        "dependant.dependantBirthDate",
-        "disbursement.id",
-        "disbursement.fundingType",
-        "disbursement.fundingAmount",
-        "disbursement.fundingDate",
-        "disbursement.dateIssued",
-        "location.id",
-        "location.name",
-        "location.primaryContact",
-      ])
-      .leftJoin("legacyApplication.dependants", "dependant")
-      .leftJoin("legacyApplication.disbursements", "disbursement")
-      .leftJoin(
-        "legacyApplication.institutionLocation",
-        "location",
-        "location.institutionCode IS NOT NULL",
-      )
-      .where("legacyApplication.individual.id = :sfasIndividualId", {
-        sfasIndividualId,
-      })
-      .andWhere(
-        `legacyApplication.programYearId IN (${legacyProgramYearQuery})`,
-      )
-      .getMany();
+    return (
+      this.sfasApplicationRepo
+        .createQueryBuilder("legacyApplication")
+        .select([
+          "legacyApplication.id",
+          "legacyApplication.startDate",
+          "legacyApplication.endDate",
+          "legacyApplication.educationPeriodWeeks",
+          "legacyApplication.courseLoad",
+          "legacyApplication.applicationNumber",
+          "legacyApplication.applicationStatusCode",
+          "legacyApplication.applicationCancelDate",
+          "legacyApplication.withdrawalDate",
+          "legacyApplication.withdrawalReason",
+          "legacyApplication.withdrawalActiveFlag",
+          "legacyApplication.bcResidencyFlag",
+          "legacyApplication.permanentResidencyFlag",
+          "legacyApplication.maritalStatus",
+          "legacyApplication.marriageDate",
+          "legacyApplication.grossIncomePreviousYear",
+          "legacyApplication.livingArrangements",
+          "legacyApplication.bslAward",
+          "legacyApplication.cslAward",
+          "legacyApplication.bcagAward",
+          "legacyApplication.bgpdAward",
+          "legacyApplication.csfgAward",
+          "legacyApplication.csgtAward",
+          "legacyApplication.csgdAward",
+          "legacyApplication.csgpAward",
+          "legacyApplication.sbsdAward",
+          "legacyApplication.assessedCostsTuition",
+          "legacyApplication.assessedCostsBooksAndSupplies",
+          "legacyApplication.assessedCostsExceptionalExpenses",
+          "legacyApplication.assessedCostsLivingAllowance",
+          "legacyApplication.assessedCostsExtraShelter",
+          "legacyApplication.assessedCostsChildCare",
+          "legacyApplication.assessedCostsAlimony",
+          "legacyApplication.assessedCostsLocalTransport",
+          "legacyApplication.assessedCostsReturnTransport",
+          "legacyApplication.assessedEligibleNeed",
+          "legacyApplication.institutionCode",
+          "dependant.id",
+          "dependant.dependantName",
+          "dependant.dependantBirthDate",
+          "disbursement.id",
+          "disbursement.fundingType",
+          "disbursement.fundingAmount",
+          "disbursement.fundingDate",
+          "disbursement.dateIssued",
+          "location.id",
+          "location.name",
+          "location.primaryContact",
+        ])
+        .leftJoin("legacyApplication.dependants", "dependant")
+        .leftJoin("legacyApplication.disbursements", "disbursement")
+        .leftJoin(
+          "legacyApplication.institutionLocation",
+          "location",
+          "location.institutionCode IS NOT NULL",
+        )
+        .where("legacyApplication.individual.id = :sfasIndividualId", {
+          sfasIndividualId,
+        })
+        .andWhere(
+          `legacyApplication.programYearId IN (${legacyProgramYearQuery})`,
+        )
+        // Ensuring data is sorted in some way. Not a business requirement.
+        .orderBy("legacyApplication.id")
+        .getMany()
+    );
   }
 }

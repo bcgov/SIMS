@@ -695,7 +695,7 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
   }
 
   /**
-   * Create legacy student and application search data.
+   * Create legacy application search data.
    * @param individual legacy student.
    * @param options related options.
    * - `programYearId` program year id.
