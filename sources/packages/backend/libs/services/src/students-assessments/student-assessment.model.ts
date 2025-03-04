@@ -20,3 +20,11 @@ export enum FullTimeStudentContributionType {
   FederalFSC = "FederalFSC",
   ProvincialFSC = "ProvincialFSC",
 }
+
+/**
+ * Full-time program year student costs for calculating program year totals.
+ */
+export enum FullTimeStudentCostType {
+  FullTimeBooks = "FullTimeBooks",
+  ReturnTransportation = "ReturnTransportation",
+}

@@ -207,7 +207,6 @@ dmnFullTimeIncomeThreshold</bpmn:text>
         <bpmn:flowNodeRef>Event_1b81z89</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0a9extn</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_00c1iyh</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_02st413</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1n57xgo</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0bsza7c</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0rpww4j</bpmn:flowNodeRef>
@@ -615,7 +614,6 @@ dmnFullTimeIncomeThreshold</bpmn:text>
     <bpmn:sequenceFlow id="Flow_0ixsnmb" sourceRef="Event_1bl5l5x" targetRef="Gateway_0qwoqqh" />
     <bpmn:sequenceFlow id="Flow_0l4ido8" sourceRef="Event_0bk5jrr" targetRef="Event_1n57xgo" />
     <bpmn:sequenceFlow id="Flow_0mhxp8e" sourceRef="Event_0s8ztj5" targetRef="Event_1ms14ig" />
-    <bpmn:sequenceFlow id="Flow_0n7won7" sourceRef="Event_02st413" targetRef="Event_0a9extn" />
     <bpmn:sequenceFlow id="Flow_0ofu270" sourceRef="Event_1ck4wni" targetRef="Event_1y105g5" />
     <bpmn:sequenceFlow id="Flow_0ovh763" sourceRef="Event_1v0z5f4" targetRef="Event_1kdusuh" />
     <bpmn:sequenceFlow id="Flow_0riboyg" sourceRef="Event_0jry7fc" targetRef="Event_0g1lnyo" />
@@ -671,8 +669,8 @@ dmnFullTimeIncomeThreshold</bpmn:text>
     <bpmn:sequenceFlow id="Flow_1ekiozl" name="married / common-law" sourceRef="Gateway_0um3yvb" targetRef="Gateway_0zmvhsj">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1fbmivh" name="no" sourceRef="Gateway_0zmvhsj" targetRef="Event_02st413">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = FALSE</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_1fbmivh" name="no" sourceRef="Gateway_0zmvhsj" targetRef="Event_0a9extn">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = false</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0g6wvij" name="no" sourceRef="Gateway_13qzd4v" targetRef="Event_0jry7fc">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParentValidSinNumber = "no"</bpmn:conditionExpression>
@@ -808,26 +806,17 @@ dmnFullTimeIncomeThreshold</bpmn:text>
           <zeebe:output source="=if studentDataPartnerStudyWeeks = null then 0 else studentDataPartnerStudyWeeks" target="calculatedDataPartnerStudyWeeks" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0n7won7</bpmn:incoming>
+      <bpmn:incoming>Flow_1fbmivh</bpmn:incoming>
       <bpmn:outgoing>Flow_10kp7wy</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_00c1iyh" name="Partner Income">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataPartner1TotalIncome" target="calculatedDataPartner1TotalIncome" />
+          <zeebe:output source="=partner1TotalIncome" target="calculatedDataPartner1TotalIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_08mnfio</bpmn:incoming>
       <bpmn:outgoing>Flow_1d1sl5k</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_02st413" name="Partner Income">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=studentDataEstimatedSpouseIncome" target="calculatedDataPartner1TotalIncome" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1fbmivh</bpmn:incoming>
-      <bpmn:outgoing>Flow_0n7won7</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_1n57xgo" name="Partner Social Assistance">
       <bpmn:extensionElements>
@@ -975,7 +964,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
       <bpmn:outgoing>Flow_1li9w29</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_08mnfio" name="yes" sourceRef="Gateway_0zmvhsj" targetRef="Event_00c1iyh">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = TRUE</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0y2zl5a" name="yes" sourceRef="Gateway_13qzd4v" targetRef="Gateway_1hun062">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParentValidSinNumber = "yes"</bpmn:conditionExpression>
@@ -2046,9 +2035,8 @@ There is an application limit based on offering weeks and a total program year l
     <bpmn:intermediateThrowEvent id="Event_0rfsu30" name="PY Return Transportation">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=0" target="programYearTotalReturnTransportation" />
           <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearReturnTransportation - programYearTotalReturnTransportation)" target="calculatedDataRemainingReturnTransportation" />
-          <zeebe:output source="=if offeringDelivered = &#34;onsite&#34;&#10;then&#10;min(dmnFullTimeApplicationReturnTransportation,calculatedDataRemainingReturnTransportation)&#10;else &#10;  0" target="calculatedDataReturnTransportationCost" />
+          <zeebe:output source="=if offeringDelivered = &#34;onsite&#34;&#10;then&#10;min(dmnFullTimeApplicationReturnTransportation, calculatedDataRemainingReturnTransportation)&#10;else &#10;  0" target="calculatedDataReturnTransportationCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_03tcdoz</bpmn:incoming>
@@ -2191,7 +2179,6 @@ There is an application limit based on offering weeks and a total program year l
 The remaining limit in the program year is calculated with a floor of 0.</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=0" target="programYearTotalFullTimeBooks" />
           <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearBooks-programYearTotalFullTimeBooks)" target="calculatedDataRemainingBookLimit" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -2519,12 +2506,6 @@ There is also a per application limit based on the number of weeks in the offeri
         <dc:Bounds x="1082" y="685" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1063" y="728" width="76" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_02st413_di" bpmnElement="Event_02st413">
-        <dc:Bounds x="1082" y="782" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1063" y="825" width="76" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1n57xgo_di" bpmnElement="Event_1n57xgo">
@@ -3370,10 +3351,6 @@ There is also a per application limit based on the number of weeks in the offeri
         <di:waypoint x="1878" y="620" />
         <di:waypoint x="1932" y="620" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0n7won7_di" bpmnElement="Flow_0n7won7">
-        <di:waypoint x="1118" y="800" />
-        <di:waypoint x="1182" y="800" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ofu270_di" bpmnElement="Flow_0ofu270">
         <di:waypoint x="1658" y="430" />
         <di:waypoint x="1732" y="430" />
@@ -3514,9 +3491,9 @@ There is also a per application limit based on the number of weeks in the offeri
       <bpmndi:BPMNEdge id="Flow_1fbmivh_di" bpmnElement="Flow_1fbmivh">
         <di:waypoint x="1000" y="728" />
         <di:waypoint x="1000" y="800" />
-        <di:waypoint x="1082" y="800" />
+        <di:waypoint x="1182" y="800" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1003" y="723" width="13" height="14" />
+          <dc:Bounds x="1010" y="813" width="13" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0g6wvij_di" bpmnElement="Flow_0g6wvij">

@@ -1091,7 +1091,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     });
   });
 
-  it("Should sum the contributions from past applications with full-time offering intensities when the applications are for the same student and program year and the student submits a full-time application.", async () => {
+  it("Should sum the contributions and costs from past applications with full-time offering intensities when the applications are for the same student and program year and the student submits a full-time application.", async () => {
     // Arrange
 
     // Create the student and program year to be shared across the applications.
@@ -1125,6 +1125,8 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
               exemptScholarshipsBursaries: 2000,
               totalFederalFSC: 3000,
               totalProvincialFSC: 4000,
+              returnTransportationCost: 500,
+              fullTimeBooksCost: 600,
             },
           } as WorkflowData,
         },
@@ -1156,6 +1158,8 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
               exemptScholarshipsBursaries: 2000,
               totalFederalFSC: 3000,
               totalProvincialFSC: 4000,
+              returnTransportationCost: 500,
+              fullTimeBooksCost: 600,
             },
           } as WorkflowData,
         },
@@ -1207,6 +1211,8 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       programYearTotalProvincialFSC: 8000,
       programYearTotalScholarshipsBursaries: 4000,
       programYearTotalSpouseContributionWeeks: 2000,
+      programYearTotalReturnTransportation: 1000,
+      programYearTotalFullTimeBooks: 1200,
     });
   });
 });

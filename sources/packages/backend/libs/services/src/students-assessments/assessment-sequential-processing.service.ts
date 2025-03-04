@@ -19,6 +19,7 @@ import {
 import {
   AwardTotal,
   ProgramYearContributionTotal,
+  ProgramYearCostTotal,
   ProgramYearTotal,
   SequencedApplications,
   SequentialApplication,
@@ -27,6 +28,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { getISODateOnlyString } from "@sims/utilities";
 import {
   FullTimeStudentContributionType,
+  FullTimeStudentCostType,
   StudentAssessmentDetail,
 } from "./student-assessment.model";
 
@@ -164,24 +166,25 @@ export class AssessmentSequentialProcessingService {
     const applicationNumbers = sequencedApplications.previous.map(
       (application) => application.applicationNumber,
     );
-    // Only get the full-time contribution totals if the offering intensity is full-time.
-    const shouldGetProgramYearContributionTotals =
+    // Only get the full-time costs and contribution totals if the offering intensity is full-time.
+    const shouldGetProgramYearCostsContributionTotals =
       OfferingIntensity.fullTime === offeringIntensity &&
       !!applicationNumbers?.length;
-    const [awardTotals, contributionTotals] = await Promise.all([
+    const [awardTotals, costsAndContributionTotals] = await Promise.all([
       // Get the program year awards totals for part-time and full-time.
       this.getProgramYearPreviousAwardsTotals(
         sequencedApplications,
         currentAssessment,
         options,
       ),
-      shouldGetProgramYearContributionTotals
-        ? this.getProgramYearContributionTotals(applicationNumbers)
+      shouldGetProgramYearCostsContributionTotals
+        ? this.getProgramYearCostsAndContributionTotals(applicationNumbers)
         : null,
     ]);
     return {
       awardTotals,
-      contributionTotals,
+      contributionTotals: costsAndContributionTotals.contributions,
+      costTotals: costsAndContributionTotals.costs,
     };
   }
 
@@ -309,9 +312,12 @@ export class AssessmentSequentialProcessingService {
    * @param applicationNumbers application numbers.
    * @returns full-time program year contribution totals.
    */
-  private async getProgramYearContributionTotals(
+  private async getProgramYearCostsAndContributionTotals(
     applicationNumbers: string[],
-  ): Promise<ProgramYearContributionTotal[]> {
+  ): Promise<{
+    contributions: ProgramYearContributionTotal[];
+    costs: ProgramYearCostTotal[];
+  }> {
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
       .select(
@@ -330,6 +336,14 @@ export class AssessmentSequentialProcessingService {
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContributionWeeks')::NUMERIC)",
         FullTimeStudentContributionType.SpouseContributionWeeks,
       )
+      .addSelect(
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'fullTimeBooksCost')::NUMERIC)",
+        FullTimeStudentCostType.FullTimeBooks,
+      )
+      .addSelect(
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'returnTransportationCost')::NUMERIC)",
+        FullTimeStudentCostType.ReturnTransportation,
+      )
       .innerJoin("application.currentAssessment", "currentAssessment")
       .where("application.applicationNumber IN (:...applicationNumbers)", {
         applicationNumbers,
@@ -337,7 +351,7 @@ export class AssessmentSequentialProcessingService {
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.Overwritten,
       })
-      // Check for assessment completed status to avoid retrieving any cancelation status.
+      // Check for assessment completed status to avoid retrieving any cancellation status.
       .andWhere(
         "currentAssessment.studentAssessmentStatus = :completedStudentAssessmentStatus",
         {
@@ -349,12 +363,25 @@ export class AssessmentSequentialProcessingService {
         [FullTimeStudentContributionType.ProvincialFSC]: string;
         [FullTimeStudentContributionType.ScholarshipsBursaries]: string;
         [FullTimeStudentContributionType.SpouseContributionWeeks]: string;
+        [FullTimeStudentCostType.FullTimeBooks]: string;
+        [FullTimeStudentCostType.ReturnTransportation]: string;
       }>();
 
-    return Object.keys(FullTimeStudentContributionType).map((key) => ({
-      contribution: key as FullTimeStudentContributionType,
+    const contributions = Object.keys(FullTimeStudentContributionType).map(
+      (key) => ({
+        contribution: key as FullTimeStudentContributionType,
+        total: +totals[key] || 0,
+      }),
+    );
+    const costs = Object.keys(FullTimeStudentCostType).map((key) => ({
+      cost: key as FullTimeStudentCostType,
       total: +totals[key] || 0,
     }));
+
+    return {
+      contributions,
+      costs,
+    };
   }
 
   /**

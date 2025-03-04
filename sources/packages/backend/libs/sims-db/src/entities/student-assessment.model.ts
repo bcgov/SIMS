@@ -386,6 +386,8 @@ export interface WorkflowData {
     totalProvincialFSC?: number;
     exemptScholarshipsBursaries?: number;
     studentSpouseContributionWeeks?: number;
+    returnTransportationCost?: number;
+    fullTimeBooksCost?: number;
   };
 }
 

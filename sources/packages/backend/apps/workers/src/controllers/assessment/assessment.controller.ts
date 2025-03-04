@@ -466,6 +466,7 @@ export class AssessmentController {
   /**
    * Create a new dynamic output variable for each award and offering intensity for both part-time and full-time.
    * Create a new dynamic output variable for each contribution for full-time.
+   * Create a new dynamic output variable for each cost for full-time.
    * Each variable is prefixed with 'programYearTotal' and then concatenated
    * with the offering intensity as 'FullTime'/'PartTime' and the award code.
    * @example
@@ -495,6 +496,12 @@ export class AssessmentController {
       output[outputName] = output[outputName]
         ? output[outputName] + contributionTotal.total
         : contributionTotal.total;
+    });
+    programYearTotal.costTotals?.forEach((costTotal) => {
+      const outputName = `${PROGRAM_YEAR_TOTAL}${costTotal.cost}`;
+      output[outputName] = output[outputName]
+        ? output[outputName] + costTotal.total
+        : costTotal.total;
     });
   }
 
