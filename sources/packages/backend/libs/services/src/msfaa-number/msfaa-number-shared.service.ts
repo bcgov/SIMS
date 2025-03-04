@@ -328,7 +328,7 @@ export class MSFAANumberSharedService {
     const nowAllowedApplicationStatuses = [
       ApplicationStatus.Draft,
       ApplicationStatus.Cancelled,
-      ApplicationStatus.Overwritten,
+      ApplicationStatus.Edited,
     ];
     if (nowAllowedApplicationStatuses.includes(application.applicationStatus)) {
       throw new CustomNamedError(

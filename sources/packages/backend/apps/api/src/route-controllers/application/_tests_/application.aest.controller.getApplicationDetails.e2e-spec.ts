@@ -117,12 +117,12 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
   });
 
   it(
-    "Should get the student application details when the application status is overwritten and " +
+    "Should get the student application details when the application status is edited and " +
       "the optional query parameter to load dynamic data is not passed.",
     async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource, undefined, {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
       });
 
       await db.application.save(application);
@@ -162,7 +162,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       db.dataSource,
       {},
       {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
         applicationData: {
           studystartDate: "2000-01-01",
           studyendDate: "2000-01-31",

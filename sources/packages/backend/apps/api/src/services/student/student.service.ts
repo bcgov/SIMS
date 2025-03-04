@@ -607,12 +607,9 @@ export class StudentService extends RecordDataModelService<Student> {
       });
     }
     if (institutionId || searchCriteria.appNumber) {
-      searchQuery.andWhere(
-        "application.applicationStatus != :overwrittenStatus",
-        {
-          overwrittenStatus: ApplicationStatus.Overwritten,
-        },
-      );
+      searchQuery.andWhere("application.applicationStatus != :editedStatus", {
+        editedStatus: ApplicationStatus.Edited,
+      });
     }
     if (searchCriteria.sin) {
       searchQuery.andWhere("sinValidation.sin = :sin", {

@@ -24,13 +24,13 @@ describe("ApplicationAESTController(e2e)-getApplicationVersionHistory", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get an array of application versions when there is an overwritten application associated with the given application.", async () => {
+  it("Should get an array of application versions when there is an edited application associated with the given application.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       submittedDate: new Date(),
     });
 
-    const overwrittenApplication = await saveFakeApplication(
+    const editedApplication = await saveFakeApplication(
       db.dataSource,
       {
         institution:
@@ -46,7 +46,7 @@ describe("ApplicationAESTController(e2e)-getApplicationVersionHistory", () => {
         precedingApplication: { id: application.id } as Application,
       },
       {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
         applicationNumber: application.applicationNumber,
         offeringIntensity:
           application.currentAssessment.offering.offeringIntensity,
@@ -65,8 +65,8 @@ describe("ApplicationAESTController(e2e)-getApplicationVersionHistory", () => {
       .expect({
         previousVersions: [
           {
-            id: overwrittenApplication.id,
-            submittedDate: overwrittenApplication.submittedDate.toISOString(),
+            id: editedApplication.id,
+            submittedDate: editedApplication.submittedDate.toISOString(),
           },
         ],
       });

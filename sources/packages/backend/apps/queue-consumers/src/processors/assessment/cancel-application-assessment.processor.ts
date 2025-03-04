@@ -78,12 +78,12 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
     }
 
     if (
-      ![ApplicationStatus.Cancelled, ApplicationStatus.Overwritten].includes(
+      ![ApplicationStatus.Cancelled, ApplicationStatus.Edited].includes(
         assessment.application.applicationStatus,
       )
     ) {
       await job.discard();
-      const errorMessage = `Application must be in the ${ApplicationStatus.Cancelled} or ${ApplicationStatus.Overwritten} state to have the assessment cancelled.`;
+      const errorMessage = `Application must be in the ${ApplicationStatus.Cancelled} or ${ApplicationStatus.Edited} state to have the assessment cancelled.`;
       throw new CustomNamedError(
         errorMessage,
         INVALID_OPERATION_IN_THE_CURRENT_STATUS,
@@ -154,11 +154,10 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
         (disbursement) => disbursement.coeStatus === COEStatus.declined,
       );
       if (
-        assessment.application.applicationStatus !==
-          ApplicationStatus.Overwritten &&
+        assessment.application.applicationStatus !== ApplicationStatus.Edited &&
         !hasDeclinedCOE
       ) {
-        // Overwritten applications do not cause impacts in future application and the checks can be completely skipped.
+        // Edited applications do not cause impacts in future application and the checks can be completely skipped.
         // If a COE of an application is declined, during the process of COE being declined,
         // the impacted application if exist is identified and reassessed.
         // Hence while cancelling an application with a declined COE, it must NOT be assessed for impacted application reassessment again.

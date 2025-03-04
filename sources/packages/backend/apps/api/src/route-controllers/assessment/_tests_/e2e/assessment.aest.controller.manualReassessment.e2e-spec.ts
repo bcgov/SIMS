@@ -142,7 +142,7 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
 
   const unprocessableApplicationStatuses = [
     ApplicationStatus.Cancelled,
-    ApplicationStatus.Overwritten,
+    ApplicationStatus.Edited,
     ApplicationStatus.Draft,
   ];
   for (const unprocessableApplicationStatus of unprocessableApplicationStatuses) {
@@ -166,7 +166,7 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
         .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .expect({
           statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-          message: `Application cannot have manual reassessment in any of the statuses: ${ApplicationStatus.Cancelled}, ${ApplicationStatus.Overwritten} or ${ApplicationStatus.Draft}.`,
+          message: `Application cannot have manual reassessment in any of the statuses: ${ApplicationStatus.Cancelled}, ${ApplicationStatus.Edited} or ${ApplicationStatus.Draft}.`,
           error: "Unprocessable Entity",
         });
     });
