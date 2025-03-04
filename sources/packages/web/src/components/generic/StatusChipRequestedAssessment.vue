@@ -8,6 +8,7 @@ import {
   StudentAppealStatus,
   ApplicationExceptionStatus,
   ApplicationOfferingChangeRequestStatus,
+  OfferingStatus,
 } from "@/types";
 export default defineComponent({
   props: {
@@ -16,6 +17,7 @@ export default defineComponent({
         | StudentAppealStatus
         | ApplicationExceptionStatus
         | ApplicationOfferingChangeRequestStatus
+        | OfferingStatus
       >,
       required: true,
     },
