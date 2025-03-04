@@ -255,7 +255,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       db.dataSource,
       {},
       {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
         offeringInitialValues: offeringInitialValues,
       },
     );
@@ -274,7 +274,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         parentApplication: { id: savedFirstApplication.id } as Application,
       },
       {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
         applicationNumber: savedFirstApplication.applicationNumber,
         offeringInitialValues: offeringInitialValues,
       },

@@ -111,7 +111,7 @@ export class StudentInformationService {
       )
       .leftJoin("disbursementSchedule.disbursementValues", "disbursementValue")
       .where("searchStudent.id = :studentId")
-      .andWhere("searchApplication.applicationStatus != :overwritten")
+      .andWhere("searchApplication.applicationStatus != :editedStatus")
       .andWhere(`searchApplication.programYear.id IN (${programYearQuery})`)
       .andWhere(
         "currentAssessment.studentAssessmentStatus = :assessmentStatusCompleted",
@@ -119,7 +119,7 @@ export class StudentInformationService {
       .andWhere("offering.offeringIntensity = :fullTime")
       .setParameters({
         studentId,
-        overwritten: ApplicationStatus.Overwritten,
+        editedStatus: ApplicationStatus.Edited,
         assessmentStatusCompleted: StudentAssessmentStatus.Completed,
         fullTime: OfferingIntensity.fullTime,
         withdrawal:

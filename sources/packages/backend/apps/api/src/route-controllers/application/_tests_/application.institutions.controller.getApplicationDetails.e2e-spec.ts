@@ -198,7 +198,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       db.dataSource,
       { institutionLocation: collegeFLocation },
       {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
         offeringInitialValues: offeringInitialValues,
       },
     );
@@ -217,7 +217,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         parentApplication: { id: savedFirstApplication.id } as Application,
       },
       {
-        applicationStatus: ApplicationStatus.Overwritten,
+        applicationStatus: ApplicationStatus.Edited,
         applicationNumber: savedFirstApplication.applicationNumber,
         offeringInitialValues: offeringInitialValues,
       },
