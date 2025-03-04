@@ -50,7 +50,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
         .limitAwardCSGDIncomeCap,
     );
-    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(1260);
+    expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(1260);
   });
 
   it("Should determine federalAwardCSGDAmount for 3 or more dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
@@ -114,7 +114,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
     expect(
       Math.round(
-        calculatedAssessment.variables.federalAwardCSGDAmount * 10000,
+        calculatedAssessment.variables.federalAwardMaxCSGDAmount * 10000,
       ) / 10000,
     ).toBe(
       Math.min(
@@ -124,10 +124,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      950.832256,
+      1150.832256,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      950.832256,
+      1150.832256,
     );
   });
 
@@ -172,7 +172,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
         .limitAwardCSGDIncomeCap,
     );
-    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(840);
+    expect(calculatedAssessment.variables.federalAwardMaxCSGDAmount).toBe(840);
   });
 
   it("Should determine federalAwardCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
@@ -227,7 +227,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
     expect(
       Math.round(
-        calculatedAssessment.variables.federalAwardCSGDAmount * 10000,
+        calculatedAssessment.variables.federalAwardMaxCSGDAmount * 10000,
       ) / 10000,
     ).toBe(
       Math.min(
@@ -237,10 +237,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      496.86684445,
+      696.86684445,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      496.86684445,
+      696.86684445,
     );
   });
 
@@ -270,7 +270,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // calculatedDataTotalFamilyIncome <= limitAwardCSGDIncomeCap
     // federalAwardCSGDAmount
     expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
-    expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBe(
+    expect(calculatedAssessment.variables.federalAwardMaxCSGDAmount).toBe(
       696.86684445,
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
