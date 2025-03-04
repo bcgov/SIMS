@@ -11,6 +11,7 @@
       :assessment-id="assessmentId"
       :student-id="studentId"
       :application-id="currentApplicationId"
+      :validate-student-and-application="true"
     />
   </full-page-container>
 </template>
