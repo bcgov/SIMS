@@ -115,6 +115,12 @@ export default defineComponent({
       type: Number,
       required: false,
     },
+    // Used to validate if student and application
+    // are required to load the NOA.
+    validateStudentAndApplication: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const { dateOnlyLongString } = useFormatters();
@@ -150,9 +156,6 @@ export default defineComponent({
     };
 
     const loadNOA = async () => {
-      if (!props.studentId || !props.applicationId || !props.assessmentId) {
-        return;
-      }
       const assessment =
         await StudentAssessmentsService.shared.getAssessmentNOA(
           props.assessmentId,
@@ -208,7 +211,17 @@ export default defineComponent({
       );
     };
 
-    watchEffect(loadNOA);
+    watchEffect(async () => {
+      if (
+        (props.validateStudentAndApplication &&
+          props.studentId &&
+          props.applicationId &&
+          props.assessmentId) ||
+        (!props.validateStudentAndApplication && props.assessmentId)
+      ) {
+        await loadNOA();
+      }
+    });
 
     const setMSFAAReissueProcessing = (processing: boolean) => {
       msfaaReissueProcessing.value = processing;
