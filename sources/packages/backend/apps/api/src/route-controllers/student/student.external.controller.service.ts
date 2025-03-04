@@ -5,6 +5,7 @@ import {
   ApplicationStatus,
   FullTimeAssessment,
   DisbursementScheduleStatus,
+  SFASApplication,
 } from "@sims/sims-db";
 import {
   ApplicationDetailsAPIOutDTO,
@@ -14,7 +15,7 @@ import {
   getISODateOnlyString,
   getTotalDisbursementAmountFromSchedules,
 } from "@sims/utilities";
-import { ApplicationDetail, LegacyApplicationDetail } from "../../services";
+import { ApplicationDetail } from "../../services";
 
 @Injectable()
 export class StudentExternalControllerService {
@@ -43,7 +44,7 @@ export class StudentExternalControllerService {
    */
   transformApplicationSearchResult(
     studentApplications?: ApplicationDetail[],
-    legacyStudentApplications?: LegacyApplicationDetail[],
+    legacyStudentApplications?: SFASApplication[],
   ): ApplicationDetailsAPIOutDTO[] {
     const applications: ApplicationDetailsAPIOutDTO[] = [];
     if (studentApplications?.length) {
@@ -200,7 +201,7 @@ export class StudentExternalControllerService {
    * @returns legacy application details.
    */
   private transformLegacyApplicationDetails(
-    application: LegacyApplicationDetail,
+    application: SFASApplication,
   ): ApplicationDetailsAPIOutDTO {
     return {
       isLegacy: true,
@@ -217,7 +218,7 @@ export class StudentExternalControllerService {
       income: application.grossIncomePreviousYear,
       livingArrangement:
         application.livingArrangements === "Y" ? "Home" : "Away",
-      estimatedTotalAward: application.estimatedTotalAward,
+      estimatedTotalAward: this.getLegacyTotalEstimatedAward(application),
       dependants: application.dependants?.map((dependant) => ({
         fullName: dependant.dependantName,
         birthDate: dependant.dependantBirthDate,
@@ -230,11 +231,15 @@ export class StudentExternalControllerService {
       },
       institution: {
         locationCode: application.institutionCode,
-        locationName: application.locationName,
-        primaryContactFirstName: application.locationPrimaryContact?.firstName,
-        primaryContactLastName: application.locationPrimaryContact?.lastName,
-        primaryContactEmail: application.locationPrimaryContact?.email,
-        primaryContactPhone: application.locationPrimaryContact?.phone,
+        locationName: application.institutionLocation?.name,
+        primaryContactFirstName:
+          application.institutionLocation?.primaryContact?.firstName,
+        primaryContactLastName:
+          application.institutionLocation?.primaryContact?.lastName,
+        primaryContactEmail:
+          application.institutionLocation?.primaryContact?.email,
+        primaryContactPhone:
+          application.institutionLocation?.primaryContact?.phone,
       },
       costs: {
         tuition: application.assessedCostsTuition,
@@ -256,5 +261,24 @@ export class StudentExternalControllerService {
         requestDate: disbursement.dateIssued,
       })),
     };
+  }
+
+  /**
+   * Get legacy total estimated award
+   * @param application legacy application.
+   * @returns legacy total estimated award.
+   */
+  private getLegacyTotalEstimatedAward(application: SFASApplication): number {
+    return (
+      (application.bslAward ?? 0) +
+      (application.cslAward ?? 0) +
+      (application.bcagAward ?? 0) +
+      (application.bgpdAward ?? 0) +
+      (application.csfgAward ?? 0) +
+      (application.csgtAward ?? 0) +
+      (application.csgdAward ?? 0) +
+      (application.csgpAward ?? 0) +
+      (application.sbsdAward ?? 0)
+    );
   }
 }

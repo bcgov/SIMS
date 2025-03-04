@@ -1,8 +1,16 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+} from "typeorm";
 import { BaseSFASApplicationModel } from "./base-sfas-application.model";
 import { TableNames } from "../constant";
 import { numericTransformer } from "@sims/sims-db/transformers/numeric.transformer";
 import {
+  InstitutionLocation,
   SFASApplicationDependant,
   SFASApplicationDisbursement,
 } from "@sims/sims-db";
@@ -397,4 +405,22 @@ export class SFASApplication extends BaseSFASApplicationModel {
     },
   )
   disbursements?: SFASApplicationDisbursement[];
+
+  /**
+   * Institution location.
+   */
+  @ManyToOne(
+    () => InstitutionLocation,
+    (institutionLocation) => institutionLocation.institutionCode,
+    {
+      eager: false,
+      cascade: false,
+      nullable: true,
+    },
+  )
+  @JoinColumn({
+    name: "institution_code",
+    referencedColumnName: "institutionCode",
+  })
+  institutionLocation?: InstitutionLocation;
 }

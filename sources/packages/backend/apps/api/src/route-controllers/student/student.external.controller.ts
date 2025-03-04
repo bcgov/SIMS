@@ -14,15 +14,13 @@ import {
   RequiresUserAccount,
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
-import {
-  LegacyApplicationDetail,
-  StudentInformationService,
-} from "../../services";
+import { StudentInformationService } from "../../services";
 import {
   StudentSearchAPIInDTO,
   StudentSearchResultAPIOutDTO,
 } from "./models/student-external-search.dto";
 import { StudentExternalControllerService } from "./student.external.controller.service";
+import { SFASApplication } from "@sims/sims-db";
 
 /**
  * Student controller for external client.
@@ -78,7 +76,7 @@ export class StudentExternalController extends BaseController {
         student,
         sfasIndividual,
       );
-    let legacyApplications: LegacyApplicationDetail[];
+    let legacyApplications: SFASApplication[];
     // Get legacy applications from SFAS.
     if (sfasIndividual) {
       legacyApplications =
