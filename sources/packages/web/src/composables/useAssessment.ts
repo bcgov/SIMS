@@ -48,21 +48,24 @@ export function useAssessment() {
       case StudentAppealStatus.Approved:
       case ApplicationExceptionStatus.Approved:
       case ApplicationOfferingChangeRequestStatus.Approved:
+      case OfferingStatus.Approved:
         return StatusChipLabelTypes.Completed;
       case StudentAppealStatus.Pending:
       case ApplicationExceptionStatus.Pending:
       case ApplicationOfferingChangeRequestStatus.InProgressWithStudent:
       case ApplicationOfferingChangeRequestStatus.InProgressWithSABC:
+      case OfferingStatus.CreationPending:
+      case OfferingStatus.ChangeUnderReview:
         return StatusChipLabelTypes.Pending;
       case StudentAppealStatus.Declined:
       case ApplicationExceptionStatus.Declined:
       case ApplicationOfferingChangeRequestStatus.DeclinedByStudent:
       case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
+      case OfferingStatus.CreationDeclined:
+      case OfferingStatus.ChangeDeclined:
         return StatusChipLabelTypes.Declined;
-      case OfferingStatus.ChangeAwaitingApproval:
-        return OfferingStatus.ChangeAwaitingApproval;
       default:
-        return "";
+        return status;
     }
   };
 
