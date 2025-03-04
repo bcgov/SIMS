@@ -68,11 +68,14 @@ export class ApplicationDetailsAPIOutDTO {
   withdrawalReason?: string;
   // TODO: To be implemented in SIMS.
   withdrawalActiveFlag?: string;
-  immigrationStatus: string;
+  // TODO: When legacy is removed, this field must be mandatory.
+  immigrationStatus?: string;
   bcResidency: string;
+  // This field is only available for legacy student applications.
+  legacyPermanentResident?: string;
   maritalStatus: string;
-  // This field is only available for legacy students.
-  marriageDate?: string;
+  // This field is only available for legacy student applications.
+  legacyMaritalDate?: string;
   income: number;
   livingArrangement: "Home" | "Away";
   estimatedTotalAward: number;
