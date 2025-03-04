@@ -3,6 +3,8 @@ import * as request from "supertest";
 import {
   createE2EDataSources,
   createFakeDisbursementValue,
+  createFakeInstitutionLocation,
+  createFakeSFASApplicationDependant,
   createFakeSFASApplicationDisbursement,
   E2EDataSources,
   ensureProgramYearExists,
@@ -11,6 +13,8 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
+  Application,
+  ApplicationData,
   ApplicationStatus,
   DisbursementValueType,
   FormYesNoOptions,
@@ -18,6 +22,8 @@ import {
   OfferingIntensity,
   ProgramYear,
   RelationshipStatus,
+  SFASIndividual,
+  Student,
   StudentAssessmentStatus,
   WorkflowData,
 } from "@sims/sims-db";
@@ -39,6 +45,7 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
   let currentProgramYear: ProgramYear;
   let currentProgramYearId: number;
   let oldProgramYear: ProgramYear;
+  let oldProgramYearId: number;
   const endpoint = "/external/student";
   const VALID_SIN = "656173713";
   const searchPayload: StudentSearchAPIInDTO = {
@@ -56,6 +63,7 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
       .getOne();
     currentProgramYearId = +currentProgramYear.programYear.replace("-", "");
     oldProgramYear = await ensureProgramYearExists(db, 2000);
+    oldProgramYearId = +oldProgramYear.programYear.replace("-", "");
   });
 
   beforeEach(async () => {
@@ -219,69 +227,17 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
   it(
     "Should return student and application information from SIMS when the student with provided SIN exist in SIMS" +
       ` but not in SFAS and the student has ${OfferingIntensity.fullTime} applications in current program year` +
-      " and the student does not have any dependants.",
+      " and the student has one or more dependants.",
     async () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource, undefined, {
         sinValidationInitialValue: { sin: VALID_SIN },
         includeAddressLine2: true,
       });
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        {
-          student,
-          programYear: currentProgramYear,
-          firstDisbursementValues: [
-            createFakeDisbursementValue(
-              DisbursementValueType.CanadaLoan,
-              "CSLP",
-              100,
-            ),
-            createFakeDisbursementValue(
-              DisbursementValueType.BCGrant,
-              "BCAG",
-              100,
-            ),
-          ],
-        },
-        {
-          offeringIntensity: OfferingIntensity.fullTime,
-          applicationData: {
-            workflowName: "DUMMY",
-            dependants: [
-              {
-                fullName: "Kid one",
-                dateOfBirth: "2017-12-06",
-                declaredOnTaxes: "yes",
-                attendingPostSecondarySchool: "no",
-              },
-            ],
-          },
-          currentAssessmentInitialValues: {
-            assessmentData: {
-              tuitionCost: 600,
-              booksAndSuppliesCost: 500,
-              exceptionalEducationCost: 400,
-              livingAllowance: 300,
-              secondResidenceCost: 0,
-              childcareCost: 0,
-              alimonyOrChildSupport: 0,
-              transportationCost: 0,
-              provincialAssessmentNeed: 1800,
-            } as FullTimeAssessment,
-            workflowData: {
-              studentData: {
-                citizenship: "canadianCitizen",
-                taxReturnIncome: 1000,
-                bcResident: FormYesNoOptions.Yes,
-                relationshipStatus: RelationshipStatus.Single,
-              },
-              dmnValues: { livingCategory: "SIH" },
-            } as WorkflowData,
-            studentAssessmentStatus: StudentAssessmentStatus.Completed,
-          },
-        },
-      );
+      const application = await createStudentApplicationSearchData(student, {
+        hasDependants: true,
+      });
+
       const address = student.contactInfo.address;
       const assessment = application.currentAssessment;
       const offering = assessment.offering;
@@ -345,13 +301,13 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
             },
             disbursements: [
               {
-                awardCode: "CSLP",
+                awardCode: "CSLF",
                 awardAmount: 100,
                 fundingDate: disbursement.disbursementDate,
                 requestDate: null,
               },
               {
-                awardCode: "BCAG",
+                awardCode: "BCSL",
                 awardAmount: 100,
                 fundingDate: disbursement.disbursementDate,
                 requestDate: null,
@@ -371,61 +327,17 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
   );
 
   it(
-    "Should return student and application information from SIMS and SFAS when the student with provided SIN exist in SIMS" +
+    "Should return student information from SIMS and application information from SIMS and SFAS when the student with provided SIN exist in SIMS" +
       ` and in SFAS and the student has ${OfferingIntensity.fullTime} applications in current program year` +
       " and the student does not have any dependants.",
     async () => {
       // Arrange
+      // Create student and application data.
       const student = await saveFakeStudent(db.dataSource, undefined, {
         sinValidationInitialValue: { sin: VALID_SIN },
         includeAddressLine2: true,
       });
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        {
-          student,
-          programYear: currentProgramYear,
-          firstDisbursementValues: [
-            createFakeDisbursementValue(
-              DisbursementValueType.CanadaLoan,
-              "CSLF",
-              100,
-            ),
-            createFakeDisbursementValue(
-              DisbursementValueType.BCGrant,
-              "BCSL",
-              100,
-            ),
-          ],
-        },
-        {
-          offeringIntensity: OfferingIntensity.fullTime,
-          applicationData: { workflowName: "DUMMY" },
-          currentAssessmentInitialValues: {
-            assessmentData: {
-              tuitionCost: 600,
-              booksAndSuppliesCost: 500,
-              exceptionalEducationCost: 400,
-              livingAllowance: 300,
-              secondResidenceCost: 0,
-              childcareCost: 0,
-              alimonyOrChildSupport: 0,
-              transportationCost: 0,
-              provincialAssessmentNeed: 1800,
-            } as FullTimeAssessment,
-            workflowData: {
-              studentData: {
-                citizenship: "canadianCitizen",
-                taxReturnIncome: 1000,
-                bcResident: FormYesNoOptions.Yes,
-                relationshipStatus: RelationshipStatus.Single,
-              },
-              dmnValues: { livingCategory: "SIH" },
-            } as WorkflowData,
-            studentAssessmentStatus: StudentAssessmentStatus.Completed,
-          },
-        },
-      );
+      const application = await createStudentApplicationSearchData(student);
       const address = student.contactInfo.address;
       const assessment = application.currentAssessment;
       const offering = assessment.offering;
@@ -436,35 +348,19 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
       const individual = await saveFakeSFASIndividual(db.dataSource, {
         initialValues: { student },
       });
-      const sfasApplication = createFakeSFASApplication(
-        { individual },
+      const sfasApplication = await createLegacyStudentApplicationSearchData(
+        individual,
         {
-          initialValues: {
-            programYearId: currentProgramYearId,
-            grossIncomePreviousYear: 1000,
-            bslAward: 100,
-            cslAward: 100,
-            courseLoad: 100,
-            educationPeriodWeeks: 16,
-            assessedCostsTuition: 600,
-            assessedCostsBooksAndSupplies: 500,
-            assessedCostsExceptionalExpenses: 400,
-            assessedCostsLivingAllowance: 300,
-            assessedCostsExtraShelter: 0,
-            assessedCostsChildCare: 0,
-            assessedCostsAlimony: 0,
-            assessedCostsLocalTransport: 0,
-            assessedCostsReturnTransport: 0,
-            assessedEligibleNeed: 1800,
-            institutionCode: location.institutionCode,
-          },
+          institutionCode: location.institutionCode,
         },
       );
-      await db.sfasApplication.save(sfasApplication);
-      const sfasApplicationDisbursement = createFakeSFASApplicationDisbursement(
-        { sfasApplication },
-      );
-      await db.sfasApplicationDisbursement.save(sfasApplicationDisbursement);
+      // Create an application for same individual from old program year.
+      // This application is expected to be ignored in the search result.
+      await createLegacyStudentApplicationSearchData(individual, {
+        institutionCode: location.institutionCode,
+        programYearId: oldProgramYearId,
+      });
+      const [sfasApplicationDisbursement] = sfasApplication.disbursements;
 
       const token = await getExternalUserToken();
       const expectedStudentServiceResult: StudentSearchResultAPIOutDTO = {
@@ -597,6 +493,271 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
     },
   );
 
+  it(
+    "Should return student and application information from SFAS when the student with provided SIN exist in SFAS" +
+      ` and does not exist in SIMS and the student has ${OfferingIntensity.fullTime} applications in current program year` +
+      " ignoring the applications from old program years and the student does has one or more dependants.",
+    async () => {
+      // Arrange
+      const location = await db.institutionLocation.save(
+        createFakeInstitutionLocation(),
+      );
+      // Create legacy data.
+      const individual = await saveFakeSFASIndividual(db.dataSource, {
+        initialValues: { sin: VALID_SIN },
+      });
+      const sfasApplication = await createLegacyStudentApplicationSearchData(
+        individual,
+        {
+          institutionCode: location.institutionCode,
+          hasDependants: true,
+        },
+      );
+      const [sfasApplicationDisbursement] = sfasApplication.disbursements;
+
+      const token = await getExternalUserToken();
+      const expectedStudentServiceResult: StudentSearchResultAPIOutDTO = {
+        isLegacy: true,
+        givenNames: individual.firstName,
+        lastName: individual.lastName,
+        sin: VALID_SIN,
+        birthDate: individual.birthDate,
+        phoneNumber: individual.phoneNumber?.toString(),
+        address: {
+          addressLine1: individual.addressLine1,
+          addressLine2: individual.addressLine2,
+          city: individual.city,
+          provinceState: individual.provinceState,
+          country: individual.country,
+          postalCode: individual.postalZipCode,
+        },
+        applications: [
+          {
+            isLegacy: true,
+            applicationNumber: sfasApplication.applicationNumber.toString(),
+            applicationStatus: sfasApplication.applicationStatusCode,
+            cancelDate: null,
+            withdrawalDate: null,
+            withdrawalReason: null,
+            withdrawalActiveFlag: null,
+            bcResidency: "Y",
+            legacyPermanentResident: "Y",
+            maritalStatus: "SI",
+            legacyMaritalDate: null,
+            income: 1000,
+            livingArrangement: "Away",
+            estimatedTotalAward: 200,
+            dependants: [{ fullName: "Kid one", birthDate: "2017-12-06" }],
+            program: {
+              startDate: sfasApplication.startDate,
+              endDate: sfasApplication.endDate,
+              lengthInWeeks: 16,
+              courseLoad: "100",
+            },
+            institution: {
+              locationCode: location.institutionCode,
+              locationName: location.name,
+              primaryContactFirstName: location.primaryContact.firstName,
+              primaryContactLastName: location.primaryContact.lastName,
+              primaryContactEmail: location.primaryContact.email,
+              primaryContactPhone: location.primaryContact.phone,
+            },
+            costs: {
+              tuition: 600,
+              booksAndSupplies: 500,
+              exceptionalExpenses: 400,
+              livingAllowance: 300,
+              secondResidence: 0,
+              childCare: 0,
+              alimony: 0,
+              totalTransportation: 0,
+              totalNeed: 1800,
+            },
+            disbursements: [
+              {
+                awardCode: "BSL",
+                awardAmount: 100,
+                fundingDate: sfasApplicationDisbursement.fundingDate,
+                requestDate: sfasApplicationDisbursement.dateIssued,
+              },
+            ],
+          },
+        ],
+      };
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(searchPayload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect(expectedStudentServiceResult);
+    },
+  );
+
+  it("Should throw not fond error when the student with provided SIN does not exist in either SIMS or SFAS.", async () => {
+    const token = await getExternalUserToken();
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "Student not found.",
+        error: "Not Found",
+      });
+  });
+
+  /**
+   * Create student application search data.
+   * @param student student.
+   * @param options related options.
+   * - `hasDependants` whether the student has dependants.
+   * - `isLivingAway` whether the student is living away.
+   * - `isMarried` whether the student is married.
+   * @returns application search data.
+   */
+  async function createStudentApplicationSearchData(
+    student: Student,
+    options?: {
+      hasDependants?: boolean;
+      isLivingAway?: boolean;
+      isMarried?: boolean;
+    },
+  ): Promise<Application> {
+    const fakeApplicationData: ApplicationData = { workflowName: "DUMMY" };
+    const fullTimeAssessmentData = {
+      tuitionCost: 600,
+      booksAndSuppliesCost: 500,
+      exceptionalEducationCost: 400,
+      livingAllowance: 300,
+      secondResidenceCost: 0,
+      childcareCost: 0,
+      alimonyOrChildSupport: 0,
+      transportationCost: 0,
+      provincialAssessmentNeed: 1800,
+    } as FullTimeAssessment;
+    const workflowData = {
+      studentData: {
+        citizenship: "canadianCitizen",
+        taxReturnIncome: 1000,
+        bcResident: FormYesNoOptions.Yes,
+        relationshipStatus: RelationshipStatus.Single,
+      },
+      dmnValues: { livingCategory: "SIH" },
+    } as WorkflowData;
+    // Update the fake data based on the options.
+    if (options?.hasDependants) {
+      fakeApplicationData.dependants = [
+        {
+          fullName: "Kid one",
+          dateOfBirth: "2017-12-06",
+          declaredOnTaxes: "yes",
+          attendingPostSecondarySchool: "no",
+        },
+      ];
+    }
+    if (options?.isLivingAway) {
+      workflowData.dmnValues.livingCategory = "SDA";
+    }
+    if (options?.isMarried) {
+      workflowData.studentData.relationshipStatus = RelationshipStatus.Married;
+    }
+    return saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        programYear: currentProgramYear,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            100,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BCSL",
+            100,
+          ),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationData: fakeApplicationData,
+        currentAssessmentInitialValues: {
+          assessmentData: fullTimeAssessmentData,
+          workflowData,
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+      },
+    );
+  }
+
+  /**
+   * Create legacy student and application search data.
+   * @param individual legacy student.
+   * @param options related options.
+   * - `programYearId` program year id.
+   * - `institutionCode` whether the student is married.
+   * - `hasDependants` whether the student has dependants.
+   * @returns application search data.
+   */
+  async function createLegacyStudentApplicationSearchData(
+    individual: SFASIndividual,
+    options?: {
+      programYearId?: number;
+      institutionCode?: string;
+      hasDependants?: boolean;
+    },
+  ) {
+    const sfasApplication = createFakeSFASApplication(
+      { individual },
+      {
+        initialValues: {
+          programYearId: options?.programYearId ?? currentProgramYearId,
+          grossIncomePreviousYear: 1000,
+          bslAward: 100,
+          cslAward: 100,
+          courseLoad: 100,
+          educationPeriodWeeks: 16,
+          assessedCostsTuition: 600,
+          assessedCostsBooksAndSupplies: 500,
+          assessedCostsExceptionalExpenses: 400,
+          assessedCostsLivingAllowance: 300,
+          assessedCostsExtraShelter: 0,
+          assessedCostsChildCare: 0,
+          assessedCostsAlimony: 0,
+          assessedCostsLocalTransport: 0,
+          assessedCostsReturnTransport: 0,
+          assessedEligibleNeed: 1800,
+          institutionCode: options?.institutionCode,
+        },
+      },
+    );
+    await db.sfasApplication.save(sfasApplication);
+    const sfasApplicationDisbursement = createFakeSFASApplicationDisbursement({
+      sfasApplication,
+    });
+    await db.sfasApplicationDisbursement.save(sfasApplicationDisbursement);
+    sfasApplication.disbursements = [sfasApplicationDisbursement];
+    if (options?.hasDependants) {
+      const sfasApplicationDependant = createFakeSFASApplicationDependant(
+        {
+          sfasApplication,
+        },
+        {
+          initialValues: {
+            dependantName: "Kid one",
+            dependantBirthDate: "2017-12-06",
+          },
+        },
+      );
+      db.sfasApplicationDependant.save(sfasApplicationDependant);
+      sfasApplication.dependants = [sfasApplicationDependant];
+    }
+    return sfasApplication;
+  }
   afterAll(async () => {
     await app?.close();
   });
