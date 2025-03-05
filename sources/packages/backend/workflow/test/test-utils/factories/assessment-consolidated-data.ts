@@ -49,6 +49,7 @@ export function createFakeAssessmentConsolidatedData(
     studentDataApplicationPDPPDStatus: "no",
     applicationStatus: ApplicationStatus.Assessment,
     applicationHasNOAApproval: false,
+    programYearTotalFullTimeBooks: 500,
   };
 }
 

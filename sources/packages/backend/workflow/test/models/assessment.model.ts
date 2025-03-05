@@ -187,6 +187,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   latestCSLPBalance: number;
   applicationStatus: string;
   applicationHasNOAApproval: boolean;
+  programYearTotalFullTimeBooks: number;
 }
 
 /**
@@ -382,4 +383,5 @@ export interface CalculatedAssessmentModel {
   // Disbursement schedules
   disbursementSchedules: Array<unknown>;
   calculatedDataTotalAcademicExpenses: number;
+  calculatedDataRemainingBookLimit: number;
 }
