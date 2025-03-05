@@ -56,7 +56,6 @@ export default defineComponent({
           props.applicationId,
           {
             studentId: props.studentId,
-            isParentApplication: true,
           },
         );
       selectedForm.value = applicationDetail.value.applicationFormName;
