@@ -22,7 +22,6 @@ import { StudentAssessmentsService } from "@/services/StudentAssessmentsService"
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
 import AssessmentAward from "@/components/common/students/applicationDetails/AssessmentAward.vue";
-import { ApplicationService } from "@/services/ApplicationService";
 
 export default defineComponent({
   components: { AssessmentAward, DetailHeader },
