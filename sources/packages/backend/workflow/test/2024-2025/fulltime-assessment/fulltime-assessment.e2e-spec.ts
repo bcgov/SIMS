@@ -23,20 +23,22 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
         assessmentConsolidatedData.offeringMandatoryFees,
       childcareCost: 0,
       livingAllowance: 7088,
-      totalAssessedCost: 31088,
+      totalAssessedCost: 29588,
       totalFamilyIncome: 40000,
       totalFederalAward: 4800,
       otherAllowableCost: 0,
       transportationCost: null,
+      returnTransportationCost: 900,
       secondResidenceCost: 0,
       totalAssessmentNeed: 55049.19807692308,
-      booksAndSuppliesCost: 3000,
+      booksAndSuppliesCost: 1500,
+      booksAndSuppliesRemainingLimit: 2500,
       totalProvincialAward: 3520,
       alimonyOrChildSupport: 0,
-      federalAssessmentNeed: 30174.915384615386,
+      federalAssessmentNeed: 28674.915384615386,
       exceptionalEducationCost:
         assessmentConsolidatedData.offeringExceptionalExpenses,
-      provincialAssessmentNeed: 30174.915384615386,
+      provincialAssessmentNeed: 28674.915384615386,
       parentAssessedContribution: null,
       partnerAssessedContribution: null,
       studentTotalFederalContribution: 913.0846153846154,
@@ -78,11 +80,17 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
       calculatedAssessment.variables.calculatedDataTotalTransportationCost,
     ).toBe(expectedAssessmentData.transportationCost);
     expect(
+      calculatedAssessment.variables.calculatedDataReturnTransportationCost,
+    ).toBe(expectedAssessmentData.returnTransportationCost);
+    expect(
       calculatedAssessment.variables.calculatedDataTotalSecondResidence,
     ).toBe(expectedAssessmentData.secondResidenceCost);
     expect(calculatedAssessment.variables.calculatedDataTotalBookCost).toBe(
       expectedAssessmentData.booksAndSuppliesCost,
     );
+    expect(
+      calculatedAssessment.variables.calculatedDataRemainingBookLimit,
+    ).toBe(expectedAssessmentData.booksAndSuppliesRemainingLimit);
     expect(calculatedAssessment.variables.awardNetProvincialTotalAward).toBe(
       expectedAssessmentData.totalProvincialAward,
     );

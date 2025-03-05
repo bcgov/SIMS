@@ -33,26 +33,27 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
         assessmentConsolidatedData.offeringMandatoryFees,
       childcareCost: 0,
       livingAllowance: 26752,
-      totalAssessedCost: 50752,
+      totalAssessedCost: 49252,
       totalFamilyIncome: 40000,
       totalFederalAward: 5600,
       otherAllowableCost: 0,
       transportationCost: null,
+      returnTransportationCost: 900,
       secondResidenceCost: 0,
       totalAssessmentNeed: 55049.19807692308,
-      booksAndSuppliesCost: 3000,
+      booksAndSuppliesCost: 1500,
+      booksAndSuppliesRemainingLimit: 2500,
       totalProvincialAward: 1760,
       alimonyOrChildSupport: 0,
-      federalAssessmentNeed: 49496.70769230769,
+      federalAssessmentNeed: 47996.70769230769,
       exceptionalEducationCost:
         assessmentConsolidatedData.offeringExceptionalExpenses,
-      provincialAssessmentNeed: 49496.70769230769,
+      provincialAssessmentNeed: 47996.70769230769,
       parentAssessedContribution: null,
       partnerAssessedContribution: null,
       studentTotalFederalContribution: 1255.2923076923078,
       studentTotalProvincialContribution: 1255.2923076923078,
     };
-
     // Act/Assert
     const calculatedAssessment =
       await zeebeClientProvider.createProcessInstanceWithResult<
@@ -95,11 +96,17 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
       calculatedAssessment.variables.calculatedDataTotalTransportationCost,
     ).toBe(expectedAssessmentData.transportationCost);
     expect(
+      calculatedAssessment.variables.calculatedDataReturnTransportationCost,
+    ).toBe(expectedAssessmentData.returnTransportationCost);
+    expect(
       calculatedAssessment.variables.calculatedDataTotalSecondResidence,
     ).toBe(expectedAssessmentData.secondResidenceCost);
     expect(calculatedAssessment.variables.calculatedDataTotalBookCost).toBe(
       expectedAssessmentData.booksAndSuppliesCost,
     );
+    expect(
+      calculatedAssessment.variables.calculatedDataRemainingBookLimit,
+    ).toBe(expectedAssessmentData.booksAndSuppliesRemainingLimit);
     expect(calculatedAssessment.variables.awardNetProvincialTotalAward).toBe(
       expectedAssessmentData.totalProvincialAward,
     );

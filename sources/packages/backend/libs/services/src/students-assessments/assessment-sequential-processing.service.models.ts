@@ -132,6 +132,7 @@ export interface AwardTotal {
 export interface ProgramYearTotal {
   awardTotals: AwardTotal[];
   contributionTotals?: ProgramYearContributionTotal[];
+  costTotals?: ProgramYearCostTotal[];
 }
 
 /**
@@ -139,5 +140,13 @@ export interface ProgramYearTotal {
  */
 export interface ProgramYearContributionTotal {
   contribution: string;
+  total: number;
+}
+
+/**
+ * Full-time program year costs and its totals.
+ */
+export interface ProgramYearCostTotal {
+  cost: string;
   total: number;
 }
