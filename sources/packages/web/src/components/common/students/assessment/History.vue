@@ -104,8 +104,6 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: true,
-      // The value could be null on load of the component and updated later.
-      default: null,
     },
     // Assessment trigger types for which request form is available to view.
     viewRequestTypes: {
