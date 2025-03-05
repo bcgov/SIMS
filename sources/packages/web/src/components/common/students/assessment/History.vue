@@ -122,11 +122,13 @@ export default defineComponent({
     // Adding watch effect instead of onMounted because
     // applicationId may not be not available on load.
     watchEffect(async () => {
-      assessmentHistory.value =
-        await StudentAssessmentsService.shared.getAssessmentHistory(
-          props.applicationId,
-          props.studentId,
-        );
+      if (props.applicationId) {
+        assessmentHistory.value =
+          await StudentAssessmentsService.shared.getAssessmentHistory(
+            props.applicationId,
+            props.studentId,
+          );
+      }
     });
 
     const viewRequest = (data: AssessmentHistorySummaryAPIOutDTO) => {
