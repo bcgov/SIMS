@@ -44,27 +44,17 @@ export default defineComponent({
     const assessmentAwardData = ref<AwardDetailsAPIOutDTO>();
     const { mapAssessmentDetailHeader } = useAssessment();
     const headerMap = ref<Record<string, string>>({});
-    const currentApplicationId = ref<number>();
 
     onMounted(async () => {
-      // Get current application for the parent application.
-      const currentApplication =
-        await ApplicationService.shared.getCurrentApplicationFromParent(
-          props.applicationId,
-          {
-            studentId: props.studentId,
-          },
-        );
-      currentApplicationId.value = currentApplication.id;
-      loadAssessmentAwardValues(currentApplicationId.value);
+      await loadAssessmentAwardValues();
     });
 
-    const loadAssessmentAwardValues = async (applicationId: number) => {
+    const loadAssessmentAwardValues = async () => {
       assessmentAwardData.value =
         await StudentAssessmentsService.shared.getAssessmentAwardDetails(
           props.assessmentId,
           props.studentId,
-          applicationId,
+          props.applicationId,
         );
       headerMap.value = mapAssessmentDetailHeader(assessmentAwardData.value);
     };

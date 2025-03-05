@@ -104,8 +104,6 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: true,
-      // The value could be null on load of the component and updated later.
-      default: null,
     },
     // Assessment trigger types for which request form is available to view.
     viewRequestTypes: {
@@ -124,13 +122,11 @@ export default defineComponent({
     // Adding watch effect instead of onMounted because
     // applicationId may not be not available on load.
     watchEffect(async () => {
-      if (props.applicationId) {
-        assessmentHistory.value =
-          await StudentAssessmentsService.shared.getAssessmentHistory(
-            props.applicationId,
-            props.studentId,
-          );
-      }
+      assessmentHistory.value =
+        await StudentAssessmentsService.shared.getAssessmentHistory(
+          props.applicationId,
+          props.studentId,
+        );
     });
 
     const viewRequest = (data: AssessmentHistorySummaryAPIOutDTO) => {

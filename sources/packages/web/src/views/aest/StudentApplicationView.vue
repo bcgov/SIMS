@@ -92,7 +92,6 @@ export default defineComponent({
       if (!props.versionApplicationId) {
         application = await ApplicationService.shared.getApplicationDetail(
           applicationId,
-          { isParentApplication: true },
         );
       } else {
         application = await ApplicationService.shared.getApplicationDetail(

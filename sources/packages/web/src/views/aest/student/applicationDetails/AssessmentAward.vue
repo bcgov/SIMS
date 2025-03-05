@@ -9,7 +9,7 @@
           params: { applicationId, studentId },
         }"
       />
-      <application-header-title :application-id="currentApplicationId" />
+      <application-header-title :application-id="applicationId" />
     </template>
     <assessment-award
       :assessment-award-data="assessmentAwardData"
@@ -31,7 +31,6 @@ import { FIRST_COE_NOT_COMPLETE } from "@/constants";
 import { ApiProcessError } from "@/types";
 import AssessmentAward from "@/components/common/students/applicationDetails/AssessmentAward.vue";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
-import { ApplicationService } from "@/services/ApplicationService";
 
 export default defineComponent({
   components: { AssessmentAward, ApplicationHeaderTitle },
@@ -52,16 +51,6 @@ export default defineComponent({
   setup(props) {
     const assessmentAwardData = ref<AwardDetailsAPIOutDTO>();
     const snackBar = useSnackBar();
-    const currentApplicationId = ref<number>();
-
-    onMounted(async () => {
-      // Get current application for the parent application.
-      const currentApplication =
-        await ApplicationService.shared.getCurrentApplicationFromParent(
-          props.applicationId,
-        );
-      currentApplicationId.value = currentApplication.id;
-    });
 
     const loadAssessmentAwardValues = async () => {
       assessmentAwardData.value =
@@ -105,7 +94,6 @@ export default defineComponent({
       noticeOfAssessmentRoute,
       assessmentAwardData,
       confirmEnrolment,
-      currentApplicationId,
     };
   },
 });
