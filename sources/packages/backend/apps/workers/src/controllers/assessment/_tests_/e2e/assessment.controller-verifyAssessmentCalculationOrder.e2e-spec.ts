@@ -1088,6 +1088,8 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       programYearTotalProvincialFSC: 0,
       programYearTotalScholarshipsBursaries: 0,
       programYearTotalSpouseContributionWeeks: 0,
+      programYearTotalReturnTransportation: 0,
+      programYearTotalFullTimeBooks: 0,
     });
   });
 

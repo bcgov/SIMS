@@ -183,8 +183,8 @@ export class AssessmentSequentialProcessingService {
     ]);
     return {
       awardTotals,
-      contributionTotals: costsAndContributionTotals.contributions,
-      costTotals: costsAndContributionTotals.costs,
+      contributionTotals: costsAndContributionTotals?.contributions,
+      costTotals: costsAndContributionTotals?.costs,
     };
   }
 
