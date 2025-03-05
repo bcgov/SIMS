@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
 import { ModalDialog, useFormatters } from "@/composables";
@@ -205,7 +205,7 @@ export default defineComponent({
       );
     };
 
-    watchEffect(loadNOA);
+    onMounted(loadNOA);
 
     const setMSFAAReissueProcessing = (processing: boolean) => {
       msfaaReissueProcessing.value = processing;
