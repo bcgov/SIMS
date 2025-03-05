@@ -150,9 +150,6 @@ export default defineComponent({
     };
 
     const loadNOA = async () => {
-      if (!props.studentId || !props.applicationId || !props.assessmentId) {
-        return;
-      }
       const assessment =
         await StudentAssessmentsService.shared.getAssessmentNOA(
           props.assessmentId,
