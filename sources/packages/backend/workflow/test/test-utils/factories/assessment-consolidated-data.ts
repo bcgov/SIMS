@@ -50,6 +50,7 @@ export function createFakeAssessmentConsolidatedData(
     applicationStatus: ApplicationStatus.Assessment,
     applicationHasNOAApproval: false,
     programYearTotalFullTimeBooks: 500,
+    programYearTotalReturnTransportation: 500,
   };
 }
 

@@ -220,9 +220,11 @@ export interface AssessmentModel {
   totalFederalAward: number;
   otherAllowableCost: number;
   transportationCost: number;
+  returnTransportationCost: number;
   secondResidenceCost: number;
   totalAssessmentNeed: number;
   booksAndSuppliesCost: number;
+  booksAndSuppliesRemainingLimit: number;
   totalProvincialAward: number;
   alimonyOrChildSupport: number;
   federalAssessmentNeed: number;
@@ -254,6 +256,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalFamilyIncome: number;
   awardNetFederalTotalAward: number;
   calculatedDataTotalTransportationCost: number;
+  calculatedDataReturnTransportationCost: number;
   calculatedDataTotalSecondResidence: number;
   calculatedDataTotalAssessedNeed: number;
   calculatedDataTotalBookCost: number;
