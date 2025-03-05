@@ -53,7 +53,7 @@ class DisbursementDetailsAPIOutDTO {
   awardCode: string;
   awardAmount: number;
   fundingDate: string;
-  requestDate: string;
+  requestDate?: string;
 }
 
 /**
@@ -66,13 +66,20 @@ export class ApplicationDetailsAPIOutDTO {
   cancelDate?: string;
   withdrawalDate?: string;
   withdrawalReason?: string;
+  // TODO: To be implemented in SIMS.
   withdrawalActiveFlag?: string;
-  immigrationStatus: string;
+  // TODO: When legacy is removed, this field must be mandatory.
+  immigrationStatus?: string;
+  bcResidency: string;
+  // This field is only available for legacy student applications.
+  legacyPermanentResident?: string;
   maritalStatus: string;
-  marriageDate?: string;
+  // This field is only available for legacy student applications.
+  legacyMaritalDate?: string;
   income: number;
-  estimatedTotalAward: string;
-  dependants: DependantDetailsAPIOutDTO[];
+  livingArrangement: "Home" | "Away";
+  estimatedTotalAward: number;
+  dependants?: DependantDetailsAPIOutDTO[];
   program: ProgramOfferingDetailsAPIOutDTO;
   institution: InstitutionDetailsAPIOutDTO;
   costs: AssessedCostDetailsAPIOutDTO;
@@ -100,3 +107,8 @@ export class StudentSearchAPIInDTO {
   @IsValidSIN()
   sin: string;
 }
+
+export type StudentSearchDetails = Omit<
+  StudentSearchResultAPIOutDTO,
+  "applications"
+>;

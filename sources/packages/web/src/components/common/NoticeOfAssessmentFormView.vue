@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, watchEffect } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
 import { ModalDialog, useFormatters } from "@/composables";
@@ -150,6 +150,9 @@ export default defineComponent({
     };
 
     const loadNOA = async () => {
+      if (!props.studentId || !props.applicationId || !props.assessmentId) {
+        return;
+      }
       const assessment =
         await StudentAssessmentsService.shared.getAssessmentNOA(
           props.assessmentId,
@@ -205,7 +208,7 @@ export default defineComponent({
       );
     };
 
-    onMounted(loadNOA);
+    watchEffect(loadNOA);
 
     const setMSFAAReissueProcessing = (processing: boolean) => {
       msfaaReissueProcessing.value = processing;

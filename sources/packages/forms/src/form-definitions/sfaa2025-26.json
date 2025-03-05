@@ -12332,7 +12332,7 @@
         {
           "input": true,
           "tableView": false,
-          "key": "dependantStatus",
+          "key": "dependantstatus",
           "label": "Dependant Status",
           "protected": false,
           "unique": false,

@@ -298,6 +298,7 @@ export interface CalculatedAssessmentModel {
   provincialAwardNetCSGPAmount: number;
   // CSGD
   federalAwardCSGDAmount: number;
+  federalAwardMaxCSGDAmount: number;
   federalAwardNetCSGDAmount: number;
   provincialAwardNetCSGDAmount: number;
   // CSGF

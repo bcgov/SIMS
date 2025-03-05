@@ -1,6 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource } from "typeorm";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
@@ -12,10 +11,13 @@ import {
   InstitutionTokenTypes,
 } from "../../../testHelpers";
 import {
+  createE2EDataSources,
   createFakeInstitutionLocation,
+  E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
+  Application,
   ApplicationStatus,
   EducationProgramOffering,
   InstitutionLocation,
@@ -26,33 +28,33 @@ import { getUserFullName } from "../../../utilities";
 
 describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
   let app: INestApplication;
-  let appDataSource: DataSource;
   let collegeFLocation: InstitutionLocation;
   let collegeCLocation: InstitutionLocation;
+  let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    appDataSource = dataSource;
+    db = createE2EDataSources(dataSource);
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
     // College C.
     const { institution: collegeC } = await getAuthRelatedEntities(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
     );
     collegeCLocation = createFakeInstitutionLocation({ institution: collegeC });
     await authorizeUserTokenForLocation(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
     );
@@ -68,7 +70,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
 
     // Create new application.
     const savedApplication = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       {
         institutionLocation: collegeFLocation,
       },
@@ -107,7 +109,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
   it("Should not have access to get the student application details when the student submitted an application to non-public institution.", async () => {
     // Arrange
     // Create new application.
-    const savedApplication = await saveFakeApplication(appDataSource, {
+    const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeCLocation,
     });
 
@@ -132,7 +134,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
   it("Should not get the student application details when application is submitted for different institution.", async () => {
     // Arrange
     // Create new application.
-    const savedApplication = await saveFakeApplication(appDataSource, {
+    const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeCLocation,
     });
 
@@ -157,7 +159,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
   it("Should not get the student application details when the application status is overwritten.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       {
         institutionLocation: collegeFLocation,
       },
@@ -181,6 +183,87 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         statusCode: 403,
         message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
+      });
+  });
+
+  it("Should get the latest student application details when the optional query parameter isParentApplication is set to true.", async () => {
+    // Arrange
+    const offeringInitialValues = {
+      studyStartDate: getISODateOnlyString(addDays(-10)),
+      studyEndDate: getISODateOnlyString(addDays(10)),
+      offeringIntensity: OfferingIntensity.fullTime,
+    } as EducationProgramOffering;
+
+    const firstApplication = await saveFakeApplication(
+      db.dataSource,
+      { institutionLocation: collegeFLocation },
+      {
+        applicationStatus: ApplicationStatus.Overwritten,
+        offeringInitialValues: offeringInitialValues,
+      },
+    );
+    firstApplication.parentApplication = {
+      id: firstApplication.id,
+    } as Application;
+    firstApplication.precedingApplication = firstApplication.parentApplication;
+    const savedFirstApplication = await db.application.save(firstApplication);
+
+    const secondApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student: firstApplication.student,
+        institutionLocation: collegeFLocation,
+        precedingApplication: { id: savedFirstApplication.id } as Application,
+        parentApplication: { id: savedFirstApplication.id } as Application,
+      },
+      {
+        applicationStatus: ApplicationStatus.Overwritten,
+        applicationNumber: savedFirstApplication.applicationNumber,
+        offeringInitialValues: offeringInitialValues,
+      },
+    );
+
+    const thirdApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student: firstApplication.student,
+        institutionLocation: collegeFLocation,
+        precedingApplication: { id: secondApplication.id } as Application,
+        parentApplication: {
+          id: savedFirstApplication.parentApplication.id,
+        } as Application,
+      },
+      {
+        applicationStatus: ApplicationStatus.InProgress,
+        applicationNumber: savedFirstApplication.applicationNumber,
+        offeringInitialValues: offeringInitialValues,
+      },
+    );
+
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/application/student/${firstApplication.student.id}/application/${firstApplication.id}?isParentApplication=true`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        data: {},
+        id: thirdApplication.id,
+        applicationStatus: thirdApplication.applicationStatus,
+        applicationNumber: thirdApplication.applicationNumber,
+        applicationFormName: "SFAA2022-23",
+        applicationProgramYearID: thirdApplication.programYearId,
+        studentFullName: getUserFullName(thirdApplication.student.user),
+        applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
+        applicationStartDate: offeringInitialValues.studyStartDate,
+        applicationEndDate: offeringInitialValues.studyEndDate,
+        applicationInstitutionName:
+          thirdApplication.location.institution.legalOperatingName,
       });
   });
 

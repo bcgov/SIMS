@@ -6,6 +6,7 @@ import {
   StatusChipTypes,
   StatusChipLabelTypes,
   ApplicationOfferingChangeRequestStatus,
+  OfferingStatus,
 } from "@/types";
 
 export function useAssessment() {
@@ -13,22 +14,28 @@ export function useAssessment() {
     status:
       | StudentAppealStatus
       | ApplicationExceptionStatus
-      | ApplicationOfferingChangeRequestStatus,
+      | ApplicationOfferingChangeRequestStatus
+      | OfferingStatus,
   ): StatusChipTypes => {
     switch (status) {
       case StudentAppealStatus.Approved:
       case ApplicationExceptionStatus.Approved:
       case ApplicationOfferingChangeRequestStatus.Approved:
+      case OfferingStatus.Approved:
         return StatusChipTypes.Success;
       case StudentAppealStatus.Pending:
       case ApplicationExceptionStatus.Pending:
       case ApplicationOfferingChangeRequestStatus.InProgressWithStudent:
       case ApplicationOfferingChangeRequestStatus.InProgressWithSABC:
+      case OfferingStatus.CreationPending:
+      case OfferingStatus.ChangeUnderReview:
         return StatusChipTypes.Warning;
       case StudentAppealStatus.Declined:
       case ApplicationExceptionStatus.Declined:
       case ApplicationOfferingChangeRequestStatus.DeclinedByStudent:
       case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
+      case OfferingStatus.CreationDeclined:
+      case OfferingStatus.ChangeDeclined:
         return StatusChipTypes.Error;
       default:
         return StatusChipTypes.Inactive;
@@ -39,25 +46,31 @@ export function useAssessment() {
     status:
       | StudentAppealStatus
       | ApplicationExceptionStatus
-      | ApplicationOfferingChangeRequestStatus,
+      | ApplicationOfferingChangeRequestStatus
+      | OfferingStatus,
   ): StatusChipLabelTypes | string => {
     switch (status) {
       case StudentAppealStatus.Approved:
       case ApplicationExceptionStatus.Approved:
       case ApplicationOfferingChangeRequestStatus.Approved:
+      case OfferingStatus.Approved:
         return StatusChipLabelTypes.Completed;
       case StudentAppealStatus.Pending:
       case ApplicationExceptionStatus.Pending:
       case ApplicationOfferingChangeRequestStatus.InProgressWithStudent:
       case ApplicationOfferingChangeRequestStatus.InProgressWithSABC:
+      case OfferingStatus.CreationPending:
+      case OfferingStatus.ChangeUnderReview:
         return StatusChipLabelTypes.Pending;
       case StudentAppealStatus.Declined:
       case ApplicationExceptionStatus.Declined:
       case ApplicationOfferingChangeRequestStatus.DeclinedByStudent:
       case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
+      case OfferingStatus.CreationDeclined:
+      case OfferingStatus.ChangeDeclined:
         return StatusChipLabelTypes.Declined;
       default:
-        return "";
+        return status;
     }
   };
 
