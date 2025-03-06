@@ -26,7 +26,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { getISODateOnlyString } from "@sims/utilities";
 import {
-  WorkflowOutputType as WorkflowOutputType,
+  WorkflowOutputType,
   StudentAssessmentDetail,
 } from "./student-assessment.model";
 
@@ -163,7 +163,7 @@ export class AssessmentSequentialProcessingService {
     const applicationNumbers = sequencedApplications.previous.map(
       (application) => application.applicationNumber,
     );
-    // Only get the full-time costs and contribution totals if the offering intensity is full-time.
+    // Only get the full-time workflow output totals if the offering intensity is full-time.
     const shouldGetProgramYearWorkflowOutputTotals =
       OfferingIntensity.fullTime === offeringIntensity &&
       !!applicationNumbers?.length;
