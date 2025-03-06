@@ -61,7 +61,7 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
       application5Promise,
     ]);
 
-    application5.applicationStatus = ApplicationStatus.Overwritten;
+    application5.applicationStatus = ApplicationStatus.Edited;
     await db.application.save(application5);
 
     const endpoint =

@@ -143,14 +143,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           assessmentDate: dateEqualTo(processingDate),
           offering: { institutionLocation: { hasIntegration: true } },
           application: {
-            applicationStatus: Not(ApplicationStatus.Overwritten),
+            applicationStatus: Not(ApplicationStatus.Edited),
           },
         },
         {
           disbursementSchedules: { updatedAt: dateEqualTo(processingDate) },
           offering: { institutionLocation: { hasIntegration: true } },
           application: {
-            applicationStatus: Not(ApplicationStatus.Overwritten),
+            applicationStatus: Not(ApplicationStatus.Edited),
           },
         },
         {
@@ -161,7 +161,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           },
           offering: { institutionLocation: { hasIntegration: true } },
           application: {
-            applicationStatus: Not(ApplicationStatus.Overwritten),
+            applicationStatus: Not(ApplicationStatus.Edited),
           },
         },
       ],

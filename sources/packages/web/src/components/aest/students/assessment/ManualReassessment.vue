@@ -69,7 +69,7 @@ export default defineComponent({
           applicationAssessmentStatusDetails.isApplicationArchived ||
           [
             ApplicationStatus.Cancelled,
-            ApplicationStatus.Overwritten,
+            ApplicationStatus.Edited,
             ApplicationStatus.Draft,
           ].includes(applicationAssessmentStatusDetails.applicationStatus);
       }

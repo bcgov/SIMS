@@ -87,12 +87,12 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
         student: { sinValidation: { sin: VALID_SIN } },
       },
     });
-    // Set application status to overwritten to not interfere with other tests.
+    // Set application status to Edited to not interfere with other tests.
     await db.application.update(
       {
         id: In(applications.map((application) => application.id)),
       },
-      { applicationStatus: ApplicationStatus.Overwritten },
+      { applicationStatus: ApplicationStatus.Edited },
     );
     // Remove the SFAS data to not interfere with other tests.
     await db.sfasIndividual.delete({ sin: VALID_SIN });
