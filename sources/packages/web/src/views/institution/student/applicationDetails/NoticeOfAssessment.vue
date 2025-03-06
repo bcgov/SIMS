@@ -10,16 +10,15 @@
     <notice-of-assessment-form-view
       :assessment-id="assessmentId"
       :student-id="studentId"
-      :application-id="currentApplicationId"
+      :application-id="applicationId"
     />
   </full-page-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted, ref } from "vue";
+import { defineComponent, computed } from "vue";
 import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFormView.vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { ApplicationService } from "@/services/ApplicationService";
 
 export default defineComponent({
   components: {
@@ -40,20 +39,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const currentApplicationId = ref<number>();
-
-    onMounted(async () => {
-      // Get current application for the parent application.
-      const currentApplication =
-        await ApplicationService.shared.getCurrentApplicationFromParent(
-          props.applicationId,
-          {
-            studentId: props.studentId,
-          },
-        );
-      currentApplicationId.value = currentApplication.id;
-    });
-
     const routeLocation = computed(() => ({
       name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
       params: {
@@ -63,7 +48,7 @@ export default defineComponent({
       },
     }));
 
-    return { routeLocation, currentApplicationId };
+    return { routeLocation };
   },
 });
 </script>

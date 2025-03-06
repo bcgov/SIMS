@@ -11,16 +11,15 @@
       :studentId="studentId"
       :appealId="appealId"
       :readOnlyForm="true"
-      :application-id="currentApplicationId"
+      :application-id="applicationId"
     />
   </full-page-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import StudentAppealRequestsApproval from "@/components/common/students/applicationDetails/StudentAppealRequestsApproval.vue";
-import { ApplicationService } from "@/services/ApplicationService";
 
 export default defineComponent({
   components: { StudentAppealRequestsApproval },
@@ -39,20 +38,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const currentApplicationId = ref<number>();
-
-    onMounted(async () => {
-      // Get current application for the parent application.
-      const currentApplication =
-        await ApplicationService.shared.getCurrentApplicationFromParent(
-          props.applicationId,
-          {
-            studentId: props.studentId,
-          },
-        );
-      currentApplicationId.value = currentApplication.id;
-    });
-
     const assessmentsSummaryRoute = {
       name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
       params: {
@@ -62,7 +47,6 @@ export default defineComponent({
     };
     return {
       assessmentsSummaryRoute,
-      currentApplicationId,
     };
   },
 });

@@ -132,8 +132,6 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: true,
-      // The value could be null on load of the component and updated later.
-      default: null,
     },
     areApplicationActionsAllowed: {
       type: Boolean,

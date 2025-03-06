@@ -22,7 +22,6 @@ import { StudentAssessmentsService } from "@/services/StudentAssessmentsService"
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
 import AssessmentAward from "@/components/common/students/applicationDetails/AssessmentAward.vue";
-import { ApplicationService } from "@/services/ApplicationService";
 
 export default defineComponent({
   components: { AssessmentAward, DetailHeader },
@@ -44,27 +43,17 @@ export default defineComponent({
     const assessmentAwardData = ref<AwardDetailsAPIOutDTO>();
     const { mapAssessmentDetailHeader } = useAssessment();
     const headerMap = ref<Record<string, string>>({});
-    const currentApplicationId = ref<number>();
 
     onMounted(async () => {
-      // Get current application for the parent application.
-      const currentApplication =
-        await ApplicationService.shared.getCurrentApplicationFromParent(
-          props.applicationId,
-          {
-            studentId: props.studentId,
-          },
-        );
-      currentApplicationId.value = currentApplication.id;
-      loadAssessmentAwardValues(currentApplicationId.value);
+      await loadAssessmentAwardValues();
     });
 
-    const loadAssessmentAwardValues = async (applicationId: number) => {
+    const loadAssessmentAwardValues = async () => {
       assessmentAwardData.value =
         await StudentAssessmentsService.shared.getAssessmentAwardDetails(
           props.assessmentId,
           props.studentId,
-          applicationId,
+          props.applicationId,
         );
       headerMap.value = mapAssessmentDetailHeader(assessmentAwardData.value);
     };
