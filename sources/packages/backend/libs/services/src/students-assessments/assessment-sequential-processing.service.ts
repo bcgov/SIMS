@@ -18,8 +18,7 @@ import {
 } from "@sims/sims-db";
 import {
   AwardTotal,
-  ProgramYearContributionTotal,
-  ProgramYearCostTotal,
+  ProgramYearCostsAndContributionsTotal,
   ProgramYearTotal,
   SequencedApplications,
   SequentialApplication,
@@ -27,8 +26,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { getISODateOnlyString } from "@sims/utilities";
 import {
-  FullTimeStudentContributionType,
-  FullTimeStudentCostType,
+  FullTimeStudentCostAndContributionType,
   StudentAssessmentDetail,
 } from "./student-assessment.model";
 
@@ -170,7 +168,7 @@ export class AssessmentSequentialProcessingService {
     const shouldGetProgramYearCostsContributionTotals =
       OfferingIntensity.fullTime === offeringIntensity &&
       !!applicationNumbers?.length;
-    const [awardTotals, costsAndContributionTotals] = await Promise.all([
+    const [awardTotals, costAndContributionTotals] = await Promise.all([
       // Get the program year awards totals for part-time and full-time.
       this.getProgramYearPreviousAwardsTotals(
         sequencedApplications,
@@ -178,13 +176,12 @@ export class AssessmentSequentialProcessingService {
         options,
       ),
       shouldGetProgramYearCostsContributionTotals
-        ? this.getProgramYearCostsAndContributionTotals(applicationNumbers)
+        ? this.getProgramYearCostsAndContributionsTotals(applicationNumbers)
         : null,
     ]);
     return {
       awardTotals,
-      contributionTotals: costsAndContributionTotals?.contributions,
-      costTotals: costsAndContributionTotals?.costs,
+      costAndContributionTotals,
     };
   }
 
@@ -308,41 +305,38 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
-   * Gets the full-time program year contribution totals for the provided application numbers.
+   * Gets the full-time program year costs and contributions totals for the provided application numbers.
    * @param applicationNumbers application numbers.
-   * @returns full-time program year contribution totals.
+   * @returns full-time program year costs and contributions totals.
    */
-  private async getProgramYearCostsAndContributionTotals(
+  private async getProgramYearCostsAndContributionsTotals(
     applicationNumbers: string[],
-  ): Promise<{
-    contributions: ProgramYearContributionTotal[];
-    costs: ProgramYearCostTotal[];
-  }> {
+  ): Promise<ProgramYearCostsAndContributionsTotal[]> {
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
       .select(
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC')::NUMERIC)",
-        FullTimeStudentContributionType.FederalFSC,
+        FullTimeStudentCostAndContributionType.FederalFSC,
       )
       .addSelect(
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC')::NUMERIC)",
-        FullTimeStudentContributionType.ProvincialFSC,
+        FullTimeStudentCostAndContributionType.ProvincialFSC,
       )
       .addSelect(
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'exemptScholarshipsBursaries')::NUMERIC)",
-        FullTimeStudentContributionType.ScholarshipsBursaries,
+        FullTimeStudentCostAndContributionType.ScholarshipsBursaries,
       )
       .addSelect(
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContributionWeeks')::NUMERIC)",
-        FullTimeStudentContributionType.SpouseContributionWeeks,
+        FullTimeStudentCostAndContributionType.SpouseContributionWeeks,
       )
       .addSelect(
-        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'fullTimeBooksCost')::NUMERIC)",
-        FullTimeStudentCostType.FullTimeBooks,
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'booksCost')::NUMERIC)",
+        FullTimeStudentCostAndContributionType.BooksCost,
       )
       .addSelect(
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'returnTransportationCost')::NUMERIC)",
-        FullTimeStudentCostType.ReturnTransportation,
+        FullTimeStudentCostAndContributionType.ReturnTransportationCost,
       )
       .innerJoin("application.currentAssessment", "currentAssessment")
       .where("application.applicationNumber IN (:...applicationNumbers)", {
@@ -359,29 +353,18 @@ export class AssessmentSequentialProcessingService {
         },
       )
       .getRawOne<{
-        [FullTimeStudentContributionType.FederalFSC]: string;
-        [FullTimeStudentContributionType.ProvincialFSC]: string;
-        [FullTimeStudentContributionType.ScholarshipsBursaries]: string;
-        [FullTimeStudentContributionType.SpouseContributionWeeks]: string;
-        [FullTimeStudentCostType.FullTimeBooks]: string;
-        [FullTimeStudentCostType.ReturnTransportation]: string;
+        [FullTimeStudentCostAndContributionType.FederalFSC]: string;
+        [FullTimeStudentCostAndContributionType.ProvincialFSC]: string;
+        [FullTimeStudentCostAndContributionType.ScholarshipsBursaries]: string;
+        [FullTimeStudentCostAndContributionType.SpouseContributionWeeks]: string;
+        [FullTimeStudentCostAndContributionType.BooksCost]: string;
+        [FullTimeStudentCostAndContributionType.ReturnTransportationCost]: string;
       }>();
 
-    const contributions = Object.keys(FullTimeStudentContributionType).map(
-      (key) => ({
-        contribution: key as FullTimeStudentContributionType,
-        total: +totals[key] || 0,
-      }),
-    );
-    const costs = Object.keys(FullTimeStudentCostType).map((key) => ({
-      cost: key as FullTimeStudentCostType,
+    return Object.keys(FullTimeStudentCostAndContributionType).map((key) => ({
+      costOrContribution: key as FullTimeStudentCostAndContributionType,
       total: +totals[key] || 0,
     }));
-
-    return {
-      contributions,
-      costs,
-    };
   }
 
   /**

@@ -12,19 +12,13 @@ export interface StudentAssessmentDetail {
 }
 
 /**
- * Full-time program year student contribution for calculating program year totals.
+ * Full-time program year student costs and contributions for calculating program year totals.
  */
-export enum FullTimeStudentContributionType {
+export enum FullTimeStudentCostAndContributionType {
   ScholarshipsBursaries = "ScholarshipsBursaries",
   SpouseContributionWeeks = "SpouseContributionWeeks",
   FederalFSC = "FederalFSC",
   ProvincialFSC = "ProvincialFSC",
-}
-
-/**
- * Full-time program year student costs for calculating program year totals.
- */
-export enum FullTimeStudentCostType {
-  FullTimeBooks = "FullTimeBooks",
-  ReturnTransportation = "ReturnTransportation",
+  BooksCost = "BooksCost",
+  ReturnTransportationCost = "ReturnTransportationCost",
 }

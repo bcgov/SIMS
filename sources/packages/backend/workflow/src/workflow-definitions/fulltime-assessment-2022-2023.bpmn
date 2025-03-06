@@ -2035,7 +2035,7 @@ There is an application limit based on offering weeks and a total program year l
     <bpmn:intermediateThrowEvent id="Event_0rfsu30" name="PY Return Transportation">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearReturnTransportation - programYearTotalReturnTransportation)" target="calculatedDataRemainingReturnTransportation" />
+          <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearReturnTransportation - programYearTotalReturnTransportationCost)" target="calculatedDataRemainingReturnTransportation" />
           <zeebe:output source="=if offeringDelivered = &#34;onsite&#34;&#10;then&#10;min(dmnFullTimeApplicationReturnTransportation, calculatedDataRemainingReturnTransportation)&#10;else &#10;  0" target="calculatedDataReturnTransportationCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -2179,7 +2179,7 @@ There is an application limit based on offering weeks and a total program year l
 The remaining limit in the program year is calculated with a floor of 0.</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearBooks-programYearTotalFullTimeBooks)" target="calculatedDataRemainingBookLimit" />
+          <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearBooks-programYearTotalBooksCost)" target="calculatedDataRemainingBookLimit" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_10egxdo</bpmn:incoming>
