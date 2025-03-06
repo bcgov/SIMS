@@ -60,7 +60,6 @@ objects:
               stdin: true
               resources:
                 limits:
-                  cpu: ${CPU_LIMIT}
                   memory: ${MEMORY_LIMIT}
                 requests:
                   cpu: ${CPU_REQUEST}
@@ -72,8 +71,6 @@ parameters:
     value: sims
   - name: SERVICE_NAME
     value: db-migrations-repl
-  - name: CPU_LIMIT
-    value: "0.5"
   - name: MEMORY_LIMIT
     value: "512M"
   - name: CPU_REQUEST

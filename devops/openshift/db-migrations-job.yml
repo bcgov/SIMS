@@ -47,7 +47,6 @@ objects:
                       name: ${API_SECRET_NAME}
               resources:
                 limits:
-                  cpu: ${CPU_LIMIT}
                   memory: ${MEMORY_LIMIT}
                 requests:
                   cpu: ${CPU_REQUEST}
@@ -84,11 +83,9 @@ parameters:
     value: user
   - name: DB_PASSWORD_KEY
     value: password
-  - name: CPU_LIMIT
-    value: "1.0"
   - name: MEMORY_LIMIT
-    value: "2000M"
+    value: "500M"
   - name: CPU_REQUEST
     value: "0.5"
   - name: MEMORY_REQUEST
-    value: "1000M"
+    value: "500M"

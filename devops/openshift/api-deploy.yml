@@ -222,7 +222,6 @@ objects:
                 - containerPort: "${{PORT}}"
               resources:
                 limits:
-                  cpu: ${CPU_LIMIT}
                   memory: ${MEMORY_LIMIT}
                 requests:
                   cpu: ${CPU_REQUEST}
@@ -404,14 +403,12 @@ parameters:
     value: sims
   - name: SERVICE_NAME
     value: api
-  - name: CPU_LIMIT
-    value: "0.2"
   - name: MEMORY_LIMIT
-    value: "512M"
+    required: true
   - name: CPU_REQUEST
-    value: "0.1"
+    required: true
   - name: MEMORY_REQUEST
-    value: "384M"
+    required: true
   - name: REPLICAS
     value: "2"
   - name: PORT

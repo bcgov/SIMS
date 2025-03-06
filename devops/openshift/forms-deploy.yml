@@ -76,7 +76,6 @@ objects:
                   cpu: "${CPU_REQUEST}"
                   memory: "${MEMORY_REQUEST}"
                 limits:
-                  cpu: "${CPU_LIMIT}"
                   memory: "${MEMORY_LIMIT}"
               livenessProbe:
                 tcpSocket:
@@ -245,22 +244,14 @@ parameters:
     displayName: Resources CPU Request
     description: The resources CPU request (in cores) for this build.
     required: true
-    value: "0.2"
-  - name: CPU_LIMIT
-    displayName: Resources CPU Limit
-    description: The resources CPU limit (in cores) for this build.
-    required: true
-    value: "1.5"
   - name: MEMORY_REQUEST
     displayName: Resources Memory Request
     description: The resources Memory request (in Mi, Gi, etc) for this build.
     required: true
-    value: 500Mi
   - name: MEMORY_LIMIT
     displayName: Resources Memory Limit
     description: The resources Memory limit (in Mi, Gi, etc) for this build.
     required: true
-    value: 2Gi
   - name: TLS_CERTIFICATE
     required: true
   - name: TLS_KEY

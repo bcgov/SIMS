@@ -21,10 +21,6 @@ parameters:
     description: Amount of CPU to Request.
     displayName: Memory Request
     required: true
-  - name: CPU_LIMIT
-    description: Amount of CPU to Limit.
-    displayName: Memory Limit
-    required: true
   - name: MONGODB_SERVICE_NAME
     description: Name of the MongoDB Service
     displayName: MongoDB Service Name
@@ -208,7 +204,6 @@ objects:
               resources:
                 limits:
                   memory: "${MEMORY_LIMIT}"
-                  cpu: "${CPU_LIMIT}"
                 requests:
                   memory: "${MEMORY_REQUEST}"
                   cpu: "${CPU_REQUEST}"

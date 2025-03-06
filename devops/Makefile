@@ -399,6 +399,9 @@ deploy-api:
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		-p ALLOW_BETA_USERS_ONLY=$(ALLOW_BETA_USERS_ONLY) \
 		-p QUEUE_DASHBOARD_BASE_URL=https://$(HOST) \
+		-p CPU_REQUEST=$(API_CPU_REQUEST) \
+		-p MEMORY_REQUEST=$(API_MEMORY_REQUEST) \
+		-p MEMORY_LIMIT=$(API_MEMORY_LIMIT) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(API))
 
@@ -421,6 +424,9 @@ deploy-workers:
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
 		-p DISABLE_ORM_CACHE=$(DISABLE_ORM_CACHE) \
+		-p CPU_REQUEST=$(WORKERS_CPU_REQUEST) \
+		-p MEMORY_REQUEST=$(WORKERS_MEMORY_REQUEST) \
+		-p MEMORY_LIMIT=$(WORKERS_MEMORY_LIMIT) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(WORKERS))
 
@@ -454,6 +460,9 @@ deploy-queue-consumers:
 		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
 		-p TLS_KEY=$(TLS_KEY) \
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
+		-p CPU_REQUEST=$(QUEUE_CONSUMERS_CPU_REQUEST) \
+		-p MEMORY_REQUEST=$(QUEUE_CONSUMERS_MEMORY_REQUEST) \
+		-p MEMORY_LIMIT=$(QUEUE_CONSUMERS_MEMORY_LIMIT) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(QUEUE_CONSUMERS))
 
@@ -501,12 +510,19 @@ deploy-web:
 	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
 	-p TLS_KEY=$(TLS_KEY) \
 	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
+	-p CPU_REQUEST=$(WEB_CPU_REQUEST) \
+	-p MEMORY_REQUEST=$(WEB_MEMORY_REQUEST) \
+	-p MEMORY_LIMIT=$(WEB_MEMORY_LIMIT) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(WEB))
 
 deploy-ha-mongo:
 	test -n "$(NAMESPACE)"
-	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) \
+	-p CPU_REQUEST=$(HAMONGO_DB_CPU_REQUEST) \
+	-p MEMORY_REQUEST=$(HAMONGO_DB_MEMORY_REQUEST) \
+	-p MEMORY_LIMIT=$(HAMONGO_DB_MEMORY_LIMIT) \
+	--param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
 
 build-forms:
 	test -n "$(BUILD_NAMESPACE)"
@@ -539,6 +555,9 @@ deploy-forms:
 	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
 	-p TLS_KEY=$(TLS_KEY) \
 	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
+	-p CPU_REQUEST=$(FORMIO_CPU_REQUEST) \
+	-p MEMORY_REQUEST=$(FORMIO_MEMORY_REQUEST) \
+	-p MEMORY_LIMIT=$(FORMIO_MEMORY_LIMIT) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(FORMS_NAME))
 
