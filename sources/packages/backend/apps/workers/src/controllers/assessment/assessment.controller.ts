@@ -420,17 +420,16 @@ export class AssessmentController {
           this.studentAssessmentService.saveAssessmentCalculationStartDate(
             assessmentId,
           );
-        const programYearTotals =
-          await this.assessmentSequentialProcessingService.getProgramYearTotals(
+        const workflowOutputsTotals =
+          this.assessmentSequentialProcessingService.getProgramYearTotals(
             assessmentId,
             {
               alternativeReferenceDate: new Date(),
             },
           );
-        // Updates the calculation start date and get the program year totals and for
-        // full-time the contribution program year totals in parallel.
-        const [programYearAwardsContributionTotals] = await Promise.all([
-          programYearTotals,
+        // Updates the calculation start date and get the program year totals and workflow outputs program year totals in parallel.
+        const [programYearTotals] = await Promise.all([
+          workflowOutputsTotals,
           saveAssessmentCalculationStartDate,
         ]);
         if (
@@ -445,10 +444,7 @@ export class AssessmentController {
         jobLogger.log(
           `The assessment calculation order has been verified and the assessment id ${assessmentId} is ready to be processed.`,
         );
-        this.createOutputForProgramYearTotals(
-          programYearAwardsContributionTotals,
-          result,
-        );
+        this.createOutputForProgramYearTotals(programYearTotals, result);
         result.isReadyForCalculation = true;
         return job.complete(result);
       }
@@ -465,7 +461,7 @@ export class AssessmentController {
 
   /**
    * Create a new dynamic output variable for each award and offering intensity for both part-time and full-time.
-   * Create a new dynamic output variable for each contribution for full-time.
+   * Create a new dynamic output variable for each workflow output.
    * Each variable is prefixed with 'programYearTotal' and then concatenated
    * with the offering intensity as 'FullTime'/'PartTime' and the award code.
    * @example
@@ -490,11 +486,11 @@ export class AssessmentController {
         ? output[outputName] + award.total
         : award.total;
     });
-    programYearTotal.contributionTotals?.forEach((contributionTotal) => {
-      const outputName = `${PROGRAM_YEAR_TOTAL}${contributionTotal.contribution}`;
+    programYearTotal.workflowOutputTotals?.forEach((item) => {
+      const outputName = `${PROGRAM_YEAR_TOTAL}${item.workflowOutput}`;
       output[outputName] = output[outputName]
-        ? output[outputName] + contributionTotal.total
-        : contributionTotal.total;
+        ? output[outputName] + item.total
+        : item.total;
     });
   }
 
