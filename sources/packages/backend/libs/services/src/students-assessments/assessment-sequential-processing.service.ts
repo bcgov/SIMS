@@ -18,7 +18,7 @@ import {
 } from "@sims/sims-db";
 import {
   AwardTotal,
-  ProgramYearContributionTotal,
+  ProgramYearWorkflowOutputTotal,
   ProgramYearTotal,
   SequencedApplications,
   SequentialApplication,
@@ -26,7 +26,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { getISODateOnlyString } from "@sims/utilities";
 import {
-  FullTimeStudentContributionType,
+  WorkflowOutputType,
   StudentAssessmentDetail,
 } from "./student-assessment.model";
 
@@ -135,8 +135,7 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
-   * Get the program year awards totals for part-time and
-   * full-time and contribution totals for full-time for the assessment.
+   * Get the program year awards totals workflow outputs totals for the assessment.
    * @param assessmentId assessment id.
    * @param options method options.
    * - `alternativeReferenceDate` the reference date to be used.
@@ -164,24 +163,24 @@ export class AssessmentSequentialProcessingService {
     const applicationNumbers = sequencedApplications.previous.map(
       (application) => application.applicationNumber,
     );
-    // Only get the full-time contribution totals if the offering intensity is full-time.
-    const shouldGetProgramYearContributionTotals =
+    // Only get the full-time workflow output totals if the offering intensity is full-time.
+    const shouldGetProgramYearWorkflowOutputTotals =
       OfferingIntensity.fullTime === offeringIntensity &&
       !!applicationNumbers?.length;
-    const [awardTotals, contributionTotals] = await Promise.all([
+    const [awardTotals, workflowOutputTotals] = await Promise.all([
       // Get the program year awards totals for part-time and full-time.
       this.getProgramYearPreviousAwardsTotals(
         sequencedApplications,
         currentAssessment,
         options,
       ),
-      shouldGetProgramYearContributionTotals
-        ? this.getProgramYearContributionTotals(applicationNumbers)
+      shouldGetProgramYearWorkflowOutputTotals
+        ? this.getProgramYearWorkflowOutputTotals(applicationNumbers)
         : null,
     ]);
     return {
       awardTotals,
-      contributionTotals,
+      workflowOutputTotals,
     };
   }
 
@@ -305,30 +304,38 @@ export class AssessmentSequentialProcessingService {
   }
 
   /**
-   * Gets the full-time program year contribution totals for the provided application numbers.
+   * Gets program year workflow output totals for the provided application numbers.
    * @param applicationNumbers application numbers.
-   * @returns full-time program year contribution totals.
+   * @returns program year workflow output totals.
    */
-  private async getProgramYearContributionTotals(
+  private async getProgramYearWorkflowOutputTotals(
     applicationNumbers: string[],
-  ): Promise<ProgramYearContributionTotal[]> {
+  ): Promise<ProgramYearWorkflowOutputTotal[]> {
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
       .select(
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC')::NUMERIC)",
-        FullTimeStudentContributionType.FederalFSC,
+        WorkflowOutputType.FederalFSC,
       )
       .addSelect(
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC')::NUMERIC)",
-        FullTimeStudentContributionType.ProvincialFSC,
+        WorkflowOutputType.ProvincialFSC,
       )
       .addSelect(
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'exemptScholarshipsBursaries')::NUMERIC)",
-        FullTimeStudentContributionType.ScholarshipsBursaries,
+        WorkflowOutputType.ScholarshipsBursaries,
       )
       .addSelect(
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContributionWeeks')::NUMERIC)",
-        FullTimeStudentContributionType.SpouseContributionWeeks,
+        WorkflowOutputType.SpouseContributionWeeks,
+      )
+      .addSelect(
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalBookCost')::NUMERIC)",
+        WorkflowOutputType.BookCost,
+      )
+      .addSelect(
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'returnTransportationCost')::NUMERIC)",
+        WorkflowOutputType.ReturnTransportationCost,
       )
       .innerJoin("application.currentAssessment", "currentAssessment")
       .where("application.applicationNumber IN (:...applicationNumbers)", {
@@ -337,7 +344,7 @@ export class AssessmentSequentialProcessingService {
       .andWhere("application.applicationStatus != :editedStatus", {
         editedStatus: ApplicationStatus.Edited,
       })
-      // Check for assessment completed status to avoid retrieving any cancelation status.
+      // Check for assessment completed status to avoid retrieving any cancellation status.
       .andWhere(
         "currentAssessment.studentAssessmentStatus = :completedStudentAssessmentStatus",
         {
@@ -345,14 +352,16 @@ export class AssessmentSequentialProcessingService {
         },
       )
       .getRawOne<{
-        [FullTimeStudentContributionType.FederalFSC]: string;
-        [FullTimeStudentContributionType.ProvincialFSC]: string;
-        [FullTimeStudentContributionType.ScholarshipsBursaries]: string;
-        [FullTimeStudentContributionType.SpouseContributionWeeks]: string;
+        [WorkflowOutputType.FederalFSC]: string;
+        [WorkflowOutputType.ProvincialFSC]: string;
+        [WorkflowOutputType.ScholarshipsBursaries]: string;
+        [WorkflowOutputType.SpouseContributionWeeks]: string;
+        [WorkflowOutputType.BookCost]: string;
+        [WorkflowOutputType.ReturnTransportationCost]: string;
       }>();
 
-    return Object.keys(FullTimeStudentContributionType).map((key) => ({
-      contribution: key as FullTimeStudentContributionType,
+    return Object.keys(WorkflowOutputType).map((key) => ({
+      workflowOutput: key as WorkflowOutputType,
       total: +totals[key] || 0,
     }));
   }
