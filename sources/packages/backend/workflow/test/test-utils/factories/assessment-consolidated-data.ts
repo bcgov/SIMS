@@ -49,6 +49,8 @@ export function createFakeAssessmentConsolidatedData(
     studentDataApplicationPDPPDStatus: "no",
     applicationStatus: ApplicationStatus.Assessment,
     applicationHasNOAApproval: false,
+    programYearTotalBookCost: 500,
+    programYearTotalReturnTransportationCost: 500,
   };
 }
 

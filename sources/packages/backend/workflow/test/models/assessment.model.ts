@@ -187,6 +187,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   latestCSLPBalance: number;
   applicationStatus: string;
   applicationHasNOAApproval: boolean;
+  programYearTotalBookCost: number;
 }
 
 /**
@@ -219,9 +220,11 @@ export interface AssessmentModel {
   totalFederalAward: number;
   otherAllowableCost: number;
   transportationCost: number;
+  returnTransportationCost: number;
   secondResidenceCost: number;
   totalAssessmentNeed: number;
   booksAndSuppliesCost: number;
+  booksAndSuppliesRemainingLimit: number;
   totalProvincialAward: number;
   alimonyOrChildSupport: number;
   federalAssessmentNeed: number;
@@ -253,6 +256,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalFamilyIncome: number;
   awardNetFederalTotalAward: number;
   calculatedDataTotalTransportationCost: number;
+  calculatedDataReturnTransportationCost: number;
   calculatedDataTotalSecondResidence: number;
   calculatedDataTotalAssessedNeed: number;
   calculatedDataTotalBookCost: number;
@@ -382,4 +386,5 @@ export interface CalculatedAssessmentModel {
   // Disbursement schedules
   disbursementSchedules: Array<unknown>;
   calculatedDataTotalAcademicExpenses: number;
+  calculatedDataRemainingBookLimit: number;
 }

@@ -1,8 +1,8 @@
-bcgov_pubcode_version: 1
+bcgov_pubcode_version: 2
 data_management_roles:
-  data_custodian: Burke Van Drimmelen
-  data_steward: Jason Tang
-  product_owner: Jason Tang
+  data_custodian: Nino Samson 
+  data_steward: Carly Cotton
+  product_owner: Nino Samson
 product_external_dependencies:
   identity_authorization:
     - BCGov-SSO-Keycloak
@@ -11,8 +11,8 @@ product_external_dependencies:
   other_dependencies: Camunda 8 Cloud
 product_information:
   api_specifications:
-    - https://dev-aest-sims.apps.silver.devops.gov.bc.ca/swagger
-    - https://test-aest-sims.apps.silver.devops.gov.bc.ca/swagger
+    - https://dev.sims.studentaidbc.ca/swagger
+    - https://test.sims.studentaidbc.ca/swagger
   ministry:
     - Post-Secondary Education and Future Skills
   product_acronym: SIMS
@@ -25,14 +25,22 @@ product_information:
   product_name: Student Information Management System
   product_status: maturing
   product_urls:
-    - https://test-aest-sims.apps.silver.devops.gov.bc.ca/aest/login
-    - https://test-aest-sims.apps.silver.devops.gov.bc.ca/institution/login
-    - https://test-aest-sims.apps.silver.devops.gov.bc.ca/student/login
-    - https://test-aest-sims.apps.silver.devops.gov.bc.ca/supporting-users/login
-    - https://dev-aest-sims.apps.silver.devops.gov.bc.ca/aest/login
-    - https://dev-aest-sims.apps.silver.devops.gov.bc.ca/institution/login
-    - https://dev-aest-sims.apps.silver.devops.gov.bc.ca/student/login
-    - https://dev-aest-sims.apps.silver.devops.gov.bc.ca/supporting-users/login
+    - https://test.sims.studentaidbc.ca/ministry/login
+    - https://test.sims.studentaidbc.ca/institution/login
+    - https://test.sims.studentaidbc.ca/student/login
+    - https://test.sims.studentaidbc.ca/supporting-users/login
+    - https://dev.sims.studentaidbc.ca/ministry/login
+    - https://dev.sims.studentaidbc.ca/institution/login
+    - https://dev.sims.studentaidbc.ca/student/login
+    - https://dev.sims.studentaidbc.ca/supporting-users/login
+    - https://staging.sims.studentaidbc.ca/ministry/login
+    - https://staging.sims.studentaidbc.ca/institution/login
+    - https://staging.sims.studentaidbc.ca/student/login
+    - https://staging.sims.studentaidbc.ca/supporting-users/login
+    - https://sims.studentaidbc.ca/ministry/login
+    - https://sims.studentaidbc.ca/institution/login
+    - https://sims.studentaidbc.ca/student/login
+    - https://sims.studentaidbc.ca/supporting-users/login
   program_area: Student Aid BC
 product_technology_information:
   backend_frameworks:
@@ -42,7 +50,7 @@ product_technology_information:
       version: '16'
   backend_languages_version:
     - name: TypeScript
-      version: 4.5.5
+      version: 4.9.5
   ci_cd_tools:
     - GitHub-Actions
   data_storage_platforms:
@@ -51,9 +59,9 @@ product_technology_information:
     - name: Vue
       version: 3.2.31
     - name: Other
-      version: Vuetify 3.1.5
+      version: Vuetify 3.7.2
   frontend_languages:
     - name: TypeScript
-      version: 4.5.5
+      version: 4.9.5
   hosting_platforms:
     - Private-Cloud-Openshift
