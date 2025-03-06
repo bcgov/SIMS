@@ -19,6 +19,6 @@ export enum WorkflowOutputType {
   SpouseContributionWeeks = "SpouseContributionWeeks",
   FederalFSC = "FederalFSC",
   ProvincialFSC = "ProvincialFSC",
-  BooksCost = "BooksCost",
+  BookCost = "BooksCost",
   ReturnTransportationCost = "ReturnTransportationCost",
 }

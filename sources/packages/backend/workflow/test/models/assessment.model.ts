@@ -187,7 +187,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   latestCSLPBalance: number;
   applicationStatus: string;
   applicationHasNOAApproval: boolean;
-  programYearTotalBooksCost: number;
+  programYearTotalBookCost: number;
 }
 
 /**

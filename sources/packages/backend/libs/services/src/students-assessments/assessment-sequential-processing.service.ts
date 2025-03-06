@@ -330,8 +330,8 @@ export class AssessmentSequentialProcessingService {
         WorkflowOutputType.SpouseContributionWeeks,
       )
       .addSelect(
-        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'booksCost')::NUMERIC)",
-        WorkflowOutputType.BooksCost,
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalBookCost')::NUMERIC)",
+        WorkflowOutputType.BookCost,
       )
       .addSelect(
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'returnTransportationCost')::NUMERIC)",
@@ -356,7 +356,7 @@ export class AssessmentSequentialProcessingService {
         [WorkflowOutputType.ProvincialFSC]: string;
         [WorkflowOutputType.ScholarshipsBursaries]: string;
         [WorkflowOutputType.SpouseContributionWeeks]: string;
-        [WorkflowOutputType.BooksCost]: string;
+        [WorkflowOutputType.BookCost]: string;
         [WorkflowOutputType.ReturnTransportationCost]: string;
       }>();
 

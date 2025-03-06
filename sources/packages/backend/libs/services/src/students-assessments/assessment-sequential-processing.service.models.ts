@@ -1,3 +1,4 @@
+import { WorkflowOutputType } from "@sims/services/students-assessments/student-assessment.model";
 import { OfferingIntensity } from "@sims/sims-db";
 
 /**
@@ -138,6 +139,6 @@ export interface ProgramYearTotal {
  * Full-time program year cost and contribution and its totals.
  */
 export interface ProgramYearWorkflowOutputTotal {
-  workflowOutput: string;
+  workflowOutput: WorkflowOutputType;
   total: number;
 }

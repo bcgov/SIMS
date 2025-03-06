@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0ihicdz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.30.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="7a75e87a-6774-4e60-9a94-5dbbe3be143a">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0ihicdz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.33.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="7a75e87a-6774-4e60-9a94-5dbbe3be143a">
   <bpmn:message id="Message_3q4oc02" name="Message_3q4oc02" />
   <bpmn:collaboration id="Collaboration_1cf99un">
     <bpmn:participant id="Participant_1mct69m" name="fulltime-assessment-2025-2026" processRef="fulltime-assessment-2025-2026" />
@@ -2179,7 +2179,7 @@ There is an application limit based on offering weeks and a total program year l
 The remaining limit in the program year is calculated with a floor of 0.</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearBooks-programYearTotalBooksCost)" target="calculatedDataRemainingBookLimit" />
+          <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearBooks-programYearTotalBookCost)" target="calculatedDataRemainingBookLimit" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_10egxdo</bpmn:incoming>
@@ -4279,6 +4279,10 @@ There is also a per application limit based on the number of weeks in the offeri
         <di:waypoint x="3159" y="1107" />
         <di:waypoint x="3082" y="830" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1o4g869_di" bpmnElement="Association_1o4g869">
+        <di:waypoint x="730" y="326" />
+        <di:waypoint x="731" y="580" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
         <dc:Bounds x="5140" y="1127" width="686" height="850" />
         <bpmndi:BPMNLabel>
@@ -4444,10 +4448,6 @@ There is also a per application limit based on the number of weeks in the offeri
         <dc:Bounds x="482" y="780" width="238" height="35" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_10pqvkj_di" bpmnElement="TextAnnotation_10pqvkj">
-        <dc:Bounds x="600" y="170" width="241" height="156" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
         <dc:Bounds x="520" y="440" width="200" height="68" />
         <bpmndi:BPMNLabel />
@@ -4505,10 +4505,6 @@ There is also a per application limit based on the number of weeks in the offeri
       <bpmndi:BPMNEdge id="Association_07u88c1_di" bpmnElement="Association_07u88c1">
         <di:waypoint x="539" y="638" />
         <di:waypoint x="534" y="780" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1o4g869_di" bpmnElement="Association_1o4g869">
-        <di:waypoint x="723" y="326" />
-        <di:waypoint x="730" y="580" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
         <di:waypoint x="614" y="603" />
@@ -4590,6 +4586,10 @@ There is also a per application limit based on the number of weeks in the offeri
         <di:waypoint x="3053" y="1420" />
         <di:waypoint x="3042" y="1406" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_10pqvkj_di" bpmnElement="TextAnnotation_10pqvkj">
+        <dc:Bounds x="609" y="170" width="241" height="156" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

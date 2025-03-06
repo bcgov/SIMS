@@ -1089,7 +1089,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       programYearTotalScholarshipsBursaries: 0,
       programYearTotalSpouseContributionWeeks: 0,
       programYearTotalReturnTransportationCost: 0,
-      programYearTotalBooksCost: 0,
+      programYearTotalBookCost: 0,
     });
   });
 
@@ -1128,7 +1128,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
               totalFederalFSC: 3000,
               totalProvincialFSC: 4000,
               returnTransportationCost: 500,
-              booksCost: 600,
+              totalBookCost: 600,
             },
           } as WorkflowData,
         },
@@ -1161,7 +1161,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
               totalFederalFSC: 3000,
               totalProvincialFSC: 4000,
               returnTransportationCost: 500,
-              booksCost: 600,
+              totalBookCost: 600,
             },
           } as WorkflowData,
         },
@@ -1214,7 +1214,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       programYearTotalScholarshipsBursaries: 4000,
       programYearTotalSpouseContributionWeeks: 2000,
       programYearTotalReturnTransportationCost: 1000,
-      programYearTotalBooksCost: 1200,
+      programYearTotalBookCost: 1200,
     });
   });
 });

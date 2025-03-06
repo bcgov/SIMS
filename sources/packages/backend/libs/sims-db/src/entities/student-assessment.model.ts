@@ -391,7 +391,7 @@ export interface WorkflowData {
     exemptScholarshipsBursaries?: number;
     studentSpouseContributionWeeks?: number;
     returnTransportationCost?: number;
-    booksCost?: number;
+    totalBookCost?: number;
   };
 }
 

@@ -421,7 +421,7 @@ export class AssessmentController {
             assessmentId,
           );
         const workflowOutputsTotals =
-          await this.assessmentSequentialProcessingService.getProgramYearTotals(
+          this.assessmentSequentialProcessingService.getProgramYearTotals(
             assessmentId,
             {
               alternativeReferenceDate: new Date(),
