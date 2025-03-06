@@ -12,9 +12,9 @@ export interface StudentAssessmentDetail {
 }
 
 /**
- * Full-time program year student costs and contributions for calculating program year totals.
+ * Workflow output type for calculating program year totals.
  */
-export enum FullTimeStudentCostAndContributionType {
+export enum WorkflowOutputType {
   ScholarshipsBursaries = "ScholarshipsBursaries",
   SpouseContributionWeeks = "SpouseContributionWeeks",
   FederalFSC = "FederalFSC",
