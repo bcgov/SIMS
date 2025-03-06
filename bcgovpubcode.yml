@@ -32,7 +32,15 @@ product_information:
     - https://dev.sims.studentaidbc.ca/ministry/login
     - https://dev.sims.studentaidbc.ca/institution/login
     - https://dev.sims.studentaidbc.ca/student/login
-    - https://dev-aest-sims.apps.silver.devops.gov.bc.ca/supporting-users/login
+    - https://dev.sims.studentaidbc.ca/supporting-users/login
+    - https://staging.sims.studentaidbc.ca/ministry/login
+    - https://staging.sims.studentaidbc.ca/institution/login
+    - https://staging.sims.studentaidbc.ca/student/login
+    - https://staging.sims.studentaidbc.ca/supporting-users/login
+    - https://sims.studentaidbc.ca/ministry/login
+    - https://sims.studentaidbc.ca/institution/login
+    - https://sims.studentaidbc.ca/student/login
+    - https://sims.studentaidbc.ca/supporting-users/login
   program_area: Student Aid BC
 product_technology_information:
   backend_frameworks:
