@@ -1,4 +1,5 @@
 import { CASInvoiceBatchApprovalStatus } from "@sims/sims-db";
+import { IsNotEmpty } from "class-validator";
 
 export class CASInvoiceBatchAPIOutDTO {
   id: number;
@@ -7,4 +8,9 @@ export class CASInvoiceBatchAPIOutDTO {
   approvalStatus: CASInvoiceBatchApprovalStatus;
   approvalStatusUpdatedOn: Date;
   approvalStatusUpdatedBy: string;
+}
+
+export class UpdateCASInvoiceBatchAPIInDTO {
+  @IsNotEmpty()
+  approvalStatus: CASInvoiceBatchApprovalStatus;
 }
