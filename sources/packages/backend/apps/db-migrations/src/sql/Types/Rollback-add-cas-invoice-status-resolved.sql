@@ -1,7 +1,7 @@
 -- Postgres does not allow the removal of items of an enum, only add or rename.
 -- To remove the previously added items, a temporary enum will be created to
 -- allow the creation of the enum as it was before.
-CREATE TYPE sims.cas_invoice_status_types_to_rollback AS ENUM ('Pending', 'Sent', 'Manual Intervention');
+CREATE TYPE sims.cas_invoice_status_types_to_rollback AS ENUM ('Pending', 'Sent', 'Manual intervention');
 
 -- Update the dependent column to start using the new enum with the expected values.
 ALTER TABLE
