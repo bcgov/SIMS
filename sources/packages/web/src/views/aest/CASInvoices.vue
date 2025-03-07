@@ -81,8 +81,16 @@
                       ><strong>Download</strong></span
                     >
                   </v-btn>
+                </template>
+              </check-permission-role>
+              <check-permission-role :role="Role.AESTCASInvoiceBatchExpense">
+                <template #="{ notAllowed }">
                   <v-btn
-                    :disabled="notAllowed"
+                    :disabled="
+                      notAllowed ||
+                      item.approvalStatus !==
+                        CASInvoiceBatchApprovalStatus.Pending
+                    "
                     variant="text"
                     color="primary"
                     @click="approveBatch(item.id)"
@@ -92,7 +100,11 @@
                     >
                   </v-btn>
                   <v-btn
-                    :disabled="notAllowed"
+                    :disabled="
+                      notAllowed ||
+                      item.approvalStatus !==
+                        CASInvoiceBatchApprovalStatus.Pending
+                    "
                     variant="text"
                     color="primary"
                     @click="rejectBatch(item.id)"
@@ -220,13 +232,31 @@ export default defineComponent({
 
     const approveBatch = async (batchId: number) => {
       if (await approveBatchModal.value.showModal()) {
-        snackBar.warn(`Approve batch to be implemented (Batch ID ${batchId}).`);
+        try {
+          await CASInvoiceBatchService.shared.updateCASInvoiceBatch(batchId, {
+            approvalStatus: CASInvoiceBatchApprovalStatus.Approved,
+          });
+          snackBar.success(
+            `Batch ${batchId} has been approved and added to the queue.`,
+          );
+          loadInvoiceBatches();
+        } catch (error: unknown) {
+          snackBar.error(`Unexpected error updating batch ${batchId}.`);
+        }
       }
     };
 
     const rejectBatch = async (batchId: number) => {
       if (await rejectBatchModal.value.showModal()) {
-        snackBar.warn(`Reject batch to be implemented (Batch ID ${batchId}).`);
+        try {
+          await CASInvoiceBatchService.shared.updateCASInvoiceBatch(batchId, {
+            approvalStatus: CASInvoiceBatchApprovalStatus.Rejected,
+          });
+          snackBar.success(`Batch ${batchId} has been has been rejected.`);
+          loadInvoiceBatches();
+        } catch (error: unknown) {
+          snackBar.error(`Unexpected error updating batch ${batchId}.`);
+        }
       }
     };
 

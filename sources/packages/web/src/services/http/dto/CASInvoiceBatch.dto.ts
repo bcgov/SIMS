@@ -8,3 +8,7 @@ export interface CASInvoiceBatchAPIOutDTO {
   approvalStatusUpdatedOn: Date;
   approvalStatusUpdatedBy: string;
 }
+
+export interface UpdateCASInvoiceBatchAPIInDTO {
+  approvalStatus: CASInvoiceBatchApprovalStatus;
+}
