@@ -1,5 +1,5 @@
-import { getSQLFileData } from "@sims/utilities";
 import { MigrationInterface, QueryRunner } from "typeorm";
+import { getSQLFileData } from "../utilities/sqlLoader";
 
 export class AddCASInvoiceStatusResolved1741385166157
   implements MigrationInterface
