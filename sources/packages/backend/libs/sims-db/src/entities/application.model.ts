@@ -9,16 +9,19 @@ import {
   RelationId,
 } from "typeorm";
 import {
+  ApplicationEditStatus,
   ApplicationOfferingChangeRequest,
   ApplicationRestrictionBypass,
   CRAIncomeVerification,
   EducationProgram,
   InstitutionLocation,
+  Note,
   OfferingIntensity,
   PIRDeniedReason,
   RelationshipStatus,
   StudentScholasticStanding,
   SupportingUser,
+  User,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { ApplicationStudentFile } from "./application-student-file.model";
@@ -371,6 +374,47 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   precedingApplication?: Application;
+
+  /**
+   * Status of the application related to possible editions that resulted in
+   * different versions of the same application.
+   */
+  @Column({
+    name: "application_edit_status",
+    type: "enum",
+    enum: ApplicationEditStatus,
+    enumName: "ApplicationEditStatus",
+  })
+  applicationEditStatus: ApplicationEditStatus;
+
+  /**
+   * Last date and time when the edit status changed.
+   */
+  @Column({
+    name: "application_edit_status_updated_on",
+    type: "timestamptz",
+  })
+  applicationEditStatusUpdatedOn: Date;
+
+  /**
+   * User that changed the edit status last time.
+   */
+  @ManyToOne(() => User)
+  @JoinColumn({
+    name: "application_edit_status_updated_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  applicationEditStatusUpdatedBy: User;
+
+  /**
+   * Note added by the Ministry while approving or declining the edit application.
+   */
+  @OneToOne(() => Note, { nullable: true })
+  @JoinColumn({
+    name: "application_edit_status_note_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  applicationEditStatusNote?: Note;
 }
 
 /**
