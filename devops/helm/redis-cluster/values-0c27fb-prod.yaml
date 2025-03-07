@@ -10,7 +10,6 @@ volumePermissions:
       cpu: 500m
       memory: 1024Mi
     limits:
-      cpu: 500m
       memory: 1024Mi
 
   # resources: {}
@@ -23,7 +22,6 @@ redis:
       cpu: 500m
       memory: 1024Mi
     limits:
-      cpu: 500m
       memory: 1024Mi
 
   # resources: {}
@@ -37,7 +35,6 @@ updateJob:
       cpu: 500m
       memory: 1024Mi
     limits:
-      cpu: 500m
       memory: 1024Mi
 
   # resources: {}
