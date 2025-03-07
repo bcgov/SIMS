@@ -2,7 +2,7 @@
 ALTER TABLE
   sims.applications
 ADD
-  COLUMN application_edit_status sims.application_edit_status NOT NULL DEFAULT 'Original',
+  COLUMN application_edit_status sims.application_edit_status NOT NULL DEFAULT 'Edited',
 ADD
   COLUMN application_edit_status_updated_on TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 ADD
@@ -18,13 +18,36 @@ COMMENT ON COLUMN sims.applications.application_edit_status_updated_by IS 'User 
 
 COMMENT ON COLUMN sims.applications.application_edit_status_note_id IS 'Note added by the Ministry while approving or declining the edit application.';
 
--- Update any application different than the first one to 'Edited'.
+-- When application have an application number, the first application version of every existing application should be 'Original'.
+-- When application does not have an application number (draft or cancelled), the application version should be 'Original'.
 UPDATE
   sims.applications
 SET
-  application_edit_status = 'Edited'
+  application_edit_status = 'Original'
 WHERE
-  parent_application_id != preceding_application_id;
+  application_number IS NULL
+  OR id IN (
+    SELECT
+      id
+    FROM
+      (
+        SELECT
+          applications.id,
+          applications.application_number,
+          row_number() over (
+            PARTITION by application_number
+            ORDER BY
+              id
+          ) AS row_number
+        FROM
+          sims.applications applications
+        WHERE
+          applications.application_number IS NOT NULL
+      ) AS numbered_applications
+    WHERE
+      -- Only the first application version of every existing application should be selected.
+      numbered_applications.row_number = 1
+  );
 
 -- Update the edit user as the system user for all existing applications.
 UPDATE
