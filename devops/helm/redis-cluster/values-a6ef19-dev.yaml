@@ -45,3 +45,9 @@ metrics:
   ## @param metrics.enabled Start a side-car prometheus exporter
   ##
   enabled: false
+  resources:
+    requests:
+      cpu: 50m
+      memory: 1024Mi
+    limits:
+      memory: 1024Mi
