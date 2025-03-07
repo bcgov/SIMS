@@ -1,0 +1,36 @@
+name: Env Setup - Deploy HA Mongo in Openshift for Formio
+run-name: Env Setup - Deploy HA Mongo in Openshift from ${{ github.ref_name }} to ${{ inputs.environment }}
+
+concurrency: ha-mongo-setup
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment"
+        required: true
+        type: environment
+
+jobs:
+  deployRedis:
+    name: Deploy Mongo in Openshift
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+    steps:
+      - name: Checkout Target Branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "4"
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      - name: Deploy Mongo
+        working-directory: "./devops/"
+        run: |
+          make deploy-ha-mongo
