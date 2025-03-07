@@ -28,43 +28,22 @@ SET
   application_edit_status = 'Original'
 WHERE
   application_number IS NULL
-  OR id IN (
-    SELECT
-      id
-    FROM
-      (
-        SELECT
-          applications.id,
-          applications.application_number,
-          row_number() over (
-            PARTITION by application_number
-            ORDER BY
-              id
-          ) AS row_number
-        FROM
-          sims.applications applications
-        WHERE
-          applications.application_number IS NOT NULL
-      ) AS numbered_applications
-    WHERE
-      -- Only the first application version of every existing application should be selected.
-      numbered_applications.row_number = 1
+  OR (
+    id = parent_application_id
+    AND parent_application_id = preceding_application_id
   );
 
--- Update the edit user as the system user for all existing applications.
+-- Consider the student as the one updating the application_edit_status_updated_by because
+-- at this moment only students can edit the applications and no Ministry approval is required.
 UPDATE
-  sims.applications
+  sims.applications applications
 SET
-  application_edit_status_updated_by = (
-    SELECT
-      id
-    FROM
-      sims.users
-    WHERE
-      last_name = 'system-user'
-    LIMIT
-      1
-  );
+  application_edit_status_updated_by = users.id
+FROM
+  sims.students students
+  INNER JOIN sims.users users ON students.user_id = users.id
+WHERE
+  applications.student_id = students.id;
 
 -- Removing the dummy constraints created just to allow us
 -- to add a "NOT NULL" column in an existing table and add a 
