@@ -10,7 +10,7 @@ ALTER COLUMN
   invoice_status TYPE sims.cas_invoice_status_types_to_rollback USING (
     CASE
       invoice_status :: text
-      WHEN 'Resolved' THEN 'Manual Intervention'
+      WHEN 'Resolved' THEN 'Manual intervention'
       ELSE invoice_status :: text
     END
   ) :: sims.cas_invoice_status_types_to_rollback;

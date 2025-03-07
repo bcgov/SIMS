@@ -2,7 +2,7 @@
 CREATE TYPE sims.cas_invoice_status_types_to_be_updated AS ENUM (
   'Pending',
   'Sent',
-  'Manual Intervention',
+  'Manual intervention',
   'Resolved'
 );
 
