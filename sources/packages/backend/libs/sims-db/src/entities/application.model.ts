@@ -407,7 +407,7 @@ export class Application extends RecordDataModel {
   applicationEditStatusUpdatedBy: User;
 
   /**
-   * Note added by the Ministry while approving or declining the edit application.
+   * Note added by the Ministry while approving or declining the edited application.
    */
   @OneToOne(() => Note, { nullable: true })
   @JoinColumn({

@@ -1,11 +1,13 @@
--- Adding new column with the default 'Original' to later be removed.
 ALTER TABLE
   sims.applications
 ADD
+  -- Adding new column with the default 'Edited' to later be removed.
   COLUMN application_edit_status sims.application_edit_status NOT NULL DEFAULT 'Edited',
 ADD
+  -- Default will be dropped at the end of this script.
   COLUMN application_edit_status_updated_on TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
 ADD
+  -- A NOT NULL constraint will be added at the end of this script.
   COLUMN application_edit_status_updated_by INT REFERENCES sims.users(id),
 ADD
   COLUMN application_edit_status_note_id INT REFERENCES sims.notes(id);
@@ -16,10 +18,10 @@ COMMENT ON COLUMN sims.applications.application_edit_status_updated_on IS 'Last 
 
 COMMENT ON COLUMN sims.applications.application_edit_status_updated_by IS 'User that changed the edit status last time.';
 
-COMMENT ON COLUMN sims.applications.application_edit_status_note_id IS 'Note added by the Ministry while approving or declining the edit application.';
+COMMENT ON COLUMN sims.applications.application_edit_status_note_id IS 'Note added by the Ministry while approving or declining the edited application.';
 
--- When application have an application number, the first application version of every existing application should be 'Original'.
--- When application does not have an application number (draft or cancelled), the application version should be 'Original'.
+-- When application have an application number, the first application version of every existing application should be 'Original', or
+-- when application does not have an application number (draft or cancelled), the application version should also be 'Original'.
 UPDATE
   sims.applications
 SET
