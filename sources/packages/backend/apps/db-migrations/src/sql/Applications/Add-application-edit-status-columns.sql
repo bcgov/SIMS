@@ -20,18 +20,15 @@ COMMENT ON COLUMN sims.applications.application_edit_status_updated_by IS 'User 
 
 COMMENT ON COLUMN sims.applications.application_edit_status_note_id IS 'Note added by the Ministry while approving or declining the edited application.';
 
--- When application have an application number, the first application version of every existing application should be 'Original', or
--- when application does not have an application number (draft or cancelled), the application version should also be 'Original'.
+-- First ever saved application should be considered the original one.
+-- The submission will make the parent_application_id and the preceding_application_id the same from its own ID.
 UPDATE
   sims.applications
 SET
   application_edit_status = 'Original'
 WHERE
-  application_number IS NULL
-  OR (
-    id = parent_application_id
-    AND parent_application_id = preceding_application_id
-  );
+  id = parent_application_id
+  AND parent_application_id = preceding_application_id;
 
 -- Consider the student as the one updating the application_edit_status_updated_by because
 -- at this moment only students can edit the applications and no Ministry approval is required.
@@ -45,9 +42,9 @@ FROM
 WHERE
   applications.student_id = students.id;
 
--- Removing the dummy constraints created just to allow us
--- to add a "NOT NULL" column in an existing table and add a 
--- NOT NULL constraint to the updated_by column.
+-- Removing the dummy DEFAULT constraints created just to allow us
+-- to add a "NOT NULL" column in an existing table and added a 
+-- NOT NULL constraint to the application_edit_status_updated_by column.
 ALTER TABLE
   sims.applications
 ALTER COLUMN

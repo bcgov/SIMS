@@ -10,7 +10,7 @@
 export enum ApplicationEditStatus {
   /**
    * Default status when the application was never edited in any way.
-   * This status will likely associated to draft applications.
+   * This status will likely be associated to draft applications.
    */
   Original = "Original",
   /**
@@ -18,8 +18,8 @@ export enum ApplicationEditStatus {
    */
   ChangeInProgress = "Change in progress",
   /**
-   * Status for applications that are being edited after COE and Ministry approval time
-   * is requested and pending.
+   * Status for applications that are being edited after COE and Ministry approval
+   * was requested and is pending.
    */
   ChangePendingApproval = "Change pending approval",
   /**

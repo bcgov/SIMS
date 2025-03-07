@@ -81,7 +81,8 @@ export function createFakeApplication(
     ApplicationEditStatus.Original;
   application.applicationEditStatusUpdatedOn =
     options?.initialValue?.applicationEditStatusUpdatedOn ?? now;
-  application.applicationEditStatusUpdatedBy = relations?.editStatusUpdatedBy;
+  application.applicationEditStatusUpdatedBy =
+    relations?.applicationEditStatusUpdatedBy;
   return application;
 }
 
@@ -364,7 +365,7 @@ export async function saveFakeApplication(
         application: savedApplication,
         offering: savedOffering,
         auditUser: savedUser,
-        editStatusUpdatedBy: savedUser,
+        applicationEditStatusUpdatedBy: savedUser,
       },
       {
         initialValue: {
