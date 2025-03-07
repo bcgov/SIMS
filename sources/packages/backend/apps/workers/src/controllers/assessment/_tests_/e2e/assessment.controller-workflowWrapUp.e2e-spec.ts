@@ -757,7 +757,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         offering: savedOffering,
         previousDateChangedReportedAssessment:
           relations?.previousDateChangedReportedAssessment,
-        editStatusUpdatedBy: auditUser,
+        applicationEditStatusUpdatedBy: auditUser,
       },
       {
         initialValue: {

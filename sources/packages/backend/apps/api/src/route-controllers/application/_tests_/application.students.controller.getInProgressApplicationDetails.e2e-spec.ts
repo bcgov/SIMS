@@ -69,7 +69,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
       {
         application,
-        editStatusUpdatedBy: student.user,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );
@@ -132,7 +132,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
       {
         application,
-        editStatusUpdatedBy: student.user,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );
@@ -140,7 +140,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       {
         application,
         supportingUser: parent1,
-        editStatusUpdatedBy: student.user,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );
@@ -148,7 +148,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       {
         application,
         supportingUser: parent2,
-        editStatusUpdatedBy: student.user,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );
@@ -210,7 +210,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
       {
         application,
-        editStatusUpdatedBy: student.user,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );
@@ -218,7 +218,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       {
         application,
         supportingUser: partner,
-        editStatusUpdatedBy: student.user,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );

@@ -11,7 +11,7 @@ import { createFakeApplication } from "@sims/test-utils/factories/application";
  * @param relations dependencies.
  * - `application` related student application.
  * - `supportingUser` related supporting user.
- * - `editStatusUpdatedBy` user updating the edit status.
+ * - `applicationEditStatusUpdatedBy` user updating the edit status.
  * @param options student options.
  * - `initialValues` CRA income verification values.
  * @returns a CRA income verification ready to be saved to the database.
@@ -20,7 +20,7 @@ export function createFakeCRAIncomeVerification(
   relations?: {
     application?: Application;
     supportingUser?: SupportingUser;
-    editStatusUpdatedBy?: User;
+    applicationEditStatusUpdatedBy?: User;
   },
   options?: {
     initialValues?: Partial<CRAIncomeVerification>;

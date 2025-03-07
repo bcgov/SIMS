@@ -45,7 +45,7 @@ export function createFakeApplication(
     location?: InstitutionLocation;
     precedingApplication?: Application;
     parentApplication?: Application;
-    editStatusUpdatedBy?: User;
+    applicationEditStatusUpdatedBy?: User;
   },
   options?: { initialValue?: Partial<Application> },
 ): Application {
@@ -316,7 +316,7 @@ export async function saveFakeApplication(
       applicationException: relations?.applicationException,
       precedingApplication: relations?.precedingApplication,
       parentApplication: relations?.parentApplication,
-      editStatusUpdatedBy: savedUser,
+      applicationEditStatusUpdatedBy: savedUser,
     },
     {
       initialValue: {

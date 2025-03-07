@@ -61,7 +61,7 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
       createFakeStudentAssessment({
         auditUser: student.user,
         application,
-        editStatusUpdatedBy: student.user,
+        applicationEditStatusUpdatedBy: student.user,
       }),
     );
     application.currentAssessment = studentAssessment;
