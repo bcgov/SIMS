@@ -15,4 +15,8 @@ export enum CASInvoiceStatus {
    * and a manual intervention is required.
    */
   ManualIntervention = "Manual intervention",
+  /** Manual intervention was completed
+   * and the invoice was resolved.
+   */
+  Resolved = "Resolved",
 }
