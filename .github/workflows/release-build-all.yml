@@ -204,7 +204,6 @@ jobs:
   # If DEV is used to deploy a release or hotfix branch the automatic deploy can be stopped using the env variable because there
   # is a Potential to main/relase/hotfix branches have differences (for instance the DB) that would not be backward compatible.
   deployAlltoDEV:
-    if: github.event_name == 'pull_request' && vars.ALLOW_AUTOMATIC_MAIN_BRANCH_DEPLOY_TO_DEV == 'true' && github.ref_name == 'main'
     name: Deploy All to DEV
     needs:
       [
