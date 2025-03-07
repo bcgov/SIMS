@@ -9,10 +9,14 @@ on:
       environment:
         description: "Environment"
         required: true
-        type: environment
+        type: string
+      volume_capacity:
+        description: "Volume space available for data (e.g., 10Gi, 20Gi) - (Optional defaults to 2Gi)."
+        required: false
+        type: string
 
 jobs:
-  deployRedis:
+  deployMongo:
     name: Deploy Mongo in Openshift
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
@@ -33,4 +37,4 @@ jobs:
       - name: Deploy Mongo
         working-directory: "./devops/"
         run: |
-          make oc-deploy-ha-mongo
+          make oc-deploy-ha-mongo VOLUME_CAPACITY="${{ inputs.volume_capacity }}"

@@ -1,3 +1,0 @@
-VOLUME_CAPACITY=2Gi
-SC_MONGO=netapp-block-standard
-MONGODB_DATABASE=forms

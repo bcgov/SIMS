@@ -39,6 +39,8 @@ export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
 export QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS := $(or $(QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS), 3600)
+export VOLUME_CAPACITY := $(or $(VOLUME_CAPACITY), 2Gi)
+export SC_MONGO := $(or ${SC_MONGO}, netapp-block-standard)
 
 export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.
@@ -97,10 +99,6 @@ endef
 
 define HAMONGO_DB_TEMPLATE_PATH
 "openshift/database/mongo-ha.yml"
-endef
-
-define HAMONGO_DB_PARAM_PATH
-"openshift/database/mongo-ha-param.yml"
 endef
 
 # Ensure DOMAIN_PREFIX do not have any ".", which would create a subdomain
@@ -522,7 +520,9 @@ deploy-ha-mongo:
 	-p CPU_REQUEST=$(HAMONGO_DB_CPU_REQUEST) \
 	-p MEMORY_REQUEST=$(HAMONGO_DB_MEMORY_REQUEST) \
 	-p MEMORY_LIMIT=$(HAMONGO_DB_MEMORY_REQUEST) \
-	--param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
+	-p VOLUME_CAPACITY=$(VOLUME_CAPACITY) \
+	-p SC_MONGO=$(SC_MONGO) \
+	| oc -n $(NAMESPACE) apply -f -
 
 build-forms:
 	test -n "$(BUILD_NAMESPACE)"
