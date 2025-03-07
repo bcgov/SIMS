@@ -401,7 +401,7 @@ deploy-api:
 		-p QUEUE_DASHBOARD_BASE_URL=https://$(HOST) \
 		-p CPU_REQUEST=$(API_CPU_REQUEST) \
 		-p MEMORY_REQUEST=$(API_MEMORY_REQUEST) \
-		-p MEMORY_LIMIT=$(API_MEMORY_LIMIT) \
+		-p MEMORY_LIMIT=$(API_MEMORY_REQUEST) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(API))
 
@@ -426,7 +426,7 @@ deploy-workers:
 		-p DISABLE_ORM_CACHE=$(DISABLE_ORM_CACHE) \
 		-p CPU_REQUEST=$(WORKERS_CPU_REQUEST) \
 		-p MEMORY_REQUEST=$(WORKERS_MEMORY_REQUEST) \
-		-p MEMORY_LIMIT=$(WORKERS_MEMORY_LIMIT) \
+		-p MEMORY_LIMIT=$(WORKERS_MEMORY_REQUEST) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(WORKERS))
 
@@ -462,7 +462,7 @@ deploy-queue-consumers:
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		-p CPU_REQUEST=$(QUEUE_CONSUMERS_CPU_REQUEST) \
 		-p MEMORY_REQUEST=$(QUEUE_CONSUMERS_MEMORY_REQUEST) \
-		-p MEMORY_LIMIT=$(QUEUE_CONSUMERS_MEMORY_LIMIT) \
+		-p MEMORY_LIMIT=$(QUEUE_CONSUMERS_MEMORY_REQUEST) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(QUEUE_CONSUMERS))
 
@@ -512,7 +512,7 @@ deploy-web:
 	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	-p CPU_REQUEST=$(WEB_CPU_REQUEST) \
 	-p MEMORY_REQUEST=$(WEB_MEMORY_REQUEST) \
-	-p MEMORY_LIMIT=$(WEB_MEMORY_LIMIT) \
+	-p MEMORY_LIMIT=$(WEB_MEMORY_REQUEST) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(WEB))
 
@@ -521,7 +521,7 @@ deploy-ha-mongo:
 	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) \
 	-p CPU_REQUEST=$(HAMONGO_DB_CPU_REQUEST) \
 	-p MEMORY_REQUEST=$(HAMONGO_DB_MEMORY_REQUEST) \
-	-p MEMORY_LIMIT=$(HAMONGO_DB_MEMORY_LIMIT) \
+	-p MEMORY_LIMIT=$(HAMONGO_DB_MEMORY_REQUEST) \
 	--param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
 
 build-forms:
@@ -557,7 +557,7 @@ deploy-forms:
 	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	-p CPU_REQUEST=$(FORMIO_CPU_REQUEST) \
 	-p MEMORY_REQUEST=$(FORMIO_MEMORY_REQUEST) \
-	-p MEMORY_LIMIT=$(FORMIO_MEMORY_LIMIT) \
+	-p MEMORY_LIMIT=$(FORMIO_MEMORY_REQUEST) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(FORMS_NAME))
 
