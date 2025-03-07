@@ -86,7 +86,11 @@ describe("OverawardAESTController(e2e)-getOverawardsByStudent", () => {
     // Prepare the student assessment to create overaward.
     const application = await saveFakeApplication(appDataSource, { student });
     const studentAssessment = await assessmentRepo.save(
-      createFakeStudentAssessment({ auditUser: user, application }),
+      createFakeStudentAssessment({
+        auditUser: user,
+        application,
+        editStatusUpdatedBy: user,
+      }),
     );
     application.currentAssessment = studentAssessment;
     await applicationRepo.save(application);

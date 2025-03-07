@@ -54,6 +54,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
       auditUser: savedUser,
+      editStatusUpdatedBy: savedUser,
     });
     fakeOriginalAssessment.application = savedApplication;
     // Original assessment - first disbursement (Sent).
@@ -102,6 +103,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     const fakeReassessment = createFakeStudentAssessment({
       auditUser: savedUser,
       offering: savedOffering,
+      editStatusUpdatedBy: savedUser,
     });
     fakeReassessment.triggerType = AssessmentTriggerType.OfferingChange;
     fakeReassessment.application = savedApplication;
@@ -366,6 +368,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
       auditUser: savedUser,
+      editStatusUpdatedBy: savedUser,
     });
     fakeOriginalAssessment.application = savedApplication;
     const savedOriginalAssessment = await db.studentAssessment.save(
@@ -447,6 +450,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
       auditUser: savedUser,
+      editStatusUpdatedBy: savedUser,
     });
     fakeOriginalAssessment.application = savedApplication;
     const savedOriginalAssessment = await db.studentAssessment.save(

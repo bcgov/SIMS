@@ -166,6 +166,7 @@ describe(
             previousDateChangedReportedAssessment:
               application.currentAssessment,
             offering: newOffering,
+            editStatusUpdatedBy: auditUser,
           },
           {
             initialValue: {
@@ -305,6 +306,7 @@ describe(
             application,
             previousDateChangedReportedAssessment: originalAssessment,
             offering: newOffering,
+            editStatusUpdatedBy: auditUser,
           },
           {
             initialValue: {

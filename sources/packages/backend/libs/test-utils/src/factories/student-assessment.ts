@@ -18,6 +18,7 @@ export function createFakeStudentAssessment(
     offering?: EducationProgramOffering;
     studentAppeal?: StudentAppeal;
     previousDateChangedReportedAssessment?: StudentAssessment;
+    editStatusUpdatedBy?: User;
   },
   options?: {
     initialValue?: Partial<StudentAssessment>;
@@ -26,7 +27,8 @@ export function createFakeStudentAssessment(
 ): StudentAssessment {
   const now = new Date();
   const assessment = new StudentAssessment();
-  assessment.application = relations?.application ?? createFakeApplication();
+  assessment.application =
+    relations?.application ?? createFakeApplication(relations);
   assessment.submittedDate = now;
   assessment.submittedBy = relations?.auditUser;
   assessment.assessmentWorkflowId = null;

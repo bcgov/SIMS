@@ -249,6 +249,7 @@ describe(
             auditUser: application.student.user,
             application: application,
             offering: application.currentAssessment.offering,
+            editStatusUpdatedBy: application.student.user,
           },
           {
             initialValue: {
