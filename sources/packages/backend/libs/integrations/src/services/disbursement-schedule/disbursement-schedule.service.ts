@@ -2,11 +2,12 @@ import { Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   DisbursementSchedule,
-  OfferingIntensity,
   ApplicationStatus,
   COEStatus,
+  OfferingIntensity,
 } from "@sims/sims-db";
-import { DataSource, In } from "typeorm";
+import { addDays, COE_WINDOW } from "@sims/utilities";
+import { DataSource } from "typeorm";
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -68,71 +69,64 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .getMany();
   }
   /**
-   * Fetch the COEs which are pending for the institution.
-   * @returns eligible COEs.
+   * Fetch the COEs which are eligible to confirm enrolment by the institutions.
+   * @returns eligible COE .
    */
-  async getPendingCOEs(): Promise<DisbursementSchedule[]> {
-    return this.repo.find({
-      select: {
-        id: true,
-        disbursementDate: true,
-        disbursementValues: { id: true, valueCode: true, valueAmount: true },
-        studentAssessment: {
-          id: true,
-          application: {
-            id: true,
-            applicationNumber: true,
-            studentNumber: true,
-            currentAssessment: {
-              id: true,
-              offering: {
-                id: true,
-                studyStartDate: true,
-                studyEndDate: true,
-                institutionLocation: {
-                  institutionCode: true,
-                },
-              },
-            },
-            student: {
-              id: true,
-              birthDate: true,
-              sinValidation: { id: true, sin: true },
-              user: { id: true, lastName: true, firstName: true },
-            },
-          },
-        },
-      },
-      relations: {
-        disbursementValues: true,
-        studentAssessment: {
-          application: {
-            currentAssessment: { offering: { institutionLocation: true } },
-            student: {
-              sinValidation: true,
-              user: true,
-            },
-          },
-        },
-      },
-      where: {
-        coeStatus: COEStatus.required,
-        studentAssessment: {
-          application: {
-            applicationStatus: In([
-              ApplicationStatus.Enrolment,
-              ApplicationStatus.Completed,
-            ]),
-            currentAssessment: {
-              offering: {
-                institutionLocation: { hasIntegration: true },
-                offeringIntensity: OfferingIntensity.fullTime,
-              },
-            },
-          },
-        },
-        hasEstimatedAwards: true,
-      },
-    });
+  async getInstitutionEligiblePendingEnrolments(): Promise<
+    DisbursementSchedule[]
+  > {
+    const coeThresholdDate = addDays(COE_WINDOW);
+    return this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .select([
+        "disbursementSchedule.id",
+        "disbursementSchedule.disbursementDate",
+        "disbursementValues.id",
+        "disbursementValues.valueAmount",
+        "disbursementValues.valueCode",
+        "studentAssessment.id",
+        "offering.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "location.id",
+        "location.institutionCode",
+        "application.id",
+        "application.applicationNumber",
+        "application.studentNumber",
+        "student.id",
+        "student.birthDate",
+        "sinValidation.id",
+        "sinValidation.sin",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .innerJoin(
+        "disbursementSchedule.disbursementValues",
+        "disbursementValues",
+      )
+      .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin("studentAssessment.application", "application")
+      .innerJoin("offering.institutionLocation", "location")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.sinValidation", "sinValidation")
+      .innerJoin("student.user", "user")
+      .where("studentAssessment.id = application.currentAssessment.id")
+      .andWhere("application.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
+      })
+      .andWhere("disbursementSchedule.hasEstimatedAwards = true")
+      .andWhere("disbursementSchedule.disbursementDate <= :coeThresholdDate", {
+        coeThresholdDate,
+      })
+      .andWhere("disbursementSchedule.coeStatus = :required", {
+        required: COEStatus.required,
+      })
+      .andWhere("offering.offeringIntensity = :fullTime", {
+        fullTime: OfferingIntensity.fullTime,
+      })
+      .andWhere("location.hasIntegration = TRUE")
+      .getMany();
   }
 }

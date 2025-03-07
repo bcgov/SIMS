@@ -1,10 +1,12 @@
 import {
   Application,
   ApplicationStatus,
+  AssessmentTriggerType,
   COEStatus,
   DisbursementValue,
   DisbursementValueType,
   OfferingIntensity,
+  Student,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -13,6 +15,8 @@ import {
   saveFakeStudent,
   createFakeDisbursementValue,
   createFakeInstitutionLocation,
+  createFakeStudentAssessment,
+  createFakeDisbursementSchedule,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -20,7 +24,13 @@ import {
   mockBullJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
-import { formatDate, QueueNames } from "@sims/utilities";
+import {
+  addDays,
+  COE_WINDOW,
+  formatDate,
+  getISODateOnlyString,
+  QueueNames,
+} from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
 import { ECEProcessIntegrationScheduler } from "../ece-process-integration.scheduler";
 import { getUploadedFile } from "@sims/test-utils/mocks";
@@ -33,6 +43,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
   let processor: ECEProcessIntegrationScheduler;
   let db: E2EDataSources;
   let sftpClientMock: DeepMocked<Client>;
+  let sharedStudent: Student;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, sshClientMock } =
@@ -42,6 +53,8 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
     sftpClientMock = sshClientMock;
     // Processor under test.
     processor = app.get(ECEProcessIntegrationScheduler);
+    // Student with valid SIN.
+    sharedStudent = await saveFakeStudent(db.dataSource);
   });
 
   beforeEach(async () => {
@@ -55,76 +68,93 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
     );
   });
 
-  it("Should process an ECE request file and when there are valid disbursements and applications.", async () => {
-    // Arrange
-    // Student with valid SIN.
-    const student = await saveFakeStudent(db.dataSource);
-    // Student application eligible for e-Cert.
-    const application = await saveFakeApplicationDisbursements(
-      db.dataSource,
-      {
-        student,
-        firstDisbursementValues: [
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaLoan,
-            "CSLP",
-            1122,
-          ),
-        ],
-        institutionLocation: createFakeInstitutionLocation(undefined, {
-          initialValue: { hasIntegration: true },
-        }),
-      },
-      {
-        offeringIntensity: OfferingIntensity.fullTime,
-        applicationStatus: ApplicationStatus.Enrolment,
-        firstDisbursementInitialValues: {
-          coeStatus: COEStatus.required,
+  it(
+    "Should process an ECE request file and when there are valid disbursements and applications" +
+      " ignoring the disbursements outside COE window.",
+    async () => {
+      // Arrange
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student: sharedStudent,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              1122,
+            ),
+          ],
+          secondDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              1500,
+            ),
+          ],
+          institutionLocation: createFakeInstitutionLocation(undefined, {
+            initialValue: { hasIntegration: true },
+          }),
         },
-      },
-    );
-    application.studentNumber = "1234567789";
-    const locationCode =
-      application.currentAssessment.offering.institutionLocation
-        .institutionCode;
-    await db.application.save(application);
-    // Queued job.
-    const mockedJob = mockBullJob<void>();
+        {
+          createSecondDisbursement: true,
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Enrolment,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.required,
+          },
+          // This disbursement is expected to be ignored for ECE request
+          // as the disbursement date is outside COE window.
+          secondDisbursementInitialValues: {
+            coeStatus: COEStatus.required,
+            disbursementDate: getISODateOnlyString(addDays(COE_WINDOW + 10)),
+          },
+        },
+      );
+      application.studentNumber = "1234567789";
+      const locationCode =
+        application.currentAssessment.offering.institutionLocation
+          .institutionCode;
+      await db.application.save(application);
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
 
-    // Act
-    const result = await processor.processQueue(mockedJob.job);
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
 
-    const uploadedFile = getUploadedFile(sftpClientMock);
-    const fileDate = dayjs().format("YYYYMMDD");
-    expect(result).toStrictEqual([
-      `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
-    ]);
-    expect(
-      mockedJob.containLogMessages([
-        "Retrieving eligible COEs for ECE request.",
-        "Found 1 COEs.",
-        "Creating ECE request content.",
-        `Processing content for institution code ${locationCode}.`,
-        "Uploading content.",
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      expect(result).toStrictEqual([
         `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
-      ]),
-    ).toBe(true);
-    // Assert file output.
-    const [header, fileDetail, footer] = uploadedFile.fileLines;
-    // Expect the header to contain REQUEST and file date.
-    expect(header).toContain(`REQUEST${fileDate}`);
-    // Expect the file detail.
-    const [disbursement] = application.currentAssessment.disbursementSchedules;
-    const [disbursementValue] = disbursement.disbursementValues;
-    const expectedDetailRecord = buildECEFileDetail(
-      application,
-      disbursementValue,
-      disbursement.disbursementDate,
-    );
-    expect(fileDetail).toBe(expectedDetailRecord);
-    // Expect the file footer.
-    expect(footer).toBe("3000001");
-  });
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          "Retrieving eligible COEs for ECE request.",
+          "Found 1 COEs.",
+          "Creating ECE request content.",
+          `Processing content for institution code ${locationCode}.`,
+          "Uploading content.",
+          `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
+        ]),
+      ).toBe(true);
+      // Assert file output.
+      const [header, fileDetail, footer] = uploadedFile.fileLines;
+      // Expect the header to contain REQUEST and file date.
+      expect(header).toContain(`REQUEST${fileDate}`);
+      // Expect the file detail.
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const [disbursementValue] = disbursement.disbursementValues;
+      const expectedDetailRecord = buildECEFileDetail(
+        application,
+        disbursementValue,
+        disbursement.disbursementDate,
+      );
+      expect(fileDetail).toBe(expectedDetailRecord);
+      // Expect the file footer.
+      expect(footer).toBe("3000001");
+    },
+  );
 
   it("Should not process an ECE request file and when there is an application with disbursement that doesn't have estimated awards.", async () => {
     // Arrange
@@ -149,6 +179,109 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
     // Assert
     expect(result).toStrictEqual(["No eligible COEs found."]);
   });
+
+  it(
+    "Should process an ECE request file for the disbursements only from current assessment where an application has" +
+      " more than one assessments.",
+    async () => {
+      // Arrange
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student: sharedStudent,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              1122,
+            ),
+          ],
+          institutionLocation: createFakeInstitutionLocation(undefined, {
+            initialValue: { hasIntegration: true },
+          }),
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Enrolment,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.required,
+          },
+        },
+      );
+      application.studentNumber = "1234567789";
+      await db.application.save(application);
+      const originalAssessment = application.currentAssessment;
+      const offering = originalAssessment.offering;
+      const location = offering.institutionLocation;
+
+      // Add a fake reassessment for the application.
+      const newAssessment = createFakeStudentAssessment(
+        {
+          auditUser: application.student.user,
+          application,
+          offering,
+        },
+        {
+          initialValue: {
+            triggerType: AssessmentTriggerType.ManualReassessment,
+          },
+        },
+      );
+      application.currentAssessment = newAssessment;
+      await db.application.save(application);
+      // Create fake disbursement for the reassessment.
+      const newDisbursementValue = createFakeDisbursementValue(
+        DisbursementValueType.CanadaLoan,
+        "CSLP",
+        2000,
+      );
+      const newDisbursement = createFakeDisbursementSchedule(
+        {
+          studentAssessment: newAssessment,
+          disbursementValues: [newDisbursementValue],
+        },
+        { initialValues: { coeStatus: COEStatus.required } },
+      );
+      newAssessment.disbursementSchedules = [newDisbursement];
+      await db.studentAssessment.save(newAssessment);
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      expect(result).toStrictEqual([
+        `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          "Retrieving eligible COEs for ECE request.",
+          "Found 1 COEs.",
+          "Creating ECE request content.",
+          `Processing content for institution code ${location.institutionCode}.`,
+          "Uploading content.",
+          `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
+        ]),
+      ).toBe(true);
+      // Assert file output.
+      const [header, fileDetail, footer] = uploadedFile.fileLines;
+      // Expect the header to contain REQUEST and file date.
+      expect(header).toContain(`REQUEST${fileDate}`);
+      // Expect the file detail.
+      const expectedDetailRecord = buildECEFileDetail(
+        application,
+        newDisbursementValue,
+        newDisbursement.disbursementDate,
+      );
+      expect(fileDetail).toBe(expectedDetailRecord);
+      // Expect the file footer.
+      expect(footer).toBe("3000001");
+    },
+  );
 
   function buildECEFileDetail(
     application: Application,
