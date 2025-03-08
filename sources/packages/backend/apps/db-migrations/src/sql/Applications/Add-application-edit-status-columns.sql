@@ -2,7 +2,7 @@ ALTER TABLE
   sims.applications
 ADD
   -- Adding new column with the default 'Edited' to later be removed.
-  COLUMN application_edit_status sims.application_edit_status NOT NULL DEFAULT 'Edited',
+  COLUMN application_edit_status sims.application_edit_status NOT NULL DEFAULT 'Original',
 ADD
   -- Default will be dropped at the end of this script.
   COLUMN application_edit_status_updated_on TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -24,10 +24,10 @@ COMMENT ON COLUMN sims.applications.application_edit_status_note_id IS 'Note add
 UPDATE
   sims.applications
 SET
-  application_edit_status = 'Original',
+  application_edit_status = 'Edited',
   application_edit_status_updated_on = application_status_updated_on
 WHERE
-  id = parent_application_id;
+  id != parent_application_id;
 
 -- Consider the student as the one updating the application_edit_status_updated_by because
 -- at this moment only students can edit the applications and no Ministry approval is required.
