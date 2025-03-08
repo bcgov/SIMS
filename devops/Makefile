@@ -39,6 +39,19 @@ export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
 export QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS := $(or $(QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS), 3600)
+export VOLUME_CAPACITY := $(or $(VOLUME_CAPACITY), 2Gi)
+export FORMIO_CPU_REQUEST := $(or ${FORMIO_CPU_REQUEST}, 200m)
+export FORMIO_MEMORY_REQUEST := $(or ${FORMIO_MEMORY_REQUEST}, 2Gi)
+export API_CPU_REQUEST := $(or ${API_CPU_REQUEST}, 100m)
+export API_MEMORY_REQUEST := $(or ${API_MEMORY_REQUEST}, 512Mi)
+export WORKERS_CPU_REQUEST := $(or ${WORKERS_CPU_REQUEST}, 100m)
+export WORKERS_MEMORY_REQUEST := $(or ${WORKERS_MEMORY_REQUEST}, 512Mi)
+export WEB_CPU_REQUEST := $(or ${WEB_CPU_REQUEST}, 100m)
+export WEB_MEMORY_REQUEST := $(or ${WEB_MEMORY_REQUEST}, 256Mi)
+export QUEUE_CONSUMERS_CPU_REQUEST := $(or ${QUEUE_CONSUMERS_CPU_REQUEST}, 200m)
+export QUEUE_CONSUMERS_MEMORY_REQUEST := $(or ${QUEUE_CONSUMERS_MEMORY_REQUEST}, 1024Mi)
+export HAMONGO_DB_CPU_REQUEST := $(or ${HAMONGO_DB_CPU_REQUEST}, 250m)
+export HAMONGO_DB_MEMORY_REQUEST := $(or ${HAMONGO_DB_MEMORY_REQUEST}, 2Gi)
 
 export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.
@@ -97,10 +110,6 @@ endef
 
 define HAMONGO_DB_TEMPLATE_PATH
 "openshift/database/mongo-ha.yml"
-endef
-
-define HAMONGO_DB_PARAM_PATH
-"openshift/database/mongo-ha-param.yml"
 endef
 
 # Ensure DOMAIN_PREFIX do not have any ".", which would create a subdomain
@@ -367,6 +376,8 @@ deploy-api:
 	test -n "$(API_PORT)"
 	test -n "$(IS_FULLTIME_ALLOWED)"
 	test -n "$(APPLICATION_ARCHIVE_DAYS)"
+	test -n "$(API_CPU_REQUEST)"
+	test -n "$(API_MEMORY_REQUEST)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -399,6 +410,9 @@ deploy-api:
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		-p ALLOW_BETA_USERS_ONLY=$(ALLOW_BETA_USERS_ONLY) \
 		-p QUEUE_DASHBOARD_BASE_URL=https://$(HOST) \
+		-p CPU_REQUEST=$(API_CPU_REQUEST) \
+		-p MEMORY_REQUEST=$(API_MEMORY_REQUEST) \
+		-p MEMORY_LIMIT=$(API_MEMORY_REQUEST) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(API))
 
@@ -411,6 +425,8 @@ deploy-workers:
 	test -n "$(WORKERS)"
 	test -n "$(WORKERS_PORT)"
 	test -n "$(BYPASS_CRA_INCOME_VERIFICATION)"
+	test -n "$(WORKERS_CPU_REQUEST)"
+	test -n "$(WORKERS_MEMORY_REQUEST)"
 	@echo "+\n++ Deploying Workers with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \
 		-p NAME=$(WORKERS) \
@@ -421,6 +437,9 @@ deploy-workers:
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
 		-p DISABLE_ORM_CACHE=$(DISABLE_ORM_CACHE) \
+		-p CPU_REQUEST=$(WORKERS_CPU_REQUEST) \
+		-p MEMORY_REQUEST=$(WORKERS_MEMORY_REQUEST) \
+		-p MEMORY_LIMIT=$(WORKERS_MEMORY_REQUEST) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(WORKERS))
 
@@ -436,6 +455,8 @@ deploy-queue-consumers:
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
 	test -n "$(APPLICATION_ARCHIVE_DAYS)"
+	test -n "$(QUEUE_CONSUMERS_CPU_REQUEST)"
+	test -n "$(QUEUE_CONSUMERS_MEMORY_REQUEST)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -454,6 +475,9 @@ deploy-queue-consumers:
 		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
 		-p TLS_KEY=$(TLS_KEY) \
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
+		-p CPU_REQUEST=$(QUEUE_CONSUMERS_CPU_REQUEST) \
+		-p MEMORY_REQUEST=$(QUEUE_CONSUMERS_MEMORY_REQUEST) \
+		-p MEMORY_LIMIT=$(QUEUE_CONSUMERS_MEMORY_REQUEST) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(QUEUE_CONSUMERS))
 
@@ -491,6 +515,8 @@ deploy-web:
 	test -n "$(WEB_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(WEB_PORT)"
+	test -n "$(WEB_CPU_REQUEST)"
+	test -n "$(WEB_MEMORY_REQUEST)"
 	@echo "+\n++ Deploying WEB with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml \
 	-p NAME=$(WEB) \
@@ -501,12 +527,22 @@ deploy-web:
 	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
 	-p TLS_KEY=$(TLS_KEY) \
 	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
+	-p CPU_REQUEST=$(WEB_CPU_REQUEST) \
+	-p MEMORY_REQUEST=$(WEB_MEMORY_REQUEST) \
+	-p MEMORY_LIMIT=$(WEB_MEMORY_REQUEST) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(WEB))
 
 deploy-ha-mongo:
 	test -n "$(NAMESPACE)"
-	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) --param-file=$(HAMONGO_DB_PARAM_PATH) | oc -n $(NAMESPACE) apply -f -
+	test -n "$(HAMONGO_DB_CPU_REQUEST)"
+	test -n "$(HAMONGO_DB_MEMORY_REQUEST)"
+	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) \
+	-p CPU_REQUEST=$(HAMONGO_DB_CPU_REQUEST) \
+	-p MEMORY_REQUEST=$(HAMONGO_DB_MEMORY_REQUEST) \
+	-p MEMORY_LIMIT=$(HAMONGO_DB_MEMORY_REQUEST) \
+	-p VOLUME_CAPACITY=$(VOLUME_CAPACITY) \
+	| oc -n $(NAMESPACE) apply -f -
 
 build-forms:
 	test -n "$(BUILD_NAMESPACE)"
@@ -527,6 +563,8 @@ deploy-forms:
 	test -n "$(FORMIO_SOURCE_REPO_TAG)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
 	test -n "$(MONGODB_URI)"
+	test -n "$(FORMIO_CPU_REQUEST)"
+	test -n "$(FORMIO_MEMORY_REQUEST)"
 	@echo "+\n++ Deploying forms with tag: $(FORMIO_SOURCE_REPO_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \
@@ -539,6 +577,9 @@ deploy-forms:
 	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
 	-p TLS_KEY=$(TLS_KEY) \
 	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
+	-p CPU_REQUEST=$(FORMIO_CPU_REQUEST) \
+	-p MEMORY_REQUEST=$(FORMIO_MEMORY_REQUEST) \
+	-p MEMORY_LIMIT=$(FORMIO_MEMORY_REQUEST) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(FORMS_NAME))
 

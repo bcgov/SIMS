@@ -116,7 +116,6 @@ objects:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
                 limits:
-                  cpu: ${CPU_LIMIT}
                   memory: ${MEMORY_LIMIT}
               volumeMounts:
                 - name: conf
@@ -185,11 +184,6 @@ parameters:
     displayName: CPU Request
     required: true
     value: 25m
-  - name: CPU_LIMIT
-    description: Maximum amount of CPU the container can use.
-    displayName: CPU Limit
-    required: true
-    value: 100m
   - name: MEMORY_REQUEST
     description: Starting amount of memory the container can use.
     displayName: Memory Request

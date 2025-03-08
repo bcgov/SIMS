@@ -22,7 +22,6 @@ service:
 # Ensure to have the minimum resources to run clamd
 resources:
   limits:
-    cpu: 1000m
     memory: 3Gi
   requests:
     cpu: 300m
