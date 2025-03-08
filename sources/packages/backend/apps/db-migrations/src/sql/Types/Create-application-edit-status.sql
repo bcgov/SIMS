@@ -3,6 +3,7 @@ CREATE TYPE sims.application_edit_status AS ENUM (
   'Change in progress',
   'Change pending approval',
   'Change declined',
+  'Change cancelled',
   'Changed with approval',
   'Edited'
 );

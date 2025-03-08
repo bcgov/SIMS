@@ -20,18 +20,27 @@ export enum ApplicationEditStatus {
   /**
    * Status for applications that are being edited after COE and Ministry approval
    * was requested and is pending.
+   * This status is only applicable to applications that are being edited after COE.
    */
   ChangePendingApproval = "Change pending approval",
   /**
    * Status for applications that are being edited after COE and Ministry declined the edit.
+   * This status is only applicable to applications that are being edited after COE.
    */
   ChangeDeclined = "Change declined",
   /**
+   * Status for applications the student opted by cancelling a change request prior to the Ministry approval.
+   * This status is only applicable to applications that are being edited after COE.
+   */
+  ChangeCancelled = "Change cancelled",
+  /**
    * Status for applications that are being edited after COE and Ministry has approved it.
+   * This status is only applicable to applications that are being edited after COE.
    */
   ChangedWithApproval = "Changed with approval",
   /**
    * When the edit was executed and no Ministry approval was needed (a.k.a. edit before COE).
+   * This status is only applicable to applications that are being edited before COE.
    */
   Edited = "Edited",
 }

@@ -21,14 +21,13 @@ COMMENT ON COLUMN sims.applications.application_edit_status_updated_by IS 'User 
 COMMENT ON COLUMN sims.applications.application_edit_status_note_id IS 'Note added by the Ministry while approving or declining the edited application.';
 
 -- First ever saved application should be considered the original one.
--- The submission will make the parent_application_id and the preceding_application_id the same from its own ID.
 UPDATE
   sims.applications
 SET
-  application_edit_status = 'Original'
+  application_edit_status = 'Original',
+  application_edit_status_updated_on = NOW()
 WHERE
-  id = parent_application_id
-  AND parent_application_id = preceding_application_id;
+  id = parent_application_id;
 
 -- Consider the student as the one updating the application_edit_status_updated_by because
 -- at this moment only students can edit the applications and no Ministry approval is required.
