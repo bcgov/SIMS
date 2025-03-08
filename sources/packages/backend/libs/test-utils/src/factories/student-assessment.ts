@@ -11,6 +11,20 @@ import {
   User,
 } from "@sims/sims-db";
 
+/**
+ * Creates a fake {@link StudentAssessment} object for testing purposes.
+ * @param relations optional relations.
+ * - `auditUser` user that created the record.
+ * - `application` application.
+ * - `offering` offering.
+ * - `studentAppeal` student appeal.
+ * - `previousDateChangedReportedAssessment` previous assessment that was changed.
+ * - `applicationEditStatusUpdatedBy` user that updated the application edit status.
+ * @param options initial values for {@link StudentAssessment}.
+ * - `initialValue` initial values for the {@link StudentAssessment}.
+ * - `isPIRPending` if the PIR is pending.
+ * @returns a new {@link StudentAssessment} to be saved to the database.
+ */
 export function createFakeStudentAssessment(
   relations?: {
     auditUser: User;
@@ -18,6 +32,7 @@ export function createFakeStudentAssessment(
     offering?: EducationProgramOffering;
     studentAppeal?: StudentAppeal;
     previousDateChangedReportedAssessment?: StudentAssessment;
+    applicationEditStatusUpdatedBy?: User;
   },
   options?: {
     initialValue?: Partial<StudentAssessment>;
@@ -26,7 +41,8 @@ export function createFakeStudentAssessment(
 ): StudentAssessment {
   const now = new Date();
   const assessment = new StudentAssessment();
-  assessment.application = relations?.application ?? createFakeApplication();
+  assessment.application =
+    relations?.application ?? createFakeApplication(relations);
   assessment.submittedDate = now;
   assessment.submittedBy = relations?.auditUser;
   assessment.assessmentWorkflowId = null;

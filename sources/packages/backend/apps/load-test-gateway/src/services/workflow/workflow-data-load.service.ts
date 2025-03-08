@@ -54,6 +54,7 @@ export class WorkflowDataLoadService {
           location: preliminaryData.offering.institutionLocation,
           precedingApplication: parentAndPrecedingApplication,
           parentApplication: parentAndPrecedingApplication,
+          applicationEditStatusUpdatedBy: preliminaryData.student.user,
         },
         { initialValue: { data: submittedApplicationData } },
       );
@@ -94,6 +95,7 @@ export class WorkflowDataLoadService {
           auditUser: application.student.user,
           application,
           offering: offering,
+          applicationEditStatusUpdatedBy: application.student.user,
         },
         {
           initialValue: {

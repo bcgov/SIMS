@@ -73,6 +73,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           auditUser: student.user,
           application,
           offering: application.currentAssessment.offering,
+          applicationEditStatusUpdatedBy: student.user,
         },
         {
           initialValue: {

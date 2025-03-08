@@ -1,6 +1,7 @@
 import {
   Application,
   ApplicationData,
+  ApplicationEditStatus,
   ApplicationException,
   ApplicationStatus,
   COEStatus,
@@ -44,9 +45,11 @@ export function createFakeApplication(
     location?: InstitutionLocation;
     precedingApplication?: Application;
     parentApplication?: Application;
+    applicationEditStatusUpdatedBy?: User;
   },
   options?: { initialValue?: Partial<Application> },
 ): Application {
+  const now = new Date();
   const application = new Application();
   application.data = options?.initialValue.data ?? ({} as ApplicationData);
   application.programYear = relations?.programYear ?? createFakeProgramYear();
@@ -54,7 +57,7 @@ export function createFakeApplication(
   application.programYear.id = relations?.programYear?.id ?? 2;
   application.student = relations?.student ?? createFakeStudent();
   application.applicationStatusUpdatedOn =
-    options?.initialValue?.applicationStatusUpdatedOn ?? new Date();
+    options?.initialValue?.applicationStatusUpdatedOn ?? now;
   application.applicationStatus =
     options?.initialValue?.applicationStatus ?? ApplicationStatus.Draft;
   application.relationshipStatus =
@@ -72,6 +75,14 @@ export function createFakeApplication(
   application.submittedDate = options?.initialValue?.submittedDate;
   application.precedingApplication = relations?.precedingApplication;
   application.parentApplication = relations?.parentApplication;
+  // Application edit status properties.
+  application.applicationEditStatus =
+    options?.initialValue?.applicationEditStatus ??
+    ApplicationEditStatus.Original;
+  application.applicationEditStatusUpdatedOn =
+    options?.initialValue?.applicationEditStatusUpdatedOn ?? now;
+  application.applicationEditStatusUpdatedBy =
+    relations?.applicationEditStatusUpdatedBy;
   return application;
 }
 
@@ -306,6 +317,7 @@ export async function saveFakeApplication(
       applicationException: relations?.applicationException,
       precedingApplication: relations?.precedingApplication,
       parentApplication: relations?.parentApplication,
+      applicationEditStatusUpdatedBy: savedUser,
     },
     {
       initialValue: {
@@ -353,6 +365,7 @@ export async function saveFakeApplication(
         application: savedApplication,
         offering: savedOffering,
         auditUser: savedUser,
+        applicationEditStatusUpdatedBy: savedUser,
       },
       {
         initialValue: {

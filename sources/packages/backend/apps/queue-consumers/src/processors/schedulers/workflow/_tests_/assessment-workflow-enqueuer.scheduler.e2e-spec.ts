@@ -107,6 +107,7 @@ describe(
       const oldestAssessment = createFakeStudentAssessment({
         application,
         auditUser,
+        applicationEditStatusUpdatedBy: auditUser,
       });
       oldestAssessment.triggerType = AssessmentTriggerType.OfferingChange;
       oldestAssessment.createdAt = addDays(-1);
@@ -114,6 +115,7 @@ describe(
       const newestAssessment = createFakeStudentAssessment({
         application,
         auditUser,
+        applicationEditStatusUpdatedBy: auditUser,
       });
       newestAssessment.triggerType = AssessmentTriggerType.OfferingChange;
       // Save all assessments.
@@ -161,6 +163,7 @@ describe(
         const submittedAssessment = createFakeStudentAssessment({
           application,
           auditUser,
+          applicationEditStatusUpdatedBy: auditUser,
         });
         submittedAssessment.triggerType = AssessmentTriggerType.OfferingChange;
         await db.studentAssessment.save(submittedAssessment);
@@ -240,6 +243,7 @@ describe(
       const cancellationRequestedAssessment = createFakeStudentAssessment({
         application,
         auditUser,
+        applicationEditStatusUpdatedBy: auditUser,
       });
       cancellationRequestedAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.CancellationRequested;

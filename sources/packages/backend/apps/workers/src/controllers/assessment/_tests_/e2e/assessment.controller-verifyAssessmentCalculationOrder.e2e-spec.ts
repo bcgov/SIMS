@@ -416,6 +416,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         auditUser: currentApplication.student.user,
         application: currentApplication,
         offering: currentApplication.currentAssessment.offering,
+        applicationEditStatusUpdatedBy: currentApplication.student.user,
       },
       {
         initialValue: {
@@ -714,6 +715,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         auditUser: currentApplication.student.user,
         application: currentApplication,
         offering: currentApplication.currentAssessment.offering,
+        applicationEditStatusUpdatedBy: currentApplication.student.user,
       },
       {
         initialValue: {
@@ -865,6 +867,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         auditUser: currentApplication.student.user,
         application: currentApplication,
         offering: currentApplication.currentAssessment.offering,
+        applicationEditStatusUpdatedBy: currentApplication.student.user,
       },
       {
         initialValue: {
@@ -1185,6 +1188,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         auditUser: currentApplication.student.user,
         application: currentApplication,
         offering: currentApplication.currentAssessment.offering,
+        applicationEditStatusUpdatedBy: currentApplication.student.user,
       },
       {
         initialValue: {
