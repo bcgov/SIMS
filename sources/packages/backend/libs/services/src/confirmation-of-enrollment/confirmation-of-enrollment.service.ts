@@ -801,6 +801,7 @@ export class ConfirmationOfEnrollmentService {
         new Brackets((qb) => {
           qb.where(
             "disbursementSchedule.disbursementDate > :coeThresholdDate",
+            { coeThresholdDate },
           ).orWhere("disbursementSchedule.coeStatus != :required", {
             required: COEStatus.required,
           });
