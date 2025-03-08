@@ -25,7 +25,7 @@ UPDATE
   sims.applications
 SET
   application_edit_status = 'Original',
-  application_edit_status_updated_on = NOW()
+  application_edit_status_updated_on = application_status_updated_on
 WHERE
   id = parent_application_id;
 
