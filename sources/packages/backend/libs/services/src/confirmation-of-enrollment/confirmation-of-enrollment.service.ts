@@ -11,10 +11,12 @@ import {
   User,
 } from "@sims/sims-db";
 import {
+  Brackets,
   DataSource,
   EntityManager,
   LessThan,
   Repository,
+  SelectQueryBuilder,
   UpdateResult,
 } from "typeorm";
 import {
@@ -729,6 +731,83 @@ export class ConfirmationOfEnrollmentService {
         otherReasonDesc: declineReason.otherReasonDesc,
       },
     );
+  }
+
+  /**
+   * Get disbursement(s) for COE Query.
+   **Note: Please ensure that alias from this query is used correctly at the consumer side.
+   * @param isEligibleToConfirm whether the disbursement(s) is/are eligible to be confirmed by institution.
+   * @param addConditionsAndOrderAndSelect add conditions and order to the query builder.
+   * @returns disbursements query.
+   */
+  getDisbursementForCOEQuery(
+    disbursementScheduleRepo: Repository<DisbursementSchedule>,
+    isEligibleToConfirm: boolean,
+  ): SelectQueryBuilder<DisbursementSchedule> {
+    const coeThresholdDate = addDays(COE_WINDOW);
+    const disbursementCOEQuery = disbursementScheduleRepo
+      .createQueryBuilder("disbursementSchedule")
+      .select([
+        "disbursementSchedule.id",
+        "disbursementSchedule.disbursementDate",
+        "disbursementSchedule.coeStatus",
+        "disbursementValues.id",
+        "disbursementValues.valueAmount",
+        "disbursementValues.valueCode",
+        "studentAssessment.id",
+        "offering.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "location.id",
+        "location.institutionCode",
+        "application.id",
+        "application.applicationNumber",
+        "application.studentNumber",
+        "student.id",
+        "student.birthDate",
+        "sinValidation.id",
+        "sinValidation.sin",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .innerJoin(
+        "disbursementSchedule.disbursementValues",
+        "disbursementValues",
+      )
+      .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin("studentAssessment.application", "application")
+      .innerJoin("offering.institutionLocation", "location")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.sinValidation", "sinValidation")
+      .innerJoin("student.user", "user")
+      .where("studentAssessment.id = application.currentAssessment.id")
+      .andWhere("application.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
+      })
+      .andWhere("disbursementSchedule.hasEstimatedAwards = true");
+    if (isEligibleToConfirm) {
+      disbursementCOEQuery
+        .andWhere(
+          "disbursementSchedule.disbursementDate <= :coeThresholdDate",
+          { coeThresholdDate },
+        )
+        .andWhere("disbursementSchedule.coeStatus = :required", {
+          required: COEStatus.required,
+        });
+    } else {
+      disbursementCOEQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            "disbursementSchedule.disbursementDate > :coeThresholdDate",
+          ).orWhere("disbursementSchedule.coeStatus != :required", {
+            required: COEStatus.required,
+          });
+        }),
+      );
+    }
+    return disbursementCOEQuery;
   }
 
   /**
