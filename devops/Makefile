@@ -40,7 +40,6 @@ export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
 export QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS := $(or $(QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS), 3600)
 export VOLUME_CAPACITY := $(or $(VOLUME_CAPACITY), 2Gi)
-export SC_MONGO := $(or ${SC_MONGO}, netapp-block-standard)
 export FORMIO_CPU_REQUEST := $(or ${FORMIO_CPU_REQUEST}, 200m)
 export FORMIO_MEMORY_REQUEST := $(or ${FORMIO_MEMORY_REQUEST}, 2Gi)
 export API_CPU_REQUEST := $(or ${API_CPU_REQUEST}, 100m)
@@ -377,6 +376,8 @@ deploy-api:
 	test -n "$(API_PORT)"
 	test -n "$(IS_FULLTIME_ALLOWED)"
 	test -n "$(APPLICATION_ARCHIVE_DAYS)"
+	test -n "$(API_CPU_REQUEST)"
+	test -n "$(API_MEMORY_REQUEST)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -424,6 +425,8 @@ deploy-workers:
 	test -n "$(WORKERS)"
 	test -n "$(WORKERS_PORT)"
 	test -n "$(BYPASS_CRA_INCOME_VERIFICATION)"
+	test -n "$(WORKERS_CPU_REQUEST)"
+	test -n "$(WORKERS_MEMORY_REQUEST)"
 	@echo "+\n++ Deploying Workers with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \
 		-p NAME=$(WORKERS) \
@@ -452,6 +455,8 @@ deploy-queue-consumers:
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
 	test -n "$(APPLICATION_ARCHIVE_DAYS)"
+	test -n "$(QUEUE_CONSUMERS_CPU_REQUEST)"
+	test -n "$(QUEUE_CONSUMERS_MEMORY_REQUEST)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -510,6 +515,8 @@ deploy-web:
 	test -n "$(WEB_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(WEB_PORT)"
+	test -n "$(WEB_CPU_REQUEST)"
+	test -n "$(WEB_MEMORY_REQUEST)"
 	@echo "+\n++ Deploying WEB with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml \
 	-p NAME=$(WEB) \
@@ -528,12 +535,13 @@ deploy-web:
 
 deploy-ha-mongo:
 	test -n "$(NAMESPACE)"
+	test -n "$(HAMONGO_DB_CPU_REQUEST)"
+	test -n "$(HAMONGO_DB_MEMORY_REQUEST)"
 	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) \
 	-p CPU_REQUEST=$(HAMONGO_DB_CPU_REQUEST) \
 	-p MEMORY_REQUEST=$(HAMONGO_DB_MEMORY_REQUEST) \
 	-p MEMORY_LIMIT=$(HAMONGO_DB_MEMORY_REQUEST) \
 	-p VOLUME_CAPACITY=$(VOLUME_CAPACITY) \
-	-p SC_MONGO=$(SC_MONGO) \
 	| oc -n $(NAMESPACE) apply -f -
 
 build-forms:
@@ -555,6 +563,8 @@ deploy-forms:
 	test -n "$(FORMIO_SOURCE_REPO_TAG)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
 	test -n "$(MONGODB_URI)"
+	test -n "$(FORMIO_CPU_REQUEST)"
+	test -n "$(FORMIO_MEMORY_REQUEST)"
 	@echo "+\n++ Deploying forms with tag: $(FORMIO_SOURCE_REPO_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \

@@ -82,7 +82,7 @@ parameters:
   - name: SC_MONGO
     description: The Storage Class for the MongoDB
     displayName: Storage Class for MongoDB
-    required: true
+    value: netapp-block-standard
   - name: MONGODB_DATABASE
     displayName: "MongoDB Database Name"
     description: "Name of the MongoDB database accessed."
