@@ -27535,7 +27535,7 @@
                   "currency": "USD",
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
-                  "key": "bcIncomeassistancefordisabilitiesCosts",
+                  "key": "bcIncomeAssistanceForDisabilitiesCosts",
                   "conditional": {
                     "show": true,
                     "when": "bcIncomeassistanceforDisabilities",
@@ -28257,7 +28257,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "nongovernmentfundingCosts",
+                  "key": "nonGovernmentFundingCosts",
                   "conditional": {
                     "show": true,
                     "when": "nonGovernmentFunding",
@@ -30325,7 +30325,7 @@
                     "step": "any",
                     "integer": ""
                   },
-                  "key": "returntriphomeCost",
+                  "key": "returnTripHomeCost",
                   "conditional": {
                     "show": "true",
                     "when": "considerCostToRelocateToDifferentCity",

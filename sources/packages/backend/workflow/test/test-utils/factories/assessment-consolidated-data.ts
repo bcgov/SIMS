@@ -126,7 +126,7 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     studentDataCRAReportedIncome: null,
     studentDataDependants: null,
     studentDataGovernmentFundingCosts: null,
-    studentDataNongovernmentFundingCosts: null,
+    studentDataNonGovernmentFundingCosts: null,
     studentDataParentVoluntaryContributionsCosts: null,
     studentDataPartnerStudyWeeks: null,
     studentDataPartnerEmploymentInsurance: null,
