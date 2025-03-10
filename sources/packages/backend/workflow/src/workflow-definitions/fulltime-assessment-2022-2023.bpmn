@@ -852,7 +852,6 @@ dmnFullTimeIncomeThreshold</bpmn:text>
           <zeebe:output source="=if studentDataIncomeAssistanceAmount = null&#10;then 0&#10;else &#10;  studentDataIncomeAssistanceAmount" target="studentDataIncomeAssistanceAmount" />
           <zeebe:output source="=if studentDataStudentParentNetContribution = null&#10;then 0&#10;else studentDataStudentParentNetContribution" target="studentDataStudentParentNetContribution" />
           <zeebe:output source="=if studentDataVoluntaryContributions = null then 0&#10;else studentDataVoluntaryContributions" target="studentDataVoluntaryContributions" />
-          <zeebe:output source="=if studentDataIncomeAssistanceAmount = null&#10;then 0&#10;else&#10;  studentDataIncomeAssistanceAmount" target="studentDataIncomeAssistanceAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1tcyqyg</bpmn:incoming>

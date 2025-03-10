@@ -841,7 +841,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if studentDataLivingathomeRent = null&#10;then &#34;no&#34;&#10;else&#10;  studentDataLivingathomeRent" target="studentDataLivingathomeRent" />
-          <zeebe:output source="=if studentDataTransportationCost = null&#10;then 0&#10;else&#10;  studentDataTransportationCost" target="studentDataTransportationCost" />
+          <zeebe:output source="=if studentDataReturnTripHomeCost = null&#10;then 0&#10;else&#10;  studentDataReturnTripHomeCost" target="studentDataReturnTripHomeCost" />
           <zeebe:output source="=if studentDataDaycareCosts11YearsOrUnder = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts11YearsOrUnder" target="studentDataDaycareCosts11YearsOrUnder" />
           <zeebe:output source="=if studentDataDaycareCosts12YearsOrOver = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts12YearsOrOver" target="studentDataDaycareCosts12YearsOrOver" />
           <zeebe:output source="=if studentDataChildSupportAndOrSpousalSupport = null&#10;then 0&#10;else&#10;  studentDataChildSupportAndOrSpousalSupport" target="studentDataChildSupportAndOrSpousalSupport" />
