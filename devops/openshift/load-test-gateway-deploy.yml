@@ -86,7 +86,6 @@ objects:
                 - containerPort: "${{PORT}}"
               resources:
                 limits:
-                  cpu: ${CPU_LIMIT}
                   memory: ${MEMORY_LIMIT}
                 requests:
                   cpu: ${CPU_REQUEST}
@@ -140,8 +139,6 @@ parameters:
     value: sims
   - name: SERVICE_NAME
     value: queue-consumers
-  - name: CPU_LIMIT
-    value: "0.4"
   - name: MEMORY_LIMIT
     value: "512M"
   - name: CPU_REQUEST

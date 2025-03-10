@@ -30,14 +30,12 @@ instances:
     cpu: 250m
     memory: 512Mi
   limits:
-    cpu: "1"
     memory: 1Gi
   replicaCertCopy:
     requests:
       cpu: 50m
       memory: 128Mi
     limits:
-      cpu: 250m
       memory: 512Mi
 
 # If we need to restore the cluster from a backup, we need to set the following values
@@ -64,14 +62,12 @@ pgBackRest:
       cpu: 50m
       memory: 128Mi
     limits:
-      cpu: 250m
       memory: 256Mi
   sidecars:
     requests:
       cpu: 50m
       memory: 128Mi
     limits:
-      cpu: 250m
       memory: 256Mi
   s3:
     enabled: false
@@ -94,7 +90,6 @@ proxy:
       cpu: 50m
       memory: 128Mi
     limits:
-      cpu: 250m
       memory: 256Mi
 
 # Postgres Cluster resource values:

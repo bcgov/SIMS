@@ -19,7 +19,6 @@ objects:
     spec:
       resources:
         limits:
-          cpu: ${CPU_LIMIT}
           memory: ${MEMORY_LIMIT}
         requests:
           cpu: ${CPU_REQUEST}
@@ -66,8 +65,6 @@ parameters:
     value: Dockerfile
   - name: TAG
     value: "latest"
-  - name: CPU_LIMIT
-    value: "2"
   - name: MEMORY_LIMIT
     value: "8Gi"
   - name: CPU_REQUEST

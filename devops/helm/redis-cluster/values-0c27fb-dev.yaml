@@ -7,10 +7,9 @@ volumePermissions:
   ## Example:
   resources:
     requests:
-      cpu: 500m
+      cpu: 50m
       memory: 1024Mi
     limits:
-      cpu: 500m
       memory: 1024Mi
 
   # resources: {}
@@ -20,10 +19,9 @@ redis:
   ## Example:
   resources:
     requests:
-      cpu: 500m
+      cpu: 50m
       memory: 1024Mi
     limits:
-      cpu: 500m
       memory: 1024Mi
 
   # resources: {}
@@ -34,10 +32,9 @@ updateJob:
   ## Example:
   resources:
     requests:
-      cpu: 500m
+      cpu: 50m
       memory: 1024Mi
     limits:
-      cpu: 500m
       memory: 1024Mi
 
   # resources: {}
@@ -48,3 +45,9 @@ metrics:
   ## @param metrics.enabled Start a side-car prometheus exporter
   ##
   enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 128Mi
+    limits:
+      memory: 128Mi
