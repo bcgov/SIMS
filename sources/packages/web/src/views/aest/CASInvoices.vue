@@ -83,7 +83,7 @@
                   </v-btn>
                 </template>
               </check-permission-role>
-              <check-permission-role :role="Role.AESTCCASExpenseAuthority">
+              <check-permission-role :role="Role.AESTCASExpenseAuthority">
                 <template #="{ notAllowed }">
                   <v-btn
                     :disabled="

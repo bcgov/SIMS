@@ -126,7 +126,7 @@ export class CASInvoiceBatchAESTController extends BaseController {
    * @param payload CAS invoice batch payload.
    * @param casInvoiceBatchId ID of the CAS invoice batch to be updated.
    */
-  @Roles(Role.AESTCCASExpenseAuthority)
+  @Roles(Role.AESTCASExpenseAuthority)
   @Patch(":casInvoiceBatchId")
   @ApiNotFoundResponse({
     description: "CAS invoice batch not found.",
