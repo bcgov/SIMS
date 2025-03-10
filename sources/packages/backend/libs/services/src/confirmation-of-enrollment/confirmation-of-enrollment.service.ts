@@ -736,8 +736,10 @@ export class ConfirmationOfEnrollmentService {
   /**
    * Get disbursement(s) for COE Query.
    **Note: Please ensure that alias from this query is used correctly at the consumer side.
+   * @param disbursementScheduleRepo disbursement schedule repository.
    * @param isEligibleToConfirm whether the disbursement(s) is/are eligible to be confirmed by institution.
-   * @param addConditionsAndOrderAndSelect add conditions and order to the query builder.
+   * If the value is false, then the query returns disbursements that are either not eligible to be confirmed
+   * or already confirmed.
    * @returns disbursements query.
    */
   getDisbursementForCOEQuery(
@@ -787,6 +789,7 @@ export class ConfirmationOfEnrollmentService {
         status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
       })
       .andWhere("disbursementSchedule.hasEstimatedAwards = true");
+    // Get only COE(s) that are eligible to be confirmed by institution.
     if (isEligibleToConfirm) {
       disbursementCOEQuery
         .andWhere(
@@ -796,7 +799,9 @@ export class ConfirmationOfEnrollmentService {
         .andWhere("disbursementSchedule.coeStatus = :required", {
           required: COEStatus.required,
         });
-    } else {
+    }
+    // Get only COE(s) that are either already confirmed or not eligible to be confirmed by institution.
+    else {
       disbursementCOEQuery.andWhere(
         new Brackets((qb) => {
           qb.where(
