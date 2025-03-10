@@ -121,7 +121,7 @@
           <zeebe:header key="applicationHasNOAApproval" value="$.hasNOAApproval" />
           <zeebe:header key="studentDataCurrentYearIncome" value="$.data.currentYearIncome" />
           <zeebe:header key="studentDataReturnTripHomeCost" value="$.data.returnTripHomeCost" />
-          <zeebe:header key="studentDataBCIncomeAssistanceForDisabilitiesCosts" value="$.data.bcIncomeAssistanceForDisabilitiesCosts" />
+          <zeebe:header key="studentDataIncomeAssistanceAmount" value="$.data.studentDataIncomeAssistanceAmount" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>
