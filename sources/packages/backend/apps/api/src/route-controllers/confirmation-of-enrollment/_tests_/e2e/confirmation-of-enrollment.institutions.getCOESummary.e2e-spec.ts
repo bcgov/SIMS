@@ -138,7 +138,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
   });
 
   it(
-    `Should get the COE current summary only from the provided institution location for applications with application status ${ApplicationStatus.Enrolment} or ${ApplicationStatus.Completed}` +
+    "Should get the COE current summary only from the provided institution location" +
       " when there are 2 COEs available for the current location and more available for other locations.",
     async () => {
       // Arrange
@@ -159,18 +159,6 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         {
           applicationStatus: ApplicationStatus.Enrolment,
           createSecondDisbursement: true,
-        },
-      );
-      // Application with status 'Assessment' which is not expected in COE summary.
-      await saveFakeApplicationDisbursements(
-        appDataSource,
-        {
-          institution: collegeC,
-          institutionLocation: collegeCLocation,
-          student: sharedStudent,
-        },
-        {
-          applicationStatus: ApplicationStatus.Assessment,
         },
       );
       // Application A for current location.
@@ -218,35 +206,104 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
           BEARER_AUTH_TYPE,
         )
         .expect(HttpStatus.OK)
-        .expect((response) => {
-          const paginatedResults =
-            response.body as PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>;
-          expect(paginatedResults.count).toBe(2);
-          const [firstCOE, secondCOE] = paginatedResults.results;
-          expect(firstCOE).toStrictEqual({
-            applicationNumber: applicationA.applicationNumber,
-            applicationId: applicationA.id,
-            studyStartPeriod:
-              applicationA.currentAssessment.offering.studyStartDate,
-            studyEndPeriod:
-              applicationA.currentAssessment.offering.studyEndDate,
-            coeStatus: COEStatus.required,
-            fullName: getUserFullName(applicationA.student.user),
-            disbursementScheduleId: applicationAFirstSchedule.id,
-            disbursementDate: applicationAFirstSchedule.disbursementDate,
-          });
-          expect(secondCOE).toStrictEqual({
-            applicationNumber: applicationB.applicationNumber,
-            applicationId: applicationB.id,
-            studyStartPeriod:
-              applicationB.currentAssessment.offering.studyStartDate,
-            studyEndPeriod:
-              applicationB.currentAssessment.offering.studyEndDate,
-            coeStatus: COEStatus.required,
-            fullName: getUserFullName(applicationB.student.user),
-            disbursementScheduleId: applicationBFirstSchedule.id,
-            disbursementDate: applicationBFirstSchedule.disbursementDate,
-          });
+        .expect({
+          count: 2,
+          results: [
+            {
+              applicationNumber: applicationA.applicationNumber,
+              applicationId: applicationA.id,
+              studyStartPeriod:
+                applicationA.currentAssessment.offering.studyStartDate,
+              studyEndPeriod:
+                applicationA.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.required,
+              fullName: getUserFullName(applicationA.student.user),
+              disbursementScheduleId: applicationAFirstSchedule.id,
+              disbursementDate: applicationAFirstSchedule.disbursementDate,
+            },
+            {
+              applicationNumber: applicationB.applicationNumber,
+              applicationId: applicationB.id,
+              studyStartPeriod:
+                applicationB.currentAssessment.offering.studyStartDate,
+              studyEndPeriod:
+                applicationB.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.required,
+              fullName: getUserFullName(applicationB.student.user),
+              disbursementScheduleId: applicationBFirstSchedule.id,
+              disbursementDate: applicationBFirstSchedule.disbursementDate,
+            },
+          ],
+        });
+    },
+  );
+
+  it(
+    `Should get the COE current summary only from applications with application status ${ApplicationStatus.Enrolment} or ${ApplicationStatus.Completed}` +
+      " when there are 2 COEs in given application statuses and more available for other application statuses.",
+    async () => {
+      // Arrange
+      const collegeCLocation = createFakeInstitutionLocation({
+        institution: collegeC,
+      });
+      await authorizeUserTokenForLocation(
+        appDataSource,
+        InstitutionTokenTypes.CollegeCUser,
+        collegeCLocation,
+      );
+      // Application with status 'Assessment' which is not expected in COE summary.
+      await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+          student: sharedStudent,
+        },
+        {
+          applicationStatus: ApplicationStatus.Assessment,
+        },
+      );
+      // Application in status 'Enrolment'.
+      const applicationA = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+          student: sharedStudent,
+        },
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+          createSecondDisbursement: true,
+        },
+      );
+      const [applicationAFirstSchedule] =
+        applicationA.currentAssessment.disbursementSchedules;
+
+      const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/enrollmentPeriod/${EnrollmentPeriod.Current}?page=0&pageLimit=10&sortField=disbursementDate&sortOrder=ASC`;
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(
+          await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+          BEARER_AUTH_TYPE,
+        )
+        .expect(HttpStatus.OK)
+        .expect({
+          count: 1,
+          results: [
+            {
+              applicationNumber: applicationA.applicationNumber,
+              applicationId: applicationA.id,
+              studyStartPeriod:
+                applicationA.currentAssessment.offering.studyStartDate,
+              studyEndPeriod:
+                applicationA.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.required,
+              fullName: getUserFullName(applicationA.student.user),
+              disbursementScheduleId: applicationAFirstSchedule.id,
+              disbursementDate: applicationAFirstSchedule.disbursementDate,
+            },
+          ],
         });
     },
   );
@@ -462,35 +519,34 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
           BEARER_AUTH_TYPE,
         )
         .expect(HttpStatus.OK)
-        .expect((response) => {
-          const paginatedResults =
-            response.body as PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>;
-          expect(paginatedResults.count).toBe(2);
-          const [firstCOE, secondCOE] = paginatedResults.results;
-          expect(firstCOE).toStrictEqual({
-            applicationNumber: applicationA.applicationNumber,
-            applicationId: applicationA.id,
-            studyStartPeriod:
-              applicationA.currentAssessment.offering.studyStartDate,
-            studyEndPeriod:
-              applicationA.currentAssessment.offering.studyEndDate,
-            coeStatus: COEStatus.completed,
-            fullName: getUserFullName(applicationA.student.user),
-            disbursementScheduleId: applicationAFirstSchedule.id,
-            disbursementDate: applicationAFirstSchedule.disbursementDate,
-          });
-          expect(secondCOE).toStrictEqual({
-            applicationNumber: applicationB.applicationNumber,
-            applicationId: applicationB.id,
-            studyStartPeriod:
-              applicationB.currentAssessment.offering.studyStartDate,
-            studyEndPeriod:
-              applicationB.currentAssessment.offering.studyEndDate,
-            coeStatus: COEStatus.declined,
-            fullName: getUserFullName(applicationB.student.user),
-            disbursementScheduleId: applicationBFirstSchedule.id,
-            disbursementDate: applicationBFirstSchedule.disbursementDate,
-          });
+        .expect({
+          count: 2,
+          results: [
+            {
+              applicationNumber: applicationA.applicationNumber,
+              applicationId: applicationA.id,
+              studyStartPeriod:
+                applicationA.currentAssessment.offering.studyStartDate,
+              studyEndPeriod:
+                applicationA.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.completed,
+              fullName: getUserFullName(applicationA.student.user),
+              disbursementScheduleId: applicationAFirstSchedule.id,
+              disbursementDate: applicationAFirstSchedule.disbursementDate,
+            },
+            {
+              applicationNumber: applicationB.applicationNumber,
+              applicationId: applicationB.id,
+              studyStartPeriod:
+                applicationB.currentAssessment.offering.studyStartDate,
+              studyEndPeriod:
+                applicationB.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.declined,
+              fullName: getUserFullName(applicationB.student.user),
+              disbursementScheduleId: applicationBFirstSchedule.id,
+              disbursementDate: applicationBFirstSchedule.disbursementDate,
+            },
+          ],
         });
     },
   );
