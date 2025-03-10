@@ -28415,7 +28415,7 @@
                   "currency": "USD",
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
-                  "key": "studentDataIncomeAssistanceAmount",
+                  "key": "incomeAssistanceAmount",
                   "conditional": {
                     "show": true,
                     "when": "bcIncomeassistanceforDisabilities",
