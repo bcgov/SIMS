@@ -113,10 +113,6 @@ define FORMS_NAME
 "$(HOST_PREFIX)forms"
 endef
 
-define HAMONGO_DB_TEMPLATE_PATH
-"openshift/database/mongo-ha.yml"
-endef
-
 # Ensure DOMAIN_PREFIX do not have any ".", which would create a subdomain
 # since forms has it own custom prefix appended.
 define FORMS_URL
@@ -548,7 +544,7 @@ deploy-ha-mongo:
 	test -n "$(HAMONGO_DB_MEMORY_REQUEST)"
 	test -n "${HAMONGO_DB_MEMORY_LIMIT}"
 	test -n "$(VOLUME_CAPACITY)"
-	@oc -n $(NAMESPACE) process -f $(HAMONGO_DB_TEMPLATE_PATH) \
+	@oc -n $(NAMESPACE) process -f openshift/database/mongo-ha.yml \
 	-p CPU_REQUEST=$(HAMONGO_DB_CPU_REQUEST) \
 	-p MEMORY_REQUEST=$(HAMONGO_DB_MEMORY_REQUEST) \
 	-p MEMORY_LIMIT=$(HAMONGO_DB_MEMORY_LIMIT) \
