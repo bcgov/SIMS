@@ -49,7 +49,6 @@ import {
 } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
-@Roles(Role.AESTCASInvoicing, Role.AESTCASInvoiceBatchExpense)
 @Groups(UserGroups.AESTUser)
 @Controller("cas-invoice-batch")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-cas-invoice-batch`)
@@ -66,6 +65,7 @@ export class CASInvoiceBatchAESTController extends BaseController {
    * @param paginationOptions pagination options.
    * @returns list of all invoice batches.
    */
+  @Roles(Role.AESTCASInvoicing)
   @Get()
   async getInvoiceBatches(
     @Query() paginationOptions: CASInvoiceBatchesPaginationOptionsAPIInDTO,
@@ -93,6 +93,7 @@ export class CASInvoiceBatchAESTController extends BaseController {
    * @param casInvoiceBatchId batch ID to have the report generated for.
    * @returns list of all invoices in the batch.
    */
+  @Roles(Role.AESTCASInvoicing)
   @Get(":casInvoiceBatchId/report")
   @ApiNotFoundResponse({ description: "CAS invoice batch not found." })
   async getCASInvoiceBatchReport(
@@ -125,8 +126,8 @@ export class CASInvoiceBatchAESTController extends BaseController {
    * @param payload CAS invoice batch payload.
    * @param casInvoiceBatchId ID of the CAS invoice batch to be updated.
    */
-  @Roles(Role.AESTCASInvoiceBatchExpense)
-  @Patch("/:casInvoiceBatchId")
+  @Roles(Role.AESTCCASExpenseAuthority)
+  @Patch(":casInvoiceBatchId")
   @ApiNotFoundResponse({
     description: "CAS invoice batch not found.",
   })

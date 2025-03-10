@@ -83,17 +83,18 @@
                   </v-btn>
                 </template>
               </check-permission-role>
-              <check-permission-role :role="Role.AESTCASInvoiceBatchExpense">
+              <check-permission-role :role="Role.AESTCCASExpenseAuthority">
                 <template #="{ notAllowed }">
                   <v-btn
                     :disabled="
                       notAllowed ||
                       item.approvalStatus !==
-                        CASInvoiceBatchApprovalStatus.Pending
+                        CASInvoiceBatchApprovalStatus.Pending ||
+                      !!item.approvalInProgress
                     "
                     variant="text"
                     color="primary"
-                    @click="approveBatch(item.id)"
+                    @click="approveBatch(item)"
                   >
                     <span class="text-decoration-underline"
                       ><strong>Approve</strong></span
@@ -103,11 +104,12 @@
                     :disabled="
                       notAllowed ||
                       item.approvalStatus !==
-                        CASInvoiceBatchApprovalStatus.Pending
+                        CASInvoiceBatchApprovalStatus.Pending ||
+                      !!item.approvalInProgress
                     "
                     variant="text"
                     color="primary"
-                    @click="rejectBatch(item.id)"
+                    @click="rejectBatch(item)"
                   >
                     <span class="text-decoration-underline"
                       ><strong>Reject</strong></span
@@ -167,6 +169,7 @@ const ApprovalStatusFilter = {
 
 interface CASInvoiceBatchModel extends CASInvoiceBatchAPIOutDTO {
   downloadInProgress?: boolean;
+  approvalInProgress?: boolean;
 }
 
 export default defineComponent({
@@ -230,32 +233,38 @@ export default defineComponent({
       }
     };
 
-    const approveBatch = async (batchId: number) => {
+    const approveBatch = async (batch: CASInvoiceBatchModel) => {
       if (await approveBatchModal.value.showModal()) {
         try {
-          await CASInvoiceBatchService.shared.updateCASInvoiceBatch(batchId, {
+          batch.approvalInProgress = true;
+          await CASInvoiceBatchService.shared.updateCASInvoiceBatch(batch.id, {
             approvalStatus: CASInvoiceBatchApprovalStatus.Approved,
           });
           snackBar.success(
-            `Batch ${batchId} has been approved and added to the queue.`,
+            `Batch ${batch.batchName} has been approved and added to the queue.`,
           );
           loadInvoiceBatches();
         } catch (error: unknown) {
-          snackBar.error(`Unexpected error updating batch ${batchId}.`);
+          snackBar.error(`Unexpected error updating batch ${batch.batchName}.`);
+        } finally {
+          batch.approvalInProgress = false;
         }
       }
     };
 
-    const rejectBatch = async (batchId: number) => {
-      if (await rejectBatchModal.value.showModal()) {
+    const rejectBatch = async (batch: CASInvoiceBatchModel) => {
+      if (await approveBatchModal.value.showModal()) {
         try {
-          await CASInvoiceBatchService.shared.updateCASInvoiceBatch(batchId, {
+          batch.approvalInProgress = true;
+          await CASInvoiceBatchService.shared.updateCASInvoiceBatch(batch.id, {
             approvalStatus: CASInvoiceBatchApprovalStatus.Rejected,
           });
-          snackBar.success(`Batch ${batchId} has been has been rejected.`);
+          snackBar.success(`Batch ${batch.batchName} has been rejected.`);
           loadInvoiceBatches();
         } catch (error: unknown) {
-          snackBar.error(`Unexpected error updating batch ${batchId}.`);
+          snackBar.error(`Unexpected error updating batch ${batch.batchName}.`);
+        } finally {
+          batch.approvalInProgress = false;
         }
       }
     };

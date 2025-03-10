@@ -86,18 +86,14 @@ export class CASInvoiceBatchService {
       );
     }
     const auditUser = { id: auditUserId } as User;
-    try {
-      await this.casInvoiceBatchRepo.update(
-        { id: casInvoiceBatchId },
-        {
-          approvalStatus,
-          approvalStatusUpdatedBy: auditUser,
-          approvalStatusUpdatedOn: new Date(),
-        },
-      );
-    } catch (error: unknown) {
-      throw error;
-    }
+    await this.casInvoiceBatchRepo.update(
+      { id: casInvoiceBatchId },
+      {
+        approvalStatus,
+        approvalStatusUpdatedBy: auditUser,
+        approvalStatusUpdatedOn: new Date(),
+      },
+    );
   }
 
   /**

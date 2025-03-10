@@ -10,7 +10,7 @@ export enum Role {
   AESTCreateInstitution = "aest-create-institution",
   AESTEditCASSupplierInfo = "aest-edit-cas-supplier-info",
   AESTCASInvoicing = "aest-cas-invoicing",
-  AESTCASInvoiceBatchExpense = "aest-cas-expense-authority",
+  AESTCCASExpenseAuthority = "aest-cas-expense-authority",
   AESTBypassStudentRestriction = "aest-bypass-student-restriction",
   AESTQueueDashboardAdmin = "aest-queue-dashboard-admin",
   StudentAddRestriction = "student-add-restriction",
