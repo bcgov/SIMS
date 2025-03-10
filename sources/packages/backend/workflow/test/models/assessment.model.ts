@@ -126,7 +126,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataCRAReportedIncome?: number;
   studentDataDependants?: StudentDependent[];
   studentDataGovernmentFundingCosts?: number;
-  studentDataNongovernmentFundingCosts?: number;
+  studentDataNonGovernmentFundingCosts?: number;
   studentDataParentVoluntaryContributionsCosts?: number;
   studentDataPartnerStudyWeeks?: number;
   studentDataPartnerEmploymentInsurance?: YesNoOptions;
@@ -142,8 +142,9 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataDaycareCosts11YearsOrUnder?: number;
   studentDataDaycareCosts12YearsOrOver?: number;
   studentDataLivingathomeRent?: number;
-  studentDataTransportationCost?: number;
   studentDataCurrentYearIncome?: number;
+  studentDataReturnTripHomeCost?: number;
+  studentDataIncomeAssistanceAmount?: number;
   offeringCourseLoad?: number;
   parent1Contributions?: number;
   parent1Ei?: number;
@@ -219,7 +220,7 @@ export interface AssessmentModel {
   totalFamilyIncome: number;
   totalFederalAward: number;
   otherAllowableCost: number;
-  transportationCost: number;
+  returnTripHomeCost: number;
   returnTransportationCost: number;
   secondResidenceCost: number;
   totalAssessmentNeed: number;

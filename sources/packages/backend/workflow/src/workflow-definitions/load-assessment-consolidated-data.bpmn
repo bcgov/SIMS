@@ -27,7 +27,6 @@
           <zeebe:header key="studentDataStudentParentsTotalIncome" value="$.data.studentParentsTotalIncome" />
           <zeebe:header key="studentDataWhenDidYouGraduateOrLeaveHighSchool" value="$.data.whenDidYouGraduateOrLeaveHighSchool" />
           <zeebe:header key="studentDataLivingathomeRent" value="$.data.livingathomeRent" />
-          <zeebe:header key="studentDataTransportationCost" value="$.data.transportationCost" />
           <zeebe:header key="studentDataIndigenousStatus" value="$.data.indigenousStatus" />
           <zeebe:header key="studentDataHasDependents" value="$.data.hasDependents" />
           <zeebe:header key="studentDataLivingWithParents" value="$.data.livingWithParents" />
@@ -97,7 +96,7 @@
           <zeebe:header key="offeringWeeks" value="$.offering.studyBreaks.totalFundedWeeks" />
           <zeebe:header key="studentDataDependants" value="$.data.dependants[*][&#39;dateOfBirth&#39;,&#39;declaredOnTaxes&#39;,&#39;attendingPostSecondarySchool&#39;]" />
           <zeebe:header key="studentDataGovernmentFundingCosts" value="$.data.governmentFundingCosts" />
-          <zeebe:header key="studentDataNongovernmentFundingCosts" value="$.data.nongovernmentFundingCosts" />
+          <zeebe:header key="studentDataNonGovernmentFundingCosts" value="$.data.nonGovernmentFundingCosts" />
           <zeebe:header key="studentDataParentVoluntaryContributionsCosts" value="$.data.parentvoluntarycontributionsCosts" />
           <zeebe:header key="studentDataPartnerStudyWeeks" value="$.data.partnerStudyWeeks" />
           <zeebe:header key="studentDataPartnerEmploymentInsurance" value="$.data.partnerEmploymentInsurance" />
@@ -120,6 +119,8 @@
           <zeebe:header key="applicationStatus" value="$.applicationStatus" />
           <zeebe:header key="applicationHasNOAApproval" value="$.hasNOAApproval" />
           <zeebe:header key="studentDataCurrentYearIncome" value="$.data.currentYearIncome" />
+          <zeebe:header key="studentDataReturnTripHomeCost" value="$.data.returnTripHomeCost" />
+          <zeebe:header key="studentDataIncomeAssistanceAmount" value="$.data.incomeAssistanceAmount" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>

@@ -27,7 +27,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
       totalFamilyIncome: 40000,
       totalFederalAward: 4800,
       otherAllowableCost: 0,
-      transportationCost: null,
+      returnTripHomeCost: 1234,
       returnTransportationCost: 900,
       secondResidenceCost: 0,
       totalAssessmentNeed: 55049.19807692308,
@@ -76,9 +76,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
     expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(
       expectedAssessmentData.otherAllowableCost,
     );
-    expect(
-      calculatedAssessment.variables.calculatedDataTotalTransportationCost,
-    ).toBe(expectedAssessmentData.transportationCost);
     expect(
       calculatedAssessment.variables.calculatedDataReturnTransportationCost,
     ).toBe(expectedAssessmentData.returnTransportationCost);

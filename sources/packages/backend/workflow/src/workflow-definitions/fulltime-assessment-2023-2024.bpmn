@@ -841,13 +841,13 @@ dmnFullTimeIncomeThreshold</bpmn:text>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if studentDataLivingathomeRent = null&#10;then &#34;no&#34;&#10;else&#10;  studentDataLivingathomeRent" target="studentDataLivingathomeRent" />
-          <zeebe:output source="=if studentDataTransportationCost = null&#10;then 0&#10;else&#10;  studentDataTransportationCost" target="studentDataTransportationCost" />
+          <zeebe:output source="=if studentDataReturnTripHomeCost = null&#10;then 0&#10;else&#10;  studentDataReturnTripHomeCost" target="studentDataReturnTripHomeCost" />
           <zeebe:output source="=if studentDataDaycareCosts11YearsOrUnder = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts11YearsOrUnder" target="studentDataDaycareCosts11YearsOrUnder" />
           <zeebe:output source="=if studentDataDaycareCosts12YearsOrOver = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts12YearsOrOver" target="studentDataDaycareCosts12YearsOrOver" />
           <zeebe:output source="=if studentDataChildSupportAndOrSpousalSupport = null&#10;then 0&#10;else&#10;  studentDataChildSupportAndOrSpousalSupport" target="studentDataChildSupportAndOrSpousalSupport" />
           <zeebe:output source="=if studentDataScholarshipAmount = null&#10;then 0&#10;else&#10;  studentDataScholarshipAmount" target="studentDataScholarshipAmount" />
           <zeebe:output source="=if studentDataGovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataGovernmentFundingCosts" target="studentDataGovernmentFundingCosts" />
-          <zeebe:output source="=if studentDataNongovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataNongovernmentFundingCosts" target="studentDataNongovernmentFundingCosts" />
+          <zeebe:output source="=if studentDataNonGovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataNonGovernmentFundingCosts" target="studentDataNonGovernmentFundingCosts" />
           <zeebe:output source="=if studentDataParentVoluntaryContributionsCosts = null&#10;then 0&#10;else&#10;  studentDataParentVoluntaryContributionsCosts" target="studentDataParentVoluntaryContributionsCosts" />
           <zeebe:output source="=if studentDataIncomeAssistanceAmount = null&#10;then 0&#10;else &#10;  studentDataIncomeAssistanceAmount" target="studentDataIncomeAssistanceAmount" />
           <zeebe:output source="=if studentDataStudentParentNetContribution = null&#10;then 0&#10;else studentDataStudentParentNetContribution" target="studentDataStudentParentNetContribution" />
@@ -1787,7 +1787,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_1j6aoeh" name="Targeted Resources">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=studentDataGovernmentFundingCosts + studentDataNongovernmentFundingCosts + calculatedDataParentalContribution" target="calculatedDataTargetedResources" />
+          <zeebe:output source="=studentDataGovernmentFundingCosts + studentDataNonGovernmentFundingCosts + calculatedDataParentalContribution" target="calculatedDataTargetedResources" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0skklaw</bpmn:incoming>
@@ -1796,7 +1796,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_15hkbz7" name="Targeted Resources">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=studentDataGovernmentFundingCosts + studentDataNongovernmentFundingCosts" target="calculatedDataTargetedResources" />
+          <zeebe:output source="=studentDataGovernmentFundingCosts + studentDataNonGovernmentFundingCosts" target="calculatedDataTargetedResources" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1fhidu5</bpmn:incoming>
@@ -2085,7 +2085,7 @@ There is an application limit based on offering weeks and a total program year l
     <bpmn:intermediateThrowEvent id="Event_02iyl2y" name="Total Transportation Costs">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataReturnTransportationCost + calculatedDataAdditionalTransportationAllowance" target="calculatedDataTotalTransportationCost" />
+          <zeebe:output source="=calculatedDataReturnTransportationCost + calculatedDataTotalAdditionalTransportationAllowance" target="calculatedDataTotalTransportationCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mxpzu4</bpmn:incoming>
