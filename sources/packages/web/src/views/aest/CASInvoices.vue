@@ -253,7 +253,7 @@ export default defineComponent({
     };
 
     const rejectBatch = async (batch: CASInvoiceBatchModel) => {
-      if (await approveBatchModal.value.showModal()) {
+      if (await rejectBatchModal.value.showModal()) {
         try {
           batch.approvalInProgress = true;
           await CASInvoiceBatchService.shared.updateCASInvoiceBatch(batch.id, {
