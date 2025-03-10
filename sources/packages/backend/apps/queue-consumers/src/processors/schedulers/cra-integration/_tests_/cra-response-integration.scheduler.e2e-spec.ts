@@ -60,6 +60,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     // Create CRA income verifications for student.
     const studentCRAIncomeVerification = createFakeCRAIncomeVerification({
       application,
+      applicationEditStatusUpdatedBy: student.user,
     });
     await db.craIncomeVerification.save([studentCRAIncomeVerification]);
     // Queued job.

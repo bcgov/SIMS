@@ -556,6 +556,7 @@ describe(
             {
               auditUser: student.user,
               application: futureImpactedApplication,
+              applicationEditStatusUpdatedBy: student.user,
             },
             {
               initialValue: {

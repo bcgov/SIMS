@@ -69,6 +69,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
       {
         application,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );
@@ -131,6 +132,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
       {
         application,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );
@@ -138,6 +140,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       {
         application,
         supportingUser: parent1,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );
@@ -145,6 +148,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       {
         application,
         supportingUser: parent2,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );
@@ -206,6 +210,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
     const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
       {
         application,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );
@@ -213,6 +218,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       {
         application,
         supportingUser: partner,
+        applicationEditStatusUpdatedBy: student.user,
       },
       { initialValues: { dateReceived: new Date() } },
     );
