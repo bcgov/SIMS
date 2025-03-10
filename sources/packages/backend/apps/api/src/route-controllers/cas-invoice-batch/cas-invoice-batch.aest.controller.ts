@@ -14,6 +14,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiTags,
+  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { AuthorizedParties, IUserToken, Role, UserGroups } from "../../auth";
 import {
@@ -133,6 +134,10 @@ export class CASInvoiceBatchAESTController extends BaseController {
   })
   @ApiForbiddenResponse({
     description: "You are not authorized to update a CAS invoice batch.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Cannot update CAS invoice batch that is approved or rejected.",
   })
   async updateCASInvoiceBatch(
     @Body() payload: UpdateCASInvoiceBatchAPIInDTO,
