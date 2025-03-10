@@ -38,4 +38,4 @@ jobs:
         working-directory: "./devops/"
         run: |
           VOLUME_CAPACITY="${{ inputs.volume_capacity || '2Gi' }}"
-          make oc-deploy-ha-mongo VOLUME_CAPACITY="${{ inputs.volume_capacity }}"
+          make oc-deploy-ha-mongo VOLUME_CAPACITY="$VOLUME_CAPACITY"
