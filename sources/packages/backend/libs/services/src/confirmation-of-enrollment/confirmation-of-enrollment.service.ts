@@ -22,6 +22,7 @@ import {
 import {
   Award,
   COEApprovalPeriodStatus,
+  EnrollmentPeriod,
   MaxTuitionRemittanceTypes,
   OfferingCosts,
 } from "./models/confirmation-of-enrollment.models";
@@ -737,14 +738,14 @@ export class ConfirmationOfEnrollmentService {
    * Get disbursement(s) for COE Query.
    **Note: Please ensure that alias from this query is used correctly at the consumer side.
    * @param disbursementScheduleRepo disbursement schedule repository.
-   * @param isEligibleToConfirm whether the disbursement(s) is/are eligible to be confirmed by institution.
-   * If the value is false, then the query returns disbursements that are either not eligible to be confirmed
+   * @param enrolmentPeriod if the value is 'Current' then the query returns disbursement(s) is/are eligible to be confirmed by institution.
+   * If the value is 'Upcoming', then the query returns disbursements that are either not eligible to be confirmed
    * or already confirmed.
    * @returns disbursements query.
    */
   getDisbursementForCOEQuery(
     disbursementScheduleRepo: Repository<DisbursementSchedule>,
-    isEligibleToConfirm: boolean,
+    enrolmentPeriod = EnrollmentPeriod.Current,
   ): SelectQueryBuilder<DisbursementSchedule> {
     const coeThresholdDate = addDays(COE_WINDOW);
     const disbursementCOEQuery = disbursementScheduleRepo
@@ -790,7 +791,7 @@ export class ConfirmationOfEnrollmentService {
       })
       .andWhere("disbursementSchedule.hasEstimatedAwards = true");
     // Get only COE(s) that are eligible to be confirmed by institution.
-    if (isEligibleToConfirm) {
+    if (enrolmentPeriod === EnrollmentPeriod.Current) {
       disbursementCOEQuery
         .andWhere(
           "disbursementSchedule.disbursementDate <= :coeThresholdDate",

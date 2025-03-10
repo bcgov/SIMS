@@ -22,11 +22,12 @@ import {
   Institution,
   Student,
 } from "@sims/sims-db";
-import { EnrollmentPeriod } from "../../../../services";
+
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { PaginatedResultsAPIOutDTO } from "../../../models/pagination.dto";
 import { COESummaryAPIOutDTO } from "../../models/confirmation-of-enrollment.dto";
 import { getUserFullName } from "../../../../utilities";
+import { EnrollmentPeriod } from "@sims/services";
 
 describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", () => {
   let app: INestApplication;

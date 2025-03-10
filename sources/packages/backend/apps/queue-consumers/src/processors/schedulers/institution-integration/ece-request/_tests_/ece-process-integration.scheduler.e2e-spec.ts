@@ -69,7 +69,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
   });
 
   it(
-    "Should process an ECE request file and when there are valid disbursements and applications" +
+    "Should process an ECE request file when there are valid disbursements for applications" +
       " ignoring the disbursements outside COE window.",
     async () => {
       // Arrange

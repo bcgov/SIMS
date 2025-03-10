@@ -40,7 +40,6 @@ import {
   ConfirmationOfEnrollmentAPIInDTO,
   COESummaryAPIOutDTO,
 } from "./models/confirmation-of-enrollment.dto";
-import { EnrollmentPeriod } from "../../services/disbursement-schedule/disbursement-schedule.models";
 import { ClientTypeBaseRoute } from "../../types";
 import {
   ApiNotFoundResponse,
@@ -56,6 +55,7 @@ import { ConfirmationOfEnrollmentControllerService } from "./confirmation-of-enr
 import {
   ConfirmationOfEnrollmentService,
   DisbursementOverawardService,
+  EnrollmentPeriod,
 } from "@sims/services";
 import {
   ENROLMENT_ALREADY_COMPLETED,

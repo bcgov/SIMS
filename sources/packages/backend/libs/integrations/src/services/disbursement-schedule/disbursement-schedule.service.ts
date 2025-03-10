@@ -71,7 +71,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   }
   /**
    * Fetch the COEs which are eligible to confirm enrolment by the institutions.
-   * @returns eligible COE .
+   * @returns eligible COE.
    */
   async getInstitutionEligiblePendingEnrolments(): Promise<
     DisbursementSchedule[]
@@ -79,13 +79,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const eligibleCOEQuery =
       this.confirmationOfEnrollmentService.getDisbursementForCOEQuery(
         this.repo,
-        true,
       );
     return eligibleCOEQuery
       .andWhere("offering.offeringIntensity = :fullTime", {
         fullTime: OfferingIntensity.fullTime,
       })
-      .andWhere("location.hasIntegration = TRUE")
+      .andWhere("location.hasIntegration = true")
       .orderBy("disbursementSchedule.id", "ASC")
       .getMany();
   }

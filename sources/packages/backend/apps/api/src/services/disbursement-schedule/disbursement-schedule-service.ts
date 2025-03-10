@@ -12,8 +12,10 @@ import {
   DisbursementSchedule,
   getUserFullNameLikeSearch,
 } from "@sims/sims-db";
-import { EnrollmentPeriod } from "./disbursement-schedule.models";
-import { ConfirmationOfEnrollmentService } from "@sims/services";
+import {
+  ConfirmationOfEnrollmentService,
+  EnrollmentPeriod,
+} from "@sims/services";
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -32,20 +34,20 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    ** COE values are retrieved only when an application reaches enrollment status.
    ** When the first COE is approved, application moves to complete status as per workflow but second COE is still
    ** waiting to be approved by institution.
-   * @param locationId
-   * @param enrollmentPeriod
-   * @param paginationOptions
+   * @param locationId location id.
+   * @param enrolmentPeriod enrolment period.
+   * @param paginationOptions pagination options.
    * @returns List of COE for given location.
    */
   async getCOEByLocation(
     locationId: number,
-    enrollmentPeriod: EnrollmentPeriod,
+    enrolmentPeriod: EnrollmentPeriod,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<DisbursementSchedule>> {
     const disbursementCOEQuery =
       this.confirmationOfEnrollmentService.getDisbursementForCOEQuery(
         this.repo,
-        enrollmentPeriod === EnrollmentPeriod.Current,
+        enrolmentPeriod,
       );
     disbursementCOEQuery.andWhere("location.id = :locationId", { locationId });
     // Add pagination, sort and search criteria.
