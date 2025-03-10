@@ -41,16 +41,15 @@ export class ECEProcessingService {
   ): Promise<ECEUploadResult[]> {
     processSummary.info(`Retrieving eligible COEs for ECE request.`);
     const eligibleCOEs =
-      await this.disbursementScheduleService.getPendingCOEs();
+      await this.disbursementScheduleService.getInstitutionEligiblePendingEnrolments();
     if (!eligibleCOEs.length) {
       return [];
     }
     processSummary.info(`Found ${eligibleCOEs.length} COEs.`);
     const fileRecords: Record<string, ECERecord[]> = {};
     eligibleCOEs.forEach((eligibleCOE) => {
-      const institutionCode =
-        eligibleCOE.studentAssessment.application.currentAssessment.offering
-          .institutionLocation.institutionCode;
+      const offering = eligibleCOE.studentAssessment.offering;
+      const institutionCode = offering.institutionLocation.institutionCode;
       if (!fileRecords[institutionCode]) {
         fileRecords[institutionCode] = [];
       }
@@ -149,12 +148,11 @@ export class ECEProcessingService {
    */
   private createECERecord(eligibleCOE: DisbursementSchedule): ECERecord {
     const studentAssessment = eligibleCOE.studentAssessment;
+    const offering = studentAssessment.offering;
     const application = studentAssessment.application;
-    const currentAssessment = application.currentAssessment;
     const student = application.student;
     const user = student.user;
     const sinValidation = student.sinValidation;
-    const offering = currentAssessment.offering;
     const institutionLocation = offering.institutionLocation;
     return {
       institutionCode: institutionLocation.institutionCode,

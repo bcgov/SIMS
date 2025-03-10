@@ -1,19 +1,21 @@
 import { Injectable } from "@nestjs/common";
+import { ConfirmationOfEnrollmentService } from "@sims/services";
 import {
   RecordDataModelService,
   DisbursementSchedule,
   OfferingIntensity,
-  ApplicationStatus,
-  COEStatus,
 } from "@sims/sims-db";
-import { DataSource, In } from "typeorm";
+import { DataSource } from "typeorm";
 
 /**
  * Service layer for Student Application disbursement schedules.
  */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
-  constructor(readonly dataSource: DataSource) {
+  constructor(
+    readonly dataSource: DataSource,
+    private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
+  ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
 
@@ -68,71 +70,22 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .getMany();
   }
   /**
-   * Fetch the COEs which are pending for the institution.
-   * @returns eligible COEs.
+   * Fetch the COEs which are eligible to confirm enrolment by the institutions.
+   * @returns eligible COE.
    */
-  async getPendingCOEs(): Promise<DisbursementSchedule[]> {
-    return this.repo.find({
-      select: {
-        id: true,
-        disbursementDate: true,
-        disbursementValues: { id: true, valueCode: true, valueAmount: true },
-        studentAssessment: {
-          id: true,
-          application: {
-            id: true,
-            applicationNumber: true,
-            studentNumber: true,
-            currentAssessment: {
-              id: true,
-              offering: {
-                id: true,
-                studyStartDate: true,
-                studyEndDate: true,
-                institutionLocation: {
-                  institutionCode: true,
-                },
-              },
-            },
-            student: {
-              id: true,
-              birthDate: true,
-              sinValidation: { id: true, sin: true },
-              user: { id: true, lastName: true, firstName: true },
-            },
-          },
-        },
-      },
-      relations: {
-        disbursementValues: true,
-        studentAssessment: {
-          application: {
-            currentAssessment: { offering: { institutionLocation: true } },
-            student: {
-              sinValidation: true,
-              user: true,
-            },
-          },
-        },
-      },
-      where: {
-        coeStatus: COEStatus.required,
-        studentAssessment: {
-          application: {
-            applicationStatus: In([
-              ApplicationStatus.Enrolment,
-              ApplicationStatus.Completed,
-            ]),
-            currentAssessment: {
-              offering: {
-                institutionLocation: { hasIntegration: true },
-                offeringIntensity: OfferingIntensity.fullTime,
-              },
-            },
-          },
-        },
-        hasEstimatedAwards: true,
-      },
-    });
+  async getInstitutionEligiblePendingEnrolments(): Promise<
+    DisbursementSchedule[]
+  > {
+    const eligibleCOEQuery =
+      this.confirmationOfEnrollmentService.getDisbursementForCOEQuery(
+        this.repo,
+      );
+    return eligibleCOEQuery
+      .andWhere("offering.offeringIntensity = :fullTime", {
+        fullTime: OfferingIntensity.fullTime,
+      })
+      .andWhere("location.hasIntegration = true")
+      .orderBy("disbursementSchedule.id", "ASC")
+      .getMany();
   }
 }

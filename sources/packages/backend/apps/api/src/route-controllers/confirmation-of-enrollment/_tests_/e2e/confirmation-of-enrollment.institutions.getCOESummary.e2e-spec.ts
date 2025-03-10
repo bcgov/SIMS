@@ -12,6 +12,7 @@ import {
 import {
   createFakeInstitutionLocation,
   saveFakeApplicationDisbursements,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import {
   Application,
@@ -19,12 +20,14 @@ import {
   COEStatus,
   DisbursementSchedule,
   Institution,
+  Student,
 } from "@sims/sims-db";
-import { EnrollmentPeriod } from "../../../../services";
+
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { PaginatedResultsAPIOutDTO } from "../../../models/pagination.dto";
 import { COESummaryAPIOutDTO } from "../../models/confirmation-of-enrollment.dto";
 import { getUserFullName } from "../../../../utilities";
+import { EnrollmentPeriod } from "@sims/services";
 
 describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", () => {
   let app: INestApplication;
@@ -32,6 +35,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
   let applicationRepo: Repository<Application>;
   let disbursementScheduleRepo: Repository<DisbursementSchedule>;
   let collegeC: Institution;
+  let sharedStudent: Student;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -45,6 +49,8 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       InstitutionTokenTypes.CollegeCUser,
     );
     collegeC = institution;
+    // Shared student with SIN validation.
+    sharedStudent = await saveFakeStudent(appDataSource);
   });
 
   it("Should get the COE current summary when there are 2 COEs available.", async () => {
@@ -63,6 +69,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
+        student: sharedStudent,
       },
       {
         applicationStatus: ApplicationStatus.Enrolment,
@@ -77,6 +84,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
+        student: sharedStudent,
       },
       {
         applicationStatus: ApplicationStatus.Enrolment,
@@ -130,6 +138,177 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       });
   });
 
+  it(
+    "Should get the COE current summary only from the provided institution location" +
+      " when there are 2 COEs available for the current location and more available for other locations.",
+    async () => {
+      // Arrange
+      const collegeCLocation = createFakeInstitutionLocation({
+        institution: collegeC,
+      });
+      await authorizeUserTokenForLocation(
+        appDataSource,
+        InstitutionTokenTypes.CollegeCUser,
+        collegeCLocation,
+      );
+      // Application for a different location which is not expected in COE summary.
+      await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          student: sharedStudent,
+        },
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+          createSecondDisbursement: true,
+        },
+      );
+      // Application A for current location.
+      const applicationA = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+          student: sharedStudent,
+        },
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+          createSecondDisbursement: true,
+        },
+      );
+      const [applicationAFirstSchedule] =
+        applicationA.currentAssessment.disbursementSchedules;
+      // Application B for current location.
+      const applicationB = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+          student: sharedStudent,
+        },
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+          createSecondDisbursement: true,
+        },
+      );
+      const [applicationBFirstSchedule] =
+        applicationB.currentAssessment.disbursementSchedules;
+      // Adjust the date to ensure the proper order on the return.
+      applicationBFirstSchedule.disbursementDate = getISODateOnlyString(
+        addDays(1, applicationAFirstSchedule.disbursementDate),
+      );
+      await disbursementScheduleRepo.save(applicationBFirstSchedule);
+
+      const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/enrollmentPeriod/${EnrollmentPeriod.Current}?page=0&pageLimit=10&sortField=disbursementDate&sortOrder=ASC`;
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(
+          await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+          BEARER_AUTH_TYPE,
+        )
+        .expect(HttpStatus.OK)
+        .expect({
+          count: 2,
+          results: [
+            {
+              applicationNumber: applicationA.applicationNumber,
+              applicationId: applicationA.id,
+              studyStartPeriod:
+                applicationA.currentAssessment.offering.studyStartDate,
+              studyEndPeriod:
+                applicationA.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.required,
+              fullName: getUserFullName(applicationA.student.user),
+              disbursementScheduleId: applicationAFirstSchedule.id,
+              disbursementDate: applicationAFirstSchedule.disbursementDate,
+            },
+            {
+              applicationNumber: applicationB.applicationNumber,
+              applicationId: applicationB.id,
+              studyStartPeriod:
+                applicationB.currentAssessment.offering.studyStartDate,
+              studyEndPeriod:
+                applicationB.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.required,
+              fullName: getUserFullName(applicationB.student.user),
+              disbursementScheduleId: applicationBFirstSchedule.id,
+              disbursementDate: applicationBFirstSchedule.disbursementDate,
+            },
+          ],
+        });
+    },
+  );
+
+  it(
+    `Should get the COE current summary only from applications with application status ${ApplicationStatus.Enrolment} or ${ApplicationStatus.Completed}` +
+      " when there are 2 COEs in given application statuses and more available for other application statuses.",
+    async () => {
+      // Arrange
+      const collegeCLocation = createFakeInstitutionLocation({
+        institution: collegeC,
+      });
+      await authorizeUserTokenForLocation(
+        appDataSource,
+        InstitutionTokenTypes.CollegeCUser,
+        collegeCLocation,
+      );
+      // Application with status 'Assessment' which is not expected in COE summary.
+      await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+          student: sharedStudent,
+        },
+        {
+          applicationStatus: ApplicationStatus.Assessment,
+        },
+      );
+      // Application in status 'Enrolment'.
+      const applicationA = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+          student: sharedStudent,
+        },
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+          createSecondDisbursement: true,
+        },
+      );
+      const [applicationAFirstSchedule] =
+        applicationA.currentAssessment.disbursementSchedules;
+
+      const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/enrollmentPeriod/${EnrollmentPeriod.Current}?page=0&pageLimit=10&sortField=disbursementDate&sortOrder=ASC`;
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(
+          await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+          BEARER_AUTH_TYPE,
+        )
+        .expect(HttpStatus.OK)
+        .expect({
+          count: 1,
+          results: [
+            {
+              applicationNumber: applicationA.applicationNumber,
+              applicationId: applicationA.id,
+              studyStartPeriod:
+                applicationA.currentAssessment.offering.studyStartDate,
+              studyEndPeriod:
+                applicationA.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.required,
+              fullName: getUserFullName(applicationA.student.user),
+              disbursementScheduleId: applicationAFirstSchedule.id,
+              disbursementDate: applicationAFirstSchedule.disbursementDate,
+            },
+          ],
+        });
+    },
+  );
+
   it("Should get the count of COE current summary as zero when there is 1 COE that doesn't have estimated awards.", async () => {
     // Arrange
     const collegeCLocation = createFakeInstitutionLocation({
@@ -146,6 +325,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
+        student: sharedStudent,
       },
       {
         applicationStatus: ApplicationStatus.Enrolment,
@@ -213,6 +393,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
+        student: sharedStudent,
       },
       {
         applicationStatus: ApplicationStatus.Enrolment,
@@ -230,6 +411,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       {
         institution: collegeC,
         institutionLocation: collegeCLocation,
+        student: sharedStudent,
       },
       {
         applicationStatus: ApplicationStatus.Enrolment,
@@ -281,6 +463,94 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         });
       });
   });
+
+  it(
+    `Should get all the COEs with COE status ${COEStatus.completed} or ${COEStatus.declined} in the upcoming summary` +
+      " when the provided location has one or more COEs with those statuses.",
+    async () => {
+      // Arrange
+      const collegeCLocation = createFakeInstitutionLocation({
+        institution: collegeC,
+      });
+      await authorizeUserTokenForLocation(
+        appDataSource,
+        InstitutionTokenTypes.CollegeCUser,
+        collegeCLocation,
+      );
+      // Application A
+      const applicationA = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+          student: sharedStudent,
+        },
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+          firstDisbursementInitialValues: { coeStatus: COEStatus.completed },
+        },
+      );
+      const [applicationAFirstSchedule] =
+        applicationA.currentAssessment.disbursementSchedules;
+      // Application B
+      const applicationB = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+          student: sharedStudent,
+        },
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+          firstDisbursementInitialValues: { coeStatus: COEStatus.declined },
+        },
+      );
+      const [applicationBFirstSchedule] =
+        applicationB.currentAssessment.disbursementSchedules;
+      applicationBFirstSchedule.disbursementDate = getISODateOnlyString(
+        addDays(1, applicationAFirstSchedule.disbursementDate),
+      );
+      await disbursementScheduleRepo.save(applicationBFirstSchedule);
+      const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/enrollmentPeriod/${EnrollmentPeriod.Upcoming}?page=0&pageLimit=10&sortField=disbursementDate&sortOrder=ASC`;
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(
+          await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+          BEARER_AUTH_TYPE,
+        )
+        .expect(HttpStatus.OK)
+        .expect({
+          count: 2,
+          results: [
+            {
+              applicationNumber: applicationA.applicationNumber,
+              applicationId: applicationA.id,
+              studyStartPeriod:
+                applicationA.currentAssessment.offering.studyStartDate,
+              studyEndPeriod:
+                applicationA.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.completed,
+              fullName: getUserFullName(applicationA.student.user),
+              disbursementScheduleId: applicationAFirstSchedule.id,
+              disbursementDate: applicationAFirstSchedule.disbursementDate,
+            },
+            {
+              applicationNumber: applicationB.applicationNumber,
+              applicationId: applicationB.id,
+              studyStartPeriod:
+                applicationB.currentAssessment.offering.studyStartDate,
+              studyEndPeriod:
+                applicationB.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.declined,
+              fullName: getUserFullName(applicationB.student.user),
+              disbursementScheduleId: applicationBFirstSchedule.id,
+              disbursementDate: applicationBFirstSchedule.disbursementDate,
+            },
+          ],
+        });
+    },
+  );
 
   afterAll(async () => {
     await app?.close();

@@ -141,7 +141,9 @@
       "Zeebe",
       "lmpt",
       "lmpu",
-      "dependants"
+      "dependants",
+      "enrolment",
+      "enrolments"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"

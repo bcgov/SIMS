@@ -11,15 +11,18 @@ import {
   User,
 } from "@sims/sims-db";
 import {
+  Brackets,
   DataSource,
   EntityManager,
   LessThan,
   Repository,
+  SelectQueryBuilder,
   UpdateResult,
 } from "typeorm";
 import {
   Award,
   COEApprovalPeriodStatus,
+  EnrollmentPeriod,
   MaxTuitionRemittanceTypes,
   OfferingCosts,
 } from "./models/confirmation-of-enrollment.models";
@@ -729,6 +732,89 @@ export class ConfirmationOfEnrollmentService {
         otherReasonDesc: declineReason.otherReasonDesc,
       },
     );
+  }
+
+  /**
+   * Get disbursement(s) for COE Query.
+   **Note: Please ensure that alias from this query is used correctly at the consumer side.
+   * @param disbursementScheduleRepo disbursement schedule repository.
+   * @param enrolmentPeriod if the value is 'Current' then the query returns disbursement(s) is/are eligible to be confirmed by institution.
+   * If the value is 'Upcoming', then the query returns disbursements that are either not eligible to be confirmed
+   * or already confirmed.
+   * @returns disbursements query.
+   */
+  getDisbursementForCOEQuery(
+    disbursementScheduleRepo: Repository<DisbursementSchedule>,
+    enrolmentPeriod = EnrollmentPeriod.Current,
+  ): SelectQueryBuilder<DisbursementSchedule> {
+    const coeThresholdDate = addDays(COE_WINDOW);
+    const disbursementCOEQuery = disbursementScheduleRepo
+      .createQueryBuilder("disbursementSchedule")
+      .select([
+        "disbursementSchedule.id",
+        "disbursementSchedule.disbursementDate",
+        "disbursementSchedule.coeStatus",
+        "disbursementValues.id",
+        "disbursementValues.valueAmount",
+        "disbursementValues.valueCode",
+        "studentAssessment.id",
+        "offering.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "location.id",
+        "location.institutionCode",
+        "application.id",
+        "application.applicationNumber",
+        "application.studentNumber",
+        "student.id",
+        "student.birthDate",
+        "sinValidation.id",
+        "sinValidation.sin",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+      ])
+      .innerJoin(
+        "disbursementSchedule.disbursementValues",
+        "disbursementValues",
+      )
+      .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin("studentAssessment.application", "application")
+      .innerJoin("offering.institutionLocation", "location")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.sinValidation", "sinValidation")
+      .innerJoin("student.user", "user")
+      .where("studentAssessment.id = application.currentAssessment.id")
+      .andWhere("application.applicationStatus IN (:...status)", {
+        status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
+      })
+      .andWhere("disbursementSchedule.hasEstimatedAwards = true");
+    // Get only COE(s) that are eligible to be confirmed by institution.
+    if (enrolmentPeriod === EnrollmentPeriod.Current) {
+      disbursementCOEQuery
+        .andWhere(
+          "disbursementSchedule.disbursementDate <= :coeThresholdDate",
+          { coeThresholdDate },
+        )
+        .andWhere("disbursementSchedule.coeStatus = :required", {
+          required: COEStatus.required,
+        });
+    }
+    // Get only COE(s) that are either already confirmed or not eligible to be confirmed by institution.
+    else {
+      disbursementCOEQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            "disbursementSchedule.disbursementDate > :coeThresholdDate",
+            { coeThresholdDate },
+          ).orWhere("disbursementSchedule.coeStatus != :required", {
+            required: COEStatus.required,
+          });
+        }),
+      );
+    }
+    return disbursementCOEQuery;
   }
 
   /**

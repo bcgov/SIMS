@@ -4,23 +4,28 @@ import {
   PaginatedResults,
   OrderByCondition,
 } from "../../utilities";
-import { addDays, FieldSortOrder, COE_WINDOW } from "@sims/utilities";
+import { FieldSortOrder } from "@sims/utilities";
 import { DataSource, Brackets } from "typeorm";
 import {
   RecordDataModelService,
   ApplicationStatus,
-  COEStatus,
   DisbursementSchedule,
   getUserFullNameLikeSearch,
 } from "@sims/sims-db";
-import { EnrollmentPeriod } from "./disbursement-schedule.models";
+import {
+  ConfirmationOfEnrollmentService,
+  EnrollmentPeriod,
+} from "@sims/services";
 
 /**
  * Service layer for Student Application disbursement schedules.
  */
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
+  ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
 
@@ -29,66 +34,25 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
    ** COE values are retrieved only when an application reaches enrollment status.
    ** When the first COE is approved, application moves to complete status as per workflow but second COE is still
    ** waiting to be approved by institution.
-   * @param locationId
-   * @param enrollmentPeriod
-   * @param paginationOptions
+   * @param locationId location id.
+   * @param enrolmentPeriod enrolment period.
+   * @param paginationOptions pagination options.
    * @returns List of COE for given location.
    */
   async getCOEByLocation(
     locationId: number,
-    enrollmentPeriod: EnrollmentPeriod,
+    enrolmentPeriod: EnrollmentPeriod,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<DisbursementSchedule>> {
-    const coeThresholdDate = addDays(COE_WINDOW);
-    const coeQuery = this.repo
-      .createQueryBuilder("disbursementSchedule")
-      .select([
-        "disbursementSchedule.id",
-        "disbursementSchedule.disbursementDate",
-        "disbursementSchedule.coeStatus",
-        "application.applicationNumber",
-        "application.id",
-        "studentAssessment.id",
-        "currentAssessment.id",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "student.id",
-        "user.firstName",
-        "user.lastName",
-      ])
-      .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
-      .innerJoin("studentAssessment.application", "application")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "offering")
-      .innerJoin("offering.institutionLocation", "location")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .where("studentAssessment.id = currentAssessment.id")
-      .andWhere("location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus IN (:...status)", {
-        status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
-      })
-      .andWhere("disbursementSchedule.hasEstimatedAwards = true");
-    if (enrollmentPeriod === EnrollmentPeriod.Upcoming) {
-      coeQuery.andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            "disbursementSchedule.disbursementDate > :coeThresholdDate",
-          ).orWhere("disbursementSchedule.coeStatus != :required", {
-            required: COEStatus.required,
-          });
-        }),
+    const disbursementCOEQuery =
+      this.confirmationOfEnrollmentService.getDisbursementForCOEQuery(
+        this.repo,
+        enrolmentPeriod,
       );
-    } else {
-      coeQuery
-        .andWhere("disbursementSchedule.disbursementDate <= :coeThresholdDate")
-        .andWhere("disbursementSchedule.coeStatus = :required", {
-          required: COEStatus.required,
-        });
-    }
-    coeQuery.setParameter("coeThresholdDate", coeThresholdDate);
+    disbursementCOEQuery.andWhere("location.id = :locationId", { locationId });
+    // Add pagination, sort and search criteria.
     if (paginationOptions.searchCriteria) {
-      coeQuery
+      disbursementCOEQuery
         .andWhere(
           new Brackets((qb) => {
             qb.where(getUserFullNameLikeSearch()).orWhere(
@@ -101,7 +65,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           `%${paginationOptions.searchCriteria.trim()}%`,
         );
     }
-    coeQuery
+    disbursementCOEQuery
       .orderBy(
         this.transformToEntitySortField(
           paginationOptions.sortField,
@@ -110,7 +74,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       )
       .offset(paginationOptions.page * paginationOptions.pageLimit)
       .limit(paginationOptions.pageLimit);
-    const [result, count] = await coeQuery.getManyAndCount();
+    const [result, count] = await disbursementCOEQuery.getManyAndCount();
     return {
       results: result,
       count: count,

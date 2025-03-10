@@ -1,5 +1,7 @@
 import { Module } from "@nestjs/common";
 import {
+  AssessmentSequentialProcessingService,
+  ConfirmationOfEnrollmentService,
   ReportService,
   RestrictionSharedService,
   SequenceControlService,
@@ -27,6 +29,8 @@ import {
     ReportService,
     StudentRestrictionSharedService,
     RestrictionSharedService,
+    ConfirmationOfEnrollmentService,
+    AssessmentSequentialProcessingService,
   ],
   exports: [DisbursementReceiptProcessingService],
 })
