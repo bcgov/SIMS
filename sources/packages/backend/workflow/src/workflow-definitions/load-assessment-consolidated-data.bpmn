@@ -27,7 +27,6 @@
           <zeebe:header key="studentDataStudentParentsTotalIncome" value="$.data.studentParentsTotalIncome" />
           <zeebe:header key="studentDataWhenDidYouGraduateOrLeaveHighSchool" value="$.data.whenDidYouGraduateOrLeaveHighSchool" />
           <zeebe:header key="studentDataLivingathomeRent" value="$.data.livingathomeRent" />
-          <zeebe:header key="studentDataTransportationCost" value="$.data.transportationCost" />
           <zeebe:header key="studentDataIndigenousStatus" value="$.data.indigenousStatus" />
           <zeebe:header key="studentDataHasDependents" value="$.data.hasDependents" />
           <zeebe:header key="studentDataLivingWithParents" value="$.data.livingWithParents" />
