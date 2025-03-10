@@ -142,7 +142,6 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     studentDataDaycareCosts11YearsOrUnder: null,
     studentDataDaycareCosts12YearsOrOver: null,
     studentDataLivingathomeRent: null,
-    studentDataTransportationCost: null,
     studentDataSelectedOffering: null,
     studentDataAdditionalTransportKm: null,
     studentDataAdditionalTransportWeeks: null,

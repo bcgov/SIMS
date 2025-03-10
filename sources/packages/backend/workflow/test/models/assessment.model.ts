@@ -142,7 +142,6 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataDaycareCosts11YearsOrUnder?: number;
   studentDataDaycareCosts12YearsOrOver?: number;
   studentDataLivingathomeRent?: number;
-  studentDataTransportationCost?: number;
   studentDataCurrentYearIncome?: number;
   studentDataReturnTripHomeCost?: number;
   studentDataIncomeAssistanceAmount?: number;
@@ -221,7 +220,7 @@ export interface AssessmentModel {
   totalFamilyIncome: number;
   totalFederalAward: number;
   otherAllowableCost: number;
-  transportationCost: number;
+  returnTripHomeCost: number;
   returnTransportationCost: number;
   secondResidenceCost: number;
   totalAssessmentNeed: number;
