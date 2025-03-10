@@ -20,12 +20,22 @@ COMMENT ON COLUMN sims.applications.application_edit_status_updated_by IS 'User 
 
 COMMENT ON COLUMN sims.applications.application_edit_status_note_id IS 'Note added by the Ministry while approving or declining the edited application.';
 
--- First ever saved application should be considered the original one.
+-- By the default constraint, all applications are considered "Original".
+-- Set the update date to be the same as the creation date, since it will be updated when the draft application is created.
+UPDATE
+  sims.applications
+SET
+  application_edit_status_updated_on = created_at
+WHERE
+  id = parent_application_id;
+
+-- Edited applications will be created during submit only for now, once the
+-- application_edit_status_updated_on can be considered the same as the submitted_date.
 UPDATE
   sims.applications
 SET
   application_edit_status = 'Edited',
-  application_edit_status_updated_on = application_status_updated_on
+  application_edit_status_updated_on = submitted_date
 WHERE
   id != parent_application_id;
 
