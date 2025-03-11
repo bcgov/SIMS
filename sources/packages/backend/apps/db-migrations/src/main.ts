@@ -1,11 +1,7 @@
 import { NestFactory, repl } from "@nestjs/core";
 import { REPLModule } from "./repl.module";
 import { DBMigrationsModule } from "./db-migrations.module";
-import {
-  DBMigrationsService,
-  DEFAULT_LIST_LIMIT,
-  FailureBehavior,
-} from "./db-migrations.service";
+import { DBMigrationsService } from "./db-migrations.service";
 import { Logger } from "@nestjs/common";
 
 /**
@@ -45,13 +41,13 @@ enum InitArguments {
   const migrationsService = app.get(DBMigrationsService);
   switch (initArg) {
     case InitArguments.Run:
-      await migrationsService.run(FailureBehavior.Rethrow);
+      await migrationsService.run();
       break;
     case InitArguments.Revert:
-      await migrationsService.revert(FailureBehavior.Rethrow);
+      await migrationsService.revert();
       break;
     case InitArguments.List:
-      await migrationsService.list(DEFAULT_LIST_LIMIT, FailureBehavior.Rethrow);
+      await migrationsService.list();
       break;
     default:
       logger.warn(
