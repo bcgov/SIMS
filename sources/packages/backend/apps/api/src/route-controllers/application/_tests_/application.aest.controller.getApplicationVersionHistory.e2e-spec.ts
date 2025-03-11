@@ -84,7 +84,7 @@ describe("ApplicationAESTController(e2e)-getApplicationVersionHistory", () => {
       .expect(HttpStatus.NOT_FOUND)
       .expect({
         statusCode: HttpStatus.NOT_FOUND,
-        message: "Parent application not found.",
+        message: "Application not found.",
         error: "Not Found",
       });
   });

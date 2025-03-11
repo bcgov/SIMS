@@ -268,27 +268,26 @@ export class ApplicationAESTController extends BaseController {
   }
 
   /**
-   * Get application overall details for an application.
-   * @param parentApplicationId parent application Id.
+   * Get application overall details for the given application.
+   * @param applicationId application Id.
    * @returns application overall details.
    */
   @ApiNotFoundResponse({
-    description: "Parent application not found.",
+    description: "Application not found.",
   })
-  @Get(":parentApplicationId/overall-details")
+  @Get(":applicationId/overall-details")
   async getApplicationOverallDetails(
-    @Param("parentApplicationId", ParseIntPipe) parentApplicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
-    const parentApplication =
-      await this.applicationService.doesApplicationExist({
-        applicationId: parentApplicationId,
-      });
-    if (!parentApplication) {
-      throw new NotFoundException("Parent application not found.");
+    const application = await this.applicationService.doesApplicationExist({
+      applicationId: applicationId,
+    });
+    if (!application) {
+      throw new NotFoundException("Application not found.");
     }
     const applications =
       await this.applicationService.getPreviousApplicationVersions(
-        parentApplicationId,
+        applicationId,
       );
     return {
       previousVersions: applications.map((application) => ({
