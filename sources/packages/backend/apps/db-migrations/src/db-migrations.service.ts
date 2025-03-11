@@ -34,10 +34,10 @@ export class DBMigrationsService {
 
   /**
    * Run all pending migrations.
-   * @param failureBehavior the behavior to use when a failure occurs.
-   * Defaults to log only.
+   * @param failureBehavior behavior to use when a failure occurs.
+   * If not provided, it defaults to log only.
    */
-  async run(failureBehavior = FailureBehavior.LogOnly): Promise<void> {
+  async run(failureBehavior?: FailureBehavior): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
       this.logger.log("Setting up data source to execute migrations.");
       await dataSource.query(
@@ -53,10 +53,10 @@ export class DBMigrationsService {
 
   /**
    * Revert the last migration.
-   * @param failureBehavior the behavior to use when a failure occurs.
-   * Defaults to log only.
+   * @param failureBehavior behavior to use when a failure occurs.
+   * If not provided, it defaults to log only.
    */
-  async revert(failureBehavior = FailureBehavior.LogOnly): Promise<void> {
+  async revert(failureBehavior?: FailureBehavior): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
       this.logger.log("Running rollback.");
       this.logger.warn("The below is the migration being reverted.");
@@ -72,12 +72,12 @@ export class DBMigrationsService {
   /**
    * List the latest migrations.
    * @param limit number of latest migrations to list.
-   * @param failureBehavior the behavior to use when a failure occurs.
-   * Defaults to log only.
+   * @param failureBehavior behavior to use when a failure occurs.
+   * If not provided, it defaults to log only.
    */
   async list(
     limit = DEFAULT_LIST_LIMIT,
-    failureBehavior = FailureBehavior.LogOnly,
+    failureBehavior?: FailureBehavior,
   ): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
       const mostRecentMigrations = await this.getRecentMigrationRecords(
@@ -98,9 +98,10 @@ export class DBMigrationsService {
     operation: (dataSource: DataSource) => Promise<void>,
     failureBehavior = FailureBehavior.LogOnly,
   ): Promise<void> {
-    const migrationDataSource = new DataSource(ormConfig);
-    const dataSource = await migrationDataSource.initialize();
+    let dataSource: DataSource;
     try {
+      const migrationDataSource = new DataSource(ormConfig);
+      dataSource = await migrationDataSource.initialize();
       await operation(dataSource);
     } catch (error: unknown) {
       if (failureBehavior === FailureBehavior.LogOnly) {
@@ -112,7 +113,7 @@ export class DBMigrationsService {
       }
       throw error;
     } finally {
-      await dataSource.destroy();
+      await dataSource?.destroy();
     }
   }
 
