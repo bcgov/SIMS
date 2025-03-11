@@ -180,7 +180,7 @@ export class ApplicationController {
 
   /**
    * Processes the application change request approval.
-   * Set the application edit status to 'Change pending approval' to allow wait
+   * Set the application edit status to 'Change pending approval' to allow waiting
    * till the Ministry approves or declines the changes.
    * @returns most updated edit status and the application status to be updated in
    * workflow in case the change request was approved.
@@ -233,7 +233,7 @@ export class ApplicationController {
         }
         // Refresh the status to ensure the most updated status is returned.
         // If no records were updated it means the status was already updated,
-        // but the something changed between the first query and the update.
+        // but something changed between the first query and the update.
         application = await this.applicationService.getApplicationById(
           job.variables.applicationId,
           { loadDynamicData: false },
