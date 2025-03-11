@@ -9,7 +9,7 @@ on:
       environment:
         description: "Environment"
         required: true
-        type: string
+        type: environment
       volume_capacity:
         description: "Volume space available for data (e.g., 10Gi, 20Gi) - (Optional defaults to 2Gi)."
         required: false
@@ -37,4 +37,5 @@ jobs:
       - name: Deploy Mongo
         working-directory: "./devops/"
         run: |
-          make oc-deploy-ha-mongo VOLUME_CAPACITY="${{ inputs.volume_capacity }}"
+          VOLUME_CAPACITY="${{ inputs.volume_capacity || '2Gi' }}"
+          make oc-deploy-ha-mongo VOLUME_CAPACITY="$VOLUME_CAPACITY"

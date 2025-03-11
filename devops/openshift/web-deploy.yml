@@ -125,8 +125,8 @@ objects:
           resource:
             name: memory
             target:
-              type: AverageValue
-              averageValue: "230M"
+              type: Utilization
+              averageUtilization: 80
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
