@@ -249,3 +249,8 @@ export const STUDENT_NOT_FOUND = "STUDENT_NOT_FOUND";
  * CAS invoice batch not found error code.
  */
 export const CAS_INVOICE_BATCH_NOT_FOUND = "CAS_INVOICE_BATCH_NOT_FOUND";
+
+/**
+ * CAS invoice batch not pending error code.
+ */
+export const CAS_INVOICE_BATCH_NOT_PENDING = "CAS_INVOICE_BATCH_NOT_PENDING";
