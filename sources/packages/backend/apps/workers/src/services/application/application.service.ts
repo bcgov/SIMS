@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
+import { SystemUsersService } from "@sims/services";
 import {
   Application,
+  ApplicationEditStatus,
   ApplicationStatus,
   ProgramInfoStatus,
   RecordDataModelService,
@@ -9,7 +11,10 @@ import { DataSource, In, UpdateResult } from "typeorm";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    private systemUsersService: SystemUsersService,
+  ) {
     super(dataSource.getRepository(Application));
   }
 
@@ -99,5 +104,29 @@ export class ApplicationService extends RecordDataModelService<Application> {
         id: applicationId,
       },
     });
+  }
+
+  /**
+   * Updates the application edit status to desired status if not updated yet.
+   * @param applicationId application to be updated.
+   * @param fromStatus expected status of the application.
+   * @param toStatus desired status to be updated.
+   * @returns update result.
+   */
+  async updateApplicationEditStatus(
+    applicationId: number,
+    fromStatus: ApplicationEditStatus,
+    toStatus: ApplicationEditStatus,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      {
+        id: applicationId,
+        applicationEditStatus: fromStatus,
+      },
+      {
+        applicationEditStatus: toStatus,
+        modifier: this.systemUsersService.systemUser,
+      },
+    );
   }
 }

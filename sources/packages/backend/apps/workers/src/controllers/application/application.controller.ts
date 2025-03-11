@@ -5,17 +5,26 @@ import {
   ApplicationService,
 } from "../../services";
 import {
+  ApplicationChangeRequestApprovalJobInDTO,
+  ApplicationChangeRequestApprovalJobOutDTO,
   ApplicationExceptionsJobInDTO,
   ApplicationExceptionsJobOutDTO,
   ApplicationUpdateStatusJobHeaderDTO,
   ApplicationUpdateStatusJobInDTO,
 } from "..";
-import { ApplicationExceptionStatus } from "@sims/sims-db";
+import {
+  ApplicationEditStatus,
+  ApplicationExceptionStatus,
+} from "@sims/sims-db";
 import {
   APPLICATION_NOT_FOUND,
   APPLICATION_STATUS_NOT_UPDATED,
 } from "../../constants";
-import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
+import {
+  APPLICATION_EDIT_STATUS,
+  APPLICATION_ID,
+  APPLICATION_STATUS,
+} from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
 import { createUnexpectedJobFail } from "../../utilities";
@@ -161,6 +170,83 @@ export class ApplicationController {
       jobLogger.log("Verified application exception. No exceptions created.");
       return job.complete({
         applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+      });
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
+  }
+
+  /**
+   * Processes the application change request approval.
+   * Set the application edit status to 'Change pending approval' to allow wait
+   * till the Ministry approves or declines the changes.
+   * @returns most updated edit status and the application status to be updated in
+   * workflow in case the change request was approved.
+   */
+  @ZeebeWorker(Workers.ApplicationChangeRequestApproval, {
+    fetchVariable: [APPLICATION_ID],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
+  })
+  async applicationChangeRequestApproval(
+    job: Readonly<
+      ZeebeJob<
+        ApplicationChangeRequestApprovalJobInDTO,
+        ICustomHeaders,
+        ApplicationChangeRequestApprovalJobOutDTO
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
+    try {
+      let application = await this.applicationService.getApplicationById(
+        job.variables.applicationId,
+        { loadDynamicData: false },
+      );
+      if (!application) {
+        const message = "Application id not found.";
+        jobLogger.error(message);
+        return job.error(APPLICATION_NOT_FOUND, message);
+      }
+      if (
+        application.applicationEditStatus ===
+        ApplicationEditStatus.ChangeInProgress
+      ) {
+        jobLogger.log(
+          `Setting the application's edit status to ${ApplicationEditStatus.ChangePendingApproval}`,
+        );
+        const updateResult =
+          await this.applicationService.updateApplicationEditStatus(
+            application.id,
+            ApplicationEditStatus.ChangeInProgress,
+            ApplicationEditStatus.ChangePendingApproval,
+          );
+        if (updateResult.affected) {
+          jobLogger.log(
+            `Application edit status updated to ${ApplicationEditStatus.ChangePendingApproval}.`,
+          );
+          return job.complete({
+            [APPLICATION_EDIT_STATUS]:
+              ApplicationEditStatus.ChangePendingApproval,
+          });
+        }
+        // Refresh the status to ensure the most updated status is returned.
+        // If no records were updated it means the status was already updated,
+        // but the something changed between the first query and the update.
+        application = await this.applicationService.getApplicationById(
+          job.variables.applicationId,
+          { loadDynamicData: false },
+        );
+      }
+      jobLogger.log(
+        "Applications edit status not updated, returning the current status only.",
+      );
+      // Returns the most updated status for the application.
+      // The status is expected to be 'Completed' if the edit was approved, otherwise it should remain as 'Edited'.
+      return job.complete({
+        [APPLICATION_STATUS]: application.applicationStatus,
+        [APPLICATION_EDIT_STATUS]: application.applicationEditStatus,
       });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {
