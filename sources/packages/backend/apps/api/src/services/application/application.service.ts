@@ -1866,8 +1866,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getPreviousApplicationVersions(
     applicationId: number,
   ): Promise<Application[]> {
-    // Get parent application.
-    const parentApplication = await this.repo.findOne({
+    // Get application and parent application.
+    const application = await this.repo.findOne({
       select: { id: true, parentApplication: { id: true } },
       relations: { parentApplication: true },
       where: { id: applicationId },
@@ -1879,7 +1879,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         submittedDate: true,
       },
       where: {
-        parentApplication: { id: parentApplication.id },
+        parentApplication: { id: application.parentApplication.id },
         applicationStatus: ApplicationStatus.Overwritten,
       },
       order: {
