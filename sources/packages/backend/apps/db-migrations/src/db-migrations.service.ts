@@ -1,11 +1,17 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { ormConfig } from "./data-source";
-import { inspect } from "util";
+
+/**
+ * Default limit to use when listing migrations.
+ */
+const DEFAULT_LIST_LIMIT = 5;
 
 /**
  * DB migrations options available.
  * Each operation is executed in an isolated data source.
+ * When an operation fails, the data source is destroyed and the error
+ * will be logged to the console while the REPL will continue to run.
  */
 @Injectable()
 export class DBMigrationsService {
@@ -48,7 +54,7 @@ export class DBMigrationsService {
    * List the latest migrations.
    * @param limit number of latest migrations to list.
    */
-  async list(limit = 5): Promise<void> {
+  async list(limit = DEFAULT_LIST_LIMIT): Promise<void> {
     await this.executeDBOperation(async (dataSource) => {
       const mostRecentMigrations = await this.getRecentMigrationRecords(
         dataSource,
@@ -63,16 +69,15 @@ export class DBMigrationsService {
    * @param operation the operation to execute.
    */
   private async executeDBOperation(
-    operation: (sataSource: DataSource) => Promise<void>,
+    operation: (dataSource: DataSource) => Promise<void>,
   ): Promise<void> {
-    const migrationDataSource = new DataSource(ormConfig);
-    const dataSource = await migrationDataSource.initialize();
+    let dataSource: DataSource;
     try {
+      const migrationDataSource = new DataSource(ormConfig);
+      dataSource = await migrationDataSource.initialize();
       await operation(dataSource);
-    } catch (error: unknown) {
-      this.logger.error("Error listing migrations.", inspect(error));
     } finally {
-      await dataSource.destroy();
+      await dataSource?.destroy();
     }
   }
 
