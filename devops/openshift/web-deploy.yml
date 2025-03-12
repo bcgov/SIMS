@@ -150,7 +150,7 @@ parameters:
   - name: MEMORY_REQUEST
     required: true
   - name: REPLICAS
-    value: "2"
+    required: true
   - name: PORT
     required: true
   - name: IMAGE_STREAM_TAG

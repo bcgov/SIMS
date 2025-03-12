@@ -6,10 +6,10 @@ clamav:
     limits:
       memory: 3Gi
     requests:
-      cpu: 300m
-      memory: 2Gi
+      cpu: 30m
+      memory: 1800Mi
 
   persistentVolume:
-    size: 2Gi
+    size: 1Gi
 
   configVersion: "1.0"

@@ -28,7 +28,7 @@ instances:
     storage: 5Gi
     storageClassName: netapp-block-standard
   requests:
-    cpu: 250m
+    cpu: 25m
     memory: 512Mi
   limits:
     memory: 1Gi

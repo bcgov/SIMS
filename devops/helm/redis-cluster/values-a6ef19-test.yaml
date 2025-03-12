@@ -7,7 +7,7 @@ volumePermissions:
   ## Example:
   resources:
     requests:
-      cpu: 500m
+      cpu: 50m
       memory: 1024Mi
     limits:
       memory: 1024Mi
@@ -19,7 +19,7 @@ redis:
   ## Example:
   resources:
     requests:
-      cpu: 500m
+      cpu: 50m
       memory: 1024Mi
     limits:
       memory: 1024Mi
@@ -32,7 +32,7 @@ updateJob:
   ## Example:
   resources:
     requests:
-      cpu: 500m
+      cpu: 50m
       memory: 1024Mi
     limits:
       memory: 1024Mi
@@ -47,7 +47,7 @@ metrics:
   enabled: false
   resources:
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 10m
+      memory: 128Mi
     limits:
-      memory: 256Mi
+      memory: 128Mi
