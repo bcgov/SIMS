@@ -35,8 +35,7 @@ export interface ProgramPaginationOptions extends BasePaginationOptions {
 /**
  * CAS invoices specific parameters.
  */
-export interface CASInvoicePaginationOptionsAPIInDTO
-  extends BasePaginationOptions {
+export interface CASInvoicePaginationOptions extends BasePaginationOptions {
   invoiceStatusSearch: CASInvoiceStatus[];
 }
 

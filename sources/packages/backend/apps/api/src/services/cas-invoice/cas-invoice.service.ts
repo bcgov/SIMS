@@ -2,10 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CASInvoice, CASInvoiceStatus, User } from "@sims/sims-db";
 import { In, Repository, UpdateResult } from "typeorm";
-import {
-  CASInvoicePaginationOptionsAPIInDTO,
-  PaginatedResults,
-} from "../../utilities";
+import { CASInvoicePaginationOptions, PaginatedResults } from "../../utilities";
 
 @Injectable()
 export class CASInvoiceService {
@@ -20,7 +17,7 @@ export class CASInvoiceService {
    * @returns paginated CAS invoices.
    */
   async getCASInvoices(
-    paginationOptions: CASInvoicePaginationOptionsAPIInDTO,
+    paginationOptions: CASInvoicePaginationOptions,
   ): Promise<PaginatedResults<CASInvoice>> {
     const [results, count] = await this.repo.findAndCount({
       select: {
@@ -58,13 +55,18 @@ export class CASInvoiceService {
   /**
    * Checks if CAS invoice exists.
    * @param invoiceId invoice id.
+   * @param options provided options
+   * `invoiceStatus`: invoice status.
    * @returns true if invoice exists, false otherwise.
    */
-  async checkCASInvoiceExists(invoiceId: number): Promise<boolean> {
+  async checkCASInvoiceExists(
+    invoiceId: number,
+    options?: { invoiceStatus: CASInvoiceStatus },
+  ): Promise<boolean> {
     return this.repo.exists({
       where: {
         id: invoiceId,
-        invoiceStatus: CASInvoiceStatus.ManualIntervention,
+        invoiceStatus: options?.invoiceStatus,
       },
     });
   }
@@ -82,11 +84,14 @@ export class CASInvoiceService {
     auditUserId: number,
   ): Promise<UpdateResult> {
     const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     return this.repo.update(
       { id: invoiceId },
       {
         invoiceStatus,
         invoiceStatusUpdatedBy: auditUser,
+        modifier: auditUser,
+        updatedAt: now,
       },
     );
   }

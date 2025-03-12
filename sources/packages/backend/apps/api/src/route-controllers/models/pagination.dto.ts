@@ -128,7 +128,7 @@ export class CASInvoicePaginationOptionsAPIInDTO extends PaginationOptionsAPIInD
   sortField?: string;
   @IsArray()
   @Transform(({ value }) => value.split(","))
-  @IsEnum(CASInvoiceStatus, { each: true })
+  @IsIn([CASInvoiceStatus.ManualIntervention])
   invoiceStatusSearch: CASInvoiceStatus[];
 }
 

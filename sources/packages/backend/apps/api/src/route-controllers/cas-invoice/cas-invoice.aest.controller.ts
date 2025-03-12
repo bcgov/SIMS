@@ -3,6 +3,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Query,
 } from "@nestjs/common";
@@ -62,19 +63,20 @@ export class CASInvoiceAESTController extends BaseController {
   }
 
   /**
-   * Updates CAS invoice status.
+   * Updates CAS invoice status to Resolved.
    * @param invoiceId invoice id.
    */
   @ApiNotFoundResponse({
     description: `CAS invoice not found.`,
   })
-  @Patch(":invoiceId")
-  async updateInvoiceStatus(
-    @Param("invoiceId") invoiceId: number,
+  @Patch(":invoiceId/resolve")
+  async updateInvoiceToResolved(
+    @Param("invoiceId", ParseIntPipe) invoiceId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     const invoiceExists = await this.casInvoiceService.checkCASInvoiceExists(
       invoiceId,
+      { invoiceStatus: CASInvoiceStatus.ManualIntervention },
     );
     if (!invoiceExists) {
       throw new NotFoundException("CAS invoice not found.");
