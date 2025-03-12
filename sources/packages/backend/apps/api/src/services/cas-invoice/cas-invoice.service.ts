@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CASInvoice, CASInvoiceStatus, User } from "@sims/sims-db";
-import { In, Repository, UpdateResult } from "typeorm";
+import { Repository, UpdateResult } from "typeorm";
 import { CASInvoicePaginationOptions, PaginatedResults } from "../../utilities";
 
 @Injectable()
@@ -39,9 +39,7 @@ export class CASInvoiceService {
         casInvoiceBatch: true,
       },
       where: {
-        invoiceStatus: paginationOptions.invoiceStatusSearch?.length
-          ? In(paginationOptions.invoiceStatusSearch)
-          : undefined,
+        invoiceStatus: paginationOptions.invoiceStatusSearch,
       },
       skip: paginationOptions.pageLimit * paginationOptions.page,
       take: paginationOptions.pageLimit,

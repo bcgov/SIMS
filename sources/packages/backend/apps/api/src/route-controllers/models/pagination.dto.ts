@@ -1,4 +1,5 @@
 import {
+  Equals,
   IsArray,
   IsBoolean,
   IsEnum,
@@ -126,10 +127,8 @@ export class CASInvoicePaginationOptionsAPIInDTO extends PaginationOptionsAPIInD
   @IsOptional()
   @IsIn(["invoiceStatusUpdatedOn"])
   sortField?: string;
-  @IsArray()
-  @Transform(({ value }) => value.split(","))
-  @IsIn([CASInvoiceStatus.ManualIntervention])
-  invoiceStatusSearch: CASInvoiceStatus[];
+  @Equals(CASInvoiceStatus.ManualIntervention)
+  invoiceStatusSearch: CASInvoiceStatus;
 }
 
 export class CASInvoiceBatchesPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
