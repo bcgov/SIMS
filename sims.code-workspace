@@ -143,7 +143,11 @@
       "lmpu",
       "dependants",
       "enrolment",
-      "enrolments"
+      "enrolments",
+      "PDRQ",
+      "PDAP",
+      "PPDA",
+      "PDDC"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"

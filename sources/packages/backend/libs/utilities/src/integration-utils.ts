@@ -26,17 +26,29 @@ export function getTotalYearsOfStudy(completionYears: string): number {
   }
 }
 
+/**
+ * Get the student disability status code.
+ * @param disabilityStatus disability status.
+ * @throws error if the disability status cannot be translated.
+ * @returns disability status code.
+ */
 export function getStudentDisabilityStatusCode(
   disabilityStatus: DisabilityStatus,
-) {
+): string {
   switch (disabilityStatus) {
     case DisabilityStatus.NotRequested:
       return "NONE";
     case DisabilityStatus.Requested:
       return "PDRQ";
     case DisabilityStatus.PD:
-      return "Approved for Permanent Disability";
+      return "PDAP";
     case DisabilityStatus.PPD:
-      return "Approved for Persistent or Prolonged Disability";
+      return "PPDA";
+    case DisabilityStatus.Declined:
+      return "PDDC";
+    default:
+      throw new Error(
+        `Unknown disability status to get code: ${disabilityStatus}`,
+      );
   }
 }

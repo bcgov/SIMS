@@ -166,6 +166,9 @@ export class ECEProcessingService {
       studyStartDate: offering.studyStartDate,
       studyEndDate: offering.studyEndDate,
       disbursementDate: eligibleCOE.disbursementDate,
+      studentDisabilityStatus: student.disabilityStatus,
+      applicationStudentDisabilityStatus:
+        studentAssessment.workflowData.calculatedData.pdppdStatus,
     };
   }
 

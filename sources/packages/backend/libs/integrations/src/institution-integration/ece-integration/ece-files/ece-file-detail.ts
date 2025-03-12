@@ -7,6 +7,7 @@ import {
   SPACE_FILLER,
 } from "../models/ece-integration.model";
 import { ECERequestFileLine } from "./ece-file-line";
+import { YNFlag } from "@sims/integrations/models";
 
 /**
  * Record of a ECE request file.
@@ -21,7 +22,9 @@ export class ECERequestFileDetail implements ECERequestFileLine {
   studentLastName: string;
   studentGivenName: string;
   birthDate: string;
+  studentPDStatusCode: string;
   applicationNumber: string;
+  applicationPDStatusFlag: YNFlag;
   institutionStudentNumber: string;
   courseLoad: string;
   studyStartDate: string;
@@ -58,6 +61,8 @@ export class ECERequestFileDetail implements ECERequestFileLine {
       record.appendDate(this.studyStartDate, DATE_FORMAT);
       record.appendDate(this.studyEndDate, DATE_FORMAT);
       record.appendDate(this.disbursementDate, DATE_FORMAT);
+      record.append(this.studentPDStatusCode);
+      record.append(this.applicationPDStatusFlag);
       return record.toString();
     });
     return records.join(END_OF_LINE);
