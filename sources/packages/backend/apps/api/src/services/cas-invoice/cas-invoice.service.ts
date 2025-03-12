@@ -87,6 +87,7 @@ export class CASInvoiceService {
       { id: invoiceId },
       {
         invoiceStatus,
+        invoiceStatusUpdatedOn: now,
         invoiceStatusUpdatedBy: auditUser,
         modifier: auditUser,
         updatedAt: now,
