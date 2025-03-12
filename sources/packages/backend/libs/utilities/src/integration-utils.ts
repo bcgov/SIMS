@@ -1,3 +1,5 @@
+import { DisabilityStatus } from "@sims/sims-db";
+
 /**
  * Express the completion years data present on educational programs as
  * an amount of years.
@@ -21,5 +23,20 @@ export function getTotalYearsOfStudy(completionYears: string): number {
       return 6;
     default:
       return 1;
+  }
+}
+
+export function getStudentDisabilityStatusCode(
+  disabilityStatus: DisabilityStatus,
+) {
+  switch (disabilityStatus) {
+    case DisabilityStatus.NotRequested:
+      return "NONE";
+    case DisabilityStatus.Requested:
+      return "PDRQ";
+    case DisabilityStatus.PD:
+      return "Approved for Permanent Disability";
+    case DisabilityStatus.PPD:
+      return "Approved for Persistent or Prolonged Disability";
   }
 }
