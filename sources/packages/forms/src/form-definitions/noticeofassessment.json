@@ -4430,7 +4430,7 @@
                                 "attr": ""
                               }
                             ],
-                            "className": "ml-4",
+                            "className": "grid-row-indentation-first-level",
                             "content": "Fixed student contribution",
                             "type": "htmlelement",
                             "hideLabel": true,
@@ -4550,7 +4550,7 @@
                                 "attr": ""
                               }
                             ],
-                            "className": "ml-4",
+                            "className": "grid-row-indentation-first-level",
                             "content": "Scholarships and bursaries contribution",
                             "type": "htmlelement",
                             "hideLabel": true,
@@ -4669,7 +4669,7 @@
                                 "attr": ""
                               }
                             ],
-                            "className": "ml-4",
+                            "className": "grid-row-indentation-first-level",
                             "content": "Targeted resources",
                             "type": "htmlelement",
                             "hideLabel": true,
@@ -5033,7 +5033,7 @@
                                 "attr": ""
                               }
                             ],
-                            "className": "ml-4",
+                            "className": "grid-row-indentation-first-level",
                             "content": "Parental income contribution",
                             "type": "htmlelement",
                             "hideLabel": true,
@@ -5153,7 +5153,7 @@
                                 "attr": ""
                               }
                             ],
-                            "className": "ml-4",
+                            "className": "grid-row-indentation-first-level",
                             "content": "Parental asset contribution",
                             "type": "htmlelement",
                             "hideLabel": true,
@@ -5273,7 +5273,7 @@
                                 "attr": ""
                               }
                             ],
-                            "className": "ml-4",
+                            "className": "grid-row-indentation-first-level",
                             "content": "Parental voluntary contribution",
                             "type": "htmlelement",
                             "hideLabel": true,
@@ -5492,7 +5492,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.totalFederalContribution === 'number' ? '$' + (data.assessment.totalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = typeof data.assessment?.totalProvincialContribution === 'number' ? '$' + (data.assessment.totalProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
                             "disabled": true,
                             "customClass": "font-weight-bold"
                           }
