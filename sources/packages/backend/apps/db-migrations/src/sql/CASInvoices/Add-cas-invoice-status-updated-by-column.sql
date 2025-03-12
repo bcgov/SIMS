@@ -9,14 +9,7 @@ COMMENT ON COLUMN sims.cas_invoices.invoice_status_updated_by IS 'User who updat
 UPDATE
   sims.cas_invoices
 SET
-  invoice_status_updated_by = (
-    SELECT
-      id
-    FROM
-      sims.users
-    WHERE
-      last_name = 'system-user'
-  );
+  invoice_status_updated_by = creator;
 
 -- Update the column to NOT NULL.
 ALTER TABLE

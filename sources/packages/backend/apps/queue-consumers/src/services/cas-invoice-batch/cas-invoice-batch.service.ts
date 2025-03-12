@@ -133,6 +133,7 @@ export class CASInvoiceBatchService {
   ): CASInvoice[] {
     const casInvoices: CASInvoice[] = [];
     const invoicesSummary = new ProcessSummary();
+    const systemUser = this.systemUsersService.systemUser;
     parentProcessSummary.children(invoicesSummary);
     // Start processing the invoices for each pending receipt.
     for (const receipt of pendingReceipts) {
@@ -152,8 +153,8 @@ export class CASInvoiceBatchService {
       }`;
       newInvoice.invoiceStatus = CASInvoiceStatus.Pending;
       newInvoice.invoiceStatusUpdatedOn = referenceDate;
-      newInvoice.creator = this.systemUsersService.systemUser;
-      newInvoice.invoiceStatusUpdatedBy = this.systemUsersService.systemUser;
+      newInvoice.creator = systemUser;
+      newInvoice.invoiceStatusUpdatedBy = systemUser;
       newInvoice.createdAt = referenceDate;
       newInvoice.updatedAt = referenceDate;
       // Create invoice details.
