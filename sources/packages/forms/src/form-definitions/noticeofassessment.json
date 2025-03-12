@@ -3993,7 +3993,7 @@
                 },
                 {
                   "label": "Table",
-                  "numRows": 5,
+                  "numRows": 11,
                   "numCols": 3,
                   "cloneRows": false,
                   "cellAlignment": "left",
@@ -4011,7 +4011,7 @@
                   "tags": [],
                   "properties": {},
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": "",
                     "json": ""
@@ -4298,127 +4298,27 @@
                       {
                         "components": [
                           {
-                            "label": "Assessed student contribution",
+                            "key": "table5Content",
+                            "label": "Student expected contribution",
+                            "input": false,
+                            "tag": "p",
                             "attrs": [
                               {
-                                "attr": "",
-                                "value": ""
+                                "value": "",
+                                "attr": ""
                               }
                             ],
-                            "content": "Assessed student contribution",
-                            "refreshOnChange": false,
-                            "key": "studentContribution2",
+                            "className": "",
+                            "content": "<strong>Student expected contribution</strong>",
                             "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideOnChildrenHidden": false,
-                            "id": "effn5gg11111111111111111111111111111111111111111111111111",
-                            "placeholder": "",
-                            "prefix": "",
-                            "customClass": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "modalEdit": false,
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "attributes": {},
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": ""
-                            },
-                            "overlay": {
-                              "style": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "properties": {},
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "tag": "p",
-                            "className": ""
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "table5Text4",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
+                            "hideLabel": true,
+                            "tags": [],
                             "conditional": {
                               "show": "",
                               "when": null,
                               "eq": ""
                             },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "mask": false,
-                            "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.studentTotalFederalContribution === 'number' ? '$' + (data.assessment.studentTotalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
-                            "isNew": false
+                            "properties": {}
                           }
                         ]
                       },
@@ -4462,137 +4362,9 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.studentExpectedFederalContribution === 'number' ? '$' + (data.assessment.studentExpectedFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "customClass": "font-weight-bold",
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.studentTotalProvincialContribution === 'number' ? '$' + (data.assessment.studentTotalProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      }
-                    ],
-                    [
-                      {
-                        "components": [
-                          {
-                            "label": "Assessed spouse contribution",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "Assessed spouse contribution",
-                            "refreshOnChange": false,
-                            "key": "assessedSpouseContributions2",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideOnChildrenHidden": false,
-                            "id": "e119yql22222222222222222222222222222222222222222222222222",
-                            "placeholder": "",
-                            "prefix": "",
-                            "customClass": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "modalEdit": false,
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "attributes": {},
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": ""
-                            },
-                            "overlay": {
-                              "style": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "properties": {},
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "tag": "p",
-                            "className": ""
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "table5Text7",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
                             "isNew": false
                           }
                         ]
@@ -4637,10 +4409,9 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.partnerAssessedContribution === 'number' ? '$' + (data.assessment.partnerAssessedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
-                            "customClass": "",
-                            "isNew": false
+                            "calculateValue": "value = typeof data.assessment?.studentExpectedProvincialContribution === 'number' ? '$' + (data.assessment.studentExpectedProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "customClass": "font-weight-bold",
+                            "disabled": true
                           }
                         ]
                       }
@@ -4649,126 +4420,27 @@
                       {
                         "components": [
                           {
-                            "label": "Assessed parent contribution",
+                            "key": "table5Content2",
+                            "label": "Fixed student contribution",
+                            "input": false,
+                            "tag": "p",
                             "attrs": [
                               {
-                                "attr": "",
-                                "value": ""
+                                "value": "",
+                                "attr": ""
                               }
                             ],
-                            "content": "Assessed parent contribution",
-                            "refreshOnChange": false,
-                            "key": "assessedParentContribution2",
+                            "className": "ml-4",
+                            "content": "Fixed student contribution",
                             "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideOnChildrenHidden": false,
-                            "id": "eplstpl33333333333333333333333333333333333333333333333333",
-                            "placeholder": "",
-                            "prefix": "",
-                            "customClass": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "modalEdit": false,
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "attributes": {},
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": ""
-                            },
-                            "overlay": {
-                              "style": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "properties": {},
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "tag": "p",
-                            "className": ""
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "table5Text8",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
+                            "hideLabel": true,
+                            "tags": [],
                             "conditional": {
                               "show": "",
                               "when": null,
                               "eq": ""
                             },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
-                            "isNew": false
+                            "properties": {}
                           }
                         ]
                       },
@@ -4812,9 +4484,53 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.studentTotalFederalContribution === 'number' ? '$' + (data.assessment.studentTotalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text11",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.studentTotalProvincialContribution === 'number' ? '$' + (data.assessment.studentTotalProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.parentAssessedContribution === 'number' ? '$' + (data.assessment.parentAssessedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
-                            "customClass": "",
                             "isNew": false
                           }
                         ]
@@ -4824,87 +4540,146 @@
                       {
                         "components": [
                           {
-                            "label": "Total student contribution",
-                            "labelWidth": "",
-                            "labelMargin": "",
+                            "key": "table5Content3",
+                            "label": "Scholarships and bursaries contribution",
+                            "input": false,
                             "tag": "p",
-                            "className": "",
                             "attrs": [
                               {
-                                "attr": "",
-                                "value": ""
+                                "value": "",
+                                "attr": ""
                               }
                             ],
-                            "content": "<strong>Total student contribution</strong>",
-                            "refreshOnChange": false,
-                            "customClass": "",
-                            "hidden": false,
-                            "modalEdit": false,
-                            "key": "totalAssessedCosts6",
-                            "tags": [],
-                            "properties": {},
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": "",
-                              "json": ""
-                            },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
-                            "overlay": {
-                              "style": "",
-                              "page": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
+                            "className": "ml-4",
+                            "content": "Scholarships and bursaries contribution",
                             "type": "htmlelement",
-                            "input": false,
+                            "hideLabel": true,
+                            "tags": [],
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "properties": {}
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
                             "tableView": false,
-                            "hideOnChildrenHidden": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text4",
                             "placeholder": "",
                             "prefix": "",
                             "suffix": "",
                             "multiple": false,
-                            "defaultValue": null,
+                            "defaultValue": "",
                             "protected": false,
                             "unique": false,
                             "persistent": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "validateOn": "change",
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
                             "validate": {
                               "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
                               "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
+                              "customPrivate": false
                             },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "id": "eqnikij44444444444444444444444444444444444444444444444"
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.scholarshipsBursariesContribution === 'number' ? '$' + (data.assessment.scholarshipsBursariesContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text12",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.scholarshipsBursariesContribution === 'number' ? '$' + (data.assessment.scholarshipsBursariesContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "disabled": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content4",
+                            "label": "Targeted resources",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "ml-4",
+                            "content": "Targeted resources",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tags": [],
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "properties": {}
                           }
                         ]
                       },
@@ -4948,10 +4723,83 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "customClass": "font-weight-bold",
-                            "calculateValue": "value = typeof data.assessment?.totalFederalContribution === 'number' ? '$' + (data.assessment.totalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = typeof data.assessment?.targetedResources === 'number' ? '$' + (data.assessment.targetedResources).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text13",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.targetedResources === 'number' ? '$' + (data.assessment.targetedResources).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
                             "disabled": true,
                             "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content5",
+                            "label": "Partner expected contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "",
+                            "content": "<strong>Partner expected contribution</strong>",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tags": [],
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "properties": {}
                           }
                         ]
                       },
@@ -4995,10 +4843,658 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.totalProvincialContribution === 'number' ? '$' + (data.assessment.totalProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = typeof data.assessment?.partnerExpectedContribution === 'number' ? '$' + (data.assessment.partnerExpectedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
                             "customClass": "font-weight-bold",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text14",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.partnerExpectedContribution === 'number' ? '$' + (data.assessment.partnerExpectedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "customClass": "font-weight-bold",
+                            "disabled": true,
                             "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content6",
+                            "label": "Parental expected contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "",
+                            "content": "<strong>Parental expected contribution</strong>",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tags": [],
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "properties": {}
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text7",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "customClass": "font-weight-bold",
+                            "disabled": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text15",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "customClass": "font-weight-bold",
+                            "disabled": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content7",
+                            "label": "Parental income contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "ml-4",
+                            "content": "Parental income contribution",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tags": [],
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "properties": {}
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text8",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.parentalDiscretionaryContribution === 'number' ? '$' + (data.assessment.parentalDiscretionaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text16",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.parentalDiscretionaryContribution === 'number' ? '$' + (data.assessment.parentalDiscretionaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "disabled": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content8",
+                            "label": "Parental asset contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "ml-4",
+                            "content": "Parental asset contribution",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tags": [],
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "properties": {}
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text9",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "disabled": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text17",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "disabled": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content9",
+                            "label": "Parental voluntary contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "ml-4",
+                            "content": "Parental voluntary contribution",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tags": [],
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "properties": {}
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text10",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.parentalVoluntaryContribution === 'number' ? '$' + (data.assessment.parentalVoluntaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text18",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.parentalVoluntaryContribution === 'number' ? '$' + (data.assessment.parentalVoluntaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "disabled": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Totalstudentcontribution",
+                            "label": "Total student contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "",
+                            "content": "<strong>Total student contribution</strong>",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tags": [],
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "properties": {}
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text19",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.totalFederalContribution === 'number' ? '$' + (data.assessment.totalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "customClass": "font-weight-bold",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "table5Text20",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "hideLabel": true,
+                            "calculateValue": "value = typeof data.assessment?.totalFederalContribution === 'number' ? '$' + (data.assessment.totalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "disabled": true,
+                            "customClass": "font-weight-bold"
                           }
                         ]
                       }
