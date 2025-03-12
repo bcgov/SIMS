@@ -29,7 +29,7 @@ export class CASInvoiceApi extends HttpBaseClient {
    */
   async resolveCASInvoice(invoiceId: number): Promise<void> {
     await this.patchCall(
-      this.addClientRoot(`cas-invoice/${invoiceId}`),
+      this.addClientRoot(`cas-invoice/${invoiceId}/resolve`),
       undefined,
     );
   }
