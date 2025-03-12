@@ -30,6 +30,7 @@ import { CASSupplierApi } from "@/services/http/CASSupplier";
 import { AuditApi } from "@/services/http/AuditApi";
 import { ApplicationRestrictionBypassApi } from "@/services/http/ApplicationRestrictionBypassApi";
 import { CASInvoiceBatchApi } from "@/services/http/CASInvoiceBatchApi";
+import { CASInvoiceApi } from "@/services/http/CASInvoiceApi";
 
 const ApiClient = {
   AuditApi: new AuditApi(),
@@ -65,6 +66,7 @@ const ApiClient = {
   AnnouncementApi: new AnnouncementApi(),
   ApplicationRestrictionBypassApi: new ApplicationRestrictionBypassApi(),
   CASInvoiceBatchApi: new CASInvoiceBatchApi(),
+  CASInvoiceApi: new CASInvoiceApi(),
 };
 
 export default ApiClient;

@@ -417,3 +417,8 @@ div.v-field__field input[type="date"] {
     @extend .font-bold;
   }
 }
+
+.remove-side-padding {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}

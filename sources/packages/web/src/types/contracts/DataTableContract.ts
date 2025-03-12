@@ -439,6 +439,38 @@ export const CASInvoicesBatchesHeaders = [
 ];
 
 /**
+ * CAS invoice headers.
+ */
+export const CASInvoiceHeaders = [
+  {
+    title: "Invoice Response Date",
+    sortable: true,
+    key: "invoiceStatusUpdatedOn",
+  },
+  { title: "Batch Name", sortable: false, key: "invoiceBatchName" },
+  {
+    title: "Invoice Number",
+    sortable: false,
+    key: "invoiceNumber",
+  },
+  {
+    title: "Supplier Number",
+    sortable: false,
+    key: "supplierNumber",
+  },
+  {
+    title: "Actions",
+    sortable: false,
+    key: "actions",
+  },
+  {
+    title: "Details",
+    sortable: false,
+    key: "data-table-expand",
+  },
+];
+
+/**
  * Student application summary headers.
  */
 export const StudentApplicationsSummaryHeaders = [

@@ -122,6 +122,7 @@
         </toggle-content>
       </content-group>
     </body-header-container>
+    <c-a-s-manual-intervention />
   </full-page-container>
   <confirm-modal
     title="Approve invoice batch"
@@ -160,6 +161,7 @@ import {
 import { defineComponent, onMounted, ref } from "vue";
 import StatusInvoiceBatchApproval from "@/components/generic/StatusInvoiceBatchApproval.vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
+import CASManualIntervention from "@/components/aest/CASManualIntervention.vue";
 
 const DEFAULT_SORT_FIELD = "batchDate";
 const ApprovalStatusFilter = {
@@ -177,6 +179,7 @@ export default defineComponent({
     CheckPermissionRole,
     StatusInvoiceBatchApproval,
     ConfirmModal,
+    CASManualIntervention,
   },
   setup() {
     const snackBar = useSnackBar();
