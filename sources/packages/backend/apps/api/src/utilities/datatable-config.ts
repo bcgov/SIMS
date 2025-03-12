@@ -1,4 +1,8 @@
-import { CASInvoiceBatchApprovalStatus, ProgramStatus } from "@sims/sims-db";
+import {
+  CASInvoiceBatchApprovalStatus,
+  CASInvoiceStatus,
+  ProgramStatus,
+} from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
 
 /**
@@ -26,6 +30,14 @@ export interface ProgramPaginationOptions extends BasePaginationOptions {
   locationNameSearch?: string;
   statusSearch?: ProgramStatus[];
   inactiveProgramSearch?: boolean;
+}
+
+/**
+ * CAS invoices specific parameters.
+ */
+export interface CASInvoicePaginationOptionsAPIInDTO
+  extends BasePaginationOptions {
+  invoiceStatusSearch: CASInvoiceStatus[];
 }
 
 /**
