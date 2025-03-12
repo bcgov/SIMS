@@ -42,18 +42,23 @@ export QUEUE_DASHBOARD_TOKEN_EXPIRATION_SECONDS := $(or $(QUEUE_DASHBOARD_TOKEN_
 export FORMIO_CPU_REQUEST := $(or ${FORMIO_CPU_REQUEST}, 200m)
 export FORMIO_MEMORY_REQUEST := $(or ${FORMIO_MEMORY_REQUEST}, 500Mi)
 export FORMIO_MEMORY_LIMIT := $(or ${FORMIO_MEMORY_LIMIT}, 2Gi)
+export FORMIO_REPLICAS := $(or ${FORMIO_REPLICAS}, 2)
 export API_CPU_REQUEST := $(or ${API_CPU_REQUEST}, 100m)
 export API_MEMORY_REQUEST := $(or ${API_MEMORY_REQUEST}, 384Mi)
 export API_MEMORY_LIMIT := $(or ${API_MEMORY_LIMIT}, 512Mi)
+export API_REPLICAS := $(or ${API_REPLICAS}, 2)
 export WORKERS_CPU_REQUEST := $(or ${WORKERS_CPU_REQUEST}, 100m)
 export WORKERS_MEMORY_REQUEST := $(or ${WORKERS_MEMORY_REQUEST}, 384Mi)
 export WORKERS_MEMORY_LIMIT := $(or ${WORKERS_MEMORY_LIMIT}, 512Mi)
+export WORKERS_REPLICAS := $(or ${WORKERS_REPLICAS}, 2)
 export WEB_CPU_REQUEST := $(or ${WEB_CPU_REQUEST}, 100m)
 export WEB_MEMORY_REQUEST := $(or ${WEB_MEMORY_REQUEST}, 128Mi)
 export WEB_MEMORY_LIMIT := $(or ${WEB_MEMORY_LIMIT}, 256Mi)
+export WEB_REPLICAS := $(or ${WEB_REPLICAS}, 2)
 export QUEUE_CONSUMERS_CPU_REQUEST := $(or ${QUEUE_CONSUMERS_CPU_REQUEST}, 200m)
 export QUEUE_CONSUMERS_MEMORY_REQUEST := $(or ${QUEUE_CONSUMERS_MEMORY_REQUEST}, 768Mi)
 export QUEUE_CONSUMERS_MEMORY_LIMIT := $(or ${QUEUE_CONSUMERS_MEMORY_LIMIT}, 1024Mi)
+export QUEUE_CONSUMERS_REPLICAS := $(or ${QUEUE_CONSUMERS_REPLICAS}, 2)
 export HAMONGO_DB_CPU_REQUEST := $(or ${HAMONGO_DB_CPU_REQUEST}, 250m)
 export HAMONGO_DB_MEMORY_REQUEST := $(or ${HAMONGO_DB_MEMORY_REQUEST}, 512Mi)
 export HAMONGO_DB_MEMORY_LIMIT := $(or ${HAMONGO_DB_MEMORY_LIMIT}, 2Gi)
@@ -380,6 +385,7 @@ deploy-api:
 	test -n "$(API_CPU_REQUEST)"
 	test -n "$(API_MEMORY_REQUEST)"
 	test -n "${API_MEMORY_LIMIT}"
+	test -n "${API_REPLICAS}"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -415,6 +421,7 @@ deploy-api:
 		-p CPU_REQUEST=$(API_CPU_REQUEST) \
 		-p MEMORY_REQUEST=$(API_MEMORY_REQUEST) \
 		-p MEMORY_LIMIT=$(API_MEMORY_LIMIT) \
+		-p REPLICAS=$(API_REPLICAS) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(API))
 
@@ -430,6 +437,7 @@ deploy-workers:
 	test -n "$(WORKERS_CPU_REQUEST)"
 	test -n "$(WORKERS_MEMORY_REQUEST)"
 	test -n "${WORKERS_MEMORY_LIMIT}"
+	test -n "${WORKERS_REPLICAS}"
 	@echo "+\n++ Deploying Workers with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \
 		-p NAME=$(WORKERS) \
@@ -443,6 +451,7 @@ deploy-workers:
 		-p CPU_REQUEST=$(WORKERS_CPU_REQUEST) \
 		-p MEMORY_REQUEST=$(WORKERS_MEMORY_REQUEST) \
 		-p MEMORY_LIMIT=$(WORKERS_MEMORY_LIMIT) \
+		-p REPLICAS=$(WORKERS_REPLICAS)	\
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(WORKERS))
 
@@ -461,6 +470,7 @@ deploy-queue-consumers:
 	test -n "$(QUEUE_CONSUMERS_CPU_REQUEST)"
 	test -n "$(QUEUE_CONSUMERS_MEMORY_REQUEST)"
 	test -n "$(QUEUE_CONSUMERS_MEMORY_LIMIT)"
+	test -n "$(QUEUE_CONSUMERS_REPLICAS)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -482,6 +492,7 @@ deploy-queue-consumers:
 		-p CPU_REQUEST=$(QUEUE_CONSUMERS_CPU_REQUEST) \
 		-p MEMORY_REQUEST=$(QUEUE_CONSUMERS_MEMORY_REQUEST) \
 		-p MEMORY_LIMIT=$(QUEUE_CONSUMERS_MEMORY_LIMIT) \
+		-p REPLICAS=$(QUEUE_CONSUMERS_REPLICAS) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(QUEUE_CONSUMERS))
 
@@ -522,6 +533,7 @@ deploy-web:
 	test -n "$(WEB_CPU_REQUEST)"
 	test -n "$(WEB_MEMORY_REQUEST)"
 	test -n "$(WEB_MEMORY_LIMIT)"
+	test -n "${WEB_REPLICAS}"
 	@echo "+\n++ Deploying WEB with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml \
 	-p NAME=$(WEB) \
@@ -535,6 +547,7 @@ deploy-web:
 	-p CPU_REQUEST=$(WEB_CPU_REQUEST) \
 	-p MEMORY_REQUEST=$(WEB_MEMORY_REQUEST) \
 	-p MEMORY_LIMIT=$(WEB_MEMORY_LIMIT) \
+	-p REPLICAS=$(WEB_REPLICAS) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(WEB))
 
@@ -573,6 +586,7 @@ deploy-forms:
 	test -n "$(FORMIO_CPU_REQUEST)"
 	test -n "$(FORMIO_MEMORY_REQUEST)"
 	test -n "${FORMIO_MEMORY_LIMIT}"
+	test -n "${FORMIO_REPLICAS}"
 	@echo "+\n++ Deploying forms with tag: $(FORMIO_SOURCE_REPO_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \
@@ -588,6 +602,7 @@ deploy-forms:
 	-p CPU_REQUEST=$(FORMIO_CPU_REQUEST) \
 	-p MEMORY_REQUEST=$(FORMIO_MEMORY_REQUEST) \
 	-p MEMORY_LIMIT=$(FORMIO_MEMORY_LIMIT) \
+	-p REPLICAS=$(FORMIO_REPLICAS) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(FORMS_NAME))
 
