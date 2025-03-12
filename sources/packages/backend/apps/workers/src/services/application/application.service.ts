@@ -13,7 +13,7 @@ import { DataSource, In, UpdateResult } from "typeorm";
 export class ApplicationService extends RecordDataModelService<Application> {
   constructor(
     dataSource: DataSource,
-    private systemUsersService: SystemUsersService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     super(dataSource.getRepository(Application));
   }
