@@ -153,6 +153,7 @@ export class CASInvoiceBatchService {
       newInvoice.invoiceStatus = CASInvoiceStatus.Pending;
       newInvoice.invoiceStatusUpdatedOn = referenceDate;
       newInvoice.creator = this.systemUsersService.systemUser;
+      newInvoice.invoiceStatusUpdatedBy = this.systemUsersService.systemUser;
       newInvoice.createdAt = referenceDate;
       newInvoice.updatedAt = referenceDate;
       // Create invoice details.
