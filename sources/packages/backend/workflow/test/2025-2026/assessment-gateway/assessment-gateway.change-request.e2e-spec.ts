@@ -1,4 +1,7 @@
-import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
+import {
+  APPLICATION_ID,
+  ASSESSMENT_ID,
+} from "@sims/services/workflow/variables/assessment-gateway";
 import {
   ApplicationEditStatus,
   ApplicationStatus,
@@ -16,7 +19,6 @@ import {
   expectNotToPassThroughServiceTasks,
 } from "../../test-utils";
 import {
-  createVerifyApplicationExceptionsTaskMock,
   createIncomeRequestTaskMock,
   createWorkersMockedData,
   createLoadAssessmentDataTaskMock,
@@ -31,6 +33,7 @@ import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_YEAR}`, () => {
   let zeebeClientProvider: ZeebeGrpcClient;
+  let applicationId = PROGRAM_YEAR_BASE_ID;
   let assessmentId = PROGRAM_YEAR_BASE_ID;
   let incomeVerificationId = PROGRAM_YEAR_BASE_ID;
 
@@ -38,34 +41,46 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
     zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();
   });
 
-  it.skip("Should complete the assessment calculations when a change request was approved by the Ministry and a message was sent to the workflow.", async () => {
+  it("Should complete the assessment calculations when a change request was approved by the Ministry and a message was sent to the workflow.", async () => {
     // Arrange
+    const currentAssessmentId = assessmentId++;
+    const currentApplicationId = applicationId++;
 
     // Assessment consolidated mocked data.
-    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+    const dataOnSubmit: AssessmentConsolidatedData = {
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
       ...createFakeSingleIndependentStudentData(),
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
-      applicationStatus: ApplicationStatus.Completed,
+      applicationStatus: ApplicationStatus.Edited,
       applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
+      [APPLICATION_ID]: currentApplicationId,
+    };
+
+    const dataPreAssessment: AssessmentConsolidatedData = {
+      ...dataOnSubmit,
+      applicationStatus: ApplicationStatus.Completed,
+      applicationEditStatus: ApplicationEditStatus.ChangedWithApproval,
     };
 
     const workersMockedData = createWorkersMockedData([
-      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
-      createVerifyApplicationExceptionsTaskMock(),
+      createLoadAssessmentDataTaskMock({
+        assessmentConsolidatedData: dataOnSubmit,
+      }),
+      createLoadAssessmentDataTaskMock({
+        assessmentConsolidatedData: dataPreAssessment,
+        subprocess: WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
+      }),
       createIncomeRequestTaskMock({
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
       createApplicationChangeRequestApprovalTaskMock({
-        applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
+        applicationId: currentApplicationId,
       }),
       createVerifyAssessmentCalculationOrderTaskMock(),
     ]);
-
-    const currentAssessmentId = assessmentId++;
 
     // Act/Assert
     const assessmentGatewayResponse =
@@ -82,23 +97,27 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       WorkflowServiceTasks.AssociateWorkflowInstance,
       WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
       WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowSubprocesses.StudentIncomeVerification,
       WorkflowServiceTasks.ApplicationChangeRequestApproval,
+      WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
+      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
+      WorkflowServiceTasks.SaveDisbursementSchedules,
+      WorkflowServiceTasks.AssociateMSFAA,
+      WorkflowServiceTasks.UpdateNOAStatusToNotRequiredApplicationCompleted,
+      WorkflowServiceTasks.WorkflowWrapUpTask,
     );
     expectNotToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.VerifyApplicationExceptions,
       WorkflowServiceTasks.ProgramInfoRequired,
-      WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
-      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
-      WorkflowServiceTasks.SaveDisbursementSchedules,
-      WorkflowServiceTasks.AssociateMSFAA,
-      WorkflowServiceTasks.UpdateNOAStatusToRequired,
       WorkflowServiceTasks.UpdateApplicationStatusToAssessment,
     );
   });
 
   it("Should end the assessment workflow when a change request is declined by the Ministry.", async () => {
     // Arrange
+    const currentAssessmentId = assessmentId++;
+    const currentApplicationId = applicationId++;
 
     // Assessment consolidated mocked data.
     const assessmentConsolidatedData: AssessmentConsolidatedData = {
@@ -107,23 +126,22 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       ...createFakeSingleIndependentStudentData(),
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
-      applicationStatus: ApplicationStatus.Completed,
+      applicationStatus: ApplicationStatus.Edited,
       applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
+      [APPLICATION_ID]: currentApplicationId,
     };
 
     const workersMockedData = createWorkersMockedData([
       createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
-      createVerifyApplicationExceptionsTaskMock(),
       createIncomeRequestTaskMock({
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
       createApplicationChangeRequestApprovalTaskMock({
-        applicationEditStatus: ApplicationEditStatus.ChangeDeclined,
+        applicationId: currentApplicationId,
+        messageApplicationEditStatus: ApplicationEditStatus.ChangeDeclined,
       }),
     ]);
-
-    const currentAssessmentId = assessmentId++;
 
     // Act/Assert
     const assessmentGatewayResponse =
@@ -140,6 +158,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       WorkflowServiceTasks.AssociateWorkflowInstance,
       WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
       WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowSubprocesses.StudentIncomeVerification,
       WorkflowServiceTasks.ApplicationChangeRequestApproval,
     );
     expectNotToPassThroughServiceTasks(
@@ -150,8 +169,8 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
       WorkflowServiceTasks.SaveDisbursementSchedules,
       WorkflowServiceTasks.AssociateMSFAA,
-      WorkflowServiceTasks.UpdateNOAStatusToRequired,
-      WorkflowServiceTasks.UpdateApplicationStatusToAssessment,
+      WorkflowServiceTasks.UpdateNOAStatusToNotRequiredApplicationCompleted,
+      WorkflowServiceTasks.WorkflowWrapUpTask,
     );
   });
 
