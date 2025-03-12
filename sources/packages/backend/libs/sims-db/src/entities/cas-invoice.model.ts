@@ -14,6 +14,7 @@ import {
   CASSupplier,
   CASInvoiceStatus,
   CASInvoiceDetail,
+  User,
 } from ".";
 
 /**
@@ -79,6 +80,15 @@ export class CASInvoice extends RecordDataModel {
     type: "timestamptz",
   })
   invoiceStatusUpdatedOn: Date;
+  /**
+   * User that changed the status last time.
+   */
+  @ManyToOne(() => User, { nullable: false })
+  @JoinColumn({
+    name: "invoice_status_updated_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  invoiceStatusUpdatedBy: User;
   /**
    * Invoice details.
    */
