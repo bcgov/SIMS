@@ -795,3 +795,7 @@ td .formio-custom-tooltip:hover .tooltip-text {
   @extend .changed-value-content-base;
   content: "  Items were appended to the list";
 }
+
+.grid-row-indentation-first-level {
+  margin-left: 1rem;
+}
