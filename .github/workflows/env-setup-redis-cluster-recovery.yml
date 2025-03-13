@@ -1,5 +1,5 @@
-name: Env Setup - Redis recovery in Openshift
-run-name: Env Setup - Redis recovery in Openshift from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+name: Env Setup - Redis-cluster recovery in Openshift
+run-name: Env Setup - Redis-cluster recovery in Openshift from ${{ inputs.gitRef }} to ${{ inputs.environment }}
 
 concurrency: redis-setup
 
@@ -17,7 +17,7 @@ on:
 
 jobs:
   recoverRedis:
-    name: Redis recovery in Openshift
+    name: Redis-cluster recovery in Openshift
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
@@ -34,7 +34,7 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Redis cluster meet
+      - name: Redis-cluster cluster meet
         working-directory: "./devops/"
         run: |
           make redis-cluster-meet
