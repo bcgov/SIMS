@@ -51,8 +51,6 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
       ...createFakeSingleIndependentStudentData(),
-      // Application with PIR not required.
-      studentDataSelectedOffering: 1,
       applicationStatus: ApplicationStatus.Edited,
       applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
       [APPLICATION_ID]: currentApplicationId,
@@ -124,8 +122,6 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
       ...createFakeSingleIndependentStudentData(),
-      // Application with PIR not required.
-      studentDataSelectedOffering: 1,
       applicationStatus: ApplicationStatus.Edited,
       applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
       [APPLICATION_ID]: currentApplicationId,
@@ -184,8 +180,6 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
       ...createFakeSingleIndependentStudentData(),
-      // Application with PIR not required.
-      studentDataSelectedOffering: 1,
       applicationStatus: ApplicationStatus.Edited,
       applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
       [APPLICATION_ID]: currentApplicationId,
@@ -243,8 +237,6 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
       ...createFakeSingleIndependentStudentData(),
-      // Application with PIR not required.
-      studentDataSelectedOffering: 1,
       applicationStatus: ApplicationStatus.Edited,
       applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
       [APPLICATION_ID]: currentApplicationId,
@@ -303,8 +295,6 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
       ...createFakeSingleIndependentStudentData(),
-      // Application with PIR not required.
-      studentDataSelectedOffering: 1,
       applicationStatus: ApplicationStatus.Edited,
       applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
       [APPLICATION_ID]: currentApplicationId,

@@ -191,8 +191,7 @@ export class ApplicationController {
    * Processes the application change request approval.
    * Set the application edit status to 'Change pending approval' to allow waiting
    * till the Ministry approves or declines the changes.
-   * @returns most updated edit status and the application status to be updated in
-   * workflow in case the change request was approved.
+   * @returns most updated edit status.
    */
   @ZeebeWorker(Workers.ApplicationChangeRequestApproval, {
     fetchVariable: [APPLICATION_ID],
