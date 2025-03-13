@@ -160,12 +160,12 @@ import {
   ITEMS_PER_PAGE,
   PaginationOptions,
   Role,
+  LayoutTemplates,
 } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
 import StatusInvoiceBatchApproval from "@/components/generic/StatusInvoiceBatchApproval.vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import CASManualIntervention from "@/components/aest/CASManualIntervention.vue";
-import { LayoutTemplates } from "@/types";
 
 const DEFAULT_SORT_FIELD = "batchDate";
 const ApprovalStatusFilter = {
