@@ -1,3 +1,13 @@
+/**
+ * Workers must be implemented as idempotent methods and also with the ability to allow a retry operation.
+ * The idempotency would ensure the worker can be potentially be called multiple time to process the same job
+ * and it will produce the same impact and same result. To know more about it please check the link
+ * https://docs.camunda.io/docs/components/best-practices/development/dealing-with-problems-and-exceptions/#writing-idempotent-workers.
+ * The retry ability means that, in case of fail, the worker must ensure the data would still be consistent
+ * and a new retry operation would be successfully executed.
+ * Please see the below link also for some best practices for workers.
+ * https://docs.camunda.io/docs/components/best-practices/development/dealing-with-problems-and-exceptions/
+ */
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
@@ -23,7 +33,6 @@ import {
 import {
   APPLICATION_EDIT_STATUS,
   APPLICATION_ID,
-  APPLICATION_STATUS,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
@@ -243,9 +252,7 @@ export class ApplicationController {
         "Applications edit status not updated, returning the current status only.",
       );
       // Returns the most updated status for the application.
-      // The status is expected to be 'Completed' if the edit was approved, otherwise it should remain as 'Edited'.
       return job.complete({
-        [APPLICATION_STATUS]: application.applicationStatus,
         [APPLICATION_EDIT_STATUS]: application.applicationEditStatus,
       });
     } catch (error: unknown) {

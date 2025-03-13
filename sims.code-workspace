@@ -21,6 +21,10 @@
       "path": "./sources/packages/load-test"
     },
     {
+      "name": "Sources",
+      "path": "./sources"
+    },
+    {
       "name": "All",
       "path": "."
     }
@@ -40,6 +44,24 @@
   "tasks": {
     "version": "2.0.0",
     "tasks": [
+      {
+        "label": "Deploy Camunda Definitions",
+        "type": "shell",
+        "command": "make deploy-camunda-definitions",
+        "options": {
+          "cwd": "${workspaceFolder:Sources}"
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "Deploy Form Definitions",
+        "type": "shell",
+        "command": "make deploy-form-definitions",
+        "options": {
+          "cwd": "${workspaceFolder:Sources}"
+        },
+        "problemMatcher": []
+      },
       {
         "label": "View Outdated Web Packages",
         "type": "shell",

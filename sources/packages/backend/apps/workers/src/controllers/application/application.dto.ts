@@ -2,7 +2,6 @@ import {
   APPLICATION_EDIT_STATUS,
   APPLICATION_EXCEPTION_STATUS,
   APPLICATION_ID,
-  APPLICATION_STATUS,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import {
   ApplicationEditStatus,
@@ -33,5 +32,4 @@ export interface ApplicationChangeRequestApprovalJobInDTO {
 
 export interface ApplicationChangeRequestApprovalJobOutDTO {
   [APPLICATION_EDIT_STATUS]: ApplicationEditStatus;
-  [APPLICATION_STATUS]?: ApplicationStatus;
 }

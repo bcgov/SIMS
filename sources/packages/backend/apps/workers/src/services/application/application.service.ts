@@ -79,6 +79,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: {
         id: true,
         applicationNumber: true,
+        applicationEditStatus: true,
         pirStatus: true,
         student: {
           id: true,
@@ -118,6 +119,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     fromStatus: ApplicationEditStatus,
     toStatus: ApplicationEditStatus,
   ): Promise<UpdateResult> {
+    const now = new Date();
     return this.repo.update(
       {
         id: applicationId,
@@ -125,7 +127,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       {
         applicationEditStatus: toStatus,
+        applicationEditStatusUpdatedOn: now,
+        applicationEditStatusUpdatedBy: this.systemUsersService.systemUser,
         modifier: this.systemUsersService.systemUser,
+        updatedAt: now,
       },
     );
   }

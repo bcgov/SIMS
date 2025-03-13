@@ -4,6 +4,7 @@ import {
   WorkflowServiceTasks,
 } from "../..";
 import { WorkerMockedData } from "..";
+import { PublishMessageRequest } from "@camunda8/sdk/dist/zeebe/types";
 
 /**
  * Creates the mock for 'Application change request approval' task.
@@ -16,7 +17,7 @@ import { WorkerMockedData } from "..";
 export function createApplicationChangeRequestApprovalTaskMock(options: {
   taskCompleteApplicationEditStatus?: ApplicationEditStatus;
   messageApplicationEditStatus?: ApplicationEditStatus;
-  applicationId: number;
+  applicationId?: number;
 }): WorkerMockedData {
   // If not provided, set the default statuses to be returned as if it was waiting for approval.
   const taskCompleteApplicationEditStatus =
@@ -26,22 +27,25 @@ export function createApplicationChangeRequestApprovalTaskMock(options: {
   const messageApplicationEditStatus =
     options?.messageApplicationEditStatus ??
     ApplicationEditStatus.ChangedWithApproval;
+  // If application ID is provided, send the message to the workflow.
+  const jobMessageMocks: PublishMessageRequest<unknown>[] = [];
+  if (options?.applicationId) {
+    jobMessageMocks.push({
+      name: "application-change-request-approval-provided",
+      correlationKey: options.applicationId.toString(),
+      variables: {
+        applicationEditStatus: messageApplicationEditStatus,
+      },
+      timeToLive: PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
+    });
+  }
   return {
     serviceTaskId: WorkflowServiceTasks.ApplicationChangeRequestApproval,
     options: {
       jobCompleteMock: {
         applicationEditStatus: taskCompleteApplicationEditStatus,
       },
-      jobMessageMocks: [
-        {
-          name: "application-change-request-approval-provided",
-          correlationKey: options.applicationId.toString(),
-          variables: {
-            applicationEditStatus: messageApplicationEditStatus,
-          },
-          timeToLive: PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
-        },
-      ],
+      jobMessageMocks,
     },
   };
 }

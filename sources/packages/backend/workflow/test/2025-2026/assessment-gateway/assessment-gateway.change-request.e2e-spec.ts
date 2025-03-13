@@ -114,7 +114,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
     );
   });
 
-  it("Should end the assessment workflow when a change request is declined by the Ministry.", async () => {
+  it("Should end the assessment workflow when a change request is declined by the Ministry via message.", async () => {
     // Arrange
     const currentAssessmentId = assessmentId++;
     const currentApplicationId = applicationId++;
@@ -140,6 +140,185 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       createApplicationChangeRequestApprovalTaskMock({
         applicationId: currentApplicationId,
         messageApplicationEditStatus: ApplicationEditStatus.ChangeDeclined,
+      }),
+    ]);
+
+    // Act/Assert
+    const assessmentGatewayResponse =
+      await zeebeClientProvider.createProcessInstanceWithResult({
+        bpmnProcessId: "assessment-gateway",
+        variables: {
+          [ASSESSMENT_ID]: currentAssessmentId,
+          ...workersMockedData,
+        },
+        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+      });
+    expectToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.AssociateWorkflowInstance,
+      WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowSubprocesses.StudentIncomeVerification,
+      WorkflowServiceTasks.ApplicationChangeRequestApproval,
+    );
+    expectNotToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.VerifyApplicationExceptions,
+      WorkflowServiceTasks.ProgramInfoRequired,
+      WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
+      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
+      WorkflowServiceTasks.SaveDisbursementSchedules,
+      WorkflowServiceTasks.AssociateMSFAA,
+      WorkflowServiceTasks.UpdateNOAStatusToNotRequiredApplicationCompleted,
+      WorkflowServiceTasks.WorkflowWrapUpTask,
+    );
+  });
+
+  it("Should end the assessment workflow when a change request is declined by the Ministry via task result.", async () => {
+    // Arrange
+    const currentAssessmentId = assessmentId++;
+    const currentApplicationId = applicationId++;
+
+    // Assessment consolidated mocked data.
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createFakeSingleIndependentStudentData(),
+      // Application with PIR not required.
+      studentDataSelectedOffering: 1,
+      applicationStatus: ApplicationStatus.Edited,
+      applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
+      [APPLICATION_ID]: currentApplicationId,
+    };
+
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createApplicationChangeRequestApprovalTaskMock({
+        taskCompleteApplicationEditStatus: ApplicationEditStatus.ChangeDeclined,
+      }),
+    ]);
+
+    // Act/Assert
+    const assessmentGatewayResponse =
+      await zeebeClientProvider.createProcessInstanceWithResult({
+        bpmnProcessId: "assessment-gateway",
+        variables: {
+          [ASSESSMENT_ID]: currentAssessmentId,
+          ...workersMockedData,
+        },
+        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+      });
+    expectToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.AssociateWorkflowInstance,
+      WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowSubprocesses.StudentIncomeVerification,
+      WorkflowServiceTasks.ApplicationChangeRequestApproval,
+    );
+    expectNotToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.VerifyApplicationExceptions,
+      WorkflowServiceTasks.ProgramInfoRequired,
+      WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
+      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
+      WorkflowServiceTasks.SaveDisbursementSchedules,
+      WorkflowServiceTasks.AssociateMSFAA,
+      WorkflowServiceTasks.UpdateNOAStatusToNotRequiredApplicationCompleted,
+      WorkflowServiceTasks.WorkflowWrapUpTask,
+    );
+  });
+
+  it("Should end the assessment workflow when a change request is cancelled by the student via message.", async () => {
+    // Arrange
+    const currentAssessmentId = assessmentId++;
+    const currentApplicationId = applicationId++;
+
+    // Assessment consolidated mocked data.
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createFakeSingleIndependentStudentData(),
+      // Application with PIR not required.
+      studentDataSelectedOffering: 1,
+      applicationStatus: ApplicationStatus.Edited,
+      applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
+      [APPLICATION_ID]: currentApplicationId,
+    };
+
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createApplicationChangeRequestApprovalTaskMock({
+        applicationId: currentApplicationId,
+        messageApplicationEditStatus: ApplicationEditStatus.ChangeCancelled,
+      }),
+    ]);
+
+    // Act/Assert
+    const assessmentGatewayResponse =
+      await zeebeClientProvider.createProcessInstanceWithResult({
+        bpmnProcessId: "assessment-gateway",
+        variables: {
+          [ASSESSMENT_ID]: currentAssessmentId,
+          ...workersMockedData,
+        },
+        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+      });
+    expectToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.AssociateWorkflowInstance,
+      WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowSubprocesses.StudentIncomeVerification,
+      WorkflowServiceTasks.ApplicationChangeRequestApproval,
+    );
+    expectNotToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.VerifyApplicationExceptions,
+      WorkflowServiceTasks.ProgramInfoRequired,
+      WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
+      WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
+      WorkflowServiceTasks.SaveDisbursementSchedules,
+      WorkflowServiceTasks.AssociateMSFAA,
+      WorkflowServiceTasks.UpdateNOAStatusToNotRequiredApplicationCompleted,
+      WorkflowServiceTasks.WorkflowWrapUpTask,
+    );
+  });
+
+  it("Should end the assessment workflow when a change request is cancelled by the student via task result.", async () => {
+    // Arrange
+    const currentAssessmentId = assessmentId++;
+    const currentApplicationId = applicationId++;
+
+    // Assessment consolidated mocked data.
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createFakeSingleIndependentStudentData(),
+      // Application with PIR not required.
+      studentDataSelectedOffering: 1,
+      applicationStatus: ApplicationStatus.Edited,
+      applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
+      [APPLICATION_ID]: currentApplicationId,
+    };
+
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createApplicationChangeRequestApprovalTaskMock({
+        applicationId: currentApplicationId,
+        messageApplicationEditStatus: ApplicationEditStatus.ChangeCancelled,
       }),
     ]);
 
