@@ -3,6 +3,7 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
+  DisabilityStatus,
   DisbursementValue,
   DisbursementValueType,
   OfferingIntensity,
@@ -295,6 +296,208 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
         newDisbursement.disbursementDate,
         "NONE",
         YNFlag.N,
+      );
+      expect(fileDetail).toBe(expectedDetailRecord);
+      // Expect the file footer.
+      expect(footer).toBe("3000001");
+    },
+  );
+
+  it(
+    "Should process an ECE request file when there are valid disbursements for applications" +
+      " and the student has applied for disability grants in the applications" +
+      ` and the student disability status is ${DisabilityStatus.PD}.`,
+    async () => {
+      // Arrange
+      const studentWithPDStatus = await saveFakeStudent(
+        db.dataSource,
+        undefined,
+        { initialValue: { disabilityStatus: DisabilityStatus.PD } },
+      );
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student: studentWithPDStatus,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              1122,
+            ),
+          ],
+          secondDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              1500,
+            ),
+          ],
+          institutionLocation: createFakeInstitutionLocation(undefined, {
+            initialValue: { hasIntegration: true },
+          }),
+        },
+        {
+          createSecondDisbursement: true,
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Enrolment,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.required,
+          },
+          // This disbursement is expected to be ignored for ECE request
+          // as the disbursement date is outside COE window.
+          secondDisbursementInitialValues: {
+            coeStatus: COEStatus.required,
+            disbursementDate: getISODateOnlyString(addDays(COE_WINDOW + 10)),
+          },
+          currentAssessmentInitialValues: {
+            workflowData: {
+              calculatedData: { pdppdStatus: true },
+            } as WorkflowData,
+          },
+        },
+      );
+      application.studentNumber = "1234567789";
+      const locationCode =
+        application.currentAssessment.offering.institutionLocation
+          .institutionCode;
+      await db.application.save(application);
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      expect(result).toStrictEqual([
+        `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          "Retrieving eligible COEs for ECE request.",
+          "Found 1 COEs.",
+          "Creating ECE request content.",
+          `Processing content for institution code ${locationCode}.`,
+          "Uploading content.",
+          `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
+        ]),
+      ).toBe(true);
+      // Assert file output.
+      const [header, fileDetail, footer] = uploadedFile.fileLines;
+      // Expect the header to contain REQUEST and file date.
+      expect(header).toContain(`REQUEST${fileDate}`);
+      // Expect the file detail.
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const [disbursementValue] = disbursement.disbursementValues;
+      const expectedDetailRecord = buildECEFileDetail(
+        application,
+        disbursementValue,
+        disbursement.disbursementDate,
+        "PDAP",
+        YNFlag.Y,
+      );
+      expect(fileDetail).toBe(expectedDetailRecord);
+      // Expect the file footer.
+      expect(footer).toBe("3000001");
+    },
+  );
+
+  it(
+    "Should process an ECE request file when there are valid disbursements for applications" +
+      " and the student has applied for disability grants in the applications" +
+      ` and the student disability status is ${DisabilityStatus.PPD}.`,
+    async () => {
+      // Arrange
+      const studentWithPDStatus = await saveFakeStudent(
+        db.dataSource,
+        undefined,
+        { initialValue: { disabilityStatus: DisabilityStatus.PPD } },
+      );
+      // Student application eligible for e-Cert.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student: studentWithPDStatus,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              1122,
+            ),
+          ],
+          secondDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              1500,
+            ),
+          ],
+          institutionLocation: createFakeInstitutionLocation(undefined, {
+            initialValue: { hasIntegration: true },
+          }),
+        },
+        {
+          createSecondDisbursement: true,
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Enrolment,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.required,
+          },
+          // This disbursement is expected to be ignored for ECE request
+          // as the disbursement date is outside COE window.
+          secondDisbursementInitialValues: {
+            coeStatus: COEStatus.required,
+            disbursementDate: getISODateOnlyString(addDays(COE_WINDOW + 10)),
+          },
+          currentAssessmentInitialValues: {
+            workflowData: {
+              calculatedData: { pdppdStatus: true },
+            } as WorkflowData,
+          },
+        },
+      );
+      application.studentNumber = "1234567789";
+      const locationCode =
+        application.currentAssessment.offering.institutionLocation
+          .institutionCode;
+      await db.application.save(application);
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const fileDate = dayjs().format("YYYYMMDD");
+      expect(result).toStrictEqual([
+        `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          "Retrieving eligible COEs for ECE request.",
+          "Found 1 COEs.",
+          "Creating ECE request content.",
+          `Processing content for institution code ${locationCode}.`,
+          "Uploading content.",
+          `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
+        ]),
+      ).toBe(true);
+      // Assert file output.
+      const [header, fileDetail, footer] = uploadedFile.fileLines;
+      // Expect the header to contain REQUEST and file date.
+      expect(header).toContain(`REQUEST${fileDate}`);
+      // Expect the file detail.
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const [disbursementValue] = disbursement.disbursementValues;
+      const expectedDetailRecord = buildECEFileDetail(
+        application,
+        disbursementValue,
+        disbursement.disbursementDate,
+        "PPDA",
+        YNFlag.Y,
       );
       expect(fileDetail).toBe(expectedDetailRecord);
       // Expect the file footer.
