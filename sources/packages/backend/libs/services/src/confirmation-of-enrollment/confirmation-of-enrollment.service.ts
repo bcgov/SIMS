@@ -748,7 +748,7 @@ export class ConfirmationOfEnrollmentService {
   getDisbursementForCOEQuery(
     disbursementScheduleRepo: Repository<DisbursementSchedule>,
     options?: {
-      enrolmentPeriod: EnrollmentPeriod;
+      enrolmentPeriod?: EnrollmentPeriod;
       loadWorkflowData?: boolean;
     },
   ): SelectQueryBuilder<DisbursementSchedule> {

@@ -7,6 +7,7 @@ import {
   DisbursementValueType,
   OfferingIntensity,
   Student,
+  WorkflowData,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -37,6 +38,7 @@ import { getUploadedFile } from "@sims/test-utils/mocks";
 import { RecordTypeCodes } from "@sims/integrations/institution-integration/ece-integration";
 import * as Client from "ssh2-sftp-client";
 import * as dayjs from "dayjs";
+import { YNFlag } from "@sims/integrations/models";
 
 describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
   let app: INestApplication;
@@ -109,6 +111,11 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
             coeStatus: COEStatus.required,
             disbursementDate: getISODateOnlyString(addDays(COE_WINDOW + 10)),
           },
+          currentAssessmentInitialValues: {
+            workflowData: {
+              calculatedData: { pdppdStatus: false },
+            } as WorkflowData,
+          },
         },
       );
       application.studentNumber = "1234567789";
@@ -149,6 +156,8 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
         application,
         disbursementValue,
         disbursement.disbursementDate,
+        "NONE",
+        YNFlag.N,
       );
       expect(fileDetail).toBe(expectedDetailRecord);
       // Expect the file footer.
@@ -207,6 +216,11 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.required,
           },
+          currentAssessmentInitialValues: {
+            workflowData: {
+              calculatedData: { pdppdStatus: false },
+            } as WorkflowData,
+          },
         },
       );
       application.studentNumber = "1234567789";
@@ -225,6 +239,9 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
         {
           initialValue: {
             triggerType: AssessmentTriggerType.ManualReassessment,
+            workflowData: {
+              calculatedData: { pdppdStatus: false },
+            } as WorkflowData,
           },
         },
       );
@@ -276,6 +293,8 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
         application,
         newDisbursementValue,
         newDisbursement.disbursementDate,
+        "NONE",
+        YNFlag.N,
       );
       expect(fileDetail).toBe(expectedDetailRecord);
       // Expect the file footer.
@@ -287,6 +306,8 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
     application: Application,
     disbursementValue: DisbursementValue,
     disbursementDate: string,
+    studentPDStatusCode: string,
+    applicationPDStatusFlag: YNFlag,
   ): string {
     const DATE_FORMAT = "YYYYMMDD";
     const offering = application.currentAssessment.offering;
@@ -313,6 +334,6 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
     }${institutionStudentNumber.padEnd(
       12,
       " ",
-    )}100${studyStartDate}${studyEndDate}${disbursementDateFormatted}`;
+    )}100${studyStartDate}${studyEndDate}${disbursementDateFormatted}${studentPDStatusCode}${applicationPDStatusFlag}`;
   }
 });

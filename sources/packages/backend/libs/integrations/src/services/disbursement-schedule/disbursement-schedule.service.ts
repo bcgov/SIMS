@@ -79,6 +79,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const eligibleCOEQuery =
       this.confirmationOfEnrollmentService.getDisbursementForCOEQuery(
         this.repo,
+        {
+          loadWorkflowData: true,
+        },
       );
     return eligibleCOEQuery
       .andWhere("offering.offeringIntensity = :fullTime", {
