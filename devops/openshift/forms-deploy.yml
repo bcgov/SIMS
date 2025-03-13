@@ -239,7 +239,7 @@ parameters:
     required: true
     value: latest
   - name: REPLICAS
-    value: "2"
+    required: true
   - name: CPU_REQUEST
     displayName: Resources CPU Request
     description: The resources CPU request (in cores) for this build.

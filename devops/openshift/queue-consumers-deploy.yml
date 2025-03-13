@@ -369,7 +369,7 @@ parameters:
   - name: MEMORY_REQUEST
     required: true
   - name: REPLICAS
-    value: "2"
+    required: true
   - name: DB_SERVICE_KEY
     value: pgbouncer-host
   - name: DB_SECRET_NAME

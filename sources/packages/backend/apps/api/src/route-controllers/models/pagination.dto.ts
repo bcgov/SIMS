@@ -10,7 +10,11 @@ import {
 } from "class-validator";
 import { PAGINATION_SEARCH_MAX_LENGTH } from "../../constants";
 import { FieldSortOrder } from "@sims/utilities";
-import { CASInvoiceBatchApprovalStatus, ProgramStatus } from "@sims/sims-db";
+import {
+  CASInvoiceBatchApprovalStatus,
+  CASInvoiceStatus,
+  ProgramStatus,
+} from "@sims/sims-db";
 import { Transform } from "class-transformer";
 import { ToBoolean } from "../../utilities/class-transform";
 
@@ -116,6 +120,14 @@ export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDT
   @IsOptional()
   @IsIn(["name"])
   sortField?: string;
+}
+
+export class CASInvoicePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["invoiceStatusUpdatedOn"])
+  sortField?: string;
+  @IsEnum(CASInvoiceStatus)
+  invoiceStatusSearch: CASInvoiceStatus;
 }
 
 export class CASInvoiceBatchesPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
