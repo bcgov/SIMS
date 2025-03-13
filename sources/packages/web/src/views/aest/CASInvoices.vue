@@ -1,12 +1,15 @@
 <template>
-  <full-page-container :full-width="true">
+  <full-page-container
+    :full-width="true"
+    :layout-template="LayoutTemplates.Centered"
+  >
     <template #header
       ><header-navigator
         title="Corporate Accounting Services"
         subTitle="Invoices"
       />
     </template>
-    <body-header-container>
+    <body-header-container :enableCardView="true">
       <template #header>
         <body-header
           title="Accounts payable invoicing"
@@ -122,6 +125,7 @@
         </toggle-content>
       </content-group>
     </body-header-container>
+    <c-a-s-manual-intervention />
   </full-page-container>
   <confirm-modal
     title="Approve invoice batch"
@@ -156,10 +160,12 @@ import {
   ITEMS_PER_PAGE,
   PaginationOptions,
   Role,
+  LayoutTemplates,
 } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
 import StatusInvoiceBatchApproval from "@/components/generic/StatusInvoiceBatchApproval.vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
+import CASManualIntervention from "@/components/aest/CASManualIntervention.vue";
 
 const DEFAULT_SORT_FIELD = "batchDate";
 const ApprovalStatusFilter = {
@@ -177,6 +183,7 @@ export default defineComponent({
     CheckPermissionRole,
     StatusInvoiceBatchApproval,
     ConfirmModal,
+    CASManualIntervention,
   },
   setup() {
     const snackBar = useSnackBar();
@@ -315,6 +322,7 @@ export default defineComponent({
       rejectBatch,
       approveBatchModal,
       rejectBatchModal,
+      LayoutTemplates,
     };
   },
 });
