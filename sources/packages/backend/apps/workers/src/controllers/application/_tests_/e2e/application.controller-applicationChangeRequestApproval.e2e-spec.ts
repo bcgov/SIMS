@@ -148,7 +148,7 @@ describe("ApplicationController(e2e)-applicationChangeRequestApproval", () => {
     });
   });
 
-  it(`Should not update the application edit status when it is already set as ${ApplicationEditStatus.ChangeCancelled}.`, async () => {
+  it(`Should not update the application edit status when it is set as ${ApplicationEditStatus.ChangeCancelled}.`, async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(
       db.dataSource,

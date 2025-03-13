@@ -19,14 +19,14 @@
       <bpmn:text>Waits till a decision is made and the "edit status" is updated to "Changed with approval" or "Change declined" or the student cancels the change request.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_1inm7cq">
-      <bpmn:text>- Applications status should have been updated from "Edited to "Completed";
+      <bpmn:text>- Applications status should have been updated from "Edited" to "Completed";
 - Offering ID should be copied from the most recent assessment;
 - Student appeal ID should be copied from the most recent assessment.
 Note: the workflow process should continue its execution as a regular reassessment.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1gbgxzr" associationDirection="None" sourceRef="changed-with-approval-flow" targetRef="TextAnnotation_1inm7cq" />
-    <bpmn:association id="Association_110g427" associationDirection="None" sourceRef="TextAnnotation_1qwxwaf" targetRef="application-change-request-approval-task" />
     <bpmn:association id="Association_1wys3mp" associationDirection="None" sourceRef="TextAnnotation_17tw6q4" targetRef="minitry-approval-change-in-progress-still-pending-gateway" />
+    <bpmn:association id="Association_110g427" associationDirection="None" sourceRef="TextAnnotation_1qwxwaf" targetRef="application-change-request-approval-task" />
   </bpmn:collaboration>
   <bpmn:process id="assessment-gateway" name="Assessment Gateway" isExecutable="true">
     <bpmn:laneSet id="LaneSet_07shl28">
@@ -108,13 +108,13 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:flowNodeRef>Gateway_1imkna6</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_139oo1r</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>load-assessment-data-pre-assessment-subprocess</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-message</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-request-assessed-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-declined-end-event</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-in-progress-still-pending-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>application-change-request-approval-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-timer</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-in-progress-still-pending-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-request-assessed-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-message</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-declined-end-event</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:intermediateCatchEvent id="verify-assessment-calculation-timer">
@@ -849,45 +849,11 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>Flow_0prddd0</bpmn:incoming>
       <bpmn:outgoing>Flow_1btetiq</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-timer-flow" sourceRef="minitry-approval-change-in-progress-pending-timer" targetRef="application-change-request-approval-task" />
-    <bpmn:sequenceFlow id="Flow_10nfd6c" sourceRef="application-change-request-approval-task" targetRef="minitry-approval-change-in-progress-still-pending-gateway" />
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-timer-flow" sourceRef="minitry-approval-change-in-progress-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-timer" />
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-message-flow" sourceRef="minitry-approval-change-in-progress-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-message" />
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-decision-made-flow" name="No longer pending" sourceRef="minitry-approval-change-in-progress-still-pending-gateway" targetRef="minitry-approval-change-request-assessed-gateway" />
-    <bpmn:intermediateCatchEvent id="minitry-approval-change-in-progress-pending-message">
-      <bpmn:extensionElements />
-      <bpmn:incoming>minitry-approval-change-in-progress-pending-message-flow</bpmn:incoming>
-      <bpmn:outgoing>minitry-approval-change-in-progress-message-received-flow</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1c36euj" messageRef="Message_3767lhe" />
-    </bpmn:intermediateCatchEvent>
-    <bpmn:exclusiveGateway id="minitry-approval-change-request-assessed-gateway">
-      <bpmn:incoming>minitry-approval-change-in-progress-decision-made-flow</bpmn:incoming>
-      <bpmn:incoming>minitry-approval-change-in-progress-message-received-flow</bpmn:incoming>
-      <bpmn:outgoing>change-declined-flow</bpmn:outgoing>
-      <bpmn:outgoing>changed-with-approval-flow</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="minitry-approval-change-declined-end-event">
-      <bpmn:incoming>change-declined-flow</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-message-received-flow" sourceRef="minitry-approval-change-in-progress-pending-message" targetRef="minitry-approval-change-request-assessed-gateway" />
     <bpmn:sequenceFlow id="change-declined-flow" name="Change declined or cancelled" sourceRef="minitry-approval-change-request-assessed-gateway" targetRef="minitry-approval-change-declined-end-event">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=list contains([
   "Change declined",
   "Change cancelled"
 ], applicationEditStatus)</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:eventBasedGateway id="minitry-approval-change-in-progress-pending-gateway">
-      <bpmn:incoming>minitry-approval-change-in-progress-pending-flow</bpmn:incoming>
-      <bpmn:outgoing>minitry-approval-change-in-progress-pending-timer-flow</bpmn:outgoing>
-      <bpmn:outgoing>minitry-approval-change-in-progress-pending-message-flow</bpmn:outgoing>
-    </bpmn:eventBasedGateway>
-    <bpmn:exclusiveGateway id="minitry-approval-change-in-progress-still-pending-gateway" name="Verification pending?" default="minitry-approval-change-in-progress-decision-made-flow">
-      <bpmn:incoming>Flow_10nfd6c</bpmn:incoming>
-      <bpmn:outgoing>minitry-approval-change-in-progress-pending-flow</bpmn:outgoing>
-      <bpmn:outgoing>minitry-approval-change-in-progress-decision-made-flow</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-flow" name="Pending" sourceRef="minitry-approval-change-in-progress-still-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Change pending approval"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:serviceTask id="application-change-request-approval-task" name="Application change request approval">
       <bpmn:extensionElements>
@@ -901,9 +867,43 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>minitry-approval-change-in-progress-pending-timer-flow</bpmn:incoming>
       <bpmn:outgoing>minitry-approval-change-in-progress-timer-flow</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_1i58pfa">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15S</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
+    <bpmn:eventBasedGateway id="minitry-approval-change-in-progress-pending-gateway">
+      <bpmn:incoming>minitry-approval-change-in-progress-pending-flow</bpmn:incoming>
+      <bpmn:outgoing>minitry-approval-change-in-progress-pending-timer-flow</bpmn:outgoing>
+      <bpmn:outgoing>minitry-approval-change-in-progress-pending-message-flow</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:exclusiveGateway id="minitry-approval-change-in-progress-still-pending-gateway" name="Verification pending?" default="minitry-approval-change-in-progress-decision-made-flow">
+      <bpmn:incoming>Flow_10nfd6c</bpmn:incoming>
+      <bpmn:outgoing>minitry-approval-change-in-progress-pending-flow</bpmn:outgoing>
+      <bpmn:outgoing>minitry-approval-change-in-progress-decision-made-flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="minitry-approval-change-request-assessed-gateway">
+      <bpmn:incoming>minitry-approval-change-in-progress-decision-made-flow</bpmn:incoming>
+      <bpmn:incoming>minitry-approval-change-in-progress-message-received-flow</bpmn:incoming>
+      <bpmn:outgoing>change-declined-flow</bpmn:outgoing>
+      <bpmn:outgoing>changed-with-approval-flow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:intermediateCatchEvent id="minitry-approval-change-in-progress-pending-message">
+      <bpmn:extensionElements />
+      <bpmn:incoming>minitry-approval-change-in-progress-pending-message-flow</bpmn:incoming>
+      <bpmn:outgoing>minitry-approval-change-in-progress-message-received-flow</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1c36euj" messageRef="Message_3767lhe" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-timer-flow" sourceRef="minitry-approval-change-in-progress-pending-timer" targetRef="application-change-request-approval-task" />
+    <bpmn:sequenceFlow id="Flow_10nfd6c" sourceRef="application-change-request-approval-task" targetRef="minitry-approval-change-in-progress-still-pending-gateway" />
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-timer-flow" sourceRef="minitry-approval-change-in-progress-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-timer" />
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-flow" name="Pending" sourceRef="minitry-approval-change-in-progress-still-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Change pending approval"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-message-flow" sourceRef="minitry-approval-change-in-progress-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-message" />
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-decision-made-flow" name="No longer pending" sourceRef="minitry-approval-change-in-progress-still-pending-gateway" targetRef="minitry-approval-change-request-assessed-gateway" />
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-message-received-flow" sourceRef="minitry-approval-change-in-progress-pending-message" targetRef="minitry-approval-change-request-assessed-gateway" />
+    <bpmn:endEvent id="minitry-approval-change-declined-end-event">
+      <bpmn:incoming>change-declined-flow</bpmn:incoming>
+    </bpmn:endEvent>
   </bpmn:process>
   <bpmn:message id="Message_1clo0eh" name="program-info-request-completed">
     <bpmn:extensionElements>
@@ -1231,30 +1231,30 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="2680" y="1250" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_14f4jm3" bpmnElement="minitry-approval-change-in-progress-pending-message" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="2790" y="1062" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_18hr0ql" bpmnElement="minitry-approval-change-request-assessed-gateway" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="2895" y="1055" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1bczfyn" bpmnElement="minitry-approval-change-declined-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="3081" y="1062" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_14ymg5g" bpmnElement="minitry-approval-change-in-progress-pending-gateway" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="2785" y="935" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0nzczwc" bpmnElement="minitry-approval-change-in-progress-still-pending-gateway" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="2895" y="935" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2951" y="947" width="53" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1q15yac" bpmnElement="application-change-request-approval-task" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="2880" y="790" width="100" height="80" />
+        <dc:Bounds x="2820" y="790" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1bskmj6" bpmnElement="minitry-approval-change-in-progress-pending-timer" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="2792" y="812" width="36" height="36" />
+        <dc:Bounds x="2732" y="812" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_14ymg5g" bpmnElement="minitry-approval-change-in-progress-pending-gateway" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="2725" y="935" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0nzczwc" bpmnElement="minitry-approval-change-in-progress-still-pending-gateway" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="2835" y="935" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2891" y="947" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_18hr0ql" bpmnElement="minitry-approval-change-request-assessed-gateway" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="2835" y="1055" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_14f4jm3" bpmnElement="minitry-approval-change-in-progress-pending-message" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="2730" y="1062" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1bczfyn" bpmnElement="minitry-approval-change-declined-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="3011" y="1062" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0bza37i_di" bpmnElement="Flow_0bza37i">
         <di:waypoint x="2355" y="1740" />
@@ -1783,11 +1783,11 @@ Note: the workflow process should continue its execution as a regular reassessme
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0g0yluv_di" bpmnElement="Flow_0g0yluv">
         <di:waypoint x="2715" y="730" />
-        <di:waypoint x="2590" y="730" />
-        <di:waypoint x="2590" y="1190" />
+        <di:waypoint x="2610" y="730" />
+        <di:waypoint x="2610" y="1190" />
         <di:waypoint x="2705" y="1190" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2598" y="690" width="56" height="40" />
+          <dc:Bounds x="2612" y="690" width="56" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0prddd0_di" bpmnElement="Flow_0prddd0">
@@ -1796,72 +1796,72 @@ Note: the workflow process should continue its execution as a regular reassessme
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mllry2_di" bpmnElement="minitry-approval-change-in-progress-flow">
         <di:waypoint x="2765" y="730" />
-        <di:waypoint x="2930" y="730" />
-        <di:waypoint x="2930" y="790" />
+        <di:waypoint x="2870" y="730" />
+        <di:waypoint x="2870" y="790" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2871" y="696" width="51" height="27" />
+          <dc:Bounds x="2823" y="696" width="51" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1x1k7zp_di" bpmnElement="changed-with-approval-flow">
-        <di:waypoint x="2920" y="1105" />
-        <di:waypoint x="2920" y="1190" />
+        <di:waypoint x="2860" y="1105" />
+        <di:waypoint x="2860" y="1190" />
         <di:waypoint x="2755" y="1190" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2846" y="1128" width="68" height="27" />
+          <dc:Bounds x="2786" y="1128" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_085jk0z" bpmnElement="change-declined-flow">
+        <di:waypoint x="2885" y="1080" />
+        <di:waypoint x="3011" y="1080" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2894" y="1086" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_00giejb" bpmnElement="minitry-approval-change-in-progress-timer-flow">
-        <di:waypoint x="2828" y="830" />
-        <di:waypoint x="2880" y="830" />
+        <di:waypoint x="2768" y="830" />
+        <di:waypoint x="2820" y="830" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0wpx398" bpmnElement="Flow_10nfd6c">
-        <di:waypoint x="2920" y="870" />
-        <di:waypoint x="2920" y="935" />
+        <di:waypoint x="2860" y="870" />
+        <di:waypoint x="2860" y="935" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1yh6tri" bpmnElement="minitry-approval-change-in-progress-pending-timer-flow">
-        <di:waypoint x="2810" y="935" />
-        <di:waypoint x="2810" y="848" />
+        <di:waypoint x="2750" y="935" />
+        <di:waypoint x="2750" y="848" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_10kwile" bpmnElement="minitry-approval-change-in-progress-pending-flow">
+        <di:waypoint x="2835" y="960" />
+        <di:waypoint x="2775" y="960" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2788" y="943" width="41" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_16ajxf8" bpmnElement="minitry-approval-change-in-progress-pending-message-flow">
-        <di:waypoint x="2810" y="985" />
-        <di:waypoint x="2810" y="1062" />
+        <di:waypoint x="2750" y="985" />
+        <di:waypoint x="2750" y="1062" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0nl7k6l" bpmnElement="minitry-approval-change-in-progress-decision-made-flow">
-        <di:waypoint x="2920" y="985" />
-        <di:waypoint x="2920" y="1055" />
+        <di:waypoint x="2860" y="985" />
+        <di:waypoint x="2860" y="1055" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2925" y="1007" width="90" height="14" />
+          <dc:Bounds x="2865" y="1007" width="90" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0jzdi8d" bpmnElement="minitry-approval-change-in-progress-message-received-flow">
-        <di:waypoint x="2826" y="1080" />
-        <di:waypoint x="2895" y="1080" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_085jk0z" bpmnElement="change-declined-flow">
-        <di:waypoint x="2945" y="1080" />
-        <di:waypoint x="3081" y="1080" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2958" y="1086" width="83" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_10kwile" bpmnElement="minitry-approval-change-in-progress-pending-flow">
-        <di:waypoint x="2895" y="960" />
-        <di:waypoint x="2835" y="960" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2848" y="943" width="41" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
-        <di:waypoint x="3050" y="793" />
-        <di:waypoint x="2980" y="825" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
-        <di:waypoint x="3050" y="905" />
-        <di:waypoint x="2939" y="954" />
+        <di:waypoint x="2766" y="1080" />
+        <di:waypoint x="2835" y="1080" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">
-        <di:waypoint x="2920" y="1131" />
-        <di:waypoint x="2996" y="1180" />
+        <di:waypoint x="2860" y="1131" />
+        <di:waypoint x="2933" y="1180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
+        <di:waypoint x="2980" y="907" />
+        <di:waypoint x="2879" y="954" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
+        <di:waypoint x="2980" y="796" />
+        <di:waypoint x="2920" y="824" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1k2osho_di" bpmnElement="Group_1k2osho">
         <dc:Bounds x="1590" y="150" width="750" height="340" />
@@ -1901,16 +1901,16 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="2120" y="1634" />
         <di:waypoint x="2088" y="1643" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BPMNShape_0m4ufpe" bpmnElement="TextAnnotation_1qwxwaf">
-        <dc:Bounds x="3050" y="760" width="310" height="40" />
+      <bpmndi:BPMNShape id="TextAnnotation_1inm7cq_di" bpmnElement="TextAnnotation_1inm7cq">
+        <dc:Bounds x="2920" y="1180" width="481" height="70" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0ouejj4" bpmnElement="TextAnnotation_17tw6q4">
-        <dc:Bounds x="3050" y="860" width="353" height="55" />
+        <dc:Bounds x="2980" y="860" width="353" height="55" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1inm7cq_di" bpmnElement="TextAnnotation_1inm7cq">
-        <dc:Bounds x="2990" y="1180" width="481" height="70" />
+      <bpmndi:BPMNShape id="BPMNShape_0m4ufpe" bpmnElement="TextAnnotation_1qwxwaf">
+        <dc:Bounds x="2980" y="760" width="310" height="40" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
