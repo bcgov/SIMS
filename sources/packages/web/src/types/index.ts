@@ -48,3 +48,4 @@ export * from "@/types/contracts/ECertFailedValidation";
 export * from "@/types/contracts/RestrictionBypassContracts";
 export * from "@/types/contracts/ApplicationDataComparison";
 export * from "@/types/contracts/CASInvoiceBatchContracts";
+export * from "@/types/contracts/CASInvoiceStatus";

@@ -738,16 +738,23 @@ export class ConfirmationOfEnrollmentService {
    * Get disbursement(s) for COE Query.
    **Note: Please ensure that alias from this query is used correctly at the consumer side.
    * @param disbursementScheduleRepo disbursement schedule repository.
-   * @param enrolmentPeriod if the value is 'Current' then the query returns disbursement(s) is/are eligible to be confirmed by institution.
-   * If the value is 'Upcoming', then the query returns disbursements that are either not eligible to be confirmed
-   * or already confirmed.
+   * @param options options.
+   * - `enrolmentPeriod` if the value is 'Current' then the query returns disbursement(s) is/are eligible to be confirmed by institution.
+   * If the value is 'Upcoming', then the query returns disbursements that are either not eligible to be confirmed or are already confirmed.
+   * - `loadWorkflowData` load workflow data for the associated assessment.
    * @returns disbursements query.
    */
   getDisbursementForCOEQuery(
     disbursementScheduleRepo: Repository<DisbursementSchedule>,
-    enrolmentPeriod = EnrollmentPeriod.Current,
+    options?: {
+      enrolmentPeriod?: EnrollmentPeriod;
+      loadWorkflowData?: boolean;
+    },
   ): SelectQueryBuilder<DisbursementSchedule> {
+    const enrolmentPeriod =
+      options?.enrolmentPeriod ?? EnrollmentPeriod.Current;
     const coeThresholdDate = addDays(COE_WINDOW);
+    // Basic select query.
     const disbursementCOEQuery = disbursementScheduleRepo
       .createQueryBuilder("disbursementSchedule")
       .select([
@@ -768,12 +775,18 @@ export class ConfirmationOfEnrollmentService {
         "application.studentNumber",
         "student.id",
         "student.birthDate",
+        "student.disabilityStatus",
         "sinValidation.id",
         "sinValidation.sin",
         "user.id",
         "user.firstName",
         "user.lastName",
-      ])
+      ]);
+    // Load workflow data for the assessment.
+    if (options?.loadWorkflowData) {
+      disbursementCOEQuery.addSelect("studentAssessment.workflowData");
+    }
+    disbursementCOEQuery
       .innerJoin(
         "disbursementSchedule.disbursementValues",
         "disbursementValues",
