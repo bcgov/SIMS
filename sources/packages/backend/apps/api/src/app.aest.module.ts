@@ -36,6 +36,7 @@ import {
   CRAIncomeVerificationService,
   CASInvoiceBatchService,
   CASInvoiceBatchReportService,
+  CASInvoiceService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -81,6 +82,7 @@ import {
   CASSupplierAESTController,
   ApplicationRestrictionBypassAESTController,
   CASInvoiceBatchAESTController,
+  CASInvoiceAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -130,6 +132,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     StudentLoanBalanceAESTController,
     CASSupplierAESTController,
     CASInvoiceBatchAESTController,
+    CASInvoiceAESTController,
     ApplicationRestrictionBypassAESTController,
   ],
   providers: [
@@ -201,6 +204,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     SupportingUserService,
     CASSupplierSharedService,
     CASInvoiceBatchService,
+    CASInvoiceService,
     CASInvoiceBatchReportService,
   ],
 })
