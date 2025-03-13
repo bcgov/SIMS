@@ -16,9 +16,9 @@ export class CASInvoiceService {
   }
 
   /**
-   * Retrieves all CAS invoice batches.
+   * Retrieves all the CAS invoices.
    * @param paginationOptions pagination options.
-   * @returns list of all invoice batches.
+   * @returns list of all invoices.
    */
   async getInvoices(
     paginationOptions: PaginationOptions,

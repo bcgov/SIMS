@@ -18,14 +18,34 @@
           :loading="invoiceLoading"
           @update:options="pageSortEvent"
         >
-          <template #[`item.invoiceNumber`]="{ item }">
-            {{ item.invoiceNumber }}
-          </template>
           <template #[`item.invoiceStatusUpdatedOn`]="{ item }">
             {{ getISODateHourMinuteString(item.invoiceStatusUpdatedOn) }}
           </template>
+          <template #[`item.batchName`]="{ item }">
+            {{ item.invoiceBatchName }}
+          </template>
+          <template #[`item.invoiceNumber`]="{ item }">
+            {{ item.invoiceNumber }}
+          </template>
           <template #[`item.supplierNumber`]="{ item }">
             {{ item.supplierNumber }}
+          </template>
+          <template #[`item.actions`]="{ item }">
+            <check-permission-role :role="Role.AESTCASInvoicing">
+              <template #="{ notAllowed }">
+                <v-btn
+                  :disabled="notAllowed || item.resolutionInProgress"
+                  @click="resolveInvoice(item)"
+                  variant="text"
+                  color="primary"
+                  text="Resolve Invoice"
+                >
+                  <span class="text-decoration-underline"
+                    ><strong>Resolve Invoice</strong></span
+                  >
+                </v-btn>
+              </template>
+            </check-permission-role>
           </template>
           <template v-slot:expanded-row="{ item, columns }">
             <tr>
@@ -56,24 +76,6 @@
               variant="text"
               @click="toggleExpand(internalItem)"
             ></v-btn>
-          </template>
-          <template #[`item.actions`]="{ item }">
-            <check-permission-role :role="Role.AESTCASInvoicing">
-              <template #="{ notAllowed }">
-                <v-btn
-                  :disabled="notAllowed"
-                  @click="resolveInvoice(item.id)"
-                  variant="text"
-                  color="primary"
-                  text="Resolve Invoice"
-                  class="remove-side-padding"
-                >
-                  <span class="text-decoration-underline"
-                    ><strong>Resolve Invoice</strong></span
-                  >
-                </v-btn>
-              </template>
-            </check-permission-role>
           </template>
         </v-data-table-server>
       </toggle-content>
@@ -106,6 +108,9 @@ import { CASInvoiceAPIOutDTO } from "@/services/http/dto/CASInvoice.dto";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
+interface CASInvoiceModel extends CASInvoiceAPIOutDTO {
+  resolutionInProgress?: boolean;
+}
 const DEFAULT_SORT_FIELD = "invoiceStatusUpdatedOn";
 export default defineComponent({
   components: {
@@ -114,14 +119,14 @@ export default defineComponent({
   },
   setup() {
     const snackBar = useSnackBar();
-    const { dateOnlyLongString, getISODateHourMinuteString } = useFormatters();
+    const { getISODateHourMinuteString } = useFormatters();
     const invoiceLoading = ref(false);
     const resolveInvoiceModal = ref({} as ModalDialog<boolean>);
     /**
      * Pagination with invoice details.
      */
     const paginatedInvoices = ref(
-      {} as PaginatedResultsAPIOutDTO<CASInvoiceAPIOutDTO>,
+      {} as PaginatedResultsAPIOutDTO<CASInvoiceModel>,
     );
     /**
      * Current state of the pagination.
@@ -168,13 +173,17 @@ export default defineComponent({
       await loadManualInterventionInvoices();
     };
 
-    const resolveInvoice = async (invoiceId: number) => {
+    const resolveInvoice = async (invoice: CASInvoiceModel) => {
       if (await resolveInvoiceModal.value.showModal()) {
         try {
-          await CASInvoiceService.shared.resolveCASInvoice(invoiceId);
+          invoice.resolutionInProgress = true;
+          await CASInvoiceService.shared.resolveCASInvoice(invoice.id);
+          snackBar.success("Invoice resolved.");
           await loadManualInterventionInvoices();
         } catch (error: unknown) {
           snackBar.error("Unexpected error while resolving the invoice.");
+        } finally {
+          invoice.resolutionInProgress = false;
         }
       }
     };
@@ -186,7 +195,6 @@ export default defineComponent({
       paginatedInvoices,
       invoiceLoading,
       CASInvoiceHeaders,
-      dateOnlyLongString,
       getISODateHourMinuteString,
       pageSortEvent,
       resolveInvoice,

@@ -1,8 +1,10 @@
 import { PaginationOptions } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { PaginatedResultsAPIOutDTO } from "@/services/http/dto";
+import {
+  CASInvoiceAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers";
-import { CASInvoiceAPIOutDTO } from "@/services/http/dto/CASInvoice.dto";
 
 /**
  * Http API client for CAS invoices.
