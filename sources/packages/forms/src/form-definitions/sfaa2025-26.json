@@ -11070,12 +11070,13 @@
               "optionsLabelPosition": "right",
               "tags": [],
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time"
+                "show": "",
+                "when": null,
+                "eq": ""
               },
               "properties": {},
-              "lockKey": true
+              "lockKey": true,
+              "customConditional": "show = data.dependantstatus === \"dependant\";"
             }
           ],
           "type": "panel",
@@ -12518,7 +12519,7 @@
           },
           "properties": {},
           "calculateServer": true,
-          "calculateValue": "/**\r\n * Part-time is always considered \"independant\".\r\n * Full-time student will be considered \"independant\" if\r\n * parent information does not need to be entered after \r\n * all the questions in the personal information are answered or \r\n * if parent information needs to be entered and student\r\n * \t- has both the parents passed away or; \r\n * \t- is estranged from both of parents. \r\n * Otherwise, student is considered \"dependant\".\r\n */\r\n \r\nconst personalInfoAnswered = !!data.hasDependents &&\r\n  !!data.relationshipStatus &&\r\n  !!data.outOfHighSchoolFor4Years &&\r\n  !!data.fulltimelabourForce &&\r\n  ([\"no\",\"preferNotToAnswer\"].includes(data.youthInCare) || !!data.custodyOfChildWelfare);\r\n\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n\tinstance.setValue(\"independant\");\r\n} else if (personalInfoAnswered && !data.showParentInformation) { \r\n\tinstance.setValue(\"independant\");\r\n} else if (data.showParentInformation && (data.parentsDeceased === \"yes\" || data.estranged === \"yes\")) {\r\n\tinstance.setValue(\"independant\");\r\n} else {\r\n\tinstance.setValue(\"dependant\");\r\n}",
+          "calculateValue": "/**\r\n * Part-time is always considered \"independant\".\r\n * Full-time student will be considered \"independant\" if\r\n * parent information does not need to be entered after \r\n * all the questions in the personal information are answered or \r\n * if parent information needs to be entered and student\r\n * \t- has both the parents passed away or; \r\n * \t- is estranged from both of parents. \r\n * Otherwise, student is considered \"dependant\".\r\n */\r\n \r\nconst personalInfoAnswered = !!data.hasDependents &&\r\n  !!data.relationshipStatus &&\r\n  !!data.outOfHighSchoolFor4Years &&\r\n  !!data.fulltimelabourForce &&\r\n  ([\"no\",\"preferNotToAnswer\"].includes(data.youthInCare) || !!data.custodyOfChildWelfare);\r\n\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n\tinstance.setValue(\"independant\");\r\n} else if (personalInfoAnswered && !data.showParentInformation) { \r\n\tinstance.setValue(\"independant\");\r\n} else if (data.parentsDeceased === \"yes\" || data.estranged === \"yes\") {\r\n\tinstance.setValue(\"independant\");\r\n} else {\r\n\tinstance.setValue(\"dependant\");\r\n}",
           "lockKey": true
         }
       ],
@@ -18614,12 +18615,12 @@
       "key": "page6",
       "tags": [],
       "properties": {},
-      "customConditional": "",
+      "customConditional": "show = data.dependantstatus === \"dependant\";",
       "conditional": {
         "json": "",
-        "show": "true",
-        "when": "showParentInformation",
-        "eq": "true"
+        "show": "",
+        "when": null,
+        "eq": ""
       },
       "logic": [],
       "attributes": {},
@@ -18986,7 +18987,7 @@
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = !!data.parentbcResident;",
+              "customConditional": "",
               "logic": [],
               "attributes": {
                 "data-cy": "doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber"
@@ -19229,12 +19230,12 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
               },
-              "customConditional": "show = (data.parentbcResident && (data.parentbcResident === \"yes\" || data.parentbcResident === \"no\"));",
+              "customConditional": "",
               "logic": [],
               "attributes": {
                 "data-cy": "numberOfParents"
@@ -20993,8 +20994,7 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "ejm0rnl",
-          "isNew": false
+          "id": "ejm0rnl"
         },
         {
           "title": "Estranged details panel",
