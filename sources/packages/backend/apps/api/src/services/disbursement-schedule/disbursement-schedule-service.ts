@@ -47,7 +47,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const disbursementCOEQuery =
       this.confirmationOfEnrollmentService.getDisbursementForCOEQuery(
         this.repo,
-        enrolmentPeriod,
+        { enrolmentPeriod },
       );
     disbursementCOEQuery.andWhere("location.id = :locationId", { locationId });
     // Add pagination, sort and search criteria.

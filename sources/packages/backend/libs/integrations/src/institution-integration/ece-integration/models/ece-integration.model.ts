@@ -1,4 +1,4 @@
-import { DisbursementValue } from "@sims/sims-db";
+import { DisabilityStatus, DisbursementValue } from "@sims/sims-db";
 
 export const ECE_SENT_TITLE = "CONFIRMATION REQUEST";
 
@@ -17,7 +17,9 @@ export interface ECERecord {
   studentLastName: string;
   studentGivenName: string;
   birthDate: string;
+  studentDisabilityStatus: DisabilityStatus;
   applicationNumber: string;
+  applicationStudentDisabilityStatus: boolean;
   institutionStudentNumber: string;
   studyStartDate: string;
   studyEndDate: string;

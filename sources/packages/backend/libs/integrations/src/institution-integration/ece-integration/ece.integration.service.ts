@@ -6,6 +6,8 @@ import { ECEFileFooter } from "./ece-files/ece-file-footer";
 import { ECEFileHeader } from "./ece-files/ece-file-header";
 import { ECERequestFileLine } from "./ece-files/ece-file-line";
 import { ECERecord, RecordTypeCodes } from "./models/ece-integration.model";
+import { getStudentDisabilityStatusCode } from "@sims/utilities";
+import { YNFlag } from "@sims/integrations/models";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -50,6 +52,11 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
       eceRequestFileDetail.studyStartDate = eceRecord.studyStartDate;
       eceRequestFileDetail.studyEndDate = eceRecord.studyEndDate;
       eceRequestFileDetail.disbursementDate = eceRecord.disbursementDate;
+      eceRequestFileDetail.studentPDStatusCode = getStudentDisabilityStatusCode(
+        eceRecord.studentDisabilityStatus,
+      );
+      eceRequestFileDetail.applicationPDStatusFlag =
+        eceRecord.applicationStudentDisabilityStatus ? YNFlag.Y : YNFlag.N;
       return eceRequestFileDetail;
     });
     eceRequestFileLines.push(...fileRecords);
