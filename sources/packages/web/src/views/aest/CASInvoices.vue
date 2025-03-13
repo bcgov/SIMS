@@ -1,12 +1,15 @@
 <template>
-  <full-page-container :full-width="true">
+  <full-page-container
+    :full-width="true"
+    :layout-template="LayoutTemplates.Centered"
+  >
     <template #header
       ><header-navigator
         title="Corporate Accounting Services"
         subTitle="Invoices"
       />
     </template>
-    <body-header-container>
+    <body-header-container :enableCardView="true">
       <template #header>
         <body-header
           title="Accounts payable invoicing"
@@ -162,6 +165,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import StatusInvoiceBatchApproval from "@/components/generic/StatusInvoiceBatchApproval.vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import CASManualIntervention from "@/components/aest/CASManualIntervention.vue";
+import { LayoutTemplates } from "@/types";
 
 const DEFAULT_SORT_FIELD = "batchDate";
 const ApprovalStatusFilter = {
@@ -318,6 +322,7 @@ export default defineComponent({
       rejectBatch,
       approveBatchModal,
       rejectBatchModal,
+      LayoutTemplates,
     };
   },
 });

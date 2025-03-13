@@ -30,3 +30,4 @@ export * from "@/services/http/dto/CASSupplier.dto";
 export * from "@/services/http/dto/ApplicationRestrictionBypass.dto";
 export * from "@/services/http/dto/Audit.dto";
 export * from "@/services/http/dto/CASInvoiceBatch.dto";
+export * from "@/services/http/dto/CASInvoice.dto";

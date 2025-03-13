@@ -1,5 +1,5 @@
 <template>
-  <body-header-container>
+  <body-header-container :enableCardView="true">
     <template #header>
       <body-header
         title="Manual Intervention Invoices"
@@ -163,7 +163,7 @@ export default defineComponent({
       } else {
         // Sorting was removed, reset to default.
         currentPagination.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.sortOrder = DataTableSortOrder.DESC;
+        currentPagination.sortOrder = DataTableSortOrder.ASC;
       }
       await loadManualInterventionInvoices();
     };

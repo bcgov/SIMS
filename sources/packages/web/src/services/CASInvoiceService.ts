@@ -1,6 +1,8 @@
 import ApiClient from "@/services/http/ApiClient";
-import { PaginatedResultsAPIOutDTO } from "@/services/http/dto";
-import { CASInvoiceAPIOutDTO } from "@/services/http/dto/CASInvoice.dto";
+import {
+  CASInvoiceAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
 import { PaginationOptions } from "@/types";
 
 export class CASInvoiceService {
