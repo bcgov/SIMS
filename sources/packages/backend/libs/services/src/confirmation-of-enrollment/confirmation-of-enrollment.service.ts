@@ -740,9 +740,8 @@ export class ConfirmationOfEnrollmentService {
    * @param disbursementScheduleRepo disbursement schedule repository.
    * @param options options.
    * - `enrolmentPeriod` if the value is 'Current' then the query returns disbursement(s) is/are eligible to be confirmed by institution.
-   * If the value is 'Upcoming', then the query returns disbursements that are either not eligible to be confirmed.
+   * If the value is 'Upcoming', then the query returns disbursements that are either not eligible to be confirmed or are already confirmed.
    * - `loadWorkflowData` load workflow data for the associated assessment.
-   * or already confirmed.
    * @returns disbursements query.
    */
   getDisbursementForCOEQuery(
