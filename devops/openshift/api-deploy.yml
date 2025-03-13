@@ -373,8 +373,8 @@ objects:
           resource:
             name: memory
             target:
-              type: AverageValue
-              averageValue: "350M"
+              type: Utilization
+              averageUtilization: 80
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
@@ -410,7 +410,7 @@ parameters:
   - name: MEMORY_REQUEST
     required: true
   - name: REPLICAS
-    value: "2"
+    required: true
   - name: PORT
     required: true
   - name: DB_SERVICE_KEY

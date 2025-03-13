@@ -344,8 +344,8 @@ objects:
           resource:
             name: memory
             target:
-              type: AverageValue
-              averageValue: "350M"
+              type: Utilization
+              averageUtilization: 80
   - apiVersion: policy/v1
     kind: PodDisruptionBudget
     metadata:
@@ -369,7 +369,7 @@ parameters:
   - name: MEMORY_REQUEST
     required: true
   - name: REPLICAS
-    value: "2"
+    required: true
   - name: DB_SERVICE_KEY
     value: pgbouncer-host
   - name: DB_SECRET_NAME

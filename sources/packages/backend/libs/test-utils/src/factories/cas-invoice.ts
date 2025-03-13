@@ -35,6 +35,7 @@ export function createFakeCASInvoice(relations: {
   casInvoice.invoiceStatus = CASInvoiceStatus.Pending;
   casInvoice.invoiceStatusUpdatedOn = now;
   casInvoice.creator = relations.creator;
+  casInvoice.invoiceStatusUpdatedBy = relations.creator;
   return casInvoice;
 }
 
