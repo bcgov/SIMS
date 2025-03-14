@@ -62,7 +62,7 @@ describe("ApplicationController(e2e)-applicationChangeRequestApproval", () => {
       >(updateApplicationStatusPayload),
     );
 
-    // Asserts
+    // Assert
     expect(result).toHaveProperty(
       FAKE_WORKER_JOB_RESULT_PROPERTY,
       MockedZeebeJobResult.Complete,
@@ -115,7 +115,7 @@ describe("ApplicationController(e2e)-applicationChangeRequestApproval", () => {
       >(updateApplicationStatusPayload),
     );
 
-    // Asserts
+    // Assert
     expect(result).toHaveProperty(
       FAKE_WORKER_JOB_RESULT_PROPERTY,
       MockedZeebeJobResult.Complete,
@@ -170,7 +170,7 @@ describe("ApplicationController(e2e)-applicationChangeRequestApproval", () => {
       >(updateApplicationStatusPayload),
     );
 
-    // Asserts
+    // Assert
     expect(result).toHaveProperty(
       FAKE_WORKER_JOB_RESULT_PROPERTY,
       MockedZeebeJobResult.Complete,
