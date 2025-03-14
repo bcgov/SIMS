@@ -295,25 +295,11 @@ build-web:
 	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)web -p NAME=$(WEB_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(WEB_BUILD_REF) --wait
 
-init-redis:
-	@echo "++\n Init Redis in $(NAMESPACE) \n++"
-	@oc -n $(NAMESPACE) process -f openshift/database/redis-secrets.yml | oc -n $(NAMESPACE) apply -f -
-
-deploy-redis:
-	@oc -n $(NAMESPACE) process -f openshift/database/redis-ha-deploy.yml -p IMAGE_NAME="redis" -p IMAGE_TAG="6.2.7-alpine" -p IMAGE_REGISTRY="artifacts.developer.gov.bc.ca/docker-remote" | oc -n $(NAMESPACE) apply -f -
-
-# Command to initialize the redis cluster.
-# Make sure that all the redis pods are up and running before initializing the cluster.
-init-redis-cluster:
-	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d); \
-	REDIS_NODES=$$(oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range .items[*]}{.status.podIP}:$(REDIS_PORT) ' | sed 's/ :$(REDIS_PORT) $$/ /'); \
-	oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -a $$REDIS_PASSWORD --cluster create $$REDIS_NODES --cluster-replicas 1
-
 # Command to tell one Redis node to connect to another node and join the cluster.
 # This is typically done when you are setting up a Redis Cluster or adding new nodes to an existing cluster to ensure they are aware of each other and can communicate effectively.
 redis-cluster-meet:
-	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-creds -o jsonpath='{.data.password}' | base64 -d); \
-  oc get pods -n $(NAMESPACE) -l app=redis -o jsonpath='{range.items[*]}{.status.podIP} $(REDIS_PORT) {end}' | xargs -n2 oc exec -n $(NAMESPACE) -it redis-0 -- redis-cli -a $$REDIS_PASSWORD -c CLUSTER MEET
+	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-cluster -o jsonpath='{.data.redis-password}' | base64 -d); \
+  oc get pods -n $(NAMESPACE) -o json | jq -r '.items[] | select(.metadata.ownerReferences[]? | .kind=="StatefulSet" and .name=="redis-cluster") | "\(.status.podIP) \(env.REDIS_PORT)"' | xargs -n2 oc exec -n $(NAMESPACE) -it redis-cluster-0 -- redis-cli -a $$REDIS_PASSWORD -c CLUSTER MEET
 
 run-db-migrations:
 	test -n "$(NAMESPACE)"
@@ -605,11 +591,6 @@ deploy-forms:
 	-p REPLICAS=$(FORMIO_REPLICAS) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(FORMS_NAME))
-
-# Remove redis and resources including secrets from openshift namespace.
-delete-redis:
-	@echo "+\n++ Removing redis and resources on $(NAMESPACE)\n+"
-	@oc delete -n $(NAMESPACE) all,rc,svc,dc,route,pvc,secret,configmap,sa -l app=redis
 
 update-sysdig-team:
 	@echo "Updating Sysdig Team for license plate 0c27fb.\n"
