@@ -11093,7 +11093,7 @@
           },
           "properties": {},
           "lockKey": true,
-          "customConditional": ""
+          "customConditional": "show = !!data.dependantstatus;"
         },
         {
           "title": "Share information with trusted contact",
