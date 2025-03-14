@@ -3,6 +3,7 @@
     :formName="formName"
     :data="formData"
     :readOnly="readOnly"
+    :customUtils="customUtils"
     @loaded="formLoaded"
     @customEvent="formCustomEvent"
     @render="formRender"
@@ -30,6 +31,10 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
+    },
+    customUtils: {
+      type: Object,
+      required: false,
     },
   },
   setup(_props, context) {

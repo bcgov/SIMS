@@ -60,6 +60,10 @@ export default defineComponent({
       default: false,
       required: false,
     },
+    customUtils: {
+      type: Object,
+      required: false,
+    },
   },
   setup(props, context) {
     const formioContainerRef = ref(null);
@@ -131,6 +135,10 @@ export default defineComponent({
         };
         createUniqueIDs(formDefinition);
       }
+
+      // Adds custom utils to the utils object of the form.
+      Formio.Utils.custom = props.customUtils;
+
       form = await Formio.createForm(formioContainerRef.value, formDefinition, {
         fileService: new FormUploadService(),
         readOnly: props.readOnly,
