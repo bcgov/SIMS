@@ -17,7 +17,6 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { SystemUsersService } from "@sims/services";
-import { MoreThanOrEqual } from "typeorm";
 import {
   CASInvoiceStatus,
   DisbursementValueType,
@@ -26,12 +25,6 @@ import {
 } from "@sims/sims-db";
 import { CASInvoiceAPIOutDTO } from "apps/api/src/route-controllers/cas-invoice/models/cas-invoice.dto";
 import { addMilliSeconds } from "@sims/test-utils/utils";
-
-/**
- * Use a period that will never be reached to delete all existing invoice batches
- * and allow the retrieval of invoice batches to be tested.
- */
-const CAS_BATCHES_UNIQUE_START_PERIOD = new Date("2100-01-01");
 
 describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
   let app: INestApplication;
@@ -46,10 +39,8 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
   });
 
   beforeEach(async () => {
-    // Delete all existing invoice batches that could impact the test results.
-    await db.casInvoiceBatch.delete({
-      batchDate: MoreThanOrEqual(CAS_BATCHES_UNIQUE_START_PERIOD),
-    });
+    // Delete all existing invoice batches.
+    await db.casInvoiceBatch.delete({});
     // Delete all existing CAS invoices and invoice details.
     await db.casInvoiceDetail.delete({});
     await db.casInvoice.delete({});
