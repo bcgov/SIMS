@@ -98,8 +98,8 @@
         "--forceExit"
       ],
       "console": "integratedTerminal",
-      "disableOptimisticBPs": true,
       "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
       "windows": {
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
@@ -123,6 +123,7 @@
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
       "windows": {
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
@@ -144,6 +145,7 @@
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
       "windows": {
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
@@ -167,6 +169,7 @@
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
       "windows": {
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
@@ -188,6 +191,7 @@
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
       "windows": {
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
@@ -211,6 +215,7 @@
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
       "windows": {
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
@@ -232,6 +237,7 @@
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
       "windows": {
         "program": "${workspaceFolder}/sources/packages/backend/node_modules/jest/bin/jest"
       },
