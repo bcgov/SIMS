@@ -9275,7 +9275,8 @@
             "eq": "Full Time"
           },
           "properties": {},
-          "hideLabel": true
+          "hideLabel": true,
+          "isNew": false
         },
         {
           "title": "Disability information panel",
@@ -9622,7 +9623,8 @@
                 "eq": ""
               },
               "properties": {},
-              "lockKey": true
+              "lockKey": true,
+              "isNew": false
             },
             {
               "label": "Are you a resident of B.C.?",
@@ -9680,9 +9682,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "",
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "dependantstatus",
+                "eq": "independant",
                 "json": ""
               },
               "customConditional": "",
@@ -9717,7 +9719,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "e3yxtjc",
-              "defaultValue": ""
+              "defaultValue": "",
+              "isNew": false
             },
             {
               "title": "Not a BC resident panel",
@@ -11070,13 +11073,13 @@
               "optionsLabelPosition": "right",
               "tags": [],
               "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
+                "show": "true",
+                "when": "dependantstatus",
+                "eq": "dependant"
               },
               "properties": {},
               "lockKey": true,
-              "customConditional": "show = data.dependantstatus === \"dependant\";"
+              "customConditional": ""
             }
           ],
           "type": "panel",
@@ -11090,7 +11093,7 @@
           },
           "properties": {},
           "lockKey": true,
-          "customConditional": "show = !!data.dependantstatus;"
+          "customConditional": ""
         },
         {
           "title": "Share information with trusted contact",
@@ -12499,7 +12502,7 @@
           },
           "properties": {},
           "calculateServer": true,
-          "calculateValue": "/**\r\n * Part-time is always considered \"independant\".\r\n * Full-time student will be considered \"independant\" if\r\n * parent information does not need to be entered after \r\n * all the questions in the personal information are answered or \r\n * if parent information needs to be entered and student\r\n * \t- has both the parents passed away or; \r\n * \t- is estranged from both of parents. \r\n * Otherwise, student is considered \"dependant\".\r\n */\r\n\r\n// If the intensity is Part-time, student is always considered 'independant'.\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n  instance.setValue(\"independant\");\r\n}\r\n// If the intensity is Full-time, dependant status is calculated based on personal information answers.\r\nelse if (data.howWillYouBeAttendingTheProgram === \"Full Time\") {\r\n  const isStudentIndependant =\r\n    data.hasDependents === \"yes\" ||\r\n    [\"married\", \"other\"].includes(data.relationshipStatus) ||\r\n    data.outOfHighSchoolFor4Years === \"yes\" ||\r\n    data.fulltimelabourForce === \"yes\" ||\r\n    data.parentsDeceased === \"yes\" ||\r\n    data.estranged === \"yes\" ||\r\n    data.custodyOfChildWelfare === \"yes\";\r\n  // If the student is not independant, dependant status is calculated based on personal information answer inputs.\r\n  if (!isStudentIndependant) {\r\n    const isPersonalInfoAnswered =\r\n      !!data.hasDependents &&\r\n      !!data.relationshipStatus &&\r\n      !!data.outOfHighSchoolFor4Years &&\r\n      !!data.fulltimelabourForce &&\r\n      !!data.parentsDeceased &&\r\n      !!data.estranged &&\r\n      !!data.youthInCare &&\r\n      (data.youthInCare === \"no\" || !!data.custodyOfChildWelfare);\r\n    // If the answers to required personal information inputs are not provided, set the dependant status to null.\r\n    // Otherwise, dependant status is calculated based on personal information answers.\r\n    const calculatedStatusFromPersonalInfo = isPersonalInfoAnswered\r\n      ? \"dependant\"\r\n      : null;\r\n    instance.setValue(calculatedStatusFromPersonalInfo);\r\n  } else {\r\n    instance.setValue(\"independant\");\r\n  }\r\n}\r\n// If the intensity is not provided, set the value to null.\r\nelse {\r\n  instance.setValue(null);\r\n}\r\n ",
+          "calculateValue": "// If the intensity is Part-time, student is always considered 'independant'.\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n  instance.setValue(\"independant\");\r\n}\r\n// If the intensity is Full-time, dependant status is calculated based on personal information answers.\r\nelse if (data.howWillYouBeAttendingTheProgram === \"Full Time\") {\r\n  const isStudentIndependant =\r\n    data.hasDependents === \"yes\" ||\r\n    [\"married\", \"other\"].includes(data.relationshipStatus) ||\r\n    data.outOfHighSchoolFor4Years === \"yes\" ||\r\n    data.fulltimelabourForce === \"yes\" ||\r\n    data.parentsDeceased === \"yes\" ||\r\n    data.estranged === \"yes\" ||\r\n    data.custodyOfChildWelfare === \"yes\";\r\n  // If the student is not independant, dependant status is calculated based on personal information answer inputs.\r\n  if (!isStudentIndependant) {\r\n    const isPersonalInfoAnswered =\r\n      !!data.hasDependents &&\r\n      !!data.relationshipStatus &&\r\n      !!data.outOfHighSchoolFor4Years &&\r\n      !!data.fulltimelabourForce &&\r\n      !!data.parentsDeceased &&\r\n      !!data.estranged &&\r\n      !!data.youthInCare &&\r\n      (data.youthInCare === \"no\" || !!data.custodyOfChildWelfare);\r\n    // If the answers to required personal information inputs are not provided, set the dependant status to null.\r\n    // Otherwise, dependant status is calculated based on personal information answers.\r\n    const calculatedStatusFromPersonalInfo = isPersonalInfoAnswered\r\n      ? \"dependant\"\r\n      : null;\r\n    instance.setValue(calculatedStatusFromPersonalInfo);\r\n  } else {\r\n    instance.setValue(\"independant\");\r\n  }\r\n}\r\n// If the intensity is not provided, set the value to null.\r\nelse {\r\n  instance.setValue(null);\r\n}\r\n ",
           "lockKey": true
         }
       ],
@@ -18578,7 +18581,8 @@
       "addons": [],
       "tree": false,
       "lazyLoad": false,
-      "id": "eo39uv9"
+      "id": "eo39uv9",
+      "isNew": false
     },
     {
       "title": "Parent information",
@@ -18595,12 +18599,12 @@
       "key": "page6",
       "tags": [],
       "properties": {},
-      "customConditional": "show = data.dependantstatus === \"dependant\";",
+      "customConditional": "",
       "conditional": {
         "json": "",
-        "show": "",
-        "when": null,
-        "eq": ""
+        "show": "true",
+        "when": "dependantstatus",
+        "eq": "dependant"
       },
       "logic": [],
       "attributes": {},
