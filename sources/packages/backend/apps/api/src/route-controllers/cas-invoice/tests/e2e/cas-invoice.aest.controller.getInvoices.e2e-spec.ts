@@ -200,7 +200,7 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
       .expect({
         statusCode: HttpStatus.BAD_REQUEST,
         message: [
-          "each value in invoiceStatusSearch must be one of the following values: Pending, Sent, Manual intervention, Resolved",
+          "invoiceStatusSearch must be one of the following values: Pending, Sent, Manual intervention, Resolved",
         ],
         error: "Bad Request",
       });
