@@ -18,22 +18,31 @@ import { E2EDataSources } from "..";
  * - `disbursementReceipt` disbursement receipt already saved to the database to be associated with the invoice.
  * - `casSupplier` CAS supplier already saved to the database to be associated with the invoice.
  * - `creator` user already saved to the database that will be the creator of the invoice.
+ * @param options optional parameters for the invoice.
+ * - `initialValue` CAS invoice initial values.
  * @returns created CAS invoice.
  */
-export function createFakeCASInvoice(relations: {
-  casInvoiceBatch: CASInvoiceBatch;
-  disbursementReceipt: DisbursementReceipt;
-  casSupplier: CASSupplier;
-  creator: User;
-}): CASInvoice {
+export function createFakeCASInvoice(
+  relations: {
+    casInvoiceBatch: CASInvoiceBatch;
+    disbursementReceipt: DisbursementReceipt;
+    casSupplier: CASSupplier;
+    creator: User;
+  },
+  options?: {
+    initialValue?: Partial<CASInvoice>;
+  },
+): CASInvoice {
   const now = new Date();
   const casInvoice = new CASInvoice();
   casInvoice.casInvoiceBatch = relations.casInvoiceBatch;
   casInvoice.disbursementReceipt = relations.disbursementReceipt;
   casInvoice.casSupplier = relations.casSupplier;
   casInvoice.invoiceNumber = faker.datatype.uuid();
-  casInvoice.invoiceStatus = CASInvoiceStatus.Pending;
-  casInvoice.invoiceStatusUpdatedOn = now;
+  casInvoice.invoiceStatus =
+    options?.initialValue?.invoiceStatus ?? CASInvoiceStatus.Pending;
+  casInvoice.invoiceStatusUpdatedOn =
+    options?.initialValue?.invoiceStatusUpdatedOn ?? now;
   casInvoice.creator = relations.creator;
   casInvoice.invoiceStatusUpdatedBy = relations.creator;
   return casInvoice;
@@ -53,6 +62,8 @@ export function createFakeCASInvoice(relations: {
  * all nested records are created.
  * - `casSupplier` CAS supplier already saved to the database to be associated
  * with the invoice.
+ * @param options optional parameters to customize the invoice.
+ * - `invoiceStatus` invoice status to be set.
  * @returns invoice created from the provided {@see DisbursementReceipt}.
  */
 export async function saveFakeInvoiceFromDisbursementReceipt(
@@ -63,13 +74,22 @@ export async function saveFakeInvoiceFromDisbursementReceipt(
     provincialDisbursementReceipt: DisbursementReceipt;
     casSupplier: CASSupplier;
   },
+  options?: { invoiceStatus?: CASInvoiceStatus; invoiceStatusUpdatedOn?: Date },
 ): Promise<CASInvoice> {
-  const fakeCASInvoice = createFakeCASInvoice({
-    casInvoiceBatch: relations.casInvoiceBatch,
-    disbursementReceipt: relations.provincialDisbursementReceipt,
-    casSupplier: relations.casSupplier,
-    creator: relations.creator,
-  });
+  const fakeCASInvoice = createFakeCASInvoice(
+    {
+      casInvoiceBatch: relations.casInvoiceBatch,
+      disbursementReceipt: relations.provincialDisbursementReceipt,
+      casSupplier: relations.casSupplier,
+      creator: relations.creator,
+    },
+    {
+      initialValue: {
+        invoiceStatus: options?.invoiceStatus,
+        invoiceStatusUpdatedOn: options?.invoiceStatusUpdatedOn,
+      },
+    },
+  );
   const offeringIntensity =
     relations.provincialDisbursementReceipt.disbursementSchedule
       .studentAssessment.offering.offeringIntensity;
