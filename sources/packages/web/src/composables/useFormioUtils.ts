@@ -2,6 +2,8 @@ import { FormIOComponent, FormIOForm } from "@/types";
 import { ClassConstructor, plainToClass } from "class-transformer";
 import { Utils } from "@formio/js";
 
+const UTILS_COMMON_OBJECT_NAME = "custom";
+
 /**
  * Form.IO helper methods.
  */
@@ -241,6 +243,18 @@ export function useFormioUtils() {
     return plainToClass(type, plainObject, { excludeExtraneousValues: true });
   };
 
+  const registerUtilsMethod = (
+    name: string,
+    method: (...args: any[]) => unknown,
+  ) => {
+    let customUtils = Utils[UTILS_COMMON_OBJECT_NAME];
+    if (!customUtils) {
+      customUtils = {};
+      Utils[UTILS_COMMON_OBJECT_NAME] = customUtils;
+    }
+    customUtils[name] = method;
+  };
+
   return {
     getComponent,
     getFirstComponent,
@@ -257,5 +271,6 @@ export function useFormioUtils() {
     checkFormioValidity,
     excludeExtraneousValues,
     searchByKey,
+    registerUtilsMethod,
   };
 }

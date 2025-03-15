@@ -48,7 +48,7 @@ export default defineComponent({
         (award) => award.offeringIntensity === props.offeringIntensity,
       ),
     );
-    const { getFormattedMoneyValue } = useFormatters();
+    const { currencyFormatter } = useFormatters();
 
     const getAwardValue = (awardType: string): string | number | Date => {
       const awardValue = props.awardDetails[
@@ -60,9 +60,7 @@ export default defineComponent({
       }
       // If the award in not defined at all it means that the award is not eligible and it was not
       // part of the disbursement calculations output.
-      return awardValue === undefined
-        ? "(Not eligible)"
-        : getFormattedMoneyValue(awardValue);
+      return currencyFormatter(awardValue, "(Not eligible)");
     };
 
     return {
