@@ -94,7 +94,6 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.AssociateWorkflowInstance,
       WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
-      WorkflowServiceTasks.ProgramInfoNotRequired,
       WorkflowSubprocesses.StudentIncomeVerification,
       WorkflowServiceTasks.ApplicationChangeRequestApproval,
       WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
@@ -108,6 +107,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.VerifyApplicationExceptions,
       WorkflowServiceTasks.ProgramInfoRequired,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
       WorkflowServiceTasks.UpdateApplicationStatusToAssessment,
     );
   });
@@ -153,7 +153,6 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.AssociateWorkflowInstance,
       WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
-      WorkflowServiceTasks.ProgramInfoNotRequired,
       WorkflowSubprocesses.StudentIncomeVerification,
       WorkflowServiceTasks.ApplicationChangeRequestApproval,
     );
@@ -161,6 +160,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.VerifyApplicationExceptions,
       WorkflowServiceTasks.ProgramInfoRequired,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
       WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
       WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
       WorkflowServiceTasks.SaveDisbursementSchedules,
@@ -210,7 +210,6 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.AssociateWorkflowInstance,
       WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
-      WorkflowServiceTasks.ProgramInfoNotRequired,
       WorkflowSubprocesses.StudentIncomeVerification,
       WorkflowServiceTasks.ApplicationChangeRequestApproval,
     );
@@ -218,6 +217,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.VerifyApplicationExceptions,
       WorkflowServiceTasks.ProgramInfoRequired,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
       WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
       WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
       WorkflowServiceTasks.SaveDisbursementSchedules,
@@ -268,7 +268,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.AssociateWorkflowInstance,
       WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
-      WorkflowServiceTasks.ProgramInfoNotRequired,
+
       WorkflowSubprocesses.StudentIncomeVerification,
       WorkflowServiceTasks.ApplicationChangeRequestApproval,
     );
@@ -276,6 +276,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.VerifyApplicationExceptions,
       WorkflowServiceTasks.ProgramInfoRequired,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
       WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
       WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
       WorkflowServiceTasks.SaveDisbursementSchedules,
@@ -326,7 +327,6 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.AssociateWorkflowInstance,
       WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
-      WorkflowServiceTasks.ProgramInfoNotRequired,
       WorkflowSubprocesses.StudentIncomeVerification,
       WorkflowServiceTasks.ApplicationChangeRequestApproval,
     );
@@ -334,6 +334,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.VerifyApplicationExceptions,
       WorkflowServiceTasks.ProgramInfoRequired,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
       WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
       WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
       WorkflowServiceTasks.SaveDisbursementSchedules,
