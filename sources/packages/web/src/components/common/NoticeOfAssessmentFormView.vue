@@ -3,7 +3,6 @@
     formName="noticeOfAssessment"
     @customEvent="customEvent"
     :formData="initialData"
-    :customUtils="customUtils"
   />
   <confirm-modal
     title="Reissue MSFAA number"
@@ -244,7 +243,6 @@ export default defineComponent({
       msfaaReissueProcessing,
       customEvent,
       initialData,
-      customUtils,
     };
   },
 });
