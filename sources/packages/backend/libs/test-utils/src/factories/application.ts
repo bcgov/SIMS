@@ -281,6 +281,7 @@ export async function saveFakeApplication(
   },
   options?: {
     applicationStatus?: ApplicationStatus;
+    applicationEditStatus?: ApplicationEditStatus;
     applicationNumber?: string;
     offeringIntensity?: OfferingIntensity;
     applicationData?: ApplicationData;
@@ -326,6 +327,7 @@ export async function saveFakeApplication(
         pirStatus: options?.pirStatus,
         isArchived: options?.isArchived ? options?.isArchived : false,
         submittedDate: options?.submittedDate,
+        applicationEditStatus: options?.applicationEditStatus,
       },
     },
   );

@@ -125,6 +125,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "application.id",
         "application.data",
         "application.applicationStatus",
+        "application.applicationEditStatus",
         "programYear.programYear",
         "programYear.startDate",
         "programYear.endDate",

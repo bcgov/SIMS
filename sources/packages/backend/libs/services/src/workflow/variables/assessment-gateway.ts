@@ -41,3 +41,12 @@ export const DISBURSEMENT_SCHEDULES = "disbursementSchedules";
  * is executed for easy application consumption.
  */
 export const WORKFLOW_DATA = "workflowData";
+/**
+ * Edit status of a Student Application executing a edit post-COE which
+ * requires Ministry approval.
+ */
+export const APPLICATION_EDIT_STATUS = "applicationEditStatus";
+/**
+ * Applications status.
+ */
+export const APPLICATION_STATUS = "applicationStatus";

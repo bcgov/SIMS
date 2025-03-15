@@ -515,6 +515,7 @@ export class AssessmentController {
     return {
       applicationId: application.id,
       applicationStatus: application.applicationStatus,
+      applicationEditStatus: application.applicationEditStatus,
       hasNOAApproval,
       triggerType: assessment.triggerType,
       data: application.data,

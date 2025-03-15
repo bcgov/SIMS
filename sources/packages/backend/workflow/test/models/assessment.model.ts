@@ -1,4 +1,8 @@
-import { AssessmentTriggerType, OfferingIntensity } from "@sims/sims-db";
+import {
+  ApplicationEditStatus,
+  AssessmentTriggerType,
+  OfferingIntensity,
+} from "@sims/sims-db";
 import {
   Provinces,
   YesNoOptions,
@@ -186,7 +190,9 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   programYearTotalPartTimeCSGP: number;
   programYearTotalFullTimeCSGP: number;
   latestCSLPBalance: number;
+  applicationId: number;
   applicationStatus: string;
+  applicationEditStatus: ApplicationEditStatus;
   applicationHasNOAApproval: boolean;
   programYearTotalBookCost: number;
 }
