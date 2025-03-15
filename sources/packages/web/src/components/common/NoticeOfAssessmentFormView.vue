@@ -223,21 +223,6 @@ export default defineComponent({
         }
     };
 
-    // Custom utilities functions to be used in the form.
-    const customUtils = {
-      // Custom currency formatter. Can receive a value and an optional placeholder.
-      currencyFormatter: function (value: unknown, placeholder = "") {
-        if (typeof value === "number") {
-          return new Intl.NumberFormat("en-CA", {
-            style: "currency",
-            currency: "CAD",
-            roundingMode: "trunc",
-          }).format(value);
-        }
-        return placeholder;
-      },
-    };
-
     return {
       confirmReissueMSFAA,
       msfaaReissueProcessing,
