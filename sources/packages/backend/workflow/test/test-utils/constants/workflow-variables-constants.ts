@@ -6,6 +6,7 @@ export enum WorkflowServiceTasks {
   AssociateWorkflowInstance = "associate-workflow-instance-task",
   LoadAssessmentConsolidatedData = "load-assessment-data-task",
   VerifyApplicationExceptions = "verify-application-exceptions-task",
+  ApplicationChangeRequestApproval = "application-change-request-approval-task",
   UpdateApplicationStatusToInProgress = "update-application-status-to-in-progress-task",
   ProgramInfoRequired = "program-info-required-task",
   ProgramInfoNotRequired = "program-info-not-required-task",
