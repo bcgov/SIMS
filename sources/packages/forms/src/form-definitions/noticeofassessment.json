@@ -18,7 +18,7 @@
       "dbIndex": false,
       "encrypted": false,
       "redrawOn": "",
-      "customDefaultValue": "value= ((typeof data.assessment?.totalFederalAward === 'number' ? data.assessment.totalFederalAward : 0) \n        + (typeof data.assessment?.totalProvincialAward === 'number' ? data.assessment.totalProvincialAward : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+      "customDefaultValue": "value = utils.custom.currencyFormatter((typeof data.assessment?.totalFederalAward === 'number' ? data.assessment.totalFederalAward : 0) \n        + (typeof data.assessment?.totalProvincialAward === 'number' ? data.assessment.totalProvincialAward : 0));",
       "calculateValue": "",
       "calculateServer": false,
       "key": "eligibleAmount",
@@ -716,7 +716,7 @@
                   "value": ""
                 }
               ],
-              "content": "You are eligible to receive: ${{ (data.eligibleAmount)?.toLocaleString('en-CA', { minimumFractionDigits: 2 }) }}",
+              "content": "You are eligible to receive: {{ utils.custom.currencyFormatter(data.eligibleAmount) }}",
               "refreshOnChange": true,
               "customClass": "",
               "hidden": false,
@@ -1949,7 +1949,7 @@
               "value": ""
             }
           ],
-          "content": "Total income used for assessment purposes: <span class=\"label-bold\">${{ (data.assessment?.totalFamilyIncome)?.toLocaleString('en-CA', { minimumFractionDigits: 2 }) }}</span>",
+          "content": "Total income used for assessment purposes: <span class=\"label-bold\">{{ utils.custom.currencyFormatter(data.assessment?.totalFamilyIncome) }}</span>",
           "refreshOnChange": true,
           "customClass": "",
           "hidden": false,
@@ -2585,7 +2585,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment?.tuitionCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.tuitionCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -2632,7 +2632,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment?.tuitionCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.tuitionCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -2761,7 +2761,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment?.booksAndSuppliesCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.booksAndSuppliesCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -2808,7 +2808,7 @@
                             "hideLabel": true,
                             "mask": false,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.booksAndSuppliesCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -2936,7 +2936,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment?.exceptionalEducationCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.exceptionalEducationCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -2982,7 +2982,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.exceptionalEducationCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -3111,7 +3111,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment?.livingAllowance).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.livingAllowance, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -3157,7 +3157,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.livingAllowance, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -3285,7 +3285,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment?.transportationCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.transportationCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -3331,7 +3331,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.transportationCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -3459,7 +3459,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment?.childcareCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.childcareCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -3505,7 +3505,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.childcareCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -3633,7 +3633,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment?.otherAllowableCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.otherAllowableCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -3679,7 +3679,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.otherAllowableCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -3808,7 +3808,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment?.totalAssessedCost).toLocaleString('en-CA', {minimunFractionDigits: 2}): '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalAssessedCost, '(Not eligible)');",
                             "customClass": "font-weight-bold",
                             "mask": false,
                             "isNew": false
@@ -3857,7 +3857,7 @@
                             "hideLabel": true,
                             "disabled": true,
                             "customClass": "font-weight-bold",
-                            "calculateValue": "value = typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment?.totalAssessedCost).toLocaleString('en-CA', {minimunFractionDigits: 2}): '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalAssessedCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -4362,7 +4362,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.studentExpectedFederalContribution === 'number' ? '$' + (data.assessment.studentExpectedFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentExpectedFederalContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true,
                             "isNew": false
@@ -4409,7 +4409,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.studentExpectedProvincialContribution === 'number' ? '$' + (data.assessment.studentExpectedProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentExpectedProvincialContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true
                           }
@@ -4484,7 +4484,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.studentTotalFederalContribution === 'number' ? '$' + (data.assessment.studentTotalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentTotalFederalContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -4529,7 +4529,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.studentTotalProvincialContribution === 'number' ? '$' + (data.assessment.studentTotalProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentTotalProvincialContribution, '-');",
                             "disabled": true,
                             "isNew": false
                           }
@@ -4604,7 +4604,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.scholarshipsBursariesContribution === 'number' ? '$' + (data.assessment.scholarshipsBursariesContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.scholarshipsBursariesContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -4649,7 +4649,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.scholarshipsBursariesContribution === 'number' ? '$' + (data.assessment.scholarshipsBursariesContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.scholarshipsBursariesContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -4723,7 +4723,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.targetedResources === 'number' ? '$' + (data.assessment.targetedResources).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.targetedResources, '-');",
                             "disabled": true
                           }
                         ]
@@ -4768,7 +4768,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.targetedResources === 'number' ? '$' + (data.assessment.targetedResources).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.targetedResources, '-');",
                             "disabled": true,
                             "isNew": false
                           }
@@ -4843,7 +4843,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.partnerExpectedContribution === 'number' ? '$' + (data.assessment.partnerExpectedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.partnerExpectedContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true
                           }
@@ -4889,7 +4889,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.partnerExpectedContribution === 'number' ? '$' + (data.assessment.partnerExpectedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.partnerExpectedContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true,
                             "isNew": false
@@ -4965,7 +4965,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalAssetContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true,
                             "isNew": false
@@ -5012,7 +5012,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalAssetContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true
                           }
@@ -5087,7 +5087,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalDiscretionaryContribution === 'number' ? '$' + (data.assessment.parentalDiscretionaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalDiscretionaryContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -5132,7 +5132,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalDiscretionaryContribution === 'number' ? '$' + (data.assessment.parentalDiscretionaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalDiscretionaryContribution, '-');",
                             "disabled": true,
                             "isNew": false
                           }
@@ -5207,7 +5207,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalAssetContribution, '-');",
                             "disabled": true,
                             "isNew": false
                           }
@@ -5253,7 +5253,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalAssetContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -5327,7 +5327,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalVoluntaryContribution === 'number' ? '$' + (data.assessment.parentalVoluntaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalVoluntaryContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -5372,7 +5372,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalVoluntaryContribution === 'number' ? '$' + (data.assessment.parentalVoluntaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalVoluntaryContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -5446,7 +5446,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.totalFederalContribution === 'number' ? '$' + (data.assessment.totalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalFederalContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true
                           }
@@ -5492,7 +5492,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.totalProvincialContribution === 'number' ? '$' + (data.assessment.totalProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalProvincialContribution, '-');",
                             "disabled": true,
                             "customClass": "font-weight-bold"
                           }
@@ -5796,7 +5796,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.federalAssessmentNeed === 'number' ? '$' + (data.assessment.federalAssessmentNeed).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.federalAssessmentNeed, '(Not eligible)');",
                             "customClass": "font-weight-bold",
                             "isNew": false
                           }
@@ -5843,7 +5843,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.provincialAssessmentNeed === 'number' ? '$' + (data.assessment.provincialAssessmentNeed).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.provincialAssessmentNeed, '(Not eligible)');",
                             "customClass": "font-weight-bold",
                             "isNew": false
                           }
@@ -6311,7 +6311,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment?.tuitionCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.tuitionCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -6441,7 +6441,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.booksAndSuppliesCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -6517,7 +6517,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.mandatoryFees === 'number' ? '$' + (data.assessment?.mandatoryFees).toLocaleString('en-CA', {minimunFractionDigits: 2}): '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.mandatoryFees, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -6646,7 +6646,7 @@
                             "hideLabel": true,
                             "disabled": true,
                             "customClass": "",
-                            "calculateValue": "value = typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment?.transportationCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.transportationCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -6774,7 +6774,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.miscellaneousAllowance === 'number' ? '$' + (data.assessment?.miscellaneousAllowance).toLocaleString('en-CA', {minimunFractionDigits: 2}): '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.miscellaneousAllowance, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -6910,7 +6910,7 @@
                             "hideLabel": true,
                             "disabled": true,
                             "customClass": "",
-                            "calculateValue": "value = typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment?.childcareCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.childcareCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -7046,7 +7046,7 @@
                             "hideLabel": true,
                             "disabled": true,
                             "customClass": "font-weight-bold",
-                            "calculateValue": "value = typeof data.assessment?.totalAssessmentNeed === 'number' ? '$' + (data.assessment?.totalAssessmentNeed).toLocaleString('en-CA', {minimunFractionDigits: 2}): '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalAssessmentNeed, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -7836,7 +7836,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1cslf ? '$' + (data.disbursement?.disbursement1cslf).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1cslf, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -7883,7 +7883,7 @@
                             "properties": {},
                             "disabled": true,
                             "hideLabel": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2cslf ? '$'+ (data.disbursement.disbursement2cslf).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2cslf, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -7932,7 +7932,7 @@
                             "mask": false,
                             "disabled": true,
                             "customClass": "",
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1cslf ? parseFloat(data.disbursement?.disbursement1cslf) : 0) +(data.disbursement?.disbursement2cslf ? parseFloat(data.disbursement?.disbursement2cslf) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1cslf ? parseFloat(data.disbursement?.disbursement1cslf) : 0) + (data.disbursement?.disbursement2cslf ? parseFloat(data.disbursement?.disbursement2cslf) : 0));",
                             "isNew": false
                           }
                         ]
@@ -8067,7 +8067,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1bcsl ? '$' + (data.disbursement?.disbursement1bcsl).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bcsl, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -8114,7 +8114,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2bcsl ? '$'+ (data.disbursement.disbursement2bcsl).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bcsl, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -8162,7 +8162,7 @@
                             "hideLabel": true,
                             "customClass": "",
                             "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1bcsl ? parseFloat(data.disbursement?.disbursement1bcsl) : 0) +(data.disbursement?.disbursement2bcsl ? parseFloat(data.disbursement?.disbursement2bcsl) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bcsl ? parseFloat(data.disbursement?.disbursement1bcsl) : 0) + (data.disbursement?.disbursement2bcsl ? parseFloat(data.disbursement?.disbursement2bcsl) : 0));",
                             "isNew": false
                           }
                         ]
@@ -8297,7 +8297,7 @@
                             "hideLabel": true,
                             "mask": false,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgp ? '$' + (data.disbursement?.disbursement1csgp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgp, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -8344,7 +8344,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgp ? '$' + (data.disbursement?.disbursement2csgp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgp, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -8393,7 +8393,7 @@
                             "customClass": "",
                             "mask": false,
                             "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement?.disbursement1csgp) : 0) +(data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement?.disbursement2csgp) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement?.disbursement1csgp) : 0) +(data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement?.disbursement2csgp) : 0));",
                             "isNew": false
                           }
                         ]
@@ -8527,7 +8527,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgd ? '$' + (data.disbursement?.disbursement1csgd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgd, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -8574,7 +8574,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgd ? '$' + (data.disbursement?.disbursement2csgd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgd, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -8622,7 +8622,7 @@
                             "hideLabel": true,
                             "customClass": "",
                             "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement?.disbursement1csgd) : 0) +(data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement?.disbursement2csgd) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement?.disbursement1csgd) : 0) +(data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement?.disbursement2csgd) : 0));",
                             "isNew": false
                           }
                         ]
@@ -8756,7 +8756,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgf ? '$' + (data.disbursement?.disbursement1csgf).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgf, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -8803,7 +8803,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgf ? '$' + (data.disbursement?.disbursement2csgf).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgf, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -8851,7 +8851,7 @@
                             "hideLabel": true,
                             "customClass": "",
                             "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1csgf ? parseFloat(data.disbursement?.disbursement1csgf) : 0) +(data.disbursement?.disbursement2csgf ? parseFloat(data.disbursement?.disbursement2csgf) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgf ? parseFloat(data.disbursement?.disbursement1csgf) : 0) +(data.disbursement?.disbursement2csgf ? parseFloat(data.disbursement?.disbursement2csgf) : 0));",
                             "isNew": false
                           }
                         ]
@@ -8987,7 +8987,7 @@
                             "hideLabel": true,
                             "mask": false,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgt ? '$' + (data.disbursement?.disbursement1csgt).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgt, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -9034,7 +9034,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgt ? '$' + (data.disbursement?.disbursement2csgt).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgt, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -9082,7 +9082,7 @@
                             "hideLabel": true,
                             "disabled": true,
                             "customClass": "",
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1csgt ? parseFloat(data.disbursement?.disbursement1csgt) : 0) +(data.disbursement?.disbursement2csgt ? parseFloat(data.disbursement?.disbursement2csgt) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgt ? parseFloat(data.disbursement?.disbursement1csgt) : 0) +(data.disbursement?.disbursement2csgt ? parseFloat(data.disbursement?.disbursement2csgt) : 0));",
                             "isNew": false
                           }
                         ]
@@ -9217,7 +9217,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1bcag ? '$' + (data.disbursement?.disbursement1bcag).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bcag, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -9264,7 +9264,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2bcag ? '$' + (data.disbursement?.disbursement2bcag).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bcag, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -9312,7 +9312,7 @@
                             "hideLabel": true,
                             "customClass": "",
                             "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement?.disbursement1bcag) : 0) +(data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement?.disbursement2bcag) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement?.disbursement1bcag) : 0) +(data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement?.disbursement2bcag) : 0));",
                             "isNew": false
                           }
                         ]
@@ -9447,7 +9447,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1sbsd ? '$' + (data.disbursement?.disbursement1sbsd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1sbsd, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -9494,7 +9494,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2sbsd ? '$' + (data.disbursement?.disbursement2sbsd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2sbsd, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -9542,7 +9542,7 @@
                             "hideLabel": true,
                             "disabled": true,
                             "customClass": "",
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement?.disbursement1sbsd) : 0) +(data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement?.disbursement2sbsd) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement?.disbursement1sbsd) : 0) +(data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement?.disbursement2sbsd) : 0));",
                             "isNew": false
                           }
                         ]
@@ -9677,7 +9677,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1bgpd ? '$' + (data.disbursement?.disbursement1bgpd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bgpd, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -9724,7 +9724,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2bgpd ? '$' + (data.disbursement?.disbursement2bgpd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bgpd, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -9772,7 +9772,7 @@
                             "hideLabel": true,
                             "disabled": true,
                             "customClass": "",
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1bgpd ? parseFloat(data.disbursement?.disbursement1bgpd) : 0) +(data.disbursement?.disbursement2bgpd ? parseFloat(data.disbursement?.disbursement2bgpd) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bgpd ? parseFloat(data.disbursement?.disbursement1bgpd) : 0) +(data.disbursement?.disbursement2bgpd ? parseFloat(data.disbursement?.disbursement2bgpd) : 0));",
                             "isNew": false
                           }
                         ]
@@ -9906,7 +9906,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1bcsg ? '$' + (data.disbursement?.disbursement1bcsg).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bcsg, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -9953,7 +9953,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2bcsg ? '$' + (data.disbursement?.disbursement2bcsg).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bcsg, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -10001,7 +10001,7 @@
                             "hideLabel": true,
                             "customClass": "",
                             "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1bcsg ? parseFloat(data.disbursement?.disbursement1bcsg) : 0) +(data.disbursement?.disbursement2bcsg ? parseFloat(data.disbursement?.disbursement2bcsg) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bcsg ? parseFloat(data.disbursement?.disbursement1bcsg) : 0) +(data.disbursement?.disbursement2bcsg ? parseFloat(data.disbursement?.disbursement2bcsg) : 0));",
                             "isNew": false
                           }
                         ]
@@ -10646,7 +10646,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgp ? '$' + (data.disbursement?.disbursement1csgp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgp, 'Not eligible');",
                             "isNew": false
                           }
                         ]
@@ -10692,7 +10692,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgp ? '$' + (data.disbursement?.disbursement2csgp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgp, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": "",
                             "isNew": false
@@ -10740,7 +10740,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement.disbursement1csgp) : 0) + (data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement.disbursement2csgp) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement.disbursement1csgp) : 0) + (data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement.disbursement2csgp) : 0));",
                             "customClass": "",
                             "isNew": false
                           }
@@ -10875,7 +10875,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1cspt ? '$' + (data.disbursement?.disbursement1cspt).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1cspt, 'Not eligible');",
                             "isNew": false
                           }
                         ]
@@ -10921,7 +10921,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2cspt ? '$' + (data.disbursement?.disbursement2cspt).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2cspt, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": "",
                             "isNew": false
@@ -10969,7 +10969,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1cspt ? parseFloat(data.disbursement.disbursement1cspt) : 0) + (data.disbursement?.disbursement2cspt ? parseFloat(data.disbursement.disbursement2cspt) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1cspt ? parseFloat(data.disbursement.disbursement1cspt) : 0) + (data.disbursement?.disbursement2cspt ? parseFloat(data.disbursement.disbursement2cspt) : 0));",
                             "customClass": "",
                             "isNew": false
                           }
@@ -11104,7 +11104,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgd ? '$' + (data.disbursement?.disbursement1csgd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgd, 'Not eligible');",
                             "isNew": false
                           }
                         ]
@@ -11150,7 +11150,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgd ? '$' + (data.disbursement?.disbursement2csgd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgd, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": ""
                           }
@@ -11197,7 +11197,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement.disbursement1csgd) : 0) + (data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement.disbursement2csgd) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement.disbursement1csgd) : 0) + (data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement.disbursement2csgd) : 0));",
                             "customClass": "",
                             "isNew": false
                           }
@@ -11333,7 +11333,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1bcag ? '$' + (data.disbursement?.disbursement1bcag).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bcag, 'Not eligible');",
                             "isNew": false
                           }
                         ]
@@ -11379,7 +11379,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2bcag ? '$' + (data.disbursement?.disbursement2bcag).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bcag, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": "",
                             "isNew": false
@@ -11427,7 +11427,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement.disbursement1bcag) : 0) + (data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement.disbursement2bcag) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement.disbursement1bcag) : 0) + (data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement.disbursement2bcag) : 0));",
                             "customClass": "",
                             "isNew": false
                           }
@@ -11562,7 +11562,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1cslp ? '$' + (data.disbursement?.disbursement1cslp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';"
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1cslp, 'Not eligible');"
                           }
                         ]
                       },
@@ -11607,7 +11607,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2cslp ? '$' + (data.disbursement?.disbursement2cslp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2cslp, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": ""
                           }
@@ -11654,7 +11654,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1cslp ? parseFloat(data.disbursement.disbursement1cslp) : 0) + (data.disbursement?.disbursement2cslp ? parseFloat(data.disbursement.disbursement2cslp) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1cslp ? parseFloat(data.disbursement.disbursement1cslp) : 0) + (data.disbursement?.disbursement2cslp ? parseFloat(data.disbursement.disbursement2cslp) : 0));",
                             "customClass": ""
                           }
                         ]
@@ -11789,7 +11789,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1sbsd ? '$' + (data.disbursement?.disbursement1sbsd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1sbsd, 'Not eligible');",
                             "isNew": false
                           }
                         ]
@@ -11835,7 +11835,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2sbsd ? '$' + (data.disbursement?.disbursement2sbsd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2sbsd, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": "",
                             "isNew": false
@@ -11883,7 +11883,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement.disbursement1sbsd) : 0) + (data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement.disbursement2sbsd) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement.disbursement1sbsd) : 0) + (data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement.disbursement2sbsd) : 0));",
                             "customClass": "",
                             "isNew": false
                           }
