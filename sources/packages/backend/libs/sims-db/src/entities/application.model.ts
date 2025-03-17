@@ -424,10 +424,10 @@ export class Application extends RecordDataModel {
     () => Application,
     (versionApplication) => versionApplication.parentApplication,
     {
-      nullable: true,
+      nullable: false,
     },
   )
-  versions?: Application[];
+  versions: Application[];
 }
 
 /**

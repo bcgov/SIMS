@@ -55,7 +55,9 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
       db.dataSource,
       {
         parentApplication: { id: firstVersionApplication.id } as Application,
-        precedingApplication: { id: firstVersionApplication.id } as Application,
+        precedingApplication: {
+          id: secondVersionApplication.id,
+        } as Application,
       },
       {
         applicationNumber: firstVersionApplication.applicationNumber,
