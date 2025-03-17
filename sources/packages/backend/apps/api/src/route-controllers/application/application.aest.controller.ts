@@ -286,9 +286,7 @@ export class ApplicationAESTController extends BaseController {
       throw new NotFoundException("Application not found.");
     }
     const applications =
-      await this.applicationService.getPreviousApplicationVersions(
-        applicationId,
-      );
+      await this.applicationService.getAllApplicationVersions(applicationId);
     return {
       previousVersions: applications.map((application) => ({
         id: application.id,

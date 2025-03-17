@@ -1866,33 +1866,34 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get previous application versions for an application.
+   * Get all the application versions for an application through parent application.
    * @param applicationId application id.
-   * @returns previous application versions.
+   * @returns application versions.
    */
-  async getPreviousApplicationVersions(
+  async getAllApplicationVersions(
     applicationId: number,
   ): Promise<Application[]> {
-    // Get application and parent application.
-    const application = await this.repo.findOne({
-      select: { id: true, parentApplication: { id: true } },
-      relations: { parentApplication: true },
-      where: { id: applicationId },
-    });
-
-    return this.repo.find({
-      select: {
-        id: true,
-        submittedDate: true,
-      },
-      where: {
-        parentApplication: { id: application.parentApplication.id },
-        applicationStatus: ApplicationStatus.Edited,
-      },
-      order: {
-        submittedDate: "DESC",
-      },
-    });
+    const application = await this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "parentApplication.id",
+        "version.id",
+        "version.submittedDate",
+      ])
+      .innerJoin("application.parentApplication", "parentApplication")
+      .leftJoin(
+        "parentApplication.versions",
+        "version",
+        "version.applicationStatus = :editedStatus",
+        { editedStatus: ApplicationStatus.Edited },
+      )
+      .where("application.id = :applicationId", {
+        applicationId: applicationId,
+      })
+      .orderBy("version.submittedDate", "DESC")
+      .getOne();
+    return application.parentApplication.versions;
   }
 
   /**
