@@ -6,7 +6,6 @@ import {
   CASSupplier,
   DisbursementValue,
   OfferingIntensity,
-  Student,
   SupplierStatus,
   User,
 } from "@sims/sims-db";
@@ -56,11 +55,10 @@ export function createFakeCASInvoiceBatch(
  * - `casInvoiceBatch` invoice batch to associate with the invoice, already saved to the database.
  * - `creator` user who creates the invoice and any other related records.
  * - `disbursementValues` optional disbursement values for the invoice.
- * - `casSupplier` optional CAS supplier to create the invoice for.
- * - `student` optional student associated with the invoice.
  * @param options optional parameters to customize the invoice.
  * - `offeringIntensity` offering intensity for the invoice.
  * - `casSupplierInitialValues` initial values for the CAS supplier.
+ * - `casInvoiceInitialValue` initial values for the CAS invoice.
  * @returns CAS invoice created and associated with the batch.
  */
 export async function saveFakeInvoiceIntoBatchWithInvoiceDetails(
@@ -69,25 +67,20 @@ export async function saveFakeInvoiceIntoBatchWithInvoiceDetails(
     casInvoiceBatch: CASInvoiceBatch;
     creator: User;
     disbursementValues?: DisbursementValue[];
-    casSupplier?: CASSupplier;
-    student?: Student;
   },
   options?: {
     offeringIntensity?: OfferingIntensity;
     casSupplierInitialValues?: Partial<CASSupplier>;
+    casInvoiceInitialValues?: Partial<CASInvoice>;
   },
 ): Promise<CASInvoice> {
   // Create a valid supplier. If not valid an invoice would not be created.
-  const casSupplier =
-    relations.casSupplier ??
-    (await saveFakeCASSupplier(db, undefined, {
-      initialValues: options?.casSupplierInitialValues ?? {
-        supplierStatus: SupplierStatus.VerifiedManually,
-      },
-    }));
-  const student =
-    relations.student ??
-    (await saveFakeStudent(db.dataSource, { casSupplier }));
+  const casSupplier = await saveFakeCASSupplier(db, undefined, {
+    initialValues: options?.casSupplierInitialValues ?? {
+      supplierStatus: SupplierStatus.VerifiedManually,
+    },
+  });
+  const student = await saveFakeStudent(db.dataSource, { casSupplier });
   const application = await saveFakeApplicationDisbursements(
     db.dataSource,
     {
@@ -108,11 +101,17 @@ export async function saveFakeInvoiceIntoBatchWithInvoiceDetails(
     );
 
   // Create invoice and its details associated with th batch
-  const createdInvoice = await saveFakeInvoiceFromDisbursementReceipt(db, {
-    casInvoiceBatch: relations.casInvoiceBatch,
-    creator: relations.creator,
-    provincialDisbursementReceipt,
-    casSupplier,
-  });
+  const createdInvoice = await saveFakeInvoiceFromDisbursementReceipt(
+    db,
+    {
+      casInvoiceBatch: relations.casInvoiceBatch,
+      creator: relations.creator,
+      provincialDisbursementReceipt,
+      casSupplier,
+    },
+    {
+      casInvoiceInitialValues: options?.casInvoiceInitialValues,
+    },
+  );
   return createdInvoice;
 }

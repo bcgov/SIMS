@@ -63,7 +63,7 @@ export function createFakeCASInvoice(
  * - `casSupplier` CAS supplier already saved to the database to be associated
  * with the invoice.
  * @param options optional parameters to customize the invoice.
- * - `invoiceStatus` invoice status to be set.
+ * - `casInvoiceInitialValues` initial values for the invoice.
  * @returns invoice created from the provided {@see DisbursementReceipt}.
  */
 export async function saveFakeInvoiceFromDisbursementReceipt(
@@ -74,7 +74,7 @@ export async function saveFakeInvoiceFromDisbursementReceipt(
     provincialDisbursementReceipt: DisbursementReceipt;
     casSupplier: CASSupplier;
   },
-  options?: { invoiceStatus?: CASInvoiceStatus; invoiceStatusUpdatedOn?: Date },
+  options?: { casInvoiceInitialValues?: Partial<CASInvoice> },
 ): Promise<CASInvoice> {
   const fakeCASInvoice = createFakeCASInvoice(
     {
@@ -84,10 +84,7 @@ export async function saveFakeInvoiceFromDisbursementReceipt(
       creator: relations.creator,
     },
     {
-      initialValue: {
-        invoiceStatus: options?.invoiceStatus,
-        invoiceStatusUpdatedOn: options?.invoiceStatusUpdatedOn,
-      },
+      initialValue: options?.casInvoiceInitialValues,
     },
   );
   const offeringIntensity =

@@ -11,10 +11,8 @@ import {
   createFakeCASInvoiceBatch,
   createFakeDisbursementValue,
   E2EDataSources,
-  saveFakeCASSupplier,
   saveFakeInvoiceFromDisbursementReceipt,
   saveFakeInvoiceIntoBatchWithInvoiceDetails,
-  saveFakeStudent,
 } from "@sims/test-utils";
 import { SystemUsersService } from "@sims/services";
 import {
@@ -24,7 +22,15 @@ import {
   SupplierStatus,
 } from "@sims/sims-db";
 import { CASInvoiceAPIOutDTO } from "apps/api/src/route-controllers/cas-invoice/models/cas-invoice.dto";
-import { addMilliSeconds } from "@sims/test-utils/utils";
+import { addDays } from "@sims/utilities";
+import { Between } from "typeorm";
+
+/**
+ * Use a period that will never be reached to delete all existing invoice batches
+ * and allow the retrieval of invoice batches to be tested.
+ */
+const CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE = new Date("2200-01-01");
+const CAS_INVOICE_STATUS_LAST_UPDATED_ON_END_DATE = new Date("2200-02-01");
 
 describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
   let app: INestApplication;
@@ -39,21 +45,33 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
   });
 
   beforeEach(async () => {
+    // Delete existing CAS invoices and invoice details created between the CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE and the CAS_INVOICE_STATUS_LAST_UPDATED_ON_END_DATE dates.
+    const invoicesToDelete = await db.casInvoice.find({
+      select: { id: true },
+      where: {
+        invoiceStatusUpdatedOn: Between(
+          CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE,
+          CAS_INVOICE_STATUS_LAST_UPDATED_ON_END_DATE,
+        ),
+      },
+    });
+    for (const invoice of invoicesToDelete) {
+      await db.casInvoiceDetail.delete({
+        casInvoice: invoice,
+      });
+    }
+    await db.casInvoice.delete({
+      invoiceStatusUpdatedOn: Between(
+        CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE,
+        CAS_INVOICE_STATUS_LAST_UPDATED_ON_END_DATE,
+      ),
+    });
     // Delete all existing invoice batches.
     await db.casInvoiceBatch.delete({});
-    // Delete all existing CAS invoices and invoice details.
-    await db.casInvoiceDetail.delete({});
-    await db.casInvoice.delete({});
   });
 
   it(`Should be able to get invoices for the first page in a paginated result with a limit of two per page with ${CASInvoiceStatus.ManualIntervention} status in the descending order.`, async () => {
     // Arrange
-    const casSupplier = await saveFakeCASSupplier(db, undefined, {
-      initialValues: {
-        supplierStatus: SupplierStatus.VerifiedManually,
-      },
-    });
-    const student = await saveFakeStudent(db.dataSource, { casSupplier });
     // Create CAS invoice batch.
     const casInvoiceBatch = await db.casInvoiceBatch.save(
       createFakeCASInvoiceBatch({
@@ -91,8 +109,6 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
             { effectiveAmount: 400 },
           ),
         ],
-        casSupplier,
-        student,
       },
       {
         offeringIntensity: OfferingIntensity.partTime,
@@ -100,24 +116,32 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
           supplierStatus: SupplierStatus.VerifiedManually,
           supplierNumber: "222222",
         },
+        casInvoiceInitialValues: {
+          invoiceStatusUpdatedOn: addDays(
+            5,
+            CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE,
+          ),
+        },
       },
     );
     const disbursementReceipt = casInvoice.disbursementReceipt;
-    const date = new Date();
-    const twoSecondsAgo = addMilliSeconds(-2000, date);
-    const twoSecondsAhead = addMilliSeconds(2000, date);
-    const fourSecondsAhead = addMilliSeconds(4000, date);
+    const casSupplier = casInvoice.casSupplier;
     await saveFakeInvoiceFromDisbursementReceipt(
       db,
       {
         casInvoiceBatch,
         creator: systemUsersService.systemUser,
         provincialDisbursementReceipt: disbursementReceipt,
-        casSupplier: casSupplier,
+        casSupplier,
       },
       {
-        invoiceStatus: CASInvoiceStatus.ManualIntervention,
-        invoiceStatusUpdatedOn: twoSecondsAgo,
+        casInvoiceInitialValues: {
+          invoiceStatus: CASInvoiceStatus.ManualIntervention,
+          invoiceStatusUpdatedOn: addDays(
+            2,
+            CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE,
+          ),
+        },
       },
     );
     const thirdInvoice = await saveFakeInvoiceFromDisbursementReceipt(
@@ -126,11 +150,16 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
         casInvoiceBatch,
         creator: systemUsersService.systemUser,
         provincialDisbursementReceipt: disbursementReceipt,
-        casSupplier: casSupplier,
+        casSupplier,
       },
       {
-        invoiceStatus: CASInvoiceStatus.ManualIntervention,
-        invoiceStatusUpdatedOn: twoSecondsAhead,
+        casInvoiceInitialValues: {
+          invoiceStatus: CASInvoiceStatus.ManualIntervention,
+          invoiceStatusUpdatedOn: addDays(
+            10,
+            CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE,
+          ),
+        },
       },
     );
     const fourthInvoice = await saveFakeInvoiceFromDisbursementReceipt(
@@ -139,11 +168,16 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
         casInvoiceBatch,
         creator: systemUsersService.systemUser,
         provincialDisbursementReceipt: disbursementReceipt,
-        casSupplier: casSupplier,
+        casSupplier,
       },
       {
-        invoiceStatus: CASInvoiceStatus.ManualIntervention,
-        invoiceStatusUpdatedOn: fourSecondsAhead,
+        casInvoiceInitialValues: {
+          invoiceStatus: CASInvoiceStatus.ManualIntervention,
+          invoiceStatusUpdatedOn: addDays(
+            20,
+            CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE,
+          ),
+        },
       },
     );
     const endpoint = `/aest/cas-invoice?page=0&pageLimit=2&sortField=invoiceStatusUpdatedOn&sortOrder=DESC&invoiceStatusSearch=${CASInvoiceStatus.ManualIntervention}`;

@@ -11,9 +11,7 @@ import {
   createE2EDataSources,
   createFakeDisbursementValue,
   E2EDataSources,
-  saveFakeCASSupplier,
   saveFakeInvoiceIntoBatchWithInvoiceDetails,
-  saveFakeStudent,
 } from "@sims/test-utils";
 import { createFakeCASInvoiceBatch } from "../../../../../../../libs/test-utils/src";
 import { SystemUsersService } from "@sims/services";
@@ -39,12 +37,6 @@ describe("CASInvoiceAESTController(e2e)-updateInvoiceToResolved", () => {
 
   it(`Should resolve an invoice in ${CASInvoiceStatus.ManualIntervention} status for the provided invoice identifier.`, async () => {
     // Arrange
-    const casSupplier = await saveFakeCASSupplier(db, undefined, {
-      initialValues: {
-        supplierStatus: SupplierStatus.VerifiedManually,
-      },
-    });
-    const student = await saveFakeStudent(db.dataSource, { casSupplier });
     // Create CAS invoice batch.
     const casInvoiceBatch = await db.casInvoiceBatch.save(
       createFakeCASInvoiceBatch({
@@ -82,8 +74,6 @@ describe("CASInvoiceAESTController(e2e)-updateInvoiceToResolved", () => {
             { effectiveAmount: 400 },
           ),
         ],
-        casSupplier,
-        student,
       },
       {
         offeringIntensity: OfferingIntensity.partTime,
@@ -110,6 +100,7 @@ describe("CASInvoiceAESTController(e2e)-updateInvoiceToResolved", () => {
         invoiceNumber: true,
         invoiceStatus: true,
         invoiceStatusUpdatedBy: { id: true },
+        invoiceStatusUpdatedOn: true,
       },
       relations: { invoiceStatusUpdatedBy: true },
       where: { id: casInvoice.id },
@@ -123,7 +114,23 @@ describe("CASInvoiceAESTController(e2e)-updateInvoiceToResolved", () => {
       invoiceNumber: casInvoice.invoiceNumber,
       invoiceStatus: CASInvoiceStatus.Resolved,
       invoiceStatusUpdatedBy: { id: invoiceStatusUpdatedBy.id } as User,
+      invoiceStatusUpdatedOn: updatedCASInvoice.invoiceStatusUpdatedOn,
     });
+    // Delete existing CAS invoice and invoice details for the updated CAS invoice to clean the database.
+    const invoiceToDelete = await db.casInvoice.findOne({
+      select: { id: true },
+      where: {
+        invoiceStatusUpdatedOn: updatedCASInvoice.invoiceStatusUpdatedOn,
+      },
+    });
+    await db.casInvoiceDetail.delete({
+      casInvoice: invoiceToDelete,
+    });
+    await db.casInvoice.delete({
+      invoiceStatusUpdatedOn: updatedCASInvoice.invoiceStatusUpdatedOn,
+    });
+    // Delete all existing invoice batches.
+    await db.casInvoiceBatch.delete({});
   });
 
   it("Should throw a HttpStatus Not Found (404) error when the CAS invoice to resolve doesn't exist.", async () => {
