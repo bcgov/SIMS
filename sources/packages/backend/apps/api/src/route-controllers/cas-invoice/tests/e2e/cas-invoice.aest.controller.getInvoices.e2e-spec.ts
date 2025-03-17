@@ -66,8 +66,6 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
         CAS_INVOICE_STATUS_LAST_UPDATED_ON_END_DATE,
       ),
     });
-    // Delete all existing invoice batches.
-    await db.casInvoiceBatch.delete({});
   });
 
   it(`Should be able to get invoices for the first page in a paginated result with a limit of two per page with ${CASInvoiceStatus.ManualIntervention} status in the descending order.`, async () => {

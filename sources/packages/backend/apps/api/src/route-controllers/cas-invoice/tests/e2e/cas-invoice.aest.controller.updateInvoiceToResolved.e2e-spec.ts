@@ -129,8 +129,6 @@ describe("CASInvoiceAESTController(e2e)-updateInvoiceToResolved", () => {
     await db.casInvoice.delete({
       invoiceStatusUpdatedOn: updatedCASInvoice.invoiceStatusUpdatedOn,
     });
-    // Delete all existing invoice batches.
-    await db.casInvoiceBatch.delete({});
   });
 
   it("Should throw a HttpStatus Not Found (404) error when the CAS invoice to resolve doesn't exist.", async () => {
