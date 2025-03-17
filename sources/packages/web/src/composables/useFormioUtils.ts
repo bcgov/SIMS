@@ -246,8 +246,8 @@ export function useFormioUtils() {
   /**
    * Registers a custom utility method with a specified name in the Form.IO Utils object.
    * If the custom utils object does not exist, it is initialized.
-   * @param name - The name to register the method under.
-   * @param method - The function to be registered as a utility method.
+   * @param name name to register the method under.
+   * @param method function to be registered as a utility method.
    */
   const registerUtilsMethod = (
     name: string,
