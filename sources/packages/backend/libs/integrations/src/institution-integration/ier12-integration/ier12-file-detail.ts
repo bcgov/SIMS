@@ -34,9 +34,9 @@ export class IER12FileDetail implements IER12FileLine {
   studentBirthDate: Date;
   studentGroupCode: "A" | "B";
   studentMaritalStatusCode: StudentMaritalStatusCode;
-  // Analysis pending for the field.
+  // TODO: IER - Dheepak.
   studentDisabilityStatusCode?: string;
-  // Analysis pending for the field.
+  // TODO: IER - Dheepak.
   applicationDisabilityStatusFlag?: string;
   addressInfo: IERAddressInfo;
   programName: string;
@@ -71,7 +71,7 @@ export class IER12FileDetail implements IER12FileLine {
   bcslAmount: number;
   epAmount: number;
   provincialDefaultFlag: YNFlag;
-  // Analysis pending for the field.
+  // TODO: IER - Dheepak.
   federalDefaultFlag?: string;
   provincialOverawardFlag: YNFlag;
   federalOverawardFlag: YNFlag;
@@ -80,48 +80,68 @@ export class IER12FileDetail implements IER12FileLine {
   scholasticStandingCode?: ScholasticStandingCode;
   assessmentDate: Date;
   withdrawalDate?: Date;
+  // TODO: IER - Dheepak.
   applicantAndPartnerExpectedContribution: number;
+  // TODO: IER - Dheepak.
   parentExpectedContribution?: number;
+  // TODO: IER - Dheepak.
   totalExpectedContribution: number;
+  // TODO: IER - Dheepak.
   dependantChildQuantity?: number;
+  // TODO: IER - Dheepak.
   dependantChildInDaycareQuantity?: number;
+  // TODO: IER - Dheepak.
   dependantInfantQuantity?: number;
+  // TODO: IER - Dheepak.
   dependantOtherQuantity?: number;
+  // TODO: IER - Dheepak.
   dependantPostSecondaryQuantity?: number;
+  // TODO: IER - Dheepak.
   totalDependantQuantity?: number;
+  // TODO: IER - Dheepak.
   familyMembersQuantity: number;
+  // TODO: IER - Dheepak.
   parent1Flag?: YNFlag;
+  // TODO: IER - Dheepak.
   parent2Flag?: YNFlag;
+  // TODO: IER - Dheepak.
   partnerFlag: YNFlag;
+  // TODO: IER - Dheepak.
   parentalAssets?: number;
+  // TODO: IER - Dheepak.
   parentalAssetsExpectedContribution?: number;
   parentalIncomeExpectedContribution?: number;
-  // Analysis pending for the field.
+  // TODO: IER - Dheepak.
   parentalVoluntaryContribution?: number;
+  // TODO: IER - Dheepak.
   parentalDiscretionaryIncome?: number;
+  // TODO: IER - Dheepak.
   parentalDiscretionaryAnnualIncomeFormulaResult?: number;
   studentLivingAtHomeFlag: YNFlag;
+  // TODO: IER - Dheepak.
   partnerInSchoolFlag?: string;
   // Analysis pending for the field.
   otherEducationalExpenses?: number;
   totalEducationalExpenses: number;
-  // Analysis pending for the field.
+  // TODO: IER - Dheepak.
   extraLocalTransportationCosts?: number;
-  // Analysis pending for the field.
+  // TODO: IER - Dheepak.
   extraShelterCosts?: number;
+  // TODO: IER - Dheepak.
   dependantLivingAllowance?: number;
   studentLivingAllowance: number;
   totalLivingAllowance: number;
   alimonyCost?: number;
   // Analysis pending for the field.
   otherDiscretionaryCosts?: number;
-  // Analysis pending for the field.
+  // TODO: IER - Dheepak.
   returnTransportationCosts?: number;
   // Analysis pending for the field.
   partnerStudentLoanPaymentCosts?: number;
   childcareCost?: number;
   totalNonEducationalCost: number;
   totalExpenses: number;
+  // TODO: IER - Dheepak.
   assessedNeed: number;
   studentEligibleAward: number;
   // Analysis pending for the field.
