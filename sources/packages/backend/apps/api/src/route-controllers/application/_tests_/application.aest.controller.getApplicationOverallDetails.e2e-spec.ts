@@ -24,7 +24,7 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get an array of application versions in overall details when there is an edited application associated with the given application.", async () => {
+  it("Should get all application versions in overall details when there is one or more edited application associated with the given application.", async () => {
     // Arrange
     // Create the parent application and also the first application version.
     const firstVersionApplication = await saveFakeApplication(
@@ -79,10 +79,28 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
             submittedDate: secondVersionApplication.submittedDate.toISOString(),
           },
           {
-            id: secondVersionApplication.id,
-            submittedDate: secondVersionApplication.submittedDate.toISOString(),
+            id: firstVersionApplication.id,
+            submittedDate: firstVersionApplication.submittedDate.toISOString(),
           },
         ],
+      });
+  });
+
+  it("Should get no application versions in overall details when there is no edited application associated with the given application.", async () => {
+    // Arrange
+    // Create the parent application and also the first application version.
+    const originalApplication = await saveFakeApplication(db.dataSource);
+
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/application/${originalApplication.id}/overall-details`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        previousVersions: [],
       });
   });
 
