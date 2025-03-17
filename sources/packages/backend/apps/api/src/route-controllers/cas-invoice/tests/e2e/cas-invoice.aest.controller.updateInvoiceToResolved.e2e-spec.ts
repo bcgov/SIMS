@@ -116,19 +116,6 @@ describe("CASInvoiceAESTController(e2e)-updateInvoiceToResolved", () => {
       invoiceStatusUpdatedBy: { id: invoiceStatusUpdatedBy.id } as User,
       invoiceStatusUpdatedOn: updatedCASInvoice.invoiceStatusUpdatedOn,
     });
-    // Delete existing CAS invoice and invoice details for the updated CAS invoice to clean the database.
-    const invoiceToDelete = await db.casInvoice.findOne({
-      select: { id: true },
-      where: {
-        invoiceStatusUpdatedOn: updatedCASInvoice.invoiceStatusUpdatedOn,
-      },
-    });
-    await db.casInvoiceDetail.delete({
-      casInvoice: invoiceToDelete,
-    });
-    await db.casInvoice.delete({
-      invoiceStatusUpdatedOn: updatedCASInvoice.invoiceStatusUpdatedOn,
-    });
   });
 
   it("Should throw a HttpStatus Not Found (404) error when the CAS invoice to resolve doesn't exist.", async () => {
