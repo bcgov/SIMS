@@ -29,8 +29,8 @@ import { Between } from "typeorm";
  * Use a period that will never be reached to delete all existing invoice batches
  * and allow the retrieval of invoice batches to be tested.
  */
-const CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE = new Date("2200-01-01");
-const CAS_INVOICE_STATUS_LAST_UPDATED_ON_END_DATE = new Date("2200-02-01");
+const CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE = new Date("2080-01-01");
+const CAS_INVOICE_STATUS_LAST_UPDATED_ON_END_DATE = new Date("2080-02-01");
 
 describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
   let app: INestApplication;
