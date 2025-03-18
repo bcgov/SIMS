@@ -54,12 +54,6 @@ export const AWARDS: AwardDetail[] = [
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
-    awardType: FullTimeAwardTypes.CSGT,
-    awardTypeDisplay: FullTimeAwardTypes.CSGT,
-    description: "Canada Student Grant for Full-time Top-up",
-    offeringIntensity: OfferingIntensity.fullTime,
-  },
-  {
     awardType: FullTimeAwardTypes.BCSL,
     awardTypeDisplay: FullTimeAwardTypes.BCSL,
     description: "B.C. Student Loan",
