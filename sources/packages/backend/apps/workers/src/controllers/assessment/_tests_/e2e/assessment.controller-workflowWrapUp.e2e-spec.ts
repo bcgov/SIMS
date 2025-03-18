@@ -30,9 +30,11 @@ import {
 import {
   AssessmentSequentialProcessingService,
   SystemUsersService,
+  WorkflowClientService,
 } from "@sims/services";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { StudentAssessmentService } from "../../../../services";
+import { WorkflowWrapUpType } from "../../assessment.dto";
 
 describe("AssessmentController(e2e)-workflowWrapUp", () => {
   let db: E2EDataSources;
@@ -40,6 +42,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
   let systemUsersService: SystemUsersService;
   let studentAssessmentService: StudentAssessmentService;
   let assessmentSequentialProcessingService: AssessmentSequentialProcessingService;
+  let workflowClientService: WorkflowClientService;
   let now: Date;
   let auditUser: User;
 
@@ -52,6 +55,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     assessmentSequentialProcessingService = nestApplication.get(
       AssessmentSequentialProcessingService,
     );
+    workflowClientService = nestApplication.get(WorkflowClientService);
     auditUser = systemUsersService.systemUser;
     now = new Date();
   });
@@ -74,10 +78,9 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
     // Act
     const result = await assessmentController.workflowWrapUp(
-      createFakeWorkflowWrapUpPayload(
-        savedApplication.currentAssessment.id,
+      createFakeWorkflowWrapUpPayload(savedApplication.currentAssessment.id, {
         workflowData,
-      ),
+      }),
     );
 
     // Asserts
@@ -163,7 +166,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     const result = await assessmentController.workflowWrapUp(
       createFakeWorkflowWrapUpPayload(
         currentApplicationToWrapUp.currentAssessment.id,
-        workflowData,
+        { workflowData },
       ),
     );
 
@@ -210,7 +213,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         currentAssessmentInitialValues: {
           assessmentWorkflowId: "some fake id",
           assessmentDate: new Date(),
-          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
         },
       },
     );
@@ -223,7 +226,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     // Monitor the updateAssessmentStatusAndSaveWorkflowData to ensure that it will be called.
     const updateAssessmentStatusAndSaveWorkflowDataMock = jest.spyOn(
       studentAssessmentService,
-      "updateAssessmentStatusAndSaveWorkflowData",
+      "updateAssessmentWrapUpData",
     );
     // Monitor the assessImpactedApplicationReassessmentNeeded to ensure that it will not be called.
     const assessImpactedApplicationReassessmentNeededMock = jest.spyOn(
@@ -235,7 +238,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     const result = await assessmentController.workflowWrapUp(
       createFakeWorkflowWrapUpPayload(
         currentApplicationToWrapUp.currentAssessment.id,
-        workflowData,
+        { workflowData },
       ),
     );
 
@@ -285,10 +288,9 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
       // Act
       const result = await assessmentController.workflowWrapUp(
-        createFakeWorkflowWrapUpPayload(
-          savedApplication.currentAssessment.id,
-          {} as WorkflowData,
-        ),
+        createFakeWorkflowWrapUpPayload(savedApplication.currentAssessment.id, {
+          workflowData: {} as WorkflowData,
+        }),
       );
 
       // Asserts
@@ -344,10 +346,9 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
       // Act
       const result = await assessmentController.workflowWrapUp(
-        createFakeWorkflowWrapUpPayload(
-          savedApplication.currentAssessment.id,
-          {} as WorkflowData,
-        ),
+        createFakeWorkflowWrapUpPayload(savedApplication.currentAssessment.id, {
+          workflowData: {} as WorkflowData,
+        }),
       );
 
       // Asserts
@@ -403,10 +404,9 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
       // Act
       const result = await assessmentController.workflowWrapUp(
-        createFakeWorkflowWrapUpPayload(
-          savedApplication.currentAssessment.id,
-          {} as WorkflowData,
-        ),
+        createFakeWorkflowWrapUpPayload(savedApplication.currentAssessment.id, {
+          workflowData: {} as WorkflowData,
+        }),
       );
 
       // Asserts
@@ -500,10 +500,9 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
     // Act
     const result = await assessmentController.workflowWrapUp(
-      createFakeWorkflowWrapUpPayload(
-        savedApplication.currentAssessment.id,
-        {} as WorkflowData,
-      ),
+      createFakeWorkflowWrapUpPayload(savedApplication.currentAssessment.id, {
+        workflowData: {} as WorkflowData,
+      }),
     );
 
     // Asserts
@@ -600,10 +599,9 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
       // Act
       const result = await assessmentController.workflowWrapUp(
-        createFakeWorkflowWrapUpPayload(
-          savedApplication.currentAssessment.id,
-          {} as WorkflowData,
-        ),
+        createFakeWorkflowWrapUpPayload(savedApplication.currentAssessment.id, {
+          workflowData: {} as WorkflowData,
+        }),
       );
 
       // Asserts
@@ -685,10 +683,9 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
 
       // Act
       const result = await assessmentController.workflowWrapUp(
-        createFakeWorkflowWrapUpPayload(
-          savedApplication.currentAssessment.id,
-          {} as WorkflowData,
-        ),
+        createFakeWorkflowWrapUpPayload(savedApplication.currentAssessment.id, {
+          workflowData: {} as WorkflowData,
+        }),
       );
 
       // Asserts
@@ -711,6 +708,60 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       ).toBeNull();
     },
   );
+
+  it(`Should update only the assessment status to completed when the workflow wrapUpType header is set to ${WorkflowWrapUpType.AssessmentStatusOnly}.`, async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Edited,
+        currentAssessmentInitialValues: {
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+    // Monitor the assessImpactedApplicationReassessmentNeeded to ensure that it will not be called.
+    const assessImpactedApplicationReassessmentNeededMock = jest.spyOn(
+      assessmentSequentialProcessingService,
+      "assessImpactedApplicationReassessmentNeeded",
+    );
+    const sendReleaseAssessmentCalculationMessageMock = jest.spyOn(
+      workflowClientService,
+      "sendReleaseAssessmentCalculationMessage",
+    );
+
+    // Act
+    const result = await assessmentController.workflowWrapUp(
+      createFakeWorkflowWrapUpPayload(savedApplication.currentAssessment.id, {
+        wrapUpType: WorkflowWrapUpType.AssessmentStatusOnly,
+      }),
+    );
+
+    // Assert
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    const expectedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        studentAssessmentStatus: true,
+        studentAssessmentStatusUpdatedOn: true,
+      },
+      where: { id: savedApplication.currentAssessment.id },
+    });
+    expect(expectedAssessment).toEqual({
+      id: savedApplication.currentAssessment.id,
+      studentAssessmentStatus: StudentAssessmentStatus.Completed,
+      studentAssessmentStatusUpdatedOn: expect.any(Date),
+    });
+    // Ensures assessImpactedApplicationReassessmentNeeded was not called.
+    expect(
+      assessImpactedApplicationReassessmentNeededMock,
+    ).not.toHaveBeenCalled();
+    // Ensures sendReleaseAssessmentCalculationMessage was not called.
+    expect(sendReleaseAssessmentCalculationMessageMock).not.toHaveBeenCalled();
+  });
 
   /**
    * Saves an offering and assessment for that offering.

@@ -56,7 +56,6 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:flowNodeRef>parents-verification-has-sin-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1jdrla2</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>in-progress-main-parallel-info-gathering-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>application-exception-end-event</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-application-exceptions-retry-timer</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>application-exception-verified-message</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-application-exceptions-pending-gateway</bpmn:flowNodeRef>
@@ -77,9 +76,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:flowNodeRef>minitry-approval-change-in-progress-still-pending-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>minitry-approval-change-request-assessed-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-message</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-declined-end-event</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>program-info-request-timer</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>pir-declined-end-event</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1imkna6</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1hgcddi</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>program-info-not-required-task</bpmn:flowNodeRef>
@@ -92,6 +89,12 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:flowNodeRef>program-info-request-completed-message</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>pir-change-request-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_04uphc0</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_15nmb01</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-declined-end-event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>application-exception-end-event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_0zwppeg</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>pir-declined-end-event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_17dwbpv</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1bfd2e9" name="Assessment/reassessment calculation">
         <bpmn:flowNodeRef>verify-assessment-calculation-timer</bpmn:flowNodeRef>
@@ -463,13 +466,16 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>Flow_1txrz77</bpmn:incoming>
       <bpmn:outgoing>Flow_0rkzx2d</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:serviceTask id="workflow-wrap-up-task" name="Workflow wrap up">
+    <bpmn:serviceTask id="workflow-wrap-up-task" name="Workflow wrap up (Complete wrap-up)">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="workflow-wrap-up" />
         <zeebe:ioMapping>
           <zeebe:input source="=assessmentId" target="assessmentId" />
           <zeebe:input source="=workflowData" target="workflowData" />
         </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="wrapUpType" value="Complete wrap-up" />
+        </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0rkzx2d</bpmn:incoming>
       <bpmn:outgoing>Flow_0mt0uyq</bpmn:outgoing>
@@ -508,9 +514,6 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:outgoing>Flow_1a4wzic</bpmn:outgoing>
       <bpmn:outgoing>Flow_01iq5cw</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="application-exception-end-event">
-      <bpmn:incoming>verify-application-exceptions-status-denied-flow</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:intermediateCatchEvent id="verify-application-exceptions-retry-timer">
       <bpmn:incoming>Flow_10lg2ud</bpmn:incoming>
       <bpmn:outgoing>verify-application-exceptions-retry-timer-flow</bpmn:outgoing>
@@ -662,9 +665,6 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:outgoing>minitry-approval-change-in-progress-message-received-flow</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1c36euj" messageRef="Message_3767lhe" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:endEvent id="minitry-approval-change-declined-end-event">
-      <bpmn:incoming>change-declined-flow</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:intermediateCatchEvent id="program-info-request-timer">
       <bpmn:incoming>Flow_1ds5r8m</bpmn:incoming>
       <bpmn:outgoing>Flow_1sze0w6</bpmn:outgoing>
@@ -672,9 +672,6 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
-    <bpmn:endEvent id="pir-declined-end-event">
-      <bpmn:incoming>pir-pending-declined-flow</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:exclusiveGateway id="Gateway_1imkna6" default="not-a-change-request-flow">
       <bpmn:incoming>Flow_16d5gro</bpmn:incoming>
       <bpmn:outgoing>not-a-change-request-flow</bpmn:outgoing>
@@ -843,7 +840,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:sequenceFlow id="Flow_0mt0uyq" sourceRef="workflow-wrap-up-task" targetRef="Event_0mtgfbi" />
     <bpmn:sequenceFlow id="Flow_1a4wzic" name="Does Not Have NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-application-status-to-assessment-task" />
     <bpmn:sequenceFlow id="Flow_0mayggl" sourceRef="update-application-status-to-assessment-task" targetRef="update-noa-status-to-required-task" />
-    <bpmn:sequenceFlow id="verify-application-exceptions-status-denied-flow" name="Declined" sourceRef="verify-application-exceptions-status-gateway" targetRef="application-exception-end-event">
+    <bpmn:sequenceFlow id="verify-application-exceptions-status-denied-flow" name="Declined" sourceRef="verify-application-exceptions-status-gateway" targetRef="Activity_0zwppeg">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Declined"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_10lg2ud" sourceRef="verify-application-exceptions-pending-gateway" targetRef="verify-application-exceptions-retry-timer" />
@@ -887,7 +884,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-message-flow" sourceRef="minitry-approval-change-in-progress-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-message" />
     <bpmn:sequenceFlow id="minitry-approval-change-in-progress-decision-made-flow" name="No longer pending" sourceRef="minitry-approval-change-in-progress-still-pending-gateway" targetRef="minitry-approval-change-request-assessed-gateway" />
     <bpmn:sequenceFlow id="minitry-approval-change-in-progress-message-received-flow" sourceRef="minitry-approval-change-in-progress-pending-message" targetRef="minitry-approval-change-request-assessed-gateway" />
-    <bpmn:sequenceFlow id="change-declined-flow" name="Change declined or cancelled" sourceRef="minitry-approval-change-request-assessed-gateway" targetRef="minitry-approval-change-declined-end-event">
+    <bpmn:sequenceFlow id="change-declined-flow" name="Change declined or cancelled" sourceRef="minitry-approval-change-request-assessed-gateway" targetRef="Activity_15nmb01">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=list contains([
   "Change declined",
   "Change cancelled"
@@ -895,7 +892,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1ds5r8m" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-timer" />
     <bpmn:sequenceFlow id="Flow_1sze0w6" sourceRef="program-info-request-timer" targetRef="program-info-required-task" />
-    <bpmn:sequenceFlow id="pir-pending-declined-flow" name="Declined" sourceRef="pir-pending-declined-complted-gateway" targetRef="pir-declined-end-event">
+    <bpmn:sequenceFlow id="pir-pending-declined-flow" name="Declined" sourceRef="pir-pending-declined-complted-gateway" targetRef="Activity_17dwbpv">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Declined"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="pir-pending-completed-flow" name="Completed" sourceRef="pir-pending-declined-complted-gateway" targetRef="Gateway_1hgcddi">
@@ -923,6 +920,48 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:sequenceFlow id="change-in-progress-no-pir-required-flow" name="Change is in progress" sourceRef="pir-change-request-gateway" targetRef="Gateway_04uphc0">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Change in progress"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0jltxxn" sourceRef="Activity_15nmb01" targetRef="minitry-approval-change-declined-end-event" />
+    <bpmn:serviceTask id="Activity_15nmb01" name="Workflow wrap up (Assessment status only)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="workflow-wrap-up" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="wrapUpType" value="Assessment status only" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>change-declined-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jltxxn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="minitry-approval-change-declined-end-event">
+      <bpmn:incoming>Flow_0jltxxn</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="application-exception-end-event">
+      <bpmn:incoming>Flow_0puhcea</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_0zwppeg" name="Workflow wrap up (Assessment status only)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="workflow-wrap-up" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="wrapUpType" value="Assessment status only" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>verify-application-exceptions-status-denied-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_0puhcea</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0puhcea" sourceRef="Activity_0zwppeg" targetRef="application-exception-end-event" />
+    <bpmn:sequenceFlow id="Flow_0jivtff" sourceRef="Activity_17dwbpv" targetRef="pir-declined-end-event" />
+    <bpmn:endEvent id="pir-declined-end-event">
+      <bpmn:incoming>Flow_0jivtff</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_17dwbpv" name="Workflow wrap up (Assessment status only)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="workflow-wrap-up" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="wrapUpType" value="Assessment status only" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>pir-pending-declined-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jivtff</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:message id="Message_1clo0eh" name="program-info-request-completed">
     <bpmn:extensionElements>
@@ -967,12 +1006,12 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="160" y="80" width="4288" height="1910" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_0lvs868_di" bpmnElement="Lane_0lvs868" isHorizontal="true">
-        <dc:Bounds x="190" y="80" width="4258" height="1480" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1bfd2e9_di" bpmnElement="Lane_1bfd2e9" isHorizontal="true">
         <dc:Bounds x="190" y="1560" width="4258" height="430" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0lvs868_di" bpmnElement="Lane_0lvs868" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="4258" height="1480" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1b54j4j_di" bpmnElement="verify-assessment-calculation-timer">
@@ -1133,7 +1172,7 @@ Note: the workflow process should continue its execution as a regular reassessme
           <dc:Bounds x="4151" y="1755" width="67" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0dcydtn_di" bpmnElement="workflow-wrap-up-task">
+      <bpmndi:BPMNShape id="Activity_0dcydtn_di" bpmnElement="workflow-wrap-up-task" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
         <dc:Bounds x="4230" y="1690" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -1153,9 +1192,6 @@ Note: the workflow process should continue its execution as a regular reassessme
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1m2js1c_di" bpmnElement="Gateway_1m2js1c" isMarkerVisible="true">
         <dc:Bounds x="3585" y="1715" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_016am96_di" bpmnElement="application-exception-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="1279" y="842" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0f2fffe_di" bpmnElement="verify-application-exceptions-retry-timer">
         <dc:Bounds x="1148" y="781" width="36" height="36" />
@@ -1231,14 +1267,8 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmndi:BPMNShape id="BPMNShape_14f4jm3" bpmnElement="minitry-approval-change-in-progress-pending-message" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
         <dc:Bounds x="2730" y="1182" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1bczfyn" bpmnElement="minitry-approval-change-declined-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="3011" y="1182" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_067eupg" bpmnElement="program-info-request-timer">
         <dc:Bounds x="1863" y="188" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1sbole4_di" bpmnElement="pir-declined-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="2252" y="188" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1imkna6_di" bpmnElement="Gateway_1imkna6" isMarkerVisible="true">
         <dc:Bounds x="2715" y="795" width="50" height="50" />
@@ -1283,6 +1313,27 @@ Note: the workflow process should continue its execution as a regular reassessme
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_04uphc0_di" bpmnElement="Gateway_04uphc0" isMarkerVisible="true">
         <dc:Bounds x="2345" y="395" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_07n5f2c" bpmnElement="Activity_15nmb01" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="3010" y="1160" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1bczfyn" bpmnElement="minitry-approval-change-declined-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="3162" y="1182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_016am96_di" bpmnElement="application-exception-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1279" y="952" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_11pvkh4" bpmnElement="Activity_0zwppeg" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1247" y="820" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1sbole4_di" bpmnElement="pir-declined-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="2422" y="188" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1sv8y9e" bpmnElement="Activity_17dwbpv" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="2284" y="166" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0bza37i_di" bpmnElement="Flow_0bza37i">
         <di:waypoint x="2355" y="1860" />
@@ -1390,16 +1441,6 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="3335" y="1740" />
         <di:waypoint x="3350" y="1740" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_16d5gro_di" bpmnElement="Flow_16d5gro">
-        <di:waypoint x="2615" y="722" />
-        <di:waypoint x="2740" y="722" />
-        <di:waypoint x="2740" y="795" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1s8wnxz_di" bpmnElement="Flow_1s8wnxz">
-        <di:waypoint x="2305" y="360" />
-        <di:waypoint x="2370" y="360" />
-        <di:waypoint x="2370" y="395" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mbspca_di" bpmnElement="Flow_1mbspca">
         <di:waypoint x="2010" y="722" />
         <di:waypoint x="2565" y="722" />
@@ -1416,34 +1457,16 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="2520" y="722" />
         <di:waypoint x="2565" y="722" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0kk35bl_di" bpmnElement="pir-pending-declined-flow">
-        <di:waypoint x="2190" y="269" />
-        <di:waypoint x="2190" y="206" />
-        <di:waypoint x="2252" y="206" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2194.0000000000055" y="213" width="43" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_1w8k6d4_di" bpmnElement="Flow_1w8k6d4">
+        <di:waypoint x="2395" y="420" />
+        <di:waypoint x="2520" y="420" />
+        <di:waypoint x="2520" y="722" />
+        <di:waypoint x="2565" y="722" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_11vpdhg_di" bpmnElement="needs-pir-flow">
-        <di:waypoint x="1700" y="335" />
-        <di:waypoint x="1700" y="294" />
-        <di:waypoint x="1760" y="294" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1700" y="276" width="54" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_04jxppm_di" bpmnElement="pir-not-required-flow">
-        <di:waypoint x="1700" y="385" />
-        <di:waypoint x="1700" y="420" />
-        <di:waypoint x="1920" y="420" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1706" y="398" width="81" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1a980l7_di" bpmnElement="Flow_1a980l7">
-        <di:waypoint x="1550" y="696" />
-        <di:waypoint x="1550" y="420" />
-        <di:waypoint x="1603" y="420" />
+      <bpmndi:BPMNEdge id="Flow_16d5gro_di" bpmnElement="Flow_16d5gro">
+        <di:waypoint x="2615" y="722" />
+        <di:waypoint x="2740" y="722" />
+        <di:waypoint x="2740" y="795" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_18qbsu1_di" bpmnElement="Flow_18qbsu1">
         <di:waypoint x="1575" y="721" />
@@ -1598,6 +1621,11 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="1475" y="721" />
         <di:waypoint x="1525" y="721" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a980l7_di" bpmnElement="Flow_1a980l7">
+        <di:waypoint x="1550" y="696" />
+        <di:waypoint x="1550" y="420" />
+        <di:waypoint x="1603" y="420" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1atzf7v_di" bpmnElement="Flow_1atzf7v">
         <di:waypoint x="3450" y="1740" />
         <di:waypoint x="3475" y="1740" />
@@ -1668,15 +1696,11 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="3780" y="1660" />
         <di:waypoint x="3840" y="1660" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0rxxozm_di" bpmnElement="Flow_0rxxozm">
-        <di:waypoint x="531" y="721" />
-        <di:waypoint x="625" y="721" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10abeca_di" bpmnElement="verify-application-exceptions-status-denied-flow">
         <di:waypoint x="1297" y="746" />
-        <di:waypoint x="1297" y="842" />
+        <di:waypoint x="1297" y="820" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1300" y="783" width="43" height="14" />
+          <dc:Bounds x="1300" y="761" width="43" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10lg2ud_di" bpmnElement="Flow_10lg2ud">
@@ -1734,6 +1758,10 @@ Note: the workflow process should continue its execution as a regular reassessme
           <dc:Bounds x="670" y="703" width="60" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rxxozm_di" bpmnElement="Flow_0rxxozm">
+        <di:waypoint x="531" y="721" />
+        <di:waypoint x="625" y="721" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1quai3y_di" bpmnElement="change-in-progress-flow">
         <di:waypoint x="650" y="696" />
         <di:waypoint x="650" y="590" />
@@ -1760,6 +1788,14 @@ Note: the workflow process should continue its execution as a regular reassessme
           <dc:Bounds x="2618" y="823" width="63" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1x1k7zp_di" bpmnElement="changed-with-approval-flow">
+        <di:waypoint x="2860" y="1225" />
+        <di:waypoint x="2860" y="1310" />
+        <di:waypoint x="2755" y="1310" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2786" y="1248" width="68" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0prddd0_di" bpmnElement="Flow_0prddd0">
         <di:waypoint x="2730" y="1335" />
         <di:waypoint x="2730" y="1370" />
@@ -1770,21 +1806,6 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="2870" y="910" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2775" y="827" width="90" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1x1k7zp_di" bpmnElement="changed-with-approval-flow">
-        <di:waypoint x="2860" y="1225" />
-        <di:waypoint x="2860" y="1310" />
-        <di:waypoint x="2755" y="1310" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2786" y="1248" width="68" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_085jk0z" bpmnElement="change-declined-flow">
-        <di:waypoint x="2885" y="1200" />
-        <di:waypoint x="3011" y="1200" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="2894" y="1206" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_00giejb" bpmnElement="minitry-approval-change-in-progress-timer-flow">
@@ -1821,6 +1842,31 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="2766" y="1200" />
         <di:waypoint x="2835" y="1200" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_085jk0z" bpmnElement="change-declined-flow">
+        <di:waypoint x="2885" y="1200" />
+        <di:waypoint x="3010" y="1200" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2878" y="1206" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0vt8krb" bpmnElement="Flow_1ds5r8m">
+        <di:waypoint x="2000" y="225" />
+        <di:waypoint x="2000" y="206" />
+        <di:waypoint x="1899" y="206" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1vq41fx" bpmnElement="Flow_1sze0w6">
+        <di:waypoint x="1863" y="206" />
+        <di:waypoint x="1810" y="206" />
+        <di:waypoint x="1810" y="254" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kk35bl_di" bpmnElement="pir-pending-declined-flow">
+        <di:waypoint x="2190" y="269" />
+        <di:waypoint x="2190" y="206" />
+        <di:waypoint x="2284" y="206" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2210" y="188" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_04dns6s_di" bpmnElement="pir-pending-completed-flow">
         <di:waypoint x="2215" y="294" />
         <di:waypoint x="2280" y="294" />
@@ -1833,6 +1879,35 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="2020" y="420" />
         <di:waypoint x="2280" y="420" />
         <di:waypoint x="2280" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s8wnxz_di" bpmnElement="Flow_1s8wnxz">
+        <di:waypoint x="2305" y="360" />
+        <di:waypoint x="2370" y="360" />
+        <di:waypoint x="2370" y="395" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04jxppm_di" bpmnElement="pir-not-required-flow">
+        <di:waypoint x="1700" y="385" />
+        <di:waypoint x="1700" y="420" />
+        <di:waypoint x="1920" y="420" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1706" y="398" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0olapnp_di" bpmnElement="pir-default-flow">
+        <di:waypoint x="1628" y="395" />
+        <di:waypoint x="1628" y="360" />
+        <di:waypoint x="1675" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1624" y="245" width="39" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11vpdhg_di" bpmnElement="needs-pir-flow">
+        <di:waypoint x="1700" y="335" />
+        <di:waypoint x="1700" y="294" />
+        <di:waypoint x="1760" y="294" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1700" y="276" width="54" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0im6s57_di" bpmnElement="Flow_0im6s57">
         <di:waypoint x="2135" y="290" />
@@ -1854,10 +1929,6 @@ Note: the workflow process should continue its execution as a regular reassessme
           <dc:Bounds x="1922" y="334" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_0xk4tav" bpmnElement="Flow_0joyxdn">
-        <di:waypoint x="2025" y="250" />
-        <di:waypoint x="2056" y="250" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0wuxwbg" bpmnElement="pir-not-completed-flow">
         <di:waypoint x="1920" y="269" />
         <di:waypoint x="1920" y="250" />
@@ -1866,33 +1937,13 @@ Note: the workflow process should continue its execution as a regular reassessme
           <dc:Bounds x="1924" y="233" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_0vt8krb" bpmnElement="Flow_1ds5r8m">
-        <di:waypoint x="2000" y="225" />
-        <di:waypoint x="2000" y="206" />
-        <di:waypoint x="1899" y="206" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_1vq41fx" bpmnElement="Flow_1sze0w6">
-        <di:waypoint x="1863" y="206" />
-        <di:waypoint x="1810" y="206" />
-        <di:waypoint x="1810" y="254" />
+      <bpmndi:BPMNEdge id="BPMNEdge_0xk4tav" bpmnElement="Flow_0joyxdn">
+        <di:waypoint x="2025" y="250" />
+        <di:waypoint x="2056" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_19h509o" bpmnElement="Flow_0guy66a">
         <di:waypoint x="1860" y="294" />
         <di:waypoint x="1895" y="294" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0olapnp_di" bpmnElement="pir-default-flow">
-        <di:waypoint x="1628" y="395" />
-        <di:waypoint x="1628" y="360" />
-        <di:waypoint x="1675" y="360" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1624" y="245" width="39" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1w8k6d4_di" bpmnElement="Flow_1w8k6d4">
-        <di:waypoint x="2395" y="420" />
-        <di:waypoint x="2520" y="420" />
-        <di:waypoint x="2520" y="722" />
-        <di:waypoint x="2565" y="722" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1bbg6qj_di" bpmnElement="change-in-progress-no-pir-required-flow">
         <di:waypoint x="1628" y="445" />
@@ -1903,14 +1954,22 @@ Note: the workflow process should continue its execution as a regular reassessme
           <dc:Bounds x="1629" y="506" width="62" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1a6d3cc_di" bpmnElement="Association_1a6d3cc">
-        <di:waypoint x="1999" y="500" />
-        <di:waypoint x="1928" y="520" />
+      <bpmndi:BPMNEdge id="Flow_0jltxxn_di" bpmnElement="Flow_0jltxxn">
+        <di:waypoint x="3110" y="1200" />
+        <di:waypoint x="3162" y="1200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0puhcea_di" bpmnElement="Flow_0puhcea">
+        <di:waypoint x="1297" y="900" />
+        <di:waypoint x="1297" y="952" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jivtff_di" bpmnElement="Flow_0jivtff">
+        <di:waypoint x="2384" y="206" />
+        <di:waypoint x="2422" y="206" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_1k2osho_di" bpmnElement="Group_1k2osho">
-        <dc:Bounds x="1590" y="130" width="820" height="480" />
+        <dc:Bounds x="1590" y="130" width="900" height="480" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1967" y="137" width="70" height="40" />
+          <dc:Bounds x="2007" y="137" width="71" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0vf0jbr" bpmnElement="Group_19tqt3y">
@@ -1953,26 +2012,30 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="2920" y="1300" width="481" height="70" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
-        <di:waypoint x="2120" y="1754" />
-        <di:waypoint x="2088" y="1763" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0q68x7e_di" bpmnElement="TextAnnotation_0q68x7e">
+        <dc:Bounds x="1860" y="520" width="340" height="40" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">
         <di:waypoint x="2860" y="1251" />
         <di:waypoint x="2933" y="1300" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
-        <di:waypoint x="2980" y="1027" />
-        <di:waypoint x="2879" y="1074" />
+      <bpmndi:BPMNEdge id="Association_1a6d3cc_di" bpmnElement="Association_1a6d3cc">
+        <di:waypoint x="1999" y="500" />
+        <di:waypoint x="1928" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
+        <di:waypoint x="2120" y="1754" />
+        <di:waypoint x="2088" y="1763" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
         <di:waypoint x="2980" y="916" />
         <di:waypoint x="2920" y="944" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0q68x7e_di" bpmnElement="TextAnnotation_0q68x7e">
-        <dc:Bounds x="1860" y="520" width="340" height="40" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
+        <di:waypoint x="2980" y="1027" />
+        <di:waypoint x="2879" y="1074" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
