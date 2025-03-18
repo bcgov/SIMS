@@ -59,20 +59,6 @@ describe("CASInvoiceAESTController(e2e)-updateInvoiceToResolved", () => {
               effectiveAmount: 150,
             },
           ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "SBSD",
-            300,
-            {
-              effectiveAmount: 250,
-            },
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCTotalGrant,
-            "BCSG",
-            500,
-            { effectiveAmount: 400 },
-          ),
         ],
       },
       {

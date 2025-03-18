@@ -23,7 +23,7 @@ import {
 } from "@sims/sims-db";
 import { CASInvoiceAPIOutDTO } from "apps/api/src/route-controllers/cas-invoice/models/cas-invoice.dto";
 import { addDays } from "@sims/utilities";
-import { Between } from "typeorm";
+import { Between, In } from "typeorm";
 
 /**
  * Use a period that will never be reached to delete all existing invoice batches
@@ -55,11 +55,10 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
         ),
       },
     });
-    for (const invoice of invoicesToDelete) {
-      await db.casInvoiceDetail.delete({
-        casInvoice: invoice,
-      });
-    }
+    const invoiceIDsToDelete = invoicesToDelete.map((invoice) => invoice.id);
+    await db.casInvoiceDetail.delete({
+      casInvoice: In(invoiceIDsToDelete),
+    });
     await db.casInvoice.delete({
       invoiceStatusUpdatedOn: Between(
         CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE,
@@ -76,7 +75,7 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
         creator: systemUsersService.systemUser,
       }),
     );
-    // Creates part-time application with receipts, and invoices details.
+    // Creates Part-time application with receipts, and invoices details.
     const casInvoice = await saveFakeInvoiceIntoBatchWithInvoiceDetails(
       db,
       {
@@ -91,20 +90,6 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
             {
               effectiveAmount: 150,
             },
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "SBSD",
-            300,
-            {
-              effectiveAmount: 250,
-            },
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCTotalGrant,
-            "BCSG",
-            500,
-            { effectiveAmount: 400 },
           ),
         ],
       },
