@@ -721,7 +721,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         },
       },
     );
-    // Monitor the assessImpactedApplicationReassessmentNeeded to ensure that it will not be called.
+    // Monitor the below methods to ensure that they won't be called.
     const assessImpactedApplicationReassessmentNeededMock = jest.spyOn(
       assessmentSequentialProcessingService,
       "assessImpactedApplicationReassessmentNeeded",

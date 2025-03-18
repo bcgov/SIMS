@@ -298,7 +298,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   async updateAssessmentWrapUpData(
     assessmentId: number,
     entityManager: EntityManager,
-    options: { workflowData?: WorkflowData },
+    options?: { workflowData?: WorkflowData },
   ): Promise<boolean> {
     const studentAssessmentRepo =
       entityManager.getRepository(StudentAssessment);
