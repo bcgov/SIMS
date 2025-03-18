@@ -58,6 +58,7 @@ export function createFakeCASInvoiceBatch(
  * @param options optional parameters to customize the invoice.
  * - `offeringIntensity` offering intensity for the invoice.
  * - `casSupplierInitialValues` initial values for the CAS supplier.
+ * - `casInvoiceInitialValue` initial values for the CAS invoice.
  * @returns CAS invoice created and associated with the batch.
  */
 export async function saveFakeInvoiceIntoBatchWithInvoiceDetails(
@@ -70,6 +71,7 @@ export async function saveFakeInvoiceIntoBatchWithInvoiceDetails(
   options?: {
     offeringIntensity?: OfferingIntensity;
     casSupplierInitialValues?: Partial<CASSupplier>;
+    casInvoiceInitialValues?: Partial<CASInvoice>;
   },
 ): Promise<CASInvoice> {
   // Create a valid supplier. If not valid an invoice would not be created.
@@ -99,11 +101,17 @@ export async function saveFakeInvoiceIntoBatchWithInvoiceDetails(
     );
 
   // Create invoice and its details associated with th batch
-  const createdInvoice = await saveFakeInvoiceFromDisbursementReceipt(db, {
-    casInvoiceBatch: relations.casInvoiceBatch,
-    creator: relations.creator,
-    provincialDisbursementReceipt,
-    casSupplier,
-  });
+  const createdInvoice = await saveFakeInvoiceFromDisbursementReceipt(
+    db,
+    {
+      casInvoiceBatch: relations.casInvoiceBatch,
+      creator: relations.creator,
+      provincialDisbursementReceipt,
+      casSupplier,
+    },
+    {
+      casInvoiceInitialValues: options?.casInvoiceInitialValues,
+    },
+  );
   return createdInvoice;
 }
