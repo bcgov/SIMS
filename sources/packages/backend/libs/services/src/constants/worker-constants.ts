@@ -5,6 +5,7 @@ export enum Workers {
   CreateIncomeRequest = "create-income-request",
   CheckIncomeRequest = "check-income-request",
   UpdateApplicationStatus = "update-application-status",
+  ApplicationChangeRequestApproval = "application-change-request-approval",
   LoadAssessmentConsolidatedData = "load-assessment-consolidated-data",
   UpdateNOAStatus = "update-noa-status",
   SaveAssessmentData = "save-assessment-data",

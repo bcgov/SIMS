@@ -407,6 +407,19 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   applicationEditStatusNote?: Note;
+
+  /**
+   * Application versions that were created from this application
+   * if the application is the parent application.
+   */
+  @OneToMany(
+    () => Application,
+    (versionApplication) => versionApplication.parentApplication,
+    {
+      nullable: false,
+    },
+  )
+  versions: Application[];
 }
 
 /**

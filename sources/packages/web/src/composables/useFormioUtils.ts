@@ -2,6 +2,8 @@ import { FormIOComponent, FormIOForm } from "@/types";
 import { ClassConstructor, plainToClass } from "class-transformer";
 import { Utils } from "@formio/js";
 
+const UTILS_COMMON_OBJECT_NAME = "custom";
+
 /**
  * Form.IO helper methods.
  */
@@ -241,6 +243,24 @@ export function useFormioUtils() {
     return plainToClass(type, plainObject, { excludeExtraneousValues: true });
   };
 
+  /**
+   * Registers a custom utility method with a specified name in the Form.IO Utils object.
+   * If the custom utils object does not exist, it is initialized.
+   * @param name name to register the method under.
+   * @param method function to be registered as a utility method.
+   */
+  const registerUtilsMethod = (
+    name: string,
+    method: (...args: any[]) => unknown,
+  ) => {
+    let customUtils = Utils[UTILS_COMMON_OBJECT_NAME];
+    if (!customUtils) {
+      customUtils = {};
+      Utils[UTILS_COMMON_OBJECT_NAME] = customUtils;
+    }
+    customUtils[name] = method;
+  };
+
   return {
     getComponent,
     getFirstComponent,
@@ -257,5 +277,6 @@ export function useFormioUtils() {
     checkFormioValidity,
     excludeExtraneousValues,
     searchByKey,
+    registerUtilsMethod,
   };
 }

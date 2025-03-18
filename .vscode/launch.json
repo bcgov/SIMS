@@ -68,10 +68,11 @@
       "name": "API - Current test file",
       "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
       "args": [
-        "./${fileBasenameNoExtension}",
         "--runInBand",
         "--config",
         "./sources/packages/backend/apps/api/test/jest-e2e.json",
+        "--runTestsByPath",
+        "${relativeFile}",
         "--forceExit"
       ],
       "console": "integratedTerminal",
@@ -113,10 +114,11 @@
       "name": "Workers - Current test file",
       "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
       "args": [
-        "./${fileBasenameNoExtension}",
         "--runInBand",
         "--config",
         "./sources/packages/backend/apps/workers/test/jest-e2e.json",
+        "--runTestsByPath",
+        "${relativeFile}",
         "--forceExit"
       ],
       "console": "integratedTerminal",
@@ -158,10 +160,11 @@
       "name": "Queue Consumers - Current test file",
       "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
       "args": [
-        "./${fileBasenameNoExtension}",
         "--runInBand",
         "--config",
         "./sources/packages/backend/apps/queue-consumers/test/jest-e2e.json",
+        "--runTestsByPath",
+        "${relativeFile}",
         "--forceExit"
       ],
       "console": "integratedTerminal",
@@ -203,10 +206,11 @@
       "name": "Workflow - Current test file",
       "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
       "args": [
-        "./${fileBasenameNoExtension}",
         "--runInBand",
         "--config",
         "./sources/packages/backend/workflow/test/jest-e2e.json",
+        "--runTestsByPath",
+        "${relativeFile}",
         "--forceExit"
       ],
       "console": "integratedTerminal",
@@ -248,10 +252,11 @@
       "name": "Unit tests - Current test file",
       "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
       "args": [
-        "./${fileBasenameNoExtension}",
         "--runInBand",
         "--config",
         "./sources/packages/backend/jest-unit-tests.json",
+        "--runTestsByPath",
+        "${relativeFile}",
         "--forceExit"
       ],
       "console": "integratedTerminal",
