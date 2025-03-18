@@ -272,7 +272,7 @@ export class AssessmentController {
       );
       // The updateAssessmentStatusAndSaveWorkflowData and assessImpactedApplicationReassessmentNeeded are executed in the same transaction
       // to force then to be successfully executed together or to fail together. In this way the worker can be safely retried from Camunda.
-      const completeImmediately = await this.dataSource.transaction(
+      const jobActionAcknowledgement = await this.dataSource.transaction(
         async (entityManager) => {
           // Update status and workflow data ensuring that it will be updated only for the first time to ensure the worker idempotency.
           const updated =
@@ -287,13 +287,13 @@ export class AssessmentController {
               "Assessment status and workflow data were already updated. This indicates that the worker " +
                 "was invoked multiple times and it was already executed with success.",
             );
-            return true;
+            return job.complete();
           }
           if (
             job.customHeaders.wrapUpType ===
             WorkflowWrapUpType.AssessmentStatusOnly
           ) {
-            return true;
+            return job.complete();
           }
           const application = assessment.application;
           // Previous date change reported assessments can only exist for completed applications
@@ -322,12 +322,11 @@ export class AssessmentController {
               `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
             );
           }
-          return false;
         },
       );
-      if (completeImmediately) {
-        // If the job left the transaction early returning true, then the job is considered completed.
-        return job.complete();
+      if (jobActionAcknowledgement) {
+        // If there is a job result to be returned, the worker should finalize its processing.
+        return jobActionAcknowledgement;
       }
       const studentId = assessment.application.student.id;
       const programYearId = assessment.application.programYear.id;
