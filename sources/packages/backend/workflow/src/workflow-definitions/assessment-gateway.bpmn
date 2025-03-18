@@ -89,12 +89,12 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:flowNodeRef>program-info-request-completed-message</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>pir-change-request-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_04uphc0</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_15nmb01</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>change-request-workflow-wrap-up-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>minitry-approval-change-declined-end-event</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>application-exception-end-event</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0zwppeg</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exceptions-workflow-wrap-up-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>pir-declined-end-event</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_17dwbpv</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>pir-workflow-wrap-up-task</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1bfd2e9" name="Assessment/reassessment calculation">
         <bpmn:flowNodeRef>verify-assessment-calculation-timer</bpmn:flowNodeRef>
@@ -839,7 +839,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:sequenceFlow id="Flow_0mt0uyq" sourceRef="workflow-wrap-up-task" targetRef="Event_0mtgfbi" />
     <bpmn:sequenceFlow id="Flow_1a4wzic" name="Does Not Have NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-application-status-to-assessment-task" />
     <bpmn:sequenceFlow id="Flow_0mayggl" sourceRef="update-application-status-to-assessment-task" targetRef="update-noa-status-to-required-task" />
-    <bpmn:sequenceFlow id="verify-application-exceptions-status-denied-flow" name="Declined" sourceRef="verify-application-exceptions-status-gateway" targetRef="Activity_0zwppeg">
+    <bpmn:sequenceFlow id="verify-application-exceptions-status-denied-flow" name="Declined" sourceRef="verify-application-exceptions-status-gateway" targetRef="exceptions-workflow-wrap-up-task">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Declined"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_10lg2ud" sourceRef="verify-application-exceptions-pending-gateway" targetRef="verify-application-exceptions-retry-timer" />
@@ -883,7 +883,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-message-flow" sourceRef="minitry-approval-change-in-progress-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-message" />
     <bpmn:sequenceFlow id="minitry-approval-change-in-progress-decision-made-flow" name="No longer pending" sourceRef="minitry-approval-change-in-progress-still-pending-gateway" targetRef="minitry-approval-change-request-assessed-gateway" />
     <bpmn:sequenceFlow id="minitry-approval-change-in-progress-message-received-flow" sourceRef="minitry-approval-change-in-progress-pending-message" targetRef="minitry-approval-change-request-assessed-gateway" />
-    <bpmn:sequenceFlow id="change-declined-flow" name="Change declined or cancelled" sourceRef="minitry-approval-change-request-assessed-gateway" targetRef="Activity_15nmb01">
+    <bpmn:sequenceFlow id="change-declined-flow" name="Change declined or cancelled" sourceRef="minitry-approval-change-request-assessed-gateway" targetRef="change-request-workflow-wrap-up-task">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=list contains([
   "Change declined",
   "Change cancelled"
@@ -891,7 +891,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1ds5r8m" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-timer" />
     <bpmn:sequenceFlow id="Flow_1sze0w6" sourceRef="program-info-request-timer" targetRef="program-info-required-task" />
-    <bpmn:sequenceFlow id="pir-pending-declined-flow" name="Declined" sourceRef="pir-pending-declined-complted-gateway" targetRef="Activity_17dwbpv">
+    <bpmn:sequenceFlow id="pir-pending-declined-flow" name="Declined" sourceRef="pir-pending-declined-complted-gateway" targetRef="pir-workflow-wrap-up-task">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Declined"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="pir-pending-completed-flow" name="Completed" sourceRef="pir-pending-declined-complted-gateway" targetRef="Gateway_1hgcddi">
@@ -919,8 +919,8 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:sequenceFlow id="change-in-progress-no-pir-required-flow" name="Change is in progress" sourceRef="pir-change-request-gateway" targetRef="Gateway_04uphc0">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Change in progress"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0jltxxn" sourceRef="Activity_15nmb01" targetRef="minitry-approval-change-declined-end-event" />
-    <bpmn:serviceTask id="Activity_15nmb01" name="Workflow wrap up (Assessment status only)">
+    <bpmn:sequenceFlow id="Flow_0jltxxn" sourceRef="change-request-workflow-wrap-up-task" targetRef="minitry-approval-change-declined-end-event" />
+    <bpmn:serviceTask id="change-request-workflow-wrap-up-task" name="Workflow wrap up (Assessment status only)">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="workflow-wrap-up" />
         <zeebe:taskHeaders>
@@ -936,7 +936,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:endEvent id="application-exception-end-event">
       <bpmn:incoming>Flow_0puhcea</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Activity_0zwppeg" name="Workflow wrap up (Assessment status only)">
+    <bpmn:serviceTask id="exceptions-workflow-wrap-up-task" name="Workflow wrap up (Assessment status only)">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="workflow-wrap-up" />
         <zeebe:taskHeaders>
@@ -946,12 +946,12 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>verify-application-exceptions-status-denied-flow</bpmn:incoming>
       <bpmn:outgoing>Flow_0puhcea</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_0puhcea" sourceRef="Activity_0zwppeg" targetRef="application-exception-end-event" />
-    <bpmn:sequenceFlow id="Flow_0jivtff" sourceRef="Activity_17dwbpv" targetRef="pir-declined-end-event" />
+    <bpmn:sequenceFlow id="Flow_0puhcea" sourceRef="exceptions-workflow-wrap-up-task" targetRef="application-exception-end-event" />
+    <bpmn:sequenceFlow id="Flow_0jivtff" sourceRef="pir-workflow-wrap-up-task" targetRef="pir-declined-end-event" />
     <bpmn:endEvent id="pir-declined-end-event">
       <bpmn:incoming>Flow_0jivtff</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:serviceTask id="Activity_17dwbpv" name="Workflow wrap up (Assessment status only)">
+    <bpmn:serviceTask id="pir-workflow-wrap-up-task" name="Workflow wrap up (Assessment status only)">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="workflow-wrap-up" />
         <zeebe:taskHeaders>
@@ -1313,7 +1313,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmndi:BPMNShape id="Gateway_04uphc0_di" bpmnElement="Gateway_04uphc0" isMarkerVisible="true">
         <dc:Bounds x="2345" y="395" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_07n5f2c" bpmnElement="Activity_15nmb01" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+      <bpmndi:BPMNShape id="BPMNShape_07n5f2c" bpmnElement="change-request-workflow-wrap-up-task" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="3010" y="1160" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -1323,14 +1323,14 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmndi:BPMNShape id="Event_016am96_di" bpmnElement="application-exception-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="1279" y="952" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_11pvkh4" bpmnElement="Activity_0zwppeg" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+      <bpmndi:BPMNShape id="BPMNShape_11pvkh4" bpmnElement="exceptions-workflow-wrap-up-task" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="1247" y="820" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1sbole4_di" bpmnElement="pir-declined-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="2422" y="188" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1sv8y9e" bpmnElement="Activity_17dwbpv" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+      <bpmndi:BPMNShape id="BPMNShape_1sv8y9e" bpmnElement="pir-workflow-wrap-up-task" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="2284" y="166" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
