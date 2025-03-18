@@ -40,6 +40,11 @@
               >{{ item.applicationName }}
             </span>
           </template>
+          <template #[`item.submitted`]="{ item }">
+            {{
+              emptyStringFiller(getISODateHourMinuteString(item.submittedDate))
+            }}
+          </template>
           <template #[`item.studyStartPeriod`]="{ item }">
             {{ dateOnlyLongString(item.studyStartPeriod) }} -
             {{ dateOnlyLongString(item.studyEndPeriod) }}
@@ -151,7 +156,11 @@ export default defineComponent({
     const applicationsAndCount = ref(
       {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
     );
-    const { dateOnlyLongString } = useFormatters();
+    const {
+      dateOnlyLongString,
+      getISODateHourMinuteString,
+      emptyStringFiller,
+    } = useFormatters();
     const store = useStore();
 
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
@@ -213,6 +222,8 @@ export default defineComponent({
 
     return {
       dateOnlyLongString,
+      getISODateHourMinuteString,
+      emptyStringFiller,
       ApplicationStatus,
       applicationsAndCount,
       DEFAULT_PAGE_LIMIT,

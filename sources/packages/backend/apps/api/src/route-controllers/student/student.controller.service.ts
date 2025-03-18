@@ -363,6 +363,7 @@ export class StudentControllerService {
       submitted: application.currentAssessment?.submittedDate,
       status: application.applicationStatus,
       parentApplicationId: application.parentApplication.id,
+      submittedDate: application.parentApplication.submittedDate,
     };
   };
 

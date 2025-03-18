@@ -214,6 +214,7 @@ export class ApplicationSummaryAPIOutDTO {
   submitted?: Date;
   status: ApplicationStatus;
   parentApplicationId: number;
+  submittedDate?: Date;
 }
 
 /**
