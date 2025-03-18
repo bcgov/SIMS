@@ -470,7 +470,6 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="workflow-wrap-up" />
         <zeebe:ioMapping>
-          <zeebe:input source="=assessmentId" target="assessmentId" />
           <zeebe:input source="=workflowData" target="workflowData" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
