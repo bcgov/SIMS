@@ -142,6 +142,7 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
             10,
             CAS_INVOICE_STATUS_LAST_UPDATED_ON_START_DATE,
           ),
+          errors: ["Error 1", "Error 2"],
         },
       },
     );
@@ -183,7 +184,7 @@ describe("CASInvoiceAESTController(e2e)-getInvoices", () => {
         supplierNumber: fourthInvoice.casSupplier.supplierNumber,
       },
       {
-        errors: null,
+        errors: thirdInvoice.errors,
         id: thirdInvoice.id,
         invoiceBatchName: thirdInvoice.casInvoiceBatch.batchName,
         invoiceNumber: thirdInvoice.invoiceNumber,

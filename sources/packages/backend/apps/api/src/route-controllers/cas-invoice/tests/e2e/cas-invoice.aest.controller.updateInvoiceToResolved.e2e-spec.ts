@@ -43,7 +43,7 @@ describe("CASInvoiceAESTController(e2e)-updateInvoiceToResolved", () => {
         creator: systemUsersService.systemUser,
       }),
     );
-    // Creates part-time application with receipts, and invoices details.
+    // Creates Part-time application with receipts, and invoices details.
     const casInvoice = await saveFakeInvoiceIntoBatchWithInvoiceDetails(
       db,
       {
@@ -67,10 +67,11 @@ describe("CASInvoiceAESTController(e2e)-updateInvoiceToResolved", () => {
           supplierStatus: SupplierStatus.VerifiedManually,
           supplierNumber: "222222",
         },
+        casInvoiceInitialValues: {
+          invoiceStatus: CASInvoiceStatus.ManualIntervention,
+        },
       },
     );
-    casInvoice.invoiceStatus = CASInvoiceStatus.ManualIntervention;
-    await db.casInvoice.save(casInvoice);
     const endpoint = `/aest/cas-invoice/${casInvoice.id}/resolve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -86,7 +87,6 @@ describe("CASInvoiceAESTController(e2e)-updateInvoiceToResolved", () => {
         invoiceNumber: true,
         invoiceStatus: true,
         invoiceStatusUpdatedBy: { id: true },
-        invoiceStatusUpdatedOn: true,
       },
       relations: { invoiceStatusUpdatedBy: true },
       where: { id: casInvoice.id },
@@ -100,13 +100,65 @@ describe("CASInvoiceAESTController(e2e)-updateInvoiceToResolved", () => {
       invoiceNumber: casInvoice.invoiceNumber,
       invoiceStatus: CASInvoiceStatus.Resolved,
       invoiceStatusUpdatedBy: { id: invoiceStatusUpdatedBy.id } as User,
-      invoiceStatusUpdatedOn: updatedCASInvoice.invoiceStatusUpdatedOn,
     });
   });
 
   it("Should throw a HttpStatus Not Found (404) error when the CAS invoice to resolve doesn't exist.", async () => {
     // Arrange
     const endpoint = "/aest/cas-invoice/99999999/resolve";
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send()
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: "CAS invoice not found.",
+        error: "Not Found",
+      });
+  });
+
+  it(`Should throw a HttpStatus Not Found (404) error when the CAS invoice to resolve does not have the expected ${CASInvoiceStatus.ManualIntervention} status.`, async () => {
+    // Arrange
+    // Create CAS invoice batch.
+    const casInvoiceBatch = await db.casInvoiceBatch.save(
+      createFakeCASInvoiceBatch({
+        creator: systemUsersService.systemUser,
+      }),
+    );
+    // Creates Part-time application with receipts, and invoices details.
+    const casInvoice = await saveFakeInvoiceIntoBatchWithInvoiceDetails(
+      db,
+      {
+        casInvoiceBatch,
+        creator: systemUsersService.systemUser,
+        // Part-time BC grants.
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BCAG",
+            200,
+            {
+              effectiveAmount: 150,
+            },
+          ),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        casSupplierInitialValues: {
+          supplierStatus: SupplierStatus.VerifiedManually,
+          supplierNumber: "222222",
+        },
+        casInvoiceInitialValues: {
+          invoiceStatus: CASInvoiceStatus.Sent,
+        },
+      },
+    );
+    const endpoint = `/aest/cas-invoice/${casInvoice.id}/resolve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
