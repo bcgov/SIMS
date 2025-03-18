@@ -173,7 +173,7 @@ export enum WorkflowWrapUpType {
    * Executes all wrap-up operations, setting the assessment status to completed and
    * executing other processes related to sequential processing.
    */
-  CompleteWrapUp = "Complete wrap-up",
+  CompleteWrapUp = "Complete",
 }
 
 export interface WorkflowWrapUpJobHeaderDTO {

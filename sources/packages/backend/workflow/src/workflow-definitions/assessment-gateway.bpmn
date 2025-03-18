@@ -473,7 +473,7 @@ Note: the workflow process should continue its execution as a regular reassessme
           <zeebe:input source="=workflowData" target="workflowData" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="wrapUpType" value="Complete wrap-up" />
+          <zeebe:header key="wrapUpType" value="Complete" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0rkzx2d</bpmn:incoming>
