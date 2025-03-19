@@ -27,18 +27,14 @@
           </template>
           <template #[`item.applicationName`]="{ item }">
             <v-btn
-              v-if="enableViewApplicationOnName"
               variant="plain"
               @click="$emit('goToApplication', item.id)"
               color="primary"
               >{{ item.applicationName }}
               <v-tooltip activator="parent" location="start"
-                >Click To View this Application</v-tooltip
+                >Click to view this application</v-tooltip
               >
             </v-btn>
-            <span v-if="!enableViewApplicationOnName"
-              >{{ item.applicationName }}
-            </span>
           </template>
           <template #[`item.submitted`]="{ item }">
             {{
@@ -50,51 +46,40 @@
             {{ dateOnlyLongString(item.studyEndPeriod) }}
           </template>
           <template #[`item.status`]="{ item }">
-            <status-chip-application
-              :status="item.status as ApplicationStatus"
-            />
+            <status-chip-application :status="item.status" />
           </template>
           <template #[`item.actions`]="{ item }">
-            <span v-if="manageApplication">
-              <span
-                v-if="
-                  !(
-                    item.status === ApplicationStatus.Cancelled ||
-                    item.status === ApplicationStatus.Completed
-                  )
-                "
-              >
-                <v-btn
-                  :disabled="sinValidStatus !== SINStatusEnum.VALID"
-                  variant="plain"
-                  color="primary"
-                  class="label-bold"
-                  @click="$emit('editApplicationAction', item.status, item.id)"
-                  append-icon="mdi-pencil-outline"
-                  ><span class="label-bold">Edit</span>
-                  <v-tooltip activator="parent" location="start"
-                    >Click To Edit this Application</v-tooltip
-                  >
-                </v-btn>
-                <v-btn
-                  :disabled="sinValidStatus !== SINStatusEnum.VALID"
-                  variant="plain"
-                  color="primary"
-                  class="label-bold"
-                  @click="emitCancel(item.id)"
-                  ><span class="label-bold">Cancel</span>
-                  <v-tooltip activator="parent" location="start"
-                    >Click To Cancel this Application</v-tooltip
-                  >
-                </v-btn>
-              </span>
-            </span>
-            <span v-if="enableViewApplication">
+            <span
+              v-if="
+                !(
+                  item.status === ApplicationStatus.Cancelled ||
+                  item.status === ApplicationStatus.Completed
+                )
+              "
+            >
               <v-btn
-                variant="outlined"
-                @click="$emit('goToApplication', item.id)"
-                >View</v-btn
-              >
+                :disabled="!hasSINValidStatus"
+                variant="plain"
+                color="primary"
+                class="label-bold"
+                @click="$emit('editApplicationAction', item.status, item.id)"
+                append-icon="mdi-pencil-outline"
+                ><span class="label-bold">Edit</span>
+                <v-tooltip activator="parent" location="start"
+                  >Click to edit this application</v-tooltip
+                >
+              </v-btn>
+              <v-btn
+                :disabled="!hasSINValidStatus"
+                variant="plain"
+                color="primary"
+                class="label-bold"
+                @click="emitCancel(item.id)"
+                ><span class="label-bold">Cancel</span>
+                <v-tooltip activator="parent" location="start"
+                  >Click to cancel this application</v-tooltip
+                >
+              </v-btn>
             </span>
           </template>
         </v-data-table-server>
@@ -134,21 +119,6 @@ export default defineComponent({
       type: Number,
       required: false,
     },
-    enableViewApplication: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    manageApplication: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    enableViewApplicationOnName: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
   },
   setup(props, { emit }) {
     const loading = ref(false);
@@ -171,8 +141,9 @@ export default defineComponent({
       sortOrder: DataTableSortOrder.DESC,
     });
 
-    const sinValidStatus = computed(
-      () => store.state.student.sinValidStatus.sinStatus,
+    const hasSINValidStatus = computed(
+      () =>
+        store.state.student.sinValidStatus.sinStatus === SINStatusEnum.VALID,
     );
 
     const getStudentApplications = async () => {
@@ -230,9 +201,7 @@ export default defineComponent({
       ITEMS_PER_PAGE,
       loading,
       StudentApplicationFields,
-      reloadApplications,
-      SINStatusEnum,
-      sinValidStatus,
+      hasSINValidStatus,
       emitCancel,
       StudentApplicationsExtendedSummaryHeaders,
       isMobile,

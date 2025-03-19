@@ -77,7 +77,11 @@ import { useDisplay } from "vuetify";
 
 export default defineComponent({
   components: { StatusChipApplication },
-  emits: ["goToApplication"],
+  emits: {
+    goToApplication: (applicationId: number) => {
+      return !!applicationId && applicationId > 0;
+    },
+  },
   props: {
     studentId: {
       type: Number,
@@ -95,7 +99,6 @@ export default defineComponent({
       dateOnlyLongPeriodString,
       emptyStringFiller,
     } = useFormatters();
-
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
     const currentPagination = ref<PaginationOptions>({
       page: 1,
@@ -120,7 +123,7 @@ export default defineComponent({
       }
     };
 
-    onMounted(() => getStudentApplications());
+    onMounted(getStudentApplications);
 
     const paginationAndSortEvent = async (event: DataTableOptions) => {
       currentPagination.value.page = event.page;
