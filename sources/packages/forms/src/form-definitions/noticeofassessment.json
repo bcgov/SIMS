@@ -9437,7 +9437,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bcsg, '(Not eligible)');",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1sbsd, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -9531,7 +9531,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bcsg ? parseFloat(data.disbursement?.disbursement1bcsg) : 0) +(data.disbursement?.disbursement2bcsg ? parseFloat(data.disbursement?.disbursement2bcsg) : 0));",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement?.disbursement1sbsd) : 0) +(data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement?.disbursement2sbsd) : 0));",
                             "isNew": false
                           }
                         ]

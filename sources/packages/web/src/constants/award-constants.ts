@@ -12,7 +12,6 @@ export enum FullTimeAwardTypes {
   CSGP = "CSGP",
   CSGD = "CSGD",
   CSGF = "CSGF",
-  CSGT = "CSGT",
   BCSL = "BCSL",
   BCAG = "BCAG",
   BGPD = "BGPD",
