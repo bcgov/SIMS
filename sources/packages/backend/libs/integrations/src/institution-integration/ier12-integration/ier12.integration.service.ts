@@ -47,8 +47,9 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.assessmentId = ierRecord.assessmentId;
       ierFileDetail.disbursementId = ierRecord.disbursementId;
       ierFileDetail.applicationNumber = ierRecord.applicationNumber;
-      ierFileDetail.applicationDisabilityStatusFlag =
-        ierRecord.applicationPDStatus ? YNFlag.Y : YNFlag.N;
+      ierFileDetail.applicationDisabilityStatusFlag = this.convertToYNFlag(
+        ierRecord.applicationPDStatus,
+      );
       ierFileDetail.institutionStudentNumber =
         ierRecord.institutionStudentNumber;
       ierFileDetail.sin = ierRecord.sin;
