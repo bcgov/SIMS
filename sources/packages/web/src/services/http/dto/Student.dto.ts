@@ -2,6 +2,7 @@ import {
   FileOriginType,
   DisabilityStatus,
   SpecificIdentityProviders,
+  ApplicationStatus,
 } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { AddressDetailsFormAPIDTO } from "./Common.dto";
@@ -143,7 +144,7 @@ export interface ApplicationSummaryAPIOutDTO {
   id: number;
   applicationName: string;
   submitted?: Date;
-  status: string;
+  status: ApplicationStatus;
   parentApplicationId: number;
   submittedDate?: Date;
 }

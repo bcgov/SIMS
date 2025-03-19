@@ -9,7 +9,7 @@
     </template>
     <v-row>
       <v-col cols="12" :class="{ 'pa-0': isMobile }">
-        <student-applications
+        <student-applications-extended-summary
           :manage-application="true"
           :enable-view-application-on-name="true"
           :dense="isMobile"
@@ -27,7 +27,7 @@
 import { ref, defineComponent } from "vue";
 import StartApplication from "@/views/student/financial-aid-application/Applications.vue";
 import { ApplicationStatus } from "@/types";
-import StudentApplications from "@/components/common/students/StudentApplications.vue";
+import StudentApplicationsExtendedSummary from "@/components/students/StudentApplicationsExtendedSummary.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -39,7 +39,7 @@ import { useDisplay } from "vuetify";
 export default defineComponent({
   components: {
     StartApplication,
-    StudentApplications,
+    StudentApplicationsExtendedSummary,
     ConfirmEditApplication,
     CancelApplication,
   },
