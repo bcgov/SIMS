@@ -7,6 +7,7 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
+import { InstitutionType } from "@sims/sims-db";
 
 describe("InstitutionAESTController(e2e)-createInstitution", () => {
   let app: INestApplication;
@@ -60,6 +61,7 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
       });
     const savedInstitution = await db.institution.findOne({
       where: { id: institutionId },
+      relations: { institutionType: true },
     });
     expect(savedInstitution).toEqual(
       expect.objectContaining({
@@ -82,7 +84,9 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
           lastName: payload.primaryContactLastName,
           phone: payload.primaryContactPhone,
         },
-        institutionTypeId: payload.institutionType,
+        institutionType: expect.objectContaining({
+          id: payload.institutionType,
+        } as InstitutionType),
         legalOperatingName: payload.legalOperatingName,
         operatingName: payload.operatingName,
         otherRegulatingBody: null,
