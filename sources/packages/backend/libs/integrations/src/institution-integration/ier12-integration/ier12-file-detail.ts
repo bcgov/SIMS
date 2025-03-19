@@ -86,30 +86,18 @@ export class IER12FileDetail implements IER12FileLine {
   dependantChildQuantity?: number;
   dependantChildInDaycareQuantity?: number;
   dependantInfantQuantity?: number;
-  // TODO: IER.
   dependantOtherQuantity?: number;
-  // TODO: IER.
   dependantPostSecondaryQuantity?: number;
-  // TODO: IER.
   totalDependantQuantity?: number;
-  // TODO: IER.
   familyMembersQuantity: number;
-  // TODO: IER.
   parent1Flag?: YNFlag;
-  // TODO: IER.
   parent2Flag?: YNFlag;
-  // TODO: IER.
   partnerFlag: YNFlag;
-  // TODO: IER.
   parentalAssets?: number;
-  // TODO: IER.
   parentalAssetsExpectedContribution?: number;
   parentalIncomeExpectedContribution?: number;
-  // TODO: IER.
   parentalVoluntaryContribution?: number;
-  // TODO: IER.
   parentalDiscretionaryIncome?: number;
-  // TODO: IER.
   parentalDiscretionaryAnnualIncomeFormulaResult?: number;
   studentLivingAtHomeFlag: YNFlag;
   // TODO: IER.

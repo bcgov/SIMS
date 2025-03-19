@@ -4,7 +4,6 @@ import { ConfigService } from "@sims/utilities/config";
 import { IER12FileDetail } from "./ier12-file-detail";
 import {
   ApplicationStatusCode,
-  DISCRETIONARY_INCOME_PERCENTAGE,
   IER12FileLine,
   IER12Record,
   IERAward,
@@ -183,6 +182,10 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.parentalAssetContribution
           ? combineDecimalPlaces(ierRecord.parentalAssetContribution)
           : 0;
+      ierFileDetail.parentalVoluntaryContribution =
+        ierRecord.parentalContribution
+          ? combineDecimalPlaces(ierRecord.parentalContribution)
+          : 0;
       ierFileDetail.parentalIncomeExpectedContribution =
         ierRecord.parentalContribution
           ? combineDecimalPlaces(ierRecord.parentalContribution)
@@ -192,11 +195,8 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
           ? combineDecimalPlaces(ierRecord.parentDiscretionaryIncome)
           : 0;
       ierFileDetail.parentalDiscretionaryAnnualIncomeFormulaResult =
-        ierRecord.parentDiscretionaryIncome
-          ? combineDecimalPlaces(
-              ierRecord.parentDiscretionaryIncome *
-                DISCRETIONARY_INCOME_PERCENTAGE,
-            )
+        ierRecord.parentalDiscretionaryContribution
+          ? combineDecimalPlaces(ierRecord.parentalDiscretionaryContribution)
           : 0;
       ierFileDetail.studentLivingAtHomeFlag = this.convertToYNFlag(
         ierRecord.studentLivingWithParents,

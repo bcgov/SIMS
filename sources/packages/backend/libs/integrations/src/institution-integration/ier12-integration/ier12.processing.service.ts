@@ -311,6 +311,8 @@ export class IER12ProcessingService {
         parentalContribution: workflowData.calculatedData.parentalContribution,
         parentDiscretionaryIncome:
           workflowData.calculatedData.parentDiscretionaryIncome,
+        parentalDiscretionaryContribution:
+          assessmentData.parentalDiscretionaryContribution,
         studentLivingWithParents:
           workflowData.studentData.livingWithParents === FormYesNoOptions.Yes,
         partnerStudentStudyWeeks:
