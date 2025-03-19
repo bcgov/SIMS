@@ -56,7 +56,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     testingModule = module;
   });
 
-  it.only("Should create an education program when valid data is passed.", async () => {
+  it("Should create an education program when valid data is passed.", async () => {
     // Arrange
     const sabcCode = `${faker.random.alpha({ count: 3 })}1`;
     const payload = getPayload(sabcCode);
