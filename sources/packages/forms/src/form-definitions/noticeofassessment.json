@@ -7342,13 +7342,13 @@
               "components": [
                 {
                   "label": "Table",
-                  "numRows": 11,
+                  "numRows": 9,
                   "numCols": 4,
                   "cloneRows": false,
                   "cellAlignment": "left",
                   "labelWidth": "",
                   "labelMargin": "",
-                  "customClass": "formio-bordered extra-small",
+                  "customClass": "flexible-width-formio-bordered extra-small",
                   "striped": false,
                   "bordered": false,
                   "hover": true,
@@ -7617,7 +7617,7 @@
                             "tag": "p",
                             "className": "",
                             "tags": [],
-                            "customConditional": ""
+                            "customConditional": "show = !!data.disbursement.disbursement2Date"
                           }
                         ]
                       },
@@ -7712,7 +7712,7 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Loan",
+                            "label": "Canada Student Loan (CSL)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -7723,7 +7723,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": " CSLF\r\n <span\r\n class=\"formio-custom-tooltip\">\r\n   <span class=\"tooltip-text\">\r\n    Canada Student Loan for Full-time Studies\r\n    </span>\r\n</span>",
+                            "content": "Canada Student Loan (CSL)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
@@ -7885,7 +7885,8 @@
                             "hideLabel": true,
                             "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2cslf, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "isNew": false,
+                            "customConditional": "show = !!data.disbursement.disbursement2Date"
                           }
                         ]
                       },
@@ -7942,7 +7943,7 @@
                       {
                         "components": [
                           {
-                            "label": "HTML",
+                            "label": "B.C. Student Loan (BCSL)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -7953,7 +7954,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": " BCSL\r\n <span\r\n class=\"formio-custom-tooltip\">\r\n   <span class=\"tooltip-text\">\r\n    B.C. Student Loan\r\n    </span>\r\n</span>",
+                            "content": "B.C. Student Loan (BCSL)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
@@ -8116,7 +8117,7 @@
                             "disabled": true,
                             "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bcsl, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "customConditional": "show = !!data.disbursement.disbursement2Date"
                           }
                         ]
                       },
@@ -8172,7 +8173,7 @@
                       {
                         "components": [
                           {
-                            "label": "CSGP",
+                            "label": "Canada Student Grant Program for Full-time Students (CSG-FT)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -8183,12 +8184,12 @@
                                 "value": ""
                               }
                             ],
-                            "content": "CSGP\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    Canada Student Grant for Student with Permanent Disability\n    </span>\n</span>",
+                            "content": "Canada Student Grant Program for Full-time Students (CSG-FT)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
                             "modalEdit": false,
-                            "key": "csgp",
+                            "key": "csgFt",
                             "tags": [],
                             "properties": {},
                             "conditional": {
@@ -8227,7 +8228,6 @@
                             "description": "",
                             "errorLabel": "",
                             "tooltip": "",
-                            "hideLabel": false,
                             "tabindex": "",
                             "disabled": false,
                             "autofocus": false,
@@ -8251,7 +8251,8 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "addons": [],
-                            "id": "efloic3333333333333333333333333333333333333333333333333"
+                            "id": "etkse9r55555555555555555555555555555555555555555555555",
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -8264,7 +8265,7 @@
                             "inputType": "text",
                             "inputMask": "",
                             "label": "Text",
-                            "key": "tableText22",
+                            "key": "tableText25",
                             "placeholder": "",
                             "prefix": "",
                             "suffix": "",
@@ -8294,12 +8295,10 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
-                            "mask": false,
                             "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgp, '(Not eligible)');",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgf, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -8312,7 +8311,7 @@
                             "inputType": "text",
                             "inputMask": "",
                             "label": "Text",
-                            "key": "tableText3",
+                            "key": "tableText5",
                             "placeholder": "",
                             "prefix": "",
                             "suffix": "",
@@ -8342,11 +8341,11 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgp, '(Not eligible)');",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgf, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "customConditional": "show = !!data.disbursement.disbursement2Date",
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -8359,7 +8358,7 @@
                             "inputType": "text",
                             "inputMask": "",
                             "label": "Text",
-                            "key": "tableText13",
+                            "key": "tableText15",
                             "placeholder": "",
                             "prefix": "",
                             "suffix": "",
@@ -8389,12 +8388,10 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
                             "customClass": "",
-                            "mask": false,
                             "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement?.disbursement1csgp) : 0) +(data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement?.disbursement2csgp) : 0));",
-                            "isNew": false
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgf ? parseFloat(data.disbursement?.disbursement1csgf) : 0) +(data.disbursement?.disbursement2csgf ? parseFloat(data.disbursement?.disbursement2csgf) : 0));",
+                            "hideLabel": true
                           }
                         ]
                       }
@@ -8403,7 +8400,7 @@
                       {
                         "components": [
                           {
-                            "label": "CSGD",
+                            "label": "Canada Student Grant for Persons with Dependents(CSG-FTDEP)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -8414,7 +8411,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "CSGD\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    Canada Student Grant for Students with Dependents\n    </span>\n</span>",
+                            "content": "Canada Student Grant for Persons with Dependents(CSG-FTDEP)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
@@ -8576,7 +8573,7 @@
                             "disabled": true,
                             "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgd, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "customConditional": "show = !!data.disbursement.disbursement2Date"
                           }
                         ]
                       },
@@ -8622,8 +8619,7 @@
                             "hideLabel": true,
                             "customClass": "",
                             "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement?.disbursement1csgd) : 0) +(data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement?.disbursement2csgd) : 0));",
-                            "isNew": false
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement?.disbursement1csgd) : 0) +(data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement?.disbursement2csgd) : 0));"
                           }
                         ]
                       }
@@ -8632,7 +8628,7 @@
                       {
                         "components": [
                           {
-                            "label": "CSG-FT",
+                            "label": "B.C. Access Grant for Full-Time Students (BCAG)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -8643,467 +8639,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "CSGF\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    Canada Student Grant for Full-time Studies\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "customClass": "",
-                            "hidden": false,
-                            "modalEdit": false,
-                            "key": "csgFt",
-                            "tags": [],
-                            "properties": {},
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": "",
-                              "json": ""
-                            },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
-                            "overlay": {
-                              "style": "",
-                              "page": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "id": "etkse9r55555555555555555555555555555555555555555555555"
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText25",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgf, '(Not eligible)');",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText5",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgf, '(Not eligible)');",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText15",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "customClass": "",
-                            "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgf ? parseFloat(data.disbursement?.disbursement1csgf) : 0) +(data.disbursement?.disbursement2csgf ? parseFloat(data.disbursement?.disbursement2csgf) : 0));",
-                            "isNew": false
-                          }
-                        ]
-                      }
-                    ],
-                    [
-                      {
-                        "components": [
-                          {
-                            "label": "CSG-TU",
-                            "labelWidth": "",
-                            "labelMargin": "",
-                            "tag": "p",
-                            "className": "",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "CSGT\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    Canada Student Grant for Full-time Top-up\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "customClass": "",
-                            "hidden": false,
-                            "modalEdit": false,
-                            "key": "csgTu",
-                            "tags": [],
-                            "properties": {},
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": "",
-                              "json": ""
-                            },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
-                            "overlay": {
-                              "style": "",
-                              "page": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideOnChildrenHidden": false,
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "id": "e2tuwab6666666666666666666666666666666666666666666666"
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText26",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "mask": false,
-                            "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgt, '(Not eligible)');",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText6",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgt, '(Not eligible)');",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText16",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "customClass": "",
-                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgt ? parseFloat(data.disbursement?.disbursement1csgt) : 0) +(data.disbursement?.disbursement2csgt ? parseFloat(data.disbursement?.disbursement2csgt) : 0));",
-                            "isNew": false
-                          }
-                        ]
-                      }
-                    ],
-                    [
-                      {
-                        "components": [
-                          {
-                            "label": "BCAG",
-                            "labelWidth": "",
-                            "labelMargin": "",
-                            "tag": "p",
-                            "className": "",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "BCAG\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    B.C. Access Grant\n    </span>\n</span>",
+                            "content": "B.C. Access Grant for Full-Time Students (BCAG)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
@@ -9112,7 +8648,7 @@
                             "tags": [],
                             "properties": {},
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": "",
                               "json": ""
@@ -9148,7 +8684,6 @@
                             "description": "",
                             "errorLabel": "",
                             "tooltip": "",
-                            "hideLabel": false,
                             "tabindex": "",
                             "disabled": false,
                             "autofocus": false,
@@ -9172,7 +8707,8 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "addons": [],
-                            "id": "epkk8aa777777777777777777777777777777777777777777777"
+                            "id": "epkk8aa777777777777777777777777777777777777777777777",
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -9215,11 +8751,10 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
                             "disabled": true,
                             "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bcag, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -9262,11 +8797,11 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
                             "disabled": true,
                             "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bcag, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "customConditional": "show = !!data.disbursement.disbursement2Date",
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -9309,11 +8844,10 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
                             "customClass": "",
                             "disabled": true,
                             "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement?.disbursement1bcag) : 0) +(data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement?.disbursement2bcag) : 0));",
-                            "isNew": false
+                            "hideLabel": true
                           }
                         ]
                       }
@@ -9322,7 +8856,7 @@
                       {
                         "components": [
                           {
-                            "label": "SBSD",
+                            "label": "Canada Student Grant for Persons with Disabilities (CSG-D)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -9333,7 +8867,463 @@
                                 "value": ""
                               }
                             ],
-                            "content": "SBSD\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    B.C. Supplemental Bursary with Disabilities\n    </span>\n</span>",
+                            "content": "Canada Student Grant for Persons with Disabilities (CSG-D)",
+                            "refreshOnChange": false,
+                            "customClass": "",
+                            "hidden": false,
+                            "modalEdit": false,
+                            "key": "csgp",
+                            "tags": [],
+                            "properties": {},
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": "",
+                              "json": ""
+                            },
+                            "customConditional": "",
+                            "logic": [],
+                            "attributes": {},
+                            "overlay": {
+                              "style": "",
+                              "page": "",
+                              "left": "",
+                              "top": "",
+                              "width": "",
+                              "height": ""
+                            },
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "validateOn": "change",
+                            "validate": {
+                              "required": false,
+                              "custom": "",
+                              "customPrivate": false,
+                              "strictDateValidation": false,
+                              "multiple": false,
+                              "unique": false
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "id": "e20r5588888888888888888888888888888888888888888888"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText22",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "mask": false,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgp, '(Not eligible)');",
+                            "customClass": "",
+                            "hideLabel": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText3",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgp, '(Not eligible)');",
+                            "customClass": "",
+                            "customConditional": "show = !!data.disbursement.disbursement2Date",
+                            "hideLabel": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText13",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "customClass": "",
+                            "mask": false,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement?.disbursement1csgp) : 0) +(data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement?.disbursement2csgp) : 0));",
+                            "hideLabel": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "B.C. Access Grant for Students with a Disability (BCAG-D)",
+                            "labelWidth": "",
+                            "labelMargin": "",
+                            "tag": "p",
+                            "className": "",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "B.C. Access Grant for Students with a Disability (BCAG-D)",
+                            "refreshOnChange": false,
+                            "customClass": "",
+                            "hidden": false,
+                            "modalEdit": false,
+                            "key": "bgpd",
+                            "tags": [],
+                            "properties": {},
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": "",
+                              "json": ""
+                            },
+                            "customConditional": "",
+                            "logic": [],
+                            "attributes": {},
+                            "overlay": {
+                              "style": "",
+                              "page": "",
+                              "left": "",
+                              "top": "",
+                              "width": "",
+                              "height": ""
+                            },
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false,
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "validateOn": "change",
+                            "validate": {
+                              "required": false,
+                              "custom": "",
+                              "customPrivate": false,
+                              "strictDateValidation": false,
+                              "multiple": false,
+                              "unique": false
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "id": "e5oagza9999999999999999999999999999999999999999999",
+                            "hideLabel": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText29",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bgpd, '(Not eligible)');",
+                            "customClass": "",
+                            "hideLabel": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText9",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bgpd, '(Not eligible)');",
+                            "customClass": "",
+                            "customConditional": "show = !!data.disbursement.disbursement2Date",
+                            "hideLabel": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText19",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "disabled": true,
+                            "customClass": "",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bgpd ? parseFloat(data.disbursement?.disbursement1bgpd) : 0) +(data.disbursement?.disbursement2bgpd ? parseFloat(data.disbursement?.disbursement2bgpd) : 0));",
+                            "hideLabel": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "B.C. Supplemental Bursary for Students with a Disability (SBSD)",
+                            "labelWidth": "",
+                            "labelMargin": "",
+                            "tag": "p",
+                            "className": "",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "B.C. Supplemental Bursary for Students with a Disability (SBSD)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
@@ -9496,7 +9486,7 @@
                             "disabled": true,
                             "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2sbsd, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "customConditional": "show = !!data.disbursement.disbursement2Date"
                           }
                         ]
                       },
@@ -9541,467 +9531,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "customClass": "",
                             "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement?.disbursement1sbsd) : 0) +(data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement?.disbursement2sbsd) : 0));",
-                            "isNew": false
-                          }
-                        ]
-                      }
-                    ],
-                    [
-                      {
-                        "components": [
-                          {
-                            "label": "BGPD",
-                            "labelWidth": "",
-                            "labelMargin": "",
-                            "tag": "p",
-                            "className": "",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "BGPD\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    B.C. Permanent Disability Grant\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "customClass": "",
-                            "hidden": false,
-                            "modalEdit": false,
-                            "key": "bgpd",
-                            "tags": [],
-                            "properties": {},
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": "",
-                              "json": ""
-                            },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
-                            "overlay": {
-                              "style": "",
-                              "page": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideOnChildrenHidden": false,
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "id": "e5oagza9999999999999999999999999999999999999999999"
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText29",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bgpd, '(Not eligible)');",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText9",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bgpd, '(Not eligible)');",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText19",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "customClass": "",
-                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bgpd ? parseFloat(data.disbursement?.disbursement1bgpd) : 0) +(data.disbursement?.disbursement2bgpd ? parseFloat(data.disbursement?.disbursement2bgpd) : 0));",
-                            "isNew": false
-                          }
-                        ]
-                      }
-                    ],
-                    [
-                      {
-                        "components": [
-                          {
-                            "label": "BCSG",
-                            "labelWidth": "",
-                            "labelMargin": "",
-                            "tag": "p",
-                            "className": "",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "BCSG\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n     B.C. Student Grants\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "customClass": "",
-                            "hidden": false,
-                            "modalEdit": false,
-                            "key": "bcsg",
-                            "tags": [],
-                            "properties": {},
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": "",
-                              "json": ""
-                            },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
-                            "overlay": {
-                              "style": "",
-                              "page": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "id": "e6dlyvr1010101010101010101010101010101010101010101010101010101010101010"
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText30",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bcsg, '(Not eligible)');",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText10",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bcsg, '(Not eligible)');",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText20",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "customClass": "",
-                            "disabled": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bcsg ? parseFloat(data.disbursement?.disbursement1bcsg) : 0) +(data.disbursement?.disbursement2bcsg ? parseFloat(data.disbursement?.disbursement2bcsg) : 0));",
                             "isNew": false
                           }
                         ]

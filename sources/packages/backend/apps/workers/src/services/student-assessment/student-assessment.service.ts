@@ -290,50 +290,61 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * Updates assessment status and save workflow data ensuring
    * that the data will be updated only once.
    * @param assessmentId updated assessment.
-   * @param workflowData workflow data to be saved.
    * @param entityManager used to execute the commands in the same transaction.
+   * @param options options to be updated.
+   * - `workflowData` data to be saved in the workflowData field.
    * @returns true if the update was executed or false in case the data was already present.
    */
-  async updateAssessmentStatusAndSaveWorkflowData(
+  async updateAssessmentWrapUpData(
     assessmentId: number,
-    workflowData: WorkflowData,
     entityManager: EntityManager,
+    options?: { workflowData?: WorkflowData },
   ): Promise<boolean> {
     const studentAssessmentRepo =
       entityManager.getRepository(StudentAssessment);
-    const auditUser = this.systemUsersService.systemUser;
-    const now = new Date();
     const studentAssessment = await studentAssessmentRepo.findOne({
-      select: { studentAssessmentStatus: true, workflowData: true as unknown },
+      select: { studentAssessmentStatus: true },
       where: { id: assessmentId },
     });
-    if (studentAssessment.workflowData) {
-      // If the workflow data was already updated no further updates are needed.
-      return false;
+    const workflowIsCancelled = [
+      StudentAssessmentStatus.CancellationRequested,
+      StudentAssessmentStatus.CancellationQueued,
+      StudentAssessmentStatus.Cancelled,
+    ].includes(studentAssessment.studentAssessmentStatus);
+    const auditUser = this.systemUsersService.systemUser;
+    const now = new Date();
+    if (workflowIsCancelled) {
+      if (!options?.workflowData) {
+        // No update is executed because the data was already present or the workflow was cancelled.
+        return false;
+      }
+      // If the workflow was cancelled and there is a workflowData to be saved,
+      // save the data without updating the status.
+      const updateResult = await studentAssessmentRepo.update(
+        { id: assessmentId, workflowData: IsNull() },
+        {
+          workflowData: options.workflowData,
+          modifier: auditUser,
+          updatedAt: now,
+        },
+      );
+      return !!updateResult.affected;
     }
-    const assessmentUpdate: Partial<StudentAssessment> = {
-      workflowData,
-      modifier: auditUser,
-      updatedAt: now,
-    };
-    // In case the student assessment is in process of being cancelled or is already cancelled,
-    // it does not update status and update date.
-    if (
-      [
-        StudentAssessmentStatus.CancellationRequested,
-        StudentAssessmentStatus.CancellationQueued,
-        StudentAssessmentStatus.Cancelled,
-      ].includes(studentAssessment.studentAssessmentStatus)
-    ) {
-      await studentAssessmentRepo.update(assessmentId, assessmentUpdate);
-    } else {
-      await studentAssessmentRepo.update(assessmentId, {
-        ...assessmentUpdate,
+    // Workflow is not cancelled, update the status and save the data, if not updated already.
+    const updateResult = await studentAssessmentRepo.update(
+      {
+        id: assessmentId,
+        studentAssessmentStatus: Not(StudentAssessmentStatus.Completed),
+      },
+      {
         studentAssessmentStatus: StudentAssessmentStatus.Completed,
         studentAssessmentStatusUpdatedOn: now,
-      });
-    }
-    return true;
+        workflowData: options?.workflowData,
+        modifier: auditUser,
+        updatedAt: now,
+      },
+    );
+    return !!updateResult.affected;
   }
 
   /**
