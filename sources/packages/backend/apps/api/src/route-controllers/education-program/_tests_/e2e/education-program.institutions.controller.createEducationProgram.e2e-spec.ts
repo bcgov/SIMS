@@ -56,7 +56,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     testingModule = module;
   });
 
-  it("Should create an education program when valid data is passed.", async () => {
+  it.only("Should create an education program when valid data is passed.", async () => {
     // Arrange
     const sabcCode = `${faker.random.alpha({ count: 3 })}1`;
     const payload = getPayload(sabcCode);
@@ -89,6 +89,12 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
     const educationProgram = await db.educationProgram.findOne({
       where: { id: educationProgramId },
+      relations: {
+        institution: true,
+        programNote: true,
+        assessedBy: true,
+        submittedBy: true,
+      },
     });
     expect(educationProgram).toEqual(
       expect.objectContaining({
@@ -134,10 +140,12 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         assessedDate: null,
         effectiveEndDate: null,
         fieldOfStudyCode: Number.parseInt(payload.fieldOfStudyCode),
-        institutionId: collegeF.id,
-        programNoteId: null,
-        assessedById: null,
-        submittedById: collegeFUser.id,
+        institution: expect.objectContaining({
+          id: collegeF.id,
+        } as Institution),
+        programNote: null,
+        assessedBy: null,
+        submittedBy: expect.objectContaining({ id: collegeFUser.id } as User),
         isActive: true,
         isExpired: false,
       }),

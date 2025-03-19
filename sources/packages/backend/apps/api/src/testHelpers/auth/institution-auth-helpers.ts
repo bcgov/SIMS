@@ -79,7 +79,10 @@ export async function getAuthRelatedEntities(
   }
   const institutionRepo = dataSource.getRepository(Institution);
   const userRepo = dataSource.getRepository(User);
-  const institution = await institutionRepo.findOneBy({ businessGuid });
+  const institution = await institutionRepo.findOne({
+    where: { businessGuid },
+    relations: { institutionType: true },
+  });
   const user = await userRepo.findOneBy({ userName });
   return { institution, user };
 }
