@@ -9,7 +9,7 @@
     </template>
     <content-group>
       <toggle-content
-        :toggled="!applicationsAndCount.results?.length"
+        :toggled="!applicationsAndCount.count"
         message="No applications are currently available."
       >
         <v-data-table-server
@@ -114,13 +114,7 @@ import { useDisplay } from "vuetify";
 export default defineComponent({
   components: { StatusChipApplication },
   emits: ["editApplicationAction", "openConfirmCancel", "goToApplication"],
-  props: {
-    studentId: {
-      type: Number,
-      required: false,
-    },
-  },
-  setup(props, { emit }) {
+  setup(_, { emit }) {
     const loading = ref(false);
     const { mobile: isMobile } = useDisplay();
     const applicationsAndCount = ref(
@@ -155,7 +149,6 @@ export default defineComponent({
             currentPagination.value.pageLimit,
             currentPagination.value.sortField as StudentApplicationFields,
             currentPagination.value.sortOrder as DataTableSortOrder,
-            props.studentId,
           );
       } finally {
         loading.value = false;

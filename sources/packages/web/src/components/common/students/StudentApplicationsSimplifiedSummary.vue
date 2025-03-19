@@ -9,7 +9,7 @@
     </template>
     <content-group>
       <toggle-content
-        :toggled="!applicationsAndCount.results?.length"
+        :toggled="!applicationsAndCount.count"
         message="No applications are currently available."
       >
         <v-data-table-server

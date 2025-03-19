@@ -211,7 +211,6 @@ export class ApplicationSummaryAPIOutDTO {
   studyEndPeriod: string;
   id: number;
   applicationName: string;
-  submitted?: Date;
   status: ApplicationStatus;
   parentApplicationId: number;
   submittedDate?: Date;
