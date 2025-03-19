@@ -18,6 +18,7 @@ import {
 } from "@sims/sims-db";
 import {
   combineDecimalPlaces,
+  getStudentDisabilityStatusCode,
   getTotalYearsOfStudy,
   replaceLineBreaks,
 } from "@sims/utilities";
@@ -47,12 +48,16 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.assessmentId = ierRecord.assessmentId;
       ierFileDetail.disbursementId = ierRecord.disbursementId;
       ierFileDetail.applicationNumber = ierRecord.applicationNumber;
+      ierFileDetail.applicationDisabilityStatusFlag =
+        ierRecord.applicationPDStatus ? YNFlag.Y : YNFlag.N;
       ierFileDetail.institutionStudentNumber =
         ierRecord.institutionStudentNumber;
       ierFileDetail.sin = ierRecord.sin;
       ierFileDetail.studentLastName = ierRecord.studentLastName;
       ierFileDetail.studentGivenName = ierRecord.studentGivenName;
       ierFileDetail.studentBirthDate = ierRecord.studentBirthDate;
+      ierFileDetail.studentDisabilityStatusCode =
+        getStudentDisabilityStatusCode(ierRecord.studentDisabilityStatus);
       ierFileDetail.studentGroupCode =
         ierRecord.studentDependantStatus === "dependant" ? "A" : "B";
       ierFileDetail.studentMaritalStatusCode =
@@ -146,13 +151,13 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.studyEndDate,
       );
       ierFileDetail.applicantAndPartnerExpectedContribution =
-        combineDecimalPlaces(ierRecord.studentAndSupportingUserContribution);
+        combineDecimalPlaces(ierRecord.applicantAndPartnerExpectedContribution);
       ierFileDetail.parentExpectedContribution =
         ierRecord.parentExpectedContribution
           ? combineDecimalPlaces(ierRecord.parentExpectedContribution)
           : 0;
       ierFileDetail.totalExpectedContribution = combineDecimalPlaces(
-        ierRecord.studentAndSupportingUserContribution,
+        ierRecord.totalExpectedContribution,
       );
       ierFileDetail.dependantChildQuantity = ierRecord.dependantChildQuantity;
       ierFileDetail.dependantChildInDaycareQuantity =

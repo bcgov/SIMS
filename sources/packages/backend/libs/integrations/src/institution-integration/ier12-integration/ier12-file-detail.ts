@@ -34,10 +34,8 @@ export class IER12FileDetail implements IER12FileLine {
   studentBirthDate: Date;
   studentGroupCode: "A" | "B";
   studentMaritalStatusCode: StudentMaritalStatusCode;
-  // TODO: IER - Dheepak.
-  studentDisabilityStatusCode?: string;
-  // TODO: IER - Dheepak.
-  applicationDisabilityStatusFlag?: string;
+  studentDisabilityStatusCode: string;
+  applicationDisabilityStatusFlag: YNFlag;
   addressInfo: IERAddressInfo;
   programName: string;
   programDescription: string;
@@ -71,7 +69,7 @@ export class IER12FileDetail implements IER12FileLine {
   bcslAmount: number;
   epAmount: number;
   provincialDefaultFlag: YNFlag;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   federalDefaultFlag?: string;
   provincialOverawardFlag: YNFlag;
   federalOverawardFlag: YNFlag;
@@ -80,68 +78,64 @@ export class IER12FileDetail implements IER12FileLine {
   scholasticStandingCode?: ScholasticStandingCode;
   assessmentDate: Date;
   withdrawalDate?: Date;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   applicantAndPartnerExpectedContribution: number;
-  // TODO: IER - Dheepak.
   parentExpectedContribution?: number;
-  // TODO: IER - Dheepak.
   totalExpectedContribution: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   dependantChildQuantity?: number;
-  // TODO: IER - Dheepak.
   dependantChildInDaycareQuantity?: number;
-  // TODO: IER - Dheepak.
   dependantInfantQuantity?: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   dependantOtherQuantity?: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   dependantPostSecondaryQuantity?: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   totalDependantQuantity?: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   familyMembersQuantity: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   parent1Flag?: YNFlag;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   parent2Flag?: YNFlag;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   partnerFlag: YNFlag;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   parentalAssets?: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   parentalAssetsExpectedContribution?: number;
   parentalIncomeExpectedContribution?: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   parentalVoluntaryContribution?: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   parentalDiscretionaryIncome?: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   parentalDiscretionaryAnnualIncomeFormulaResult?: number;
   studentLivingAtHomeFlag: YNFlag;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   partnerInSchoolFlag?: string;
   // Analysis pending for the field.
   otherEducationalExpenses?: number;
   totalEducationalExpenses: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   extraLocalTransportationCosts?: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   extraShelterCosts?: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   dependantLivingAllowance?: number;
   studentLivingAllowance: number;
   totalLivingAllowance: number;
   alimonyCost?: number;
   // Analysis pending for the field.
   otherDiscretionaryCosts?: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   returnTransportationCosts?: number;
   // Analysis pending for the field.
   partnerStudentLoanPaymentCosts?: number;
   childcareCost?: number;
   totalNonEducationalCost: number;
   totalExpenses: number;
-  // TODO: IER - Dheepak.
+  // TODO: IER.
   assessedNeed: number;
   studentEligibleAward: number;
   // Analysis pending for the field.
@@ -194,11 +188,8 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendFormattedDate(this.studentBirthDate);
     record.appendStringWithFiller(this.studentGroupCode, 4);
     record.appendStringWithFiller(this.studentMaritalStatusCode, 4);
-    record.appendOptionalStringWithFiller(this.studentDisabilityStatusCode, 4);
-    record.appendOptionalStringWithFiller(
-      this.applicationDisabilityStatusFlag,
-      1,
-    );
+    record.append(this.studentDisabilityStatusCode);
+    record.append(this.applicationDisabilityStatusFlag);
     record.appendStringWithFiller(this.addressInfo.addressLine1, 25);
     record.appendOptionalStringWithFiller(this.addressInfo.addressLine2, 25);
     record.appendStringWithFiller(this.addressInfo.city, 25);

@@ -223,11 +223,13 @@ export class IER12ProcessingService {
         assessmentId: pendingAssessment.id,
         disbursementId: disbursement.id,
         applicationNumber: application.applicationNumber,
+        applicationPDStatus: workflowData.calculatedData.pdppdStatus,
         institutionStudentNumber: application.studentNumber,
         sin: sinValidation.sin,
         studentLastName: user.lastName,
         studentGivenName: user.firstName,
         studentBirthDate: new Date(student.birthDate),
+        studentDisabilityStatus: student.disabilityStatus,
         studentDependantStatus: workflowData.studentData.dependantStatus,
         addressInfo,
         programName: educationProgram.name,
@@ -283,11 +285,12 @@ export class IER12ProcessingService {
         ),
         studentMaritalStatusCode:
           workflowData.calculatedData.studentMaritalStatusCode,
-        studentAndSupportingUserContribution:
+        applicantAndPartnerExpectedContribution:
           assessmentData.studentTotalFederalContribution +
           assessmentData.studentTotalProvincialContribution +
           (assessmentData.parentAssessedContribution ?? 0) +
           (assessmentData.partnerAssessedContribution ?? 0),
+        totalExpectedContribution: assessmentData.totalProvincialContribution,
         dependantChildQuantity:
           workflowData.calculatedData.dependantChildQuantity,
         dependantChildInDaycareQuantity:
