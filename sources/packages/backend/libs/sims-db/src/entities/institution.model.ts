@@ -101,7 +101,7 @@ export class Institution extends RecordDataModel {
   })
   users: InstitutionUser[];
 
-  @ManyToOne(() => InstitutionType, { eager: false, cascade: false })
+  @ManyToOne(() => InstitutionType, { eager: true, cascade: false })
   @JoinColumn({
     name: "institution_type_id",
     referencedColumnName: ColumnNames.ID,
