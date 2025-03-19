@@ -80,8 +80,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
           SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
         );
       }
-      console.log("updateInfo: ", updateInfo);
-      console.log("updateInfo.supportingData: ", updateInfo.supportingData);
 
       // The SIN can be received with a few white spaces in the middle, so we need remove then
       // before inserting it because the DB will accept only 9 characters.

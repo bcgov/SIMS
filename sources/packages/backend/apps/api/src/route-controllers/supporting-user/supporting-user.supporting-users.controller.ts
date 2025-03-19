@@ -227,7 +227,6 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-    console.log("submissionResult.data: ", submissionResult.data);
 
     try {
       const addressInfo: AddressInfo = {
