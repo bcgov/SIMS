@@ -189,7 +189,7 @@ export class DisbursementSchedule extends RecordDataModel {
    * number generated for a student.
    */
   @ManyToOne(() => MSFAANumber, {
-    eager: true,
+    eager: false,
     cascade: ["update"],
     nullable: true,
   })

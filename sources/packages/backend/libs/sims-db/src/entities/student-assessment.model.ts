@@ -111,7 +111,7 @@ export class StudentAssessment extends RecordDataModel {
    * represent the new/changed program/offering.
    */
   @ManyToOne(() => EducationProgramOffering, {
-    eager: true,
+    eager: false,
     cascade: false,
     nullable: true,
   })
@@ -128,7 +128,7 @@ export class StudentAssessment extends RecordDataModel {
     () => StudentAppeal,
     (studentAppeal) => studentAppeal.studentAssessment,
     {
-      eager: true,
+      eager: false,
       cascade: true,
       nullable: true,
     },

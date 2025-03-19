@@ -64,7 +64,7 @@ export class Application extends RecordDataModel {
   /**
    * Student associated with this application.
    */
-  @OneToOne(() => Student, { eager: true, cascade: false })
+  @OneToOne(() => Student, { eager: false, cascade: false })
   @JoinColumn({
     name: "student_id",
     referencedColumnName: ColumnNames.ID,
@@ -108,7 +108,7 @@ export class Application extends RecordDataModel {
    * This will be populated only when an active program year application is Submitted
    */
   @ManyToOne(() => ProgramYear, {
-    eager: true,
+    eager: false,
     cascade: false,
   })
   @JoinColumn({

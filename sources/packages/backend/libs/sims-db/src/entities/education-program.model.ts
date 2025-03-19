@@ -175,7 +175,7 @@ export class EducationProgram extends RecordDataModel {
   /**
    * Related institution.
    */
-  @OneToOne(() => Institution, { eager: true, cascade: true })
+  @OneToOne(() => Institution, { eager: false, cascade: true })
   @JoinColumn({
     name: "institution_id",
     referencedColumnName: ColumnNames.ID,
@@ -364,7 +364,7 @@ export class EducationProgram extends RecordDataModel {
   /**
    * Education program note.
    */
-  @OneToOne(() => Note, { eager: true, cascade: true, nullable: true })
+  @OneToOne(() => Note, { eager: false, cascade: true, nullable: true })
   @JoinColumn({
     name: "program_note",
     referencedColumnName: ColumnNames.ID,
@@ -374,7 +374,7 @@ export class EducationProgram extends RecordDataModel {
   /**
    * Education program assessed by.
    */
-  @ManyToOne(() => User, { eager: true, nullable: true })
+  @ManyToOne(() => User, { eager: false, nullable: true })
   @JoinColumn({
     name: "assessed_by",
     referencedColumnName: "id",
@@ -384,7 +384,7 @@ export class EducationProgram extends RecordDataModel {
   /**
    * Education program submitted by.
    */
-  @ManyToOne(() => User, { eager: true, nullable: true })
+  @ManyToOne(() => User, { eager: false, nullable: true })
   @JoinColumn({
     name: "submitted_by",
     referencedColumnName: "id",

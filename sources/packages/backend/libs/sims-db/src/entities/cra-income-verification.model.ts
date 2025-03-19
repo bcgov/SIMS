@@ -119,7 +119,7 @@ export class CRAIncomeVerification extends RecordDataModel {
   /**
    * Supporting user that requires a CRA income verification.
    */
-  @ManyToOne(() => SupportingUser, { eager: true, cascade: false })
+  @ManyToOne(() => SupportingUser, { eager: false, cascade: false })
   @JoinColumn({
     name: "supporting_user_id",
     referencedColumnName: ColumnNames.ID,
