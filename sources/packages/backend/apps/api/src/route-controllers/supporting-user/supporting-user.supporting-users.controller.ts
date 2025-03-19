@@ -184,7 +184,13 @@ export class SupportingUserSupportingUsersController extends BaseController {
       supportingUserType,
       application.programYear,
     );
-
+    // Ensure the offering intensity provided is the same from the application.
+    if (
+      payload.offeringIntensity !==
+      application.currentAssessment.offering.offeringIntensity
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
     const submissionResult: DryRunSubmissionResult =
       await this.formService.dryRunSubmission(formName, payload);
 
@@ -221,6 +227,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
+    console.log("submissionResult.data: ", submissionResult.data);
 
     try {
       const addressInfo: AddressInfo = {

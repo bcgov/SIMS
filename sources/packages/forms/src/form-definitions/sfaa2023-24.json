@@ -17024,6 +17024,317 @@
               "defaultValue": ""
             },
             {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "inputType": "radio",
+              "label": "Will your partner receive Employment Insurance (EI) benefits during your study period?",
+              "key": "partnerEmploymentInsuranceBenefits",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "custom": "",
+                "customPrivate": false
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time"
+              },
+              "properties": {},
+              "lockKey": true,
+              "isNew": false
+            },
+            {
+              "clearOnHide": false,
+              "key": "partnerIncomePanelPanel2",
+              "input": false,
+              "title": "Will your partner receive federal or provincial disability benefits during your study period?",
+              "theme": "default",
+              "tableView": false,
+              "components": [
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "inputType": "number",
+                  "label": "Enter amount that your partner will receive federal or provincial disability benefits.",
+                  "key": "partnerEmploymentInsurance",
+                  "placeholder": "",
+                  "prefix": "$",
+                  "suffix": "",
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "min": "",
+                    "max": "",
+                    "step": "any",
+                    "integer": "",
+                    "multiple": "",
+                    "custom": ""
+                  },
+                  "type": "number",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "lockKey": true,
+                  "delimiter": true,
+                  "decimalLimit": 2,
+                  "requireDecimal": true,
+                  "hideLabel": false
+                }
+              ],
+              "type": "panel",
+              "breadcrumb": "default",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "partnerEmploymentInsuranceBenefits",
+                "eq": "yes"
+              },
+              "properties": {},
+              "hideLabel": true,
+              "lockKey": true
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "inputType": "radio",
+              "label": "Will your partner receive federal or provincial disability benefits during your study period?",
+              "key": "partnerFedralProvincialPDReceipt",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "custom": "",
+                "customPrivate": false
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time"
+              },
+              "properties": {},
+              "lockKey": true,
+              "isNew": false
+            },
+            {
+              "clearOnHide": false,
+              "key": "partnerIncomePanelPanel3",
+              "input": false,
+              "title": "Will your partner receive federal or provincial disability benefits during your study period?",
+              "theme": "default",
+              "tableView": false,
+              "components": [
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "inputType": "number",
+                  "label": "Enter amount that your partner will receive federal or provincial disability benefits.",
+                  "key": "partnerFedralProvincialPDReceiptCost",
+                  "placeholder": "",
+                  "prefix": "$",
+                  "suffix": "",
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "min": "",
+                    "max": "",
+                    "step": "any",
+                    "integer": "",
+                    "multiple": "",
+                    "custom": ""
+                  },
+                  "type": "number",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "lockKey": true,
+                  "delimiter": true,
+                  "decimalLimit": 2,
+                  "requireDecimal": true,
+                  "hideLabel": false,
+                  "isNew": false
+                }
+              ],
+              "type": "panel",
+              "breadcrumb": "default",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "partnerFedralProvincialPDReceipt",
+                "eq": "yes"
+              },
+              "properties": {},
+              "lockKey": true,
+              "isNew": false
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": true,
+              "inputType": "radio",
+              "label": "Will your partner receive Income Assistance (welfare) during your study period?",
+              "key": "partnerTotalIncomeAssist",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "custom": "",
+                "customPrivate": false
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time"
+              },
+              "properties": {},
+              "lockKey": true,
+              "isNew": false
+            },
+            {
+              "clearOnHide": false,
+              "key": "partnerIncomePanelPanel4",
+              "input": false,
+              "title": "Will your partner receive Income Assistance (welfare) during your study period?",
+              "theme": "default",
+              "tableView": false,
+              "components": [
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "inputType": "number",
+                  "label": "Enter amount that your partner will receive federal or provincial disability benefits.",
+                  "key": "partnerTotalIncomeAssistance",
+                  "placeholder": "",
+                  "prefix": "$",
+                  "suffix": "",
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "min": "",
+                    "max": "",
+                    "step": "any",
+                    "integer": "",
+                    "multiple": "",
+                    "custom": ""
+                  },
+                  "type": "number",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "lockKey": true,
+                  "delimiter": true,
+                  "decimalLimit": 2,
+                  "requireDecimal": true,
+                  "hideLabel": false
+                }
+              ],
+              "type": "panel",
+              "breadcrumb": "default",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "partnerTotalIncomeAssist",
+                "eq": "yes"
+              },
+              "properties": {},
+              "lockKey": true,
+              "hideLabel": true
+            },
+            {
               "label": "Will your partner be at home caring for eligible dependent children on a full-time basis during your entire study period?",
               "labelPosition": "top",
               "labelWidth": "",

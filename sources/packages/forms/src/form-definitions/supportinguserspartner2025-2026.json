@@ -1953,8 +1953,7 @@
             "when": null,
             "eq": ""
           },
-          "properties": {},
-          "isNew": false
+          "properties": {}
         },
         {
           "label": "Calculated Tax Year",
@@ -2022,8 +2021,7 @@
           "addons": [],
           "inputType": "hidden",
           "id": "eug8z8f",
-          "tags": [],
-          "isNew": false
+          "tags": []
         },
         {
           "label": "Program Year Start Date",
@@ -2383,6 +2381,311 @@
                   "tags": []
                 },
                 {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "radio",
+                  "label": "During the applicant's study period, will you receive Employment Insurance (EI)?",
+                  "key": "partnerEmploymentInsurance",
+                  "values": [
+                    {
+                      "value": "yes",
+                      "label": "Yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "no",
+                      "label": "No",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "custom": "",
+                    "customPrivate": false
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "offeringIntensity",
+                    "eq": "Full Time"
+                  },
+                  "properties": {},
+                  "lockKey": true,
+                  "isNew": false
+                },
+                {
+                  "clearOnHide": false,
+                  "key": "panel4Panel",
+                  "input": false,
+                  "title": "During the applicant's study period, will you receive Employment Insurance (EI)?",
+                  "theme": "default",
+                  "tableView": false,
+                  "components": [
+                    {
+                      "autofocus": false,
+                      "input": true,
+                      "tableView": false,
+                      "inputType": "number",
+                      "label": "Enter amount that you will receive Employment Insurance (EI).",
+                      "key": "partnerTotalEmploymentInsurance",
+                      "placeholder": "",
+                      "prefix": "$",
+                      "suffix": "",
+                      "defaultValue": "",
+                      "protected": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "validate": {
+                        "required": true,
+                        "min": "",
+                        "max": "",
+                        "step": "any",
+                        "integer": "",
+                        "multiple": "",
+                        "custom": ""
+                      },
+                      "type": "number",
+                      "labelPosition": "top",
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {},
+                      "lockKey": true,
+                      "delimiter": true,
+                      "decimalLimit": 2,
+                      "requireDecimal": true
+                    }
+                  ],
+                  "type": "panel",
+                  "breadcrumb": "default",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "partnerEmploymentInsurance",
+                    "eq": "yes"
+                  },
+                  "properties": {},
+                  "hideLabel": true,
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "radio",
+                  "label": "During the applicant's study period, will you receive federal or provincial disability benefits?",
+                  "key": "partnerFedralProvincialPDReceipt",
+                  "values": [
+                    {
+                      "value": "yes",
+                      "label": "Yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "no",
+                      "label": "No",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "custom": "",
+                    "customPrivate": false
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "offeringIntensity",
+                    "eq": "Full Time"
+                  },
+                  "properties": {},
+                  "lockKey": true
+                },
+                {
+                  "clearOnHide": false,
+                  "key": "panel4Panel2",
+                  "input": false,
+                  "title": "During the applicant's study period, will you receive federal or provincial disability benefits?",
+                  "theme": "default",
+                  "tableView": false,
+                  "components": [
+                    {
+                      "autofocus": false,
+                      "input": true,
+                      "tableView": false,
+                      "inputType": "number",
+                      "label": "Enter amount that you will receive federal or provincial disability benefits.",
+                      "key": "partnerTotalPDBenefits",
+                      "placeholder": "",
+                      "prefix": "$",
+                      "suffix": "",
+                      "defaultValue": "",
+                      "protected": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "validate": {
+                        "required": true,
+                        "min": "",
+                        "max": "",
+                        "step": "any",
+                        "integer": "",
+                        "multiple": "",
+                        "custom": ""
+                      },
+                      "type": "number",
+                      "labelPosition": "top",
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {},
+                      "lockKey": true,
+                      "delimiter": true,
+                      "decimalLimit": 2,
+                      "requireDecimal": true
+                    }
+                  ],
+                  "type": "panel",
+                  "breadcrumb": "default",
+                  "hideLabel": true,
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "partnerFedralProvincialPDReceipt",
+                    "eq": "yes"
+                  },
+                  "properties": {},
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "radio",
+                  "label": "During the applicant's study period, will you receive Income Assistance (welfare)?",
+                  "key": "partnerTotalIncomeAssist",
+                  "values": [
+                    {
+                      "value": "yes",
+                      "label": "Yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "no",
+                      "label": "No",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "custom": "",
+                    "customPrivate": false
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "offeringIntensity",
+                    "eq": "Full Time"
+                  },
+                  "properties": {},
+                  "lockKey": true,
+                  "isNew": false
+                },
+                {
+                  "clearOnHide": false,
+                  "key": "panel4Panel3",
+                  "input": false,
+                  "title": "During the applicant's study period, will you receive Income Assistance (welfare)?",
+                  "theme": "default",
+                  "tableView": false,
+                  "components": [
+                    {
+                      "autofocus": false,
+                      "input": true,
+                      "tableView": false,
+                      "inputType": "number",
+                      "label": "Enter amount that you will receive Income Assistance (welfare).",
+                      "key": "partnerTotalIncomeAssistance",
+                      "placeholder": "",
+                      "prefix": "$",
+                      "suffix": "",
+                      "defaultValue": "",
+                      "protected": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "validate": {
+                        "required": true,
+                        "min": "",
+                        "max": "",
+                        "step": "any",
+                        "integer": "",
+                        "multiple": "",
+                        "custom": ""
+                      },
+                      "type": "number",
+                      "labelPosition": "top",
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {},
+                      "lockKey": true,
+                      "delimiter": true,
+                      "decimalLimit": 2,
+                      "requireDecimal": true
+                    }
+                  ],
+                  "type": "panel",
+                  "breadcrumb": "default",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "partnerTotalIncomeAssist",
+                    "eq": "yes"
+                  },
+                  "properties": {},
+                  "hideLabel": false,
+                  "isNew": false
+                },
+                {
                   "label": "Will you be at home caring for eligible dependant children on a full-time basis during your Partner's entire study period?",
                   "labelPosition": "top",
                   "labelWidth": "",
@@ -2639,7 +2942,8 @@
                   "inputType": "radio",
                   "fieldSet": false,
                   "id": "ex27r4o",
-                  "tags": []
+                  "tags": [],
+                  "isNew": false
                 },
                 {
                   "title": "If your partner will be a full-time student, how many weeks of your study period will they also be in studies Panel",
@@ -2739,7 +3043,8 @@
                       "addons": [],
                       "id": "euxu2ql",
                       "inputType": "number",
-                      "tags": []
+                      "tags": [],
+                      "isNew": false
                     }
                   ],
                   "placeholder": "",
@@ -2798,7 +3103,8 @@
                   "theme": "default",
                   "breadcrumb": "default",
                   "id": "eryyqjh",
-                  "tags": []
+                  "tags": [],
+                  "isNew": false
                 },
                 {
                   "label": "Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your Partner's study period?",
@@ -3015,7 +3321,8 @@
                       "addons": [],
                       "id": "ezmubec",
                       "inputType": "number",
-                      "tags": []
+                      "tags": [],
+                      "isNew": false
                     }
                   ],
                   "placeholder": "",
