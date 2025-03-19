@@ -10,8 +10,6 @@
     <v-row>
       <v-col cols="12" :class="{ 'pa-0': isMobile }">
         <student-applications-extended-summary
-          :manage-application="true"
-          :enable-view-application-on-name="true"
           :dense="isMobile"
           @editApplicationAction="editApplicationAction"
           @openConfirmCancel="confirmCancelApplication"
