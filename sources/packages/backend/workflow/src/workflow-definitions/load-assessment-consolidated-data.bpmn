@@ -121,6 +121,12 @@
           <zeebe:header key="studentDataCurrentYearIncome" value="$.data.currentYearIncome" />
           <zeebe:header key="studentDataReturnTripHomeCost" value="$.data.returnTripHomeCost" />
           <zeebe:header key="studentDataIncomeAssistanceAmount" value="$.data.incomeAssistanceAmount" />
+          <zeebe:header key="studentDataPartnerHasEmploymentInsuranceBenefits" value="$.data.partnerHasEmploymentInsuranceBenefits" />
+          <zeebe:header key="studentDataPartnerHasFedralProvincialPDReceipt" value="$.data.partnerHasFedralProvincialPDReceipt" />
+          <zeebe:header key="studentDataPartnerHasTotalIncomeAssistance" value="$.data.partnerHasTotalIncomeAssistance" />
+          <zeebe:header key="partner1PartnerHasEmploymentInsuranceBenefits" value="$.supportingUsers.Partner1.supportingData.partnerHasEmploymentInsuranceBenefits" />
+          <zeebe:header key="partner1PartnerHasFedralProvincialPDReceipt" value="$.supportingUsers.Partner1.supportingData.partnerHasFedralProvincialPDReceipt" />
+          <zeebe:header key="partner1PartnerHasTotalIncomeAssistance" value="$.supportingUsers.Partner1.supportingData.partnerHasTotalIncomeAssistance" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>

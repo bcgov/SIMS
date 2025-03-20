@@ -17029,7 +17029,7 @@
               "tableView": false,
               "inputType": "radio",
               "label": "Will your partner receive Employment Insurance (EI) benefits during your study period?",
-              "key": "partnerEmploymentInsuranceBenefits",
+              "key": "partnerHasEmploymentInsuranceBenefits",
               "values": [
                 {
                   "value": "yes",
@@ -17072,7 +17072,7 @@
               "tableView": false,
               "inputType": "radio",
               "label": "Will your partner receive federal or provincial disability benefits during your study period?",
-              "key": "partnerFedralProvincialPDReceipt",
+              "key": "partnerHasFedralProvincialPDReceipt",
               "values": [
                 {
                   "value": "yes",
@@ -17115,7 +17115,7 @@
               "tableView": false,
               "inputType": "radio",
               "label": "Will your partner receive Income Assistance (welfare) during your study period?",
-              "key": "partnerTotalIncomeAssist",
+              "key": "partnerHasTotalIncomeAssistance",
               "values": [
                 {
                   "value": "yes",

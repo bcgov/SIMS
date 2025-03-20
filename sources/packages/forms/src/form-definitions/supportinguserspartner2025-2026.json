@@ -2385,7 +2385,7 @@
                   "tableView": false,
                   "inputType": "radio",
                   "label": "During the applicant's study period, will you receive Employment Insurance (EI)?",
-                  "key": "partnerEmploymentInsuranceBenefits",
+                  "key": "partnerHasEmploymentInsuranceBenefits",
                   "values": [
                     {
                       "value": "yes",
@@ -2428,7 +2428,7 @@
                   "tableView": false,
                   "inputType": "radio",
                   "label": "During the applicant's study period, will you receive federal or provincial disability benefits?",
-                  "key": "partnerFedralProvincialPDReceipt",
+                  "key": "partnerHasFedralProvincialPDReceipt",
                   "values": [
                     {
                       "value": "yes",
@@ -2471,7 +2471,7 @@
                   "tableView": false,
                   "inputType": "radio",
                   "label": "During the applicant's study period, will you receive Income Assistance (welfare)?",
-                  "key": "partnerTotalIncomeAssist",
+                  "key": "partnerHasTotalIncomeAssistance",
                   "values": [
                     {
                       "value": "yes",
