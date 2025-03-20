@@ -8400,7 +8400,7 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Grant for Persons with Dependents(CSG-FTDEP)",
+                            "label": "Canada Student Grant for Persons with Dependants (CSG-FTDEP)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -8411,7 +8411,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Grant for Persons with Dependents(CSG-FTDEP)",
+                            "content": "Canada Student Grant for Persons with Dependants (CSG-FTDEP)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
