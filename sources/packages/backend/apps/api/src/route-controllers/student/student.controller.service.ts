@@ -360,9 +360,9 @@ export class StudentControllerService {
       studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
       // TODO: when application name is captured, update the below line
       applicationName: "Financial Aid Application",
-      submitted: application.currentAssessment?.submittedDate,
       status: application.applicationStatus,
       parentApplicationId: application.parentApplication.id,
+      submittedDate: application.parentApplication.submittedDate,
     };
   };
 
