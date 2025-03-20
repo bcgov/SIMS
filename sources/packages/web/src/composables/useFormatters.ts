@@ -407,14 +407,20 @@ export function useFormatters() {
   };
 
   /**
-   * Format the money value to the form ##,###.00
-   * @param moneyValue money value to be formatted.
+   * Formats a money value as a currency value.
+   * @param value money value to be formatted.
+   * @param placeholder placeholder to be used in case value is not provided.
    * @returns the formatted money value.
    */
-  const getFormattedMoneyValue = (moneyValue: number): string => {
-    return `$${moneyValue.toLocaleString("en-CA", {
-      minimumFractionDigits: 2,
-    })}`;
+  const currencyFormatter = (value: unknown, placeholder = ""): string => {
+    if (typeof value === "number") {
+      return new Intl.NumberFormat("en-CA", {
+        style: "currency",
+        currency: "CAD",
+        roundingMode: "trunc",
+      }).format(value);
+    }
+    return placeholder;
   };
 
   return {
@@ -440,6 +446,6 @@ export function useFormatters() {
     isBeforeDateOnly,
     disabilityStatusToDisplay,
     applicationDisabilityStatusToDisplay,
-    getFormattedMoneyValue,
+    currencyFormatter,
   };
 }

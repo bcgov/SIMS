@@ -11,6 +11,7 @@ import {
   AssessmentStatus,
   WorkflowData,
   ApplicationStatus,
+  ApplicationEditStatus,
 } from "@sims/sims-db";
 
 export interface AssociateWorkflowInstanceJobInDTO {
@@ -88,6 +89,10 @@ export interface ApplicationAssessmentJobOutDTO {
    */
   applicationStatus: ApplicationStatus;
   /**
+   * Application edit status.
+   */
+  applicationEditStatus: ApplicationEditStatus;
+  /**
    * If any NOA has been approved for the application.
    */
   hasNOAApproval: boolean;
@@ -153,6 +158,26 @@ export interface UpdateNOAStatusHeaderDTO {
 export interface WorkflowWrapUpJobInDTO {
   [ASSESSMENT_ID]: number;
   [WORKFLOW_DATA]: WorkflowData;
+}
+
+/**
+ * Types of operations that can be performed when wrapping up a workflow.
+ */
+export enum WorkflowWrapUpType {
+  /**
+   * Executes only a subset of the wrap-up operations, setting the assessment status to completed.
+   * Used when the workflow does not reach the calculations stage and must be aborted.
+   */
+  AssessmentStatusOnly = "Assessment status only",
+  /**
+   * Executes all wrap-up operations, setting the assessment status to completed and
+   * executing other processes related to sequential processing.
+   */
+  CompleteWrapUp = "Complete",
+}
+
+export interface WorkflowWrapUpJobHeaderDTO {
+  wrapUpType: WorkflowWrapUpType;
 }
 
 /**

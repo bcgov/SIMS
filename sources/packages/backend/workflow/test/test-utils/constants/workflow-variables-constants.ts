@@ -6,6 +6,7 @@ export enum WorkflowServiceTasks {
   AssociateWorkflowInstance = "associate-workflow-instance-task",
   LoadAssessmentConsolidatedData = "load-assessment-data-task",
   VerifyApplicationExceptions = "verify-application-exceptions-task",
+  ApplicationChangeRequestApproval = "application-change-request-approval-task",
   UpdateApplicationStatusToInProgress = "update-application-status-to-in-progress-task",
   ProgramInfoRequired = "program-info-required-task",
   ProgramInfoNotRequired = "program-info-not-required-task",
@@ -26,6 +27,10 @@ export enum WorkflowServiceTasks {
   CheckIncomeRequest = "check-income-request-task",
   // Workflow - Supporting User Information Request
   CheckSupportingUserResponseTask = "check-supporting-user-response-task",
+  // Wrap-up tasks
+  ExceptionsWorkflowWrapUpTask = "exceptions-workflow-wrap-up-task",
+  PIRWorkflowWrapUpTask = "pir-workflow-wrap-up-task",
+  ChangeRequestWorkflowWrapUpTask = "change-request-workflow-wrap-up-task",
   WorkflowWrapUpTask = "workflow-wrap-up-task",
 }
 

@@ -10,7 +10,11 @@ import {
   OfferingDeliveryOptions,
   AssessmentDataType,
 } from "@sims/test-utils";
-import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
+import {
+  ApplicationEditStatus,
+  ApplicationStatus,
+  OfferingIntensity,
+} from "@sims/sims-db";
 
 /**
  * Create fake consolidated data
@@ -24,6 +28,7 @@ export function createFakeAssessmentConsolidatedData(
   const [programStartYear] = programYear.split("-");
   return {
     ...getDefaultAssessmentConsolidatedData(),
+    applicationEditStatus: ApplicationEditStatus.Original,
     studentDataDependantstatus: "independant",
     programYear,
     programYearStartDate: `${programStartYear}-08-01`,
@@ -175,6 +180,7 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     partner1CRAReportedIncome: null,
     assessmentId: null,
     applicationStatus: null,
+    applicationEditStatus: null,
     applicationHasNOAApproval: null,
     studentDataPartnerHasEmploymentInsuranceBenefits: null,
     studentDataPartnerHasFedralProvincialPDReceipt: null,

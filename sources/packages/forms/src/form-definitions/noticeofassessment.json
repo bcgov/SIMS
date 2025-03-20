@@ -18,7 +18,7 @@
       "dbIndex": false,
       "encrypted": false,
       "redrawOn": "",
-      "customDefaultValue": "value= ((typeof data.assessment?.totalFederalAward === 'number' ? data.assessment.totalFederalAward : 0) \n        + (typeof data.assessment?.totalProvincialAward === 'number' ? data.assessment.totalProvincialAward : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+      "customDefaultValue": "value = utils.custom.currencyFormatter((typeof data.assessment?.totalFederalAward === 'number' ? data.assessment.totalFederalAward : 0) \n        + (typeof data.assessment?.totalProvincialAward === 'number' ? data.assessment.totalProvincialAward : 0));",
       "calculateValue": "",
       "calculateServer": false,
       "key": "eligibleAmount",
@@ -716,7 +716,7 @@
                   "value": ""
                 }
               ],
-              "content": "You are eligible to receive: ${{ (data.eligibleAmount)?.toLocaleString('en-CA', { minimumFractionDigits: 2 }) }}",
+              "content": "You are eligible to receive: {{ utils.custom.currencyFormatter(data.eligibleAmount) }}",
               "refreshOnChange": true,
               "customClass": "",
               "hidden": false,
@@ -1949,7 +1949,7 @@
               "value": ""
             }
           ],
-          "content": "Total income used for assessment purposes: <span class=\"label-bold\">${{ (data.assessment?.totalFamilyIncome)?.toLocaleString('en-CA', { minimumFractionDigits: 2 }) }}</span>",
+          "content": "Total income used for assessment purposes: <span class=\"label-bold\">{{ utils.custom.currencyFormatter(data.assessment?.totalFamilyIncome) }}</span>",
           "refreshOnChange": true,
           "customClass": "",
           "hidden": false,
@@ -2585,7 +2585,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment?.tuitionCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.tuitionCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -2632,7 +2632,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment?.tuitionCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.tuitionCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -2761,7 +2761,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment?.booksAndSuppliesCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.booksAndSuppliesCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -2808,7 +2808,7 @@
                             "hideLabel": true,
                             "mask": false,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.booksAndSuppliesCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -2936,7 +2936,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment?.exceptionalEducationCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.exceptionalEducationCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -2982,7 +2982,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.exceptionalEducationCost === 'number' ? '$' + (data.assessment.exceptionalEducationCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.exceptionalEducationCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -3111,7 +3111,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment?.livingAllowance).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.livingAllowance, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -3157,7 +3157,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.livingAllowance === 'number' ? '$' + (data.assessment.livingAllowance).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.livingAllowance, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -3285,7 +3285,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment?.transportationCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.transportationCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -3331,7 +3331,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment.transportationCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.transportationCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -3459,7 +3459,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment?.childcareCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.childcareCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -3505,7 +3505,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment.childcareCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.childcareCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -3633,7 +3633,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment?.otherAllowableCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.otherAllowableCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -3679,7 +3679,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.otherAllowableCost === 'number' ? '$' + (data.assessment.otherAllowableCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.otherAllowableCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -3808,7 +3808,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment?.totalAssessedCost).toLocaleString('en-CA', {minimunFractionDigits: 2}): '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalAssessedCost, '(Not eligible)');",
                             "customClass": "font-weight-bold",
                             "mask": false,
                             "isNew": false
@@ -3857,7 +3857,7 @@
                             "hideLabel": true,
                             "disabled": true,
                             "customClass": "font-weight-bold",
-                            "calculateValue": "value = typeof data.assessment?.totalAssessedCost === 'number' ? '$' + (data.assessment?.totalAssessedCost).toLocaleString('en-CA', {minimunFractionDigits: 2}): '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalAssessedCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -4362,7 +4362,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.studentExpectedFederalContribution === 'number' ? '$' + (data.assessment.studentExpectedFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentExpectedFederalContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true,
                             "isNew": false
@@ -4409,7 +4409,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.studentExpectedProvincialContribution === 'number' ? '$' + (data.assessment.studentExpectedProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentExpectedProvincialContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true
                           }
@@ -4484,7 +4484,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.studentTotalFederalContribution === 'number' ? '$' + (data.assessment.studentTotalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentTotalFederalContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -4529,7 +4529,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.studentTotalProvincialContribution === 'number' ? '$' + (data.assessment.studentTotalProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentTotalProvincialContribution, '-');",
                             "disabled": true,
                             "isNew": false
                           }
@@ -4604,7 +4604,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.scholarshipsBursariesContribution === 'number' ? '$' + (data.assessment.scholarshipsBursariesContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.scholarshipsBursariesContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -4649,7 +4649,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.scholarshipsBursariesContribution === 'number' ? '$' + (data.assessment.scholarshipsBursariesContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.scholarshipsBursariesContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -4723,7 +4723,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.targetedResources === 'number' ? '$' + (data.assessment.targetedResources).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.targetedResources, '-');",
                             "disabled": true
                           }
                         ]
@@ -4768,7 +4768,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.targetedResources === 'number' ? '$' + (data.assessment.targetedResources).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.targetedResources, '-');",
                             "disabled": true,
                             "isNew": false
                           }
@@ -4843,7 +4843,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.partnerExpectedContribution === 'number' ? '$' + (data.assessment.partnerExpectedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.partnerExpectedContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true
                           }
@@ -4889,7 +4889,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.partnerExpectedContribution === 'number' ? '$' + (data.assessment.partnerExpectedContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.partnerExpectedContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true,
                             "isNew": false
@@ -4965,7 +4965,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalAssetContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true,
                             "isNew": false
@@ -5012,7 +5012,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalAssetContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true
                           }
@@ -5087,7 +5087,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalDiscretionaryContribution === 'number' ? '$' + (data.assessment.parentalDiscretionaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalDiscretionaryContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -5132,7 +5132,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalDiscretionaryContribution === 'number' ? '$' + (data.assessment.parentalDiscretionaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalDiscretionaryContribution, '-');",
                             "disabled": true,
                             "isNew": false
                           }
@@ -5207,7 +5207,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalAssetContribution, '-');",
                             "disabled": true,
                             "isNew": false
                           }
@@ -5253,7 +5253,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalAssetContribution === 'number' ? '$' + (data.assessment.parentalAssetContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalAssetContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -5327,7 +5327,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalVoluntaryContribution === 'number' ? '$' + (data.assessment.parentalVoluntaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalVoluntaryContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -5372,7 +5372,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.parentalVoluntaryContribution === 'number' ? '$' + (data.assessment.parentalVoluntaryContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalVoluntaryContribution, '-');",
                             "disabled": true
                           }
                         ]
@@ -5446,7 +5446,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.totalFederalContribution === 'number' ? '$' + (data.assessment.totalFederalContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalFederalContribution, '-');",
                             "customClass": "font-weight-bold",
                             "disabled": true
                           }
@@ -5492,7 +5492,7 @@
                             "tags": [],
                             "properties": {},
                             "hideLabel": true,
-                            "calculateValue": "value = typeof data.assessment?.totalProvincialContribution === 'number' ? '$' + (data.assessment.totalProvincialContribution).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '-';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalProvincialContribution, '-');",
                             "disabled": true,
                             "customClass": "font-weight-bold"
                           }
@@ -5796,7 +5796,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.federalAssessmentNeed === 'number' ? '$' + (data.assessment.federalAssessmentNeed).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.federalAssessmentNeed, '(Not eligible)');",
                             "customClass": "font-weight-bold",
                             "isNew": false
                           }
@@ -5843,7 +5843,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.provincialAssessmentNeed === 'number' ? '$' + (data.assessment.provincialAssessmentNeed).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.provincialAssessmentNeed, '(Not eligible)');",
                             "customClass": "font-weight-bold",
                             "isNew": false
                           }
@@ -6311,7 +6311,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.tuitionCost === 'number' ? '$' + (data.assessment?.tuitionCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.tuitionCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -6441,7 +6441,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.booksAndSuppliesCost === 'number' ? '$' + (data.assessment.booksAndSuppliesCost).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.booksAndSuppliesCost, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -6517,7 +6517,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.mandatoryFees === 'number' ? '$' + (data.assessment?.mandatoryFees).toLocaleString('en-CA', {minimunFractionDigits: 2}): '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.mandatoryFees, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -6646,7 +6646,7 @@
                             "hideLabel": true,
                             "disabled": true,
                             "customClass": "",
-                            "calculateValue": "value = typeof data.assessment?.transportationCost === 'number' ? '$' + (data.assessment?.transportationCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.transportationCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -6774,7 +6774,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = typeof data.assessment?.miscellaneousAllowance === 'number' ? '$' + (data.assessment?.miscellaneousAllowance).toLocaleString('en-CA', {minimunFractionDigits: 2}): '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.miscellaneousAllowance, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -6910,7 +6910,7 @@
                             "hideLabel": true,
                             "disabled": true,
                             "customClass": "",
-                            "calculateValue": "value = typeof data.assessment?.childcareCost === 'number' ? '$' + (data.assessment?.childcareCost).toLocaleString('en-CA', {minimunFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.childcareCost, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -7046,7 +7046,7 @@
                             "hideLabel": true,
                             "disabled": true,
                             "customClass": "font-weight-bold",
-                            "calculateValue": "value = typeof data.assessment?.totalAssessmentNeed === 'number' ? '$' + (data.assessment?.totalAssessmentNeed).toLocaleString('en-CA', {minimunFractionDigits: 2}): '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalAssessmentNeed, '(Not eligible)');",
                             "isNew": false
                           }
                         ]
@@ -7342,13 +7342,13 @@
               "components": [
                 {
                   "label": "Table",
-                  "numRows": 11,
+                  "numRows": 9,
                   "numCols": 4,
                   "cloneRows": false,
                   "cellAlignment": "left",
                   "labelWidth": "",
                   "labelMargin": "",
-                  "customClass": "formio-bordered extra-small",
+                  "customClass": "flexible-width-formio-bordered extra-small",
                   "striped": false,
                   "bordered": false,
                   "hover": true,
@@ -7617,7 +7617,7 @@
                             "tag": "p",
                             "className": "",
                             "tags": [],
-                            "customConditional": ""
+                            "customConditional": "show = !!data.disbursement.disbursement2Date"
                           }
                         ]
                       },
@@ -7712,7 +7712,7 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Loan",
+                            "label": "Canada Student Loan (CSL)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -7723,7 +7723,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": " CSLF\r\n <span\r\n class=\"formio-custom-tooltip\">\r\n   <span class=\"tooltip-text\">\r\n    Canada Student Loan for Full-time Studies\r\n    </span>\r\n</span>",
+                            "content": "Canada Student Loan (CSL)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
@@ -7836,7 +7836,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1cslf ? '$' + (data.disbursement?.disbursement1cslf).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1cslf, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -7883,9 +7883,10 @@
                             "properties": {},
                             "disabled": true,
                             "hideLabel": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2cslf ? '$'+ (data.disbursement.disbursement2cslf).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2cslf, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "isNew": false,
+                            "customConditional": "show = !!data.disbursement.disbursement2Date"
                           }
                         ]
                       },
@@ -7932,7 +7933,7 @@
                             "mask": false,
                             "disabled": true,
                             "customClass": "",
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1cslf ? parseFloat(data.disbursement?.disbursement1cslf) : 0) +(data.disbursement?.disbursement2cslf ? parseFloat(data.disbursement?.disbursement2cslf) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1cslf ? parseFloat(data.disbursement?.disbursement1cslf) : 0) + (data.disbursement?.disbursement2cslf ? parseFloat(data.disbursement?.disbursement2cslf) : 0));",
                             "isNew": false
                           }
                         ]
@@ -7942,7 +7943,7 @@
                       {
                         "components": [
                           {
-                            "label": "HTML",
+                            "label": "B.C. Student Loan (BCSL)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -7953,7 +7954,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": " BCSL\r\n <span\r\n class=\"formio-custom-tooltip\">\r\n   <span class=\"tooltip-text\">\r\n    B.C. Student Loan\r\n    </span>\r\n</span>",
+                            "content": "B.C. Student Loan (BCSL)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
@@ -8067,7 +8068,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1bcsl ? '$' + (data.disbursement?.disbursement1bcsl).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bcsl, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -8114,9 +8115,9 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2bcsl ? '$'+ (data.disbursement.disbursement2bcsl).toLocaleString('en-CA', { minimumFractionDigits: 2 }) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bcsl, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "customConditional": "show = !!data.disbursement.disbursement2Date"
                           }
                         ]
                       },
@@ -8162,7 +8163,7 @@
                             "hideLabel": true,
                             "customClass": "",
                             "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1bcsl ? parseFloat(data.disbursement?.disbursement1bcsl) : 0) +(data.disbursement?.disbursement2bcsl ? parseFloat(data.disbursement?.disbursement2bcsl) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bcsl ? parseFloat(data.disbursement?.disbursement1bcsl) : 0) + (data.disbursement?.disbursement2bcsl ? parseFloat(data.disbursement?.disbursement2bcsl) : 0));",
                             "isNew": false
                           }
                         ]
@@ -8172,7 +8173,7 @@
                       {
                         "components": [
                           {
-                            "label": "CSGP",
+                            "label": "Canada Student Grant Program for Full-time Students (CSG-FT)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -8183,12 +8184,12 @@
                                 "value": ""
                               }
                             ],
-                            "content": "CSGP\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    Canada Student Grant for Student with Permanent Disability\n    </span>\n</span>",
+                            "content": "Canada Student Grant Program for Full-time Students (CSG-FT)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
                             "modalEdit": false,
-                            "key": "csgp",
+                            "key": "csgFt",
                             "tags": [],
                             "properties": {},
                             "conditional": {
@@ -8227,7 +8228,6 @@
                             "description": "",
                             "errorLabel": "",
                             "tooltip": "",
-                            "hideLabel": false,
                             "tabindex": "",
                             "disabled": false,
                             "autofocus": false,
@@ -8251,7 +8251,8 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "addons": [],
-                            "id": "efloic3333333333333333333333333333333333333333333333333"
+                            "id": "etkse9r55555555555555555555555555555555555555555555555",
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -8264,7 +8265,7 @@
                             "inputType": "text",
                             "inputMask": "",
                             "label": "Text",
-                            "key": "tableText22",
+                            "key": "tableText25",
                             "placeholder": "",
                             "prefix": "",
                             "suffix": "",
@@ -8294,12 +8295,10 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
-                            "mask": false,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgp ? '$' + (data.disbursement?.disbursement1csgp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgf, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -8312,7 +8311,7 @@
                             "inputType": "text",
                             "inputMask": "",
                             "label": "Text",
-                            "key": "tableText3",
+                            "key": "tableText5",
                             "placeholder": "",
                             "prefix": "",
                             "suffix": "",
@@ -8342,11 +8341,11 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgp ? '$' + (data.disbursement?.disbursement2csgp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgf, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "customConditional": "show = !!data.disbursement.disbursement2Date",
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -8359,7 +8358,7 @@
                             "inputType": "text",
                             "inputMask": "",
                             "label": "Text",
-                            "key": "tableText13",
+                            "key": "tableText15",
                             "placeholder": "",
                             "prefix": "",
                             "suffix": "",
@@ -8389,12 +8388,10 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
                             "customClass": "",
-                            "mask": false,
                             "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement?.disbursement1csgp) : 0) +(data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement?.disbursement2csgp) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
-                            "isNew": false
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgf ? parseFloat(data.disbursement?.disbursement1csgf) : 0) +(data.disbursement?.disbursement2csgf ? parseFloat(data.disbursement?.disbursement2csgf) : 0));",
+                            "hideLabel": true
                           }
                         ]
                       }
@@ -8403,7 +8400,7 @@
                       {
                         "components": [
                           {
-                            "label": "CSGD",
+                            "label": "Canada Student Grant for Persons with Dependants (CSG-FTDEP)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -8414,7 +8411,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "CSGD\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    Canada Student Grant for Students with Dependents\n    </span>\n</span>",
+                            "content": "Canada Student Grant for Persons with Dependants (CSG-FTDEP)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
@@ -8527,7 +8524,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgd ? '$' + (data.disbursement?.disbursement1csgd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgd, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -8574,9 +8571,9 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgd ? '$' + (data.disbursement?.disbursement2csgd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgd, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "customConditional": "show = !!data.disbursement.disbursement2Date"
                           }
                         ]
                       },
@@ -8622,8 +8619,7 @@
                             "hideLabel": true,
                             "customClass": "",
                             "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement?.disbursement1csgd) : 0) +(data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement?.disbursement2csgd) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
-                            "isNew": false
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement?.disbursement1csgd) : 0) +(data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement?.disbursement2csgd) : 0));"
                           }
                         ]
                       }
@@ -8632,7 +8628,7 @@
                       {
                         "components": [
                           {
-                            "label": "CSG-FT",
+                            "label": "B.C. Access Grant for Full-Time Students (BCAG)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -8643,467 +8639,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "CSGF\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    Canada Student Grant for Full-time Studies\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "customClass": "",
-                            "hidden": false,
-                            "modalEdit": false,
-                            "key": "csgFt",
-                            "tags": [],
-                            "properties": {},
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": "",
-                              "json": ""
-                            },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
-                            "overlay": {
-                              "style": "",
-                              "page": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "id": "etkse9r55555555555555555555555555555555555555555555555"
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText25",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgf ? '$' + (data.disbursement?.disbursement1csgf).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText5",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgf ? '$' + (data.disbursement?.disbursement2csgf).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText15",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "customClass": "",
-                            "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1csgf ? parseFloat(data.disbursement?.disbursement1csgf) : 0) +(data.disbursement?.disbursement2csgf ? parseFloat(data.disbursement?.disbursement2csgf) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
-                            "isNew": false
-                          }
-                        ]
-                      }
-                    ],
-                    [
-                      {
-                        "components": [
-                          {
-                            "label": "CSG-TU",
-                            "labelWidth": "",
-                            "labelMargin": "",
-                            "tag": "p",
-                            "className": "",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "CSGT\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    Canada Student Grant for Full-time Top-up\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "customClass": "",
-                            "hidden": false,
-                            "modalEdit": false,
-                            "key": "csgTu",
-                            "tags": [],
-                            "properties": {},
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": "",
-                              "json": ""
-                            },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
-                            "overlay": {
-                              "style": "",
-                              "page": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideOnChildrenHidden": false,
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "id": "e2tuwab6666666666666666666666666666666666666666666666"
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText26",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "mask": false,
-                            "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgt ? '$' + (data.disbursement?.disbursement1csgt).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText6",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgt ? '$' + (data.disbursement?.disbursement2csgt).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText16",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "customClass": "",
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1csgt ? parseFloat(data.disbursement?.disbursement1csgt) : 0) +(data.disbursement?.disbursement2csgt ? parseFloat(data.disbursement?.disbursement2csgt) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
-                            "isNew": false
-                          }
-                        ]
-                      }
-                    ],
-                    [
-                      {
-                        "components": [
-                          {
-                            "label": "BCAG",
-                            "labelWidth": "",
-                            "labelMargin": "",
-                            "tag": "p",
-                            "className": "",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "BCAG\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    B.C. Access Grant\n    </span>\n</span>",
+                            "content": "B.C. Access Grant for Full-Time Students (BCAG)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
@@ -9112,7 +8648,7 @@
                             "tags": [],
                             "properties": {},
                             "conditional": {
-                              "show": null,
+                              "show": "",
                               "when": null,
                               "eq": "",
                               "json": ""
@@ -9148,7 +8684,6 @@
                             "description": "",
                             "errorLabel": "",
                             "tooltip": "",
-                            "hideLabel": false,
                             "tabindex": "",
                             "disabled": false,
                             "autofocus": false,
@@ -9172,7 +8707,8 @@
                             "showWordCount": false,
                             "allowMultipleMasks": false,
                             "addons": [],
-                            "id": "epkk8aa777777777777777777777777777777777777777777777"
+                            "id": "epkk8aa777777777777777777777777777777777777777777777",
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -9215,11 +8751,10 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1bcag ? '$' + (data.disbursement?.disbursement1bcag).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bcag, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -9262,11 +8797,11 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2bcag ? '$' + (data.disbursement?.disbursement2bcag).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bcag, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "customConditional": "show = !!data.disbursement.disbursement2Date",
+                            "hideLabel": true
                           }
                         ]
                       },
@@ -9309,11 +8844,10 @@
                             "inputFormat": "html",
                             "tags": [],
                             "properties": {},
-                            "hideLabel": true,
                             "customClass": "",
                             "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement?.disbursement1bcag) : 0) +(data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement?.disbursement2bcag) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
-                            "isNew": false
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement?.disbursement1bcag) : 0) +(data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement?.disbursement2bcag) : 0));",
+                            "hideLabel": true
                           }
                         ]
                       }
@@ -9322,7 +8856,7 @@
                       {
                         "components": [
                           {
-                            "label": "SBSD",
+                            "label": "Canada Student Grant for Persons with Disabilities (CSG-D)",
                             "labelWidth": "",
                             "labelMargin": "",
                             "tag": "p",
@@ -9333,7 +8867,463 @@
                                 "value": ""
                               }
                             ],
-                            "content": "SBSD\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    B.C. Supplemental Bursary with Disabilities\n    </span>\n</span>",
+                            "content": "Canada Student Grant for Persons with Disabilities (CSG-D)",
+                            "refreshOnChange": false,
+                            "customClass": "",
+                            "hidden": false,
+                            "modalEdit": false,
+                            "key": "csgp",
+                            "tags": [],
+                            "properties": {},
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": "",
+                              "json": ""
+                            },
+                            "customConditional": "",
+                            "logic": [],
+                            "attributes": {},
+                            "overlay": {
+                              "style": "",
+                              "page": "",
+                              "left": "",
+                              "top": "",
+                              "width": "",
+                              "height": ""
+                            },
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "validateOn": "change",
+                            "validate": {
+                              "required": false,
+                              "custom": "",
+                              "customPrivate": false,
+                              "strictDateValidation": false,
+                              "multiple": false,
+                              "unique": false
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "id": "e20r5588888888888888888888888888888888888888888888"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText22",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "mask": false,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgp, '(Not eligible)');",
+                            "customClass": "",
+                            "hideLabel": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText3",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgp, '(Not eligible)');",
+                            "customClass": "",
+                            "customConditional": "show = !!data.disbursement.disbursement2Date",
+                            "hideLabel": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText13",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "customClass": "",
+                            "mask": false,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement?.disbursement1csgp) : 0) +(data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement?.disbursement2csgp) : 0));",
+                            "hideLabel": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "B.C. Access Grant for Students with a Disability (BCAG-D)",
+                            "labelWidth": "",
+                            "labelMargin": "",
+                            "tag": "p",
+                            "className": "",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "B.C. Access Grant for Students with a Disability (BCAG-D)",
+                            "refreshOnChange": false,
+                            "customClass": "",
+                            "hidden": false,
+                            "modalEdit": false,
+                            "key": "bgpd",
+                            "tags": [],
+                            "properties": {},
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": "",
+                              "json": ""
+                            },
+                            "customConditional": "",
+                            "logic": [],
+                            "attributes": {},
+                            "overlay": {
+                              "style": "",
+                              "page": "",
+                              "left": "",
+                              "top": "",
+                              "width": "",
+                              "height": ""
+                            },
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false,
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "validateOn": "change",
+                            "validate": {
+                              "required": false,
+                              "custom": "",
+                              "customPrivate": false,
+                              "strictDateValidation": false,
+                              "multiple": false,
+                              "unique": false
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "id": "e5oagza9999999999999999999999999999999999999999999",
+                            "hideLabel": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText29",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bgpd, '(Not eligible)');",
+                            "customClass": "",
+                            "hideLabel": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText9",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bgpd, '(Not eligible)');",
+                            "customClass": "",
+                            "customConditional": "show = !!data.disbursement.disbursement2Date",
+                            "hideLabel": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "autofocus": false,
+                            "input": true,
+                            "tableView": false,
+                            "inputType": "text",
+                            "inputMask": "",
+                            "label": "Text",
+                            "key": "tableText19",
+                            "placeholder": "",
+                            "prefix": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": "",
+                            "protected": false,
+                            "unique": false,
+                            "persistent": false,
+                            "hidden": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "validate": {
+                              "required": false,
+                              "minLength": "",
+                              "maxLength": "",
+                              "pattern": "",
+                              "custom": "",
+                              "customPrivate": false
+                            },
+                            "conditional": {
+                              "show": "",
+                              "when": null,
+                              "eq": ""
+                            },
+                            "type": "textfield",
+                            "labelPosition": "top",
+                            "inputFormat": "html",
+                            "tags": [],
+                            "properties": {},
+                            "disabled": true,
+                            "customClass": "",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1bgpd ? parseFloat(data.disbursement?.disbursement1bgpd) : 0) +(data.disbursement?.disbursement2bgpd ? parseFloat(data.disbursement?.disbursement2bgpd) : 0));",
+                            "hideLabel": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "B.C. Supplemental Bursary for Students with a Disability (SBSD)",
+                            "labelWidth": "",
+                            "labelMargin": "",
+                            "tag": "p",
+                            "className": "",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "B.C. Supplemental Bursary for Students with a Disability (SBSD)",
                             "refreshOnChange": false,
                             "customClass": "",
                             "hidden": false,
@@ -9447,7 +9437,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1sbsd ? '$' + (data.disbursement?.disbursement1sbsd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1sbsd, '(Not eligible)');",
                             "customClass": "",
                             "isNew": false
                           }
@@ -9494,9 +9484,9 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2sbsd ? '$' + (data.disbursement?.disbursement2sbsd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2sbsd, '(Not eligible)');",
                             "customClass": "",
-                            "isNew": false
+                            "customConditional": "show = !!data.disbursement.disbursement2Date"
                           }
                         ]
                       },
@@ -9541,467 +9531,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "customClass": "",
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement?.disbursement1sbsd) : 0) +(data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement?.disbursement2sbsd) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
-                            "isNew": false
-                          }
-                        ]
-                      }
-                    ],
-                    [
-                      {
-                        "components": [
-                          {
-                            "label": "BGPD",
-                            "labelWidth": "",
-                            "labelMargin": "",
-                            "tag": "p",
-                            "className": "",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "BGPD\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    B.C. Permanent Disability Grant\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "customClass": "",
-                            "hidden": false,
-                            "modalEdit": false,
-                            "key": "bgpd",
-                            "tags": [],
-                            "properties": {},
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": "",
-                              "json": ""
-                            },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
-                            "overlay": {
-                              "style": "",
-                              "page": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "hideOnChildrenHidden": false,
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "id": "e5oagza9999999999999999999999999999999999999999999"
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText29",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1bgpd ? '$' + (data.disbursement?.disbursement1bgpd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText9",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2bgpd ? '$' + (data.disbursement?.disbursement2bgpd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText19",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "customClass": "",
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1bgpd ? parseFloat(data.disbursement?.disbursement1bgpd) : 0) +(data.disbursement?.disbursement2bgpd ? parseFloat(data.disbursement?.disbursement2bgpd) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
-                            "isNew": false
-                          }
-                        ]
-                      }
-                    ],
-                    [
-                      {
-                        "components": [
-                          {
-                            "label": "BCSG",
-                            "labelWidth": "",
-                            "labelMargin": "",
-                            "tag": "p",
-                            "className": "",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "BCSG\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n     B.C. Student Grants\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "customClass": "",
-                            "hidden": false,
-                            "modalEdit": false,
-                            "key": "bcsg",
-                            "tags": [],
-                            "properties": {},
-                            "conditional": {
-                              "show": null,
-                              "when": null,
-                              "eq": "",
-                              "json": ""
-                            },
-                            "customConditional": "",
-                            "logic": [],
-                            "attributes": {},
-                            "overlay": {
-                              "style": "",
-                              "page": "",
-                              "left": "",
-                              "top": "",
-                              "width": "",
-                              "height": ""
-                            },
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false,
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": null,
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "clearOnHide": true,
-                            "refreshOn": "",
-                            "redrawOn": "",
-                            "dataGridLabel": false,
-                            "labelPosition": "top",
-                            "description": "",
-                            "errorLabel": "",
-                            "tooltip": "",
-                            "hideLabel": false,
-                            "tabindex": "",
-                            "disabled": false,
-                            "autofocus": false,
-                            "dbIndex": false,
-                            "customDefaultValue": "",
-                            "calculateValue": "",
-                            "calculateServer": false,
-                            "widget": null,
-                            "validateOn": "change",
-                            "validate": {
-                              "required": false,
-                              "custom": "",
-                              "customPrivate": false,
-                              "strictDateValidation": false,
-                              "multiple": false,
-                              "unique": false
-                            },
-                            "allowCalculateOverride": false,
-                            "encrypted": false,
-                            "showCharCount": false,
-                            "showWordCount": false,
-                            "allowMultipleMasks": false,
-                            "addons": [],
-                            "id": "e6dlyvr1010101010101010101010101010101010101010101010101010101010101010"
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText30",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1bcsg ? '$' + (data.disbursement?.disbursement1bcsg).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText10",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2bcsg ? '$' + (data.disbursement?.disbursement2bcsg).toLocaleString('en-CA', {minimumFractionDigits: 2}) : '(Not eligible)';",
-                            "customClass": "",
-                            "isNew": false
-                          }
-                        ]
-                      },
-                      {
-                        "components": [
-                          {
-                            "autofocus": false,
-                            "input": true,
-                            "tableView": false,
-                            "inputType": "text",
-                            "inputMask": "",
-                            "label": "Text",
-                            "key": "tableText20",
-                            "placeholder": "",
-                            "prefix": "",
-                            "suffix": "",
-                            "multiple": false,
-                            "defaultValue": "",
-                            "protected": false,
-                            "unique": false,
-                            "persistent": false,
-                            "hidden": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "validate": {
-                              "required": false,
-                              "minLength": "",
-                              "maxLength": "",
-                              "pattern": "",
-                              "custom": "",
-                              "customPrivate": false
-                            },
-                            "conditional": {
-                              "show": "",
-                              "when": null,
-                              "eq": ""
-                            },
-                            "type": "textfield",
-                            "labelPosition": "top",
-                            "inputFormat": "html",
-                            "tags": [],
-                            "properties": {},
-                            "hideLabel": true,
-                            "customClass": "",
-                            "disabled": true,
-                            "calculateValue": "value = '$' + ((data.disbursement?.disbursement1bcsg ? parseFloat(data.disbursement?.disbursement1bcsg) : 0) +(data.disbursement?.disbursement2bcsg ? parseFloat(data.disbursement?.disbursement2bcsg) : 0)).toLocaleString('en-CA', {minimumFractionDigits: 2});",
+                            "calculateValue": "value = utils.custom.currencyFormatter((data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement?.disbursement1sbsd) : 0) +(data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement?.disbursement2sbsd) : 0));",
                             "isNew": false
                           }
                         ]
@@ -10646,7 +10176,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgp ? '$' + (data.disbursement?.disbursement1csgp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgp, 'Not eligible');",
                             "isNew": false
                           }
                         ]
@@ -10692,7 +10222,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgp ? '$' + (data.disbursement?.disbursement2csgp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgp, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": "",
                             "isNew": false
@@ -10740,7 +10270,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement.disbursement1csgp) : 0) + (data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement.disbursement2csgp) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1csgp ? parseFloat(data.disbursement.disbursement1csgp) : 0) + (data.disbursement?.disbursement2csgp ? parseFloat(data.disbursement.disbursement2csgp) : 0));",
                             "customClass": "",
                             "isNew": false
                           }
@@ -10875,7 +10405,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1cspt ? '$' + (data.disbursement?.disbursement1cspt).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1cspt, 'Not eligible');",
                             "isNew": false
                           }
                         ]
@@ -10921,7 +10451,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2cspt ? '$' + (data.disbursement?.disbursement2cspt).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2cspt, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": "",
                             "isNew": false
@@ -10969,7 +10499,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1cspt ? parseFloat(data.disbursement.disbursement1cspt) : 0) + (data.disbursement?.disbursement2cspt ? parseFloat(data.disbursement.disbursement2cspt) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1cspt ? parseFloat(data.disbursement.disbursement1cspt) : 0) + (data.disbursement?.disbursement2cspt ? parseFloat(data.disbursement.disbursement2cspt) : 0));",
                             "customClass": "",
                             "isNew": false
                           }
@@ -11104,7 +10634,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1csgd ? '$' + (data.disbursement?.disbursement1csgd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1csgd, 'Not eligible');",
                             "isNew": false
                           }
                         ]
@@ -11150,7 +10680,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2csgd ? '$' + (data.disbursement?.disbursement2csgd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2csgd, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": ""
                           }
@@ -11197,7 +10727,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement.disbursement1csgd) : 0) + (data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement.disbursement2csgd) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1csgd ? parseFloat(data.disbursement.disbursement1csgd) : 0) + (data.disbursement?.disbursement2csgd ? parseFloat(data.disbursement.disbursement2csgd) : 0));",
                             "customClass": "",
                             "isNew": false
                           }
@@ -11333,7 +10863,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1bcag ? '$' + (data.disbursement?.disbursement1bcag).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1bcag, 'Not eligible');",
                             "isNew": false
                           }
                         ]
@@ -11379,7 +10909,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2bcag ? '$' + (data.disbursement?.disbursement2bcag).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2bcag, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": "",
                             "isNew": false
@@ -11427,7 +10957,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement.disbursement1bcag) : 0) + (data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement.disbursement2bcag) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1bcag ? parseFloat(data.disbursement.disbursement1bcag) : 0) + (data.disbursement?.disbursement2bcag ? parseFloat(data.disbursement.disbursement2bcag) : 0));",
                             "customClass": "",
                             "isNew": false
                           }
@@ -11562,7 +11092,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1cslp ? '$' + (data.disbursement?.disbursement1cslp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';"
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1cslp, 'Not eligible');"
                           }
                         ]
                       },
@@ -11607,7 +11137,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2cslp ? '$' + (data.disbursement?.disbursement2cslp).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2cslp, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": ""
                           }
@@ -11654,7 +11184,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1cslp ? parseFloat(data.disbursement.disbursement1cslp) : 0) + (data.disbursement?.disbursement2cslp ? parseFloat(data.disbursement.disbursement2cslp) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1cslp ? parseFloat(data.disbursement.disbursement1cslp) : 0) + (data.disbursement?.disbursement2cslp ? parseFloat(data.disbursement.disbursement2cslp) : 0));",
                             "customClass": ""
                           }
                         ]
@@ -11789,7 +11319,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement1sbsd ? '$' + (data.disbursement?.disbursement1sbsd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement1sbsd, 'Not eligible');",
                             "isNew": false
                           }
                         ]
@@ -11835,7 +11365,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = data.disbursement?.disbursement2sbsd ? '$' + (data.disbursement?.disbursement2sbsd).toLocaleString('en-CA', {minimumFractionDigits: 2}) : 'Not eligible';",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.disbursement?.disbursement2sbsd, 'Not eligible');",
                             "customConditional": "show = !!data.disbursement.disbursement2Date",
                             "customClass": "",
                             "isNew": false
@@ -11883,7 +11413,7 @@
                             "properties": {},
                             "hideLabel": true,
                             "disabled": true,
-                            "calculateValue": "value = '$' + (( data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement.disbursement1sbsd) : 0) + (data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement.disbursement2sbsd) : 0)).toLocaleString('en-CA', { minimumFractionDigits: 2 });",
+                            "calculateValue": "value = utils.custom.currencyFormatter(( data.disbursement?.disbursement1sbsd ? parseFloat(data.disbursement.disbursement1sbsd) : 0) + (data.disbursement?.disbursement2sbsd ? parseFloat(data.disbursement.disbursement2sbsd) : 0));",
                             "customClass": "",
                             "isNew": false
                           }
