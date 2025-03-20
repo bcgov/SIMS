@@ -2385,7 +2385,7 @@
                   "tableView": false,
                   "inputType": "radio",
                   "label": "During the applicant's study period, will you receive Employment Insurance (EI)?",
-                  "key": "partnerEmploymentInsurance",
+                  "key": "partnerEmploymentInsuranceBenefits",
                   "values": [
                     {
                       "value": "yes",
@@ -2407,7 +2407,8 @@
                   "validate": {
                     "required": true,
                     "custom": "",
-                    "customPrivate": false
+                    "customPrivate": false,
+                    "onlyAvailableItems": true
                   },
                   "type": "radio",
                   "labelPosition": "top",
@@ -2449,7 +2450,8 @@
                   "validate": {
                     "required": true,
                     "custom": "",
-                    "customPrivate": false
+                    "customPrivate": false,
+                    "onlyAvailableItems": true
                   },
                   "type": "radio",
                   "labelPosition": "top",
@@ -2491,7 +2493,8 @@
                   "validate": {
                     "required": true,
                     "custom": "",
-                    "customPrivate": false
+                    "customPrivate": false,
+                    "onlyAvailableItems": true
                   },
                   "type": "radio",
                   "labelPosition": "top",
