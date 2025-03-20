@@ -34,10 +34,8 @@ export class IER12FileDetail implements IER12FileLine {
   studentBirthDate: Date;
   studentGroupCode: "A" | "B";
   studentMaritalStatusCode: StudentMaritalStatusCode;
-  // Analysis pending for the field.
-  studentDisabilityStatusCode?: string;
-  // Analysis pending for the field.
-  applicationDisabilityStatusFlag?: string;
+  studentDisabilityStatusCode: string;
+  applicationDisabilityStatusFlag: YNFlag;
   addressInfo: IERAddressInfo;
   programName: string;
   programDescription: string;
@@ -71,7 +69,7 @@ export class IER12FileDetail implements IER12FileLine {
   bcslAmount: number;
   epAmount: number;
   provincialDefaultFlag: YNFlag;
-  // Analysis pending for the field.
+  // TODO: IER.
   federalDefaultFlag?: string;
   provincialOverawardFlag: YNFlag;
   federalOverawardFlag: YNFlag;
@@ -80,9 +78,11 @@ export class IER12FileDetail implements IER12FileLine {
   scholasticStandingCode?: ScholasticStandingCode;
   assessmentDate: Date;
   withdrawalDate?: Date;
+  // TODO: IER.
   applicantAndPartnerExpectedContribution: number;
   parentExpectedContribution?: number;
   totalExpectedContribution: number;
+  // TODO: IER.
   dependantChildQuantity?: number;
   dependantChildInDaycareQuantity?: number;
   dependantInfantQuantity?: number;
@@ -90,38 +90,40 @@ export class IER12FileDetail implements IER12FileLine {
   dependantPostSecondaryQuantity?: number;
   totalDependantQuantity?: number;
   familyMembersQuantity: number;
-  parent1Flag?: YNFlag;
-  parent2Flag?: YNFlag;
+  parent1Flag: YNFlag;
+  parent2Flag: YNFlag;
   partnerFlag: YNFlag;
   parentalAssets?: number;
   parentalAssetsExpectedContribution?: number;
   parentalIncomeExpectedContribution?: number;
-  // Analysis pending for the field.
   parentalVoluntaryContribution?: number;
   parentalDiscretionaryIncome?: number;
   parentalDiscretionaryAnnualIncomeFormulaResult?: number;
   studentLivingAtHomeFlag: YNFlag;
+  // TODO: IER.
   partnerInSchoolFlag?: string;
   // Analysis pending for the field.
   otherEducationalExpenses?: number;
   totalEducationalExpenses: number;
-  // Analysis pending for the field.
+  // TODO: IER.
   extraLocalTransportationCosts?: number;
-  // Analysis pending for the field.
+  // TODO: IER.
   extraShelterCosts?: number;
+  // TODO: IER.
   dependantLivingAllowance?: number;
   studentLivingAllowance: number;
   totalLivingAllowance: number;
   alimonyCost?: number;
   // Analysis pending for the field.
   otherDiscretionaryCosts?: number;
-  // Analysis pending for the field.
+  // TODO: IER.
   returnTransportationCosts?: number;
   // Analysis pending for the field.
   partnerStudentLoanPaymentCosts?: number;
   childcareCost?: number;
   totalNonEducationalCost: number;
   totalExpenses: number;
+  // TODO: IER.
   assessedNeed: number;
   studentEligibleAward: number;
   // Analysis pending for the field.
@@ -174,11 +176,8 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendFormattedDate(this.studentBirthDate);
     record.appendStringWithFiller(this.studentGroupCode, 4);
     record.appendStringWithFiller(this.studentMaritalStatusCode, 4);
-    record.appendOptionalStringWithFiller(this.studentDisabilityStatusCode, 4);
-    record.appendOptionalStringWithFiller(
-      this.applicationDisabilityStatusFlag,
-      1,
-    );
+    record.append(this.studentDisabilityStatusCode);
+    record.append(this.applicationDisabilityStatusFlag);
     record.appendStringWithFiller(this.addressInfo.addressLine1, 25);
     record.appendOptionalStringWithFiller(this.addressInfo.addressLine2, 25);
     record.appendStringWithFiller(this.addressInfo.city, 25);

@@ -3,6 +3,7 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   COEStatus,
+  DisabilityStatus,
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
@@ -32,15 +33,18 @@ export interface IER12Record {
   assessmentId: number;
   disbursementId: number;
   applicationNumber: string;
+  applicationPDStatus: boolean;
   institutionStudentNumber?: string;
   sin: string;
   studentLastName: string;
   studentGivenName?: string;
   studentBirthDate: Date;
+  studentDisabilityStatus: DisabilityStatus;
   studentDependantStatus: "dependant" | "independant";
   studentMaritalStatusCode: StudentMaritalStatusCode;
-  studentAndSupportingUserContribution: number;
+  applicantAndPartnerExpectedContribution: number;
   parentExpectedContribution?: number;
+  totalExpectedContribution: number;
   totalEligibleDependents?: number;
   dependantChildQuantity?: number;
   dependantChildInDaycareQuantity?: number;
@@ -53,6 +57,7 @@ export interface IER12Record {
   parentalAssetContribution?: number;
   parentalContribution?: number;
   parentDiscretionaryIncome?: number;
+  parentalDiscretionaryContribution?: number;
   studentLivingWithParents: boolean;
   dependantTotalMSOLAllowance?: number;
   studentMSOLAllowance: number;
@@ -195,8 +200,6 @@ export enum ApplicationEventCode {
    */
   DISC = "DISC",
 }
-
-export const DISCRETIONARY_INCOME_PERCENTAGE = 0.15;
 
 /**
  * Application event code for completed application.

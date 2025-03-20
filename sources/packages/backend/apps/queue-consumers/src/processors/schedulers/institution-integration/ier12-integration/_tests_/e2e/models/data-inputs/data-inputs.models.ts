@@ -69,6 +69,8 @@ export type IER12FullTimeAssessment = Pick<
   | "totalAssessedCost"
   | "totalAssessmentNeed"
   | "weeks"
+  | "totalProvincialContribution"
+  | "parentalDiscretionaryContribution"
 >;
 
 /**

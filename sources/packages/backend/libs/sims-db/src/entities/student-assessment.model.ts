@@ -324,6 +324,7 @@ export interface FullTimeAssessment extends BaseAssessment {
   finalProvincialAwardNetBCSLAmount: number;
   finalFederalAwardNetCSGFAmount: number;
   finalProvincialAwardNetBGPDAmount: number;
+  parentalDiscretionaryContribution?: number;
 }
 
 /**
