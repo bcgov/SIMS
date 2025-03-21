@@ -159,6 +159,7 @@ export class AssessmentSequentialProcessingService {
       currentAssessment.application.programYear.id,
       { alternativeReferenceDate: options?.alternativeReferenceDate },
     );
+    console.log("sequencedApplications Translated", sequencedApplications);
     // Get the application numbers of the previous applications.
     const applicationNumbers = sequencedApplications.previous.map(
       (application) => application.applicationNumber,
@@ -461,12 +462,22 @@ export class AssessmentSequentialProcessingService {
     // Sub query to determined if the assessment has at least one non-declined COE (Required or Completed).
     // If all the COEs from the assessment are declined some user action will be needed in the application
     // and this application will not be considered for sequential processing.
-    const existsValidCOE = entityManager
+    const existsValidDisbursement = entityManager
       .getRepository(DisbursementSchedule)
       .createQueryBuilder("disbursementSchedule")
       .select("1")
-      .where("disbursementSchedule.studentAssessment.id = currentAssessment.id")
-      .andWhere("disbursementSchedule.coeStatus != :declinedCOEStatus")
+      .innerJoin(
+        "disbursementSchedule.studentAssessment",
+        "disbursementAssessment",
+      )
+      .innerJoin(
+        "disbursementAssessment.application",
+        "disbursementApplication",
+      )
+      .where("disbursementApplication.id = application.id")
+      .andWhere(
+        "disbursementSchedule.disbursementScheduleStatus != :cancelledDisbursementStatus",
+      )
       .limit(1)
       .getSql();
     // Returns past, current, and future applications ordered by the first ever executed assessment calculation.
@@ -503,7 +514,7 @@ export class AssessmentSequentialProcessingService {
                   cancelledStatus: ApplicationStatus.Cancelled,
                 })
                 .andWhere("currentAssessment.assessmentDate IS NOT NULL")
-                .andWhere(`EXISTS (${existsValidCOE})`),
+                .andWhere(`EXISTS (${existsValidDisbursement})`),
             ),
             // The 'or' condition forces the current application to be returned since its data matters for decisions,
             // for instance, if the current application has no calculation date no future application should be impacted.
@@ -512,9 +523,12 @@ export class AssessmentSequentialProcessingService {
           });
         }),
       )
-      .setParameters({ declinedCOEStatus: COEStatus.declined })
+      .setParameters({
+        cancelledDisbursementStatus: DisbursementScheduleStatus.Cancelled,
+      })
       .orderBy(`"${referenceAssessmentDateColumn}"`)
       .getRawMany<SequentialApplication>();
+    console.log("sequentialApplications", sequentialApplications);
     return new SequencedApplications(
       applicationNumber,
       sequentialApplications,
