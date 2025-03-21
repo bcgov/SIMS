@@ -508,7 +508,7 @@ export class AssessmentController {
   ): ApplicationAssessmentJobOutDTO {
     const application = assessment.application;
     const [studentCRAIncome] = application.craIncomeVerifications?.filter(
-      (verification) => verification.supportingUser?.id === null,
+      (verification) => !verification.supportingUser?.id,
     );
     const offering = assessment.offering;
     const institutionLocation = offering?.institutionLocation;
