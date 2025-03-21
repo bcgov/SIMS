@@ -161,6 +161,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         assessmentTriggerType: application.currentAssessment.triggerType,
         hasBlockFundingFeedbackError: false,
         hasECertFailedValidations: false,
+        currentAssessmentId: application.currentAssessment.id,
       });
   });
 
@@ -202,6 +203,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         assessmentTriggerType: AssessmentTriggerType.RelatedApplicationChanged,
         hasBlockFundingFeedbackError: false,
         hasECertFailedValidations: false,
+        currentAssessmentId: application.currentAssessment.id,
       });
   });
 
@@ -256,6 +258,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
           hasECertFailedValidations: false,
+          currentAssessmentId: application.currentAssessment.id,
         });
     },
   );
@@ -311,6 +314,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
           hasECertFailedValidations: false,
+          currentAssessmentId: application.currentAssessment.id,
         });
     },
   );
@@ -369,6 +373,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
           hasECertFailedValidations: true,
+          currentAssessmentId: application.currentAssessment.id,
         });
     },
   );
