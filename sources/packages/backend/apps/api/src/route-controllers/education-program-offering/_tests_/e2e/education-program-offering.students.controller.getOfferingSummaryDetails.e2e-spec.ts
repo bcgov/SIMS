@@ -39,14 +39,14 @@ describe("EducationProgramOfferingStudentsController(e2e)-getOfferingSummaryDeta
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    const endpoint = `/students/education-program-offering/offering/${application.currentAssessment.offeringId}/summary-details?purpose=application-offering-change`;
+    const endpoint = `/students/education-program-offering/offering/${application.currentAssessment.offering.id}/summary-details?purpose=application-offering-change`;
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        id: application.currentAssessment.offeringId,
+        id: application.currentAssessment.offering.id,
         offeringName: application.currentAssessment.offering.name,
         studyStartDate: application.currentAssessment.offering.studyStartDate,
         studyEndDate: application.currentAssessment.offering.studyEndDate,
@@ -86,7 +86,7 @@ describe("EducationProgramOfferingStudentsController(e2e)-getOfferingSummaryDeta
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    const endpoint = `/students/education-program-offering/offering/${application.currentAssessment.offeringId}/summary-details?purpose=application-offering-change`;
+    const endpoint = `/students/education-program-offering/offering/${application.currentAssessment.offering.id}/summary-details?purpose=application-offering-change`;
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
@@ -108,7 +108,7 @@ describe("EducationProgramOfferingStudentsController(e2e)-getOfferingSummaryDeta
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    const endpoint = `/students/education-program-offering/offering/${application.currentAssessment.offeringId}/summary-details`;
+    const endpoint = `/students/education-program-offering/offering/${application.currentAssessment.offering.id}/summary-details`;
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)

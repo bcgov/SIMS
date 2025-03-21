@@ -41,7 +41,7 @@ export function createFakeDesignationAgreement(
   const fakeDesignationAgreement = new DesignationAgreement();
   fakeDesignationAgreement.institution = relations.fakeInstitution;
   const isBCPrivate =
-    fakeDesignationAgreement.institution.institutionTypeId ===
+    fakeDesignationAgreement.institution.institutionType.id ===
     INSTITUTION_TYPE_BC_PRIVATE;
   fakeDesignationAgreement.submittedData = {
     legalAuthorityName: faker.name.findName(),
