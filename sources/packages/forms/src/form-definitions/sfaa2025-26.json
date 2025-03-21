@@ -9275,8 +9275,7 @@
             "eq": "Full Time"
           },
           "properties": {},
-          "hideLabel": true,
-          "isNew": false
+          "hideLabel": true
         },
         {
           "title": "Disability information panel",
@@ -9623,8 +9622,7 @@
                 "eq": ""
               },
               "properties": {},
-              "lockKey": true,
-              "isNew": false
+              "lockKey": true
             },
             {
               "label": "Are you a resident of B.C.?",
@@ -9719,8 +9717,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "e3yxtjc",
-              "defaultValue": "",
-              "isNew": false
+              "defaultValue": ""
             },
             {
               "title": "Not a BC resident panel",
@@ -17420,6 +17417,135 @@
               "defaultValue": ""
             },
             {
+              "autofocus": false,
+              "input": true,
+              "tableView": false,
+              "inputType": "radio",
+              "label": "Will your partner receive Employment Insurance (EI) benefits during your study period?",
+              "key": "partnerHasEmploymentInsuranceBenefits",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "custom": "",
+                "customPrivate": false,
+                "onlyAvailableItems": true
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time"
+              },
+              "properties": {},
+              "lockKey": true
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": false,
+              "inputType": "radio",
+              "label": "Will your partner receive federal or provincial disability benefits during your study period?",
+              "key": "partnerHasFedralProvincialPDReceipt",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "custom": "",
+                "customPrivate": false,
+                "onlyAvailableItems": true
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time"
+              },
+              "properties": {},
+              "lockKey": true
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": false,
+              "inputType": "radio",
+              "label": "Will your partner receive Income Assistance (welfare) during your study period?",
+              "key": "partnerHasTotalIncomeAssistance",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "custom": "",
+                "customPrivate": false,
+                "onlyAvailableItems": true
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time"
+              },
+              "properties": {},
+              "lockKey": true
+            },
+            {
               "label": "Will your partner be at home caring for eligible dependent children on a full-time basis during your entire study period?",
               "labelPosition": "top",
               "labelWidth": "",
@@ -18581,8 +18707,7 @@
       "addons": [],
       "tree": false,
       "lazyLoad": false,
-      "id": "eo39uv9",
-      "isNew": false
+      "id": "eo39uv9"
     },
     {
       "title": "Parent information",

@@ -38,6 +38,8 @@ export class UpdateSupportingUserAPIInDTO extends ApplicationIdentifierAPIInDTO 
   sin: string;
   @Expose()
   supportingData: unknown;
+  @Expose()
+  offeringIntensity: OfferingIntensity;
 }
 
 export interface ApplicationAPIOutDTO {

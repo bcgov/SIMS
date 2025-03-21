@@ -49,10 +49,15 @@ export function useFormatters() {
   /**
    * Get the date hour and minute of a date/time or string.
    * @param date date/time or string to have the date extracted.
-   * @returns date only string in ISO format YYYY-MM-DD.
+   * @returns date only string in ISO format YYYY-MM-DD, if a date is provided.
    */
-  const getISODateHourMinuteString = (date: Date | string): string => {
-    return dayjs(date).format(DATE_HOUR_MINUTE_ISO_FORMAT);
+  const getISODateHourMinuteString = (
+    date?: Date | string,
+  ): string | undefined => {
+    if (date) {
+      return dayjs(date).format(DATE_HOUR_MINUTE_ISO_FORMAT);
+    }
+    return undefined;
   };
 
   /**

@@ -195,6 +195,12 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   applicationEditStatus: ApplicationEditStatus;
   applicationHasNOAApproval: boolean;
   programYearTotalBookCost: number;
+  studentDataPartnerHasEmploymentInsuranceBenefits?: YesNoOptions;
+  studentDataPartnerHasFedralProvincialPDReceipt?: YesNoOptions;
+  studentDataPartnerHasTotalIncomeAssistance?: YesNoOptions;
+  partner1PartnerHasEmploymentInsuranceBenefits?: YesNoOptions;
+  partner1PartnerHasFedralProvincialPDReceipt?: YesNoOptions;
+  partner1PartnerHasTotalIncomeAssistance?: YesNoOptions;
 }
 
 /**

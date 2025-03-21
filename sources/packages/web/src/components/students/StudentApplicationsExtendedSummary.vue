@@ -1,5 +1,5 @@
+<!-- This component is student specific. -->
 <template>
-  <!-- This component is shared between ministry and student users -->
   <body-header-container>
     <template #header>
       <body-header
@@ -9,11 +9,11 @@
     </template>
     <content-group>
       <toggle-content
-        :toggled="!applicationsAndCount.results?.length"
+        :toggled="!applicationsAndCount.count"
         message="No applications are currently available."
       >
         <v-data-table-server
-          :headers="StudentApplicationsSummaryHeaders"
+          :headers="StudentApplicationsExtendedSummaryHeaders"
           :items="applicationsAndCount.results"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
@@ -27,69 +27,59 @@
           </template>
           <template #[`item.applicationName`]="{ item }">
             <v-btn
-              v-if="enableViewApplicationOnName"
               variant="plain"
               @click="$emit('goToApplication', item.id)"
               color="primary"
               >{{ item.applicationName }}
               <v-tooltip activator="parent" location="start"
-                >Click To View this Application</v-tooltip
+                >Click to view this application</v-tooltip
               >
             </v-btn>
-            <span v-if="!enableViewApplicationOnName"
-              >{{ item.applicationName }}
-            </span>
+          </template>
+          <template #[`item.submitted`]="{ item }">
+            {{
+              emptyStringFiller(getISODateHourMinuteString(item.submittedDate))
+            }}
           </template>
           <template #[`item.studyStartPeriod`]="{ item }">
             {{ dateOnlyLongString(item.studyStartPeriod) }} -
             {{ dateOnlyLongString(item.studyEndPeriod) }}
           </template>
           <template #[`item.status`]="{ item }">
-            <status-chip-application
-              :status="item.status as ApplicationStatus"
-            />
+            <status-chip-application :status="item.status" />
           </template>
           <template #[`item.actions`]="{ item }">
-            <span v-if="manageApplication">
-              <span
-                v-if="
-                  !(
-                    item.status === ApplicationStatus.Cancelled ||
-                    item.status === ApplicationStatus.Completed
-                  )
-                "
-              >
-                <v-btn
-                  :disabled="sinValidStatus !== SINStatusEnum.VALID"
-                  variant="plain"
-                  color="primary"
-                  class="label-bold"
-                  @click="$emit('editApplicationAction', item.status, item.id)"
-                  append-icon="mdi-pencil-outline"
-                  ><span class="label-bold">Edit</span>
-                  <v-tooltip activator="parent" location="start"
-                    >Click To Edit this Application</v-tooltip
-                  >
-                </v-btn>
-                <v-btn
-                  :disabled="sinValidStatus !== SINStatusEnum.VALID"
-                  variant="plain"
-                  color="primary"
-                  class="label-bold"
-                  @click="emitCancel(item.id)"
-                  ><span class="label-bold">Cancel</span>
-                  <v-tooltip activator="parent" location="start"
-                    >Click To Cancel this Application</v-tooltip
-                  >
-                </v-btn>
-              </span>
-            </span>
-            <span v-if="enableViewApplication">
+            <span
+              v-if="
+                !(
+                  item.status === ApplicationStatus.Cancelled ||
+                  item.status === ApplicationStatus.Completed
+                )
+              "
+            >
               <v-btn
-                variant="outlined"
-                @click="$emit('goToApplication', item.id)"
-                >View</v-btn
-              >
+                :disabled="!hasSINValidStatus"
+                variant="plain"
+                color="primary"
+                class="label-bold"
+                @click="$emit('editApplicationAction', item.status, item.id)"
+                append-icon="mdi-pencil-outline"
+                ><span class="label-bold">Edit</span>
+                <v-tooltip activator="parent" location="start"
+                  >Click to edit this application</v-tooltip
+                >
+              </v-btn>
+              <v-btn
+                :disabled="!hasSINValidStatus"
+                variant="plain"
+                color="primary"
+                class="label-bold"
+                @click="emitCancel(item.id)"
+                ><span class="label-bold">Cancel</span>
+                <v-tooltip activator="parent" location="start"
+                  >Click to cancel this application</v-tooltip
+                >
+              </v-btn>
             </span>
           </template>
         </v-data-table-server>
@@ -106,7 +96,7 @@ import {
   DataTableSortOrder,
   StudentApplicationFields,
   SINStatusEnum,
-  StudentApplicationsSummaryHeaders,
+  StudentApplicationsExtendedSummaryHeaders,
   ITEMS_PER_PAGE,
   DataTableOptions,
   PaginationOptions,
@@ -124,34 +114,17 @@ import { useDisplay } from "vuetify";
 export default defineComponent({
   components: { StatusChipApplication },
   emits: ["editApplicationAction", "openConfirmCancel", "goToApplication"],
-  props: {
-    studentId: {
-      type: Number,
-      required: false,
-    },
-    enableViewApplication: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    manageApplication: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    enableViewApplicationOnName: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-  },
-  setup(props, { emit }) {
+  setup(_, { emit }) {
     const loading = ref(false);
     const { mobile: isMobile } = useDisplay();
     const applicationsAndCount = ref(
       {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
     );
-    const { dateOnlyLongString } = useFormatters();
+    const {
+      dateOnlyLongString,
+      getISODateHourMinuteString,
+      emptyStringFiller,
+    } = useFormatters();
     const store = useStore();
 
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
@@ -162,8 +135,9 @@ export default defineComponent({
       sortOrder: DataTableSortOrder.DESC,
     });
 
-    const sinValidStatus = computed(
-      () => store.state.student.sinValidStatus.sinStatus,
+    const hasSINValidStatus = computed(
+      () =>
+        store.state.student.sinValidStatus.sinStatus === SINStatusEnum.VALID,
     );
 
     const getStudentApplications = async () => {
@@ -175,7 +149,6 @@ export default defineComponent({
             currentPagination.value.pageLimit,
             currentPagination.value.sortField as StudentApplicationFields,
             currentPagination.value.sortOrder as DataTableSortOrder,
-            props.studentId,
           );
       } finally {
         loading.value = false;
@@ -213,17 +186,17 @@ export default defineComponent({
 
     return {
       dateOnlyLongString,
+      getISODateHourMinuteString,
+      emptyStringFiller,
       ApplicationStatus,
       applicationsAndCount,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       loading,
       StudentApplicationFields,
-      reloadApplications,
-      SINStatusEnum,
-      sinValidStatus,
+      hasSINValidStatus,
       emitCancel,
-      StudentApplicationsSummaryHeaders,
+      StudentApplicationsExtendedSummaryHeaders,
       isMobile,
       paginationAndSortEvent,
     };
