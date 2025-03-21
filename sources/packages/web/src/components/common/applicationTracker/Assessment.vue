@@ -17,19 +17,20 @@
       required on your application.
     </template>
     <template #actions>
-      <v-btn color="primary" @click="goToViewAssessment">View assessment</v-btn>
+      <v-btn color="primary" @click="$emit('goToNoticeOfAssessment')"
+        >View assessment</v-btn
+      >
     </template>
   </application-status-tracker-banner>
 </template>
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/common/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import RelatedApplicationChanged from "@/components/common/applicationTracker/RelatedApplicationChanged.vue";
-import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { AssessmentTriggerType } from "@/types";
 import { defineComponent, PropType } from "vue";
-import { useRouter } from "vue-router";
 
 export default defineComponent({
+  emits: ["goToNoticeOfAssessment"],
   components: {
     ApplicationStatusTrackerBanner,
     RelatedApplicationChanged,
@@ -39,27 +40,9 @@ export default defineComponent({
       type: String as PropType<AssessmentTriggerType>,
       required: true,
     },
-    applicationId: {
-      type: Number,
-      required: true,
-    },
-    assessmentId: {
-      type: Number,
-      required: true,
-    },
   },
-  setup(props) {
-    const router = useRouter();
-    const goToViewAssessment = () => {
-      router.push({
-        name: StudentRoutesConst.ASSESSMENT_AWARD_VIEW,
-        params: {
-          applicationId: props.applicationId,
-          assessmentId: props.assessmentId,
-        },
-      });
-    };
-    return { AssessmentTriggerType, goToViewAssessment };
+  setup() {
+    return { AssessmentTriggerType };
   },
 });
 </script>
