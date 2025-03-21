@@ -720,8 +720,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "offering.studyStartDate",
         "offering.studyEndDate",
         "application.applicationStatus",
+        "programYear.programYear",
+        "versions.id",
+        "versions.submittedDate",
+        "versions.applicationEditStatus",
       ])
       .innerJoin("application.parentApplication", "parentApplication")
+      .innerJoin("application.programYear", "programYear")
+      .leftJoin("parentApplication.versions", "versions")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .where("application.student.id = :studentId", { studentId })
@@ -1429,16 +1435,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Retrieve application with application number in
    * completed status.
-   ** Application id is used to perform same lookup by id
-   ** instead of application number.
-   * @param userId
-   * @param applicationId
-   * @param applicationNumber
-   * @returns
+   * @param userId user id.
+   * @param applicationId application ID.
+   * @returns application details for an appeal.
    */
   async getApplicationToRequestAppeal(
     userId: number,
-    applicationNumber?: string,
     applicationId?: number,
   ): Promise<Application> {
     return this.repo.findOne({
@@ -1452,7 +1454,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       where: {
         student: { user: { id: userId } },
         applicationStatus: ApplicationStatus.Completed,
-        applicationNumber,
         id: applicationId,
       },
     });

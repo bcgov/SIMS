@@ -89,7 +89,6 @@ export class StudentAppealStudentsController extends BaseController {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
         userToken.userId,
-        undefined,
         applicationId,
       );
     if (!application) {

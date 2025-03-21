@@ -213,6 +213,9 @@ export default defineComponent({
           command: () => {
             router.push({
               name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
+              params: {
+                applicationId: props.id,
+              },
             });
           },
         });

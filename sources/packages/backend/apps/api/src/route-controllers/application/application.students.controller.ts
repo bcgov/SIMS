@@ -34,7 +34,6 @@ import {
   ApplicationDataAPIOutDTO,
   ApplicationWithProgramYearAPIOutDTO,
   ApplicationProgramYearAPIOutDTO,
-  ApplicationNumberParamAPIInDTO,
   InProgressApplicationDetailsAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
@@ -558,15 +557,15 @@ export class ApplicationStudentsController extends BaseController {
     description:
       "Application either not found or not eligible to request for change.",
   })
-  @Get(":applicationNumber/appeal")
+  @Get(":applicationId/appeal")
   async getApplicationToRequestAppeal(
-    @Param() applicationNumberParam: ApplicationNumberParamAPIInDTO,
+    @Param("applicationId") applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<ApplicationProgramYearAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
         userToken.userId,
-        applicationNumberParam.applicationNumber,
+        applicationId,
       );
     if (!application) {
       throw new NotFoundException(

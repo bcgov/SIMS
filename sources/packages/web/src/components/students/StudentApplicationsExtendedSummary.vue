@@ -21,6 +21,7 @@
           :loading="loading"
           :mobile="isMobile"
           @update:options="paginationAndSortEvent"
+          show-expand
         >
           <template #[`item.applicationNumber`]="{ item }">
             {{ item.applicationNumber }}
@@ -49,38 +50,115 @@
             <status-chip-application :status="item.status" />
           </template>
           <template #[`item.actions`]="{ item }">
-            <span
-              v-if="
-                !(
-                  item.status === ApplicationStatus.Cancelled ||
-                  item.status === ApplicationStatus.Completed
-                )
-              "
+            <v-btn
+              variant="plain"
+              color="primary"
+              @click="$emit('goToApplication', item.id)"
+              >View
+              <v-tooltip activator="parent" location="start"
+                >Click to view this application</v-tooltip
+              >
+            </v-btn>
+            <v-btn
+              v-if="canDisplayEdit(item)"
+              :disabled="!hasSINValidStatus"
+              variant="plain"
+              color="primary"
+              @click="$emit('editApplicationAction', item.status, item.id)"
+              append-icon="mdi-pencil-outline"
+              >Edit
+              <v-tooltip activator="parent" location="start"
+                >Click to edit this application</v-tooltip
+              >
+            </v-btn>
+            <v-btn
+              v-if="canDisplayChangeRequest(item)"
+              :disabled="!hasSINValidStatus"
+              variant="plain"
+              color="primary"
+              @click="$emit('editApplicationAction', item.status, item.id)"
+              append-icon="mdi-pencil-outline"
+              >Change Request
+              <v-tooltip activator="parent" location="start"
+                >Click to request a change in this application</v-tooltip
+              >
+            </v-btn>
+            <v-btn
+              v-if="canDisplayCancel(item)"
+              :disabled="!hasSINValidStatus"
+              variant="plain"
+              color="primary"
+              @click="emitCancel(item.id)"
+              >Cancel
+              <v-tooltip activator="parent" location="start"
+                >Click to cancel this application</v-tooltip
+              >
+            </v-btn>
+          </template>
+          <!-- <template #[`item.history`]="{ item }">
+            <v-select
+              density="compact"
+              :items="item.versions"
+              item-value="id"
+              label="Versions"
+              style="min-width: 130px"
             >
-              <v-btn
-                :disabled="!hasSINValidStatus"
-                variant="plain"
-                color="primary"
-                class="label-bold"
-                @click="$emit('editApplicationAction', item.status, item.id)"
-                append-icon="mdi-pencil-outline"
-                ><span class="label-bold">Edit</span>
-                <v-tooltip activator="parent" location="start"
-                  >Click to edit this application</v-tooltip
-                >
-              </v-btn>
-              <v-btn
-                :disabled="!hasSINValidStatus"
-                variant="plain"
-                color="primary"
-                class="label-bold"
-                @click="emitCancel(item.id)"
-                ><span class="label-bold">Cancel</span>
-                <v-tooltip activator="parent" location="start"
-                  >Click to cancel this application</v-tooltip
-                >
-              </v-btn>
-            </span>
+              <template v-slot:item="{ item }">
+                <v-list-item @click="$emit('goToApplication', item.raw.id)">
+                  <v-list-item-title
+                    >{{
+                      getISODateHourMinuteString(item.raw.submittedDate)
+                    }}
+                    ({{ item.raw.applicationEditStatus }})</v-list-item-title
+                  >
+                </v-list-item>
+              </template>
+            </v-select>
+          </template> -->
+          <template
+            v-slot:[`item.data-table-expand`]="{
+              internalItem,
+              isExpanded,
+              toggleExpand,
+            }"
+          >
+            <v-btn
+              :append-icon="
+                isExpanded(internalItem) ? 'mdi-chevron-up' : 'mdi-chevron-down'
+              "
+              text="Versions"
+              variant="plain"
+              color="primary"
+              @click="toggleExpand(internalItem)"
+            ></v-btn>
+          </template>
+          <template v-slot:expanded-row="{ columns, item }">
+            <tr>
+              <td :colspan="columns.length" class="py-4">
+                <content-group>
+                  <v-table density="compact">
+                    <thead>
+                      <tr>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="version in item.versions" :key="version.id">
+                        <td>
+                          {{
+                            getISODateHourMinuteString(version.submittedDate)
+                          }}
+                        </td>
+                        <td>{{ version.applicationEditStatus }}</td>
+                        <td>View this application version</td>
+                      </tr>
+                    </tbody>
+                  </v-table>
+                </content-group>
+              </td>
+            </tr>
           </template>
         </v-data-table-server>
       </toggle-content>
@@ -120,6 +198,7 @@ export default defineComponent({
     const applicationsAndCount = ref(
       {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
     );
+
     const {
       dateOnlyLongString,
       getISODateHourMinuteString,
@@ -184,10 +263,37 @@ export default defineComponent({
       emit("openConfirmCancel", applicationId, () => reloadApplications());
     };
 
+    const canDisplayEdit = (application: ApplicationSummaryAPIOutDTO) => {
+      return (
+        application.status !== ApplicationStatus.Cancelled &&
+        application.status !== ApplicationStatus.Completed
+      );
+    };
+
+    const canDisplayChangeRequest = (
+      application: ApplicationSummaryAPIOutDTO,
+    ) => {
+      return (
+        application.status !== ApplicationStatus.Cancelled &&
+        application.status === ApplicationStatus.Completed &&
+        application.isChangeRequestAllowed
+      );
+    };
+
+    const canDisplayCancel = (application: ApplicationSummaryAPIOutDTO) => {
+      return (
+        application.status !== ApplicationStatus.Cancelled &&
+        application.status !== ApplicationStatus.Completed
+      );
+    };
+
     return {
       dateOnlyLongString,
       getISODateHourMinuteString,
       emptyStringFiller,
+      canDisplayEdit,
+      canDisplayChangeRequest,
+      canDisplayCancel,
       ApplicationStatus,
       applicationsAndCount,
       DEFAULT_PAGE_LIMIT,

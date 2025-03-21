@@ -23,6 +23,7 @@ import {
   USER_LAST_NAME_MAX_LENGTH,
   USER_GIVEN_NAMES_MAX_LENGTH,
   SpecificIdentityProviders,
+  ApplicationEditStatus,
 } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
@@ -202,6 +203,12 @@ export class AESTFileUploadToStudentAPIInDTO {
   associatedFiles: string[];
 }
 
+export class ApplicationVersionAPIOutDTO {
+  id: number;
+  applicationEditStatus: ApplicationEditStatus;
+  submittedDate: Date;
+}
+
 /**
  * DTO object application summary info.
  */
@@ -213,7 +220,16 @@ export class ApplicationSummaryAPIOutDTO {
   applicationName: string;
   status: ApplicationStatus;
   parentApplicationId: number;
+  /**
+   * Original application submission date.
+   */
   submittedDate?: Date;
+  /**
+   * Indicates if the application is able to use the
+   * change request feature. Other conditions may apply.
+   */
+  isChangeRequestAllowed: boolean;
+  versions: ApplicationVersionAPIOutDTO[];
 }
 
 /**

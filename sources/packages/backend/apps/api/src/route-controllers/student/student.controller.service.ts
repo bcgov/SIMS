@@ -16,7 +16,10 @@ import {
   ApplicationPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import { getUserFullName } from "../../utilities";
+import {
+  allowApplicationChangeRequest,
+  getUserFullName,
+} from "../../utilities";
 import {
   CustomNamedError,
   getISODateOnlyString,
@@ -363,6 +366,14 @@ export class StudentControllerService {
       status: application.applicationStatus,
       parentApplicationId: application.parentApplication.id,
       submittedDate: application.parentApplication.submittedDate,
+      isChangeRequestAllowed: allowApplicationChangeRequest(
+        application.programYear,
+      ),
+      versions: application.parentApplication.versions.map((version) => ({
+        id: version.id,
+        applicationEditStatus: version.applicationEditStatus,
+        submittedDate: version.submittedDate,
+      })),
     };
   };
 
