@@ -46,6 +46,8 @@
         :assessmentTriggerType="
           applicationProgressDetails.assessmentTriggerType!
         "
+        :applicationId="applicationId"
+        :assessmentId="applicationProgressDetails.currentAssessmentId"
       />
       <enrolment
         v-else-if="

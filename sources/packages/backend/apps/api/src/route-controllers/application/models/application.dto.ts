@@ -185,6 +185,7 @@ export class ApplicationProgressDetailsAPIOutDTO {
   assessmentTriggerType?: AssessmentTriggerType;
   hasBlockFundingFeedbackError: boolean;
   hasECertFailedValidations: boolean;
+  currentAssessmentId: number;
 }
 
 export class DisbursementDetailsAPIOutDTO {
