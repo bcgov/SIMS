@@ -60,6 +60,38 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
         institutionId = response.body.id;
       });
     const savedInstitution = await db.institution.findOne({
+      select: {
+        id: true,
+        businessGuid: true,
+        establishedDate: true,
+        institutionAddress: {
+          mailingAddress: {
+            addressLine1: true,
+            addressLine2: true,
+            city: true,
+            country: true,
+            postalCode: true,
+            provinceState: true,
+            selectedCountry: true,
+          },
+        },
+        institutionPrimaryContact: {
+          email: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+        },
+        institutionType: {
+          id: true,
+        },
+        legalOperatingName: true,
+        operatingName: true,
+        otherRegulatingBody: true,
+        primaryEmail: true,
+        primaryPhone: true,
+        regulatingBody: true,
+        website: true,
+      },
       where: { id: institutionId },
       relations: { institutionType: true },
     });
