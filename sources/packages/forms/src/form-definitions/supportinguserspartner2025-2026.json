@@ -1953,8 +1953,7 @@
             "when": null,
             "eq": ""
           },
-          "properties": {},
-          "isNew": false
+          "properties": {}
         },
         {
           "label": "Calculated Tax Year",
@@ -2022,8 +2021,7 @@
           "addons": [],
           "inputType": "hidden",
           "id": "eug8z8f",
-          "tags": [],
-          "isNew": false
+          "tags": []
         },
         {
           "label": "Program Year Start Date",
@@ -2100,7 +2098,7 @@
           "label": "Offering Intensity",
           "protected": false,
           "unique": false,
-          "persistent": false,
+          "persistent": true,
           "type": "hidden",
           "tags": [],
           "conditional": {
@@ -2296,8 +2294,7 @@
                   "addons": [],
                   "id": "eazbh7",
                   "inputType": "number",
-                  "tags": [],
-                  "isNew": false
+                  "tags": []
                 },
                 {
                   "label": "Will you be employed full-time or part-time during your Partner's study period",
@@ -2381,6 +2378,135 @@
                   "fieldSet": false,
                   "id": "e2j82bp",
                   "tags": []
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "inputType": "radio",
+                  "label": "During the applicant's study period, will you receive Employment Insurance (EI)?",
+                  "key": "partnerHasEmploymentInsuranceBenefits",
+                  "values": [
+                    {
+                      "value": "yes",
+                      "label": "Yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "no",
+                      "label": "No",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "custom": "",
+                    "customPrivate": false,
+                    "onlyAvailableItems": true
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "offeringIntensity",
+                    "eq": "Full Time"
+                  },
+                  "properties": {},
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "inputType": "radio",
+                  "label": "During the applicant's study period, will you receive federal or provincial disability benefits?",
+                  "key": "partnerHasFedralProvincialPDReceipt",
+                  "values": [
+                    {
+                      "value": "yes",
+                      "label": "Yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "no",
+                      "label": "No",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "custom": "",
+                    "customPrivate": false,
+                    "onlyAvailableItems": true
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "offeringIntensity",
+                    "eq": "Full Time"
+                  },
+                  "properties": {},
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": false,
+                  "inputType": "radio",
+                  "label": "During the applicant's study period, will you receive Income Assistance (welfare)?",
+                  "key": "partnerHasTotalIncomeAssistance",
+                  "values": [
+                    {
+                      "value": "yes",
+                      "label": "Yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "no",
+                      "label": "No",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": true,
+                    "custom": "",
+                    "customPrivate": false,
+                    "onlyAvailableItems": true
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "offeringIntensity",
+                    "eq": "Full Time"
+                  },
+                  "properties": {},
+                  "lockKey": true
                 },
                 {
                   "label": "Will you be at home caring for eligible dependant children on a full-time basis during your Partner's entire study period?",
