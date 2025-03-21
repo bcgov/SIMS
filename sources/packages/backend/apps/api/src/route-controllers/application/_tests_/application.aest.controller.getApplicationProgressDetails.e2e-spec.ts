@@ -84,6 +84,7 @@ describe("ApplicationAESTController(e2e)-getApplicationProgressDetails", () => {
           assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
           hasBlockFundingFeedbackError: false,
           hasECertFailedValidations: false,
+          currentAssessmentId: application.currentAssessment.id,
         });
     },
   );
