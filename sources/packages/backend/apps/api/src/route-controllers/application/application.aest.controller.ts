@@ -291,6 +291,7 @@ export class ApplicationAESTController extends BaseController {
       previousVersions: applications.map((application) => ({
         id: application.id,
         submittedDate: application.submittedDate,
+        applicationEditStatus: application.applicationEditStatus,
       })),
     };
   }

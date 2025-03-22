@@ -15,6 +15,7 @@ import {
   StudentScholasticStandingChangeType,
   ApplicationOfferingChangeRequestStatus,
   StudentAssessmentStatus,
+  ApplicationEditStatus,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
@@ -224,6 +225,7 @@ export class ApplicationWarningsAPIOutDTO {
 export class ApplicationVersionAPIOutDTO {
   id: number;
   submittedDate: Date;
+  applicationEditStatus: ApplicationEditStatus;
 }
 
 export class ApplicationOverallDetailsAPIOutDTO {

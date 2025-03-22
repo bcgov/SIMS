@@ -721,13 +721,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "offering.studyEndDate",
         "application.applicationStatus",
         "programYear.programYear",
-        "versions.id",
-        "versions.submittedDate",
-        "versions.applicationEditStatus",
       ])
       .innerJoin("application.parentApplication", "parentApplication")
       .innerJoin("application.programYear", "programYear")
-      .leftJoin("parentApplication.versions", "versions")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .where("application.student.id = :studentId", { studentId })
@@ -1882,6 +1878,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "parentApplication.id",
         "version.id",
         "version.submittedDate",
+        "version.applicationEditStatus",
       ])
       .innerJoin("application.parentApplication", "parentApplication")
       .leftJoin(

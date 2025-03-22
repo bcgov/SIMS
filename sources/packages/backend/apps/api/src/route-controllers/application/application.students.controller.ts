@@ -39,6 +39,7 @@ import {
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
   ApplicationWarningsAPIOutDTO,
+  ApplicationOverallDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -662,5 +663,36 @@ export class ApplicationStudentsController extends BaseController {
         studentId: userToken.studentId,
       },
     );
+  }
+
+  /**
+   * Get application overall details for the given application.
+   * @param applicationId application Id.
+   * @returns application overall details.
+   */
+  @ApiNotFoundResponse({
+    description: "Application not found.",
+  })
+  @Get(":applicationId/overall-details")
+  async getApplicationOverallDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<ApplicationOverallDetailsAPIOutDTO> {
+    const application = await this.applicationService.doesApplicationExist({
+      applicationId: applicationId,
+      studentId: userToken.studentId,
+    });
+    if (!application) {
+      throw new NotFoundException("Application not found.");
+    }
+    const applications =
+      await this.applicationService.getAllApplicationVersions(applicationId);
+    return {
+      previousVersions: applications.map((application) => ({
+        id: application.id,
+        submittedDate: application.submittedDate,
+        applicationEditStatus: application.applicationEditStatus,
+      })),
+    };
   }
 }

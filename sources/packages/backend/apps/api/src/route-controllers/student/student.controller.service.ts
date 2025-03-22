@@ -369,11 +369,6 @@ export class StudentControllerService {
       isChangeRequestAllowed: allowApplicationChangeRequest(
         application.programYear,
       ),
-      versions: application.parentApplication.versions.map((version) => ({
-        id: version.id,
-        applicationEditStatus: version.applicationEditStatus,
-        submittedDate: version.submittedDate,
-      })),
     };
   };
 

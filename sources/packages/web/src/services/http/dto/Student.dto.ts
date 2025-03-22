@@ -3,7 +3,6 @@ import {
   DisabilityStatus,
   SpecificIdentityProviders,
   ApplicationStatus,
-  ApplicationEditStatus,
 } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { AddressDetailsFormAPIDTO } from "./Common.dto";
@@ -138,12 +137,6 @@ export interface SearchStudentAPIOutDTO {
   sin: string;
 }
 
-export interface ApplicationVersionAPIOutDTO {
-  id: number;
-  applicationEditStatus: ApplicationEditStatus;
-  submittedDate: Date;
-}
-
 /**
  * DTO object application summary info.
  */
@@ -164,7 +157,6 @@ export interface ApplicationSummaryAPIOutDTO {
    * change request feature. Other conditions may apply.
    */
   isChangeRequestAllowed: boolean;
-  versions: ApplicationVersionAPIOutDTO[];
 }
 
 /**

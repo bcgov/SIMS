@@ -22,7 +22,11 @@
           :mobile="isMobile"
           @update:options="paginationAndSortEvent"
           show-expand
+          @update:expanded="versionsExpanded"
         >
+          <template v-slot:loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
           <template #[`item.applicationNumber`]="{ item }">
             {{ item.applicationNumber }}
           </template>
@@ -50,71 +54,53 @@
             <status-chip-application :status="item.status" />
           </template>
           <template #[`item.actions`]="{ item }">
-            <v-btn
-              variant="plain"
-              color="primary"
-              @click="$emit('goToApplication', item.id)"
-              >View
-              <v-tooltip activator="parent" location="start"
-                >Click to view this application</v-tooltip
-              >
-            </v-btn>
-            <v-btn
-              v-if="canDisplayEdit(item)"
-              :disabled="!hasSINValidStatus"
-              variant="plain"
-              color="primary"
-              @click="$emit('editApplicationAction', item.status, item.id)"
-              append-icon="mdi-pencil-outline"
-              >Edit
-              <v-tooltip activator="parent" location="start"
-                >Click to edit this application</v-tooltip
-              >
-            </v-btn>
-            <v-btn
-              v-if="canDisplayChangeRequest(item)"
-              :disabled="!hasSINValidStatus"
-              variant="plain"
-              color="primary"
-              @click="$emit('editApplicationAction', item.status, item.id)"
-              append-icon="mdi-pencil-outline"
-              >Change Request
-              <v-tooltip activator="parent" location="start"
-                >Click to request a change in this application</v-tooltip
-              >
-            </v-btn>
-            <v-btn
-              v-if="canDisplayCancel(item)"
-              :disabled="!hasSINValidStatus"
-              variant="plain"
-              color="primary"
-              @click="emitCancel(item.id)"
-              >Cancel
-              <v-tooltip activator="parent" location="start"
-                >Click to cancel this application</v-tooltip
-              >
-            </v-btn>
+            <v-btn-group divided variant="tonal">
+              <v-btn
+                variant="text"
+                color="primary"
+                @click="$emit('goToApplication', item.id)"
+                >View
+                <v-tooltip activator="parent" location="start"
+                  >Click to view this application</v-tooltip
+                >
+              </v-btn>
+              <v-btn
+                v-if="canDisplayEdit(item)"
+                :disabled="!hasSINValidStatus"
+                variant="text"
+                color="primary"
+                @click="$emit('editApplicationAction', item.status, item.id)"
+                append-icon="mdi-pencil-outline"
+                >Edit
+                <v-tooltip activator="parent" location="start"
+                  >Click to edit this application</v-tooltip
+                >
+              </v-btn>
+              <v-btn
+                v-if="canDisplayChangeRequest(item)"
+                :disabled="!hasSINValidStatus"
+                variant="text"
+                color="primary"
+                @click="$emit('editApplicationAction', item.status, item.id)"
+                append-icon="mdi-pencil-outline"
+                >Change Request
+                <v-tooltip activator="parent" location="start"
+                  >Click to request a change in this application</v-tooltip
+                >
+              </v-btn>
+              <v-btn
+                v-if="canDisplayCancel(item)"
+                :disabled="!hasSINValidStatus"
+                variant="text"
+                color="primary"
+                @click="emitCancel(item.id)"
+                >Cancel
+                <v-tooltip activator="parent" location="start"
+                  >Click to cancel this application</v-tooltip
+                >
+              </v-btn>
+            </v-btn-group>
           </template>
-          <!-- <template #[`item.history`]="{ item }">
-            <v-select
-              density="compact"
-              :items="item.versions"
-              item-value="id"
-              label="Versions"
-              style="min-width: 130px"
-            >
-              <template v-slot:item="{ item }">
-                <v-list-item @click="$emit('goToApplication', item.raw.id)">
-                  <v-list-item-title
-                    >{{
-                      getISODateHourMinuteString(item.raw.submittedDate)
-                    }}
-                    ({{ item.raw.applicationEditStatus }})</v-list-item-title
-                  >
-                </v-list-item>
-              </template>
-            </v-select>
-          </template> -->
           <template
             v-slot:[`item.data-table-expand`]="{
               internalItem,
@@ -123,11 +109,14 @@
             }"
           >
             <v-btn
+              v-if="
+                internalItem.raw.id !== internalItem.raw.parentApplicationId
+              "
               :append-icon="
                 isExpanded(internalItem) ? 'mdi-chevron-up' : 'mdi-chevron-down'
               "
               text="Versions"
-              variant="plain"
+              variant="text"
               color="primary"
               @click="toggleExpand(internalItem)"
             ></v-btn>
@@ -136,26 +125,10 @@
             <tr>
               <td :colspan="columns.length" class="py-4">
                 <content-group>
-                  <v-table density="compact">
-                    <thead>
-                      <tr>
-                        <th>Submitted</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="version in item.versions" :key="version.id">
-                        <td>
-                          {{
-                            getISODateHourMinuteString(version.submittedDate)
-                          }}
-                        </td>
-                        <td>{{ version.applicationEditStatus }}</td>
-                        <td>View this application version</td>
-                      </tr>
-                    </tbody>
-                  </v-table>
+                  <student-applications-version
+                    :applicationId="item.id"
+                    :loading="loading"
+                  />
                 </content-group>
               </td>
             </tr>
@@ -182,6 +155,7 @@ import {
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
+import StudentApplicationsVersion from "@/components/students/StudentApplicationsVersion.vue";
 import { useStore } from "vuex";
 import {
   ApplicationSummaryAPIOutDTO,
@@ -190,8 +164,14 @@ import {
 import { useDisplay } from "vuetify";
 
 export default defineComponent({
-  components: { StatusChipApplication },
-  emits: ["editApplicationAction", "openConfirmCancel", "goToApplication"],
+  components: { StatusChipApplication, StudentApplicationsVersion },
+  emits: {
+    editApplicationAction: (status: ApplicationStatus, applicationId: number) =>
+      !!status && !!applicationId,
+    openConfirmCancel: (applicationId: number, callback: () => void) =>
+      !!applicationId && !!callback,
+    goToApplication: (applicationId: number) => !!applicationId,
+  },
   setup(_, { emit }) {
     const loading = ref(false);
     const { mobile: isMobile } = useDisplay();
@@ -259,6 +239,11 @@ export default defineComponent({
       await getStudentApplications();
     };
 
+    const versionsExpanded = (item: ApplicationSummaryAPIOutDTO) => {
+      console.log("item");
+      console.log(item);
+    };
+
     const emitCancel = (applicationId: number) => {
       emit("openConfirmCancel", applicationId, () => reloadApplications());
     };
@@ -305,6 +290,7 @@ export default defineComponent({
       StudentApplicationsExtendedSummaryHeaders,
       isMobile,
       paginationAndSortEvent,
+      versionsExpanded,
     };
   },
 });
