@@ -243,7 +243,7 @@ export class AssessmentSequentialProcessingService {
       .select("disbursementValue.valueCode", "valueCode")
       .addSelect("offering.offeringIntensity", "offeringIntensity")
       .addSelect(
-        "SUM(COALESCE(disbursementValue.effectiveAmount, disbursementValue.valueAmount - disbursementValue.overawardAmountSubtracted))",
+        "SUM(COALESCE(disbursementValue.effectiveAmount, disbursementValue.valueAmount - COALESCE(disbursementValue.disbursedAmountSubtracted, 0)))",
         "total",
       )
       .innerJoin(
