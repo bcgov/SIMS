@@ -2,9 +2,9 @@
   <v-table>
     <thead>
       <tr>
-        <th>Submitted</th>
-        <th>Status</th>
-        <th>Actions</th>
+        <th id="submitted-header">Submitted</th>
+        <th id="status-header">Status</th>
+        <th id="actions-header">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -14,11 +14,11 @@
         </td>
       </tr>
       <tr v-for="version in versions" :key="version.id">
-        <td>
+        <td headers="submitted-header">
           {{ getISODateHourMinuteString(version.submittedDate) }}
         </td>
-        <td>{{ version.applicationEditStatus }}</td>
-        <td>
+        <td headers="status-header">{{ version.applicationEditStatus }}</td>
+        <td headers="actions-header">
           <v-btn
             variant="text"
             color="primary"
