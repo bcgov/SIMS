@@ -198,9 +198,9 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataPartnerHasEmploymentInsuranceBenefits?: YesNoOptions;
   studentDataPartnerHasFedralProvincialPDReceipt?: YesNoOptions;
   studentDataPartnerHasTotalIncomeAssistance?: YesNoOptions;
-  partner1PartnerHasEmploymentInsuranceBenefits?: YesNoOptions;
-  partner1PartnerHasFedralProvincialPDReceipt?: YesNoOptions;
-  partner1PartnerHasTotalIncomeAssistance?: YesNoOptions;
+  partner1HasEmploymentInsuranceBenefits?: YesNoOptions;
+  partner1HasFedralProvincialPDReceipt?: YesNoOptions;
+  partner1HasTotalIncomeAssistance?: YesNoOptions;
 }
 
 /**
