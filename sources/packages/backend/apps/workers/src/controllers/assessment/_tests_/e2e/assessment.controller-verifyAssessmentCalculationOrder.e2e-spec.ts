@@ -1,5 +1,6 @@
 import {
   createE2EDataSources,
+  createFakeDisbursementSchedule,
   createFakeDisbursementValue,
   createFakeStudentAssessment,
   createFakeStudentLoanBalance,
@@ -17,6 +18,7 @@ import { createTestingAppModule } from "../../../../../test/helpers";
 import { AssessmentController } from "../../assessment.controller";
 import {
   ApplicationStatus,
+  AssessmentTriggerType,
   COEStatus,
   DisbursementScheduleStatus,
   DisbursementValueType,
@@ -1220,4 +1222,256 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       programYearTotalBookCost: 1200,
     });
   });
+
+  it(
+    "Should calculate the sum of grants from effective amount for sent disbursements and from the difference between value amount and disbursement amount subtracted" +
+      " for the pending disbursements when a past application has one disbursement sent and the other in pending status.",
+    async () => {
+      // Arrange
+
+      // Create the student to be shared across the applications.
+      const student = await saveFakeStudent(db.dataSource);
+      // Past part-time application with two assessments where the first assessment disbursement is sent
+      // and current assessment disbursement is pending to be sent.
+      const pastApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSPT",
+              1000,
+              { effectiveAmount: 1000 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGD",
+              500,
+              { effectiveAmount: 500 },
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: addDays(-2),
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          },
+        },
+      );
+      const currentAssessment = createFakeStudentAssessment(
+        {
+          auditUser: student.user,
+          application: pastApplication,
+          offering: pastApplication.currentAssessment.offering,
+        },
+        {
+          initialValue: {
+            assessmentWorkflowId: "some fake id",
+            triggerType: AssessmentTriggerType.ManualReassessment,
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
+            assessmentDate: addDays(-1),
+          },
+        },
+      );
+      pastApplication.currentAssessment = currentAssessment;
+      await db.application.save(pastApplication);
+
+      const currentAssessmentDisbursement = createFakeDisbursementSchedule(
+        {
+          studentAssessment: currentAssessment,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSPT",
+              1150,
+              { disbursedAmountSubtracted: 1000 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGD",
+              500,
+              { disbursedAmountSubtracted: 500 },
+            ),
+          ],
+        },
+        {
+          initialValues: {
+            coeStatus: COEStatus.required,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+      currentAssessment.disbursementSchedules = [currentAssessmentDisbursement];
+      await db.studentAssessment.save(currentAssessment);
+
+      // Application currently being processed.
+      const currentApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.InProgress,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+          },
+        },
+      );
+
+      // Act
+      const result =
+        await assessmentController.verifyAssessmentCalculationOrder(
+          createFakeVerifyAssessmentCalculationOrderPayload(
+            currentApplication.currentAssessment.id,
+          ),
+        );
+
+      // Asserts
+      expect(FakeWorkerJobResult.getResultType(result)).toBe(
+        MockedZeebeJobResult.Complete,
+      );
+      // Expect to consider only the CSGP from the first disbursement
+      // and ignore the second disbursement with the declined COE.
+      expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+        isReadyForCalculation: true,
+        latestCSLPBalance: 0,
+        programYearTotalPartTimeCSPT: 1150,
+        programYearTotalPartTimeCSGD: 500,
+      });
+    },
+  );
+
+  it(
+    "Should consider the sum of grants only from the sent disbursement when a past application has COE declined for current assessment disbursement" +
+      " but has a disbursement sent from previous assessment.",
+    async () => {
+      // Arrange
+
+      // Create the student to be shared across the applications.
+      const student = await saveFakeStudent(db.dataSource);
+      // Past part-time application with two assessments where the first assessment disbursement is sent
+      // and current assessment disbursement COE is declined and the disbursement is cancelled.
+      const pastApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSPT",
+              1000,
+              { effectiveAmount: 1000 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGD",
+              500,
+              { effectiveAmount: 500 },
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: addDays(-2),
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          },
+        },
+      );
+      const currentAssessment = createFakeStudentAssessment(
+        {
+          auditUser: student.user,
+          application: pastApplication,
+          offering: pastApplication.currentAssessment.offering,
+        },
+        {
+          initialValue: {
+            assessmentWorkflowId: "some fake id",
+            triggerType: AssessmentTriggerType.ManualReassessment,
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
+            assessmentDate: addDays(-1),
+          },
+        },
+      );
+      pastApplication.currentAssessment = currentAssessment;
+      await db.application.save(pastApplication);
+
+      const currentAssessmentDisbursement = createFakeDisbursementSchedule(
+        {
+          studentAssessment: currentAssessment,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSPT",
+              1150,
+              { disbursedAmountSubtracted: 1000 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGD",
+              500,
+              { disbursedAmountSubtracted: 500 },
+            ),
+          ],
+        },
+        {
+          initialValues: {
+            coeStatus: COEStatus.declined,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Cancelled,
+          },
+        },
+      );
+      currentAssessment.disbursementSchedules = [currentAssessmentDisbursement];
+      await db.studentAssessment.save(currentAssessment);
+
+      // Application currently being processed.
+      const currentApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.InProgress,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+          },
+        },
+      );
+
+      // Act
+      const result =
+        await assessmentController.verifyAssessmentCalculationOrder(
+          createFakeVerifyAssessmentCalculationOrderPayload(
+            currentApplication.currentAssessment.id,
+          ),
+        );
+
+      // Asserts
+      expect(FakeWorkerJobResult.getResultType(result)).toBe(
+        MockedZeebeJobResult.Complete,
+      );
+      // Expect to consider only the CSGP from the first disbursement
+      // and ignore the second disbursement with the declined COE.
+      expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+        isReadyForCalculation: true,
+        latestCSLPBalance: 0,
+        programYearTotalPartTimeCSPT: 1000,
+        programYearTotalPartTimeCSGD: 500,
+      });
+    },
+  );
 });
