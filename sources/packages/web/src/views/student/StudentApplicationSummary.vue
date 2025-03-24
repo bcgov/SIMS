@@ -14,7 +14,7 @@
           @editApplicationAction="editApplicationAction"
           @openConfirmCancel="confirmCancelApplication"
           @goToApplication="goToApplication"
-          @viewApplicationVersion="goToApplicationVersion"
+          @viewApplicationVersion="goToApplicationForm"
         />
       </v-col>
     </v-row>
@@ -59,26 +59,7 @@ export default defineComponent({
       return ApplicationService.shared.getApplicationWithPY(applicationId);
     };
 
-    const goToEditApplication = async (applicationId: number) => {
-      try {
-        const applicationWithPY = await getApplicationWithPY(applicationId);
-        router.push({
-          name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
-          params: {
-            selectedForm: applicationWithPY.formName,
-            programYearId: applicationWithPY.programYearId,
-            id: applicationId,
-          },
-        });
-      } catch {
-        snackBar.error(
-          "Unexpected Error",
-          snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-        );
-      }
-    };
-
-    const goToApplicationVersion = async (applicationId: number) => {
+    const goToApplicationForm = async (applicationId: number) => {
       try {
         const applicationWithPY = await getApplicationWithPY(applicationId);
         router.push({
@@ -99,7 +80,7 @@ export default defineComponent({
 
     const confirmEditApplication = async (applicationId: number) => {
       if (await editApplicationModal.value.showModal()) {
-        await goToEditApplication(applicationId);
+        await goToApplicationForm(applicationId);
       }
     };
 
@@ -110,7 +91,7 @@ export default defineComponent({
       if (status !== ApplicationStatus.Draft) {
         await confirmEditApplication(applicationId);
       } else {
-        await goToEditApplication(applicationId);
+        await goToApplicationForm(applicationId);
       }
     };
 
@@ -142,7 +123,7 @@ export default defineComponent({
       showHideCancelApplication,
       reloadData,
       goToApplication,
-      goToApplicationVersion,
+      goToApplicationForm,
       cancelApplicationModal,
       isMobile,
     };

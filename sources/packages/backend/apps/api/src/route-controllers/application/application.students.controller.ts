@@ -105,7 +105,11 @@ export class ApplicationStudentsController extends BaseController {
   ): Promise<ApplicationDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
-      { loadDynamicData: true, studentId: userToken.studentId },
+      {
+        loadDynamicData: true,
+        studentId: userToken.studentId,
+        allowEdited: true,
+      },
     );
     if (!application) {
       throw new NotFoundException(
