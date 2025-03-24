@@ -1248,7 +1248,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
               DisbursementValueType.CanadaGrant,
               "CSGD",
               500,
-              { effectiveAmount: 500 },
+              { effectiveAmount: 450 },
             ),
           ],
         },
@@ -1297,8 +1297,8 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
             createFakeDisbursementValue(
               DisbursementValueType.CanadaGrant,
               "CSGD",
-              500,
-              { disbursedAmountSubtracted: 500 },
+              460,
+              { disbursedAmountSubtracted: 450 },
             ),
           ],
         },
@@ -1334,17 +1334,17 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           ),
         );
 
-      // Asserts
+      // Assert
       expect(FakeWorkerJobResult.getResultType(result)).toBe(
         MockedZeebeJobResult.Complete,
       );
-      // Expect to consider only the CSGP from the first disbursement
-      // and ignore the second disbursement with the declined COE.
+      // Expect to consider the CSGP and CSGD effective amount from the first assessment disbursement
+      // and CSGP and CSGD value amount and disbursement amount subtracted difference from the second disbursement.
       expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
         isReadyForCalculation: true,
         latestCSLPBalance: 0,
         programYearTotalPartTimeCSPT: 1150,
-        programYearTotalPartTimeCSGD: 500,
+        programYearTotalPartTimeCSGD: 460,
       });
     },
   );
@@ -1374,7 +1374,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
               DisbursementValueType.CanadaGrant,
               "CSGD",
               500,
-              { effectiveAmount: 500 },
+              { effectiveAmount: 420 },
             ),
           ],
         },
@@ -1424,8 +1424,8 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
             createFakeDisbursementValue(
               DisbursementValueType.CanadaGrant,
               "CSGD",
-              500,
-              { disbursedAmountSubtracted: 500 },
+              450,
+              { disbursedAmountSubtracted: 420 },
             ),
           ],
         },
@@ -1461,17 +1461,16 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           ),
         );
 
-      // Asserts
+      // Assert
       expect(FakeWorkerJobResult.getResultType(result)).toBe(
         MockedZeebeJobResult.Complete,
       );
-      // Expect to consider only the CSGP from the first disbursement
-      // and ignore the second disbursement with the declined COE.
+      // Expect to consider the CSGP and CSGD effective amount from the first assessment disbursement.
       expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
         isReadyForCalculation: true,
         latestCSLPBalance: 0,
         programYearTotalPartTimeCSPT: 1000,
-        programYearTotalPartTimeCSGD: 500,
+        programYearTotalPartTimeCSGD: 420,
       });
     },
   );

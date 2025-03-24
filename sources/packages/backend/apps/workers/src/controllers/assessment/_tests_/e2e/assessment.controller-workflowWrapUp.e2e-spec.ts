@@ -294,7 +294,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       expect(FakeWorkerJobResult.getResultType(result)).toBe(
         MockedZeebeJobResult.Complete,
       );
-      // Asserts that the student assessment status has changed to completed.
+      // Asserts that the current student assessment is 'Related application changed' trigger type.
       const expectedAssessment = await db.application.findOne({
         select: {
           id: true,
