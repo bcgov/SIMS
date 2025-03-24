@@ -170,6 +170,12 @@ export class StudentFileDetailsAPIOutDTO extends StudentUploadFileAPIOutDTO {
   metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
   createdAt: Date;
+}
+
+/**
+ *  AEST user view that contains the uploader details of the student documents .
+ */
+export class AESTStudentFileDetailsAPIOutDTO extends StudentFileDetailsAPIOutDTO {
   uploadedBy: string;
 }
 

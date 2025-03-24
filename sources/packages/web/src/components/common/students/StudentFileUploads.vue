@@ -36,7 +36,12 @@
             header="Document Purpose"
             :sortable="true"
           ></Column>
-          <Column field="uploadedBy" header="Uploaded By"></Column>
+          <Column
+            v-if="canViewUploadedBy"
+            field="uploadedBy"
+            header="Uploaded by"
+          >
+          </Column>
           <Column field="metadata" header="Application #">
             <template #body="slotProps">{{
               emptyStringFiller(slotProps.data.metadata?.applicationNumber)
@@ -131,6 +136,11 @@ export default defineComponent({
       default: false,
     },
     canDownloadFiles: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    canViewUploadedBy: {
       type: Boolean,
       required: false,
       default: false,

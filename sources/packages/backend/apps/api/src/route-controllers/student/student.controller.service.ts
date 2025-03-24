@@ -37,6 +37,7 @@ import {
   StudentUploadFileAPIOutDTO,
   InstitutionStudentProfileAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
+  AESTStudentFileDetailsAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { ApiProcessError } from "../../types";
@@ -293,12 +294,17 @@ export class StudentControllerService {
    * @param studentId student id to retrieve the data.
    * @param options related to student file uploads
    * - `extendedDetails` option to specify the additional properties to be returned (metadata, groupName, updatedAt) as a part of the studentDocuments.
+   * - `ministryView` option to specify the additional properties to be returned (uploadedBy) as a part of the studentDocuments.
    * @returns student file details.
    */
   async getStudentUploadedFiles(
     studentId: number,
-    options?: { extendedDetails: boolean },
-  ): Promise<StudentFileDetailsAPIOutDTO[] | StudentUploadFileAPIOutDTO[]> {
+    options?: { extendedDetails: boolean; ministryView?: boolean },
+  ): Promise<
+    | StudentFileDetailsAPIOutDTO[]
+    | StudentUploadFileAPIOutDTO[]
+    | AESTStudentFileDetailsAPIOutDTO[]
+  > {
     const studentDocuments = await this.fileService.getStudentUploadedFiles(
       studentId,
     );
@@ -313,7 +319,7 @@ export class StudentControllerService {
       createdAt: options?.extendedDetails
         ? studentDocument.createdAt
         : undefined,
-      uploadedBy: options?.extendedDetails
+      uploadedBy: options?.ministryView
         ? getUserFullName({
             firstName: studentDocument?.creator.firstName,
             lastName: studentDocument?.creator.lastName,
