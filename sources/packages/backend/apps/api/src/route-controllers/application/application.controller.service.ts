@@ -179,6 +179,7 @@ export class ApplicationControllerService {
       assessmentTriggerType,
       hasBlockFundingFeedbackError,
       hasECertFailedValidations,
+      currentAssessmentId: application.currentAssessment.id,
     };
   }
 
