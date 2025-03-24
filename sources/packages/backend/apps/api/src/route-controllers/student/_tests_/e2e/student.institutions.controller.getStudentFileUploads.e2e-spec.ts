@@ -23,7 +23,6 @@ import {
   InstitutionLocation,
 } from "@sims/sims-db";
 import { saveStudentApplicationForCollegeC } from "./student.institutions.utils";
-import { getUserFullName } from "../../../../utilities";
 
 describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
   let app: INestApplication;
@@ -84,10 +83,6 @@ describe("StudentInstitutionsController(e2e)-getStudentFileUploads", () => {
           groupName: "Ministry communications",
           createdAt: studentUploadedFile.updatedAt.toISOString(),
           fileOrigin: studentUploadedFile.fileOrigin,
-          uploadedBy: getUserFullName({
-            firstName: studentUploadedFile.creator.firstName,
-            lastName: studentUploadedFile.creator.lastName,
-          }),
         },
       ]);
   });
