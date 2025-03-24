@@ -242,6 +242,13 @@ export class AssessmentSequentialProcessingService {
       .createQueryBuilder("disbursementValue")
       .select("disbursementValue.valueCode", "valueCode")
       .addSelect("offering.offeringIntensity", "offeringIntensity")
+      // When obtaining the SUM of a given grant, calculate the value from effective_amount of disbursement_values when effective_amount is present
+      // or in other words disbursement is Sent
+      // and if the value is not present in effective_amount which means the disbursement has not been calculated for e-cert
+      // then use a forecast value which is (value_amount - disbursed_amount_subtracted) which could potentially be sent to the student.
+
+      // The consideration of overawards has been excluded while calculating the PY SUM value for any grant
+      // as the overawards are applicable only for the loans and NOT for the grants.
       .addSelect(
         "SUM(COALESCE(disbursementValue.effectiveAmount, disbursementValue.valueAmount - COALESCE(disbursementValue.disbursedAmountSubtracted, 0)))",
         "total",
