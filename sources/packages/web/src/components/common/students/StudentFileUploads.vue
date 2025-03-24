@@ -36,6 +36,7 @@
             header="Document Purpose"
             :sortable="true"
           ></Column>
+          <Column field="uploadedBy" header="Uploaded By"></Column>
           <Column field="metadata" header="Application #">
             <template #body="slotProps">{{
               emptyStringFiller(slotProps.data.metadata?.applicationNumber)

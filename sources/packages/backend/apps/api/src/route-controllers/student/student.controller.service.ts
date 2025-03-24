@@ -313,6 +313,12 @@ export class StudentControllerService {
       createdAt: options?.extendedDetails
         ? studentDocument.createdAt
         : undefined,
+      uploadedBy: options?.extendedDetails
+        ? getUserFullName({
+            firstName: studentDocument?.creator.firstName,
+            lastName: studentDocument?.creator.lastName,
+          })
+        : undefined,
     }));
   }
 
