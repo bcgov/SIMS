@@ -490,6 +490,7 @@ describe(
           },
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.declined,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Cancelled,
           },
         },
       );
