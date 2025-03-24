@@ -1410,6 +1410,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       pastApplication.currentAssessment = currentAssessment;
       await db.application.save(pastApplication);
 
+      // COE declined for current assessment disbursement.
       const currentAssessmentDisbursement = createFakeDisbursementSchedule(
         {
           studentAssessment: currentAssessment,
