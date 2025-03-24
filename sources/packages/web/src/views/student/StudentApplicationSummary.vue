@@ -14,6 +14,7 @@
           @editApplicationAction="editApplicationAction"
           @openConfirmCancel="confirmCancelApplication"
           @goToApplication="goToApplication"
+          @viewApplicationVersion="goToApplicationVersion"
         />
       </v-col>
     </v-row>
@@ -77,6 +78,25 @@ export default defineComponent({
       }
     };
 
+    const goToApplicationVersion = async (applicationId: number) => {
+      try {
+        const applicationWithPY = await getApplicationWithPY(applicationId);
+        router.push({
+          name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
+          params: {
+            selectedForm: applicationWithPY.formName,
+            programYearId: applicationWithPY.programYearId,
+            id: applicationId,
+          },
+        });
+      } catch {
+        snackBar.error(
+          "Unexpected Error",
+          snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
+        );
+      }
+    };
+
     const confirmEditApplication = async (applicationId: number) => {
       if (await editApplicationModal.value.showModal()) {
         await goToEditApplication(applicationId);
@@ -122,6 +142,7 @@ export default defineComponent({
       showHideCancelApplication,
       reloadData,
       goToApplication,
+      goToApplicationVersion,
       cancelApplicationModal,
       isMobile,
     };

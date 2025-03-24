@@ -22,7 +22,7 @@
           :mobile="isMobile"
           @update:options="paginationAndSortEvent"
           show-expand
-          @update:expanded="versionsExpanded"
+          v-model:expanded="expandedItems"
         >
           <template v-slot:loading>
             <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
@@ -54,7 +54,7 @@
             <status-chip-application :status="item.status" />
           </template>
           <template #[`item.actions`]="{ item }">
-            <v-btn-group divided variant="tonal">
+            <v-btn-group variant="tonal">
               <v-btn
                 variant="text"
                 color="primary"
@@ -118,7 +118,11 @@
               text="Versions"
               variant="text"
               color="primary"
-              @click="toggleExpand(internalItem)"
+              @click="
+                versionsExpanderClick(internalItem.raw, () =>
+                  toggleExpand(internalItem),
+                )
+              "
             ></v-btn>
           </template>
           <template v-slot:expanded-row="{ columns, item }">
@@ -126,8 +130,11 @@
               <td :colspan="columns.length" class="py-4">
                 <content-group>
                   <student-applications-version
-                    :applicationId="item.id"
-                    :loading="loading"
+                    :versions="item.versions"
+                    :loading="item.loadingVersions"
+                    @viewApplicationVersion="
+                      $emit('viewApplicationVersion', $event)
+                    "
                   />
                 </content-group>
               </td>
@@ -160,8 +167,14 @@ import { useStore } from "vuex";
 import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  ApplicationVersionAPIOutDTO,
 } from "@/services/http/dto";
 import { useDisplay } from "vuetify";
+
+interface ApplicationSummaryModel extends ApplicationSummaryAPIOutDTO {
+  versions?: ApplicationVersionAPIOutDTO[];
+  loadingVersions?: boolean;
+}
 
 export default defineComponent({
   components: { StatusChipApplication, StudentApplicationsVersion },
@@ -171,12 +184,14 @@ export default defineComponent({
     openConfirmCancel: (applicationId: number, callback: () => void) =>
       !!applicationId && !!callback,
     goToApplication: (applicationId: number) => !!applicationId,
+    viewApplicationVersion: (applicationId: number) => !!applicationId,
   },
   setup(_, { emit }) {
     const loading = ref(false);
     const { mobile: isMobile } = useDisplay();
+    const expandedItems = ref([]);
     const applicationsAndCount = ref(
-      {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
+      {} as PaginatedResultsAPIOutDTO<ApplicationSummaryModel>,
     );
 
     const {
@@ -202,6 +217,7 @@ export default defineComponent({
     const getStudentApplications = async () => {
       try {
         loading.value = true;
+        expandedItems.value = [];
         applicationsAndCount.value =
           await ApplicationService.shared.getStudentApplicationSummary(
             currentPagination.value.page - 1,
@@ -214,11 +230,7 @@ export default defineComponent({
       }
     };
 
-    const reloadApplications = async () => {
-      await getStudentApplications();
-    };
-
-    onMounted(reloadApplications);
+    onMounted(getStudentApplications);
 
     const paginationAndSortEvent = async (event: DataTableOptions) => {
       currentPagination.value.page = event.page;
@@ -239,13 +251,32 @@ export default defineComponent({
       await getStudentApplications();
     };
 
-    const versionsExpanded = (item: ApplicationSummaryAPIOutDTO) => {
-      console.log("item");
-      console.log(item);
+    const emitCancel = (applicationId: number) => {
+      emit("openConfirmCancel", applicationId, () => getStudentApplications());
     };
 
-    const emitCancel = (applicationId: number) => {
-      emit("openConfirmCancel", applicationId, () => reloadApplications());
+    const versionsExpanderClick = async (
+      application: ApplicationSummaryModel,
+      toggleExpand: () => void,
+    ) => {
+      toggleExpand();
+      if (application.versions) {
+        // Application versions are not required to be fetched every time.
+        // If there are already loaded there is no critical reason to fetch them again.
+        return;
+      }
+      try {
+        application.loadingVersions = true;
+        const applications =
+          await ApplicationService.shared.getApplicationOverallDetails(
+            application.id,
+          );
+        application.versions = applications.previousVersions;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        application.loadingVersions = false;
+      }
     };
 
     const canDisplayEdit = (application: ApplicationSummaryAPIOutDTO) => {
@@ -290,7 +321,8 @@ export default defineComponent({
       StudentApplicationsExtendedSummaryHeaders,
       isMobile,
       paginationAndSortEvent,
-      versionsExpanded,
+      versionsExpanderClick,
+      expandedItems,
     };
   },
 });
