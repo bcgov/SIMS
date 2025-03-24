@@ -185,9 +185,9 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     studentDataPartnerHasEmploymentInsuranceBenefits: null,
     studentDataPartnerHasFedralProvincialPDReceipt: null,
     studentDataPartnerHasTotalIncomeAssistance: null,
-    partner1PartnerHasEmploymentInsuranceBenefits: null,
-    partner1PartnerHasFedralProvincialPDReceipt: null,
-    partner1PartnerHasTotalIncomeAssistance: null,
+    partner1HasEmploymentInsuranceBenefits: null,
+    partner1HasFedralProvincialPDReceipt: null,
+    partner1HasTotalIncomeAssistance: null,
   } as AssessmentConsolidatedData;
 }
 

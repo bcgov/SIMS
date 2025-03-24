@@ -125,9 +125,9 @@
           <zeebe:header key="studentDataPartnerHasEmploymentInsuranceBenefits" value="$.data.partnerHasEmploymentInsuranceBenefits" />
           <zeebe:header key="studentDataPartnerHasFedralProvincialPDReceipt" value="$.data.partnerHasFedralProvincialPDReceipt" />
           <zeebe:header key="studentDataPartnerHasTotalIncomeAssistance" value="$.data.partnerHasTotalIncomeAssistance" />
-          <zeebe:header key="partner1PartnerHasEmploymentInsuranceBenefits" value="$.supportingUsers.Partner1.supportingData.partnerHasEmploymentInsuranceBenefits" />
-          <zeebe:header key="partner1PartnerHasFedralProvincialPDReceipt" value="$.supportingUsers.Partner1.supportingData.partnerHasFedralProvincialPDReceipt" />
-          <zeebe:header key="partner1PartnerHasTotalIncomeAssistance" value="$.supportingUsers.Partner1.supportingData.partnerHasTotalIncomeAssistance" />
+          <zeebe:header key="partner1HasEmploymentInsuranceBenefits" value="$.supportingUsers.Partner1.supportingData.hasEmploymentInsuranceBenefits" />
+          <zeebe:header key="partner1HasFedralProvincialPDReceipt" value="$.supportingUsers.Partner1.supportingData.hasFedralProvincialPDReceipt" />
+          <zeebe:header key="partner1HasTotalIncomeAssistance" value="$.supportingUsers.Partner1.supportingData.hasTotalIncomeAssistance" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>
