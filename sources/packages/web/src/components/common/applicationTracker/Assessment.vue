@@ -30,7 +30,7 @@ import { AssessmentTriggerType } from "@/types";
 import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
-  emits: ["goToNoticeOfAssessment"],
+  emits: { goToNoticeOfAssessment: null },
   components: {
     ApplicationStatusTrackerBanner,
     RelatedApplicationChanged,
