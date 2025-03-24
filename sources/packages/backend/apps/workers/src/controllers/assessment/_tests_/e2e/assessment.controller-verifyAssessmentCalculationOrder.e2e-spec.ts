@@ -18,6 +18,7 @@ import { AssessmentController } from "../../assessment.controller";
 import {
   ApplicationStatus,
   COEStatus,
+  DisbursementScheduleStatus,
   DisbursementValueType,
   OfferingIntensity,
   StudentAssessmentStatus,
@@ -202,6 +203,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         ],
       },
       {
+        createSecondDisbursement: true,
         offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.Completed,
         currentAssessmentInitialValues: {
@@ -211,6 +213,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         },
         secondDisbursementInitialValues: {
           coeStatus: COEStatus.declined,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Cancelled,
         },
       },
     );
