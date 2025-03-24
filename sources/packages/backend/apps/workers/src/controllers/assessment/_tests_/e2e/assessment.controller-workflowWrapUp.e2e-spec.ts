@@ -1,5 +1,6 @@
 import {
   createE2EDataSources,
+  createFakeDisbursementSchedule,
   createFakeEducationProgramOffering,
   createFakeStudentAppeal,
   createFakeStudentAssessment,
@@ -195,6 +196,215 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       impactedApplication.currentAssessment.studentAppeal.id,
     );
   });
+
+  it(
+    "Should find the next impacted assessment and create a reassessment when there is an application for the same student and program year in the future" +
+      " and the future application has COE declined for all current assessment disbursements but has a disbursement sent from previous assessment.",
+    async () => {
+      // Arrange
+
+      // Create the student to be shared across the applications.
+      const student = await saveFakeStudent(db.dataSource);
+      // Current application to have the workflow wrapped up.
+      const currentApplicationToWrapUp = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Assessment,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: new Date(),
+            studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+          },
+        },
+      );
+      // Resets the workflow data to allow the wrap up worker to be executed.
+      await db.studentAssessment.update(
+        currentApplicationToWrapUp.currentAssessment.id,
+        { workflowData: null },
+      );
+      // Application in the future of the currentApplicationToWrapUp.
+      const impactedApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: addDays(1),
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        },
+      );
+
+      const currentAssessment = createFakeStudentAssessment(
+        {
+          auditUser: student.user,
+          application: impactedApplication,
+          offering: impactedApplication.currentAssessment.offering,
+        },
+        {
+          initialValue: {
+            assessmentWorkflowId: "some fake id",
+            triggerType: AssessmentTriggerType.ManualReassessment,
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
+            assessmentDate: addDays(2),
+          },
+        },
+      );
+      impactedApplication.currentAssessment = currentAssessment;
+      await db.application.save(impactedApplication);
+
+      // COE declined for current assessment disbursement.
+      const currentAssessmentDisbursement = createFakeDisbursementSchedule(
+        {
+          studentAssessment: currentAssessment,
+        },
+        {
+          initialValues: {
+            coeStatus: COEStatus.declined,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Cancelled,
+          },
+        },
+      );
+      currentAssessment.disbursementSchedules = [currentAssessmentDisbursement];
+      await db.studentAssessment.save(currentAssessment);
+      // Dummy workflowData to be saved during workflow wrap up.
+      const workflowData = {
+        studentData: {
+          dependantStatus: "independant",
+        },
+      } as WorkflowData;
+
+      // Act
+      const result = await assessmentController.workflowWrapUp(
+        createFakeWorkflowWrapUpPayload(
+          currentApplicationToWrapUp.currentAssessment.id,
+          workflowData,
+        ),
+      );
+
+      // Assert
+      expect(FakeWorkerJobResult.getResultType(result)).toBe(
+        MockedZeebeJobResult.Complete,
+      );
+      // Asserts that the current student assessment is 'Related application changed' trigger type.
+      const expectedAssessment = await db.application.findOne({
+        select: {
+          id: true,
+          currentAssessment: {
+            id: true,
+            triggerType: true,
+          },
+        },
+        relations: {
+          currentAssessment: true,
+        },
+        where: {
+          id: impactedApplication.id,
+        },
+      });
+      expect(expectedAssessment.currentAssessment.triggerType).toBe(
+        AssessmentTriggerType.RelatedApplicationChanged,
+      );
+    },
+  );
+
+  it(
+    "Should not find any next impacted assessment when there is an application for the same student and program year in the future" +
+      " and the future application has COE declined for all assessment disbursements.",
+    async () => {
+      // Arrange
+
+      // Create the student to be shared across the applications.
+      const student = await saveFakeStudent(db.dataSource);
+      // Current application to have the workflow wrapped up.
+      const currentApplicationToWrapUp = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Assessment,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: new Date(),
+            studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+          },
+        },
+      );
+      // Resets the workflow data to allow the wrap up worker to be executed.
+      await db.studentAssessment.update(
+        currentApplicationToWrapUp.currentAssessment.id,
+        { workflowData: null },
+      );
+      // Application in the future and COE declined.
+      const futureApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentWorkflowId: "some fake id",
+            assessmentDate: addDays(1),
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.declined,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Cancelled,
+          },
+        },
+      );
+      // Dummy workflowData to be saved during workflow wrap up.
+      const workflowData = {
+        studentData: {
+          dependantStatus: "independant",
+        },
+      } as WorkflowData;
+
+      // Act
+      const result = await assessmentController.workflowWrapUp(
+        createFakeWorkflowWrapUpPayload(
+          currentApplicationToWrapUp.currentAssessment.id,
+          workflowData,
+        ),
+      );
+
+      // Assert
+      expect(FakeWorkerJobResult.getResultType(result)).toBe(
+        MockedZeebeJobResult.Complete,
+      );
+      // Asserts that the current assessment status has not changed.
+      const expectedAssessmentApplication = await db.application.findOne({
+        select: {
+          id: true,
+          currentAssessment: {
+            id: true,
+            triggerType: true,
+          },
+        },
+        relations: {
+          currentAssessment: true,
+        },
+        where: {
+          id: futureApplication.id,
+        },
+      });
+      expect(expectedAssessmentApplication).toEqual({
+        id: futureApplication.id,
+        currentAssessment: {
+          id: futureApplication.currentAssessment.id,
+          triggerType: AssessmentTriggerType.OriginalAssessment,
+        },
+      });
+    },
+  );
 
   it("Should return job completed when the workflow data is already set.", async () => {
     // Arrange

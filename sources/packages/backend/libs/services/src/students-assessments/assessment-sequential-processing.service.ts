@@ -4,9 +4,9 @@ import {
   Application,
   ApplicationStatus,
   AssessmentTriggerType,
-  COEStatus,
   DisbursementSchedule,
   DisbursementScheduleStatus,
+  DisbursementValue,
   DisbursementValueType,
   OfferingIntensity,
   SFASApplication,
@@ -42,6 +42,8 @@ export class AssessmentSequentialProcessingService {
     private readonly sfasApplicationsRepo: Repository<SFASApplication>,
     @InjectRepository(SFASPartTimeApplications)
     private readonly sfasPartTimeApplicationsRepo: Repository<SFASPartTimeApplications>,
+    @InjectRepository(DisbursementValue)
+    private readonly disbursementValueRepo: Repository<DisbursementValue>,
   ) {}
 
   /**
@@ -236,18 +238,28 @@ export class AssessmentSequentialProcessingService {
     const applicationNumbers = sequencedApplications.previous.map(
       (application) => application.applicationNumber,
     );
-    const totals = await this.applicationRepo
-      .createQueryBuilder("application")
+    const totals = await this.disbursementValueRepo
+      .createQueryBuilder("disbursementValue")
       .select("disbursementValue.valueCode", "valueCode")
       .addSelect("offering.offeringIntensity", "offeringIntensity")
-      .addSelect("SUM(disbursementValue.valueAmount)", "total")
-      .innerJoin("application.currentAssessment", "currentAssessment")
+      // When obtaining the SUM of a given grant, calculate the value from effective_amount of disbursement_values when effective_amount is present
+      // or in other words disbursement is Sent
+      // and if the value is not present in effective_amount which means the disbursement has not been calculated for e-cert
+      // then use a forecast value which is (value_amount - disbursed_amount_subtracted) which could potentially be sent to the student.
+
+      // The consideration of overawards has been excluded while calculating the PY SUM value for any grant
+      // as the overawards are applicable only for the loans and NOT for the grants.
+      .addSelect(
+        "SUM(COALESCE(disbursementValue.effectiveAmount, disbursementValue.valueAmount - COALESCE(disbursementValue.disbursedAmountSubtracted, 0)))",
+        "total",
+      )
       .innerJoin(
-        "currentAssessment.disbursementSchedules",
+        "disbursementValue.disbursementSchedule",
         "disbursementSchedule",
       )
-      .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
-      .innerJoin("currentAssessment.offering", "offering")
+      .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
+      .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin("studentAssessment.application", "application")
       .where("application.applicationNumber IN (:...applicationNumbers)", {
         applicationNumbers,
       })
@@ -255,26 +267,17 @@ export class AssessmentSequentialProcessingService {
       .andWhere("application.applicationStatus != :overwrittenStatus", {
         overwrittenStatus: ApplicationStatus.Overwritten,
       })
-      // Check for assessment completed status to avoid retrieving any cancelation status.
-      .andWhere(
-        "currentAssessment.studentAssessmentStatus = :completedStudentAssessmentStatus",
-        {
-          completedStudentAssessmentStatus: StudentAssessmentStatus.Completed,
-        },
-      )
       // Only consider disbursements in Pending, ReadyToSend, or Sent.
       .andWhere(
-        "disbursementSchedule.disbursementScheduleStatus != :cancelledDisbursementScheduleStatus",
+        "disbursementSchedule.disbursementScheduleStatus IN (:...payableDisbursementScheduleStatus)",
         {
-          cancelledDisbursementScheduleStatus:
-            DisbursementScheduleStatus.Cancelled,
+          payableDisbursementScheduleStatus: [
+            DisbursementScheduleStatus.Pending,
+            DisbursementScheduleStatus.ReadyToSend,
+            DisbursementScheduleStatus.Sent,
+          ],
         },
       )
-      // Sequenced applications need at least one valid COE, which means that one can be cancelled
-      // and the other still valid. This ensures that only the valid one will be considered.
-      .andWhere("disbursementSchedule.coeStatus != :declinedCOEStatus", {
-        declinedCOEStatus: COEStatus.declined,
-      })
       // Ensures that only grants will be returned since loans and not needed.
       .andWhere("disbursementValue.valueType IN (:...grantsValueTypes)", {
         grantsValueTypes: [
@@ -282,8 +285,8 @@ export class AssessmentSequentialProcessingService {
           DisbursementValueType.BCGrant,
         ],
       })
-      .groupBy("offering.offeringIntensity")
-      .addGroupBy("disbursementValue.valueCode")
+      .groupBy("disbursementValue.valueCode")
+      .addGroupBy("offering.offeringIntensity")
       .getRawMany<{
         offeringIntensity: OfferingIntensity;
         valueCode: string;
@@ -458,15 +461,24 @@ export class AssessmentSequentialProcessingService {
       .orderBy("assessment.assessmentDate")
       .limit(1)
       .getQuery();
-    // Sub query to determined if the assessment has at least one non-declined COE (Required or Completed).
-    // If all the COEs from the assessment are declined some user action will be needed in the application
-    // and this application will not be considered for sequential processing.
-    const existsValidCOE = entityManager
+    // Sub query to determine if the application has at least one payable disbursement.
+    // If all the disbursements from the application are NOT payable then the application will not be considered for sequential processing.
+    const existsValidDisbursement = entityManager
       .getRepository(DisbursementSchedule)
       .createQueryBuilder("disbursementSchedule")
       .select("1")
-      .where("disbursementSchedule.studentAssessment.id = currentAssessment.id")
-      .andWhere("disbursementSchedule.coeStatus != :declinedCOEStatus")
+      .innerJoin(
+        "disbursementSchedule.studentAssessment",
+        "disbursementAssessment",
+      )
+      .innerJoin(
+        "disbursementAssessment.application",
+        "disbursementApplication",
+      )
+      .where("disbursementApplication.id = application.id")
+      .andWhere(
+        "disbursementSchedule.disbursementScheduleStatus IN (:...payableDisbursementStatuses)",
+      )
       .limit(1)
       .getSql();
     // Returns past, current, and future applications ordered by the first ever executed assessment calculation.
@@ -503,7 +515,7 @@ export class AssessmentSequentialProcessingService {
                   cancelledStatus: ApplicationStatus.Cancelled,
                 })
                 .andWhere("currentAssessment.assessmentDate IS NOT NULL")
-                .andWhere(`EXISTS (${existsValidCOE})`),
+                .andWhere(`EXISTS (${existsValidDisbursement})`),
             ),
             // The 'or' condition forces the current application to be returned since its data matters for decisions,
             // for instance, if the current application has no calculation date no future application should be impacted.
@@ -512,7 +524,13 @@ export class AssessmentSequentialProcessingService {
           });
         }),
       )
-      .setParameters({ declinedCOEStatus: COEStatus.declined })
+      .setParameters({
+        payableDisbursementStatuses: [
+          DisbursementScheduleStatus.Pending,
+          DisbursementScheduleStatus.ReadyToSend,
+          DisbursementScheduleStatus.Sent,
+        ],
+      })
       .orderBy(`"${referenceAssessmentDateColumn}"`)
       .getRawMany<SequentialApplication>();
     return new SequencedApplications(
