@@ -70,7 +70,7 @@ export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
 # Versions upgraded following the conbination available on https://github.com/camunda/camunda-platform/blob/main/.env
 export CAMUNDA_CONNECTORS_VERSION := $(or $(CAMUNDA_CONNECTORS_VERSION), 8.6.9)
 export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.6.12)
-export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 8.14.3)
+export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 8.17.1)
 # Camunda default values for local development.
 export CAMUNDA_OAUTH_DISABLED := $(or $(CAMUNDA_OAUTH_DISABLED), true)
 export CAMUNDA_SECURE_CONNECTION := $(or $(CAMUNDA_SECURE_CONNECTION), false)
