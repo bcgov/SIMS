@@ -290,7 +290,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         ),
       );
 
-      // Asserts
+      // Assert
       expect(FakeWorkerJobResult.getResultType(result)).toBe(
         MockedZeebeJobResult.Complete,
       );
@@ -376,7 +376,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         ),
       );
 
-      // Asserts
+      // Assert
       expect(FakeWorkerJobResult.getResultType(result)).toBe(
         MockedZeebeJobResult.Complete,
       );
