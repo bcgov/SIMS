@@ -51,6 +51,7 @@ import {
   UpdateSINValidationAPIInDTO,
   UpdateDisabilityStatusAPIInDTO,
   UpdateStudentDetailsAPIInDTO,
+  AESTStudentFileDetailsAPIOutDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -109,7 +110,7 @@ export class StudentAESTController extends BaseController {
     return this.studentControllerService.getStudentUploadedFiles(studentId, {
       extendedDetails: true,
       auditUserDetails: true,
-    }) as Promise<StudentFileDetailsAPIOutDTO[]>;
+    }) as Promise<AESTStudentFileDetailsAPIOutDTO[]>;
   }
 
   /**

@@ -294,7 +294,7 @@ export class StudentControllerService {
    * @param studentId student id to retrieve the data.
    * @param options related to student file uploads
    * - `extendedDetails` option to specify the additional properties to be returned (metadata, groupName, updatedAt) as a part of the studentDocuments.
-   * - `ministryView` option to specify the additional properties to be returned (uploadedBy) as a part of the studentDocuments.
+   * - `auditUserDetails` option to specify the additional properties to be returned (uploadedBy) as a part of the studentDocuments.
    * @returns student file details.
    */
   async getStudentUploadedFiles(
