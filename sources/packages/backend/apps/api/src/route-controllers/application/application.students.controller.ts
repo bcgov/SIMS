@@ -52,7 +52,6 @@ import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
   INSTITUTION_LOCATION_NOT_VALID,
-  INVALID_APPLICATION_NUMBER,
   OFFERING_NOT_VALID,
 } from "../../constants";
 import {
@@ -571,10 +570,7 @@ export class ApplicationStudentsController extends BaseController {
       );
     if (!application) {
       throw new NotFoundException(
-        new ApiProcessError(
-          "Given application either does not exist or is not complete to request change.",
-          INVALID_APPLICATION_NUMBER,
-        ),
+        "Given application either does not exist or is not complete to request change.",
       );
     }
     return {

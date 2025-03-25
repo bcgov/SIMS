@@ -43,7 +43,6 @@ import {
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_HAS_PENDING_APPEAL,
-  INVALID_APPLICATION_NUMBER,
 } from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
@@ -93,10 +92,7 @@ export class StudentAppealStudentsController extends BaseController {
       );
     if (!application) {
       throw new NotFoundException(
-        new ApiProcessError(
-          "Given application either does not exist or is not complete to request change.",
-          INVALID_APPLICATION_NUMBER,
-        ),
+        "Given application either does not exist or is not complete to request change.",
       );
     }
 

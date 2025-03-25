@@ -71,7 +71,6 @@ import { useSnackBar } from "@/composables";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_HAS_PENDING_APPEAL,
-  INVALID_APPLICATION_NUMBER,
 } from "@/constants";
 import { ApplicationProgramYearAPIOutDTO } from "@/services/http/dto";
 
@@ -114,15 +113,9 @@ export default defineComponent({
           formNames: [],
         };
       } catch (error: unknown) {
-        const errorMessage = "An error happened while requesting a change.";
-        const errorLabel = "Unexpected error";
-        if (error instanceof ApiProcessError) {
-          if (error.errorType === INVALID_APPLICATION_NUMBER) {
-            snackBar.warn(`Application not found. ${error.message}`);
-            return;
-          }
-          snackBar.error(`${errorLabel}. ${errorMessage}`);
-        }
+        snackBar.error(
+          "An unexpected error happened while retrieving the application to request a change.",
+        );
       }
     });
 
@@ -156,7 +149,6 @@ export default defineComponent({
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           switch (error.errorType) {
-            case INVALID_APPLICATION_NUMBER:
             case APPLICATION_CHANGE_NOT_ELIGIBLE:
               snackBar.warn(`Not able to submit. ${error.message}`);
               break;
