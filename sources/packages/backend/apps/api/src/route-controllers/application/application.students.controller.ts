@@ -551,12 +551,9 @@ export class ApplicationStudentsController extends BaseController {
   }
 
   /**
-   * Get application to request appeal.
-   ** Application eligible to be requested for
-   ** a change will be returned.
-   * @param applicationNumber
-   * @param userToken
-   * @returns application
+   * Get application to request an appeal.
+   * @param applicationId application ID.
+   * @returns application eligible to be requested for a change.
    */
   @ApiNotFoundResponse({
     description:
@@ -569,8 +566,8 @@ export class ApplicationStudentsController extends BaseController {
   ): Promise<ApplicationProgramYearAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
-        userToken.userId,
         applicationId,
+        userToken.userId,
       );
     if (!application) {
       throw new NotFoundException(

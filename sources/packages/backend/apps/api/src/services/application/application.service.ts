@@ -1429,15 +1429,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Retrieve application with application number in
-   * completed status.
-   * @param userId user id.
+   * Retrieves the application to request an appeal.
    * @param applicationId application ID.
+   * @param userId user id.
    * @returns application details for an appeal.
    */
   async getApplicationToRequestAppeal(
+    applicationId: number,
     userId: number,
-    applicationId?: number,
   ): Promise<Application> {
     return this.repo.findOne({
       select: {

@@ -37,7 +37,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { useFormatters } from "@/composables";
-import { ApplicationVersionAPIOutDTO } from "@/services/http/dto/Application.dto";
+import { ApplicationVersionAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   emits: {

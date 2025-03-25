@@ -88,8 +88,8 @@ export class StudentAppealStudentsController extends BaseController {
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
-        userToken.userId,
         applicationId,
+        userToken.userId,
       );
     if (!application) {
       throw new NotFoundException(

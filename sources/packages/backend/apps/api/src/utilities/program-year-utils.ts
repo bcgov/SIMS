@@ -52,7 +52,7 @@ export function allowApplicationChangeRequest(
 ): boolean {
   // Existing program years that are not allowed to submit change request.
   // This will allow any program year from 2025-2026 and beyond to submit.
-  // Once the change request will allowed for all program years, this function
+  // Once the change request is allowed for all program years, this function
   // should be removed.
   return !["2021-2022", "2022-2023", "2023-2024", "2024-2025"].includes(
     programYear.programYear,
