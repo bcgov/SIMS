@@ -818,7 +818,7 @@
               "value": ""
             }
           ],
-          "content": "If your spouse/common-law partner has had, or anticipates having a significant decrease in income for {{data.currentTaxYear}}, you may request to be assessed using your spouse/common-law partner's estimated income.",
+          "content": "If your spouse/common-law partner has had, or anticipates having a significant decrease in gross income for {{data.currentTaxYear}}, you may request to be assessed using your spouse/common-law partner's estimated gross income.",
           "refreshOnChange": true,
           "customClass": "",
           "hidden": false,
@@ -889,7 +889,7 @@
           "hideLabel": true
         },
         {
-          "label": "Do you want to declare your partner's estimated current year income?",
+          "label": "Do you want to declare your partner's estimated current year gross income?",
           "labelPosition": "top",
           "labelWidth": "",
           "labelMargin": "",
@@ -1120,7 +1120,7 @@
                   "value": ""
                 }
               ],
-              "content": "Add your spouse/common-law partner's actual income from the beginning of the calendar year up to the date of their income change and the estimated income for the remainder of that calendar year to calculate your total current year income.",
+              "content": "Add your spouse/common-law partner's actual gross income from the beginning of the calendar year up to the date of their income change and the estimated gross income for the remainder of that calendar year to calculate your total current year gross income.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
@@ -1191,7 +1191,7 @@
               "addons": []
             },
             {
-              "label": "My spouse/common-law partner's current year income is:",
+              "label": "My spouse/common-law partner's current year gross income is:",
               "prefix": "$",
               "customClass": "font-weight-bold",
               "mask": false,
@@ -1273,7 +1273,7 @@
               "lockKey": true
             },
             {
-              "label": "Select the reason for your spouse/common-law partner's significant decrease in income:",
+              "label": "Select the reason for your spouse/common-law partner's significant decrease in gross income:",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -1569,7 +1569,7 @@
                 }
               ],
               "className": "category-header-medium primary-color",
-              "content": "Upload supporting documents for spouse/common-law partner's {{data.currentTaxYear}} estimated income.",
+              "content": "Upload supporting documents for spouse/common-law partner's {{data.currentTaxYear}} estimated gross income.",
               "type": "htmlelement",
               "hideLabel": false,
               "tags": [],
@@ -1594,7 +1594,7 @@
                 }
               ],
               "className": "",
-              "content": "Please provide supporting documentation for your request to use current year estimated income for your spouse/common law partner.",
+              "content": "Please provide supporting documentation for your request to use current year estimated gross income for your spouse/common law partner.",
               "type": "htmlelement",
               "hideLabel": false,
               "tags": [],
@@ -1643,7 +1643,7 @@
                 }
               ],
               "className": "",
-              "content": "<h4 class=\"category-header-medium-small\">Provide at least one of the following:</h4>\n<ul><li>All relevant supporting documentation of the circumstance(s) (medical records, letter from the physician, record of employment, layoff or strike, invoices from damages, etc.).</li>\n<li>The most recent CRA Income Tax Return and income information for the year matching the student financial assistance application number (with relevant supporting documentation to show the decrease in income), if available.</li>\n<li>All relevant supporting documentation of estimated total income for the year matching the student financial assistance application number, if applicable (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li>\n</ul>",
+              "content": "<h4 class=\"category-header-medium-small\">Provide at least one of the following:</h4>\n<ul><li>All relevant supporting documentation of the circumstance(s) (medical records, letter from the physician, record of employment, layoff or strike, invoices from damages, etc.).</li>\n<li>The most recent CRA Income Tax Return and gross income information for the year matching the student financial assistance application number (with relevant supporting documentation to show the decrease in gross income), if available.</li>\n<li>All relevant supporting documentation of estimated total gross income for the year matching the student financial assistance application number, if applicable (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li>\n</ul>",
               "type": "htmlelement",
               "hideLabel": true,
               "tags": [],
