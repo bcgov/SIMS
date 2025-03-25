@@ -1,5 +1,5 @@
 import { IntersectionType } from "@nestjs/swagger";
-import { IsObject, IsOptional, IsPositive, Length } from "class-validator";
+import { IsObject, IsOptional, IsPositive } from "class-validator";
 import {
   ApplicationExceptionStatus,
   ApplicationStatus,
@@ -8,7 +8,6 @@ import {
   COEStatus,
   ApplicationData,
   OfferingIntensity,
-  APPLICATION_NUMBER_LENGTH,
   DisbursementScheduleStatus,
   StudentAppealStatus,
   AssessmentTriggerType,
@@ -141,11 +140,6 @@ export class ApplicationWithProgramYearAPIOutDTO {
 export enum SuccessWaitingStatus {
   Success = "Success",
   Waiting = "Waiting",
-}
-
-export class ApplicationNumberParamAPIInDTO {
-  @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
-  applicationNumber: string;
 }
 
 export class ApplicationIncomeVerification {

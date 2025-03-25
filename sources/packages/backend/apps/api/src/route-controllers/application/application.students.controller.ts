@@ -561,7 +561,7 @@ export class ApplicationStudentsController extends BaseController {
   })
   @Get(":applicationId/appeal")
   async getApplicationToRequestAppeal(
-    @Param("applicationId") applicationId: number,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<ApplicationProgramYearAPIOutDTO> {
     const application =
