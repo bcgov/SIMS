@@ -57,14 +57,21 @@ export function useApplication() {
     };
   };
 
+  /**
+   * Application edit status targeting students.
+   * @param editStatus application edit status.
+   * @returns student friendly edit status.
+   */
   const mapApplicationEditStatusForStudents = (
     editStatus: ApplicationEditStatus,
-  ) => {
+  ): string => {
     switch (editStatus) {
+      case ApplicationEditStatus.ChangeDeclined:
+        return "Declined";
+      case ApplicationEditStatus.ChangeCancelled:
+        return "Cancelled";
       case ApplicationEditStatus.ChangedWithApproval:
         return "Changed";
-      case ApplicationEditStatus.Edited:
-        return "Edited";
       default:
         return editStatus;
     }

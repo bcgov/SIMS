@@ -85,7 +85,6 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
                 savedApplication.currentAssessment.offering.studyStartDate,
               studyEndPeriod:
                 savedApplication.currentAssessment.offering.studyEndDate,
-              applicationName: "Financial Aid Application",
               status: savedApplication.applicationStatus,
               parentApplicationId: savedApplication.id,
               submittedDate: savedApplication.submittedDate.toISOString(),
@@ -138,7 +137,6 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
                 savedApplication1.currentAssessment.offering.studyStartDate,
               studyEndPeriod:
                 savedApplication1.currentAssessment.offering.studyEndDate,
-              applicationName: "Financial Aid Application",
               status: savedApplication1.applicationStatus,
               parentApplicationId: savedApplication1.id,
               submittedDate: savedApplication1.submittedDate.toISOString(),
@@ -196,7 +194,6 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
                 savedApplication1.currentAssessment.offering.studyStartDate,
               studyEndPeriod:
                 savedApplication1.currentAssessment.offering.studyEndDate,
-              applicationName: "Financial Aid Application",
               status: savedApplication1.applicationStatus,
               parentApplicationId: savedApplication1.id,
               submittedDate: savedApplication1.submittedDate.toISOString(),
@@ -258,7 +255,6 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
                 savedApplication2.currentAssessment.offering.studyStartDate,
               studyEndPeriod:
                 savedApplication2.currentAssessment.offering.studyEndDate,
-              applicationName: "Financial Aid Application",
               status: savedApplication2.applicationStatus,
               parentApplicationId: savedApplication2.id,
               submittedDate: savedApplication2.submittedDate.toISOString(),
@@ -271,7 +267,6 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
                 savedApplication1.currentAssessment.offering.studyStartDate,
               studyEndPeriod:
                 savedApplication1.currentAssessment.offering.studyEndDate,
-              applicationName: "Financial Aid Application",
               status: savedApplication1.applicationStatus,
               parentApplicationId: savedApplication1.id,
               submittedDate: savedApplication1.submittedDate.toISOString(),

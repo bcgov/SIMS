@@ -210,7 +210,6 @@ export class ApplicationSummaryAPIOutDTO {
   studyStartPeriod: string;
   studyEndPeriod: string;
   id: number;
-  applicationName: string;
   status: ApplicationStatus;
   parentApplicationId: number;
   /**
