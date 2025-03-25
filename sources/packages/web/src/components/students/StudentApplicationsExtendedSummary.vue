@@ -30,17 +30,6 @@
           <template #[`item.applicationNumber`]="{ item }">
             {{ item.applicationNumber }}
           </template>
-          <template #[`item.applicationName`]="{ item }">
-            <v-btn
-              variant="plain"
-              @click="$emit('goToApplication', item.id)"
-              color="primary"
-              >{{ item.applicationName }}
-              <v-tooltip activator="parent" location="start"
-                >Click to view this application</v-tooltip
-              >
-            </v-btn>
-          </template>
           <template #[`item.submitted`]="{ item }">
             {{
               emptyStringFiller(getISODateHourMinuteString(item.submittedDate))
