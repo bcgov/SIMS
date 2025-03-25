@@ -234,7 +234,10 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         "studentFile.groupName",
         "studentFile.createdAt",
         "studentFile.fileOrigin",
+        "creator.firstName",
+        "creator.lastName",
       ])
+      .innerJoin("studentFile.creator", "creator")
       .where("studentFile.student.id = :studentId", { studentId })
       .andWhere("studentFile.fileOrigin IN (:...fileOrigin)", {
         fileOrigin: [FileOriginType.Student, FileOriginType.Ministry],

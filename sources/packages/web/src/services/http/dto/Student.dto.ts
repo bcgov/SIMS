@@ -112,6 +112,14 @@ export interface StudentFileDetailsAPIOutDTO
   createdAt: Date;
 }
 
+/**
+ *  AEST student file upload details.
+ */
+export interface AESTStudentFileDetailsAPIOutDTO
+  extends StudentFileDetailsAPIOutDTO {
+  uploadedBy: string;
+}
+
 export interface StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
 }

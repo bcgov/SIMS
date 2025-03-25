@@ -40,7 +40,6 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import BaseController from "../BaseController";
 import {
   AESTFileUploadToStudentAPIInDTO,
-  StudentFileDetailsAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
   StudentSearchAPIInDTO,
   ApplicationSummaryAPIOutDTO,
@@ -51,6 +50,7 @@ import {
   UpdateSINValidationAPIInDTO,
   UpdateDisabilityStatusAPIInDTO,
   UpdateStudentDetailsAPIInDTO,
+  AESTStudentFileDetailsAPIOutDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -105,10 +105,11 @@ export class StudentAESTController extends BaseController {
   @Get(":studentId/documents")
   async getAESTStudentFiles(
     @Param("studentId", ParseIntPipe) studentId: number,
-  ): Promise<StudentFileDetailsAPIOutDTO[]> {
+  ): Promise<AESTStudentFileDetailsAPIOutDTO[]> {
     return this.studentControllerService.getStudentUploadedFiles(studentId, {
       extendedDetails: true,
-    }) as Promise<StudentFileDetailsAPIOutDTO[]>;
+      auditUserDetails: true,
+    }) as Promise<AESTStudentFileDetailsAPIOutDTO[]>;
   }
 
   /**

@@ -4,6 +4,7 @@
       :studentId="studentId"
       :canUploadFiles="true"
       :canDownloadFiles="true"
+      :canViewUploadedBy="true"
       @uploadFile="uploadFile"
     >
     </student-file-uploads>

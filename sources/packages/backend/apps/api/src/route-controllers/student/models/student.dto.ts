@@ -172,6 +172,13 @@ export class StudentFileDetailsAPIOutDTO extends StudentUploadFileAPIOutDTO {
   createdAt: Date;
 }
 
+/**
+ *  AEST student file upload details.
+ */
+export class AESTStudentFileDetailsAPIOutDTO extends StudentFileDetailsAPIOutDTO {
+  uploadedBy: string;
+}
+
 export class StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
 }

@@ -14,6 +14,7 @@ import {
   SearchStudentAPIInDTO,
   UpdateDisabilityStatusAPIInDTO,
   UpdateStudentDetailsAPIInDTO,
+  AESTStudentFileDetailsAPIOutDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 
@@ -143,7 +144,9 @@ export class StudentService {
    */
   async getStudentFileDetails(
     studentId: number,
-  ): Promise<StudentFileDetailsAPIOutDTO[]> {
+  ): Promise<
+    StudentFileDetailsAPIOutDTO[] | AESTStudentFileDetailsAPIOutDTO[]
+  > {
     return ApiClient.Students.getStudentFileDetails(studentId);
   }
 
