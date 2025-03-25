@@ -40,7 +40,6 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import BaseController from "../BaseController";
 import {
   AESTFileUploadToStudentAPIInDTO,
-  StudentFileDetailsAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
   StudentSearchAPIInDTO,
   ApplicationSummaryAPIOutDTO,
@@ -106,7 +105,7 @@ export class StudentAESTController extends BaseController {
   @Get(":studentId/documents")
   async getAESTStudentFiles(
     @Param("studentId", ParseIntPipe) studentId: number,
-  ): Promise<StudentFileDetailsAPIOutDTO[]> {
+  ): Promise<AESTStudentFileDetailsAPIOutDTO[]> {
     return this.studentControllerService.getStudentUploadedFiles(studentId, {
       extendedDetails: true,
       auditUserDetails: true,
