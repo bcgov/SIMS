@@ -150,6 +150,7 @@ export class StudentApi extends HttpBaseClient {
 
   /**
    * Get all student documents uploaded by student uploader.
+   * @param studentId student id.
    * @return list of student documents.
    */
   async getStudentFileDetails(
