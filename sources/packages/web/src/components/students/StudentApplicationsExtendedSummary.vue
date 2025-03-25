@@ -62,7 +62,7 @@
                 >
               </v-btn>
               <v-btn
-                v-if="canDisplayEdit(item)"
+                v-if="canDisplayEditOrCancel(item)"
                 :disabled="!hasSINValidStatus"
                 color="primary"
                 @click="$emit('editApplicationAction', item.status, item.id)"
@@ -90,7 +90,7 @@
                 >
               </v-btn>
               <v-btn
-                v-if="canDisplayCancel(item)"
+                v-if="canDisplayEditOrCancel(item)"
                 :disabled="!hasSINValidStatus"
                 color="primary"
                 @click="emitCancel(item.id)"
@@ -223,6 +223,7 @@ export default defineComponent({
     const getStudentApplications = async () => {
       try {
         loading.value = true;
+        // Reset expanded items when fetching new data.
         expandedItems.value = [];
         applicationsAndCount.value =
           await ApplicationService.shared.getStudentApplicationSummary(
@@ -268,7 +269,7 @@ export default defineComponent({
       toggleExpand();
       if (application.versions) {
         // Application versions are not required to be fetched every time.
-        // If there are already loaded there is no critical reason to fetch them again.
+        // If they are already loaded there is no critical reason to fetch them again.
         return;
       }
       try {
@@ -285,7 +286,9 @@ export default defineComponent({
       }
     };
 
-    const canDisplayEdit = (application: ApplicationSummaryAPIOutDTO) => {
+    const canDisplayEditOrCancel = (
+      application: ApplicationSummaryAPIOutDTO,
+    ) => {
       return (
         application.status !== ApplicationStatus.Cancelled &&
         application.status !== ApplicationStatus.Completed
@@ -295,26 +298,15 @@ export default defineComponent({
     const canDisplayChangeRequest = (
       application: ApplicationSummaryAPIOutDTO,
     ) => {
-      return (
-        application.status !== ApplicationStatus.Cancelled &&
-        application.status === ApplicationStatus.Completed
-      );
-    };
-
-    const canDisplayCancel = (application: ApplicationSummaryAPIOutDTO) => {
-      return (
-        application.status !== ApplicationStatus.Cancelled &&
-        application.status !== ApplicationStatus.Completed
-      );
+      return application.status === ApplicationStatus.Completed;
     };
 
     return {
       dateOnlyLongString,
       getISODateHourMinuteString,
       emptyStringFiller,
-      canDisplayEdit,
+      canDisplayEditOrCancel,
       canDisplayChangeRequest,
-      canDisplayCancel,
       ApplicationStatus,
       applicationsAndCount,
       DEFAULT_PAGE_LIMIT,

@@ -17,7 +17,11 @@
         <td headers="submitted-header">
           {{ getISODateHourMinuteString(version.submittedDate) }}
         </td>
-        <td headers="status-header">{{ version.applicationEditStatus }}</td>
+        <td headers="status-header">
+          {{
+            mapApplicationEditStatusForStudents(version.applicationEditStatus)
+          }}
+        </td>
         <td headers="actions-header">
           <v-btn
             variant="text"
@@ -36,7 +40,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useFormatters } from "@/composables";
+import { useApplication, useFormatters } from "@/composables";
 import { ApplicationVersionAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
@@ -54,9 +58,11 @@ export default defineComponent({
     },
   },
   setup() {
+    const { mapApplicationEditStatusForStudents } = useApplication();
     const { getISODateHourMinuteString } = useFormatters();
     return {
       getISODateHourMinuteString,
+      mapApplicationEditStatusForStudents,
     };
   },
 });

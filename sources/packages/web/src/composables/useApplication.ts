@@ -1,5 +1,6 @@
 import {
   ApplicationDetailHeader,
+  ApplicationEditStatus,
   ApplicationStatus,
   OfferingIntensity,
   StatusChipTypes,
@@ -55,5 +56,23 @@ export function useApplication() {
         "-",
     };
   };
-  return { mapApplicationChipStatus, mapApplicationDetailHeader };
+
+  const mapApplicationEditStatusForStudents = (
+    editStatus: ApplicationEditStatus,
+  ) => {
+    switch (editStatus) {
+      case ApplicationEditStatus.ChangedWithApproval:
+        return "Changed";
+      case ApplicationEditStatus.Edited:
+        return "Edited";
+      default:
+        return editStatus;
+    }
+  };
+
+  return {
+    mapApplicationChipStatus,
+    mapApplicationDetailHeader,
+    mapApplicationEditStatusForStudents,
+  };
 }
