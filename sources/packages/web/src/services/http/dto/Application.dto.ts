@@ -133,6 +133,7 @@ export interface ApplicationProgressDetailsAPIOutDTO {
   assessmentTriggerType?: AssessmentTriggerType;
   hasBlockFundingFeedbackError: boolean;
   hasECertFailedValidations: boolean;
+  currentAssessmentId: number;
 }
 
 export interface DisbursementDetailsAPIOutDTO {

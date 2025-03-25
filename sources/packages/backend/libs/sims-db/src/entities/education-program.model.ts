@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
@@ -176,10 +175,6 @@ export class EducationProgram extends RecordDataModel {
   /**
    * Related institution.
    */
-
-  @RelationId((program: EducationProgram) => program.institution)
-  institutionId: number;
-
   @OneToOne(() => Institution, { eager: false, cascade: true })
   @JoinColumn({
     name: "institution_id",
@@ -369,9 +364,6 @@ export class EducationProgram extends RecordDataModel {
   /**
    * Education program note.
    */
-  @RelationId((program: EducationProgram) => program.programNote)
-  programNoteId?: number;
-
   @OneToOne(() => Note, { eager: false, cascade: true, nullable: true })
   @JoinColumn({
     name: "program_note",
@@ -382,9 +374,6 @@ export class EducationProgram extends RecordDataModel {
   /**
    * Education program assessed by.
    */
-  @RelationId((program: EducationProgram) => program.assessedBy)
-  assessedById?: number;
-
   @ManyToOne(() => User, { eager: false, nullable: true })
   @JoinColumn({
     name: "assessed_by",
@@ -395,9 +384,6 @@ export class EducationProgram extends RecordDataModel {
   /**
    * Education program submitted by.
    */
-  @RelationId((program: EducationProgram) => program.submittedBy)
-  submittedById?: number;
-
   @ManyToOne(() => User, { eager: false, nullable: true })
   @JoinColumn({
     name: "submitted_by",

@@ -37,6 +37,7 @@ import {
   StudentUploadFileAPIOutDTO,
   InstitutionStudentProfileAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
+  AESTStudentFileDetailsAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { ApiProcessError } from "../../types";
@@ -293,12 +294,17 @@ export class StudentControllerService {
    * @param studentId student id to retrieve the data.
    * @param options related to student file uploads
    * - `extendedDetails` option to specify the additional properties to be returned (metadata, groupName, updatedAt) as a part of the studentDocuments.
+   * - `auditUserDetails` option to specify the additional properties to be returned (uploadedBy) as a part of the studentDocuments.
    * @returns student file details.
    */
   async getStudentUploadedFiles(
     studentId: number,
-    options?: { extendedDetails: boolean },
-  ): Promise<StudentFileDetailsAPIOutDTO[] | StudentUploadFileAPIOutDTO[]> {
+    options?: { extendedDetails: boolean; auditUserDetails?: boolean },
+  ): Promise<
+    | StudentFileDetailsAPIOutDTO[]
+    | StudentUploadFileAPIOutDTO[]
+    | AESTStudentFileDetailsAPIOutDTO[]
+  > {
     const studentDocuments = await this.fileService.getStudentUploadedFiles(
       studentId,
     );
@@ -312,6 +318,9 @@ export class StudentControllerService {
         : undefined,
       createdAt: options?.extendedDetails
         ? studentDocument.createdAt
+        : undefined,
+      uploadedBy: options?.auditUserDetails
+        ? getUserFullName(studentDocument.creator)
         : undefined,
     }));
   }
@@ -360,9 +369,9 @@ export class StudentControllerService {
       studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
       // TODO: when application name is captured, update the below line
       applicationName: "Financial Aid Application",
-      submitted: application.currentAssessment?.submittedDate,
       status: application.applicationStatus,
       parentApplicationId: application.parentApplication.id,
+      submittedDate: application.parentApplication.submittedDate,
     };
   };
 

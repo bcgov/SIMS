@@ -7,6 +7,7 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
+import { InstitutionType } from "@sims/sims-db";
 
 describe("InstitutionAESTController(e2e)-createInstitution", () => {
   let app: INestApplication;
@@ -59,7 +60,40 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
         institutionId = response.body.id;
       });
     const savedInstitution = await db.institution.findOne({
+      select: {
+        id: true,
+        businessGuid: true,
+        establishedDate: true,
+        institutionAddress: {
+          mailingAddress: {
+            addressLine1: true,
+            addressLine2: true,
+            city: true,
+            country: true,
+            postalCode: true,
+            provinceState: true,
+            selectedCountry: true,
+          },
+        },
+        institutionPrimaryContact: {
+          email: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+        },
+        institutionType: {
+          id: true,
+        },
+        legalOperatingName: true,
+        operatingName: true,
+        otherRegulatingBody: true,
+        primaryEmail: true,
+        primaryPhone: true,
+        regulatingBody: true,
+        website: true,
+      },
       where: { id: institutionId },
+      relations: { institutionType: true },
     });
     expect(savedInstitution).toEqual(
       expect.objectContaining({
@@ -82,7 +116,9 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
           lastName: payload.primaryContactLastName,
           phone: payload.primaryContactPhone,
         },
-        institutionTypeId: payload.institutionType,
+        institutionType: expect.objectContaining({
+          id: payload.institutionType,
+        } as InstitutionType),
         legalOperatingName: payload.legalOperatingName,
         operatingName: payload.operatingName,
         otherRegulatingBody: null,

@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import {
   Application,
@@ -107,15 +106,6 @@ export class StudentAssessment extends RecordDataModel {
   })
   triggerType: AssessmentTriggerType;
   /**
-   * Offering id that must be used for any assessment/reassessment. This information can
-   * be null only during a PIR process. Upon a program/offering change, this will also
-   * represent the new/changed program/offering.
-   */
-  @RelationId(
-    (studentAssessment: StudentAssessment) => studentAssessment.offering,
-  )
-  offeringId?: number;
-  /**
    * Offering that must be used for any assessment/reassessment. This information can
    * be null only during a PIR process. Upon a program/offering change, this will also
    * represent the new/changed program/offering.
@@ -130,14 +120,6 @@ export class StudentAssessment extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   offering?: EducationProgramOffering;
-  /**
-   * When the reassessment happen due to a student appeal, this will provide to
-   * the workflow the data that need to be changed.
-   */
-  @RelationId(
-    (studentAssessment: StudentAssessment) => studentAssessment.studentAppeal,
-  )
-  studentAppealId?: number;
   /**
    * When the reassessment happen due to a student appeal, this will provide to
    * the workflow the data that need to be changed.

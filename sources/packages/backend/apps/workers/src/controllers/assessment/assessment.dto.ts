@@ -161,6 +161,26 @@ export interface WorkflowWrapUpJobInDTO {
 }
 
 /**
+ * Types of operations that can be performed when wrapping up a workflow.
+ */
+export enum WorkflowWrapUpType {
+  /**
+   * Executes only a subset of the wrap-up operations, setting the assessment status to completed.
+   * Used when the workflow does not reach the calculations stage and must be aborted.
+   */
+  AssessmentStatusOnly = "Assessment status only",
+  /**
+   * Executes all wrap-up operations, setting the assessment status to completed and
+   * executing other processes related to sequential processing.
+   */
+  CompleteWrapUp = "Complete",
+}
+
+export interface WorkflowWrapUpJobHeaderDTO {
+  wrapUpType: WorkflowWrapUpType;
+}
+
+/**
  * Provides the status to the workflow that an assessment is the next in order to be processed.
  * When {@link isReadyForCalculation} is true, dynamic properties will also be attached to the
  * response representing the total awards values consumed for the particular student for the

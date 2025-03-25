@@ -136,7 +136,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
   @Patch(":supportingUserType")
   @ApiUnprocessableEntityResponse({
     description:
-      "Student Application not found to update the supporting data or " +
+      "Invalid offering intensity or " +
+      "student application not found to update the supporting data or " +
       "the user currently authenticated is the same user that submitted " +
       "the application or supporting user already submitted the information.",
   })
@@ -184,7 +185,13 @@ export class SupportingUserSupportingUsersController extends BaseController {
       supportingUserType,
       application.programYear,
     );
-
+    // Ensure the offering intensity provided is the same from the application.
+    if (
+      payload.offeringIntensity !==
+      application.currentAssessment.offering.offeringIntensity
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
     const submissionResult: DryRunSubmissionResult =
       await this.formService.dryRunSubmission(formName, payload);
 

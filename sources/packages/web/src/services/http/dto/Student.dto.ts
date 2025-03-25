@@ -2,6 +2,7 @@ import {
   FileOriginType,
   DisabilityStatus,
   SpecificIdentityProviders,
+  ApplicationStatus,
 } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { AddressDetailsFormAPIDTO } from "./Common.dto";
@@ -111,6 +112,14 @@ export interface StudentFileDetailsAPIOutDTO
   createdAt: Date;
 }
 
+/**
+ *  AEST student file upload details.
+ */
+export interface AESTStudentFileDetailsAPIOutDTO
+  extends StudentFileDetailsAPIOutDTO {
+  uploadedBy: string;
+}
+
 export interface StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
 }
@@ -142,9 +151,9 @@ export interface ApplicationSummaryAPIOutDTO {
   studyEndPeriod: string;
   id: number;
   applicationName: string;
-  submitted?: Date;
-  status: string;
+  status: ApplicationStatus;
   parentApplicationId: number;
+  submittedDate?: Date;
 }
 
 /**

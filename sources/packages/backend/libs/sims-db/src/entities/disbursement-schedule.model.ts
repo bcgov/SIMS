@@ -5,7 +5,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import {
   User,
@@ -185,15 +184,6 @@ export class DisbursementSchedule extends RecordDataModel {
   })
   tuitionRemittanceEffectiveAmount?: number;
 
-  /**
-   * Id of the MSFAA (Master Student Financial Aid Agreement)
-   * number generated for a student.
-   */
-  @RelationId(
-    (disbursementSchedule: DisbursementSchedule) =>
-      disbursementSchedule.msfaaNumber,
-  )
-  msfaaNumberId?: number;
   /**
    * MSFAA (Master Student Financial Aid Agreement)
    * number generated for a student.

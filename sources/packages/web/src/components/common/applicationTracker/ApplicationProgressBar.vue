@@ -46,6 +46,7 @@
         :assessmentTriggerType="
           applicationProgressDetails.assessmentTriggerType!
         "
+        @goToNoticeOfAssessment="goToNoticeOfAssessment"
       />
       <enrolment
         v-else-if="
@@ -92,6 +93,8 @@ import Cancelled from "@/components/common/applicationTracker/Cancelled.vue";
 import Assessment from "@/components/common/applicationTracker/Assessment.vue";
 import Enrolment from "@/components/common/applicationTracker/Enrolment.vue";
 import Completed from "@/components/common/applicationTracker/Completed.vue";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import router from "@/router";
 
 interface StatusIconDetails {
   statusType: "success" | "warning" | "error";
@@ -229,6 +232,16 @@ export default defineComponent({
         : DEFAULT_THUMB_SIZE,
     );
 
+    const goToNoticeOfAssessment = () => {
+      router.push({
+        name: StudentRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
+        params: {
+          applicationId: props.applicationId,
+          assessmentId: applicationProgressDetails.value.currentAssessmentId,
+        },
+      });
+    };
+
     return {
       AssessmentTriggerType,
       applicationTrackerLabels,
@@ -239,6 +252,7 @@ export default defineComponent({
       ApplicationStatus,
       statusIconDetails,
       applicationProgressDetails,
+      goToNoticeOfAssessment,
     };
   },
 });

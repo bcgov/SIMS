@@ -63,6 +63,24 @@
         "problemMatcher": []
       },
       {
+        "label": "Database - Run Migrations",
+        "type": "shell",
+        "command": "npm run migration:run",
+        "options": {
+          "cwd": "${workspaceFolder:Backend}"
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "Database - Clean E2E Test DB",
+        "type": "shell",
+        "command": "npm run db:seed:test:clean",
+        "options": {
+          "cwd": "${workspaceFolder:Backend}"
+        },
+        "problemMatcher": []
+      },
+      {
         "label": "View Outdated Web Packages",
         "type": "shell",
         "command": "npm outdated",

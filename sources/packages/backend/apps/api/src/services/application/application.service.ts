@@ -267,7 +267,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       id: application.id,
     } as Application;
     newApplication.applicationStatusUpdatedOn = now;
-    newApplication.student = { id: application.studentId } as Student;
+    newApplication.student = { id: studentId } as Student;
     newApplication.studentFiles = await this.getSyncedApplicationFiles(
       studentId,
       [],
@@ -299,7 +299,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       await applicationRepository.save([application, newApplication]);
       await this.saveApplicationEditedTooManyTimesNotification(
         newApplication.applicationNumber,
-        application.studentId,
+        studentId,
         transactionalEntityManager,
       );
     });
@@ -715,6 +715,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.applicationNumber",
         "application.id",
         "parentApplication.id",
+        "parentApplication.submittedDate",
         "currentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
@@ -1324,10 +1325,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "user.userName",
         "student.id",
         "application.data",
+        "currentAssessment",
+        "offering.offeringIntensity",
       ])
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .innerJoin("application.programYear", "programYear")
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .where("application.applicationNumber = :applicationNumber", {
         applicationNumber,
       })

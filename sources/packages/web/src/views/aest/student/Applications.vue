@@ -1,7 +1,6 @@
 <template>
   <tab-container>
-    <student-applications
-      :enable-view-application="true"
+    <student-applications-simplified-summary
       :studentId="studentId"
       @goToApplication="goToApplication"
     />
@@ -10,12 +9,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import StudentApplications from "@/components/common/students/StudentApplications.vue";
+import StudentApplicationsSimplifiedSummary from "@/components/common/students/StudentApplicationsSimplifiedSummary.vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default defineComponent({
-  components: { StudentApplications },
+  components: { StudentApplicationsSimplifiedSummary },
   props: {
     studentId: {
       type: Number,

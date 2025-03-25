@@ -21,6 +21,8 @@ import {
   UpdateNOAStatusHeaderDTO,
   UpdateNOAStatusJobInDTO,
   VerifyAssessmentCalculationOrderJobOutDTO,
+  WorkflowWrapUpJobHeaderDTO,
+  WorkflowWrapUpType,
 } from "..";
 import { StudentAssessmentService } from "../../services";
 import {
@@ -247,7 +249,11 @@ export class AssessmentController {
   })
   async workflowWrapUp(
     job: Readonly<
-      ZeebeJob<WorkflowWrapUpJobInDTO, ICustomHeaders, IOutputVariables>
+      ZeebeJob<
+        WorkflowWrapUpJobInDTO,
+        WorkflowWrapUpJobHeaderDTO,
+        IOutputVariables
+      >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
     const jobLogger = new Logger(job.type);
@@ -261,52 +267,67 @@ export class AssessmentController {
         jobLogger.error(message);
         return job.error(ASSESSMENT_NOT_FOUND, message);
       }
+      jobLogger.log(
+        `Workflow wrap-up type requested: ${job.customHeaders.wrapUpType}.`,
+      );
       // The updateAssessmentStatusAndSaveWorkflowData and assessImpactedApplicationReassessmentNeeded are executed in the same transaction
       // to force then to be successfully executed together or to fail together. In this way the worker can be safely retried from Camunda.
-      await this.dataSource.transaction(async (entityManager) => {
-        // Update status and workflow data ensuring that it will be updated only for the first time to ensure the worker idempotency.
-        const updated =
-          await this.studentAssessmentService.updateAssessmentStatusAndSaveWorkflowData(
-            job.variables.assessmentId,
-            job.variables.workflowData,
-            entityManager,
-          );
-        if (!updated) {
-          // If no rows were update it means that the data is already updated and the worker was already executed before.
-          jobLogger.log(
-            "Assessment status and workflow data were already updated. This indicates that the worker " +
-              "was invoked multiple times and it was already executed with success.",
-          );
-          return job.complete();
-        }
-        const application = assessment.application;
-        // Previous date change reported assessments can only exist for completed applications
-        // with at least one disbursement sent to ESDC.
-        // Hence applications that are not completed cannot have previous date change reported assessments.
-        // To ensure the implementation to be idempotent, update previous date change reported assessment
-        // only if it is not updated already.
-        if (
-          application.applicationStatus === ApplicationStatus.Completed &&
-          !assessment.previousDateChangedReportedAssessment
-        ) {
-          await this.updatePreviousDateChangeReportedAssessment(
-            job.variables.assessmentId,
-            entityManager,
-            jobLogger,
-          );
-        }
-        const impactedApplication =
-          await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
-            job.variables.assessmentId,
-            this.systemUsersService.systemUser.id,
-            entityManager,
-          );
-        if (impactedApplication) {
-          jobLogger.log(
-            `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
-          );
-        }
-      });
+      const jobActionAcknowledgement = await this.dataSource.transaction(
+        async (entityManager) => {
+          // Update status and workflow data ensuring that it will be updated only for the first time to ensure the worker idempotency.
+          const updated =
+            await this.studentAssessmentService.updateAssessmentWrapUpData(
+              job.variables.assessmentId,
+              entityManager,
+              { workflowData: job.variables.workflowData },
+            );
+          if (!updated) {
+            // If no rows were updated it means that the data is already updated and the worker was already executed before.
+            jobLogger.log(
+              "Assessment status and workflow data were already updated. This indicates that the worker " +
+                "was invoked multiple times and it was already executed with success.",
+            );
+            return job.complete();
+          }
+          if (
+            job.customHeaders.wrapUpType ===
+            WorkflowWrapUpType.AssessmentStatusOnly
+          ) {
+            return job.complete();
+          }
+          const application = assessment.application;
+          // Previous date change reported assessments can only exist for completed applications
+          // with at least one disbursement sent to ESDC.
+          // Hence applications that are not completed cannot have previous date change reported assessments.
+          // To ensure the implementation to be idempotent, update previous date change reported assessment
+          // only if it is not updated already.
+          if (
+            application.applicationStatus === ApplicationStatus.Completed &&
+            !assessment.previousDateChangedReportedAssessment
+          ) {
+            await this.updatePreviousDateChangeReportedAssessment(
+              job.variables.assessmentId,
+              entityManager,
+              jobLogger,
+            );
+          }
+          const impactedApplication =
+            await this.assessmentSequentialProcessingService.assessImpactedApplicationReassessmentNeeded(
+              job.variables.assessmentId,
+              this.systemUsersService.systemUser.id,
+              entityManager,
+            );
+          if (impactedApplication) {
+            jobLogger.log(
+              `Application id ${impactedApplication.id} was detected as impacted and will be reassessed.`,
+            );
+          }
+        },
+      );
+      if (jobActionAcknowledgement) {
+        // If there is a job result to be returned, the worker should finalize its processing.
+        return jobActionAcknowledgement;
+      }
       const studentId = assessment.application.student.id;
       const programYearId = assessment.application.programYear.id;
       // Check for any assessment which is waiting for calculation.
@@ -508,7 +529,7 @@ export class AssessmentController {
   ): ApplicationAssessmentJobOutDTO {
     const application = assessment.application;
     const [studentCRAIncome] = application.craIncomeVerifications?.filter(
-      (verification) => verification.supportingUserId === null,
+      (verification) => !verification.supportingUser?.id,
     );
     const offering = assessment.offering;
     const institutionLocation = offering?.institutionLocation;
@@ -596,7 +617,7 @@ export class AssessmentController {
         .forEach((supportingUser, index) => {
           const [craIncome] = incomeVerifications?.filter(
             (verification) =>
-              verification.supportingUserId === supportingUser.id,
+              verification.supportingUser?.id === supportingUser.id,
           );
           flattenedSupportingUsers[`${supportingUserType}${index + 1}`] = {
             id: supportingUser.id,

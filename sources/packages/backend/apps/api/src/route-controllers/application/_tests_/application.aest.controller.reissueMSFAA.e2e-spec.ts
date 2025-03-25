@@ -343,8 +343,9 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
       const secondScheduleUpdated = await db.disbursementSchedule.findOne({
         select: { msfaaNumber: { id: true } },
         where: { id: disbursementsMSFAA.disbursementId },
+        relations: { msfaaNumber: true },
       });
-      expect(secondScheduleUpdated.msfaaNumberId).toBe(
+      expect(secondScheduleUpdated.msfaaNumber.id).toBe(
         disbursementsMSFAA.msfaaNumberId,
       );
     }

@@ -9275,8 +9275,7 @@
             "eq": "Full Time"
           },
           "properties": {},
-          "hideLabel": true,
-          "isNew": false
+          "hideLabel": true
         },
         {
           "title": "Disability information panel",
@@ -9623,8 +9622,7 @@
                 "eq": ""
               },
               "properties": {},
-              "lockKey": true,
-              "isNew": false
+              "lockKey": true
             },
             {
               "label": "Are you a resident of B.C.?",
@@ -9719,8 +9717,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "e3yxtjc",
-              "defaultValue": "",
-              "isNew": false
+              "defaultValue": ""
             },
             {
               "title": "Not a BC resident panel",
@@ -16301,7 +16298,7 @@
                     }
                   ],
                   "className": "",
-                  "content": "If your spouse/common-law partner has had, or anticipates having a significant decrease in income for {{data.currentTaxYear}}, you may request to be assessed using your spouse/common-law partner's estimated income.",
+                  "content": "If your spouse/common-law partner has had, or anticipates having a significant decrease in gross income for {{data.currentTaxYear}}, you may request to be assessed using your spouse/common-law partner's estimated gross income.",
                   "type": "htmlelement",
                   "tags": [],
                   "conditional": {
@@ -16317,7 +16314,7 @@
                   "input": true,
                   "tableView": true,
                   "inputType": "radio",
-                  "label": "Do you want to declare your spouse/common-law partner's estimated current year income?",
+                  "label": "Do you want to declare your spouse/common-law partner's estimated current year gross income?",
                   "key": "hasCurrentYearPartnerIncome",
                   "values": [
                     {
@@ -16924,7 +16921,7 @@
                     }
                   ],
                   "className": "",
-                  "content": "Add your spouse/common-law partner's actual income from the beginning of {{data.currentTaxYear}} up to the date their income change, along with the estimated income for the remainder of the year, to calculate their total estimate income for the current year.",
+                  "content": "Add your spouse/common-law partner's actual gross income from the beginning of {{data.currentTaxYear}} up to the date their gross income changed, along with the estimated gross income for the remainder of the year, to calculate their total estimate income for the current year.",
                   "type": "htmlelement",
                   "hideLabel": true,
                   "tags": [],
@@ -16941,7 +16938,7 @@
                   "tableView": true,
                   "inputType": "text",
                   "inputMask": "",
-                  "label": "My spouse/common-law partner's current year income is:",
+                  "label": "My spouse/common-law partner's current year gross income is:",
                   "key": "currentYearPartnerIncome",
                   "placeholder": "",
                   "prefix": "$",
@@ -16975,7 +16972,7 @@
                   "input": true,
                   "tableView": true,
                   "inputType": "radio",
-                  "label": "Select the reason for your spouse/common-law partner's significant decrease in income:",
+                  "label": "Select the reason for your spouse/common-law partner's significant decrease in gross income:",
                   "key": "reasonsignificantdecreaseInPartnerIncome",
                   "values": [
                     {
@@ -17096,7 +17093,7 @@
                     }
                   ],
                   "className": "category-header-medium primary-color",
-                  "content": "Upload supporting documents for spouse/common-law partner's {{data.currentTaxYear}} estimated income.",
+                  "content": "Upload supporting documents for spouse/common-law partner's {{data.currentTaxYear}} estimated gross income.",
                   "type": "htmlelement",
                   "hideLabel": true,
                   "tags": [],
@@ -17119,7 +17116,7 @@
                     }
                   ],
                   "className": "",
-                  "content": "Please provide supporting documentation for your request to use current year estimated income for your spouse/common law partner.",
+                  "content": "Please provide supporting documentation for your request to use current year estimated gross income for your spouse/common law partner.",
                   "type": "htmlelement",
                   "hideLabel": true,
                   "tags": [],
@@ -17129,6 +17126,30 @@
                     "eq": ""
                   },
                   "properties": {}
+                },
+                {
+                  "key": "partnerIncomePanelPanelHtml",
+                  "label": "HTML",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "content": "<span class=\"font-bold ml-2\"> Request for Exception</span>\n <br> \n<span>Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.<span>",
+                  "type": "htmlelement",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "hideLabel": true,
+                  "customClass": "banner-warning"
                 },
                 {
                   "key": "partnerIncomePanelPanelProvidethefollowingblurb",
@@ -17142,7 +17163,7 @@
                     }
                   ],
                   "className": "",
-                  "content": "<h4 class=\"category-header-medium-small\">Provide the following:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Criteria (see above)</li></ul>",
+                  "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Appeal Criteria (see above) and a detailed breakdown of how you calculated total estimated gross income (if applicable).</li></ul>",
                   "type": "htmlelement",
                   "hideLabel": true,
                   "tags": [],
@@ -17166,7 +17187,7 @@
                     }
                   ],
                   "className": "",
-                  "content": "<h4 class=\"category-header-medium-small\">Provide at least one of the following:</h4>\n<ul><li>All relevant supporting documentation of the circumstance(s) (medical records, letter from the physician, record of employment, layoff or strike, invoices from damages, etc.).</li>\n<li>The most recent CRA Income Tax Return and income information for the year matching the student financial assistance application number (with relevant supporting documentation to show the decrease in income), if available.</li>\n<li>All relevant supporting documentation of estimated total income for the year matching the student financial assistance application number, if applicable (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li>\n</ul>",
+                  "content": "<h4 class=\"category-header-medium-small\">AND</h4>\n<ul>\n<li>All relevant supporting documentation of the circumstance(s) (medical records, letter from physician, record of employment, layoff or strike, etc.).</li>\n<li>(If the year matching your application number is still in progress): All relevant supporting documentation of estimated total gross income for the current year, including all year-to-date gross income (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li></ul>\n<h4 class=\"category-header-medium-small\">OR</h4>\n<ul>\n<li>(If the year matching your application number is complete): CRA Income Tax Return and gross income information for the year matching the student financial assistance application number.</li>\n</ul>",
                   "type": "htmlelement",
                   "hideLabel": true,
                   "tags": [],
@@ -17418,6 +17439,135 @@
               "fieldSet": false,
               "id": "enyf4g",
               "defaultValue": ""
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": false,
+              "inputType": "radio",
+              "label": "Will your partner receive Employment Insurance (EI) benefits during your study period?",
+              "key": "partnerHasEmploymentInsuranceBenefits",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "custom": "",
+                "customPrivate": false,
+                "onlyAvailableItems": true
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time"
+              },
+              "properties": {},
+              "lockKey": true
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": false,
+              "inputType": "radio",
+              "label": "Will your partner receive federal or provincial disability benefits during your study period?",
+              "key": "partnerHasFedralProvincialPDReceipt",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "custom": "",
+                "customPrivate": false,
+                "onlyAvailableItems": true
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time"
+              },
+              "properties": {},
+              "lockKey": true
+            },
+            {
+              "autofocus": false,
+              "input": true,
+              "tableView": false,
+              "inputType": "radio",
+              "label": "Will your partner receive Income Assistance (welfare) during your study period?",
+              "key": "partnerHasTotalIncomeAssistance",
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "defaultValue": "",
+              "protected": false,
+              "fieldSet": false,
+              "persistent": true,
+              "hidden": false,
+              "clearOnHide": true,
+              "validate": {
+                "required": true,
+                "custom": "",
+                "customPrivate": false,
+                "onlyAvailableItems": true
+              },
+              "type": "radio",
+              "labelPosition": "top",
+              "optionsLabelPosition": "right",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "howWillYouBeAttendingTheProgram",
+                "eq": "Full Time"
+              },
+              "properties": {},
+              "lockKey": true
             },
             {
               "label": "Will your partner be at home caring for eligible dependent children on a full-time basis during your entire study period?",
@@ -18581,8 +18731,7 @@
       "addons": [],
       "tree": false,
       "lazyLoad": false,
-      "id": "eo39uv9",
-      "isNew": false
+      "id": "eo39uv9"
     },
     {
       "title": "Parent information",
@@ -23213,7 +23362,7 @@
                   "value": ""
                 }
               ],
-              "content": "If you have had, or anticipate having a significant decrease in income for {{data.currentTaxYear}}, you may request to be assessed using this year's estimated income.",
+              "content": "If you have had, or anticipate having a significant decrease in gross income for {{data.currentTaxYear}}, you may request to be assessed using this year's estimated gross income.",
               "refreshOnChange": true,
               "customClass": "",
               "hidden": false,
@@ -23284,7 +23433,7 @@
               "addons": []
             },
             {
-              "label": "Do you want to be assessed with this year's estimated income?",
+              "label": "Do you want to be assessed with this year's estimated gross income?",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -23536,7 +23685,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "Add your actual income from the beginning of the calendar year up to the date of your application and your estimated income for the remainder of that calendar year to calculate your total current year income.",
+                  "content": "Add your actual gross income from the beginning of the calendar year up to the date of your application and your estimated gross income for the remainder of that calendar year to calculate your total current year gross income.",
                   "refreshOnChange": false,
                   "customClass": "",
                   "hidden": false,
@@ -23607,7 +23756,7 @@
                   "addons": []
                 },
                 {
-                  "label": "My total current year income is:",
+                  "label": "My total current year gross income is:",
                   "prefix": "$",
                   "customClass": "font-weight-bold",
                   "mask": false,
@@ -23689,7 +23838,7 @@
                   "lockKey": true
                 },
                 {
-                  "label": "Select the reason for your significant decrease in income.",
+                  "label": "Select the reason for your significant decrease in gross income.",
                   "labelPosition": "top",
                   "labelWidth": "",
                   "labelMargin": "",
@@ -23983,7 +24132,7 @@
                     }
                   ],
                   "className": "category-header-medium primary-color",
-                  "content": "Upload supporting documents for current year estimated income.",
+                  "content": "Upload supporting documents for current year estimated gross income.",
                   "type": "htmlelement",
                   "hideLabel": false,
                   "tags": [],
@@ -24007,7 +24156,7 @@
                     }
                   ],
                   "className": "",
-                  "content": "Please provide supporting documentation for your request to use your current year estimated income.",
+                  "content": "Please provide supporting documentation for your request to use your current year estimated gross income.",
                   "type": "htmlelement",
                   "hideLabel": false,
                   "tags": [],
@@ -24017,6 +24166,30 @@
                     "eq": ""
                   },
                   "properties": {}
+                },
+                {
+                  "key": "decreaseInIncomePanelHtml",
+                  "label": "HTML",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "content": "<span class=\"font-bold ml-2\"> Request for Exception</span>\n <br> \n<span>Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.<span>",
+                  "type": "htmlelement",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "hideLabel": true,
+                  "customClass": "banner-warning"
                 },
                 {
                   "key": "decreaseInIncomePanelContent3",
@@ -24030,7 +24203,7 @@
                     }
                   ],
                   "className": "",
-                  "content": "<h4 class=\"category-header-medium-small\">Provide the following:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Criteria (see above)</li></ul>",
+                  "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Appeal Criteria (see above) and a detailed breakdown of how you calculated total estimated gross income (if applicable).</li></ul>",
                   "type": "htmlelement",
                   "hideLabel": true,
                   "tags": [],
@@ -24054,7 +24227,7 @@
                     }
                   ],
                   "className": "",
-                  "content": "<h4 class=\"category-header-medium-small\">Provide at least one of the following:</h4>\n<ul><li>All relevant supporting documentation of the circumstance(s) (medical records, letter from the physician, record of employment, layoff or strike, invoices from damages, etc.).</li>\n<li>The more recent CRA Income Tax Return and income information for the year matching the student financial assistance application number (with relevant supporting documentation to show the decrease in income), if available.</li>\n<li>All relevant supporting documentation of estimated total income for the year matching the student financial assistance application number, if applicable (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li>\n</ul>",
+                  "content": "<h4 class=\"category-header-medium-small\">AND</h4>\n<ul>\n<li>All relevant supporting documentation of the circumstance(s) (medical records, letter from physician, record of employment, layoff or strike, etc.).</li>\n<li>(If the year matching your application number is still in progress): All relevant supporting documentation of estimated total gross income for the current year, including all year-to-date gross income (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li></ul>\n<h4 class=\"category-header-medium-small\">OR</h4>\n<ul>\n<li>(If the year matching your application number is complete): CRA Income Tax Return and gross income information for the year matching the student financial assistance application number.</li>\n</ul>",
                   "type": "htmlelement",
                   "hideLabel": true,
                   "tags": [],
@@ -24759,7 +24932,7 @@
                   "className": ""
                 },
                 {
-                  "label": "Select the reason for your significant decrease in income:",
+                  "label": "Select the reason for your significant decrease in gross income:",
                   "optionsLabelPosition": "right",
                   "inline": false,
                   "tableView": false,
@@ -25111,7 +25284,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\r\n<ul>\r\n  <li>A copy of your insurance or claim information</li>\r\n  <li>Receipts showing payment of costs</li>\r\n  <li>Bank statement</li>\r\n</ul>",
+                  "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\r\n<ul>\r\n  <li>A copy of your insurance or claim information</li>\r\n  <li>Receipts showing payment of costs</li>\r\n  <li>Bank statement</li>\r\n</ul>",
                   "refreshOnChange": false,
                   "customClass": "align-bullets",
                   "key": "html24",
@@ -30461,6 +30634,30 @@
                       "tags": []
                     },
                     {
+                      "key": "additionalTransportationPanelPanelHtml",
+                      "label": "HTML",
+                      "input": false,
+                      "tag": "p",
+                      "attrs": [
+                        {
+                          "value": "",
+                          "attr": ""
+                        }
+                      ],
+                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                      "content": "<span class=\"font-bold ml-2\"> Request for Exception</span>\n <br> \n<span>Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.<span>",
+                      "type": "htmlelement",
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {},
+                      "hideLabel": true,
+                      "customClass": "banner-warning"
+                    },
+                    {
                       "label": "HTML",
                       "attrs": [
                         {
@@ -30468,7 +30665,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n  <li>Copy of your vehicle insurance <b>and</b></li>\n<li>Work, clinical, or practicum location and schedule with a letter of explanation <b>and</b></li>\n<li>Statement that outlines the family responsibilities that require additional travel (e.g. driving children to and\nfrom school or daycare) <b>and</b></li>\n<li>Statement why you can’t move closer to your school</li>\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul>\n<li><b>A statement</b> describing how you calculated your weekly kilometers between your residence and school in relation to the following:</li>\n<ul>\n<li>If it’s required for <b>clinical</b> or <b>practicum purposes</b>, please provide a <b>schedule and letter of explanation which includes the location.</b></li>\n<li>If it’s required for <b>family related responsibilities</b> (e.g. driving children to and from school or daycare), please provide a <b>statement that outlines your circumstances.</b></li>\n<li>If you are <b>unable to move closer to your school,</b> please provide a <b>statement that outlines your circumstances.</b></li>\n</ul>\n</ul>\n<h4 class=\"category-header-medium-small\">AND</h4>\n<ul>\n<li><b>A copy of your vehicle insurance:</b></li>\n<ul>\n<li><b>Must</b> be insured for proper vehicle use (e.g. “to or from work or school a one-way distance in excess of XXkm…”)</li>\n<li><b>Must</b> be listed as a driver of the vehicle or the registered owner.</li>\n</ul>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html28",

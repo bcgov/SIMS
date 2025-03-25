@@ -12,7 +12,6 @@ export enum FullTimeAwardTypes {
   CSGP = "CSGP",
   CSGD = "CSGD",
   CSGF = "CSGF",
-  CSGT = "CSGT",
   BCSL = "BCSL",
   BCAG = "BCAG",
   BGPD = "BGPD",
@@ -51,12 +50,6 @@ export const AWARDS: AwardDetail[] = [
     awardType: FullTimeAwardTypes.CSGF,
     awardTypeDisplay: FullTimeAwardTypes.CSGF,
     description: "Canada Student Grant for Full-time Studies",
-    offeringIntensity: OfferingIntensity.fullTime,
-  },
-  {
-    awardType: FullTimeAwardTypes.CSGT,
-    awardTypeDisplay: FullTimeAwardTypes.CSGT,
-    description: "Canada Student Grant for Full-time Top-up",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {

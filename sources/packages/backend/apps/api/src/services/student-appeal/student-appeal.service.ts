@@ -442,7 +442,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         const newAssessment = {
           application: { id: appealToUpdate.application.id } as Application,
           offering: {
-            id: appealToUpdate.application.currentAssessment.offeringId,
+            id: appealToUpdate.application.currentAssessment.offering.id,
           },
           triggerType: AssessmentTriggerType.StudentAppeal,
           creator: auditUser,

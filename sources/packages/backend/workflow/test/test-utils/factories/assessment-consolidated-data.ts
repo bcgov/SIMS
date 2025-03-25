@@ -182,6 +182,12 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     applicationStatus: null,
     applicationEditStatus: null,
     applicationHasNOAApproval: null,
+    studentDataPartnerHasEmploymentInsuranceBenefits: null,
+    studentDataPartnerHasFedralProvincialPDReceipt: null,
+    studentDataPartnerHasTotalIncomeAssistance: null,
+    partner1HasEmploymentInsuranceBenefits: null,
+    partner1HasFedralProvincialPDReceipt: null,
+    partner1HasTotalIncomeAssistance: null,
   } as AssessmentConsolidatedData;
 }
 

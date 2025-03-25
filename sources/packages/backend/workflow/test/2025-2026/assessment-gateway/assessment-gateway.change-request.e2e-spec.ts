@@ -155,6 +155,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
       WorkflowSubprocesses.StudentIncomeVerification,
       WorkflowServiceTasks.ApplicationChangeRequestApproval,
+      WorkflowServiceTasks.ChangeRequestWorkflowWrapUpTask,
     );
     expectNotToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
@@ -212,6 +213,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
       WorkflowSubprocesses.StudentIncomeVerification,
       WorkflowServiceTasks.ApplicationChangeRequestApproval,
+      WorkflowServiceTasks.ChangeRequestWorkflowWrapUpTask,
     );
     expectNotToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
@@ -268,9 +270,9 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.AssociateWorkflowInstance,
       WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
-
       WorkflowSubprocesses.StudentIncomeVerification,
       WorkflowServiceTasks.ApplicationChangeRequestApproval,
+      WorkflowServiceTasks.ChangeRequestWorkflowWrapUpTask,
     );
     expectNotToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,
@@ -329,6 +331,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
       WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
       WorkflowSubprocesses.StudentIncomeVerification,
       WorkflowServiceTasks.ApplicationChangeRequestApproval,
+      WorkflowServiceTasks.ChangeRequestWorkflowWrapUpTask,
     );
     expectNotToPassThroughServiceTasks(
       assessmentGatewayResponse.variables,

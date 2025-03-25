@@ -1,29 +1,37 @@
 import { WorkflowData } from "@sims/sims-db";
 import { createFakeWorkerJob } from "../../../../../test/utils/worker-job-mock";
-import { WorkflowWrapUpJobInDTO } from "../../assessment.dto";
 import {
-  ICustomHeaders,
-  IOutputVariables,
-  ZeebeJob,
-} from "@camunda8/sdk/dist/zeebe/types";
+  WorkflowWrapUpJobHeaderDTO,
+  WorkflowWrapUpJobInDTO,
+  WorkflowWrapUpType,
+} from "../../assessment.dto";
+import { IOutputVariables, ZeebeJob } from "@camunda8/sdk/dist/zeebe/types";
 
 /**
  * Creates a fake workflow wrap up payload.
  * @param assessmentId assessment id.
- * @param workflowData workflow data.
+ * @param options customize the payload.
+ * - `workflowData` workflow data.
+ * - `wrapUpType` wrap-up type, default {@link WorkflowWrapUpType.CompleteWrapUp} if not provided.
  * @returns fake workflow wrap up payload.
  */
 export function createFakeWorkflowWrapUpPayload(
   assessmentId: number,
-  workflowData: WorkflowData,
+  options: {
+    workflowData?: WorkflowData;
+    wrapUpType?: WorkflowWrapUpType;
+  },
 ): Readonly<
-  ZeebeJob<WorkflowWrapUpJobInDTO, ICustomHeaders, IOutputVariables>
+  ZeebeJob<WorkflowWrapUpJobInDTO, WorkflowWrapUpJobHeaderDTO, IOutputVariables>
 > {
   return createFakeWorkerJob<
     WorkflowWrapUpJobInDTO,
-    ICustomHeaders,
+    WorkflowWrapUpJobHeaderDTO,
     IOutputVariables
   >({
-    variables: { assessmentId, workflowData },
+    variables: { assessmentId, workflowData: options.workflowData },
+    customHeaders: {
+      wrapUpType: options.wrapUpType ?? WorkflowWrapUpType.CompleteWrapUp,
+    },
   });
 }

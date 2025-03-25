@@ -16,6 +16,7 @@ import {
   AESTStudentProfileAPIOutDTO,
   UpdateDisabilityStatusAPIInDTO,
   UpdateStudentDetailsAPIInDTO,
+  AESTStudentFileDetailsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -149,11 +150,14 @@ export class StudentApi extends HttpBaseClient {
 
   /**
    * Get all student documents uploaded by student uploader.
+   * @param studentId student id.
    * @return list of student documents.
    */
   async getStudentFileDetails(
     studentId: number,
-  ): Promise<StudentFileDetailsAPIOutDTO[]> {
+  ): Promise<
+    StudentFileDetailsAPIOutDTO[] | AESTStudentFileDetailsAPIOutDTO[]
+  > {
     return this.getCall<StudentFileDetailsAPIOutDTO[]>(
       this.addClientRoot(`student/${studentId}/documents`),
     );

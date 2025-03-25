@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsNotEmpty,
   IsNotEmptyObject,
   IsOptional,
@@ -62,12 +63,14 @@ export class UpdateSupportingUserAPIInDTO {
   @IsNotEmptyObject()
   @JsonMaxSize(JSON_10KB)
   supportingData: unknown;
+  @IsEnum(OfferingIntensity)
+  offeringIntensity: OfferingIntensity;
 }
 
 export class ApplicationAPIOutDTO {
   programYearStartDate: string;
   formName: string;
-  offeringIntensity: OfferingIntensity
+  offeringIntensity: OfferingIntensity;
 }
 
 export class ApplicationSupportingUsersAPIOutDTO {

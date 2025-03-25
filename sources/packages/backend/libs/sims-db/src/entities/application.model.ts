@@ -6,7 +6,6 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import {
   ApplicationEditStatus,
@@ -63,11 +62,6 @@ export class Application extends RecordDataModel {
   })
   applicationNumber: string;
   /**
-   * Student id associated with this application.
-   */
-  @RelationId((application: Application) => application.student)
-  studentId: number;
-  /**
    * Student associated with this application.
    */
   @OneToOne(() => Student, { eager: false, cascade: false })
@@ -109,8 +103,6 @@ export class Application extends RecordDataModel {
   })
   pirProgram?: EducationProgram;
 
-  @RelationId((application: Application) => application.programYear)
-  programYearId: number;
   /**
    * References the program year related to the application.
    * This will be populated only when an active program year application is Submitted
