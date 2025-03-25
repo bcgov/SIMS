@@ -486,29 +486,6 @@
                   "tableView": false,
                   "components": [
                     {
-                      "key": "additionalTransportationPanelPanelHtml",
-                      "label": "HTML",
-                      "input": false,
-                      "tag": "p",
-                      "attrs": [
-                        {
-                          "value": "",
-                          "attr": ""
-                        }
-                      ],
-                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                      "content": "<strong> Request for Exception</strong>\n <br /> Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.",
-                      "type": "htmlelement",
-                      "hideLabel": true,
-                      "tags": [],
-                      "conditional": {
-                        "show": "",
-                        "when": null,
-                        "eq": ""
-                      },
-                      "properties": {}
-                    },
-                    {
                       "label": "HTML",
                       "tag": "h3",
                       "className": "category-header-medium primary-color",
@@ -659,6 +636,30 @@
                       "id": "e29azc",
                       "className": "",
                       "tags": []
+                    },
+                    {
+                      "key": "additionalTransportationPanelPanelHtml",
+                      "label": "HTML",
+                      "input": false,
+                      "tag": "p",
+                      "attrs": [
+                        {
+                          "value": "",
+                          "attr": ""
+                        }
+                      ],
+                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                      "content": "<span class=\"font-bold ml-2\"> Request for Exception</span>\n <br> \n<span>Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.<span>",
+                      "type": "htmlelement",
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {},
+                      "hideLabel": true,
+                      "customClass": "banner-warning"
                     },
                     {
                       "label": "HTML",

@@ -1742,8 +1742,7 @@
                     "threshold": 0.3
                   },
                   "id": "eopfm7h",
-                  "defaultValue": "",
-                  "isNew": false
+                  "defaultValue": ""
                 },
                 {
                   "label": "Select your program of study:",
@@ -1823,8 +1822,7 @@
                   "truncateMultipleSpaces": false,
                   "id": "easelit",
                   "tags": [],
-                  "lockKey": true,
-                  "isNew": false
+                  "lockKey": true
                 },
                 {
                   "label": "Your program is not listed",
@@ -2505,8 +2503,7 @@
                               "addons": [],
                               "inputType": "text",
                               "id": "ehmio79",
-                              "defaultValue": "",
-                              "isNew": false
+                              "defaultValue": ""
                             }
                           ],
                           "width": 6,
@@ -3689,8 +3686,7 @@
                   "truncateMultipleSpaces": false,
                   "id": "e9w4l3n",
                   "tags": [],
-                  "lockKey": true,
-                  "isNew": false
+                  "lockKey": true
                 },
                 {
                   "label": "Your study dates are not listed",
@@ -16689,29 +16685,6 @@
                   "properties": {}
                 },
                 {
-                  "key": "partnerIncomePanelPanelHtml",
-                  "label": "HTML",
-                  "input": false,
-                  "tag": "p",
-                  "attrs": [
-                    {
-                      "value": "",
-                      "attr": ""
-                    }
-                  ],
-                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                  "content": "<strong> Request for Exception</strong>\n <br /> Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.",
-                  "type": "htmlelement",
-                  "hideLabel": true,
-                  "tags": [],
-                  "conditional": {
-                    "show": "",
-                    "when": null,
-                    "eq": ""
-                  },
-                  "properties": {}
-                },
-                {
                   "key": "partnerIncomePanelPanelUploadfile",
                   "label": "Upload file",
                   "input": false,
@@ -16758,6 +16731,30 @@
                   "properties": {}
                 },
                 {
+                  "key": "partnerIncomePanelPanelHtml",
+                  "label": "HTML",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "content": "<span class=\"font-bold ml-2\"> Request for Exception</span>\n <br> \n<span>Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.<span>",
+                  "type": "htmlelement",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "hideLabel": true,
+                  "customClass": "banner-warning"
+                },
+                {
                   "key": "partnerIncomePanelPanelProvidethefollowingblurb",
                   "label": "Provide the following blurb",
                   "input": false,
@@ -16769,7 +16766,7 @@
                     }
                   ],
                   "className": "",
-                  "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Appeal Criteria (see above) and a detailed breakdown of how you calculated total estimated gross income (if applicable)</li></ul>",
+                  "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Appeal Criteria (see above) and a detailed breakdown of how you calculated total estimated gross income (if applicable).</li></ul>",
                   "type": "htmlelement",
                   "hideLabel": true,
                   "tags": [],
@@ -21970,7 +21967,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\r\n<ul>\r\n  <li>Proof of address (e.g. paid utility receipts), <strong>or</strong></li>\r\n  <li>Letter from a professional third party <strong>or</strong></li>\r\n  <li>Official post-secondary transcripts <strong>or</strong></li>\r\n  <li>Student financial assistance denial letter from your previous province of residency</li>\r\n</ul>",
+                  "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\r\n<ul>\r\n  <li>Proof of address (e.g. paid utility receipts), <strong>or</strong></li>\r\n  <li>Letter from a professional third party <strong>or</strong></li>\r\n  <li>Official post-secondary transcripts <strong>or</strong></li>\r\n  <li>Student financial assistance denial letter from your previous province of residency</li>\r\n</ul>",
                   "refreshOnChange": false,
                   "customClass": "align-bullets",
                   "hidden": false,
@@ -24562,29 +24559,6 @@
                   "lazyLoad": false
                 },
                 {
-                  "key": "decreaseInIncomePanelHtml",
-                  "label": "HTML",
-                  "input": false,
-                  "tag": "p",
-                  "attrs": [
-                    {
-                      "value": "",
-                      "attr": ""
-                    }
-                  ],
-                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                  "content": "<strong> Request for Exception</strong>\n<br /> Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.",
-                  "type": "htmlelement",
-                  "hideLabel": true,
-                  "tags": [],
-                  "conditional": {
-                    "show": "",
-                    "when": null,
-                    "eq": ""
-                  },
-                  "properties": {}
-                },
-                {
                   "key": "decreaseInIncomePanelContent",
                   "label": "Content",
                   "input": false,
@@ -24632,6 +24606,30 @@
                   "properties": {}
                 },
                 {
+                  "key": "decreaseInIncomePanelHtml",
+                  "label": "HTML",
+                  "input": false,
+                  "tag": "p",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "content": "<span class=\"font-bold ml-2\"> Request for Exception</span>\n <br> \n<span>Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.<span>",
+                  "type": "htmlelement",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "hideLabel": true,
+                  "customClass": "banner-warning"
+                },
+                {
                   "key": "decreaseInIncomePanelContent3",
                   "label": "Content",
                   "input": false,
@@ -24643,7 +24641,7 @@
                     }
                   ],
                   "className": "",
-                  "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Appeal Criteria (see above) and a detailed breakdown of how you calculated total estimated gross income (if applicable)</li></ul>",
+                  "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Appeal Criteria (see above) and a detailed breakdown of how you calculated total estimated gross income (if applicable).</li></ul>",
                   "type": "htmlelement",
                   "hideLabel": true,
                   "tags": [],
@@ -25724,7 +25722,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\r\n<ul>\r\n  <li>A copy of your insurance or claim information</li>\r\n  <li>Receipts showing payment of costs</li>\r\n  <li>Bank statement</li>\r\n</ul>",
+                  "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\r\n<ul>\r\n  <li>A copy of your insurance or claim information</li>\r\n  <li>Receipts showing payment of costs</li>\r\n  <li>Bank statement</li>\r\n</ul>",
                   "refreshOnChange": false,
                   "customClass": "align-bullets",
                   "key": "html24",
@@ -31413,29 +31411,6 @@
                   "tableView": false,
                   "components": [
                     {
-                      "key": "additionalTransportationPanelPanelHtml",
-                      "label": "HTML",
-                      "input": false,
-                      "tag": "p",
-                      "attrs": [
-                        {
-                          "value": "",
-                          "attr": ""
-                        }
-                      ],
-                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                      "content": "<strong> Request for Exception</strong>\n <br /> Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.",
-                      "type": "htmlelement",
-                      "hideLabel": true,
-                      "tags": [],
-                      "conditional": {
-                        "show": "",
-                        "when": null,
-                        "eq": ""
-                      },
-                      "properties": {}
-                    },
-                    {
                       "label": "HTML",
                       "tag": "h3",
                       "className": "category-header-medium primary-color",
@@ -31587,6 +31562,30 @@
                       "tags": []
                     },
                     {
+                      "key": "additionalTransportationPanelPanelHtml",
+                      "label": "HTML",
+                      "input": false,
+                      "tag": "p",
+                      "attrs": [
+                        {
+                          "value": "",
+                          "attr": ""
+                        }
+                      ],
+                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                      "content": "<span class=\"font-bold ml-2\"> Request for Exception</span>\n <br> \n<span>Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.<span>",
+                      "type": "htmlelement",
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {},
+                      "hideLabel": true,
+                      "customClass": "banner-warning"
+                    },
+                    {
                       "label": "HTML",
                       "attrs": [
                         {
@@ -31594,7 +31593,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n<li><b>A statement</b> describing how you calculated your weekly kilometers between your residence and school in relation to the following:</li>\n<ul>\n<li>If it’s required for <b>clinical</b> or <b>practicum purposes</b>, please provide a <b>schedule and letter of explanation which includes the location.</b></li>\n<li>If it’s required for <b>family related responsibilities</b> (e.g. driving children to and from school or daycare), please provide a <b>statement that outlines your circumstances.</b></li>\n<li>If you are <b>unable to move closer to your school,</b> please provide a <b>statement that outlines your circumstances.</b></li>\n</ul>\n</ul>\n<h4 class=\"category-header-medium-small\">AND</h4>\n<ul>\n<li><b>A copy of your vehicle insurance:</b></li>\n<ul>\n<li><b>Must</b> be insured for proper vehicle use (e.g. “to or from work or school a one-way distance in excess of XXkm…”)</li>\n<li><b>Must</b> be listed as a driver of the vehicle or the registered owner.</li>\n</ul>\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul>\n<li><b>A statement</b> describing how you calculated your weekly kilometers between your residence and school in relation to the following:</li>\n<ul>\n<li>If it’s required for <b>clinical</b> or <b>practicum purposes</b>, please provide a <b>schedule and letter of explanation which includes the location.</b></li>\n<li>If it’s required for <b>family related responsibilities</b> (e.g. driving children to and from school or daycare), please provide a <b>statement that outlines your circumstances.</b></li>\n<li>If you are <b>unable to move closer to your school,</b> please provide a <b>statement that outlines your circumstances.</b></li>\n</ul>\n</ul>\n<h4 class=\"category-header-medium-small\">AND</h4>\n<ul>\n<li><b>A copy of your vehicle insurance:</b></li>\n<ul>\n<li><b>Must</b> be insured for proper vehicle use (e.g. “to or from work or school a one-way distance in excess of XXkm…”)</li>\n<li><b>Must</b> be listed as a driver of the vehicle or the registered owner.</li>\n</ul>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html28",
