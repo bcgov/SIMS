@@ -110,6 +110,13 @@ export interface StudentFileDetailsAPIOutDTO
   metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
   createdAt: Date;
+}
+
+/**
+ *  AEST student file upload details.
+ */
+export interface AESTStudentFileDetailsAPIOutDTO
+  extends StudentFileDetailsAPIOutDTO {
   uploadedBy: string;
 }
 

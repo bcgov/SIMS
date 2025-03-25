@@ -108,7 +108,7 @@ export class StudentAESTController extends BaseController {
   ): Promise<StudentFileDetailsAPIOutDTO[]> {
     return this.studentControllerService.getStudentUploadedFiles(studentId, {
       extendedDetails: true,
-      ministryView: true,
+      auditUserDetails: true,
     }) as Promise<StudentFileDetailsAPIOutDTO[]>;
   }
 

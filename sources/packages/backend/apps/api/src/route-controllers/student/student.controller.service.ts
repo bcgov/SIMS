@@ -299,7 +299,7 @@ export class StudentControllerService {
    */
   async getStudentUploadedFiles(
     studentId: number,
-    options?: { extendedDetails: boolean; ministryView?: boolean },
+    options?: { extendedDetails: boolean; auditUserDetails?: boolean },
   ): Promise<
     | StudentFileDetailsAPIOutDTO[]
     | StudentUploadFileAPIOutDTO[]
@@ -319,11 +319,8 @@ export class StudentControllerService {
       createdAt: options?.extendedDetails
         ? studentDocument.createdAt
         : undefined,
-      uploadedBy: options?.ministryView
-        ? getUserFullName({
-            firstName: studentDocument?.creator.firstName,
-            lastName: studentDocument?.creator.lastName,
-          })
+      uploadedBy: options?.auditUserDetails
+        ? getUserFullName(studentDocument.creator)
         : undefined,
     }));
   }

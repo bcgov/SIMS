@@ -173,7 +173,7 @@ export class StudentFileDetailsAPIOutDTO extends StudentUploadFileAPIOutDTO {
 }
 
 /**
- *  AEST user view that contains the uploader details of the student documents .
+ *  AEST student file upload details.
  */
 export class AESTStudentFileDetailsAPIOutDTO extends StudentFileDetailsAPIOutDTO {
   uploadedBy: string;
