@@ -54,11 +54,8 @@
             <status-chip-application :status="item.status" />
           </template>
           <template #[`item.actions`]="{ item }">
-            <v-btn-group variant="tonal">
-              <v-btn
-                variant="text"
-                color="primary"
-                @click="$emit('goToApplication', item.id)"
+            <v-btn-group variant="text" :rounded="false">
+              <v-btn color="primary" @click="$emit('goToApplication', item.id)"
                 >View
                 <v-tooltip activator="parent" location="start"
                   >Click to view this application</v-tooltip
@@ -67,7 +64,6 @@
               <v-btn
                 v-if="canDisplayEdit(item)"
                 :disabled="!hasSINValidStatus"
-                variant="text"
                 color="primary"
                 @click="$emit('editApplicationAction', item.status, item.id)"
                 append-icon="mdi-pencil-outline"
@@ -79,9 +75,14 @@
               <v-btn
                 v-if="canDisplayChangeRequest(item)"
                 :disabled="!hasSINValidStatus"
-                variant="text"
                 color="primary"
-                @click="$emit('editApplicationAction', item.status, item.id)"
+                @click="
+                  $emit(
+                    'changeApplicationAction',
+                    item.id,
+                    item.isChangeRequestAllowed,
+                  )
+                "
                 append-icon="mdi-pencil-outline"
                 >Change Request
                 <v-tooltip activator="parent" location="start"
@@ -91,7 +92,6 @@
               <v-btn
                 v-if="canDisplayCancel(item)"
                 :disabled="!hasSINValidStatus"
-                variant="text"
                 color="primary"
                 @click="emitCancel(item.id)"
                 >Cancel
@@ -113,7 +113,9 @@
                 internalItem.raw.id !== internalItem.raw.parentApplicationId
               "
               :append-icon="
-                isExpanded(internalItem) ? 'mdi-chevron-up' : 'mdi-chevron-down'
+                isExpanded(internalItem)
+                  ? '$expanderCollapseIcon'
+                  : '$expanderExpandIcon'
               "
               text="Versions"
               variant="text"
@@ -181,6 +183,10 @@ export default defineComponent({
   emits: {
     editApplicationAction: (status: ApplicationStatus, applicationId: number) =>
       !!status && !!applicationId,
+    changeApplicationAction: (
+      applicationId: number,
+      allowChangeRequest: boolean,
+    ) => !!applicationId && !!allowChangeRequest,
     openConfirmCancel: (applicationId: number, callback: () => void) =>
       !!applicationId && !!callback,
     goToApplication: (applicationId: number) => !!applicationId,
@@ -291,8 +297,7 @@ export default defineComponent({
     ) => {
       return (
         application.status !== ApplicationStatus.Cancelled &&
-        application.status === ApplicationStatus.Completed &&
-        application.isChangeRequestAllowed
+        application.status === ApplicationStatus.Completed
       );
     };
 

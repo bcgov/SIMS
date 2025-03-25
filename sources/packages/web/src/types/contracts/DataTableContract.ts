@@ -491,4 +491,5 @@ export const StudentApplicationsExtendedSummaryHeaders = [
   { title: "Study Period", sortable: false, key: "studyStartPeriod" },
   { title: "Status", sortable: true, key: "status" },
   { title: "Actions", sortable: false, key: "actions" },
+  { title: "History", sortable: false, key: "data-table-expand" },
 ];

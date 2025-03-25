@@ -12,6 +12,7 @@
         <student-applications-extended-summary
           :dense="isMobile"
           @editApplicationAction="editApplicationAction"
+          @changeApplicationAction="changeApplicationAction"
           @openConfirmCancel="confirmCancelApplication"
           @goToApplication="goToApplication"
           @viewApplicationVersion="goToApplicationForm"
@@ -78,6 +79,24 @@ export default defineComponent({
       }
     };
 
+    const changeApplicationAction = async (
+      applicationId: number,
+      allowChangeRequest: boolean,
+    ) => {
+      if (allowChangeRequest) {
+        snackBar.warn(
+          "Change requests for the 2025-2026 program year are not available at this moment.",
+        );
+      } else {
+        router.push({
+          name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
+          params: {
+            applicationId,
+          },
+        });
+      }
+    };
+
     const confirmEditApplication = async (applicationId: number) => {
       if (await editApplicationModal.value.showModal()) {
         await goToApplicationForm(applicationId);
@@ -117,6 +136,7 @@ export default defineComponent({
     return {
       ApplicationStatus,
       editApplicationAction,
+      changeApplicationAction,
       editApplicationModal,
       confirmCancelApplication,
       showModal,
