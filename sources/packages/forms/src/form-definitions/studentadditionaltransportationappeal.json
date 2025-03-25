@@ -486,6 +486,29 @@
                   "tableView": false,
                   "components": [
                     {
+                      "key": "additionalTransportationPanelPanelHtml",
+                      "label": "HTML",
+                      "input": false,
+                      "tag": "p",
+                      "attrs": [
+                        {
+                          "value": "",
+                          "attr": ""
+                        }
+                      ],
+                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                      "content": "<strong> Request for Exception</strong>\n <br /> Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.",
+                      "type": "htmlelement",
+                      "hideLabel": true,
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {}
+                    },
+                    {
                       "label": "HTML",
                       "tag": "h3",
                       "className": "category-header-medium primary-color",
@@ -645,7 +668,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n  <li>A letter describing your situation to indicate why an exception should be made (including why you cannot move closer to your school)</li>\n<li>A copy of your vehicle insurance</li>\n<li>All relevant supporting documentation (work schedule, clinical or practicum information, etc.)</li>\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Documents Required</h4>\n<ul>\n<li><b>A statement</b> describing how you calculated your weekly kilometers between your residence and school in relation to the following:</li>\n<ul>\n<li>If it’s required for <b>clinical</b> or <b>practicum purposes</b>, please provide a <b>schedule and letter of explanation which includes the location.</b></li>\n<li>If it’s required for <b>family related responsibilities</b> (e.g. driving children to and from school or daycare), please provide a <b>statement that outlines your circumstances.</b></li>\n<li>If you are <b>unable to move closer to your school,</b> please provide a <b>statement that outlines your circumstances.</b></li>\n</ul>\n</ul>\n<h4 class=\"category-header-medium-small\">AND</h4>\n<ul>\n<li><b>A copy of your vehicle insurance:</b></li>\n<ul>\n<li><b>Must</b> be insured for proper vehicle use (e.g. “to or from work or school a one-way distance in excess of XXkm…”)</li>\n<li><b>Must</b> be listed as a driver of the vehicle or the registered owner.</li>\n</ul>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html28",
