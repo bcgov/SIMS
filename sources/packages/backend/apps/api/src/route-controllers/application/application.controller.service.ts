@@ -14,6 +14,7 @@ import {
   ApplicationOfferingChangeRequestService,
   CRAIncomeVerificationService,
   SupportingUserService,
+  APPLICATION_NOT_FOUND,
 } from "../../services";
 import {
   ApplicationFormData,
@@ -27,6 +28,7 @@ import {
   CompletedApplicationDetailsAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
   ApplicationDataChangeAPIOutDTO,
+  ApplicationOverallDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -40,6 +42,7 @@ import {
   ApplicationDataChange,
   getDateOnlyFormat,
   compareApplicationData,
+  CustomNamedError,
 } from "@sims/utilities";
 import {
   Application,
@@ -735,5 +738,39 @@ export class ApplicationControllerService {
     }
 
     return supportingUserDetails;
+  }
+
+  /**
+   * Get application overall details for the given application.
+   * @param applicationId application ID.
+   * @param options options.
+   * - `studentId` student ID used for authorization.
+   * @returns application overall details.
+   */
+  async getApplicationOverallDetails(
+    applicationId: number,
+    options?: { studentId?: number },
+  ): Promise<ApplicationOverallDetailsAPIOutDTO> {
+    try {
+      const applications =
+        await this.applicationService.getAllApplicationVersions(applicationId, {
+          studentId: options?.studentId,
+        });
+      return {
+        previousVersions: applications.map((application) => ({
+          id: application.id,
+          submittedDate: application.submittedDate,
+          applicationEditStatus: application.applicationEditStatus,
+        })),
+      };
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === APPLICATION_NOT_FOUND
+      ) {
+        throw new NotFoundException("Application not found.");
+      }
+      throw error;
+    }
   }
 }

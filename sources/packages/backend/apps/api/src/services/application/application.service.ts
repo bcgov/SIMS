@@ -1865,12 +1865,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Get all the application versions for an application through parent application.
    * @param applicationId application id.
-   * @returns application versions.
+   * @param options query options.
+   * - `studentId` student ID used for authorization.
+   * @returns application versions if any, otherwise empty array.
    */
   async getAllApplicationVersions(
     applicationId: number,
+    options?: { studentId?: number },
   ): Promise<Application[]> {
-    const application = await this.repo
+    const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
         "application.id",
@@ -1889,8 +1892,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.id = :applicationId", {
         applicationId: applicationId,
       })
-      .orderBy("version.submittedDate", "DESC")
-      .getOne();
+      .orderBy("version.submittedDate", "DESC");
+    if (options?.studentId) {
+      applicationQuery.andWhere("application.student.id = :studentId", {
+        studentId: options.studentId,
+      });
+    }
+    const application = await applicationQuery.getOne();
+    if (!application) {
+      throw new CustomNamedError(
+        "Application not found.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
     return application.parentApplication.versions;
   }
 

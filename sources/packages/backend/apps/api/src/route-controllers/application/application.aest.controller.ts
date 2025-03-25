@@ -279,20 +279,8 @@ export class ApplicationAESTController extends BaseController {
   async getApplicationOverallDetails(
     @Param("applicationId", ParseIntPipe) applicationId: number,
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
-    const application = await this.applicationService.doesApplicationExist({
-      applicationId: applicationId,
-    });
-    if (!application) {
-      throw new NotFoundException("Application not found.");
-    }
-    const applications =
-      await this.applicationService.getAllApplicationVersions(applicationId);
-    return {
-      previousVersions: applications.map((application) => ({
-        id: application.id,
-        submittedDate: application.submittedDate,
-        applicationEditStatus: application.applicationEditStatus,
-      })),
-    };
+    return this.applicationControllerService.getApplicationOverallDetails(
+      applicationId,
+    );
   }
 }
