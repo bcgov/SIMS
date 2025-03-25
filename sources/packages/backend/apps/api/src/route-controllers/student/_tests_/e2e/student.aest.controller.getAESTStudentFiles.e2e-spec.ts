@@ -24,7 +24,7 @@ describe("StudentAESTController(e2e)-getStudentFileUploads", () => {
     appDataSource = dataSource;
   });
 
-  it("Should get the student file uploads when student has at least one application submitted.", async () => {
+  it("Should get the student file uploads when student has at least one file upload.", async () => {
     // Arrange.
     // Student who has application submitted.
     const student = await saveFakeStudent(appDataSource);
