@@ -69,7 +69,7 @@
                   $emit(
                     'changeApplicationAction',
                     item.id,
-                    item.isChangeRequestAllowed,
+                    item.isChangeRequestAllowedForPY,
                   )
                 "
                 append-icon="mdi-pencil-outline"

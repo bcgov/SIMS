@@ -364,7 +364,7 @@ export class StudentControllerService {
       status: application.applicationStatus,
       parentApplicationId: application.parentApplication.id,
       submittedDate: application.parentApplication.submittedDate,
-      isChangeRequestAllowed: allowApplicationChangeRequest(
+      isChangeRequestAllowedForPY: allowApplicationChangeRequest(
         application.programYear,
       ),
     };
