@@ -126,7 +126,7 @@ export default defineComponent({
         title: "Institution requests",
       },
       {
-        title: "Designations",
+        title: "Designation requests",
         props: {
           prependIcon: "mdi-bookmark-outline",
           to: {
@@ -135,7 +135,7 @@ export default defineComponent({
         },
       },
       {
-        title: "Offerings",
+        title: "Offering change requests",
         props: {
           prependIcon: "mdi-view-list-outline",
           to: {
