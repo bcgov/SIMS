@@ -3,13 +3,13 @@
     <template #header>
       <header-navigator
         title="Institution requests"
-        subTitle="Study Period Offerings"
+        subTitle="Offering change requests"
       />
     </template>
     <body-header
-      title="Requested changes"
+      title="Pending offering change requests"
       :recordsCount="offeringChangeRequests.length"
-      subTitle="Make a determination on requested change(s) that may require a reassessment."
+      subTitle="Offering change requests that require ministry review."
     />
     <content-group>
       <toggle-content :toggled="!offeringChangeRequests.length">
