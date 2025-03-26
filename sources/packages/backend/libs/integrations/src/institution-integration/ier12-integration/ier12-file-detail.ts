@@ -69,8 +69,7 @@ export class IER12FileDetail implements IER12FileLine {
   bcslAmount: number;
   epAmount: number;
   provincialDefaultFlag: YNFlag;
-  // TODO: IER.
-  federalDefaultFlag?: string;
+  federalDefaultFlag: YNFlag;
   provincialOverawardFlag: YNFlag;
   federalOverawardFlag: YNFlag;
   restrictionFlag: YNFlag;

@@ -125,6 +125,9 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.provincialDefaultFlag = this.convertToYNFlag(
         ierRecord.hasProvincialDefaultRestriction,
       );
+      ierFileDetail.federalDefaultFlag = this.convertToYNFlag(
+        ierRecord.hasFederalDefaultRestriction,
+      );
       ierFileDetail.provincialOverawardFlag = this.convertToYNFlag(
         ierRecord.hasProvincialOveraward,
       );
