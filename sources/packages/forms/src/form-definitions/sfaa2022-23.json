@@ -7899,9 +7899,8 @@
                   "calculateServer": false,
                   "allowCalculateOverride": false,
                   "validate": {
-                    "required": true,
-                    "customMessage": "",
-                    "custom": "",
+                    "required": false,
+                    "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
                     "customPrivate": false,
                     "json": "",
                     "strictDateValidation": false,
@@ -9257,7 +9256,7 @@
                       "id": "ekl3d6"
                     },
                     {
-                      "label": "Upload supporting documents (optional):",
+                      "label": "Upload supporting documents",
                       "customClass": "font-weight-bold",
                       "hideLabel": true,
                       "tableView": false,
@@ -9305,8 +9304,8 @@
                       "attributes": {},
                       "validateOn": "change",
                       "validate": {
-                        "required": true,
-                        "custom": "",
+                        "required": false,
+                        "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
@@ -13867,8 +13866,8 @@
                               "multiple": true,
                               "redrawOn": "dependants.declaredOnTaxes",
                               "validate": {
-                                "required": true,
-                                "custom": "",
+                                "required": false,
+                                "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
@@ -14928,9 +14927,8 @@
                   "calculateServer": false,
                   "allowCalculateOverride": false,
                   "validate": {
-                    "required": true,
-                    "customMessage": "",
-                    "custom": "",
+                    "required": false,
+                    "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
                     "customPrivate": false,
                     "json": "",
                     "strictDateValidation": false,
@@ -16833,7 +16831,8 @@
                   "url": "student/files",
                   "lockKey": true,
                   "validate": {
-                    "required": true
+                    "required": false,
+                    "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;"
                   }
                 },
                 {
@@ -21091,7 +21090,7 @@
               "id": "ecfi9yd"
             },
             {
-              "label": "Upload supporting documents (optional):",
+              "label": "Upload supporting documents",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -21133,8 +21132,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": false,
-                "customMessage": "",
-                "custom": "",
+                "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
                 "customPrivate": false,
                 "json": "",
                 "strictDateValidation": false,
@@ -22167,7 +22165,7 @@
                   "validateOn": "change",
                   "validate": {
                     "required": false,
-                    "custom": "",
+                    "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
@@ -24710,7 +24708,8 @@
                   "dir": "Current Year Income - Supporting Documents",
                   "customClass": "font-weight-bold",
                   "validate": {
-                    "required": true
+                    "required": false,
+                    "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;"
                   },
                   "lockKey": true
                 },
@@ -25919,7 +25918,7 @@
                   "validateOn": "change",
                   "validate": {
                     "required": false,
-                    "custom": "",
+                    "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
@@ -29653,7 +29652,7 @@
                       "className": ""
                     },
                     {
-                      "label": "Upload supporting documents (optional):",
+                      "label": "Upload supporting documents",
                       "hideLabel": true,
                       "tableView": false,
                       "storage": "url",
@@ -29702,7 +29701,7 @@
                       "validateOn": "change",
                       "validate": {
                         "required": false,
-                        "custom": "",
+                        "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
@@ -31738,7 +31737,7 @@
                       "tags": []
                     },
                     {
-                      "label": "Upload supporting documents (optional):",
+                      "label": "Upload supporting documents",
                       "customClass": "font-weight-bold",
                       "hideLabel": true,
                       "tableView": false,
@@ -31787,8 +31786,8 @@
                       "attributes": {},
                       "validateOn": "change",
                       "validate": {
-                        "required": true,
-                        "custom": "",
+                        "required": false,
+                        "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,

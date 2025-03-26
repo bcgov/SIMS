@@ -814,7 +814,7 @@
                       "tags": []
                     },
                     {
-                      "label": "Upload supporting documents (optional):",
+                      "label": "Upload supporting documents",
                       "customClass": "font-weight-bold",
                       "hideLabel": true,
                       "tableView": false,
@@ -863,8 +863,8 @@
                       "attributes": {},
                       "validateOn": "change",
                       "validate": {
-                        "required": true,
-                        "custom": "",
+                        "required": false,
+                        "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,

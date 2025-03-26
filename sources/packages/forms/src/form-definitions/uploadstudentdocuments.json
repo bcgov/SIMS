@@ -856,9 +856,8 @@
           "calculateServer": false,
           "allowCalculateOverride": false,
           "validate": {
-            "required": true,
-            "customMessage": "",
-            "custom": "",
+            "required": false,
+            "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
             "customPrivate": false,
             "json": "",
             "strictDateValidation": false,
