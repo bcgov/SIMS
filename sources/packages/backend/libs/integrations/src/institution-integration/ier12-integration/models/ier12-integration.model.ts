@@ -51,7 +51,7 @@ export interface IER12Record {
   dependantInfantQuantity?: number;
   dependantDeclaredOnTaxesQuantity?: number;
   dependantPostSecondaryQuantity?: number;
-  partnerStudentStudyWeeks: number;
+  partnerStudyWeeks: number;
   familySize: number;
   numberOfParents: number;
   parentalAssetContribution?: number;
@@ -110,6 +110,9 @@ export interface IER12Record {
   applicationEventDate: Date;
   currentOfferingId: number;
   parentOfferingId?: number;
+  returnTransportationCosts?: number;
+  extraLocalTransportationCosts?: number;
+  extraShelterCosts?: number;
 }
 
 export enum ApplicationStatusCode {

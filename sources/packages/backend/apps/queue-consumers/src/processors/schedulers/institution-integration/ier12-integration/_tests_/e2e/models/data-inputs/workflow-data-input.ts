@@ -27,7 +27,7 @@ export const WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS: IER12WorkflowD
       dependantInfantQuantity: undefined,
       dependantDeclaredOnTaxesQuantity: undefined,
       dependantPostSecondaryQuantity: undefined,
-      partnerStudentStudyWeeks: undefined,
+      partnerStudyWeeks: undefined,
     },
   };
 
@@ -56,7 +56,7 @@ export const WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS: IER12WorkflowData = {
     dependantInfantQuantity: 1,
     dependantDeclaredOnTaxesQuantity: 3,
     dependantPostSecondaryQuantity: 0,
-    partnerStudentStudyWeeks: 99,
+    partnerStudyWeeks: 99,
   },
 };
 
@@ -86,6 +86,6 @@ export const WORKFLOW_DATA_DEPENDANT_RELATIONSHIP_OTHER_LIVING_WITH_PARENTS: IER
       dependantInfantQuantity: undefined,
       dependantDeclaredOnTaxesQuantity: undefined,
       dependantPostSecondaryQuantity: undefined,
-      partnerStudentStudyWeeks: undefined,
+      partnerStudyWeeks: undefined,
     },
   };

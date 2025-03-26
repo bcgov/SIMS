@@ -203,7 +203,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.studentLivingWithParents,
       );
       ierFileDetail.partnerInSchoolFlag = this.convertToYNFlag(
-        ierRecord.partnerStudentStudyWeeks > 0,
+        ierRecord.partnerStudyWeeks > 0,
       );
       ierFileDetail.totalEducationalExpenses = combineDecimalPlaces(
         ierRecord.exceptionExpenses +
@@ -256,6 +256,17 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.applicationEventDate = ierRecord.applicationEventDate;
       ierFileDetail.currentOfferingId = ierRecord.currentOfferingId;
       ierFileDetail.parentOfferingId = ierRecord.parentOfferingId;
+      ierFileDetail.returnTransportationCosts =
+        ierRecord.returnTransportationCosts
+          ? combineDecimalPlaces(ierRecord.returnTransportationCosts)
+          : 0;
+      ierFileDetail.extraLocalTransportationCosts =
+        ierRecord.extraLocalTransportationCosts
+          ? combineDecimalPlaces(ierRecord.extraLocalTransportationCosts)
+          : 0;
+      ierFileDetail.extraShelterCosts = ierRecord.extraShelterCosts
+        ? combineDecimalPlaces(ierRecord.extraShelterCosts)
+        : 0;
       return ierFileDetail;
     });
     ierFileLines.push(...fileRecords);

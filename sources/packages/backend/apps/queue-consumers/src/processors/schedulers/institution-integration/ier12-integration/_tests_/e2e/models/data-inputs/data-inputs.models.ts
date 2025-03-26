@@ -101,7 +101,7 @@ export interface IER12WorkflowData {
     dependantInfantQuantity?: number;
     dependantDeclaredOnTaxesQuantity?: number;
     dependantPostSecondaryQuantity?: number;
-    partnerStudentStudyWeeks?: number;
+    partnerStudyWeeks?: number;
   };
 }
 

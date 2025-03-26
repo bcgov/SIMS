@@ -78,11 +78,9 @@ export class IER12FileDetail implements IER12FileLine {
   scholasticStandingCode?: ScholasticStandingCode;
   assessmentDate: Date;
   withdrawalDate?: Date;
-  // TODO: IER.
   applicantAndPartnerExpectedContribution: number;
   parentExpectedContribution?: number;
   totalExpectedContribution: number;
-  // TODO: IER.
   dependantChildQuantity?: number;
   dependantChildInDaycareQuantity?: number;
   dependantInfantQuantity?: number;
@@ -100,30 +98,24 @@ export class IER12FileDetail implements IER12FileLine {
   parentalDiscretionaryIncome?: number;
   parentalDiscretionaryAnnualIncomeFormulaResult?: number;
   studentLivingAtHomeFlag: YNFlag;
-  // TODO: IER.
-  partnerInSchoolFlag?: string;
+  partnerInSchoolFlag: string;
   // Analysis pending for the field.
   otherEducationalExpenses?: number;
   totalEducationalExpenses: number;
-  // TODO: IER.
-  extraLocalTransportationCosts?: number;
-  // TODO: IER.
-  extraShelterCosts?: number;
-  // TODO: IER.
-  dependantLivingAllowance?: number;
+  extraLocalTransportationCosts: number;
+  extraShelterCosts: number;
+  dependantLivingAllowance: number;
   studentLivingAllowance: number;
   totalLivingAllowance: number;
   alimonyCost?: number;
   // Analysis pending for the field.
   otherDiscretionaryCosts?: number;
-  // TODO: IER.
-  returnTransportationCosts?: number;
+  returnTransportationCosts: number;
   // Analysis pending for the field.
   partnerStudentLoanPaymentCosts?: number;
   childcareCost?: number;
   totalNonEducationalCost: number;
   totalExpenses: number;
-  // TODO: IER.
   assessedNeed: number;
   studentEligibleAward: number;
   // Analysis pending for the field.

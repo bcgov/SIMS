@@ -286,13 +286,14 @@ export class IER12ProcessingService {
         studentMaritalStatusCode:
           workflowData.calculatedData.studentMaritalStatusCode,
         applicantAndPartnerExpectedContribution:
-          assessmentData.studentTotalFederalContribution +
-          assessmentData.studentTotalProvincialContribution +
-          (assessmentData.parentAssessedContribution ?? 0) +
-          (assessmentData.partnerAssessedContribution ?? 0),
+          workflowData.calculatedData.totalProvincialFSC +
+          workflowData.calculatedData.totalTargetedResources +
+          (workflowData.calculatedData.totalSpouseContribution ?? 0),
         totalExpectedContribution: assessmentData.totalProvincialContribution,
         dependantChildQuantity:
-          workflowData.calculatedData.dependantChildQuantity,
+          (workflowData.calculatedData.dependantChildInDaycareQuantity ?? 0) +
+          (workflowData.calculatedData.dependantInfantQuantity ?? 0) +
+          (workflowData.calculatedData.dependantChildQuantity ?? 0),
         dependantChildInDaycareQuantity:
           workflowData.calculatedData.dependantChildInDaycareQuantity,
         dependantInfantQuantity:
@@ -315,8 +316,7 @@ export class IER12ProcessingService {
           assessmentData.parentalDiscretionaryContribution,
         studentLivingWithParents:
           workflowData.studentData.livingWithParents === FormYesNoOptions.Yes,
-        partnerStudentStudyWeeks:
-          workflowData.calculatedData.partnerStudentStudyWeeks ?? 0,
+        partnerStudyWeeks: workflowData.calculatedData.partnerStudyWeeks ?? 0,
         dependantTotalMSOLAllowance:
           workflowData.calculatedData.dependantTotalMSOLAllowance,
         studentMSOLAllowance: workflowData.calculatedData.studentMSOLAllowance,
@@ -326,7 +326,7 @@ export class IER12ProcessingService {
         totalNonEducationalCost:
           workflowData.calculatedData.totalNonEducationalCost,
         totalAssessedCost: assessmentData.totalAssessedCost,
-        totalAssessmentNeed: assessmentData.totalAssessmentNeed,
+        totalAssessmentNeed: assessmentData.provincialAssessmentNeed,
         disbursementSentDate: disbursement.dateSent,
         applicationEventCode: applicationEventCode,
         applicationEventDate:
@@ -337,6 +337,11 @@ export class IER12ProcessingService {
           ),
         currentOfferingId: offering.id,
         parentOfferingId: offering.parentOffering?.id,
+        returnTransportationCosts:
+          workflowData.calculatedData.returnTransportationCost,
+        extraLocalTransportationCosts:
+          workflowData.calculatedData.totalAdditionalTransportationAllowance,
+        extraShelterCosts: assessmentData.secondResidenceCost,
       };
       ier12Records.push(ier12Record);
     }
