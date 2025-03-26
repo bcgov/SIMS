@@ -5,7 +5,6 @@ export async function setupDB() {
     return simsDataSource.initialize();
   } catch (excp) {
     console.error(`Exception to connected db: ${excp}`);
-    //console.dir(ormConfig);
   }
 }
 
