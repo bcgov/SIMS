@@ -32,7 +32,7 @@ export class ATBCService {
       // (NOTE: this will disable client verification)
       // TODO: add certificate for PROD
       httpsAgent: new (require("https").Agent)({
-        rejectUnauthorized: false,
+        rejectUnauthorized: process.env.NODE_ENV !== "production",
       }),
     };
   }
@@ -72,7 +72,7 @@ export class ATBCService {
   private async loginToATBC(): Promise<ATBCAuthTokenResponse> {
     try {
       const agent = new (require("https").Agent)({
-        rejectUnauthorized: false,
+        rejectUnauthorized: process.env.NODE_ENV !== "production",
       });
 
       const authRequest = await this.httpService.axiosRef.post(
