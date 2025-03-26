@@ -32,7 +32,10 @@ import {
   AwardOverawardBalance,
 } from "@sims/services";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
-import { PROVINCIAL_DEFAULT_RESTRICTION_CODE } from "@sims/services/constants";
+import {
+  FEDERAL_DEFAULT_RESTRICTION_CODES,
+  PROVINCIAL_DEFAULT_RESTRICTION_CODES,
+} from "@sims/services/constants";
 import {
   ApplicationEventCodeUtilsService,
   ApplicationEventDateUtilsService,
@@ -194,7 +197,12 @@ export class IER12ProcessingService {
     const hasProvincialDefaultRestriction = !hasRestriction
       ? false
       : this.checkActiveRestriction(student.studentRestrictions, {
-          restrictionCode: PROVINCIAL_DEFAULT_RESTRICTION_CODE,
+          restrictionCodes: PROVINCIAL_DEFAULT_RESTRICTION_CODES,
+        });
+    const hasFederalDefaultRestriction = !hasRestriction
+      ? false
+      : this.checkActiveRestriction(student.studentRestrictions, {
+          restrictionCodes: FEDERAL_DEFAULT_RESTRICTION_CODES,
         });
     const hasPartner =
       pendingAssessment.workflowData.studentData.relationshipStatus ===
@@ -255,6 +263,7 @@ export class IER12ProcessingService {
         applicationStatusDate: application.applicationStatusUpdatedOn,
         assessmentAwards,
         hasProvincialDefaultRestriction,
+        hasFederalDefaultRestriction,
         hasProvincialOveraward: this.checkOutstandingOveraward(
           studentOverawardsBalance,
           FullTimeAwardTypes.BCSL,
@@ -382,20 +391,21 @@ export class IER12ProcessingService {
    * Check if student has an active restriction.
    * @param studentRestrictions student restrictions
    * @param options check restriction options:
-   * - `restrictionCode`: restriction code.
+   * - `restrictionCodes`: restriction codes.
    * @returns value which indicates
    * if a student has active restriction.
    */
   private checkActiveRestriction(
     studentRestrictions: StudentRestriction[],
-    options?: { restrictionCode?: string },
+    options?: { restrictionCodes?: string[] },
   ): boolean {
     return studentRestrictions?.some(
       (studentRestriction) =>
         studentRestriction.isActive &&
-        (!options?.restrictionCode ||
-          studentRestriction.restriction.restrictionCode ===
-            options.restrictionCode),
+        (!options?.restrictionCodes?.length ||
+          options.restrictionCodes.includes(
+            studentRestriction.restriction.restrictionCode,
+          )),
     );
   }
 

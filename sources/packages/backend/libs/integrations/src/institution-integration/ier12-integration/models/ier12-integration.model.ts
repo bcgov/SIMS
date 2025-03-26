@@ -91,6 +91,7 @@ export interface IER12Record {
   applicationStatusDate: Date;
   assessmentAwards: IERAward[];
   hasProvincialDefaultRestriction: boolean;
+  hasFederalDefaultRestriction: boolean;
   hasProvincialOveraward: boolean;
   hasFederalOveraward: boolean;
   hasRestriction: boolean;
