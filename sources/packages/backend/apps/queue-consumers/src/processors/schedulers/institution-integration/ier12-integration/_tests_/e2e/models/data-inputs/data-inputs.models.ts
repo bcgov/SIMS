@@ -10,6 +10,7 @@ import {
 import {
   Application,
   AssessmentTriggerType,
+  DisabilityStatus,
   DisbursementSchedule,
   EducationProgram,
   EducationProgramOffering,
@@ -29,6 +30,7 @@ export interface IER12Student {
   birthDate: Date;
   sin: string;
   addressInfo: IERAddressInfo;
+  disabilityStatus: DisabilityStatus;
 }
 
 /**
@@ -71,6 +73,8 @@ export type IER12FullTimeAssessment = Pick<
   | "weeks"
   | "totalProvincialContribution"
   | "parentalDiscretionaryContribution"
+  | "secondResidenceCost"
+  | "provincialAssessmentNeed"
 >;
 
 /**
@@ -85,6 +89,9 @@ export interface IER12WorkflowData {
   };
   calculatedData: {
     pdppdStatus: boolean;
+    totalProvincialFSC: number;
+    totalTargetedResources: number;
+    totalSpouseContribution?: number;
     parentalAssets?: number;
     studentMaritalStatusCode: StudentMaritalStatusCode;
     totalEligibleDependents?: number;
@@ -102,6 +109,8 @@ export interface IER12WorkflowData {
     dependantDeclaredOnTaxesQuantity?: number;
     dependantPostSecondaryQuantity?: number;
     partnerStudyWeeks?: number;
+    returnTransportationCost?: number;
+    totalAdditionalTransportationAllowance?: number;
   };
 }
 

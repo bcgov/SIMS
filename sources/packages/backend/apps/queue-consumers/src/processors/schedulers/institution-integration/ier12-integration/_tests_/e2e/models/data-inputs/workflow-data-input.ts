@@ -28,6 +28,10 @@ export const WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS: IER12WorkflowD
       dependantDeclaredOnTaxesQuantity: undefined,
       dependantPostSecondaryQuantity: undefined,
       partnerStudyWeeks: undefined,
+      totalProvincialFSC: 110,
+      totalTargetedResources: 100,
+      returnTransportationCost: 175,
+      totalAdditionalTransportationAllowance: 115,
     },
   };
 
@@ -56,7 +60,10 @@ export const WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS: IER12WorkflowData = {
     dependantInfantQuantity: 1,
     dependantDeclaredOnTaxesQuantity: 3,
     dependantPostSecondaryQuantity: 0,
-    partnerStudyWeeks: 99,
+    partnerStudyWeeks: 15,
+    totalProvincialFSC: 110,
+    totalTargetedResources: 100,
+    totalSpouseContribution: 75,
   },
 };
 
@@ -87,5 +94,7 @@ export const WORKFLOW_DATA_DEPENDANT_RELATIONSHIP_OTHER_LIVING_WITH_PARENTS: IER
       dependantDeclaredOnTaxesQuantity: undefined,
       dependantPostSecondaryQuantity: undefined,
       partnerStudyWeeks: undefined,
+      totalProvincialFSC: 110,
+      totalTargetedResources: 100,
     },
   };
