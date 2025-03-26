@@ -91,7 +91,7 @@
             </v-btn-group>
           </template>
           <template
-            v-slot:[`item.data-table-expand`]="{
+            #[`item.data-table-expand`]="{
               internalItem,
               isExpanded,
               toggleExpand,
