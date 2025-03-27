@@ -7899,8 +7899,8 @@
                   "calculateServer": false,
                   "allowCalculateOverride": false,
                   "validate": {
-                    "required": false,
-                    "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
+                    "required": true,
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
                     "customPrivate": false,
                     "json": "",
                     "strictDateValidation": false,
@@ -10668,8 +10668,8 @@
                       "attributes": {},
                       "validateOn": "change",
                       "validate": {
-                        "required": false,
-                        "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
+                        "required": true,
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
@@ -12483,6 +12483,27 @@
         },
         {
           "input": true,
+          "tableView": true,
+          "key": "maxUploadedFiles",
+          "label": "maxUploadedFiles",
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "defaultValue": "",
+          "lockKey": true,
+          "calculateValue": "value = 25;",
+          "calculateServer": true
+        },
+        {
+          "input": true,
           "tableView": false,
           "key": "dependantstatus",
           "label": "Dependant Status",
@@ -13777,8 +13798,8 @@
                           "multiple": true,
                           "redrawOn": "dependants.declaredOnTaxes",
                           "validate": {
-                            "required": false,
-                            "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
+                            "required": true,
+                            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
                             "customPrivate": false,
                             "strictDateValidation": false,
                             "multiple": false,
@@ -14668,8 +14689,8 @@
                           "calculateServer": false,
                           "allowCalculateOverride": false,
                           "validate": {
-                            "required": false,
-                            "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
+                            "required": true,
+                            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
                             "customPrivate": false,
                             "json": "",
                             "strictDateValidation": false,
@@ -17206,7 +17227,7 @@
                   "image": false,
                   "imageSize": "200",
                   "placeholder": "",
-                  "multiple": false,
+                  "multiple": true,
                   "defaultValue": "",
                   "protected": false,
                   "persistent": true,
@@ -17228,8 +17249,8 @@
                   "url": "student/files",
                   "lockKey": true,
                   "validate": {
-                    "required": false,
-                    "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;"
+                    "required": true,
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;"
                   }
                 },
                 {
@@ -21766,8 +21787,8 @@
               "calculateServer": false,
               "allowCalculateOverride": false,
               "validate": {
-                "required": false,
-                "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
+                "required": true,
+                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
                 "customPrivate": false,
                 "json": "",
                 "strictDateValidation": false,
@@ -24270,8 +24291,8 @@
                   "dir": "Current Year Income - Supporting Documents",
                   "customClass": "font-weight-bold",
                   "validate": {
-                    "required": false,
-                    "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;"
+                    "required": true,
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;"
                   },
                   "lockKey": true
                 },
@@ -25479,8 +25500,8 @@
                   "attributes": {},
                   "validateOn": "change",
                   "validate": {
-                    "required": false,
-                    "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
+                    "required": true,
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
@@ -28772,8 +28793,8 @@
                       "attributes": {},
                       "validateOn": "change",
                       "validate": {
-                        "required": false,
-                        "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
+                        "required": true,
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
@@ -30858,8 +30879,8 @@
                       "attributes": {},
                       "validateOn": "change",
                       "validate": {
-                        "required": false,
-                        "custom": "const maxUploadedFiles = 25; const files = data[instance.key] || []; valid = !files.length ? 'At least one file is required' : files.length > maxUploadedFiles ? `Maximum ${maxUploadedFiles} files allowed` : true;",
+                        "required": true,
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
