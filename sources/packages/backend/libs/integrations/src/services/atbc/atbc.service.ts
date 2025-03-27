@@ -31,9 +31,7 @@ export class ATBCService {
       headers: { Authorization: `Bearer ${accessToken}` },
       // (NOTE: this will disable client verification)
       // TODO: add certificate for PROD
-      httpsAgent: new (require("https").Agent)({
-        rejectUnauthorized: true,
-      }),
+      httpsAgent: new (require("https").Agent)({}),
     };
   }
 
@@ -71,9 +69,7 @@ export class ATBCService {
    */
   private async loginToATBC(): Promise<ATBCAuthTokenResponse> {
     try {
-      const agent = new (require("https").Agent)({
-        rejectUnauthorized: true,
-      });
+      const agent = new (require("https").Agent)({});
 
       const authRequest = await this.httpService.axiosRef.post(
         this.atbcIntegrationConfig.ATBCLoginEndpoint,
