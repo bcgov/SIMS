@@ -72,7 +72,7 @@ export class ATBCService {
   private async loginToATBC(): Promise<ATBCAuthTokenResponse> {
     try {
       const agent = new (require("https").Agent)({
-        rejectUnauthorized: process.env.NODE_ENV !== "production",
+        rejectUnauthorized: true,
       });
 
       const authRequest = await this.httpService.axiosRef.post(
