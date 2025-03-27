@@ -11,6 +11,10 @@ import {
 import { HttpService } from "@nestjs/axios";
 import { formatDate } from "@sims/utilities";
 
+/**
+ * @obsolete this service is no longer in use and should be removed.
+ * If not removed, should be refactored to use the new http client.
+ */
 @Injectable()
 export class ATBCService {
   private readonly atbcIntegrationConfig: ATBCIntegrationConfig;
