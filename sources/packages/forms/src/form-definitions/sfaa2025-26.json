@@ -7900,7 +7900,8 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": true,
-                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                     "customPrivate": false,
                     "json": "",
                     "strictDateValidation": false,
@@ -10669,7 +10670,8 @@
                       "validateOn": "change",
                       "validate": {
                         "required": true,
-                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
@@ -13799,7 +13801,8 @@
                           "redrawOn": "dependants.declaredOnTaxes",
                           "validate": {
                             "required": true,
-                            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
+                            "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                             "customPrivate": false,
                             "strictDateValidation": false,
                             "multiple": false,
@@ -14690,7 +14693,8 @@
                           "allowCalculateOverride": false,
                           "validate": {
                             "required": true,
-                            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
+                            "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                             "customPrivate": false,
                             "json": "",
                             "strictDateValidation": false,
@@ -17250,7 +17254,8 @@
                   "lockKey": true,
                   "validate": {
                     "required": true,
-                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;"
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                   }
                 },
                 {
@@ -21788,7 +21793,8 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
+                "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                 "customPrivate": false,
                 "json": "",
                 "strictDateValidation": false,
@@ -24292,7 +24298,8 @@
                   "customClass": "font-weight-bold",
                   "validate": {
                     "required": true,
-                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;"
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                   },
                   "lockKey": true
                 },
@@ -25501,7 +25508,8 @@
                   "validateOn": "change",
                   "validate": {
                     "required": true,
-                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
@@ -28794,7 +28802,8 @@
                       "validateOn": "change",
                       "validate": {
                         "required": true,
-                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
@@ -30880,7 +30889,8 @@
                       "validateOn": "change",
                       "validate": {
                         "required": true,
-                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;",
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,

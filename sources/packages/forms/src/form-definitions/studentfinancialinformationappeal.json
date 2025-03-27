@@ -1206,7 +1206,8 @@
               "customClass": "font-weight-bold",
               "validate": {
                 "required": true,
-                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? `Maximum ${data.maxUploadedFiles} files allowed` : true;"
+                "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
               },
               "lockKey": true
             },
