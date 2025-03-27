@@ -417,3 +417,8 @@ div.v-field__field input[type="date"] {
     @extend .font-bold;
   }
 }
+
+.field-required {
+  position: relative;
+  z-index: 10;
+}

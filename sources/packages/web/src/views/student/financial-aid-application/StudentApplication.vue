@@ -16,11 +16,27 @@
       </h2>
       <content-group>
         <p class="category-header-medium-small pa-2">
-          Financial Aid Application
+          In what capacity will you be attending this program?
+          <tooltip-icon
+            >A student is considered to be in part-time studies when taking
+            between 20% and 59% of a full-time course load in a course or
+            continuous period of study.</tooltip-icon
+          >
+          <span class="field-required"></span>
         </p>
+        <v-select
+          :items="offeringIntensityOptions"
+          variant="outlined"
+          density="compact"
+          label="Select offering intensity"
+          class="px-2 pb-4"
+          :rules="[(v) => checkNullOrEmptyRule(v, 'Offering intensity')]"
+          hide-details="auto"
+        ></v-select>
         <p class="px-2">
           Please select your program year. This is for students attending
           full-time or part-time studies.
+          <span class="field-required"></span>
         </p>
         <v-select
           v-model="programYearId"
@@ -82,6 +98,16 @@ export default defineComponent({
     const startApplicationForm = ref({} as VForm);
     const { checkNullOrEmptyRule } = useRules();
     const draftApplicationModal = ref({} as ModalDialog<boolean>);
+    const offeringIntensityOptions = ref([
+      {
+        title: "Full Time",
+        value: "Full Time",
+      },
+      {
+        title: "Part Time",
+        value: "Part Time",
+      },
+    ] as SelectItemType[]);
 
     onMounted(async () => {
       programYearOptions.value = (
@@ -148,6 +174,7 @@ export default defineComponent({
       checkNullOrEmptyRule,
       LayoutTemplates,
       draftApplicationModal,
+      offeringIntensityOptions,
     };
   },
 });
