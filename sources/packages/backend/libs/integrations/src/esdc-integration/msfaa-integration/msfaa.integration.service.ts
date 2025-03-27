@@ -119,11 +119,11 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
       const pattern =
         offeringIntensity === OfferingIntensity.fullTime
           ? new RegExp(
-              `^${this.esdcConfig.environmentCode}EDU\\.PBC\\.MSFA\\.REC\\.[0-9]{8}\\.*`,
+              `^${this.esdcConfig.environmentCode}EDU.PBC.MSFA.REC.[0-9]{8}.*`,
               "i",
             )
           : new RegExp(
-              `^${this.esdcConfig.environmentCode}EDU\\.PBC\\.MSFA\\.REC\\.PT\\.[0-9]{8}\\.*`,
+              `^${this.esdcConfig.environmentCode}EDU.PBC.MSFA.REC.PT.[0-9]{8}.*`,
               "i",
             );
       filesToProcess = await client.list(

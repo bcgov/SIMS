@@ -32,7 +32,7 @@ export class ATBCService {
       // (NOTE: this will disable client verification)
       // TODO: add certificate for PROD
       httpsAgent: new (require("https").Agent)({
-        rejectUnauthorized: process.env.NODE_ENV !== "production",
+        rejectUnauthorized: true,
       }),
     };
   }

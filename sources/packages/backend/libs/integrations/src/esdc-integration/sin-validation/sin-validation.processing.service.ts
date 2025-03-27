@@ -143,7 +143,7 @@ export class SINValidationProcessingService {
       await this.sinValidationIntegrationService.getResponseFilesFullPath(
         this.esdcConfig.ftpResponseFolder,
         new RegExp(
-          `^${this.esdcConfig.environmentCode}CSLP.PBC.BC[0-9]*.IS[\\w]*`,
+          `^${this.esdcConfig.environmentCode}CSLP.PBC.BC[0-9]*.IS[w]*`,
           "i",
         ),
       );
