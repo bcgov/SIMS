@@ -49,6 +49,7 @@ export class SaveApplicationAPIInDTO {
   /**
    * Selected offering intensity of the application.
    */
+  @IsOptional()
   @IsEnum(OfferingIntensity)
   offeringIntensity: OfferingIntensity;
 }

@@ -34,7 +34,12 @@ export interface InProgressApplicationDetailsAPIOutDTO {
 
 export interface SaveApplicationAPIInDTO {
   programYearId: number;
-  offeringIntensity: OfferingIntensity;
+  data: unknown;
+  associatedFiles: string[];
+}
+
+export interface UpdateApplicationAPIInDTO {
+  programYearId: number;
   data: unknown;
   associatedFiles: string[];
 }

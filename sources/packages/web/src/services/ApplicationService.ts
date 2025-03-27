@@ -21,6 +21,7 @@ import {
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
+  UpdateApplicationAPIInDTO,
 } from "@/services/http/dto";
 
 export class ApplicationService {
@@ -87,7 +88,7 @@ export class ApplicationService {
 
   async saveApplicationDraft(
     applicationId: number,
-    payload: SaveApplicationAPIInDTO,
+    payload: UpdateApplicationAPIInDTO,
   ): Promise<void> {
     await ApiClient.Application.saveApplicationDraft(applicationId, payload);
   }

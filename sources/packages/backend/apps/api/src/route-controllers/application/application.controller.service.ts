@@ -590,7 +590,8 @@ export class ApplicationControllerService {
       applicationStatus: applicationDetail.applicationStatus,
       applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,
       applicationNumber: applicationDetail.applicationNumber,
-      applicationOfferingIntensity: offering?.offeringIntensity,
+      applicationOfferingIntensity:
+        offering?.offeringIntensity ?? applicationDetail.offeringIntensity,
       applicationStartDate: getDateOnlyFormat(offering?.studyStartDate),
       applicationEndDate: getDateOnlyFormat(offering?.studyEndDate),
       applicationInstitutionName: applicationDetail?.location?.name,
