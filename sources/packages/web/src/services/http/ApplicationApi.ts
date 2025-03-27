@@ -92,7 +92,7 @@ export class ApplicationApi extends HttpBaseClient {
 
   async submitApplication(
     applicationId: number,
-    payload: SaveApplicationAPIInDTO,
+    payload: UpdateApplicationAPIInDTO,
   ): Promise<void> {
     await this.patchCall(
       this.addClientRoot(`application/${applicationId}/submit`),

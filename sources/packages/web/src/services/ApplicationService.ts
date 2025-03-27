@@ -95,7 +95,7 @@ export class ApplicationService {
 
   async submitApplication(
     applicationId: number,
-    payload: SaveApplicationAPIInDTO,
+    payload: UpdateApplicationAPIInDTO,
   ): Promise<void> {
     await ApiClient.Application.submitApplication(applicationId, payload);
   }
