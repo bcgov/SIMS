@@ -227,6 +227,8 @@ export default defineComponent({
       const associatedFiles = formioUtils.getAssociatedFiles(applicationWizard);
       await ApplicationService.shared.saveApplicationDraft(props.id, {
         programYearId: props.programYearId,
+        offeringIntensity:
+          existingApplication.value.applicationOfferingIntensity,
         data: applicationWizard.submission.data,
         associatedFiles,
       });
@@ -262,6 +264,8 @@ export default defineComponent({
         const associatedFiles = formioUtils.getAssociatedFiles(form);
         await ApplicationService.shared.submitApplication(props.id, {
           programYearId: props.programYearId,
+          offeringIntensity:
+            existingApplication.value.applicationOfferingIntensity,
           data: args,
           associatedFiles,
         });

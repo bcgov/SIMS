@@ -21,6 +21,7 @@ import {
   StudentAssessmentStatus,
   FileOriginType,
   ApplicationEditStatus,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -384,6 +385,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param studentId student id.
    * @param auditUserId user who is making the changes.
    * @param programYearId program year associated with the application draft.
+   * @param offeringIntensity offering intensity associated with the application.
    * @param applicationData dynamic data received from Form.IO form.
    * @param associatedFiles associated uploaded files.
    * @param [applicationId] application id used to execute validations.
@@ -393,6 +395,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     studentId: number,
     auditUserId: number,
     programYearId: number,
+    offeringIntensity: OfferingIntensity,
     applicationData: ApplicationData,
     associatedFiles: string[],
     applicationId?: number,
@@ -436,6 +439,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       draftApplication = new Application();
       draftApplication.student = { id: studentId } as Student;
       draftApplication.programYear = { id: programYearId } as ProgramYear;
+      draftApplication.offeringIntensity = offeringIntensity;
       draftApplication.applicationStatus = ApplicationStatus.Draft;
       draftApplication.applicationStatusUpdatedOn = now;
       draftApplication.creator = auditUser;

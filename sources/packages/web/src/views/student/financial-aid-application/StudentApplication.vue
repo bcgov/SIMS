@@ -25,6 +25,7 @@
           <span class="field-required"></span>
         </p>
         <v-select
+          v-model="offeringIntensity"
           :items="offeringIntensityOptions"
           variant="outlined"
           density="compact"
@@ -70,7 +71,7 @@
   </confirm-modal>
 </template>
 <script lang="ts">
-import { onMounted, ref, defineComponent } from "vue";
+import { onMounted, ref, defineComponent, watchEffect } from "vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { useSnackBar, useRules, ModalDialog } from "@/composables";
 import { useRouter } from "vue-router";
@@ -86,6 +87,7 @@ import { ProgramYearService } from "@/services/ProgramYearService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import { PrimaryIdentifierAPIOutDTO } from "@/services/http/dto";
+import { AppConfigService } from "@/services/AppConfigService";
 
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
@@ -95,21 +97,38 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const programYearOptions = ref([] as SelectItemType[]);
     const programYearId = ref();
+    const offeringIntensity = ref();
     const startApplicationForm = ref({} as VForm);
     const { checkNullOrEmptyRule } = useRules();
     const draftApplicationModal = ref({} as ModalDialog<boolean>);
-    const offeringIntensityOptions = ref([
-      {
-        title: "Full Time",
-        value: "Full Time",
-      },
-      {
-        title: "Part Time",
-        value: "Part Time",
-      },
-    ] as SelectItemType[]);
+    const allowFulltime = ref(false);
+    let offeringIntensityOptions = ref([] as SelectItemType[]);
+
+    watchEffect(() => {
+      if (!allowFulltime.value) {
+        offeringIntensityOptions.value = [
+          {
+            title: "Part Time",
+            value: "Part Time",
+          },
+        ];
+      } else {
+        offeringIntensityOptions.value = [
+          {
+            title: "Full Time",
+            value: "Full Time",
+          },
+          {
+            title: "Part Time",
+            value: "Part Time",
+          },
+        ];
+      }
+    });
 
     onMounted(async () => {
+      const { isFulltimeAllowed } = await AppConfigService.shared.config();
+      allowFulltime.value = isFulltimeAllowed;
       programYearOptions.value = (
         await ProgramYearService.shared.getProgramYearOptions()
       ).map((yearOption) => ({
@@ -128,6 +147,7 @@ export default defineComponent({
           const { id }: PrimaryIdentifierAPIOutDTO =
             await ApplicationService.shared.createApplicationDraft({
               programYearId: programYearId.value,
+              offeringIntensity: offeringIntensity.value,
               data: {},
               associatedFiles: [],
             });
@@ -169,6 +189,7 @@ export default defineComponent({
       StudentRoutesConst,
       programYearOptions,
       programYearId,
+      offeringIntensity,
       startApplication,
       startApplicationForm,
       checkNullOrEmptyRule,

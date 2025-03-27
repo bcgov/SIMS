@@ -1,5 +1,11 @@
 import { IntersectionType } from "@nestjs/swagger";
-import { IsObject, IsOptional, IsPositive, Length } from "class-validator";
+import {
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsPositive,
+  Length,
+} from "class-validator";
 import {
   ApplicationExceptionStatus,
   ApplicationStatus,
@@ -40,6 +46,11 @@ export class SaveApplicationAPIInDTO {
    */
   @IsPositive()
   programYearId: number;
+  /**
+   * Selected offering intensity of the application.
+   */
+  @IsEnum(OfferingIntensity)
+  offeringIntensity: OfferingIntensity;
 }
 
 export interface ApplicationFormData extends ApplicationData {

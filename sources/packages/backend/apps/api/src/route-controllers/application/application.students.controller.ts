@@ -405,6 +405,7 @@ export class ApplicationStudentsController extends BaseController {
           studentToken.studentId,
           studentToken.userId,
           payload.programYearId,
+          payload.offeringIntensity,
           payload.data,
           payload.associatedFiles,
         );
@@ -464,6 +465,7 @@ export class ApplicationStudentsController extends BaseController {
         studentToken.studentId,
         studentToken.userId,
         payload.programYearId,
+        payload.offeringIntensity,
         payload.data,
         payload.associatedFiles,
         applicationId,
