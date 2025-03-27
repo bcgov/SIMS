@@ -14,8 +14,11 @@
       <h2 class="category-header-large primary-color pb-4">
         Apply for funding
       </h2>
-      <content-group>
-        <p class="category-header-medium-small pa-2">
+      <content-group
+        ><p class="category-header-medium-small pa-2">
+          Financial Aid Application
+        </p>
+        <p class="px-2">
           In what capacity will you be attending this program?
           <tooltip-icon
             >A student is considered to be in part-time studies when taking
