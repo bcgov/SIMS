@@ -306,6 +306,7 @@ export interface FullTimeAssessment extends BaseAssessment {
   finalProvincialAwardNetBCSLAmount: number;
   finalFederalAwardNetCSGFAmount: number;
   finalProvincialAwardNetBGPDAmount: number;
+  parentalDiscretionaryContribution?: number;
 }
 
 /**
@@ -367,13 +368,16 @@ export interface WorkflowData {
     dependantDeclaredOnTaxesQuantity?: number;
     dependantPostSecondaryQuantity?: number;
     pdppdStatus: boolean;
-    partnerStudentStudyWeeks?: number;
+    partnerStudyWeeks?: number;
     totalFederalFSC?: number;
     totalProvincialFSC?: number;
     exemptScholarshipsBursaries?: number;
     studentSpouseContributionWeeks?: number;
     returnTransportationCost?: number;
     totalBookCost?: number;
+    totalSpouseContribution?: number;
+    totalTargetedResources?: number;
+    totalAdditionalTransportationAllowance?: number;
   };
 }
 

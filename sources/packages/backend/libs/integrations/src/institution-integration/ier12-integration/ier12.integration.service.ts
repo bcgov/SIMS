@@ -4,7 +4,6 @@ import { ConfigService } from "@sims/utilities/config";
 import { IER12FileDetail } from "./ier12-file-detail";
 import {
   ApplicationStatusCode,
-  DISCRETIONARY_INCOME_PERCENTAGE,
   IER12FileLine,
   IER12Record,
   IERAward,
@@ -18,6 +17,7 @@ import {
 } from "@sims/sims-db";
 import {
   combineDecimalPlaces,
+  getStudentDisabilityStatusCode,
   getTotalYearsOfStudy,
   replaceLineBreaks,
 } from "@sims/utilities";
@@ -47,12 +47,17 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.assessmentId = ierRecord.assessmentId;
       ierFileDetail.disbursementId = ierRecord.disbursementId;
       ierFileDetail.applicationNumber = ierRecord.applicationNumber;
+      ierFileDetail.applicationDisabilityStatusFlag = this.convertToYNFlag(
+        ierRecord.applicationPDStatus,
+      );
       ierFileDetail.institutionStudentNumber =
         ierRecord.institutionStudentNumber;
       ierFileDetail.sin = ierRecord.sin;
       ierFileDetail.studentLastName = ierRecord.studentLastName;
       ierFileDetail.studentGivenName = ierRecord.studentGivenName;
       ierFileDetail.studentBirthDate = ierRecord.studentBirthDate;
+      ierFileDetail.studentDisabilityStatusCode =
+        getStudentDisabilityStatusCode(ierRecord.studentDisabilityStatus);
       ierFileDetail.studentGroupCode =
         ierRecord.studentDependantStatus === "dependant" ? "A" : "B";
       ierFileDetail.studentMaritalStatusCode =
@@ -120,6 +125,9 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.provincialDefaultFlag = this.convertToYNFlag(
         ierRecord.hasProvincialDefaultRestriction,
       );
+      ierFileDetail.federalDefaultFlag = this.convertToYNFlag(
+        ierRecord.hasFederalDefaultRestriction,
+      );
       ierFileDetail.provincialOverawardFlag = this.convertToYNFlag(
         ierRecord.hasProvincialOveraward,
       );
@@ -146,13 +154,13 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.studyEndDate,
       );
       ierFileDetail.applicantAndPartnerExpectedContribution =
-        combineDecimalPlaces(ierRecord.studentAndSupportingUserContribution);
+        combineDecimalPlaces(ierRecord.applicantAndPartnerExpectedContribution);
       ierFileDetail.parentExpectedContribution =
         ierRecord.parentExpectedContribution
           ? combineDecimalPlaces(ierRecord.parentExpectedContribution)
           : 0;
       ierFileDetail.totalExpectedContribution = combineDecimalPlaces(
-        ierRecord.studentAndSupportingUserContribution,
+        ierRecord.totalExpectedContribution,
       );
       ierFileDetail.dependantChildQuantity = ierRecord.dependantChildQuantity;
       ierFileDetail.dependantChildInDaycareQuantity =
@@ -178,6 +186,10 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.parentalAssetContribution
           ? combineDecimalPlaces(ierRecord.parentalAssetContribution)
           : 0;
+      ierFileDetail.parentalVoluntaryContribution =
+        ierRecord.parentalContribution
+          ? combineDecimalPlaces(ierRecord.parentalContribution)
+          : 0;
       ierFileDetail.parentalIncomeExpectedContribution =
         ierRecord.parentalContribution
           ? combineDecimalPlaces(ierRecord.parentalContribution)
@@ -187,17 +199,14 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
           ? combineDecimalPlaces(ierRecord.parentDiscretionaryIncome)
           : 0;
       ierFileDetail.parentalDiscretionaryAnnualIncomeFormulaResult =
-        ierRecord.parentDiscretionaryIncome
-          ? combineDecimalPlaces(
-              ierRecord.parentDiscretionaryIncome *
-                DISCRETIONARY_INCOME_PERCENTAGE,
-            )
+        ierRecord.parentalDiscretionaryContribution
+          ? combineDecimalPlaces(ierRecord.parentalDiscretionaryContribution)
           : 0;
       ierFileDetail.studentLivingAtHomeFlag = this.convertToYNFlag(
         ierRecord.studentLivingWithParents,
       );
       ierFileDetail.partnerInSchoolFlag = this.convertToYNFlag(
-        ierRecord.partnerStudentStudyWeeks > 0,
+        ierRecord.partnerStudyWeeks > 0,
       );
       ierFileDetail.totalEducationalExpenses = combineDecimalPlaces(
         ierRecord.exceptionExpenses +
@@ -250,6 +259,17 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.applicationEventDate = ierRecord.applicationEventDate;
       ierFileDetail.currentOfferingId = ierRecord.currentOfferingId;
       ierFileDetail.parentOfferingId = ierRecord.parentOfferingId;
+      ierFileDetail.returnTransportationCosts =
+        ierRecord.returnTransportationCosts
+          ? combineDecimalPlaces(ierRecord.returnTransportationCosts)
+          : 0;
+      ierFileDetail.extraLocalTransportationCosts =
+        ierRecord.extraLocalTransportationCosts
+          ? combineDecimalPlaces(ierRecord.extraLocalTransportationCosts)
+          : 0;
+      ierFileDetail.extraShelterCosts = ierRecord.extraShelterCosts
+        ? combineDecimalPlaces(ierRecord.extraShelterCosts)
+        : 0;
       return ierFileDetail;
     });
     ierFileLines.push(...fileRecords);

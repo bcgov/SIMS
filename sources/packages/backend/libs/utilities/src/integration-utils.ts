@@ -45,7 +45,7 @@ export function getStudentDisabilityStatusCode(
     case DisabilityStatus.PPD:
       return "PPDA";
     case DisabilityStatus.Declined:
-      return "PDDL";
+      return "PDRJ";
     default:
       throw new Error(
         `Unknown disability status to get code: ${disabilityStatus}`,

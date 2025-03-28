@@ -171,6 +171,7 @@ async function saveIER12StudentFromTestInput(
     },
     phone: faker.phone.phoneNumber(),
   };
+  fakeStudent.disabilityStatus = testInputStudent.disabilityStatus;
   // SIN validation
   const sinValidation = createFakeSINValidation({ student: fakeStudent });
   sinValidation.sin = testInputStudent.sin;
