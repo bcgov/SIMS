@@ -34,12 +34,12 @@ import {
   ApplicationDataAPIOutDTO,
   ApplicationWithProgramYearAPIOutDTO,
   ApplicationProgramYearAPIOutDTO,
-  ApplicationNumberParamAPIInDTO,
   InProgressApplicationDetailsAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
   ApplicationWarningsAPIOutDTO,
+  ApplicationOverallDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -52,7 +52,6 @@ import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
 import {
   INSTITUTION_LOCATION_NOT_VALID,
-  INVALID_APPLICATION_NUMBER,
   OFFERING_NOT_VALID,
 } from "../../constants";
 import {
@@ -105,7 +104,11 @@ export class ApplicationStudentsController extends BaseController {
   ): Promise<ApplicationDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
-      { loadDynamicData: true, studentId: userToken.studentId },
+      {
+        loadDynamicData: true,
+        studentId: userToken.studentId,
+        allowEdited: true,
+      },
     );
     if (!application) {
       throw new NotFoundException(
@@ -547,33 +550,27 @@ export class ApplicationStudentsController extends BaseController {
   }
 
   /**
-   * Get application to request appeal.
-   ** Application eligible to be requested for
-   ** a change will be returned.
-   * @param applicationNumber
-   * @param userToken
-   * @returns application
+   * Get application to request an appeal.
+   * @param applicationId application ID.
+   * @returns application eligible to be requested for a change.
    */
   @ApiNotFoundResponse({
     description:
       "Application either not found or not eligible to request for change.",
   })
-  @Get(":applicationNumber/appeal")
+  @Get(":applicationId/appeal")
   async getApplicationToRequestAppeal(
-    @Param() applicationNumberParam: ApplicationNumberParamAPIInDTO,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<ApplicationProgramYearAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
+        applicationId,
         userToken.userId,
-        applicationNumberParam.applicationNumber,
       );
     if (!application) {
       throw new NotFoundException(
-        new ApiProcessError(
-          "Given application either does not exist or is not complete to request change.",
-          INVALID_APPLICATION_NUMBER,
-        ),
+        "Given application either does not exist or is not complete to request change.",
       );
     }
     return {
@@ -662,6 +659,25 @@ export class ApplicationStudentsController extends BaseController {
       {
         studentId: userToken.studentId,
       },
+    );
+  }
+
+  /**
+   * Get application overall details for the given application.
+   * @param applicationId application Id.
+   * @returns application overall details.
+   */
+  @ApiNotFoundResponse({
+    description: "Application not found.",
+  })
+  @Get(":applicationId/overall-details")
+  async getApplicationOverallDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<ApplicationOverallDetailsAPIOutDTO> {
+    return this.applicationControllerService.getApplicationOverallDetails(
+      applicationId,
+      { studentId: userToken.studentId },
     );
   }
 }

@@ -3,11 +3,11 @@
     <template #header>
       <header-navigator title="Student" subTitle="Request a Change" />
     </template>
-
     <div v-if="showRequestForAppeal">
       <!-- Content area. -->
       <formio-container
         formName="studentRequestChange"
+        :formData="initialData"
         @submitted="submitRequest"
       >
         <template #actions="{ submit }">
@@ -62,7 +62,7 @@
   </student-page-container>
 </template>
 <script lang="ts">
-import { computed, ref, defineComponent } from "vue";
+import { computed, ref, defineComponent, onMounted } from "vue";
 import { ApiProcessError, FormIOForm, StudentAppealRequest } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentAppealService } from "@/services/StudentAppealService";
@@ -71,10 +71,12 @@ import { useSnackBar } from "@/composables";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_HAS_PENDING_APPEAL,
-  INVALID_APPLICATION_NUMBER,
 } from "@/constants";
+import { ApplicationProgramYearAPIOutDTO } from "@/services/http/dto";
 
-// Model for student request change form.
+/**
+ * Model for student request change form.
+ */
 interface StudentRequestSelectedForms {
   applicationNumber: string;
   formNames: string[];
@@ -84,43 +86,51 @@ export default defineComponent({
   components: {
     AppealRequestsForm,
   },
-  setup() {
+  props: {
+    applicationId: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup(props) {
     const snackBar = useSnackBar();
     const processing = ref(false);
     const appealRequestsForms = ref([] as StudentAppealRequest[]);
-    let applicationId: number;
+    const initialData = ref({} as StudentRequestSelectedForms);
+    let applicationAppealData: ApplicationProgramYearAPIOutDTO;
     const showRequestForAppeal = computed(
       () => appealRequestsForms.value.length === 0,
     );
 
+    onMounted(async () => {
+      try {
+        applicationAppealData =
+          await ApplicationService.shared.getApplicationForRequestChange(
+            props.applicationId,
+          );
+        initialData.value = {
+          applicationNumber: applicationAppealData.applicationNumber,
+          formNames: [],
+        };
+      } catch (error: unknown) {
+        snackBar.error(
+          "An unexpected error happened while retrieving the application to request a change.",
+        );
+      }
+    });
+
     const submitRequest = async (
       form: FormIOForm<StudentRequestSelectedForms>,
     ) => {
-      try {
-        const application =
-          await ApplicationService.shared.getApplicationForRequestChange(
-            form.data.applicationNumber,
-          );
-        applicationId = application.id;
-        appealRequestsForms.value = form.data.formNames.map(
-          (formName) =>
-            ({
-              formName,
-              data: { programYear: application.programYear },
-            } as StudentAppealRequest),
-        );
-      } catch (error: unknown) {
-        const errorMessage = "An error happened while requesting a change.";
-        const errorLabel = "Unexpected error";
-        if (error instanceof ApiProcessError) {
-          if (error.errorType === INVALID_APPLICATION_NUMBER) {
-            snackBar.warn(`Application not found. ${error.message}`);
-            return;
-          }
-          snackBar.error(`${errorLabel}. ${errorMessage}`);
-        }
-      }
+      appealRequestsForms.value = form.data.formNames.map(
+        (formName) =>
+          ({
+            formName,
+            data: { programYear: applicationAppealData.programYear },
+          } as StudentAppealRequest),
+      );
     };
+
     const backToRequestForm = () => {
       appealRequestsForms.value = [];
     };
@@ -129,18 +139,16 @@ export default defineComponent({
       try {
         processing.value = true;
         await StudentAppealService.shared.submitStudentAppeal(
-          applicationId,
+          props.applicationId,
           appealRequests,
         );
         snackBar.success(
           "The request for change has been submitted successfully.",
         );
-        //TODO: Redirect to appeal view page once it is developed.
         backToRequestForm();
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           switch (error.errorType) {
-            case INVALID_APPLICATION_NUMBER:
             case APPLICATION_CHANGE_NOT_ELIGIBLE:
               snackBar.warn(`Not able to submit. ${error.message}`);
               break;
@@ -155,6 +163,7 @@ export default defineComponent({
     };
 
     return {
+      initialData,
       submitRequest,
       appealRequestsForms,
       showRequestForAppeal,

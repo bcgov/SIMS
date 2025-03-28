@@ -175,6 +175,9 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.RequestChange,
         name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
         component: StudentAppealRequest,
+        props: (route) => ({
+          applicationId: parseInt(route.params.applicationId as string),
+        }),
         meta: {
           clientType: ClientIdType.Student,
         },

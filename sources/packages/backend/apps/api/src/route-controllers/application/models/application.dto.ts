@@ -1,5 +1,5 @@
 import { IntersectionType } from "@nestjs/swagger";
-import { IsObject, IsOptional, IsPositive, Length } from "class-validator";
+import { IsObject, IsOptional, IsPositive } from "class-validator";
 import {
   ApplicationExceptionStatus,
   ApplicationStatus,
@@ -8,13 +8,13 @@ import {
   COEStatus,
   ApplicationData,
   OfferingIntensity,
-  APPLICATION_NUMBER_LENGTH,
   DisbursementScheduleStatus,
   StudentAppealStatus,
   AssessmentTriggerType,
   StudentScholasticStandingChangeType,
   ApplicationOfferingChangeRequestStatus,
   StudentAssessmentStatus,
+  ApplicationEditStatus,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
@@ -142,11 +142,6 @@ export enum SuccessWaitingStatus {
   Waiting = "Waiting",
 }
 
-export class ApplicationNumberParamAPIInDTO {
-  @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
-  applicationNumber: string;
-}
-
 export class ApplicationIncomeVerification {
   parent1IncomeVerificationStatus?: SuccessWaitingStatus;
   parent2IncomeVerificationStatus?: SuccessWaitingStatus;
@@ -225,6 +220,7 @@ export class ApplicationWarningsAPIOutDTO {
 export class ApplicationVersionAPIOutDTO {
   id: number;
   submittedDate: Date;
+  applicationEditStatus: ApplicationEditStatus;
 }
 
 export class ApplicationOverallDetailsAPIOutDTO {

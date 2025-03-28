@@ -23,7 +23,6 @@ export enum UserFields {
  */
 export enum StudentApplicationFields {
   ApplicationNumber = "applicationNumber",
-  ApplicationName = "applicationName",
   StudyPeriod = "studyPeriod",
   Submitted = "submitted",
   Status = "status",
@@ -486,9 +485,9 @@ export const StudentApplicationsSimplifiedSummaryHeaders = [
  */
 export const StudentApplicationsExtendedSummaryHeaders = [
   { title: "Application Number", sortable: true, key: "applicationNumber" },
-  { title: "Name", sortable: false, key: "applicationName" },
   { title: "Submitted", sortable: false, key: "submitted" },
   { title: "Study Period", sortable: false, key: "studyStartPeriod" },
   { title: "Status", sortable: true, key: "status" },
   { title: "Actions", sortable: false, key: "actions" },
+  { title: "History", sortable: false, key: "data-table-expand" },
 ];

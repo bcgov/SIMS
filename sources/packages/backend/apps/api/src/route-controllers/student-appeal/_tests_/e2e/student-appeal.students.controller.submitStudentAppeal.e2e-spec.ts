@@ -34,7 +34,6 @@ import { FormService } from "../../../../services";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_HAS_PENDING_APPEAL,
-  INVALID_APPLICATION_NUMBER,
 } from "../../../../constants";
 
 describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
@@ -254,7 +253,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       .expect({
         message:
           "Given application either does not exist or is not complete to request change.",
-        errorType: INVALID_APPLICATION_NUMBER,
+        error: "Not Found",
+        statusCode: HttpStatus.NOT_FOUND,
       });
   });
 

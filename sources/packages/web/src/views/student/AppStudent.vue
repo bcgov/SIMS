@@ -42,14 +42,6 @@
           prepend-icon="fa:far fa-file-alt"
           >File Uploader</v-btn
         >
-        <v-btn
-          v-if="hasAuthenticatedStudentAccount"
-          class="nav-item-label"
-          variant="text"
-          :to="{ name: StudentRoutesConst.STUDENT_REQUEST_CHANGE }"
-          prepend-icon="fa:far fa-hand-paper"
-          >Request a Change</v-btn
-        >
         <v-menu v-if="isAuthenticated">
           <template v-slot:activator="{ props }">
             <v-btn
@@ -204,14 +196,6 @@ export default defineComponent({
               props: {
                 to: {
                   name: StudentRoutesConst.STUDENT_FILE_UPLOADER,
-                },
-              },
-            },
-            {
-              title: "Request a Change",
-              props: {
-                to: {
-                  name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
                 },
               },
             },
