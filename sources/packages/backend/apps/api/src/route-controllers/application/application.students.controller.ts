@@ -407,6 +407,7 @@ export class ApplicationStudentsController extends BaseController {
           payload.programYearId,
           payload.data,
           payload.associatedFiles,
+          { offeringIntensity: payload.offeringIntensity },
         );
       return { id: draftApplication.id };
     } catch (error) {
@@ -466,7 +467,7 @@ export class ApplicationStudentsController extends BaseController {
         payload.programYearId,
         payload.data,
         payload.associatedFiles,
-        applicationId,
+        { applicationId },
       );
     } catch (error) {
       if (error.name === APPLICATION_DRAFT_NOT_FOUND) {
