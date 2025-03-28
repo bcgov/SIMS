@@ -32,6 +32,7 @@ import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
 import { AppExternalModule } from "./app.external.module";
 import { AccessLoggerMiddleware } from "./middlewares";
+import { TerminusModule } from "@nestjs/terminus";
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { AccessLoggerMiddleware } from "./middlewares";
     AppSupportingUsersModule,
     QueueModule,
     ClamAntivirusModule,
+    TerminusModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,

@@ -1,32 +1,31 @@
 import { Controller, Get } from "@nestjs/common";
-import { Public } from "../../auth/decorators";
 import { DataSource } from "typeorm";
+import {
+  HealthCheck,
+  HealthCheckService,
+  TypeOrmHealthIndicator,
+} from "@nestjs/terminus";
 
 @Controller("health")
 export class HealthController {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly healthCheckService: HealthCheckService,
+    private readonly dataSource: DataSource,
+    private readonly typeOrmHealthIndicator: TypeOrmHealthIndicator,
+  ) {}
 
   /**
-   * Returns a health check status.
-   * @returns health check status.
+   * Check the health of the api.
+   * @returns the status of the health for api, with info or error and details.
    */
   @Get()
-  @Public()
-  getHello(): string {
-    return this.getHeathCheckStatus();
-  }
-
-  /**
-   * Get health check status.
-   * @returns health check status.
-   */
-  private getHeathCheckStatus(): string {
-    try {
-      return `Hello World! The database dataSource is ${
-        this.dataSource.isInitialized
-      } and version: ${process.env.VERSION ?? "-1"}`;
-    } catch (error: unknown) {
-      return `Hello world! Fail with error: ${error}`;
-    }
+  @HealthCheck()
+  async check() {
+    return this.healthCheckService.check([
+      () =>
+        this.typeOrmHealthIndicator.pingCheck("sims-db", {
+          connection: this.dataSource,
+        }),
+    ]);
   }
 }
