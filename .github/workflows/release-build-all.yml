@@ -189,7 +189,6 @@ jobs:
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
-        uses: actions/checkout@v4
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
