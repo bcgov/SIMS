@@ -488,7 +488,9 @@
                           "url": "student/files",
                           "dir": "PD Dependent",
                           "validate": {
-                            "required": true
+                            "required": true,
+                            "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                           },
                           "lockKey": true
                         },
@@ -797,7 +799,9 @@
               "storage": "url",
               "dir": "Dependant custody",
               "validate": {
-                "required": true
+                "required": true,
+                "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
               },
               "lockKey": true,
               "url": "student/files"
@@ -915,6 +919,27 @@
           "calculateValue": "const [programYear] = data.programYear ? data.programYear.split(\"-\") : [];\nvalue = programYear ? programYear -1: \"\";",
           "calculateServer": true,
           "lockKey": true
+        },
+        {
+          "input": true,
+          "tableView": true,
+          "key": "maxUploadedFiles",
+          "label": "maxUploadedFiles",
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "defaultValue": "",
+          "lockKey": true,
+          "calculateValue": "value = 25;",
+          "calculateServer": true
         }
       ],
       "type": "panel",

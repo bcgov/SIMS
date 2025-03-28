@@ -141,6 +141,27 @@
       "lockKey": true
     },
     {
+      "input": true,
+      "tableView": true,
+      "key": "maxUploadedFiles",
+      "label": "maxUploadedFiles",
+      "protected": false,
+      "unique": false,
+      "persistent": false,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "defaultValue": "",
+      "lockKey": true,
+      "calculateValue": "value = 25;",
+      "calculateServer": true
+    },
+    {
       "label": "HTML",
       "labelWidth": "",
       "labelMargin": "",
@@ -1689,7 +1710,9 @@
               "dir": "Current Year Income - Supporting Documents",
               "customClass": "font-weight-bold",
               "validate": {
-                "required": true
+                "required": true,
+                "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
               },
               "lockKey": true
             },
