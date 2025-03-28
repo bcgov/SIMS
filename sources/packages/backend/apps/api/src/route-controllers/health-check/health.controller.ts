@@ -11,7 +11,7 @@ import { Public } from "../../auth/decorators";
 export class HealthController {
   constructor(
     private readonly healthCheckService: HealthCheckService,
-    private dataSource: DataSource,
+    private readonly dataSource: DataSource,
     private readonly typeOrmHealthIndicator: TypeOrmHealthIndicator,
   ) {}
 
