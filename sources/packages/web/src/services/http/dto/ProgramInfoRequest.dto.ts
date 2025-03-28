@@ -44,12 +44,21 @@ export interface PIRDeniedReasonAPIOutDTO {
 }
 
 export interface PIRSummaryAPIOutDTO {
+  submittedDate: string;
   applicationNumber: string;
+  givenNames: string;
+  lastName: string;
+  studentNumber: string;
+  intensity: OfferingIntensity;
+  program: string;
   studyStartPeriod: string;
   studyEndPeriod: string;
+  studentSelectedProgram?: string;
+  studentCustomProgram?: string;
+  studentStudyStartDate?: string;
+  studentStudyEndDate?: string;
   applicationId: number;
-  pirStatus: string;
-  fullName: string;
+  pirStatus: ProgramInfoStatus;
 }
 
 export class DenyProgramInfoRequestAPIInDTO {
