@@ -53,7 +53,7 @@
               <td data-cy="programCIP">{{ item.cipCode }}</td>
               <td data-cy="programName">{{ item.programName }}</td>
               <td data-cy="programCredential">
-                {{ item.credentialType }}
+                {{ item.credentialTypeToDisplay }}
               </td>
               <td data-cy="programStudyPeriods">
                 {{ item.totalOfferings }}
