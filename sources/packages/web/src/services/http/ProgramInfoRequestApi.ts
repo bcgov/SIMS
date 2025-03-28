@@ -6,6 +6,8 @@ import {
   PIRSummaryAPIOutDTO,
   ProgramInfoRequestAPIOutDTO,
 } from "@/services/http/dto";
+import { PaginatedResults } from "@/types";
+import { PIRSummaryOptions } from "../ProgramInfoRequestService";
 
 export class ProgramInfoRequestApi extends HttpBaseClient {
   /**
@@ -72,11 +74,34 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
    * Get all applications of a location in an institution
    * with Program Info Request (PIR) status completed and required
    * @param locationId location that is completing the PIR.
-   * @returns student application list of an institution location.
+   * @param options pagination, sorting and filtering options
+   * @returns paginated student application list of an institution location.
    */
-  async getPIRSummary(locationId: number): Promise<PIRSummaryAPIOutDTO[]> {
-    return this.getCall<PIRSummaryAPIOutDTO[]>(
-      this.addClientRoot(`location/${locationId}/program-info-request`),
+  async getPIRSummary(
+    locationId: number,
+    options: PIRSummaryOptions,
+  ): Promise<PaginatedResults<PIRSummaryAPIOutDTO>> {
+    const queryParams = new URLSearchParams();
+    queryParams.append("page", options.page.toString());
+    queryParams.append("pageLimit", options.pageLimit.toString());
+
+    if (options.sortField) {
+      queryParams.append("sortField", options.sortField);
+    }
+    if (options.sortOrder) {
+      queryParams.append("sortOrder", options.sortOrder);
+    }
+    if (options.searchName) {
+      queryParams.append("searchName", options.searchName);
+    }
+    if (options.intensity) {
+      queryParams.append("intensity", options.intensity);
+    }
+
+    return this.getCall<PaginatedResults<PIRSummaryAPIOutDTO>>(
+      this.addClientRoot(
+        `location/${locationId}/program-info-request?${queryParams}`,
+      ),
     );
   }
 

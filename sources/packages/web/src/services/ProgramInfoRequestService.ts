@@ -6,6 +6,20 @@ import {
   PIRSummaryAPIOutDTO,
   ProgramInfoRequestAPIOutDTO,
 } from "@/services/http/dto";
+import {
+  DataTableSortByOrder,
+  OfferingIntensity,
+  PaginatedResults,
+} from "@/types";
+
+export interface PIRSummaryOptions {
+  page: number;
+  pageLimit: number;
+  sortField?: string;
+  sortOrder?: DataTableSortByOrder;
+  searchName?: string;
+  intensity?: OfferingIntensity | null;
+}
 
 export class ProgramInfoRequestService {
   // Shared Instance
@@ -76,10 +90,14 @@ export class ProgramInfoRequestService {
    * Get all applications of a location in an institution
    * with Program Info Request (PIR) status completed and required
    * @param locationId location that is completing the PIR.
-   * @returns student application list of an institution location.
+   * @param options pagination, sorting and filtering options
+   * @returns paginated student application list of an institution location.
    */
-  async getPIRSummary(locationId: number): Promise<PIRSummaryAPIOutDTO[]> {
-    return ApiClient.ProgramInfoRequest.getPIRSummary(locationId);
+  async getPIRSummary(
+    locationId: number,
+    options: PIRSummaryOptions,
+  ): Promise<PaginatedResults<PIRSummaryAPIOutDTO>> {
+    return ApiClient.ProgramInfoRequest.getPIRSummary(locationId, options);
   }
 
   /**
