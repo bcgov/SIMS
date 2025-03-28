@@ -5,6 +5,7 @@ import {
   HealthCheckService,
   TypeOrmHealthIndicator,
 } from "@nestjs/terminus";
+import { Public } from "apps/api/src/auth/decorators";
 
 @Controller("health")
 export class HealthController {
@@ -20,6 +21,7 @@ export class HealthController {
    */
   @Get()
   @HealthCheck()
+  @Public()
   async check() {
     return this.healthCheckService.check([
       () =>
