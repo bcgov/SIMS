@@ -14,7 +14,7 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import { Student, EducationProgramOffering } from "@sims/sims-db";
-import { credentialTypeToDisplay } from "apps/api/src/utilities";
+import { credentialTypeToDisplay } from "../../../../utilities";
 
 describe("EducationProgramOfferingStudentsController(e2e)-getOfferingSummaryDetails", () => {
   let app: INestApplication;
