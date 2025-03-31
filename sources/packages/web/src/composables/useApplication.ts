@@ -1,5 +1,6 @@
 import {
   ApplicationDetailHeader,
+  ApplicationEditStatus,
   ApplicationStatus,
   OfferingIntensity,
   StatusChipTypes,
@@ -55,5 +56,30 @@ export function useApplication() {
         "-",
     };
   };
-  return { mapApplicationChipStatus, mapApplicationDetailHeader };
+
+  /**
+   * Application edit status targeting students.
+   * @param editStatus application edit status.
+   * @returns student friendly edit status.
+   */
+  const mapApplicationEditStatusForStudents = (
+    editStatus: ApplicationEditStatus,
+  ): string => {
+    switch (editStatus) {
+      case ApplicationEditStatus.ChangeDeclined:
+        return "Declined";
+      case ApplicationEditStatus.ChangeCancelled:
+        return "Cancelled";
+      case ApplicationEditStatus.ChangedWithApproval:
+        return "Changed";
+      default:
+        return editStatus;
+    }
+  };
+
+  return {
+    mapApplicationChipStatus,
+    mapApplicationDetailHeader,
+    mapApplicationEditStatusForStudents,
+  };
 }

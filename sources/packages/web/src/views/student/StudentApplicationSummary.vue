@@ -12,8 +12,10 @@
         <student-applications-extended-summary
           :dense="isMobile"
           @editApplicationAction="editApplicationAction"
+          @changeApplicationAction="changeApplicationAction"
           @openConfirmCancel="confirmCancelApplication"
           @goToApplication="goToApplication"
+          @viewApplicationVersion="goToApplicationForm"
         />
       </v-col>
     </v-row>
@@ -58,7 +60,7 @@ export default defineComponent({
       return ApplicationService.shared.getApplicationWithPY(applicationId);
     };
 
-    const goToEditApplication = async (applicationId: number) => {
+    const goToApplicationForm = async (applicationId: number) => {
       try {
         const applicationWithPY = await getApplicationWithPY(applicationId);
         router.push({
@@ -77,9 +79,27 @@ export default defineComponent({
       }
     };
 
+    const changeApplicationAction = async (
+      applicationId: number,
+      allowChangeRequest: boolean,
+    ) => {
+      if (allowChangeRequest) {
+        snackBar.warn(
+          "Change requests for the 2025-2026 program year are not available at this moment.",
+        );
+      } else {
+        router.push({
+          name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
+          params: {
+            applicationId,
+          },
+        });
+      }
+    };
+
     const confirmEditApplication = async (applicationId: number) => {
       if (await editApplicationModal.value.showModal()) {
-        await goToEditApplication(applicationId);
+        await goToApplicationForm(applicationId);
       }
     };
 
@@ -90,7 +110,7 @@ export default defineComponent({
       if (status !== ApplicationStatus.Draft) {
         await confirmEditApplication(applicationId);
       } else {
-        await goToEditApplication(applicationId);
+        await goToApplicationForm(applicationId);
       }
     };
 
@@ -116,12 +136,14 @@ export default defineComponent({
     return {
       ApplicationStatus,
       editApplicationAction,
+      changeApplicationAction,
       editApplicationModal,
       confirmCancelApplication,
       showModal,
       showHideCancelApplication,
       reloadData,
       goToApplication,
+      goToApplicationForm,
       cancelApplicationModal,
       isMobile,
     };

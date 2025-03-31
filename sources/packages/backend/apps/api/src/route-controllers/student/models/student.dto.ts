@@ -217,10 +217,17 @@ export class ApplicationSummaryAPIOutDTO {
   studyStartPeriod: string;
   studyEndPeriod: string;
   id: number;
-  applicationName: string;
   status: ApplicationStatus;
   parentApplicationId: number;
+  /**
+   * Original application submission date.
+   */
   submittedDate?: Date;
+  /**
+   * Indicates if the application is able to use the
+   * change request feature. Other conditions may apply.
+   */
+  isChangeRequestAllowedForPY: boolean;
 }
 
 /**

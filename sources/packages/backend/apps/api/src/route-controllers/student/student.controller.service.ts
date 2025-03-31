@@ -16,7 +16,10 @@ import {
   ApplicationPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import { getUserFullName } from "../../utilities";
+import {
+  allowApplicationChangeRequest,
+  getUserFullName,
+} from "../../utilities";
 import {
   CustomNamedError,
   getISODateOnlyString,
@@ -367,11 +370,12 @@ export class StudentControllerService {
       applicationNumber: application.applicationNumber,
       studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
       studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
-      // TODO: when application name is captured, update the below line
-      applicationName: "Financial Aid Application",
       status: application.applicationStatus,
       parentApplicationId: application.parentApplication.id,
       submittedDate: application.parentApplication.submittedDate,
+      isChangeRequestAllowedForPY: allowApplicationChangeRequest(
+        application.programYear,
+      ),
     };
   };
 
