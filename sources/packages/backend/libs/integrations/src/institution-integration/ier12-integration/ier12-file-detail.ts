@@ -167,8 +167,8 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendFormattedDate(this.studentBirthDate);
     record.appendStringWithFiller(this.studentGroupCode, 4);
     record.appendStringWithFiller(this.studentMaritalStatusCode, 4);
-    record.append(this.studentDisabilityStatusCode);
-    record.append(this.applicationDisabilityStatusFlag);
+    record.appendStringWithFiller(this.studentDisabilityStatusCode, 4);
+    record.appendStringWithFiller(this.applicationDisabilityStatusFlag, 1);
     record.appendStringWithFiller(this.addressInfo.addressLine1, 25);
     record.appendOptionalStringWithFiller(this.addressInfo.addressLine2, 25);
     record.appendStringWithFiller(this.addressInfo.city, 25);

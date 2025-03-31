@@ -138,7 +138,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate an IER12 file with two records for a single student with no dependents and two disbursements, one sent and one pending.", async () => {
+  it("Should generate an IER12 file with two records for a single student with no dependents when there are two disbursements, one sent and one pending.", async () => {
     // Arrange
     const testInputData = {
       student: JOHN_DOE_FROM_CANADA,
@@ -233,7 +233,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate an IER12 file with one record for a married student (mononymous) with dependents, applications still in assessment, and one pending disbursement.", async () => {
+  it("Should generate an IER12 file with one record for a married student (mononymous) with dependents when there are applications still in assessment, and one pending disbursement.", async () => {
     // Arrange
     const testInputData = {
       student: JANE_MONONYMOUS_FROM_OTHER_COUNTRY,
@@ -315,7 +315,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   });
 
   it(
-    "Should generate an IER12 file with one record for a married student with dependents, application still in assessment requested with PD awards, one pending disbursement" +
+    "Should generate an IER12 file with one record for a married student with dependents when there is an application still in assessment requested with PD awards, one pending disbursement" +
       " and student has an approved PD status.",
     async () => {
       // Arrange
@@ -413,7 +413,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     },
   );
 
-  it("Should generate an IER12 file with one record for a dependant and living with parents student with one sent disbursement with no BC funding.", async () => {
+  it("Should generate an IER12 file with one record for a dependant and living with parents student when there is one sent disbursement with no BC funding.", async () => {
     // Arrange
     const testInputData = {
       student: JOHN_DOE_FROM_CANADA,
@@ -494,7 +494,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate an IER12 file with one record for a student with one pending disbursement with a restriction which is also a federal default restriction.", async () => {
+  it("Should generate an IER12 file with one record for a student when there is one pending disbursement with a student restriction which is also a federal default restriction.", async () => {
     // Arrange
     const testInputData = {
       student: JOHN_DOE_FROM_CANADA,
@@ -589,7 +589,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate an IER12 file with one record for a student with one pending disbursement with a provincial default restriction.", async () => {
+  it("Should generate an IER12 file with one record for a student when there is one pending disbursement with a provincial default student restriction.", async () => {
     // Arrange
     const testInputData = {
       student: JOHN_DOE_FROM_CANADA,
@@ -681,7 +681,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate an IER12 file with one record for a student with one sent disbursement that had a feedback error reported (DISE).", async () => {
+  it("Should generate an IER12 file with one record for a student when there is one sent disbursement that had a feedback error reported (DISE).", async () => {
     // Arrange
     const testInputData = {
       student: JANE_MONONYMOUS_FROM_OTHER_COUNTRY,
@@ -781,7 +781,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate an IER12 file with one record for a student with one sent disbursement that had some funds withheld due to a restriction (DISW).", async () => {
+  it("Should generate an IER12 file with one record for a student when there is one sent disbursement that had some funds withheld due to a restriction (DISW).", async () => {
     // Arrange
     const testInputData = {
       student: JOHN_DOE_FROM_CANADA,
@@ -877,7 +877,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate 2 IER12 files for locations from different institutions using distinct institution codes.", async () => {
+  it("Should generate 2 IER12 files for locations when the locations are from different institutions using distinct institution codes.", async () => {
     // Arrange
     const testInputDataLocationA = {
       student: JOHN_DOE_FROM_CANADA,

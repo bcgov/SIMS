@@ -156,9 +156,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.applicantAndPartnerExpectedContribution =
         combineDecimalPlaces(ierRecord.applicantAndPartnerExpectedContribution);
       ierFileDetail.parentExpectedContribution =
-        ierRecord.parentExpectedContribution
-          ? combineDecimalPlaces(ierRecord.parentExpectedContribution)
-          : 0;
+        this.combineDecimalPlacesOptional(ierRecord.parentExpectedContribution);
       ierFileDetail.totalExpectedContribution = combineDecimalPlaces(
         ierRecord.totalExpectedContribution,
       );
@@ -179,29 +177,21 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.numberOfParents === 2,
       );
       ierFileDetail.partnerFlag = this.convertToYNFlag(ierRecord.hasPartner);
-      ierFileDetail.parentalAssets = ierRecord.parentalAssets
-        ? combineDecimalPlaces(ierRecord.parentalAssets)
-        : 0;
+      ierFileDetail.parentalAssets = this.combineDecimalPlacesOptional(
+        ierRecord.parentalAssets,
+      );
       ierFileDetail.parentalAssetsExpectedContribution =
-        ierRecord.parentalAssetContribution
-          ? combineDecimalPlaces(ierRecord.parentalAssetContribution)
-          : 0;
+        this.combineDecimalPlacesOptional(ierRecord.parentalAssetContribution);
       ierFileDetail.parentalVoluntaryContribution =
-        ierRecord.parentalContribution
-          ? combineDecimalPlaces(ierRecord.parentalContribution)
-          : 0;
+        this.combineDecimalPlacesOptional(ierRecord.parentalContribution);
       ierFileDetail.parentalIncomeExpectedContribution =
-        ierRecord.parentalContribution
-          ? combineDecimalPlaces(ierRecord.parentalContribution)
-          : 0;
+        this.combineDecimalPlacesOptional(ierRecord.parentalContribution);
       ierFileDetail.parentalDiscretionaryIncome =
-        ierRecord.parentDiscretionaryIncome
-          ? combineDecimalPlaces(ierRecord.parentDiscretionaryIncome)
-          : 0;
+        this.combineDecimalPlacesOptional(ierRecord.parentDiscretionaryIncome);
       ierFileDetail.parentalDiscretionaryAnnualIncomeFormulaResult =
-        ierRecord.parentalDiscretionaryContribution
-          ? combineDecimalPlaces(ierRecord.parentalDiscretionaryContribution)
-          : 0;
+        this.combineDecimalPlacesOptional(
+          ierRecord.parentalDiscretionaryContribution,
+        );
       ierFileDetail.studentLivingAtHomeFlag = this.convertToYNFlag(
         ierRecord.studentLivingWithParents,
       );
@@ -214,21 +204,21 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
           ierRecord.booksAndSuppliesCost,
       );
       ierFileDetail.dependantLivingAllowance =
-        ierRecord.dependantTotalMSOLAllowance
-          ? combineDecimalPlaces(ierRecord.dependantTotalMSOLAllowance)
-          : 0;
+        this.combineDecimalPlacesOptional(
+          ierRecord.dependantTotalMSOLAllowance,
+        );
       ierFileDetail.studentLivingAllowance = combineDecimalPlaces(
         ierRecord.studentMSOLAllowance,
       );
       ierFileDetail.totalLivingAllowance = combineDecimalPlaces(
         ierRecord.totalLivingAllowance,
       );
-      ierFileDetail.alimonyCost = ierRecord.alimonyCost
-        ? combineDecimalPlaces(ierRecord.alimonyCost)
-        : 0;
-      ierFileDetail.childcareCost = ierRecord.childcareCost
-        ? combineDecimalPlaces(ierRecord.childcareCost)
-        : 0;
+      ierFileDetail.alimonyCost = this.combineDecimalPlacesOptional(
+        ierRecord.alimonyCost,
+      );
+      ierFileDetail.childcareCost = this.combineDecimalPlacesOptional(
+        ierRecord.childcareCost,
+      );
       ierFileDetail.totalNonEducationalCost = combineDecimalPlaces(
         ierRecord.totalNonEducationalCost,
       );
@@ -260,16 +250,14 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.currentOfferingId = ierRecord.currentOfferingId;
       ierFileDetail.parentOfferingId = ierRecord.parentOfferingId;
       ierFileDetail.returnTransportationCosts =
-        ierRecord.returnTransportationCosts
-          ? combineDecimalPlaces(ierRecord.returnTransportationCosts)
-          : 0;
+        this.combineDecimalPlacesOptional(ierRecord.returnTransportationCosts);
       ierFileDetail.extraLocalTransportationCosts =
-        ierRecord.extraLocalTransportationCosts
-          ? combineDecimalPlaces(ierRecord.extraLocalTransportationCosts)
-          : 0;
-      ierFileDetail.extraShelterCosts = ierRecord.extraShelterCosts
-        ? combineDecimalPlaces(ierRecord.extraShelterCosts)
-        : 0;
+        this.combineDecimalPlacesOptional(
+          ierRecord.extraLocalTransportationCosts,
+        );
+      ierFileDetail.extraShelterCosts = this.combineDecimalPlacesOptional(
+        ierRecord.extraShelterCosts,
+      );
       return ierFileDetail;
     });
     ierFileLines.push(...fileRecords);
@@ -447,5 +435,14 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
     };
     const levelOfStudyCode = levelOfStudyCodeMap[credentialType];
     return levelOfStudyCode.toString();
+  }
+
+  /**
+   * Combine decimal places for optional number.
+   * @param decimalNumber number to be combined.
+   * @returns combined number.
+   */
+  private combineDecimalPlacesOptional(decimalNumber?: number): number {
+    return decimalNumber ? combineDecimalPlaces(decimalNumber) : 0;
   }
 }
