@@ -1,11 +1,5 @@
 import { IntersectionType } from "@nestjs/swagger";
-import {
-  IsEnum,
-  IsObject,
-  IsOptional,
-  IsPositive,
-  Length,
-} from "class-validator";
+import { IsEnum, IsObject, IsOptional, IsPositive } from "class-validator";
 import {
   ApplicationExceptionStatus,
   ApplicationStatus,
@@ -26,7 +20,6 @@ import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import { ChangeTypes } from "@sims/utilities";
-
 export class CreateApplicationAPIInDTO {
   /**
    * Application dynamic data.
