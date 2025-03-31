@@ -1276,7 +1276,7 @@
               "value": ""
             }
           ],
-          "content": "<strong> Your institution is not designated by StudentAid BC</strong><br />\n<span>If your institution is not designated, please contact your institution and request they apply for designation. To initiate the designation process, please ask your institution to complete the <a class=\"formio-href\" href=\"https://studentaidbc.ca/designation-application\" target=\"_blank\" rel=\"noopener noreferrer\">Designation Application</a>. Please note your institution must be designated before you can apply.</span>",
+          "content": "<strong> Your institution is currently unable to process applications in the StudentAid BC system</strong><br />\n<span>Your institution is currently unable to process applications in the StudentAid BC system. Please have your institution contact <a href=mailto:designat@gov.bc.ca>designat@gov.bc.ca</a> to inquire about the process for gaining access to our Student Information Management System (SIMS).</span>",
           "refreshOnChange": false,
           "customClass": "banner-alert",
           "hidden": false,
