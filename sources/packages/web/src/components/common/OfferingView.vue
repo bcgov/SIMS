@@ -10,7 +10,7 @@
       <v-col cols="12" sm="6">
         <title-value
           propertyTitle="Credential"
-          :propertyValue="offeringViewData.programCredential"
+          :propertyValue="offeringViewData.programCredentialTypeToDisplay"
         />
       </v-col>
       <v-col cols="12" sm="6">

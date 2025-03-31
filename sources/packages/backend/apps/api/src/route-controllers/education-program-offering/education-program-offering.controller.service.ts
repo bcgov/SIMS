@@ -417,7 +417,10 @@ export class EducationProgramOfferingControllerService {
       programId: program.id,
       programName: program.name,
       programDescription: program.description,
-      programCredential: credentialTypeToDisplay(program.credentialType),
+      programCredential: program.credentialType,
+      programCredentialTypeToDisplay: credentialTypeToDisplay(
+        program.credentialType,
+      ),
       programDelivery: deliveryMethod(
         program.deliveredOnline,
         program.deliveredOnSite,
