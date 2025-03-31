@@ -1,11 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import {
   ApplicationStatus,
+  OfferingIntensity,
   RecordDataModelService,
   StudentAssessment,
   User,
 } from "@sims/sims-db";
-import { DataSource, In, Not, UpdateResult } from "typeorm";
+import { DataSource, FindOptionsWhere, In, Not, UpdateResult } from "typeorm";
 import { addDays, dateEqualTo } from "@sims/utilities";
 
 /**
@@ -29,6 +30,16 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     const processingDate = generatedDate
       ? new Date(generatedDate)
       : addDays(-1);
+    // Base criteria to get the pending assessment for IER 12.
+    const ierAssessmentBaseCriteria: FindOptionsWhere<StudentAssessment> = {
+      offering: {
+        offeringIntensity: OfferingIntensity.fullTime,
+        institutionLocation: { hasIntegration: true },
+      },
+      application: {
+        applicationStatus: Not(ApplicationStatus.Edited),
+      },
+    };
     return this.repo.find({
       select: {
         id: true,
@@ -50,6 +61,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
             user: { id: true, lastName: true, firstName: true },
             birthDate: true,
             contactInfo: true as unknown,
+            disabilityStatus: true,
             studentRestrictions: {
               id: true,
               isActive: true,
@@ -141,17 +153,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       where: [
         {
           assessmentDate: dateEqualTo(processingDate),
-          offering: { institutionLocation: { hasIntegration: true } },
-          application: {
-            applicationStatus: Not(ApplicationStatus.Edited),
-          },
+          ...ierAssessmentBaseCriteria,
         },
         {
           disbursementSchedules: { updatedAt: dateEqualTo(processingDate) },
-          offering: { institutionLocation: { hasIntegration: true } },
-          application: {
-            applicationStatus: Not(ApplicationStatus.Edited),
-          },
+          ...ierAssessmentBaseCriteria,
         },
         {
           disbursementSchedules: {
@@ -159,10 +165,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
               updatedAt: dateEqualTo(processingDate),
             },
           },
-          offering: { institutionLocation: { hasIntegration: true } },
-          application: {
-            applicationStatus: Not(ApplicationStatus.Edited),
-          },
+          ...ierAssessmentBaseCriteria,
         },
       ],
       order: {
