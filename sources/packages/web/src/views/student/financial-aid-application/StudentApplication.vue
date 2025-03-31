@@ -25,7 +25,6 @@
             between 20% and 59% of a full-time course load in a course or
             continuous period of study.</tooltip-icon
           >
-          <span class="field-required"></span>
         </p>
         <v-select
           v-model="offeringIntensity"
@@ -74,7 +73,7 @@
   </confirm-modal>
 </template>
 <script lang="ts">
-import { onMounted, ref, defineComponent, watchEffect } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { useSnackBar, useRules, ModalDialog } from "@/composables";
 import { useRouter } from "vue-router";
@@ -104,34 +103,29 @@ export default defineComponent({
     const startApplicationForm = ref({} as VForm);
     const { checkNullOrEmptyRule } = useRules();
     const draftApplicationModal = ref({} as ModalDialog<boolean>);
-    const allowFulltime = ref(false);
     let offeringIntensityOptions = ref([] as SelectItemType[]);
 
-    watchEffect(() => {
-      if (!allowFulltime.value) {
+    onMounted(async () => {
+      const { isFulltimeAllowed } = await AppConfigService.shared.config();
+      if (!isFulltimeAllowed) {
         offeringIntensityOptions.value = [
           {
-            title: "Part Time",
+            title: "Part-Time",
             value: "Part Time",
           },
         ];
       } else {
         offeringIntensityOptions.value = [
           {
-            title: "Full Time",
+            title: "Full-Time",
             value: "Full Time",
           },
           {
-            title: "Part Time",
+            title: "Part-Time",
             value: "Part Time",
           },
         ];
       }
-    });
-
-    onMounted(async () => {
-      const { isFulltimeAllowed } = await AppConfigService.shared.config();
-      allowFulltime.value = isFulltimeAllowed;
       programYearOptions.value = (
         await ProgramYearService.shared.getProgramYearOptions()
       ).map((yearOption) => ({

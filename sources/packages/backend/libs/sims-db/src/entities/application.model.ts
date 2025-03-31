@@ -71,7 +71,7 @@ export class Application extends RecordDataModel {
     enumName: "OfferingIntensity",
     nullable: true,
   })
-  offeringIntensity: OfferingIntensity;
+  offeringIntensity?: OfferingIntensity;
   /**
    * Student associated with this application.
    */

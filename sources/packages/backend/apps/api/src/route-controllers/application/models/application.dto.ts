@@ -27,7 +27,7 @@ import { JSON_20KB } from "../../../constants";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import { ChangeTypes } from "@sims/utilities";
 
-export class SaveApplicationAPIInDTO {
+export class CreateApplicationAPIInDTO {
   /**
    * Application dynamic data.
    */
@@ -49,9 +49,29 @@ export class SaveApplicationAPIInDTO {
   /**
    * Selected offering intensity of the application.
    */
-  @IsOptional()
   @IsEnum(OfferingIntensity)
   offeringIntensity: OfferingIntensity;
+}
+
+export class SaveApplicationAPIInDTO {
+  /**
+   * Application dynamic data.
+   */
+  @IsObject()
+  @JsonMaxSize(JSON_20KB)
+  data: any;
+  /**
+   * Array of unique file names to be associated
+   * with this application.
+   */
+  @IsOptional()
+  associatedFiles: string[];
+  /**
+   * Selected form of the application.
+   * This will be used for ProgramYear active validation
+   */
+  @IsPositive()
+  programYearId: number;
 }
 
 export interface ApplicationFormData extends ApplicationData {
@@ -112,6 +132,11 @@ export class ApplicationBaseAPIOutDTO {
 
 export class ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   applicationStatusUpdatedOn: Date;
+  /**
+   * Offering intensity for the application. It represents the offering intensity
+   * associated with the current offering or the selected intensity in the application
+   * if the offering is not available (if a PIR is needed).
+   */
   applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: string;
   applicationEndDate: string;

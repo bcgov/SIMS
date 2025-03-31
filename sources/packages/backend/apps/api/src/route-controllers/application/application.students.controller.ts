@@ -40,6 +40,7 @@ import {
   EnrolmentApplicationDetailsAPIOutDTO,
   CompletedApplicationDetailsAPIOutDTO,
   ApplicationWarningsAPIOutDTO,
+  CreateApplicationAPIInDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -370,7 +371,7 @@ export class ApplicationStudentsController extends BaseController {
   })
   @Post("draft")
   async createDraftApplication(
-    @Body() payload: SaveApplicationAPIInDTO,
+    @Body() payload: CreateApplicationAPIInDTO,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;

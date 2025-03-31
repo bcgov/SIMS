@@ -22,7 +22,7 @@ import {
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
-  UpdateApplicationAPIInDTO,
+  CreateApplicationAPIInDTO,
 } from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
@@ -72,9 +72,9 @@ export class ApplicationApi extends HttpBaseClient {
   }
 
   async createApplicationDraft(
-    payload: SaveApplicationAPIInDTO,
+    payload: CreateApplicationAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return this.postCall<SaveApplicationAPIInDTO>(
+    return this.postCall<CreateApplicationAPIInDTO>(
       this.addClientRoot("application/draft"),
       payload,
     );
@@ -82,9 +82,9 @@ export class ApplicationApi extends HttpBaseClient {
 
   async saveApplicationDraft(
     applicationId: number,
-    payload: UpdateApplicationAPIInDTO,
+    payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
-    await this.patchCall<UpdateApplicationAPIInDTO>(
+    await this.patchCall<SaveApplicationAPIInDTO>(
       this.addClientRoot(`application/${applicationId}/draft`),
       payload,
     );
@@ -92,7 +92,7 @@ export class ApplicationApi extends HttpBaseClient {
 
   async submitApplication(
     applicationId: number,
-    payload: UpdateApplicationAPIInDTO,
+    payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
     await this.patchCall(
       this.addClientRoot(`application/${applicationId}/submit`),
