@@ -17,7 +17,7 @@ describe.skip("HealthController", () => {
   });
 
   describe("root", () => {
-    it("should return Hello world string with db connection status and version", () => {
+    it("should return a health check", () => {
       expect(healthController.check()).toBeCalled();
     });
   });
