@@ -66,7 +66,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({});
-
+    // Check for the appeal and appeal requests in the database.
     const updatedAppeal = await db.studentAppeal.findOne({
       select: {
         id: true,
