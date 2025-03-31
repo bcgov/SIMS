@@ -128,7 +128,7 @@
           <zeebe:header key="partner1HasEmploymentInsuranceBenefits" value="$.supportingUsers.Partner1.supportingData.hasEmploymentInsuranceBenefits" />
           <zeebe:header key="partner1HasFedralProvincialPDReceipt" value="$.supportingUsers.Partner1.supportingData.hasFedralProvincialPDReceipt" />
           <zeebe:header key="partner1HasTotalIncomeAssistance" value="$.supportingUsers.Partner1.supportingData.hasTotalIncomeAssistance" />
-          <zeebe:header key="studentDataExceptionalExpense" value="$.data.exceptionalExpenseAmount" />
+          <zeebe:header key="studentDataExceptionalExpenseAmount" value="$.data.exceptionalExpenseAmount" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>

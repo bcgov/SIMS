@@ -22666,8 +22666,7 @@
               "inputMask": "",
               "decimalLimit": 0,
               "requireDecimal": false,
-              "tags": [],
-              "isNew": false
+              "tags": []
             },
             {
               "title": "CRA consent panel",
@@ -24809,7 +24808,6 @@
                   "addons": [],
                   "inputType": "hidden",
                   "id": "e78m1ow",
-                  "isNew": false,
                   "tags": []
                 },
                 {
@@ -24895,7 +24893,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "If you are living at home and need to pay room and board, additional expenses may be considered as part of your assessment.",
+                  "content": "If you have had exceptional expenses that created financial hardship that affected your ability to start or continue your studies these expenses may be considered as part of your assessment.",
                   "refreshOnChange": false,
                   "key": "html121",
                   "type": "htmlelement",
@@ -24940,7 +24938,7 @@
                     "unique": false
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -24960,7 +24958,8 @@
                   "addons": [],
                   "tag": "p",
                   "id": "e9vsa6r",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "Select the reason for your significant decrease in gross income:",
@@ -25106,8 +25105,7 @@
                   "properties": {},
                   "lockKey": true,
                   "customClass": "font-weight-bold",
-                  "currency": "CAD",
-                  "isNew": false
+                  "currency": "CAD"
                 },
                 {
                   "label": "HTML",
@@ -25183,81 +25181,6 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "id": "eo1cjdj"
-                },
-                {
-                  "label": "HTML",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "Please provide one of the documents below.",
-                  "refreshOnChange": false,
-                  "key": "html92",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false,
-                  "placeholder": "",
-                  "prefix": "",
-                  "customClass": "",
-                  "suffix": "",
-                  "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
-                  "unique": false,
-                  "persistent": false,
-                  "hidden": false,
-                  "clearOnHide": true,
-                  "refreshOn": "",
-                  "redrawOn": "",
-                  "modalEdit": false,
-                  "dataGridLabel": false,
-                  "labelPosition": "top",
-                  "description": "",
-                  "errorLabel": "",
-                  "tooltip": "",
-                  "hideLabel": false,
-                  "tabindex": "",
-                  "disabled": false,
-                  "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "widget": null,
-                  "attributes": {},
-                  "validateOn": "change",
-                  "validate": {
-                    "required": false,
-                    "custom": "",
-                    "customPrivate": false,
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false
-                  },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "allowCalculateOverride": false,
-                  "encrypted": false,
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "properties": {},
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "tag": "div",
-                  "id": "eq7e38",
-                  "className": ""
                 },
                 {
                   "label": "HTML",
@@ -26189,8 +26112,7 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true,
-                  "isNew": false
+                  "requireDecimal": true
                 }
               ],
               "allowPrevious": false,
