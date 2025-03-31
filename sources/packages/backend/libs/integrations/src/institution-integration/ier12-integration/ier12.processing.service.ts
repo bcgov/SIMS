@@ -32,7 +32,10 @@ import {
   AwardOverawardBalance,
 } from "@sims/services";
 import { FullTimeAwardTypes } from "@sims/integrations/models";
-import { PROVINCIAL_DEFAULT_RESTRICTION_CODE } from "@sims/services/constants";
+import {
+  FEDERAL_DEFAULT_RESTRICTION_CODES,
+  PROVINCIAL_DEFAULT_RESTRICTION_CODES,
+} from "@sims/services/constants";
 import {
   ApplicationEventCodeUtilsService,
   ApplicationEventDateUtilsService,
@@ -194,7 +197,12 @@ export class IER12ProcessingService {
     const hasProvincialDefaultRestriction = !hasRestriction
       ? false
       : this.checkActiveRestriction(student.studentRestrictions, {
-          restrictionCode: PROVINCIAL_DEFAULT_RESTRICTION_CODE,
+          restrictionCodes: PROVINCIAL_DEFAULT_RESTRICTION_CODES,
+        });
+    const hasFederalDefaultRestriction = !hasRestriction
+      ? false
+      : this.checkActiveRestriction(student.studentRestrictions, {
+          restrictionCodes: FEDERAL_DEFAULT_RESTRICTION_CODES,
         });
     const hasPartner =
       pendingAssessment.workflowData.studentData.relationshipStatus ===
@@ -223,11 +231,13 @@ export class IER12ProcessingService {
         assessmentId: pendingAssessment.id,
         disbursementId: disbursement.id,
         applicationNumber: application.applicationNumber,
+        applicationPDStatus: workflowData.calculatedData.pdppdStatus,
         institutionStudentNumber: application.studentNumber,
         sin: sinValidation.sin,
         studentLastName: user.lastName,
         studentGivenName: user.firstName,
         studentBirthDate: new Date(student.birthDate),
+        studentDisabilityStatus: student.disabilityStatus,
         studentDependantStatus: workflowData.studentData.dependantStatus,
         addressInfo,
         programName: educationProgram.name,
@@ -253,6 +263,7 @@ export class IER12ProcessingService {
         applicationStatusDate: application.applicationStatusUpdatedOn,
         assessmentAwards,
         hasProvincialDefaultRestriction,
+        hasFederalDefaultRestriction,
         hasProvincialOveraward: this.checkOutstandingOveraward(
           studentOverawardsBalance,
           FullTimeAwardTypes.BCSL,
@@ -283,13 +294,15 @@ export class IER12ProcessingService {
         ),
         studentMaritalStatusCode:
           workflowData.calculatedData.studentMaritalStatusCode,
-        studentAndSupportingUserContribution:
-          assessmentData.studentTotalFederalContribution +
-          assessmentData.studentTotalProvincialContribution +
-          (assessmentData.parentAssessedContribution ?? 0) +
-          (assessmentData.partnerAssessedContribution ?? 0),
+        applicantAndPartnerExpectedContribution:
+          workflowData.calculatedData.totalProvincialFSC +
+          workflowData.calculatedData.totalTargetedResources +
+          (workflowData.calculatedData.totalSpouseContribution ?? 0),
+        totalExpectedContribution: assessmentData.totalProvincialContribution,
         dependantChildQuantity:
-          workflowData.calculatedData.dependantChildQuantity,
+          (workflowData.calculatedData.dependantChildInDaycareQuantity ?? 0) +
+          (workflowData.calculatedData.dependantInfantQuantity ?? 0) +
+          (workflowData.calculatedData.dependantChildQuantity ?? 0),
         dependantChildInDaycareQuantity:
           workflowData.calculatedData.dependantChildInDaycareQuantity,
         dependantInfantQuantity:
@@ -308,10 +321,11 @@ export class IER12ProcessingService {
         parentalContribution: workflowData.calculatedData.parentalContribution,
         parentDiscretionaryIncome:
           workflowData.calculatedData.parentDiscretionaryIncome,
+        parentalDiscretionaryContribution:
+          assessmentData.parentalDiscretionaryContribution,
         studentLivingWithParents:
           workflowData.studentData.livingWithParents === FormYesNoOptions.Yes,
-        partnerStudentStudyWeeks:
-          workflowData.calculatedData.partnerStudentStudyWeeks ?? 0,
+        partnerStudyWeeks: workflowData.calculatedData.partnerStudyWeeks ?? 0,
         dependantTotalMSOLAllowance:
           workflowData.calculatedData.dependantTotalMSOLAllowance,
         studentMSOLAllowance: workflowData.calculatedData.studentMSOLAllowance,
@@ -321,7 +335,7 @@ export class IER12ProcessingService {
         totalNonEducationalCost:
           workflowData.calculatedData.totalNonEducationalCost,
         totalAssessedCost: assessmentData.totalAssessedCost,
-        totalAssessmentNeed: assessmentData.totalAssessmentNeed,
+        totalAssessmentNeed: assessmentData.provincialAssessmentNeed,
         disbursementSentDate: disbursement.dateSent,
         applicationEventCode: applicationEventCode,
         applicationEventDate:
@@ -332,6 +346,11 @@ export class IER12ProcessingService {
           ),
         currentOfferingId: offering.id,
         parentOfferingId: offering.parentOffering?.id,
+        returnTransportationCosts:
+          workflowData.calculatedData.returnTransportationCost,
+        extraLocalTransportationCosts:
+          workflowData.calculatedData.totalAdditionalTransportationAllowance,
+        extraShelterCosts: assessmentData.secondResidenceCost,
       };
       ier12Records.push(ier12Record);
     }
@@ -372,20 +391,21 @@ export class IER12ProcessingService {
    * Check if student has an active restriction.
    * @param studentRestrictions student restrictions
    * @param options check restriction options:
-   * - `restrictionCode`: restriction code.
+   * - `restrictionCodes`: restriction codes.
    * @returns value which indicates
    * if a student has active restriction.
    */
   private checkActiveRestriction(
     studentRestrictions: StudentRestriction[],
-    options?: { restrictionCode?: string },
+    options?: { restrictionCodes?: string[] },
   ): boolean {
     return studentRestrictions?.some(
       (studentRestriction) =>
         studentRestriction.isActive &&
-        (!options?.restrictionCode ||
-          studentRestriction.restriction.restrictionCode ===
-            options.restrictionCode),
+        (!options?.restrictionCodes?.length ||
+          options.restrictionCodes.includes(
+            studentRestriction.restriction.restrictionCode,
+          )),
     );
   }
 

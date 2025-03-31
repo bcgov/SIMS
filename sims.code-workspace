@@ -187,7 +187,7 @@
       "PDRQ",
       "PDAP",
       "PPDA",
-      "PDDC"
+      "PDRJ"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"

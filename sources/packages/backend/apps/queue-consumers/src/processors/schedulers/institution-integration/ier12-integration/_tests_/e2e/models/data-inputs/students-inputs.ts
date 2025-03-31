@@ -1,3 +1,4 @@
+import { DisabilityStatus } from "@sims/sims-db";
 import { IER12Student } from "./data-inputs.models";
 
 export const JOHN_DOE_FROM_CANADA: IER12Student = {
@@ -12,6 +13,7 @@ export const JOHN_DOE_FROM_CANADA: IER12Student = {
     city: "Victoria",
     postalCode: "Z1Z1Z1",
   },
+  disabilityStatus: DisabilityStatus.NotRequested,
 };
 
 export const JANE_MONONYMOUS_FROM_OTHER_COUNTRY: IER12Student = {
@@ -26,4 +28,5 @@ export const JANE_MONONYMOUS_FROM_OTHER_COUNTRY: IER12Student = {
     city: "New York",
     postalCode: "SOME POSTAL CODE",
   },
+  disabilityStatus: DisabilityStatus.NotRequested,
 };
