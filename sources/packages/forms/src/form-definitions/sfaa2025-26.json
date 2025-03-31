@@ -1276,7 +1276,7 @@
               "value": ""
             }
           ],
-          "content": "<strong> Your institution is not designated by StudentAid BC</strong><br />\n<span>If your institution is not designated, please contact your institution and request they apply for designation. To initiate the designation process, please ask your institution to complete the <a class=\"formio-href\" href=\"https://studentaidbc.ca/designation-application\" target=\"_blank\" rel=\"noopener noreferrer\">Designation Application</a>. Please note your institution must be designated before you can apply.</span>",
+          "content": "<strong> Your institution is currently unable to process applications in the StudentAid BC system</strong><br />\n<span>Your institution is currently unable to process applications in the StudentAid BC system. Please have your institution contact <a href=mailto:designat@gov.bc.ca>designat@gov.bc.ca</a> to inquire about the process for gaining access to our Student Information Management System (SIMS).</span>",
           "refreshOnChange": false,
           "customClass": "banner-alert",
           "hidden": false,
@@ -7900,8 +7900,8 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": true,
-                    "customMessage": "",
-                    "custom": "",
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                     "customPrivate": false,
                     "json": "",
                     "strictDateValidation": false,
@@ -10621,7 +10621,7 @@
                       "id": "ekl3d6"
                     },
                     {
-                      "label": "Upload supporting documents (optional):",
+                      "label": "Upload supporting documents",
                       "customClass": "font-weight-bold",
                       "hideLabel": true,
                       "tableView": false,
@@ -10670,7 +10670,8 @@
                       "validateOn": "change",
                       "validate": {
                         "required": true,
-                        "custom": "",
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
@@ -12484,6 +12485,27 @@
         },
         {
           "input": true,
+          "tableView": true,
+          "key": "maxUploadedFiles",
+          "label": "maxUploadedFiles",
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "defaultValue": "",
+          "lockKey": true,
+          "calculateValue": "value = 25;",
+          "calculateServer": true
+        },
+        {
+          "input": true,
           "tableView": false,
           "key": "dependantstatus",
           "label": "Dependant Status",
@@ -13779,7 +13801,8 @@
                           "redrawOn": "dependants.declaredOnTaxes",
                           "validate": {
                             "required": true,
-                            "custom": "",
+                            "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                             "customPrivate": false,
                             "strictDateValidation": false,
                             "multiple": false,
@@ -14670,8 +14693,8 @@
                           "allowCalculateOverride": false,
                           "validate": {
                             "required": true,
-                            "customMessage": "",
-                            "custom": "",
+                            "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                             "customPrivate": false,
                             "json": "",
                             "strictDateValidation": false,
@@ -17208,7 +17231,7 @@
                   "image": false,
                   "imageSize": "200",
                   "placeholder": "",
-                  "multiple": false,
+                  "multiple": true,
                   "defaultValue": "",
                   "protected": false,
                   "persistent": true,
@@ -17230,7 +17253,9 @@
                   "url": "student/files",
                   "lockKey": true,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                   }
                 },
                 {
@@ -21726,7 +21751,7 @@
               "id": "ecfi9yd"
             },
             {
-              "label": "Upload supporting documents (optional):",
+              "label": "Upload supporting documents",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -21768,8 +21793,8 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "customMessage": "",
-                "custom": "",
+                "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                 "customPrivate": false,
                 "json": "",
                 "strictDateValidation": false,
@@ -24272,7 +24297,9 @@
                   "dir": "Current Year Income - Supporting Documents",
                   "customClass": "font-weight-bold",
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                   },
                   "lockKey": true
                 },
@@ -24419,7 +24446,7 @@
           "id": "erkahla"
         },
         {
-          "title": "Financial exceptional costs panel",
+          "title": "Financial exceptional expenses panel",
           "labelWidth": "",
           "labelMargin": "",
           "theme": "default",
@@ -24467,7 +24494,7 @@
                   "value": ""
                 }
               ],
-              "content": "Financial exceptional costs",
+              "content": "Financial exceptional expenses",
               "refreshOnChange": false,
               "key": "html88",
               "type": "htmlelement",
@@ -24512,7 +24539,7 @@
                 "unique": false
               },
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": ""
               },
@@ -24530,7 +24557,8 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "ejy5akn"
+              "id": "ejy5akn",
+              "tags": []
             },
             {
               "label": "HTML",
@@ -24779,7 +24807,8 @@
                   "allowMultipleMasks": false,
                   "addons": [],
                   "inputType": "hidden",
-                  "id": "e78m1ow"
+                  "id": "e78m1ow",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -24864,7 +24893,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "If you are living at home and need to pay room and board, additional expenses may be considered as part of your assessment.",
+                  "content": "If you have had exceptional expenses that created financial hardship that affected your ability to start or continue your studies these expenses may be considered as part of your assessment.",
                   "refreshOnChange": false,
                   "key": "html121",
                   "type": "htmlelement",
@@ -24909,7 +24938,7 @@
                     "unique": false
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -24929,7 +24958,8 @@
                   "addons": [],
                   "tag": "p",
                   "id": "e9vsa6r",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "Select the reason for your significant decrease in gross income:",
@@ -25041,90 +25071,41 @@
                   "lockKey": true
                 },
                 {
-                  "label": "<h4 class='category-header-medium-small'>Please explain your situation:</h4><li>Type of expense and</li><li>When expenses occurred and</li><li>Amount</li>",
-                  "autoExpand": false,
-                  "tableView": true,
-                  "key": "otherExceptionalExpenseReason",
-                  "type": "textarea",
+                  "autofocus": false,
                   "input": true,
+                  "tableView": false,
+                  "inputType": "text",
+                  "inputMask": "",
+                  "label": "Please enter the combined exceptional expense amount rounded to the nearest dollar.",
+                  "key": "exceptionalExpenseAmount",
                   "placeholder": "",
-                  "prefix": "",
-                  "customClass": "",
+                  "prefix": "$",
                   "suffix": "",
-                  "multiple": false,
-                  "defaultValue": null,
+                  "defaultValue": "",
                   "protected": false,
-                  "unique": false,
                   "persistent": true,
                   "hidden": false,
                   "clearOnHide": true,
-                  "refreshOn": "",
-                  "redrawOn": "",
-                  "modalEdit": false,
-                  "dataGridLabel": false,
-                  "labelPosition": "top",
-                  "description": "",
-                  "errorLabel": "",
-                  "tooltip": "",
-                  "hideLabel": false,
-                  "tabindex": "",
-                  "disabled": false,
-                  "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "widget": {
-                    "type": "input"
-                  },
-                  "attributes": {},
-                  "validateOn": "change",
+                  "delimiter": true,
+                  "decimalLimit": 0,
+                  "requireDecimal": true,
                   "validate": {
-                    "required": false,
-                    "custom": "",
-                    "customPrivate": false,
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false,
-                    "minLength": "",
-                    "maxLength": "",
-                    "pattern": "",
-                    "minWords": "",
-                    "maxWords": ""
+                    "required": true,
+                    "multiple": "",
+                    "custom": "valid = (input >= 0 && input < 1000000) ? true : 'The number you have entered is outside the expected range.';"
                   },
                   "conditional": {
                     "show": "",
                     "when": null,
                     "eq": ""
                   },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "allowCalculateOverride": false,
-                  "encrypted": false,
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "properties": {},
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "mask": false,
-                  "inputType": "text",
-                  "inputFormat": "html",
-                  "inputMask": "",
-                  "displayMask": "",
-                  "spellcheck": true,
-                  "truncateMultipleSpaces": false,
-                  "rows": 3,
-                  "wysiwyg": false,
-                  "editor": "",
-                  "fixedSize": true,
-                  "id": "ekefms8",
+                  "type": "currency",
+                  "labelPosition": "top",
                   "tags": [],
-                  "lockKey": true
+                  "properties": {},
+                  "lockKey": true,
+                  "customClass": "font-weight-bold",
+                  "currency": "CAD"
                 },
                 {
                   "label": "HTML",
@@ -25209,82 +25190,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "Please provide one of the documents below.",
-                  "refreshOnChange": false,
-                  "key": "html92",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false,
-                  "placeholder": "",
-                  "prefix": "",
-                  "customClass": "",
-                  "suffix": "",
-                  "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
-                  "unique": false,
-                  "persistent": false,
-                  "hidden": false,
-                  "clearOnHide": true,
-                  "refreshOn": "",
-                  "redrawOn": "",
-                  "modalEdit": false,
-                  "dataGridLabel": false,
-                  "labelPosition": "top",
-                  "description": "",
-                  "errorLabel": "",
-                  "tooltip": "",
-                  "hideLabel": false,
-                  "tabindex": "",
-                  "disabled": false,
-                  "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "widget": null,
-                  "attributes": {},
-                  "validateOn": "change",
-                  "validate": {
-                    "required": false,
-                    "custom": "",
-                    "customPrivate": false,
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false
-                  },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "allowCalculateOverride": false,
-                  "encrypted": false,
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "properties": {},
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "tag": "div",
-                  "id": "eq7e38",
-                  "className": ""
-                },
-                {
-                  "label": "HTML",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\r\n<ul>\r\n  <li>A copy of your insurance or claim information</li>\r\n  <li>Receipts showing payment of costs</li>\r\n  <li>Bank statement</li>\r\n</ul>",
+                  "content": "<h4 class=\"category-header-medium-small\">Documents required</h4>\n<h4 class=\"category-header-medium-small\">Please provide:</h4>\n<ul>\n<li>a letter explaining your situation including the type of expense(s) and when the expense(s) occurred</li>\n</ul>\n<h4 class=\"category-header-medium-small\">and</h4>\n<h4 class=\"category-header-medium-small\">Please provide at least one of the following:\n</h4>\n<ul>\n<li>A copy of your insurance documents or claim information</li>\n<li>Receipt showing payment of costs</li>\n<li>Bank statement</li>\n</ul>",
                   "refreshOnChange": false,
                   "customClass": "align-bullets",
                   "key": "html24",
@@ -25329,7 +25235,7 @@
                     "unique": false
                   },
                   "conditional": {
-                    "show": null,
+                    "show": "",
                     "when": null,
                     "eq": ""
                   },
@@ -25349,7 +25255,8 @@
                   "addons": [],
                   "tag": "div",
                   "id": "evksdr7",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -25480,8 +25387,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "validate": {
-                    "required": false,
-                    "custom": "",
+                    "required": true,
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
@@ -28725,7 +28633,7 @@
                       "className": ""
                     },
                     {
-                      "label": "Upload supporting documents (optional):",
+                      "label": "Upload supporting documents",
                       "hideLabel": true,
                       "tableView": false,
                       "storage": "url",
@@ -28773,8 +28681,9 @@
                       "attributes": {},
                       "validateOn": "change",
                       "validate": {
-                        "required": false,
-                        "custom": "",
+                        "required": true,
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
@@ -30810,7 +30719,7 @@
                       "tags": []
                     },
                     {
-                      "label": "Upload supporting documents (optional):",
+                      "label": "Upload supporting documents",
                       "customClass": "font-weight-bold",
                       "hideLabel": true,
                       "tableView": false,
@@ -30860,7 +30769,8 @@
                       "validateOn": "change",
                       "validate": {
                         "required": true,
-                        "custom": "",
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,

@@ -31,6 +31,7 @@ import {
   InstitutionLocationService,
 } from "../../services";
 import {
+  credentialTypeToDisplay,
   deliveryMethod,
   getOfferingNameAndPeriod,
   getUserFullName,
@@ -417,6 +418,9 @@ export class EducationProgramOfferingControllerService {
       programName: program.name,
       programDescription: program.description,
       programCredential: program.credentialType,
+      programCredentialTypeToDisplay: credentialTypeToDisplay(
+        program.credentialType,
+      ),
       programDelivery: deliveryMethod(
         program.deliveredOnline,
         program.deliveredOnSite,

@@ -728,8 +728,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "offering.studyStartDate",
         "offering.studyEndDate",
         "application.applicationStatus",
+        "programYear.programYear",
       ])
       .innerJoin("application.parentApplication", "parentApplication")
+      .innerJoin("application.programYear", "programYear")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .where("application.student.id = :studentId", { studentId })
@@ -1439,19 +1441,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Retrieve application with application number in
-   * completed status.
-   ** Application id is used to perform same lookup by id
-   ** instead of application number.
-   * @param userId
-   * @param applicationId
-   * @param applicationNumber
-   * @returns
+   * Retrieves the application to request an appeal.
+   * @param applicationId application ID.
+   * @param userId user id.
+   * @returns application details for an appeal.
    */
   async getApplicationToRequestAppeal(
+    applicationId: number,
     userId: number,
-    applicationNumber?: string,
-    applicationId?: number,
   ): Promise<Application> {
     return this.repo.findOne({
       select: {
@@ -1464,7 +1461,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       where: {
         student: { user: { id: userId } },
         applicationStatus: ApplicationStatus.Completed,
-        applicationNumber,
         id: applicationId,
       },
     });
@@ -1881,18 +1877,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Get all the application versions for an application through parent application.
    * @param applicationId application id.
-   * @returns application versions.
+   * @param options query options.
+   * - `studentId` student ID used for authorization.
+   * @returns application versions if any, otherwise empty array.
    */
   async getAllApplicationVersions(
     applicationId: number,
+    options?: { studentId?: number },
   ): Promise<Application[]> {
-    const application = await this.repo
+    const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
         "application.id",
         "parentApplication.id",
         "version.id",
         "version.submittedDate",
+        "version.applicationEditStatus",
       ])
       .innerJoin("application.parentApplication", "parentApplication")
       .leftJoin(
@@ -1904,8 +1904,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .where("application.id = :applicationId", {
         applicationId: applicationId,
       })
-      .orderBy("version.submittedDate", "DESC")
-      .getOne();
+      .orderBy("version.submittedDate", "DESC");
+    if (options?.studentId) {
+      applicationQuery.andWhere("application.student.id = :studentId", {
+        studentId: options.studentId,
+      });
+    }
+    const application = await applicationQuery.getOne();
+    if (!application) {
+      throw new CustomNamedError(
+        "Application not found.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
     return application.parentApplication.versions;
   }
 

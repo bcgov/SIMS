@@ -9,7 +9,7 @@ export enum AppRoutes {
   StudentFileUploader = "file-uploader",
   StudentApplicationDetails = "application/:id",
   Assessment = "application/:applicationId/assessment/:assessmentId",
-  RequestChange = "request-change",
+  RequestChange = "application/:applicationId/request-change",
   StudentAccountActivity = "student-account-activity",
   StudentOverawardsBalance = "student-overawards-balance",
   StudentAccountApplicationIsProgress = "student-account-application-in-progress",

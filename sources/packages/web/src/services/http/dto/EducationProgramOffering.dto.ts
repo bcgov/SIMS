@@ -223,5 +223,6 @@ export interface EducationProgramOfferingSummaryViewAPIOutDTO {
   programName: string;
   programDescription: string;
   programCredential: string;
+  programCredentialTypeToDisplay: string;
   programDelivery: string;
 }

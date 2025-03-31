@@ -14,6 +14,7 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import { Student, EducationProgramOffering } from "@sims/sims-db";
+import { credentialTypeToDisplay } from "../../../../utilities";
 
 describe("EducationProgramOfferingStudentsController(e2e)-getOfferingSummaryDetails", () => {
   let app: INestApplication;
@@ -73,6 +74,10 @@ describe("EducationProgramOfferingStudentsController(e2e)-getOfferingSummaryDeta
         programCredential:
           application.currentAssessment.offering.educationProgram
             .credentialType,
+        programCredentialTypeToDisplay: credentialTypeToDisplay(
+          application.currentAssessment.offering.educationProgram
+            .credentialType,
+        ),
         programDelivery: deliveryMethod(application.currentAssessment.offering),
       });
   });

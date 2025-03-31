@@ -1276,7 +1276,7 @@
               "value": ""
             }
           ],
-          "content": "<strong> Your institution is not designated by StudentAid BC</strong><br />\n<span>If your institution is not designated, please contact your institution and request they apply for designation. To initiate the designation process, please ask your institution to complete the <a class=\"formio-href\" href=\"https://studentaidbc.ca/designation-application\" target=\"_blank\" rel=\"noopener noreferrer\">Designation Application</a>. Please note your institution must be designated before you can apply.</span>",
+          "content": "<strong> Your institution is currently unable to process applications in the StudentAid BC system</strong><br />\n<span>Your institution is currently unable to process applications in the StudentAid BC system. Please have your institution contact <a href=mailto:designat@gov.bc.ca>designat@gov.bc.ca</a> to inquire about the process for gaining access to our Student Information Management System (SIMS).</span>",
           "refreshOnChange": false,
           "customClass": "banner-alert",
           "hidden": false,
@@ -7900,8 +7900,8 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": true,
-                    "customMessage": "",
-                    "custom": "",
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                     "customPrivate": false,
                     "json": "",
                     "strictDateValidation": false,
@@ -9257,7 +9257,7 @@
                       "id": "ekl3d6"
                     },
                     {
-                      "label": "Upload supporting documents (optional):",
+                      "label": "Upload supporting documents",
                       "customClass": "font-weight-bold",
                       "hideLabel": true,
                       "tableView": false,
@@ -9306,7 +9306,8 @@
                       "validateOn": "change",
                       "validate": {
                         "required": true,
-                        "custom": "",
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
@@ -12289,6 +12290,27 @@
           },
           "properties": {},
           "lockKey": true
+        },
+        {
+          "input": true,
+          "tableView": true,
+          "key": "maxUploadedFiles",
+          "label": "maxUploadedFiles",
+          "protected": false,
+          "unique": false,
+          "persistent": false,
+          "type": "hidden",
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "defaultValue": "",
+          "lockKey": true,
+          "calculateValue": "value = 25;",
+          "calculateServer": true
         }
       ],
       "input": false,
@@ -13868,7 +13890,8 @@
                               "redrawOn": "dependants.declaredOnTaxes",
                               "validate": {
                                 "required": true,
-                                "custom": "",
+                                "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                                 "customPrivate": false,
                                 "strictDateValidation": false,
                                 "multiple": false,
@@ -14929,8 +14952,8 @@
                   "allowCalculateOverride": false,
                   "validate": {
                     "required": true,
-                    "customMessage": "",
-                    "custom": "",
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                     "customPrivate": false,
                     "json": "",
                     "strictDateValidation": false,
@@ -16811,7 +16834,7 @@
                   "image": false,
                   "imageSize": "200",
                   "placeholder": "",
-                  "multiple": false,
+                  "multiple": true,
                   "defaultValue": "",
                   "protected": false,
                   "persistent": true,
@@ -16833,7 +16856,9 @@
                   "url": "student/files",
                   "lockKey": true,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                   }
                 },
                 {
@@ -21091,7 +21116,7 @@
               "id": "ecfi9yd"
             },
             {
-              "label": "Upload supporting documents (optional):",
+              "label": "Upload supporting documents",
               "labelPosition": "top",
               "labelWidth": "",
               "labelMargin": "",
@@ -21132,9 +21157,9 @@
               "calculateServer": false,
               "allowCalculateOverride": false,
               "validate": {
-                "required": false,
-                "customMessage": "",
-                "custom": "",
+                "required": true,
+                "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                 "customPrivate": false,
                 "json": "",
                 "strictDateValidation": false,
@@ -22140,7 +22165,7 @@
                   "prefix": "",
                   "customClass": "",
                   "suffix": "",
-                  "multiple": false,
+                  "multiple": true,
                   "defaultValue": null,
                   "protected": false,
                   "unique": false,
@@ -22166,8 +22191,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "validate": {
-                    "required": false,
-                    "custom": "",
+                    "required": true,
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
@@ -24710,7 +24736,9 @@
                   "dir": "Current Year Income - Supporting Documents",
                   "customClass": "font-weight-bold",
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                   },
                   "lockKey": true
                 },
@@ -25918,8 +25946,9 @@
                   "attributes": {},
                   "validateOn": "change",
                   "validate": {
-                    "required": false,
-                    "custom": "",
+                    "required": true,
+                    "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                    "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                     "customPrivate": false,
                     "strictDateValidation": false,
                     "multiple": false,
@@ -29653,7 +29682,7 @@
                       "className": ""
                     },
                     {
-                      "label": "Upload supporting documents (optional):",
+                      "label": "Upload supporting documents",
                       "hideLabel": true,
                       "tableView": false,
                       "storage": "url",
@@ -29701,8 +29730,9 @@
                       "attributes": {},
                       "validateOn": "change",
                       "validate": {
-                        "required": false,
-                        "custom": "",
+                        "required": true,
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,
@@ -31738,7 +31768,7 @@
                       "tags": []
                     },
                     {
-                      "label": "Upload supporting documents (optional):",
+                      "label": "Upload supporting documents",
                       "customClass": "font-weight-bold",
                       "hideLabel": true,
                       "tableView": false,
@@ -31788,7 +31818,8 @@
                       "validateOn": "change",
                       "validate": {
                         "required": true,
-                        "custom": "",
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
                         "customPrivate": false,
                         "strictDateValidation": false,
                         "multiple": false,

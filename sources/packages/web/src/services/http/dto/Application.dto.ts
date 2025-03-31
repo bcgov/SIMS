@@ -14,6 +14,7 @@ import {
   StudentAssessmentStatus,
   ECertFailedValidation,
   ChangeTypes,
+  ApplicationEditStatus,
 } from "@/types";
 
 export interface InProgressApplicationDetailsAPIOutDTO {
@@ -183,6 +184,7 @@ export interface ApplicationWarningsAPIOutDTO {
 export interface ApplicationVersionAPIOutDTO {
   id: number;
   submittedDate: Date;
+  applicationEditStatus: ApplicationEditStatus;
 }
 
 export interface ApplicationOverallDetailsAPIOutDTO {

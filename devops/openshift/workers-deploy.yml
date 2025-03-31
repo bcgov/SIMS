@@ -107,7 +107,7 @@ objects:
                   scheme: HTTP
                 initialDelaySeconds: 30
                 periodSeconds: 30
-                timeoutSeconds: 1
+                timeoutSeconds: 3
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:

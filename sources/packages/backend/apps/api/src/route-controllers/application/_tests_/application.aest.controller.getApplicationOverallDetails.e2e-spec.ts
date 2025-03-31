@@ -79,10 +79,14 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
           {
             id: secondVersionApplication.id,
             submittedDate: secondVersionApplication.submittedDate.toISOString(),
+            applicationEditStatus:
+              secondVersionApplication.applicationEditStatus,
           },
           {
             id: firstVersionApplication.id,
             submittedDate: firstVersionApplication.submittedDate.toISOString(),
+            applicationEditStatus:
+              firstVersionApplication.applicationEditStatus,
           },
         ],
       });

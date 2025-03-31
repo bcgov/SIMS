@@ -154,11 +154,9 @@ export class ApplicationService {
   }
 
   async getApplicationForRequestChange(
-    applicationNumber: string,
+    applicationId: number,
   ): Promise<ApplicationProgramYearAPIOutDTO> {
-    return ApiClient.Application.getApplicationForRequestChange(
-      applicationNumber,
-    );
+    return ApiClient.Application.getApplicationForRequestChange(applicationId);
   }
 
   /**

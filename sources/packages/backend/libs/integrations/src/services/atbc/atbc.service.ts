@@ -11,6 +11,10 @@ import {
 import { HttpService } from "@nestjs/axios";
 import { formatDate } from "@sims/utilities";
 
+/**
+ * @obsolete this service is no longer in use and should be removed.
+ * If not removed, should be refactored to use the new http client.
+ */
 @Injectable()
 export class ATBCService {
   private readonly atbcIntegrationConfig: ATBCIntegrationConfig;
@@ -31,9 +35,7 @@ export class ATBCService {
       headers: { Authorization: `Bearer ${accessToken}` },
       // (NOTE: this will disable client verification)
       // TODO: add certificate for PROD
-      httpsAgent: new (require("https").Agent)({
-        rejectUnauthorized: false,
-      }),
+      httpsAgent: new (require("https").Agent)({}),
     };
   }
 
@@ -71,9 +73,7 @@ export class ATBCService {
    */
   private async loginToATBC(): Promise<ATBCAuthTokenResponse> {
     try {
-      const agent = new (require("https").Agent)({
-        rejectUnauthorized: false,
-      });
+      const agent = new (require("https").Agent)({});
 
       const authRequest = await this.httpService.axiosRef.post(
         this.atbcIntegrationConfig.ATBCLoginEndpoint,

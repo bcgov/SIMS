@@ -21,20 +21,14 @@
           :loading="loading"
           :mobile="isMobile"
           @update:options="paginationAndSortEvent"
+          show-expand
+          v-model:expanded="expandedItems"
         >
+          <template v-slot:loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
           <template #[`item.applicationNumber`]="{ item }">
             {{ item.applicationNumber }}
-          </template>
-          <template #[`item.applicationName`]="{ item }">
-            <v-btn
-              variant="plain"
-              @click="$emit('goToApplication', item.id)"
-              color="primary"
-              >{{ item.applicationName }}
-              <v-tooltip activator="parent" location="start"
-                >Click to view this application</v-tooltip
-              >
-            </v-btn>
           </template>
           <template #[`item.submitted`]="{ item }">
             {{
@@ -49,38 +43,93 @@
             <status-chip-application :status="item.status" />
           </template>
           <template #[`item.actions`]="{ item }">
-            <span
-              v-if="
-                !(
-                  item.status === ApplicationStatus.Cancelled ||
-                  item.status === ApplicationStatus.Completed
-                )
-              "
-            >
+            <v-btn-group variant="text" :rounded="false">
+              <v-btn color="primary" @click="$emit('goToApplication', item.id)"
+                >View
+                <v-tooltip activator="parent" location="start"
+                  >Click to view this application</v-tooltip
+                >
+              </v-btn>
               <v-btn
+                v-if="canDisplayEditOrCancel(item)"
                 :disabled="!hasSINValidStatus"
-                variant="plain"
                 color="primary"
-                class="label-bold"
                 @click="$emit('editApplicationAction', item.status, item.id)"
                 append-icon="mdi-pencil-outline"
-                ><span class="label-bold">Edit</span>
+                >Edit
                 <v-tooltip activator="parent" location="start"
                   >Click to edit this application</v-tooltip
                 >
               </v-btn>
               <v-btn
+                v-if="canDisplayChangeRequest(item)"
                 :disabled="!hasSINValidStatus"
-                variant="plain"
                 color="primary"
-                class="label-bold"
+                @click="
+                  $emit(
+                    'changeApplicationAction',
+                    item.id,
+                    item.isChangeRequestAllowedForPY,
+                  )
+                "
+                append-icon="mdi-pencil-outline"
+                >Change Request
+                <v-tooltip activator="parent" location="start"
+                  >Click to request a change in this application</v-tooltip
+                >
+              </v-btn>
+              <v-btn
+                v-if="canDisplayEditOrCancel(item)"
+                :disabled="!hasSINValidStatus"
+                color="primary"
                 @click="emitCancel(item.id)"
-                ><span class="label-bold">Cancel</span>
+                >Cancel
                 <v-tooltip activator="parent" location="start"
                   >Click to cancel this application</v-tooltip
                 >
               </v-btn>
-            </span>
+            </v-btn-group>
+          </template>
+          <template
+            #[`item.data-table-expand`]="{
+              internalItem,
+              isExpanded,
+              toggleExpand,
+            }"
+          >
+            <v-btn
+              v-if="
+                internalItem.raw.id !== internalItem.raw.parentApplicationId
+              "
+              :append-icon="
+                isExpanded(internalItem)
+                  ? '$expanderCollapseIcon'
+                  : '$expanderExpandIcon'
+              "
+              text="Versions"
+              variant="text"
+              color="primary"
+              @click="
+                versionsExpanderClick(internalItem.raw, () =>
+                  toggleExpand(internalItem),
+                )
+              "
+            ></v-btn>
+          </template>
+          <template v-slot:expanded-row="{ columns, item }">
+            <tr>
+              <td :colspan="columns.length" class="py-4">
+                <content-group>
+                  <student-applications-version
+                    :versions="item.versions"
+                    :loading="item.loadingVersions"
+                    @viewApplicationVersion="
+                      $emit('viewApplicationVersion', $event)
+                    "
+                  />
+                </content-group>
+              </td>
+            </tr>
           </template>
         </v-data-table-server>
       </toggle-content>
@@ -104,22 +153,42 @@ import {
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
+import StudentApplicationsVersion from "@/components/students/StudentApplicationsVersion.vue";
 import { useStore } from "vuex";
 import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  ApplicationVersionAPIOutDTO,
 } from "@/services/http/dto";
 import { useDisplay } from "vuetify";
 
+interface ApplicationSummaryModel extends ApplicationSummaryAPIOutDTO {
+  versions?: ApplicationVersionAPIOutDTO[];
+  loadingVersions?: boolean;
+}
+
 export default defineComponent({
-  components: { StatusChipApplication },
-  emits: ["editApplicationAction", "openConfirmCancel", "goToApplication"],
+  components: { StatusChipApplication, StudentApplicationsVersion },
+  emits: {
+    editApplicationAction: (status: ApplicationStatus, applicationId: number) =>
+      !!status && !!applicationId,
+    changeApplicationAction: (
+      applicationId: number,
+      allowChangeRequest: boolean,
+    ) => !!applicationId && !!allowChangeRequest,
+    openConfirmCancel: (applicationId: number, callback: () => void) =>
+      !!applicationId && !!callback,
+    goToApplication: (applicationId: number) => !!applicationId,
+    viewApplicationVersion: (applicationId: number) => !!applicationId,
+  },
   setup(_, { emit }) {
     const loading = ref(false);
     const { mobile: isMobile } = useDisplay();
+    const expandedItems = ref([]);
     const applicationsAndCount = ref(
-      {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
+      {} as PaginatedResultsAPIOutDTO<ApplicationSummaryModel>,
     );
+
     const {
       dateOnlyLongString,
       getISODateHourMinuteString,
@@ -143,6 +212,8 @@ export default defineComponent({
     const getStudentApplications = async () => {
       try {
         loading.value = true;
+        // Reset expanded items when fetching new data.
+        expandedItems.value = [];
         applicationsAndCount.value =
           await ApplicationService.shared.getStudentApplicationSummary(
             currentPagination.value.page - 1,
@@ -155,11 +226,7 @@ export default defineComponent({
       }
     };
 
-    const reloadApplications = async () => {
-      await getStudentApplications();
-    };
-
-    onMounted(reloadApplications);
+    onMounted(getStudentApplications);
 
     const paginationAndSortEvent = async (event: DataTableOptions) => {
       currentPagination.value.page = event.page;
@@ -181,13 +248,54 @@ export default defineComponent({
     };
 
     const emitCancel = (applicationId: number) => {
-      emit("openConfirmCancel", applicationId, () => reloadApplications());
+      emit("openConfirmCancel", applicationId, () => getStudentApplications());
+    };
+
+    const versionsExpanderClick = async (
+      application: ApplicationSummaryModel,
+      toggleExpand: () => void,
+    ) => {
+      toggleExpand();
+      if (application.versions) {
+        // Application versions are not required to be fetched every time.
+        // If they are already loaded there is no critical reason to fetch them again.
+        return;
+      }
+      try {
+        application.loadingVersions = true;
+        const applications =
+          await ApplicationService.shared.getApplicationOverallDetails(
+            application.id,
+          );
+        application.versions = applications.previousVersions;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        application.loadingVersions = false;
+      }
+    };
+
+    const canDisplayEditOrCancel = (
+      application: ApplicationSummaryAPIOutDTO,
+    ) => {
+      return (
+        application.status !== ApplicationStatus.Cancelled &&
+        application.status !== ApplicationStatus.Completed
+      );
+    };
+
+    const canDisplayChangeRequest = (
+      application: ApplicationSummaryAPIOutDTO,
+    ) => {
+      return application.status === ApplicationStatus.Completed;
     };
 
     return {
       dateOnlyLongString,
       getISODateHourMinuteString,
       emptyStringFiller,
+      canDisplayEditOrCancel,
+      canDisplayChangeRequest,
       ApplicationStatus,
       applicationsAndCount,
       DEFAULT_PAGE_LIMIT,
@@ -199,6 +307,8 @@ export default defineComponent({
       StudentApplicationsExtendedSummaryHeaders,
       isMobile,
       paginationAndSortEvent,
+      versionsExpanderClick,
+      expandedItems,
     };
   },
 });
