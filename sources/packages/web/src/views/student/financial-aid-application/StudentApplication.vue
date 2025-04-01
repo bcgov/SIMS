@@ -107,10 +107,9 @@ export default defineComponent({
 
     onMounted(async () => {
       const { isFulltimeAllowed } = await AppConfigService.shared.config();
-      offeringIntensityOptions.value = Object.keys(
-        mapOfferingIntensities(isFulltimeAllowed),
-      ).map((key) => ({
-        title: mapOfferingIntensities(isFulltimeAllowed)[key],
+      const intensities = mapOfferingIntensities(isFulltimeAllowed);
+      offeringIntensityOptions.value = Object.keys(intensities).map((key) => ({
+        title: intensities[key],
         value: key,
       }));
       programYearOptions.value = (
