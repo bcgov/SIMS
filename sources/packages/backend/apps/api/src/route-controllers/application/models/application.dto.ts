@@ -1,5 +1,5 @@
 import { IntersectionType } from "@nestjs/swagger";
-import { IsObject, IsOptional, IsPositive } from "class-validator";
+import { IsEnum, IsObject, IsOptional, IsPositive } from "class-validator";
 import {
   ApplicationExceptionStatus,
   ApplicationStatus,
@@ -20,6 +20,32 @@ import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import { ChangeTypes } from "@sims/utilities";
+
+export class CreateApplicationAPIInDTO {
+  /**
+   * Application dynamic data.
+   */
+  @IsObject()
+  @JsonMaxSize(JSON_20KB)
+  data: any;
+  /**
+   * Array of unique file names to be associated
+   * with this application.
+   */
+  @IsOptional()
+  associatedFiles: string[];
+  /**
+   * Selected form of the application.
+   * This will be used for ProgramYear active validation
+   */
+  @IsPositive()
+  programYearId: number;
+  /**
+   * Selected offering intensity of the application.
+   */
+  @IsEnum(OfferingIntensity)
+  offeringIntensity: OfferingIntensity;
+}
 
 export class SaveApplicationAPIInDTO {
   /**
@@ -100,6 +126,11 @@ export class ApplicationBaseAPIOutDTO {
 
 export class ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   applicationStatusUpdatedOn: Date;
+  /**
+   * Offering intensity for the application. It represents the offering intensity
+   * associated with the current offering or the selected intensity in the application
+   * if the offering is not available (if a PIR is needed).
+   */
   applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: string;
   applicationEndDate: string;

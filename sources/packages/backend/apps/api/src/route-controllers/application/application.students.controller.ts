@@ -40,6 +40,7 @@ import {
   CompletedApplicationDetailsAPIOutDTO,
   ApplicationWarningsAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
+  CreateApplicationAPIInDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -445,7 +446,7 @@ export class ApplicationStudentsController extends BaseController {
   })
   @Post("draft")
   async createDraftApplication(
-    @Body() payload: SaveApplicationAPIInDTO,
+    @Body() payload: CreateApplicationAPIInDTO,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
@@ -482,6 +483,7 @@ export class ApplicationStudentsController extends BaseController {
           payload.programYearId,
           payload.data,
           payload.associatedFiles,
+          { offeringIntensity: payload.offeringIntensity },
         );
       return { id: draftApplication.id };
     } catch (error) {
@@ -541,7 +543,7 @@ export class ApplicationStudentsController extends BaseController {
         payload.programYearId,
         payload.data,
         payload.associatedFiles,
-        applicationId,
+        { applicationId },
       );
     } catch (error) {
       if (error.name === APPLICATION_DRAFT_NOT_FOUND) {

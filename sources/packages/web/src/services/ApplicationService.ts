@@ -9,7 +9,6 @@ import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
-  SaveApplicationAPIInDTO,
   ApplicationWithProgramYearAPIOutDTO,
   ApplicationDataAPIOutDTO,
   ApplicationBaseAPIOutDTO,
@@ -21,6 +20,8 @@ import {
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
+  CreateApplicationAPIInDTO,
+  SaveApplicationAPIInDTO,
 } from "@/services/http/dto";
 
 export class ApplicationService {
@@ -80,7 +81,7 @@ export class ApplicationService {
   }
 
   async createApplicationDraft(
-    payload: SaveApplicationAPIInDTO,
+    payload: CreateApplicationAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     return ApiClient.Application.createApplicationDraft(payload);
   }

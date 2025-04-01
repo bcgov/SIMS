@@ -21,6 +21,7 @@ import {
   StudentAssessmentStatus,
   FileOriginType,
   ApplicationEditStatus,
+  OfferingIntensity,
   InstitutionLocation,
   StudentAppeal,
 } from "@sims/sims-db";
@@ -479,7 +480,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param programYearId program year associated with the application draft.
    * @param applicationData dynamic data received from Form.IO form.
    * @param associatedFiles associated uploaded files.
-   * @param [applicationId] application id used to execute validations.
+   * @param options provided options
+   * - `offeringIntensity` offering intensity associated with the application.
+   * - `applicationId` application id used to execute validations.
    * @returns Student Application saved draft.
    */
   async saveDraftApplication(
@@ -488,7 +491,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     programYearId: number,
     applicationData: ApplicationData,
     associatedFiles: string[],
-    applicationId?: number,
+    options: {
+      offeringIntensity?: OfferingIntensity;
+      applicationId?: number;
+    },
   ): Promise<Application> {
     let draftApplication = await this.getApplicationToSave(
       studentId,
@@ -496,7 +502,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     );
     // If an application id is provided it means that an update is supposed to happen,
     // so an application draft is expected to be find. If not found, thrown an error.
-    if (applicationId && !draftApplication) {
+    if (options.applicationId && !draftApplication) {
       throw new CustomNamedError(
         "Not able to find the draft application associated with the student.",
         APPLICATION_DRAFT_NOT_FOUND,
@@ -506,7 +512,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // but, if an draft application already exists, it means that it is an
     // attempt to create a second draft and the student is supposed to
     // have only one draft.
-    if (!applicationId && draftApplication) {
+    if (!options.applicationId && draftApplication) {
       throw new CustomNamedError(
         "There is already an existing draft application associated with the current student.",
         MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
@@ -529,6 +535,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       draftApplication = new Application();
       draftApplication.student = { id: studentId } as Student;
       draftApplication.programYear = { id: programYearId } as ProgramYear;
+      draftApplication.offeringIntensity = options.offeringIntensity;
       draftApplication.applicationStatus = ApplicationStatus.Draft;
       draftApplication.applicationStatusUpdatedOn = now;
       draftApplication.creator = auditUser;
@@ -721,6 +728,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         id: true,
         data: !!options?.loadDynamicData as unknown,
         applicationStatus: true,
+        offeringIntensity: true,
         pirStatus: true,
         applicationStatusUpdatedOn: true,
         applicationNumber: true,

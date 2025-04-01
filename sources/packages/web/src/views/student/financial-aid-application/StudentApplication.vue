@@ -14,10 +14,28 @@
       <h2 class="category-header-large primary-color pb-4">
         Apply for funding
       </h2>
-      <content-group>
-        <p class="category-header-medium-small pa-2">
+      <content-group
+        ><p class="category-header-medium-small pa-2">
           Financial Aid Application
         </p>
+        <p class="px-2">
+          In what capacity will you be attending this program?
+          <tooltip-icon
+            >A student is considered to be in part-time studies when taking
+            between 20% and 59% of a full-time course load in a course or
+            continuous period of study.</tooltip-icon
+          >
+        </p>
+        <v-select
+          v-model="offeringIntensity"
+          :items="offeringIntensityOptions"
+          variant="outlined"
+          density="compact"
+          label="Select offering intensity"
+          class="px-2 pb-4"
+          :rules="[(v) => checkNullOrEmptyRule(v, 'Offering intensity')]"
+          hide-details="auto"
+        ></v-select>
         <p class="px-2">
           Please select your program year. This is for students attending
           full-time or part-time studies.
@@ -56,7 +74,7 @@
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
-import { useSnackBar, useRules, ModalDialog } from "@/composables";
+import { useSnackBar, useRules, ModalDialog, useOffering } from "@/composables";
 import { useRouter } from "vue-router";
 import {
   VForm,
@@ -70,6 +88,7 @@ import { ProgramYearService } from "@/services/ProgramYearService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import { PrimaryIdentifierAPIOutDTO } from "@/services/http/dto";
+import { AppConfigService } from "@/services/AppConfigService";
 
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
@@ -79,11 +98,20 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const programYearOptions = ref([] as SelectItemType[]);
     const programYearId = ref();
+    const offeringIntensity = ref();
     const startApplicationForm = ref({} as VForm);
     const { checkNullOrEmptyRule } = useRules();
+    const { mapOfferingIntensities } = useOffering();
     const draftApplicationModal = ref({} as ModalDialog<boolean>);
+    let offeringIntensityOptions = ref([] as SelectItemType[]);
 
     onMounted(async () => {
+      const { isFulltimeAllowed } = await AppConfigService.shared.config();
+      const intensities = mapOfferingIntensities(isFulltimeAllowed);
+      offeringIntensityOptions.value = Object.keys(intensities).map((key) => ({
+        title: intensities[key],
+        value: key,
+      }));
       programYearOptions.value = (
         await ProgramYearService.shared.getProgramYearOptions()
       ).map((yearOption) => ({
@@ -102,6 +130,7 @@ export default defineComponent({
           const { id }: PrimaryIdentifierAPIOutDTO =
             await ApplicationService.shared.createApplicationDraft({
               programYearId: programYearId.value,
+              offeringIntensity: offeringIntensity.value,
               data: {},
               associatedFiles: [],
             });
@@ -143,11 +172,13 @@ export default defineComponent({
       StudentRoutesConst,
       programYearOptions,
       programYearId,
+      offeringIntensity,
       startApplication,
       startApplicationForm,
       checkNullOrEmptyRule,
       LayoutTemplates,
       draftApplicationModal,
+      offeringIntensityOptions,
     };
   },
 });

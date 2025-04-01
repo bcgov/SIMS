@@ -62,6 +62,17 @@ export class Application extends RecordDataModel {
   })
   applicationNumber: string;
   /**
+   * Offering intensity of the application.
+   */
+  @Column({
+    name: "offering_intensity",
+    type: "enum",
+    enum: OfferingIntensity,
+    enumName: "OfferingIntensity",
+    nullable: true,
+  })
+  offeringIntensity?: OfferingIntensity;
+  /**
    * Student associated with this application.
    */
   @OneToOne(() => Student, { eager: false, cascade: false })
