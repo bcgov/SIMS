@@ -281,7 +281,7 @@ export default defineComponent({
 
     watch(
       () => props.locationId,
-      async (currValue) => {
+      async () => {
         await loadApplications();
       },
     );
@@ -311,16 +311,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss" scoped>
-.search-field {
-  min-width: 300px;
-}
-
-.btn-toggle {
-  :deep(.v-btn) {
-    text-transform: none;
-    font-weight: 500;
-  }
-}
-</style>
