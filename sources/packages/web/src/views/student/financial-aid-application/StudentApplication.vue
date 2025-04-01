@@ -39,7 +39,6 @@
         <p class="px-2">
           Please select your program year. This is for students attending
           full-time or part-time studies.
-          <span class="field-required"></span>
         </p>
         <v-select
           v-model="programYearId"
@@ -75,7 +74,7 @@
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
-import { useSnackBar, useRules, ModalDialog } from "@/composables";
+import { useSnackBar, useRules, ModalDialog, useOffering } from "@/composables";
 import { useRouter } from "vue-router";
 import {
   VForm,
@@ -102,30 +101,13 @@ export default defineComponent({
     const offeringIntensity = ref();
     const startApplicationForm = ref({} as VForm);
     const { checkNullOrEmptyRule } = useRules();
+    const { mapOfferingIntensities } = useOffering();
     const draftApplicationModal = ref({} as ModalDialog<boolean>);
     let offeringIntensityOptions = ref([] as SelectItemType[]);
 
     onMounted(async () => {
       const { isFulltimeAllowed } = await AppConfigService.shared.config();
-      if (!isFulltimeAllowed) {
-        offeringIntensityOptions.value = [
-          {
-            title: "Part-Time",
-            value: "Part Time",
-          },
-        ];
-      } else {
-        offeringIntensityOptions.value = [
-          {
-            title: "Full-Time",
-            value: "Full Time",
-          },
-          {
-            title: "Part-Time",
-            value: "Part Time",
-          },
-        ];
-      }
+      mapOfferingIntensities(isFulltimeAllowed);
       programYearOptions.value = (
         await ProgramYearService.shared.getProgramYearOptions()
       ).map((yearOption) => ({
