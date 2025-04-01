@@ -25,7 +25,7 @@ import {
 } from "@/types";
 import { v4 as uuid } from "uuid";
 import { AppConfigService } from "@/services/AppConfigService";
-import { useFormatters, useFormioUtils } from "@/composables";
+import { useFormatters, useFormioUtils, useOffering } from "@/composables";
 
 export default defineComponent({
   emits: {
@@ -65,8 +65,10 @@ export default defineComponent({
   setup(props, context) {
     const { registerUtilsMethod } = useFormioUtils();
     const { currencyFormatter } = useFormatters();
+    const { mapOfferingIntensities } = useOffering();
     // Register global utils functions.
     registerUtilsMethod("currencyFormatter", currencyFormatter);
+    registerUtilsMethod("mapOfferingIntensities", mapOfferingIntensities);
 
     const formioContainerRef = ref(null);
     // Wait to show the spinner when there is an API call.
