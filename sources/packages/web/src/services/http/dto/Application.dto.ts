@@ -33,6 +33,13 @@ export interface InProgressApplicationDetailsAPIOutDTO {
   outstandingAssessmentStatus: SuccessWaitingStatus;
 }
 
+export interface CreateApplicationAPIInDTO {
+  programYearId: number;
+  offeringIntensity: OfferingIntensity;
+  data: unknown;
+  associatedFiles: string[];
+}
+
 export interface SaveApplicationAPIInDTO {
   programYearId: number;
   data: unknown;

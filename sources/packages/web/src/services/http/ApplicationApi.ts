@@ -22,6 +22,7 @@ import {
   ApplicationAssessmentStatusDetailsAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
+  CreateApplicationAPIInDTO,
 } from "@/services/http/dto";
 
 export class ApplicationApi extends HttpBaseClient {
@@ -71,9 +72,9 @@ export class ApplicationApi extends HttpBaseClient {
   }
 
   async createApplicationDraft(
-    payload: SaveApplicationAPIInDTO,
+    payload: CreateApplicationAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return this.postCall<SaveApplicationAPIInDTO>(
+    return this.postCall<CreateApplicationAPIInDTO>(
       this.addClientRoot("application/draft"),
       payload,
     );
