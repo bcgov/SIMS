@@ -107,12 +107,12 @@ export default defineComponent({
 
     onMounted(async () => {
       const { isFulltimeAllowed } = await AppConfigService.shared.config();
-      for (const key in mapOfferingIntensities(isFulltimeAllowed)) {
-        offeringIntensityOptions.value.push({
-          title: mapOfferingIntensities(isFulltimeAllowed)[key],
-          value: key,
-        });
-      }
+      offeringIntensityOptions.value = Object.keys(
+        mapOfferingIntensities(isFulltimeAllowed),
+      ).map((key) => ({
+        title: mapOfferingIntensities(isFulltimeAllowed)[key],
+        value: key,
+      }));
       programYearOptions.value = (
         await ProgramYearService.shared.getProgramYearOptions()
       ).map((yearOption) => ({
