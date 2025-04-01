@@ -289,7 +289,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       const result = await assessmentController.workflowWrapUp(
         createFakeWorkflowWrapUpPayload(
           currentApplicationToWrapUp.currentAssessment.id,
-          workflowData,
+          { workflowData },
         ),
       );
 
@@ -375,7 +375,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       const result = await assessmentController.workflowWrapUp(
         createFakeWorkflowWrapUpPayload(
           currentApplicationToWrapUp.currentAssessment.id,
-          workflowData,
+          { workflowData },
         ),
       );
 
