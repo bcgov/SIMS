@@ -45,14 +45,18 @@
                   >
                 </v-btn-toggle>
               </v-col>
-              <v-col cols="auto">
+              <v-col cols="3">
                 <v-text-field
                   v-model="searchQuery"
                   append-inner-icon="mdi-magnify"
-                  label="Search"
-                  single-line
+                  placeholder="Search"
+                  variant="outlined"
+                  density="compact"
+                  class="search-field"
                   hide-details
+                  clearable
                   @update:model-value="handleSearch"
+                  @click:clear="handleSearch"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -116,7 +120,6 @@ import {
   ITEMS_PER_PAGE,
   LayoutTemplates,
   PaginationOptions,
-  ProgramInfoStatus,
 } from "@/types";
 
 // Define study intensity enum since it's not exported from types
@@ -146,17 +149,6 @@ const IntensityFilter = {
 
 const DEFAULT_SORT_FIELD = "submittedDate";
 
-// Extend the PIRSummaryAPIOutDTO interface to include new fields
-interface ExtendedPIRSummaryDTO extends Omit<PIRSummaryAPIOutDTO, "pirStatus"> {
-  submittedDate: string;
-  givenNames: string;
-  lastName: string;
-  studentNumber: string;
-  studyIntensity: StudyIntensity;
-  program: string;
-  pirStatus: ProgramInfoStatus;
-}
-
 export default defineComponent({
   components: { StatusChipProgramInfoRequest },
   props: {
@@ -173,7 +165,7 @@ export default defineComponent({
     const searchQuery = ref("");
     const intensityFilter = ref([IntensityFilter.All]);
     const paginatedApplications = ref(
-      {} as PaginatedResultsAPIOutDTO<ExtendedPIRSummaryDTO>,
+      {} as PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>,
     );
 
     const locationName = computed(() => {
@@ -201,21 +193,9 @@ export default defineComponent({
           props.locationId,
         );
 
-        // Transform the response to match ExtendedPIRSummaryDTO
-        const transformedResponse = response.map((item) => ({
-          ...item,
-          submittedDate: new Date().toISOString(), // This should come from the API
-          givenNames: item.fullName?.split(" ")[0] || "",
-          lastName: item.fullName?.split(" ").slice(1).join(" ") || "",
-          studentNumber: "", // This should come from the API
-          studyIntensity: StudyIntensity.FullTime, // This should come from the API
-          program: "", // This should come from the API
-          pirStatus: item.pirStatus as ProgramInfoStatus,
-        }));
-
         paginatedApplications.value = {
-          results: transformedResponse,
-          count: transformedResponse.length,
+          results: response,
+          count: response.length,
         };
       } catch (error: unknown) {
         console.error("Error loading PIR applications:", error);
@@ -225,16 +205,42 @@ export default defineComponent({
     };
 
     const handleSearch = async () => {
-      const searchCriteria: Record<string, string | boolean | string[]> = {};
+      let searchCriteria: Record<string, string | boolean | string[]> =
+        (currentPagination.searchCriteria as Record<
+          string,
+          string | boolean | string[]
+        >) || {};
+
       if (searchQuery.value) {
-        searchCriteria.nameSearch = searchQuery.value;
+        // Search across multiple fields
+        searchCriteria.search = searchQuery.value;
+        // Keep the intensity filter if it exists
+        if (
+          intensityFilter.value &&
+          !intensityFilter.value.includes(IntensityFilter.All)
+        ) {
+          searchCriteria.intensitySearch = intensityFilter.value.toString();
+        }
+      } else {
+        // Clear search but keep intensity filter if it exists
+        delete searchCriteria.search;
+        if (
+          intensityFilter.value &&
+          !intensityFilter.value.includes(IntensityFilter.All)
+        ) {
+          searchCriteria.intensitySearch = intensityFilter.value.toString();
+        } else {
+          // Clear all criteria if no search and no intensity filter
+          searchCriteria = {};
+        }
       }
+
       currentPagination.searchCriteria = searchCriteria;
       await loadApplications();
     };
 
     const filterByIntensity = async () => {
-      const searchCriteria: Record<string, string | boolean | string[]> =
+      let searchCriteria: Record<string, string | boolean | string[]> =
         (currentPagination.searchCriteria as Record<
           string,
           string | boolean | string[]
@@ -242,9 +248,19 @@ export default defineComponent({
 
       if (intensityFilter.value.includes(IntensityFilter.All)) {
         delete searchCriteria.intensitySearch;
+        // If no search query, clear all criteria
+        if (!searchQuery.value) {
+          searchCriteria = {};
+        }
       } else {
         searchCriteria.intensitySearch = intensityFilter.value.toString();
       }
+
+      // Preserve search query if it exists
+      if (searchQuery.value) {
+        searchCriteria.search = searchQuery.value;
+      }
+
       currentPagination.searchCriteria = searchCriteria;
       await loadApplications();
     };
@@ -295,3 +311,16 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.search-field {
+  min-width: 300px;
+}
+
+.btn-toggle {
+  :deep(.v-btn) {
+    text-transform: none;
+    font-weight: 500;
+  }
+}
+</style>

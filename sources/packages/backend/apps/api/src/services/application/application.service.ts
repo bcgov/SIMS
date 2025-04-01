@@ -1033,15 +1033,24 @@ export class ApplicationService extends RecordDataModelService<Application> {
           "application.applicationNumber",
           "application.id",
           "application.pirStatus",
+          "application.submittedDate",
+          "application.studentNumber",
           "currentAssessment.id",
           "offering.studyStartDate",
           "offering.studyEndDate",
-          "student",
+          "offering.offeringIntensity",
+          "educationProgram.name",
+          "student.id",
+          "user.firstName",
+          "user.lastName",
+          "pirProgram.name",
         ])
         .leftJoin("application.currentAssessment", "currentAssessment")
         .leftJoin("currentAssessment.offering", "offering")
+        .leftJoin("offering.educationProgram", "educationProgram")
+        .leftJoin("application.pirProgram", "pirProgram")
         .innerJoin("application.student", "student")
-        .innerJoinAndSelect("student.user", "user")
+        .innerJoin("student.user", "user")
         .where("application.location.id = :locationId", { locationId })
         .andWhere("application.pirStatus is not null")
         .andWhere("application.pirStatus != :nonPirStatus", {

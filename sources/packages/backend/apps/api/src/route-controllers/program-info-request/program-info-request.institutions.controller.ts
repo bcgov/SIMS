@@ -291,13 +291,21 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     );
     return applications.map((eachApplication: Application) => {
       const offering = eachApplication.currentAssessment?.offering;
+      const user = eachApplication.student.user;
       return {
         applicationId: eachApplication.id,
         applicationNumber: eachApplication.applicationNumber,
         studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
         studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
         pirStatus: eachApplication.pirStatus,
-        fullName: getUserFullName(eachApplication.student.user),
+        fullName: getUserFullName(user),
+        submittedDate: getISODateOnlyString(eachApplication.submittedDate),
+        givenNames: user.firstName,
+        lastName: user.lastName,
+        studentNumber: eachApplication.studentNumber,
+        studyIntensity: offering?.offeringIntensity,
+        program:
+          offering?.educationProgram?.name || eachApplication.pirProgram?.name,
       };
     });
   }
