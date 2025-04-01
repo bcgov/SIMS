@@ -99,6 +99,16 @@ export class ApplicationApi extends HttpBaseClient {
     );
   }
 
+  async applicationChangeRequest(
+    applicationId: number,
+    payload: SaveApplicationAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall<SaveApplicationAPIInDTO>(
+      this.addClientRoot(`application/${applicationId}/change-request`),
+      payload,
+    );
+  }
+
   async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,

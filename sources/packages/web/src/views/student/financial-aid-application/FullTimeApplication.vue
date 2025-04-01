@@ -3,7 +3,9 @@
     <template #header>
       <header-navigator
         title="Applications"
-        subTitle="Financial Aid Application"
+        :sub-title="
+          changeRequest ? 'Change request' : 'Financial Aid Application'
+        "
       >
         <template #buttons>
           <v-btn
@@ -132,6 +134,11 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    changeRequest: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   setup(props) {
     const {
@@ -181,13 +188,25 @@ export default defineComponent({
         ApplicationService.shared.getApplicationData(props.id),
       ]);
 
-      // Adjust the spaces when optional fields are not present.
-      isReadOnly.value =
-        [
+      // Define if the form should be read-only.
+      if (props.readOnly) {
+        // If some value is provided in the read-only prop, then the form should be readonly.
+        isReadOnly.value = true;
+      } else if (
+        // If a change request is being made in the expected application status,
+        // then the form should be editable.
+        props.changeRequest &&
+        applicationData.applicationStatus === ApplicationStatus.Completed
+      ) {
+        isReadOnly.value = false;
+      } else {
+        // If the application status is Completed, Cancelled or Edited, then the form should be read-only.
+        isReadOnly.value = [
           ApplicationStatus.Completed,
           ApplicationStatus.Cancelled,
           ApplicationStatus.Edited,
-        ].includes(applicationData.applicationStatus) || !!props.readOnly;
+        ].includes(applicationData.applicationStatus);
+      }
 
       notDraft.value =
         !!props.readOnly ||
@@ -260,15 +279,19 @@ export default defineComponent({
       submittingApplication.value = true;
       try {
         const associatedFiles = formioUtils.getAssociatedFiles(form);
-        await ApplicationService.shared.submitApplication(props.id, {
-          programYearId: props.programYearId,
-          data: args,
-          associatedFiles,
-        });
-        router.push({
+        await ApplicationService.shared.submitApplication(
+          props.id,
+          {
+            programYearId: props.programYearId,
+            data: args,
+            associatedFiles,
+          },
+          { isChangeRequest: props.changeRequest },
+        );
+        snackBar.success("Thank you, your application has been submitted.");
+        await router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         });
-        snackBar.success("Thank you, your application has been submitted.");
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An unexpected error has happened.";

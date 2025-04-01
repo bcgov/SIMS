@@ -352,6 +352,78 @@ export class ApplicationStudentsController extends BaseController {
     }
   }
 
+  @CheckSinValidation()
+  @Patch(":applicationId/change-request")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Program Year is not active or " +
+      "Selected offering id is invalid or " +
+      "invalid study dates or selected study start date is not within the program year or " +
+      "the education program is not active or " +
+      "the education program is expired or " +
+      "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
+      "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
+      "or Invalid offering intensity",
+  })
+  @ApiBadRequestResponse({
+    description: "Form validation failed or Offering intensity type is invalid",
+  })
+  @ApiNotFoundResponse({ description: "Application not found." })
+  @ApiForbiddenResponse({
+    description: "You have a restriction on your account.",
+  })
+  async applicationChangeRequest(
+    @Body() payload: SaveApplicationAPIInDTO,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<void> {
+    const programYear = await this.programYearService.getActiveProgramYear(
+      payload.programYearId,
+    );
+    if (!programYear) {
+      throw new UnprocessableEntityException(
+        "Program Year is not active. Not able to create an application invalid request.",
+      );
+    }
+    // Validate the values in the submitted application before submitting.
+    await this.validateSubmitApplicationData(payload);
+    const submissionResult =
+      await this.formService.dryRunSubmission<ApplicationData>(
+        programYear.formName,
+        payload.data,
+      );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to create an application due to an invalid request.",
+      );
+    }
+    await this.applicationControllerService.offeringIntensityRestrictionCheck(
+      studentToken.studentId,
+      submissionResult.data.data.howWillYouBeAttendingTheProgram,
+    );
+    try {
+      await this.applicationService.submitApplicationChangeRequest(
+        applicationId,
+        studentToken.userId,
+        studentToken.studentId,
+        submissionResult.data.data,
+        payload.associatedFiles,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case APPLICATION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case APPLICATION_NOT_VALID:
+          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+          case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            throw new UnprocessableEntityException(error.message);
+        }
+      }
+      throw error;
+    }
+  }
+
   /**
    * Creates a new application draft for the authenticated student.
    * The student is allowed to have only one draft application, so

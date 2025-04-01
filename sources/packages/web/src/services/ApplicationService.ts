@@ -95,7 +95,15 @@ export class ApplicationService {
   async submitApplication(
     applicationId: number,
     payload: SaveApplicationAPIInDTO,
+    options?: { isChangeRequest?: boolean },
   ): Promise<void> {
+    if (options?.isChangeRequest) {
+      await ApiClient.Application.applicationChangeRequest(
+        applicationId,
+        payload,
+      );
+      return;
+    }
     await ApiClient.Application.submitApplication(applicationId, payload);
   }
 

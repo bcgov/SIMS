@@ -21,6 +21,8 @@ import {
   StudentAssessmentStatus,
   FileOriginType,
   ApplicationEditStatus,
+  InstitutionLocation,
+  StudentAppeal,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -304,6 +306,97 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     });
     return { application, createdAssessment: originalAssessment };
+  }
+
+  async submitApplicationChangeRequest(
+    applicationId: number,
+    auditUserId: number,
+    studentId: number,
+    applicationData: ApplicationData,
+    associatedFiles: string[],
+  ): Promise<ApplicationSubmissionResult> {
+    const application = await this.getApplicationToSave(
+      studentId,
+      ApplicationStatus.Completed,
+      applicationId,
+    );
+    // If the application was not found it is because it does not belongs to the student or it is completed.
+    if (!application) {
+      throw new CustomNamedError(
+        "Student Application not found or it is not in the correct status to be submitted.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+    // Create the new assessment.
+    const now = new Date();
+    const auditUser = { id: auditUserId } as User;
+    const originalAssessment = new StudentAssessment();
+    originalAssessment.triggerType = AssessmentTriggerType.OriginalAssessment;
+    originalAssessment.submittedBy = auditUser;
+    originalAssessment.submittedDate = now;
+    originalAssessment.creator = auditUser;
+    originalAssessment.offering = {
+      id: application.currentAssessment.offering.id,
+    } as EducationProgramOffering;
+    if (application.currentAssessment.studentAppeal) {
+      originalAssessment.studentAppeal = {
+        id: application.currentAssessment.studentAppeal.id,
+      } as StudentAppeal;
+    }
+    // Creating new Application with same application number.
+    const newApplication = new Application();
+    // Current date is set as submitted date.
+    newApplication.submittedDate = now;
+    newApplication.applicationNumber = application.applicationNumber;
+    newApplication.relationshipStatus = applicationData.relationshipStatus;
+    newApplication.studentNumber = applicationData.studentNumber;
+    newApplication.programYear = application.programYear;
+    newApplication.data = applicationData;
+    newApplication.location = {
+      id: application.location.id,
+    } as InstitutionLocation;
+    newApplication.parentApplication = {
+      id: application.parentApplication.id,
+    } as Application;
+    newApplication.precedingApplication = {
+      id: application.id,
+    } as Application;
+    newApplication.student = { id: studentId } as Student;
+    newApplication.studentFiles = await this.getSyncedApplicationFiles(
+      studentId,
+      [],
+      associatedFiles,
+    );
+    // Application status related properties.
+    newApplication.applicationStatus = ApplicationStatus.Edited;
+    newApplication.applicationStatusUpdatedOn = now;
+    // Application edit status related properties.
+    newApplication.applicationEditStatus =
+      ApplicationEditStatus.ChangeInProgress;
+    newApplication.applicationEditStatusUpdatedOn = now;
+    newApplication.applicationEditStatusUpdatedBy = auditUser;
+    // While editing an application, a new application record is created and a new
+    // assessment record is also created to be the used as a "current Assessment" record.
+    // The application and the assessment records have a DB relationship and the
+    // assessment record also has a second relationship to the application that
+    // keeps its history. Due to this double relationships the application record
+    // and the assessment cannot be create at the same moment what causes a
+    // "cyclic dependency error" on Typeorm. Saving the application record and later
+    // having it associated with the assessment solves the issue.
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const applicationRepository =
+        transactionalEntityManager.getRepository(Application);
+      await applicationRepository.save(newApplication);
+      newApplication.modifier = auditUser;
+      newApplication.updatedAt = now;
+      newApplication.studentAssessments = [originalAssessment];
+      newApplication.currentAssessment = originalAssessment;
+      await applicationRepository.save(newApplication);
+    });
+    return {
+      application: newApplication,
+      createdAssessment: originalAssessment,
+    };
   }
 
   /**
@@ -808,11 +901,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "studentFile.uniqueFileName",
         "currentAssessment.id",
         "currentAssessment.assessmentWorkflowId",
+        "location.id",
+        "offering.id",
+        "studentAppeal.id",
       ])
       .innerJoin("application.programYear", "programYear")
+      .innerJoin("application.location", "location")
       .leftJoin("application.parentApplication", "parentApplication")
       .leftJoin("application.precedingApplication", "precedingApplication")
       .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
+      .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
       .leftJoin("application.studentFiles", "studentFiles")
       .leftJoin("studentFiles.studentFile", "studentFile")
       .where("application.student.id = :studentId", { studentId })
