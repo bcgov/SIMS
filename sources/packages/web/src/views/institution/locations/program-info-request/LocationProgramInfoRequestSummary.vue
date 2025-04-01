@@ -1,5 +1,8 @@
 <template>
-  <full-page-container :full-width="true">
+  <full-page-container
+    :full-width="true"
+    :layout-template="LayoutTemplates.Centered"
+  >
     <template #header>
       <header-navigator
         :title="locationName"
@@ -7,53 +10,91 @@
         data-cy="programInformationRequestsHeader"
       />
     </template>
-    <body-header
-      title="Active applications"
-      data-cy="activeApplicationsTab"
-      :recordsCount="applications.length"
-    />
-    <content-group>
-      <toggle-content :toggled="!applications.length">
-        <DataTable
-          :autoLayout="true"
-          :value="applications"
-          class="p-m-4"
-          :paginator="true"
-          :rows="10"
+    <body-header-container :enableCardView="true">
+      <template #header>
+        <body-header
+          title="Active applications"
+          data-cy="activeApplicationsTab"
+          :recordsCount="paginatedApplications.count"
         >
-          <Column field="fullName" header="Name">
-            <template #body="slotProps">
-              <span>{{ slotProps.data.fullName }}</span>
-            </template>
-          </Column>
-          <Column field="studyStartPeriod" header="Study Period">
-            <template #body="slotProps">
-              <span>
-                {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
-                {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
-              </span>
-            </template></Column
+          <template #actions>
+            <v-row align="center" justify="end" no-gutters>
+              <v-col cols="auto" class="mr-4">
+                <v-btn-toggle
+                  mandatory
+                  v-model="intensityFilter"
+                  class="float-right btn-toggle"
+                  selected-class="selected-btn-toggle"
+                  @update:model-value="filterByIntensity"
+                >
+                  <v-btn
+                    rounded="xl"
+                    color="primary"
+                    :value="IntensityFilter.All"
+                    class="mr-2"
+                    >All</v-btn
+                  >
+                  <v-btn
+                    v-for="intensity in StudyIntensity"
+                    :key="intensity"
+                    rounded="xl"
+                    color="primary"
+                    :value="intensity"
+                    class="mr-2"
+                    >{{ intensity }}</v-btn
+                  >
+                </v-btn-toggle>
+              </v-col>
+              <v-col cols="auto">
+                <v-text-field
+                  v-model="searchQuery"
+                  append-inner-icon="mdi-magnify"
+                  label="Search"
+                  single-line
+                  hide-details
+                  @update:model-value="handleSearch"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </template>
+        </body-header>
+      </template>
+      <content-group>
+        <toggle-content
+          :toggled="!paginatedApplications.count && !applicationsLoading"
+        >
+          <v-data-table-server
+            :headers="pirTableHeaders"
+            :items="paginatedApplications.results"
+            :items-length="paginatedApplications.count"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :loading="applicationsLoading"
+            @update:options="pageSortEvent"
           >
-          <Column field="applicationNumber" header="Application #"></Column>
-          <Column field="pirStatus" header="Status">
-            <template #body="slotProps">
-              <status-chip-program-info-request
-                :status="slotProps.data.pirStatus"
-              />
+            <template #[`item.submittedDate`]="{ item }">
+              {{ dateOnlyLongString(item.submittedDate) }}
             </template>
-          </Column>
-          <Column field="applicationId" header="">
-            <template #body="slotProps">
+            <template #[`item.studyStartPeriod`]="{ item }">
+              {{ dateOnlyLongString(item.studyStartPeriod) }}
+            </template>
+            <template #[`item.studyEndPeriod`]="{ item }">
+              {{ dateOnlyLongString(item.studyEndPeriod) }}
+            </template>
+            <template #[`item.pirStatus`]="{ item }">
+              <status-chip-program-info-request :status="item.pirStatus" />
+            </template>
+            <template #[`item.actions`]="{ item }">
               <v-btn
                 color="primary"
-                @click="goToViewApplication(slotProps.data.applicationId)"
+                @click="goToViewApplication(item.applicationId)"
                 >View</v-btn
               >
             </template>
-          </Column>
-        </DataTable>
-      </toggle-content>
-    </content-group>
+          </v-data-table-server>
+        </toggle-content>
+      </content-group>
+    </body-header-container>
   </full-page-container>
 </template>
 
@@ -64,7 +105,57 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
 import { useFormatters, useInstitutionState } from "@/composables";
 import StatusChipProgramInfoRequest from "@/components/generic/StatusChipProgramInfoRequest.vue";
-import { PIRSummaryAPIOutDTO } from "@/services/http/dto";
+import {
+  PIRSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
+import {
+  DataTableOptions,
+  DataTableSortOrder,
+  DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
+  LayoutTemplates,
+  PaginationOptions,
+  ProgramInfoStatus,
+} from "@/types";
+
+// Define study intensity enum since it's not exported from types
+enum StudyIntensity {
+  FullTime = "Full Time",
+  PartTime = "Part Time",
+}
+
+const pirTableHeaders = [
+  { title: "Submitted Date", key: "submittedDate", sortable: true },
+  { title: "Application #", key: "applicationNumber", sortable: true },
+  { title: "Given Names", key: "givenNames", sortable: true },
+  { title: "Last Name", key: "lastName", sortable: true },
+  { title: "Student Number", key: "studentNumber", sortable: true },
+  { title: "Intensity", key: "studyIntensity", sortable: true },
+  { title: "Program", key: "program", sortable: true },
+  { title: "Start Date", key: "studyStartPeriod", sortable: true },
+  { title: "End Date", key: "studyEndPeriod", sortable: true },
+  { title: "Status", key: "pirStatus", sortable: true },
+  { title: "Actions", key: "actions", sortable: false },
+];
+
+const IntensityFilter = {
+  All: "All",
+  ...StudyIntensity,
+};
+
+const DEFAULT_SORT_FIELD = "submittedDate";
+
+// Extend the PIRSummaryAPIOutDTO interface to include new fields
+interface ExtendedPIRSummaryDTO extends Omit<PIRSummaryAPIOutDTO, "pirStatus"> {
+  submittedDate: string;
+  givenNames: string;
+  lastName: string;
+  studentNumber: string;
+  studyIntensity: StudyIntensity;
+  program: string;
+  pirStatus: ProgramInfoStatus;
+}
 
 export default defineComponent({
   components: { StatusChipProgramInfoRequest },
@@ -78,11 +169,23 @@ export default defineComponent({
     const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
-    const applications = ref([] as PIRSummaryAPIOutDTO[]);
+    const applicationsLoading = ref(false);
+    const searchQuery = ref("");
+    const intensityFilter = ref([IntensityFilter.All]);
+    const paginatedApplications = ref(
+      {} as PaginatedResultsAPIOutDTO<ExtendedPIRSummaryDTO>,
+    );
 
     const locationName = computed(() => {
       return getLocationName(props.locationId);
     });
+
+    const currentPagination: PaginationOptions = {
+      page: 1,
+      pageLimit: DEFAULT_PAGE_LIMIT,
+      sortField: DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortOrder.DESC,
+    };
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
@@ -91,29 +194,103 @@ export default defineComponent({
       });
     };
 
-    const updateSummaryList = async (locationId: number) => {
-      applications.value = await ProgramInfoRequestService.shared.getPIRSummary(
-        locationId,
-      );
+    const loadApplications = async () => {
+      try {
+        applicationsLoading.value = true;
+        const response = await ProgramInfoRequestService.shared.getPIRSummary(
+          props.locationId,
+        );
+
+        // Transform the response to match ExtendedPIRSummaryDTO
+        const transformedResponse = response.map((item) => ({
+          ...item,
+          submittedDate: new Date().toISOString(), // This should come from the API
+          givenNames: item.fullName?.split(" ")[0] || "",
+          lastName: item.fullName?.split(" ").slice(1).join(" ") || "",
+          studentNumber: "", // This should come from the API
+          studyIntensity: StudyIntensity.FullTime, // This should come from the API
+          program: "", // This should come from the API
+          pirStatus: item.pirStatus as ProgramInfoStatus,
+        }));
+
+        paginatedApplications.value = {
+          results: transformedResponse,
+          count: transformedResponse.length,
+        };
+      } catch (error: unknown) {
+        console.error("Error loading PIR applications:", error);
+      } finally {
+        applicationsLoading.value = false;
+      }
+    };
+
+    const handleSearch = async () => {
+      const searchCriteria: Record<string, string | boolean | string[]> = {};
+      if (searchQuery.value) {
+        searchCriteria.nameSearch = searchQuery.value;
+      }
+      currentPagination.searchCriteria = searchCriteria;
+      await loadApplications();
+    };
+
+    const filterByIntensity = async () => {
+      const searchCriteria: Record<string, string | boolean | string[]> =
+        (currentPagination.searchCriteria as Record<
+          string,
+          string | boolean | string[]
+        >) || {};
+
+      if (intensityFilter.value.includes(IntensityFilter.All)) {
+        delete searchCriteria.intensitySearch;
+      } else {
+        searchCriteria.intensitySearch = intensityFilter.value.toString();
+      }
+      currentPagination.searchCriteria = searchCriteria;
+      await loadApplications();
+    };
+
+    const pageSortEvent = async (event: DataTableOptions) => {
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
+      if (event.sortBy.length) {
+        const [sortBy] = event.sortBy;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
+      } else {
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortOrder.DESC;
+      }
+      await loadApplications();
     };
 
     watch(
       () => props.locationId,
       async (currValue) => {
-        //update the list
-        await updateSummaryList(currValue);
+        await loadApplications();
       },
     );
 
     onMounted(async () => {
-      await updateSummaryList(props.locationId);
+      await loadApplications();
     });
 
     return {
-      applications,
+      paginatedApplications,
       dateOnlyLongString,
       goToViewApplication,
       locationName,
+      pirTableHeaders,
+      applicationsLoading,
+      searchQuery,
+      handleSearch,
+      intensityFilter,
+      filterByIntensity,
+      IntensityFilter,
+      StudyIntensity,
+      DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
+      pageSortEvent,
+      LayoutTemplates,
     };
   },
 });
