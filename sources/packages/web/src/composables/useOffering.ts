@@ -59,5 +59,9 @@ export function useOffering() {
     };
   };
 
-  return { mapOfferingChipStatus, mapOfferingIntensities };
+  return {
+    mapOfferingChipStatus,
+    mapOfferingIntensities,
+    mapOfferingIntensity,
+  };
 }

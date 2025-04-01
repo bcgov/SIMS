@@ -81,7 +81,6 @@ import {
   SelectItemType,
   LayoutTemplates,
   ApiProcessError,
-  OfferingIntensity,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -104,14 +103,16 @@ export default defineComponent({
     const { checkNullOrEmptyRule } = useRules();
     const { mapOfferingIntensities } = useOffering();
     const draftApplicationModal = ref({} as ModalDialog<boolean>);
-    let offeringIntensityOptions = ref(
-      [] as Partial<Record<OfferingIntensity, string>>,
-    );
+    let offeringIntensityOptions = ref([] as SelectItemType[]);
 
     onMounted(async () => {
       const { isFulltimeAllowed } = await AppConfigService.shared.config();
-      offeringIntensityOptions.value =
-        mapOfferingIntensities(isFulltimeAllowed);
+      for (const key in mapOfferingIntensities(isFulltimeAllowed)) {
+        offeringIntensityOptions.value.push({
+          title: mapOfferingIntensities(isFulltimeAllowed)[key],
+          value: key,
+        });
+      }
       programYearOptions.value = (
         await ProgramYearService.shared.getProgramYearOptions()
       ).map((yearOption) => ({
