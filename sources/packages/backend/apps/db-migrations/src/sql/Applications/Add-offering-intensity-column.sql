@@ -20,4 +20,4 @@ WHERE
 ALTER TABLE
   sims.applications
 ALTER COLUMN
-  sims.offering_intensity DROP DEFAULT;
+  offering_intensity DROP DEFAULT;
