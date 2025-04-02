@@ -326,7 +326,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // If the application was not found it is because it does not belongs to the student or it is completed.
     if (!application) {
       throw new CustomNamedError(
-        "Student Application not found or it is not in the correct status to be submitted.",
+        "Student Application it is not in the correct status to be submitted.",
         APPLICATION_NOT_FOUND,
       );
     }
@@ -340,6 +340,29 @@ export class ApplicationService extends RecordDataModelService<Application> {
       throw new CustomNamedError(
         "An application change request is already in progress.",
         APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
+      );
+    }
+    // Validates selected location and selected offering as key values that
+    // should not be changed. Even if some other values are changed (tampered by the user),
+    // there will be no impact for application processing since the location and offering
+    // are copied from the current application retrieved from the database.
+    if (
+      applicationData.selectedLocation !== application.data.selectedLocation
+    ) {
+      throw new CustomNamedError(
+        "Change request has a different location from its original submission.",
+        APPLICATION_NOT_VALID,
+      );
+    }
+    if (
+      applicationData.selectedOffering !== application.data.selectedOffering
+    ) {
+      // Applications are expected to have the same offering value populated, even for PIRs.
+      // PIRs will not have the offering value populated and the assessment will be created
+      // based on the most recent offering associated with the current application version.
+      throw new CustomNamedError(
+        "Change request has a different offering from its original submission.",
+        APPLICATION_NOT_VALID,
       );
     }
 
@@ -2071,6 +2094,31 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: Not(ApplicationStatus.Edited),
       },
       order: { submittedDate: "DESC" },
+    });
+  }
+
+  /**
+   * Get information required an application submission validation.
+   * @param applicationId application id.
+   * @param studentId student to check for authorization.
+   * @returns application data for submission validation.
+   */
+  async getApplicationForSubmissionValidation(
+    applicationId: number,
+    studentId: number,
+  ): Promise<Application> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        programYear: { id: true, formName: true, active: true },
+      },
+      relations: {
+        programYear: true,
+      },
+      where: {
+        id: applicationId,
+        student: { id: studentId },
+      },
     });
   }
 
