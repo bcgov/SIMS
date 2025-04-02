@@ -805,9 +805,7 @@ export class ApplicationControllerService {
       throw new NotFoundException("Application not found.");
     }
     if (!application.programYear.active) {
-      throw new UnprocessableEntityException(
-        "Program Year is not active. Not able to create an application invalid request.",
-      );
+      throw new UnprocessableEntityException("Program year is not active.");
     }
     // Validate the values in the submitted application before submitting.
     await this.validateSubmitApplicationData(payload);

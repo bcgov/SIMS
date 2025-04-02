@@ -311,12 +311,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return { application, createdAssessment: originalAssessment };
   }
 
+  /**
+   * Starts a change request for an existing student application.
+   * A new application will be created in edited status and will be assessed by the Ministry.
+   * @param applicationId application ID to be changed.
+   * @param studentId student ID.
+   * @param applicationData application dynamic data to be saved.
+   * @param associatedFiles files to be associated with the application.
+   * @param auditUserId user that should be considered the one that is making the change request.
+   * @returns application ID of the created application that represents the change request.
+   */
   async submitApplicationChangeRequest(
     applicationId: number,
-    auditUserId: number,
     studentId: number,
     applicationData: ApplicationData,
     associatedFiles: string[],
+    auditUserId: number,
   ): Promise<ApplicationSubmissionResult> {
     const application = await this.getApplicationToSave(
       studentId,
@@ -2098,8 +2108,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get information required an application submission validation.
-   * @param applicationId application id.
+   * Get information required for an application submission validation.
+   * @param applicationId application ID.
    * @param studentId student to check for authorization.
    * @returns application data for submission validation.
    */

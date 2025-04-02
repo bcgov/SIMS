@@ -308,10 +308,10 @@ export class ApplicationStudentsController extends BaseController {
       const submissionResult =
         await this.applicationService.submitApplicationChangeRequest(
           applicationId,
-          studentToken.userId,
           studentToken.studentId,
           validatedResult,
           payload.associatedFiles,
+          studentToken.userId,
         );
       return {
         id: submissionResult.application.id,
