@@ -13,8 +13,7 @@ SET
     applications.data ->> 'howWillYouBeAttendingTheProgram'
   ) :: sims.offering_intensity
 WHERE
-  offering_intensity IS NULL
-  AND data ->> 'howWillYouBeAttendingTheProgram' = 'Full Time';
+  data ->> 'howWillYouBeAttendingTheProgram' = 'Full Time';
 
 -- Remove the default value for offering_intensity column.
 ALTER TABLE
