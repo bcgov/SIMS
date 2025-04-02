@@ -954,7 +954,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "versions.applicationEditStatus",
       ])
       .innerJoin("application.programYear", "programYear")
-      .innerJoin("application.location", "location")
+      .leftJoin("application.location", "location")
       .leftJoin("application.parentApplication", "parentApplication")
       .leftJoin(
         "parentApplication.versions",
