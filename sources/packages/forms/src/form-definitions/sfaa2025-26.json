@@ -1473,7 +1473,7 @@
               "tableView": false,
               "inputType": "text",
               "inputMask": "",
-              "label": "Capacity in which you will be attending the program",
+              "label": "Capacity in which you will be attending this program:",
               "key": "applicationOfferingIntensity",
               "placeholder": "",
               "prefix": "",
