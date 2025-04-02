@@ -354,7 +354,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         "studentAppeal.id",
         "studentAssessment.id",
         "currentAssessment.id",
-        "currentAssessment.offering.id",
+        "offering.id",
         "appealRequest.id",
         "application.id",
         "student.id",
@@ -366,6 +366,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
       .innerJoin("studentAppeal.application", "application")
       .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .leftJoin("studentAppeal.studentAssessment", "studentAssessment")

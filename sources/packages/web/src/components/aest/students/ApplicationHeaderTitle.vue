@@ -20,7 +20,7 @@ export default defineComponent({
   setup(props) {
     const applicationData = ref<ApplicationSupplementalDataAPIOutDTO>();
     const headerMap = ref<Record<string, string | undefined>>({});
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongPeriodString } = useFormatters();
 
     const mapApplicationHeader = (
       application: ApplicationSupplementalDataAPIOutDTO,
@@ -29,11 +29,10 @@ export default defineComponent({
         Name: application.studentFullName,
         "Application number": application.applicationNumber,
         Institution: application.applicationInstitutionName,
-        "Study dates": application.applicationOfferingIntensity
-          ? `${dateOnlyLongString(
-              application.applicationStartDate,
-            )} - ${dateOnlyLongString(application.applicationEndDate)}`
-          : undefined,
+        "Study dates": dateOnlyLongPeriodString(
+          application.applicationStartDate,
+          application.applicationEndDate,
+        ),
         Type: application.applicationOfferingIntensity,
       };
     };
