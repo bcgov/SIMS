@@ -102,12 +102,14 @@ import {
   ApplicationStatus,
   ApiProcessError,
   BannerTypes,
+  FormIOForm,
 } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import {
   STUDY_DATE_OVERLAP_ERROR,
   ACTIVE_STUDENT_RESTRICTION,
+  APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
 } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { AppConfigService } from "@/services/AppConfigService";
@@ -275,19 +277,72 @@ export default defineComponent({
     };
 
     // Execute the final submission of the student application.
-    const submitApplication = async (args: any, form: any) => {
+    const submitApplication = async (data: unknown, form: FormIOForm) => {
+      const associatedFiles = formioUtils.getAssociatedFiles(form);
+      if (props.changeRequest) {
+        await changeRequestSubmission(data, associatedFiles);
+        return;
+      }
+      await applicationSubmission(data, associatedFiles);
+    };
+
+    const changeRequestSubmission = async (
+      data: unknown,
+      associatedFiles: string[],
+    ): Promise<void> => {
       submittingApplication.value = true;
       try {
-        const associatedFiles = formioUtils.getAssociatedFiles(form);
         await ApplicationService.shared.submitApplication(
           props.id,
           {
             programYearId: props.programYearId,
-            data: args,
+            data,
             associatedFiles,
           },
-          { isChangeRequest: props.changeRequest },
+          { isChangeRequest: true },
         );
+        snackBar.success("Thank you, your change request has been submitted.");
+        await router.push({
+          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          params: {
+            id: props.id,
+          },
+        });
+      } catch (error: unknown) {
+        let errorLabel = "Unexpected error!";
+        let errorMsg = "An unexpected error has happened.";
+        if (error instanceof ApiProcessError) {
+          switch (error.errorType) {
+            case APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS:
+              snackBar.warn(error.message);
+              return;
+            case ACTIVE_STUDENT_RESTRICTION:
+              errorLabel = "Active restriction!";
+              errorMsg = error.message;
+              break;
+            default:
+              errorLabel = "Unexpected error!";
+              errorMsg = error.message;
+              break;
+          }
+        }
+        snackBar.error(`${errorLabel} ${errorMsg}`);
+      } finally {
+        submittingApplication.value = false;
+      }
+    };
+
+    const applicationSubmission = async (
+      data: unknown,
+      associatedFiles: string[],
+    ): Promise<void> => {
+      submittingApplication.value = true;
+      try {
+        await ApplicationService.shared.submitApplication(props.id, {
+          programYearId: props.programYearId,
+          data,
+          associatedFiles,
+        });
         snackBar.success("Thank you, your application has been submitted.");
         await router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
@@ -303,6 +358,10 @@ export default defineComponent({
               break;
             case ACTIVE_STUDENT_RESTRICTION:
               errorLabel = "Active restriction!";
+              errorMsg = error.message;
+              break;
+            default:
+              errorLabel = "Unexpected error!";
               errorMsg = error.message;
               break;
           }

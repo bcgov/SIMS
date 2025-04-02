@@ -26,6 +26,7 @@ import {
   EducationProgramOfferingService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -357,14 +358,13 @@ export class ApplicationStudentsController extends BaseController {
   @Patch(":applicationId/change-request")
   @ApiUnprocessableEntityResponse({
     description:
-      "Program Year is not active or " +
-      "Selected offering id is invalid or " +
-      "invalid study dates or selected study start date is not within the program year or " +
-      "the education program is not active or " +
-      "the education program is expired or " +
-      "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
-      "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
-      "or Invalid offering intensity",
+      "Program year is not active" +
+      "or selected offering ID is invalid" +
+      "or the education program is not active" +
+      "or the education program is expired" +
+      "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE" +
+      "or invalid offering intensity" +
+      "or an application change request is already in progress.",
   })
   @ApiBadRequestResponse({
     description: "Form validation failed or Offering intensity type is invalid",
@@ -419,6 +419,10 @@ export class ApplicationStudentsController extends BaseController {
           case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
           case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
             throw new UnprocessableEntityException(error.message);
+          case APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
         }
       }
       throw error;

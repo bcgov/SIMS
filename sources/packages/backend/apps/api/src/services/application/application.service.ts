@@ -79,6 +79,8 @@ export const COE_DENIED_REASON_NOT_FOUND_ERROR =
   "COE_DENIED_REASON_NOT_FOUND_ERROR";
 export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
   "INSUFFICIENT_APPLICATION_SEARCH_PARAMS";
+export const APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS =
+  "APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
@@ -328,6 +330,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
         APPLICATION_NOT_FOUND,
       );
     }
+    // Check if there is already an change request in progress.
+    const hasChangeInProgress = application.parentApplication.versions.some(
+      (version) =>
+        version.applicationEditStatus ===
+        ApplicationEditStatus.ChangeInProgress,
+    );
+    if (hasChangeInProgress) {
+      throw new CustomNamedError(
+        "An application change request is already in progress.",
+        APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
+      );
+    }
+
     // Create the new assessment.
     const now = new Date();
     const auditUser = { id: auditUserId } as User;
@@ -912,10 +927,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "location.id",
         "offering.id",
         "studentAppeal.id",
+        "versions.id",
+        "versions.applicationEditStatus",
       ])
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.location", "location")
       .leftJoin("application.parentApplication", "parentApplication")
+      .leftJoin(
+        "parentApplication.versions",
+        "versions",
+        "versions.applicationEditStatus = :inProgressEditedStatus",
+        { inProgressEditedStatus: ApplicationEditStatus.ChangeInProgress },
+      )
       .leftJoin("application.precedingApplication", "precedingApplication")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
