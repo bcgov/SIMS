@@ -139,9 +139,11 @@ export class ApplicationStudentsController extends BaseController {
   /**
    * Validate the values in the submitted application before submitting.
    * @param payload payload to create the application.
+   * @param offeringIntensity offering intensity of the application.
    */
   private async validateSubmitApplicationData(
     payload: SaveApplicationAPIInDTO,
+    offeringIntensity: OfferingIntensity,
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
 
@@ -149,15 +151,14 @@ export class ApplicationStudentsController extends BaseController {
     // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (
       ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
-        payload.data.howWillYouBeAttendingTheProgram,
+        offeringIntensity,
       )
     ) {
       throw new BadRequestException("Offering intensity type is invalid.");
     }
     if (
       !isFulltimeAllowed &&
-      payload.data.howWillYouBeAttendingTheProgram ===
-        OfferingIntensity.fullTime
+      offeringIntensity === OfferingIntensity.fullTime
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
@@ -280,13 +281,15 @@ export class ApplicationStudentsController extends BaseController {
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
+    const { offeringIntensity } =
+      await this.applicationService.getApplicationInfo(applicationId);
     if (!programYear) {
       throw new UnprocessableEntityException(
         "Program Year is not active. Not able to create an application invalid request.",
       );
     }
     // Validate the values in the submitted application before submitting.
-    await this.validateSubmitApplicationData(payload);
+    await this.validateSubmitApplicationData(payload, offeringIntensity);
 
     const submissionResult =
       await this.formService.dryRunSubmission<ApplicationData>(
@@ -301,7 +304,7 @@ export class ApplicationStudentsController extends BaseController {
 
     await this.applicationControllerService.offeringIntensityRestrictionCheck(
       studentToken.studentId,
-      submissionResult.data.data.howWillYouBeAttendingTheProgram,
+      offeringIntensity,
     );
 
     // If offering is present, the selected offering's start and end dates will be used.
@@ -447,20 +450,21 @@ export class ApplicationStudentsController extends BaseController {
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
+    const { offeringIntensity } =
+      await this.applicationService.getApplicationInfo(applicationId);
     // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
     // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (
-      payload.data.howWillYouBeAttendingTheProgram &&
+      offeringIntensity &&
       ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
-        payload.data.howWillYouBeAttendingTheProgram,
+        offeringIntensity,
       )
     ) {
       throw new BadRequestException("Offering intensity type is invalid.");
     }
     if (
       !isFulltimeAllowed &&
-      payload.data.howWillYouBeAttendingTheProgram ===
-        OfferingIntensity.fullTime
+      offeringIntensity === OfferingIntensity.fullTime
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }

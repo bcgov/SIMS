@@ -180,7 +180,6 @@ export default defineComponent({
         StudentService.shared.getStudentProfile(),
         ApplicationService.shared.getApplicationData(props.id),
       ]);
-
       // Adjust the spaces when optional fields are not present.
       isReadOnly.value =
         [
@@ -215,6 +214,8 @@ export default defineComponent({
       };
       initialData.value = {
         ...applicationData.data,
+        howWillYouBeAttendingTheProgram:
+          applicationData.applicationOfferingIntensity,
         ...studentFormData,
         ...programYear,
         isReadOnly: isReadOnly.value,

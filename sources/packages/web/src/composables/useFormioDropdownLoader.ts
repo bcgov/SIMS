@@ -46,52 +46,6 @@ export function useFormioDropdownLoader() {
     );
   };
 
-  /**
-   * Populate program intensity dropdown.
-   * @param form form.
-   * @param isFulltimeAllowed is fulltime allowed.
-   * @param dropdownName dropdown name.
-   */
-  const loadProgramIntensityDetails = async (
-    form: any,
-    isFulltimeAllowed: boolean,
-    dropdownName: string,
-  ): Promise<void> => {
-    return loadDropdown(
-      form,
-      dropdownName,
-      getProgramIntensityDetails(isFulltimeAllowed),
-    );
-  };
-
-  /**
-   * Gets the program intensity details.
-   * @param isFulltimeAllowed is fulltime allowed.
-   * @returns the program intensity details.
-   */
-  const getProgramIntensityDetails = (
-    isFulltimeAllowed: boolean,
-  ): OptionItemAPIOutDTO[] => {
-    if (isFulltimeAllowed) {
-      return [
-        {
-          id: "Full Time",
-          description: "Full Time",
-        },
-        {
-          id: "Part Time",
-          description: "Part Time",
-        },
-      ];
-    }
-    return [
-      {
-        id: "Part Time",
-        description: "Part Time",
-      },
-    ];
-  };
-
   // Retrieve the list of programs that have some
   // offering to the locationId.
   const loadProgramsForLocation = async (
@@ -226,7 +180,6 @@ export function useFormioDropdownLoader() {
     loadInstitutionTypes,
     loadPIRDeniedReasonList,
     loadProgramYear,
-    loadProgramIntensityDetails,
     loadDropdown,
     loadInstitutionNames,
   };

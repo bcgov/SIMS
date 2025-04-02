@@ -1684,6 +1684,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: {
         id: true,
         applicationNumber: true,
+        offeringIntensity: true,
         data: true as unknown,
         programYear: {
           id: true,
