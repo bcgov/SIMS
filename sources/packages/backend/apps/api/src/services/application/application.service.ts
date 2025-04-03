@@ -2127,6 +2127,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: {
         id: true,
         programYear: { id: true, formName: true, active: true },
+        offeringIntensity: true,
       },
       relations: {
         programYear: true,

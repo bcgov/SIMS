@@ -789,8 +789,7 @@ export class ApplicationControllerService {
    * @param applicationId application ID.
    * @param studentId student used for authorization.
    * @param payload payload to create the application.
-   * @throws UnprocessableEntityException if the program year is not active.
-   * @throws BadRequestException if the application data is invalid, failing the druRun submission.
+   * @returns validated application data.
    */
   async validateApplicationSubmission(
     applicationId: number,
@@ -822,7 +821,7 @@ export class ApplicationControllerService {
     }
     await this.offeringIntensityRestrictionCheck(
       studentId,
-      submissionResult.data.data.howWillYouBeAttendingTheProgram,
+      application.offeringIntensity,
     );
     return submissionResult.data.data;
   }
@@ -831,10 +830,6 @@ export class ApplicationControllerService {
    * Validates and updates the payload values with the offering values (where the server is the source of truth) before submitting.
    * This is required to the values in the payload to be the same as the values in the offering and to prevent the user from modifying them.
    * @param payload payload to create the application.
-   * @throws BadRequestException if the offering intensity type is invalid.
-   * @throws UnprocessableEntityException if the offering is not valid.
-   * @throws UnprocessableEntityException if the program is not active.
-   * @throws UnprocessableEntityException if the program is expired.
    */
   private async validateSubmitApplicationData(
     payload: SaveApplicationAPIInDTO,
