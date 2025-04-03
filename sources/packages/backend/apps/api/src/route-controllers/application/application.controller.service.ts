@@ -786,8 +786,9 @@ export class ApplicationControllerService {
 
   /**
    * Validate the application submission and get the validated result.
-   * @param payload payload to create the application.
+   * @param applicationId application ID.
    * @param studentId student used for authorization.
+   * @param payload payload to create the application.
    * @throws UnprocessableEntityException if the program year is not active.
    * @throws BadRequestException if the application data is invalid, failing the druRun submission.
    */
@@ -839,7 +840,6 @@ export class ApplicationControllerService {
     payload: SaveApplicationAPIInDTO,
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
-
     // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
     // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (

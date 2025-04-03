@@ -130,7 +130,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     auditUserId: number,
     studentId: number,
-    programYearId: number,
     applicationData: ApplicationData,
     associatedFiles: string[],
   ): Promise<ApplicationSubmissionResult> {
@@ -146,14 +145,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       throw new CustomNamedError(
         "Student Application not found or it is not in the correct status to be submitted.",
         APPLICATION_NOT_FOUND,
-      );
-    }
-    // If the the existing application was created under a different program year than
-    // the one being used to submit it, it is not valid.
-    if (application.programYear.id !== programYearId) {
-      throw new CustomNamedError(
-        "Student Application program year is not the expected one.",
-        APPLICATION_NOT_VALID,
       );
     }
 
@@ -333,10 +324,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ApplicationStatus.Completed,
       applicationId,
     );
-    // If the application was not found it is because it does not belong to the student or it is completed.
+    // If the application was not found it is because it does not belong to the student or it is not completed.
     if (!application) {
       throw new CustomNamedError(
-        "Student Application it is not in the correct status to be submitted.",
+        "Student application not found or it is not in the correct status to be changed.",
         APPLICATION_NOT_FOUND,
       );
     }

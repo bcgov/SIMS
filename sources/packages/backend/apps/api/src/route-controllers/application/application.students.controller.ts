@@ -193,7 +193,7 @@ export class ApplicationStudentsController extends BaseController {
       "invalid study dates or selected study start date is not within the program year or " +
       "the education program is not active or " +
       "the education program is expired or " +
-      "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
+      "or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
       "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
       "or Invalid offering intensity",
   })
@@ -236,30 +236,26 @@ export class ApplicationStudentsController extends BaseController {
         applicationId,
         studentToken.userId,
         studentToken.studentId,
-        payload.programYearId,
         validatedResult,
         payload.associatedFiles,
       );
-    } catch (error) {
-      switch (error.name) {
-        case APPLICATION_NOT_FOUND:
-          throw new NotFoundException(error.message);
-        case APPLICATION_NOT_VALID:
-        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-        case STUDY_DATE_OVERLAP_ERROR:
-        case INSTITUTION_LOCATION_NOT_VALID:
-        case OFFERING_NOT_VALID:
-          throw new UnprocessableEntityException(
-            new ApiProcessError(error.message, error.name),
-          );
-        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          // TODO: add logger.
-          throw new InternalServerErrorException(
-            "Unexpected error while submitting the application.",
-          );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case APPLICATION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+          case STUDY_DATE_OVERLAP_ERROR:
+          case INSTITUTION_LOCATION_NOT_VALID:
+          case OFFERING_NOT_VALID:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            throw new UnprocessableEntityException(error.message);
+        }
       }
+      throw error;
     }
   }
 
@@ -282,14 +278,17 @@ export class ApplicationStudentsController extends BaseController {
       "or invalid offering intensity " +
       "or an application change request is already in progress " +
       "or application is not in the correct status to be submitted " +
-      "or change request has a offering from its original submission" +
+      "or change request has a different offering from its original submission" +
       "or change request has a different location from its original submission.",
   })
   @ApiBadRequestResponse({
     description:
       "Form validation failed or offering intensity type is invalid.",
   })
-  @ApiNotFoundResponse({ description: "Application not found." })
+  @ApiNotFoundResponse({
+    description:
+      "Application not found or it is not in the correct status to be changed.",
+  })
   @ApiForbiddenResponse({
     description: "The student has a restriction on his account.",
   })
