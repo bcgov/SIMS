@@ -883,6 +883,11 @@ export class ApplicationControllerService {
           "The education program is expired.",
         );
       }
+      if (offering.offeringIntensity !== offeringIntensity) {
+        throw new UnprocessableEntityException(
+          "The intensity of the selected offering does not match with the application's offering intensity.",
+        );
+      }
       // if  studyStartDate is not in payload
       // then selectedOffering will be there in payload,
       // then study start date taken from offering
