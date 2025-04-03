@@ -16,14 +16,12 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
-  FormService,
   StudentService,
   ProgramYearService,
   APPLICATION_DRAFT_NOT_FOUND,
   MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
-  EducationProgramOfferingService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
@@ -78,10 +76,8 @@ import { ECertPreValidationService } from "@sims/integrations/services/disbursem
 export class ApplicationStudentsController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly formService: FormService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
-    private readonly offeringService: EducationProgramOfferingService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly applicationControllerService: ApplicationControllerService,
     private readonly configService: ConfigService,
