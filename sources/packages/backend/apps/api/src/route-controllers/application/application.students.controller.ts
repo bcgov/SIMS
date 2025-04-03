@@ -146,16 +146,6 @@ export class ApplicationStudentsController extends BaseController {
     offeringIntensity: OfferingIntensity,
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
-
-    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
-    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
-    if (
-      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
-        offeringIntensity,
-      )
-    ) {
-      throw new BadRequestException("Offering intensity type is invalid.");
-    }
     if (
       !isFulltimeAllowed &&
       offeringIntensity === OfferingIntensity.fullTime
