@@ -39,6 +39,7 @@ import {
   PaginatedResults,
   offeringBelongToProgramYear,
   APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION,
+  allowApplicationChangeRequest,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -329,6 +330,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       throw new CustomNamedError(
         "Student application not found or it is not in the correct status to be changed.",
         APPLICATION_NOT_FOUND,
+      );
+    }
+    if (!allowApplicationChangeRequest(application.programYear)) {
+      throw new CustomNamedError(
+        "The program year associated to this application does not allow a change request submission.",
+        APPLICATION_NOT_VALID,
       );
     }
     // Check if there is already a change request in progress.
@@ -945,6 +952,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "parentApplication.id",
         "precedingApplication.id",
         "programYear.id",
+        "programYear.programYear",
         "programYear.programYearPrefix",
         "studentFiles",
         "studentFile.uniqueFileName",
