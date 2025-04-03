@@ -321,7 +321,6 @@ export default defineComponent({
               errorMsg = error.message;
               break;
             default:
-              errorLabel = "Unexpected error!";
               errorMsg = error.message;
               break;
           }
@@ -361,7 +360,6 @@ export default defineComponent({
               errorMsg = error.message;
               break;
             default:
-              errorLabel = "Unexpected error!";
               errorMsg = error.message;
               break;
           }
