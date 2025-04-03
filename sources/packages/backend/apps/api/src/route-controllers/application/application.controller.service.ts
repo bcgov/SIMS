@@ -808,7 +808,10 @@ export class ApplicationControllerService {
       throw new UnprocessableEntityException("Program year is not active.");
     }
     // Validate the values in the submitted application before submitting.
-    await this.validateSubmitApplicationData(payload);
+    await this.validateSubmitApplicationData(
+      payload,
+      application.offeringIntensity,
+    );
     const submissionResult =
       await this.formService.dryRunSubmission<ApplicationData>(
         application.programYear.formName,
@@ -830,26 +833,25 @@ export class ApplicationControllerService {
    * Validates and updates the payload values with the offering values (where the server is the source of truth) before submitting.
    * This is required to the values in the payload to be the same as the values in the offering and to prevent the user from modifying them.
    * @param payload payload to create the application.
+   * @param offeringIntensity offering intensity of the application.
    */
   private async validateSubmitApplicationData(
     payload: SaveApplicationAPIInDTO,
+    offeringIntensity: OfferingIntensity,
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
-    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
-    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
-    if (
-      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
-        payload.data.howWillYouBeAttendingTheProgram,
-      )
-    ) {
-      throw new BadRequestException("Offering intensity type is invalid.");
-    }
     if (
       !isFulltimeAllowed &&
-      payload.data.howWillYouBeAttendingTheProgram ===
-        OfferingIntensity.fullTime
+      offeringIntensity === OfferingIntensity.fullTime
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
+
+    // For program years still relying on the form.io variable howWillYouBeAttendingTheProgram
+    // to determine the offering intensity, we need to set the value in the payload
+    // to the offering intensity value from the database.
+    if (payload.data.howWillYouBeAttendingTheProgram) {
+      payload.data.howWillYouBeAttendingTheProgram = offeringIntensity;
     }
 
     // studyStartDate from payload is set as studyStartDate

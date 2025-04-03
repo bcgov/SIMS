@@ -95,6 +95,7 @@ import {
   useSnackBar,
   ModalDialog,
   useFormatters,
+  useOffering,
 } from "@/composables";
 import {
   FormIOCustomEvent,
@@ -148,6 +149,7 @@ export default defineComponent({
       getFormattedAddress,
       disabilityStatusToDisplay,
     } = useFormatters();
+    const { mapOfferingIntensity } = useOffering();
     const router = useRouter();
     const initialData = ref({});
     const isStudyEndDateWithinDeadline = ref(true);
@@ -236,6 +238,11 @@ export default defineComponent({
       };
       initialData.value = {
         ...applicationData.data,
+        howWillYouBeAttendingTheProgram:
+          applicationData.applicationOfferingIntensity,
+        applicationOfferingIntensity: mapOfferingIntensity(
+          applicationData.applicationOfferingIntensity,
+        ),
         ...studentFormData,
         ...programYear,
         isReadOnly: isReadOnly.value,

@@ -1,7 +1,7 @@
 ALTER TABLE
   sims.applications
 ADD
-  COLUMN offering_intensity sims.offering_intensity;
+  COLUMN offering_intensity sims.offering_intensity DEFAULT 'Part Time';
 
 COMMENT ON COLUMN sims.applications.offering_intensity IS 'Offering intensity related to the application.';
 
@@ -9,8 +9,12 @@ COMMENT ON COLUMN sims.applications.offering_intensity IS 'Offering intensity re
 UPDATE
   sims.applications applications
 SET
-  offering_intensity = (
-    applications.data ->> 'howWillYouBeAttendingTheProgram'
-  ) :: sims.offering_intensity
+  offering_intensity = 'Full Time'
 WHERE
-  offering_intensity IS NULL;
+  data ->> 'howWillYouBeAttendingTheProgram' = 'Full Time';
+
+-- Remove the default value for offering_intensity column.
+ALTER TABLE
+  sims.applications
+ALTER COLUMN
+  offering_intensity DROP DEFAULT;
