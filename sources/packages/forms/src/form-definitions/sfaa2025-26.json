@@ -1506,7 +1506,7 @@
               "properties": {},
               "hideLabel": false,
               "customDefaultValue": "",
-              "calculateValue": "value = data.howWillYouBeAttendingTheProgram ? utils.custom.mapOfferingIntensity(data.howWillYouBeAttendingTheProgram): null;",
+              "calculateValue": "",
               "disabled": true,
               "tooltip": "A student is considered to be in part-time studies when taking between 20% and 59% of a full-time course load in a course or continuous period of study.",
               "customClass": "font-weight-bold",
