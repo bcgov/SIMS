@@ -16490,7 +16490,7 @@
                     }
                   ],
                   "className": "",
-                  "content": "Add your spouse/common-law partner's actual gross income from the beginning of {{data.currentTaxYear}} up to the date their gross income changed, along with the estimated gross income for the remainder of the year, to calculate their total estimate income for the current year.",
+                  "content": "Add your spouse/common-law partner's actual gross income from the beginning of {{data.currentTaxYear}} up to the date their gross income changed, along with the estimated gross income for the remainder of the year, to calculate their total estimated gross income for the current year.",
                   "type": "htmlelement",
                   "hideLabel": true,
                   "tags": [],

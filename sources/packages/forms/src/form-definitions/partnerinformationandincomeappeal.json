@@ -1141,7 +1141,7 @@
                   "value": ""
                 }
               ],
-              "content": "Add your spouse/common-law partner's actual gross income from the beginning of the calendar year up to the date of their income change and the estimated gross income for the remainder of that calendar year to calculate your total current year gross income.",
+              "content": "Add your spouse/common-law partner's actual gross income from the beginning of the calendar year up to the date of their gross income change and the estimated gross income for the remainder of that calendar year to calculate your total current year gross income.",
               "refreshOnChange": false,
               "customClass": "",
               "hidden": false,
