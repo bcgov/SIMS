@@ -253,7 +253,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "There is an existing application already with overlapping study period or a pending PIR.",
+          "There is an existing application already with overlapping study dates or a pending program information request. Please contact your institution for further assistance.",
         errorType: STUDY_DATE_OVERLAP_ERROR,
       });
   });
