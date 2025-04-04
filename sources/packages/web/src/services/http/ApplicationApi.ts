@@ -100,6 +100,24 @@ export class ApplicationApi extends HttpBaseClient {
     );
   }
 
+  /**
+   * Starts a change request for an existing student application.
+   * A new application will be created in edited status and will be assessed by the Ministry.
+   * @param applicationId application ID to be changed.
+   * @param payload complete application payload with all the data that should be considered as a new
+   * application, if approved by the Ministry.
+   * @returns application ID of the created application that represents the change request.
+   */
+  async applicationChangeRequest(
+    applicationId: number,
+    payload: SaveApplicationAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.postCall<SaveApplicationAPIInDTO>(
+      this.addClientRoot(`application/${applicationId}/change-request`),
+      payload,
+    );
+  }
+
   async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,
