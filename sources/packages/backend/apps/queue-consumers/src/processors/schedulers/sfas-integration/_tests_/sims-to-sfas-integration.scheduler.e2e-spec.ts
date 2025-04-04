@@ -114,6 +114,9 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         { student },
         {
           offeringIntensity: OfferingIntensity.partTime,
+          offeringInitialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+          },
         },
       );
       // Update application data to fall between the most recent bridge file date and the mocked current date.
@@ -644,12 +647,14 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         { student },
         {
           applicationData: {
-            howWillYouBeAttendingTheProgram: OfferingIntensity.partTime,
             studystartDate: studyStartDate,
             studyendDate: studyEndDate,
           } as ApplicationData,
           applicationStatus: ApplicationStatus.InProgress,
           pirStatus: ProgramInfoStatus.required,
+          offeringInitialValues: {
+            offeringIntensity: OfferingIntensity.partTime,
+          },
         },
       );
       application.updatedAt = simsDataUpdatedDate;
@@ -814,8 +819,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
   ): string {
     const offering = application.currentAssessment.offering;
     const offeringIntensity =
-      offering?.offeringIntensity ??
-      application.data.howWillYouBeAttendingTheProgram;
+      offering?.offeringIntensity ?? application.offeringIntensity;
     const studentId = application.student.id;
     const applicationRecordType =
       offeringIntensity === OfferingIntensity.fullTime ? "300" : "301";

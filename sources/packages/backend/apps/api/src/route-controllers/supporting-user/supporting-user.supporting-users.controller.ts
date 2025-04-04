@@ -120,7 +120,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
         supportingUserType,
         application.programYear,
       ),
-      offeringIntensity: application.data.howWillYouBeAttendingTheProgram,
+      offeringIntensity: application.offeringIntensity,
     };
   }
 

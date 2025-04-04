@@ -77,8 +77,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     application.student.sinValidation = createFakeSINValidation({
       student: application.student,
     });
-    application.data.howWillYouBeAttendingTheProgram =
-      OfferingIntensity.fullTime;
+    application.offeringIntensity = OfferingIntensity.fullTime;
 
     await db.student.save(application.student);
     await db.application.save(application);
@@ -209,8 +208,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
         student: student,
       },
     );
-    applicationRequestForChange.data.howWillYouBeAttendingTheProgram =
-      OfferingIntensity.fullTime;
+    applicationRequestForChange.offeringIntensity = OfferingIntensity.fullTime;
 
     await db.student.save(applicationRequestForChange.student);
     await db.application.save(applicationRequestForChange);
@@ -273,8 +271,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     application.student.sinValidation = createFakeSINValidation({
       student: application.student,
     });
-    application.data.howWillYouBeAttendingTheProgram =
-      OfferingIntensity.fullTime;
+    application.offeringIntensity = OfferingIntensity.fullTime;
 
     await db.student.save(application.student);
     await db.application.save(application);
@@ -322,8 +319,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     application.student.sinValidation = createFakeSINValidation({
       student: application.student,
     });
-    application.data.howWillYouBeAttendingTheProgram =
-      OfferingIntensity.fullTime;
+    application.offeringIntensity = OfferingIntensity.fullTime;
 
     await db.student.save(application.student);
     await db.application.save(application);
@@ -455,8 +451,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     application.student.sinValidation = createFakeSINValidation({
       student: application.student,
     });
-    application.data.howWillYouBeAttendingTheProgram =
-      OfferingIntensity.fullTime;
+    application.offeringIntensity = OfferingIntensity.fullTime;
 
     await db.student.save(application.student);
     await db.application.save(application);
@@ -510,8 +505,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     application.student.sinValidation = createFakeSINValidation({
       student: application.student,
     });
-    application.data.howWillYouBeAttendingTheProgram =
-      OfferingIntensity.fullTime;
+    application.offeringIntensity = OfferingIntensity.fullTime;
 
     await db.student.save(application.student);
     await db.application.save(application);

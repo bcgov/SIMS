@@ -90,6 +90,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       {
         applicationData: {} as ApplicationData,
         applicationStatus: ApplicationStatus.Draft,
+        offeringInitialValues: {
+          offeringIntensity:
+            secondApplicationOfferingInitialValues.offeringIntensity,
+        },
       },
     );
     const auditUser = await db.user.save(createFakeUser());
@@ -110,8 +114,6 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         secondApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
         secondApplicationOfferingInitialValues.studyEndDate,
-      howWillYouBeAttendingTheProgram:
-        secondApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: secondApplicationProgram.id,
       selectedOffering: secondApplicationOffering.id,
     };
@@ -190,6 +192,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       {
         applicationData: {} as ApplicationData,
         applicationStatus: ApplicationStatus.Draft,
+        offeringInitialValues: {
+          offeringIntensity:
+            secondApplicationOfferingInitialValues.offeringIntensity,
+        },
       },
     );
     const applicationData = {
@@ -197,8 +203,6 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         secondApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
         secondApplicationOfferingInitialValues.studyEndDate,
-      howWillYouBeAttendingTheProgram:
-        secondApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: savedOffering.educationProgram.id,
       selectedOffering: savedOffering.id,
       selectedLocation: savedOffering.institutionLocation.id,
@@ -281,8 +285,6 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       selectedOfferingDate: simsApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
         simsApplicationOfferingInitialValues.studyEndDate,
-      howWillYouBeAttendingTheProgram:
-        simsApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: savedOffering.educationProgram.id,
       selectedOffering: savedOffering.id,
       selectedLocation: savedOffering.institutionLocation.id,
@@ -348,6 +350,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       {
         applicationData: {} as ApplicationData,
         applicationStatus: ApplicationStatus.Draft,
+        offeringInitialValues: {
+          offeringIntensity:
+            secondApplicationOfferingInitialValues.offeringIntensity,
+        },
       },
     );
     const auditUser = await db.user.save(createFakeUser());
@@ -368,8 +374,6 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         secondApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
         secondApplicationOfferingInitialValues.studyEndDate,
-      howWillYouBeAttendingTheProgram:
-        secondApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: secondApplicationProgram.id,
       selectedOffering: secondApplicationOffering.id,
       selectedLocation: secondApplicationOffering.institutionLocation.id,
@@ -434,6 +438,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         {
           applicationData: {} as ApplicationData,
           applicationStatus: ApplicationStatus.Draft,
+          offeringInitialValues: {
+            offeringIntensity:
+              simsApplicationOfferingInitialValues.offeringIntensity,
+          },
         },
       );
       const auditUser = await db.user.save(createFakeUser());
@@ -454,8 +462,6 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
           simsApplicationOfferingInitialValues.studyStartDate,
         selectedOfferingEndDate:
           simsApplicationOfferingInitialValues.studyEndDate,
-        howWillYouBeAttendingTheProgram:
-          simsApplicationOfferingInitialValues.offeringIntensity,
         selectedProgram: secondApplicationProgram.id,
         selectedOffering: simsApplicationOffering.id,
         selectedLocation: simsApplicationOffering.institutionLocation.id,
@@ -521,6 +527,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         {
           applicationData: {} as ApplicationData,
           applicationStatus: ApplicationStatus.Draft,
+          offeringInitialValues: {
+            offeringIntensity:
+              simsApplicationOfferingInitialValues.offeringIntensity,
+          },
         },
       );
       const auditUser = await db.user.save(createFakeUser());
@@ -541,8 +551,6 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
           simsApplicationOfferingInitialValues.studyStartDate,
         selectedOfferingEndDate:
           simsApplicationOfferingInitialValues.studyEndDate,
-        howWillYouBeAttendingTheProgram:
-          simsApplicationOfferingInitialValues.offeringIntensity,
         selectedProgram: secondApplicationProgram.id,
         selectedOffering: simsApplicationOffering.id,
         selectedLocation: simsApplicationOffering.institutionLocation.id,
