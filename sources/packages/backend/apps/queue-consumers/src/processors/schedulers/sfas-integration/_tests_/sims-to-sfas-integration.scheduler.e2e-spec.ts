@@ -647,6 +647,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         { student },
         {
           applicationData: {
+            howWillYouBeAttendingTheProgram: OfferingIntensity.partTime,
             studystartDate: studyStartDate,
             studyendDate: studyEndDate,
           } as ApplicationData,
@@ -819,7 +820,8 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
   ): string {
     const offering = application.currentAssessment.offering;
     const offeringIntensity =
-      offering?.offeringIntensity ?? application.offeringIntensity;
+      offering?.offeringIntensity ??
+      application.data.howWillYouBeAttendingTheProgram;
     const studentId = application.student.id;
     const applicationRecordType =
       offeringIntensity === OfferingIntensity.fullTime ? "300" : "301";

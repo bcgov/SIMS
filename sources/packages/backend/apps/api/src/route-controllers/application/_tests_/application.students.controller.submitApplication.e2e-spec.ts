@@ -114,6 +114,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         secondApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
         secondApplicationOfferingInitialValues.studyEndDate,
+      howWillYouBeAttendingTheProgram:
+        secondApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: secondApplicationProgram.id,
       selectedOffering: secondApplicationOffering.id,
     };
@@ -203,6 +205,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         secondApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
         secondApplicationOfferingInitialValues.studyEndDate,
+      howWillYouBeAttendingTheProgram:
+        secondApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: savedOffering.educationProgram.id,
       selectedOffering: savedOffering.id,
       selectedLocation: savedOffering.institutionLocation.id,
@@ -285,6 +289,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       selectedOfferingDate: simsApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
         simsApplicationOfferingInitialValues.studyEndDate,
+      howWillYouBeAttendingTheProgram:
+        simsApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: savedOffering.educationProgram.id,
       selectedOffering: savedOffering.id,
       selectedLocation: savedOffering.institutionLocation.id,
@@ -374,6 +380,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         secondApplicationOfferingInitialValues.studyStartDate,
       selectedOfferingEndDate:
         secondApplicationOfferingInitialValues.studyEndDate,
+      howWillYouBeAttendingTheProgram:
+        secondApplicationOfferingInitialValues.offeringIntensity,
       selectedProgram: secondApplicationProgram.id,
       selectedOffering: secondApplicationOffering.id,
       selectedLocation: secondApplicationOffering.institutionLocation.id,
@@ -462,6 +470,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
           simsApplicationOfferingInitialValues.studyStartDate,
         selectedOfferingEndDate:
           simsApplicationOfferingInitialValues.studyEndDate,
+        howWillYouBeAttendingTheProgram:
+          simsApplicationOfferingInitialValues.offeringIntensity,
         selectedProgram: secondApplicationProgram.id,
         selectedOffering: simsApplicationOffering.id,
         selectedLocation: simsApplicationOffering.institutionLocation.id,
@@ -551,6 +561,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
           simsApplicationOfferingInitialValues.studyStartDate,
         selectedOfferingEndDate:
           simsApplicationOfferingInitialValues.studyEndDate,
+        howWillYouBeAttendingTheProgram:
+          simsApplicationOfferingInitialValues.offeringIntensity,
         selectedProgram: secondApplicationProgram.id,
         selectedOffering: simsApplicationOffering.id,
         selectedLocation: simsApplicationOffering.institutionLocation.id,
