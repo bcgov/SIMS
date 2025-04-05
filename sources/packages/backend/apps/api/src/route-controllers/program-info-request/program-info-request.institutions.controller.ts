@@ -115,8 +115,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     result.courseDetails = application.data.courseDetails;
     result.pirDenyReasonId = application.pirDeniedReasonId?.id;
     result.otherReasonDesc = application.pirDeniedOtherDesc;
-    result.offeringIntensitySelectedByStudent =
-      application.data.howWillYouBeAttendingTheProgram;
+    result.offeringIntensitySelectedByStudent = application.offeringIntensity;
     // Program year data.
     result.programYearId = application.programYear.id;
     result.isActiveProgramYear = application.programYear.active;
