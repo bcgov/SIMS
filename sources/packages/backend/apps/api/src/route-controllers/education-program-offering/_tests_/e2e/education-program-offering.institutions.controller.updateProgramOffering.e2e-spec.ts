@@ -435,6 +435,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         offeringStatus: OfferingStatus.CreationPending,
         submittedDate: expect.any(Date),
         courseLoad: expect.any(Number),
+        onlineInstructionMode: null,
+        isOnlineDurationSameAlways: null,
+        totalOnlineDuration: null,
+        minimumOnlineDuration: null,
+        maximumOnlineDuration: null,
       });
     },
   );

@@ -427,6 +427,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         offeringStatus: OfferingStatus.CreationPending,
         submittedDate: expect.any(Date),
         courseLoad: null,
+        onlineInstructionMode: null,
+        isOnlineDurationSameAlways: null,
+        totalOnlineDuration: null,
+        minimumOnlineDuration: null,
+        maximumOnlineDuration: null,
       });
     },
   );
@@ -498,6 +503,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         offeringStatus: OfferingStatus.CreationPending,
         submittedDate: expect.any(Date),
         courseLoad: null,
+        onlineInstructionMode: null,
+        isOnlineDurationSameAlways: null,
+        totalOnlineDuration: null,
+        minimumOnlineDuration: null,
+        maximumOnlineDuration: null,
       });
     },
   );
