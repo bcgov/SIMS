@@ -114,9 +114,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         { student },
         {
           offeringIntensity: OfferingIntensity.partTime,
-          offeringInitialValues: {
-            offeringIntensity: OfferingIntensity.partTime,
-          },
         },
       );
       // Update application data to fall between the most recent bridge file date and the mocked current date.
@@ -653,9 +650,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           } as ApplicationData,
           applicationStatus: ApplicationStatus.InProgress,
           pirStatus: ProgramInfoStatus.required,
-          offeringInitialValues: {
-            offeringIntensity: OfferingIntensity.partTime,
-          },
         },
       );
       application.updatedAt = simsDataUpdatedDate;
