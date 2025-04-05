@@ -140,7 +140,10 @@ export class SIMSToSFASService {
         .select("application.applicationNumber", "applicationNumber")
         .addSelect("student.id", "studentId")
         .addSelect("programYear.programYear", "programYear")
-        .addSelect("application.offeringIntensity", "offeringIntensity")
+        .addSelect(
+          "COALESCE(offering.offeringIntensity, (application.data->>'howWillYouBeAttendingTheProgram')::sims.offering_intensity)",
+          "offeringIntensity",
+        )
         // Use CASE to conditionally select studyStartDate and studyEndDate and casting JSON values to dates.
         .addSelect(
           "COALESCE(offering.studyStartDate, (application.data->>'studystartDate')::date)",
