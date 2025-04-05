@@ -15,6 +15,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
   StudentAssessmentStatus,
   ApplicationEditStatus,
+  ApplicationEditStatusInProgress,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
@@ -234,6 +235,15 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
   eCertFailedValidations: ECertFailedValidation[];
+  changeRequestInProgress?: ChangeRequestInProgressAPIOutDTO;
+}
+
+export class ChangeRequestInProgressAPIOutDTO extends IntersectionType(
+  ApplicationSupportingUserDetails,
+  ApplicationIncomeVerification,
+) {
+  applicationId: number;
+  applicationEditStatus: ApplicationEditStatusInProgress;
 }
 
 export class ApplicationAssessmentStatusDetailsAPIOutDTO {

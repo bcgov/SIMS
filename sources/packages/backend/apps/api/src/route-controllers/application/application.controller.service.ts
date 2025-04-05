@@ -16,7 +16,6 @@ import {
   CRAIncomeVerificationService,
   SupportingUserService,
   APPLICATION_NOT_FOUND,
-  ProgramYearService,
   FormService,
 } from "../../services";
 import {
@@ -33,6 +32,7 @@ import {
   ApplicationDataChangeAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
   SaveApplicationAPIInDTO,
+  ChangeRequestInProgressAPIOutDTO,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -61,6 +61,8 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   StudentAppealStatus,
+  ApplicationEditStatusInProgress,
+  ApplicationEditStatusInProgressValues,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
@@ -87,7 +89,6 @@ export class ApplicationControllerService {
     private readonly craIncomeVerificationService: CRAIncomeVerificationService,
     private readonly supportingUserService: SupportingUserService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
-    private readonly programYearService: ProgramYearService,
     private readonly formService: FormService,
     private readonly configService: ConfigService,
   ) {}
@@ -278,6 +279,18 @@ export class ApplicationControllerService {
         application.currentAssessment.disbursementSchedules,
       );
     const [scholasticStandingChange] = application.studentScholasticStandings;
+    // Check if it is needed to get the in progress change request details.
+    let changeRequestInProgress: ChangeRequestInProgressAPIOutDTO | undefined;
+    if (
+      ApplicationEditStatusInProgressValues.includes(
+        application.applicationEditStatus,
+      )
+    ) {
+      changeRequestInProgress = await this.getInProgressChangeRequestDetails(
+        application.id,
+        options,
+      );
+    }
 
     return {
       firstDisbursement: enrolmentDetails.firstDisbursement,
@@ -290,6 +303,48 @@ export class ApplicationControllerService {
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
       hasBlockFundingFeedbackError,
       eCertFailedValidations: [...eCertValidationResult.failedValidations],
+      changeRequestInProgress,
+    };
+  }
+
+  private async getInProgressChangeRequestDetails(
+    applicationId: number,
+    options?: { studentId?: number },
+  ): Promise<ChangeRequestInProgressAPIOutDTO> {
+    const [inProgressChangeRequest] =
+      await this.applicationService.getApplicationsVersionByEditStatus(
+        applicationId,
+        ApplicationEditStatusInProgressValues,
+        {
+          studentId: options?.studentId,
+        },
+      );
+    if (!inProgressChangeRequest) {
+      return;
+    }
+    // If there is a in progress change request, then get the income verification and supporting user details.
+    const incomePromise =
+      this.craIncomeVerificationService.getAllIncomeVerificationsForAnApplication(
+        applicationId,
+      );
+    const supportingUsersPromise =
+      this.supportingUserService.getSupportingUsersByApplicationId(
+        applicationId,
+      );
+    const [incomeVerificationDetails, supportingUserDetails] =
+      await Promise.all([incomePromise, supportingUsersPromise]);
+    const incomeVerification = this.processApplicationIncomeVerificationDetails(
+      incomeVerificationDetails,
+    );
+    const supportingUser = this.processApplicationSupportingUserDetails(
+      supportingUserDetails,
+    );
+    return {
+      applicationId: inProgressChangeRequest.id,
+      applicationEditStatus:
+        inProgressChangeRequest.applicationEditStatus as ApplicationEditStatusInProgress,
+      ...incomeVerification,
+      ...supportingUser,
     };
   }
 

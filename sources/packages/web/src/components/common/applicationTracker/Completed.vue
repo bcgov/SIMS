@@ -17,6 +17,15 @@
     background-color="warning-bg"
     content="StudentAid BC is reviewing your requested change. If your requested change is approved, your application will be re-evaluated with a new assessment below."
   />
+  <!-- Student request an application change (after COE) - change in progress -->
+  <application-in-progress-change-request
+    v-if="!!assessmentDetails.changeRequestInProgress"
+    label="You have a submitted change request that is still pending. Please see below for the next steps."
+    icon="fa:fas fa-exclamation-triangle"
+    icon-color="warning"
+    background-color="warning-bg"
+    :changeRequest="assessmentDetails.changeRequestInProgress"
+  />
   <!-- Student application change request - in progress with student -->
   <application-status-tracker-banner
     v-if="
@@ -217,6 +226,7 @@ import {
   ECertFailedValidation,
   StudentAppealStatus,
   StudentScholasticStandingChangeType,
+  ApplicationEditStatus,
 } from "@/types";
 import { onMounted, ref, defineComponent, computed } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -225,7 +235,9 @@ import ApplicationStatusTrackerBanner from "@/components/common/applicationTrack
 import DisbursementBanner from "@/components/common/applicationTracker/DisbursementBanner.vue";
 import MultipleDisbursementBanner from "@/components/common/applicationTracker/MultipleDisbursementBanner.vue";
 import RelatedApplicationChanged from "@/components/common/applicationTracker/RelatedApplicationChanged.vue";
+import ApplicationInProgressChangeRequest from "@/components/common/applicationTracker/ApplicationInProgressChangeRequest.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import { SuccessWaitingStatus } from "@/types"; // Ensure this is the correct path to the module
 import { useRouter } from "vue-router";
 import {
   EcertFailedValidationDetail,
@@ -238,6 +250,7 @@ export default defineComponent({
     DisbursementBanner,
     MultipleDisbursementBanner,
     RelatedApplicationChanged,
+    ApplicationInProgressChangeRequest,
   },
   props: {
     applicationId: {
@@ -309,6 +322,8 @@ export default defineComponent({
       COEStatus,
       AssessmentTriggerType,
       StudentAppealStatus,
+      ApplicationEditStatus,
+      SuccessWaitingStatus,
       hasDisbursementEvent,
       StudentScholasticStandingChangeType,
       ApplicationOfferingChangeRequestStatus,

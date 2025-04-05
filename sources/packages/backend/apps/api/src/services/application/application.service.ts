@@ -24,6 +24,7 @@ import {
   OfferingIntensity,
   InstitutionLocation,
   StudentAppeal,
+  ApplicationEditStatusInProgressValues,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -67,7 +68,7 @@ import {
   NotificationService,
 } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
-import { EducationProgramService, StudentService } from "..";
+import { StudentService } from "..";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -94,7 +95,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly fileService: StudentFileService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
-    private readonly educationProgramService: EducationProgramService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly notificationService: NotificationService,
@@ -341,10 +341,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Check if there is already a change request in progress.
     const hasChangeInProgress = application.parentApplication.versions.some(
       (version) =>
-        [
-          ApplicationEditStatus.ChangeInProgress,
-          ApplicationEditStatus.ChangePendingApproval,
-        ].includes(version.applicationEditStatus),
+        ApplicationEditStatusInProgressValues.includes(
+          version.applicationEditStatus,
+        ),
     );
     if (hasChangeInProgress) {
       throw new CustomNamedError(
@@ -972,10 +971,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "versions",
         "versions.applicationEditStatus IN (:...inProgressEditedStatuses)",
         {
-          inProgressEditedStatuses: [
-            ApplicationEditStatus.ChangeInProgress,
-            ApplicationEditStatus.ChangePendingApproval,
-          ],
+          // Other statuses are not needed right now but the list can be extended
+          // to other statuses if needed.
+          inProgressEditedStatuses: ApplicationEditStatusInProgressValues,
         },
       )
       .leftJoin("application.precedingApplication", "precedingApplication")
@@ -1793,6 +1791,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.findOne({
       select: {
         id: true,
+        applicationEditStatus: true,
         currentAssessment: {
           id: true,
           triggerType: true,
@@ -2138,6 +2137,39 @@ export class ApplicationService extends RecordDataModelService<Application> {
         student: { id: studentId },
       },
     });
+  }
+
+  async getApplicationsVersionByEditStatus(
+    applicationId: number,
+    editStatuses: ApplicationEditStatus[],
+    options?: { studentId?: number },
+  ): Promise<Application[]> {
+    const query = this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application",
+        "versions.id",
+        "parentApplication.id",
+        "versions.id",
+        "versions.applicationEditStatus",
+      ])
+      .leftJoin("application.parentApplication", "parentApplication")
+      .leftJoin(
+        "parentApplication.versions",
+        "versions",
+        "versions.applicationEditStatus IN (:...editStatuses)",
+        {
+          editStatuses,
+        },
+      )
+      .where("application.id = :applicationId", { applicationId });
+    if (options?.studentId) {
+      query.andWhere("application.student.id = :studentId", {
+        studentId: options.studentId,
+      });
+    }
+    const application = await query.getOne();
+    return application?.parentApplication?.versions ?? [];
   }
 
   @InjectLogger()
