@@ -234,7 +234,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
      * Assessment, Enrollment) then the execution will come here, then the existing application
      * status is set to `Edited` and applicationStatusUpdatedOn is updated and delete the
      * corresponding workflow and creates a new Application with same Application Number and
-     * Program Year as that of the Edited Application and with newly submitted payload.
+     * Program Year as that of the Edited Application and with newly submitted payload with
+     * application status submitted.
      */
 
     // Updating existing Application status to edited
@@ -1194,53 +1195,71 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param locationId location id .
    * @returns student Application list.
    */
-  async getPIRApplications(locationId: number): Promise<Application[]> {
-    return (
-      this.repo
-        .createQueryBuilder("application")
-        .select([
-          "application.applicationNumber",
-          "application.id",
-          "application.pirStatus",
-          "application.submittedDate",
-          "application.studentNumber",
-          "currentAssessment.id",
-          "offering.studyStartDate",
-          "offering.studyEndDate",
-          "offering.offeringIntensity",
-          "educationProgram.name",
-          "student.id",
-          "user.firstName",
-          "user.lastName",
-          "pirProgram.name",
-        ])
-        .leftJoin("application.currentAssessment", "currentAssessment")
-        .leftJoin("currentAssessment.offering", "offering")
-        .leftJoin("offering.educationProgram", "educationProgram")
-        .leftJoin("application.pirProgram", "pirProgram")
-        .innerJoin("application.student", "student")
-        .innerJoin("student.user", "user")
-        .where("application.location.id = :locationId", { locationId })
-        .andWhere("application.pirStatus is not null")
-        .andWhere("application.pirStatus != :nonPirStatus", {
-          nonPirStatus: ProgramInfoStatus.notRequired,
-        })
-        .andWhere("application.applicationStatus != :editedStatus", {
-          editedStatus: ApplicationStatus.Edited,
-        })
-        // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
-        .orderBy(
-          `CASE application.pir_status
-            WHEN '${ProgramInfoStatus.required}' THEN 1
-            WHEN '${ProgramInfoStatus.submitted}' THEN 2
-            WHEN '${ProgramInfoStatus.completed}' THEN 3
-            WHEN '${ProgramInfoStatus.declined}' THEN 4
-            ELSE 5
-          END`,
-        )
-        .addOrderBy("application.applicationNumber")
-        .getMany()
-    );
+  async getPIRApplications(
+    locationId: number,
+    page: number,
+    pageLimit: number,
+    sortField?: string,
+    sortOrder?: "ASC" | "DESC",
+  ): Promise<{ results: Application[]; count: number }> {
+    const query = this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationNumber",
+        "application.id",
+        "application.pirStatus",
+        "application.submittedDate",
+        "application.studentNumber",
+        "currentAssessment.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "offering.offeringIntensity",
+        "educationProgram.name",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+        "pirProgram.name",
+      ])
+      .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
+      .leftJoin("offering.educationProgram", "educationProgram")
+      .leftJoin("application.pirProgram", "pirProgram")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.pirStatus is not null")
+      .andWhere("application.pirStatus != :nonPirStatus", {
+        nonPirStatus: ProgramInfoStatus.notRequired,
+      })
+      .andWhere("application.applicationStatus != :editedStatus", {
+        editedStatus: ApplicationStatus.Edited,
+      });
+
+    // Add sorting
+    if (sortField && sortOrder) {
+      // Map frontend sort fields to database columns
+      const dbSortField = transformToApplicationEntitySortField(sortField);
+      // Apply the sort fields
+      Object.entries(dbSortField).forEach(([field, orderObj]) => {
+        const order = typeof orderObj === "object" ? orderObj.order : orderObj;
+        query.addOrderBy(field, order);
+      });
+      // Always add application number as secondary sort for consistency
+      query.addOrderBy("application.applicationNumber", "ASC");
+    } else {
+      // Default sorting by PIR status and application number
+      query
+        .orderBy("application.pirStatus", "ASC")
+        .addOrderBy("application.applicationNumber", "ASC");
+    }
+
+    // Add pagination
+    query.skip((page - 1) * pageLimit).take(pageLimit);
+
+    // Get both results and count
+    const [results, count] = await query.getManyAndCount();
+
+    return { results, count };
   }
 
   /**

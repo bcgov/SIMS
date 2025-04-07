@@ -47,7 +47,7 @@
             <v-text-field
               v-model="searchQuery"
               append-inner-icon="mdi-magnify"
-              placeholder="Search"
+              placeholder="Search by name"
               variant="outlined"
               density="compact"
               class="search-field"
@@ -74,10 +74,8 @@
           :loading="applicationsLoading"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
-          :sort-by="[
-            { key: 'pirStatus', order: 'asc' },
-            { key: 'submittedDate', order: 'desc' },
-          ]"
+          :sort-by="[{ key: DEFAULT_SORT_FIELD, order: DEFAULT_SORT_ORDER }]"
+          must-sort
           @update:options="paginationAndSortEvent"
         >
           <template #[`item.submittedDate`]="{ item }">
@@ -86,21 +84,13 @@
             }}
           </template>
           <template #[`item.program`]="{ item }">
-            {{ item.program || "-" }}
+            {{ getProgramName(item) }}
           </template>
           <template #[`item.studyStartPeriod`]="{ item }">
-            {{
-              item.studyStartPeriod
-                ? dateOnlyLongString(item.studyStartPeriod)
-                : "-"
-            }}
+            {{ getStartDate(item) }}
           </template>
           <template #[`item.studyEndPeriod`]="{ item }">
-            {{
-              item.studyEndPeriod
-                ? dateOnlyLongString(item.studyEndPeriod)
-                : "-"
-            }}
+            {{ getEndDate(item) }}
           </template>
           <template #[`item.studentNumber`]="{ item }">
             {{ item.studentNumber || "-" }}
@@ -145,7 +135,6 @@ import {
 } from "@/types";
 import type { DataTableSortOrder } from "vuetify/lib/composables/index.mjs";
 
-// Define study intensity enum since it's not exported from types
 enum StudyIntensity {
   FullTime = "Full Time",
   PartTime = "Part Time",
@@ -191,10 +180,9 @@ export default defineComponent({
     );
     const currentPage = ref(1);
     const currentPageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const DEFAULT_SORT_FIELD = "pirStatus"; // Initial sort by status to show Pending first
-    const DEFAULT_SORT_ORDER: DataTableSortOrder = "asc"; // ASC for status to show Pending first
-    const SECONDARY_SORT_FIELD = "submittedDate";
-    const SECONDARY_SORT_ORDER: DataTableSortOrder = "desc";
+    // Initial sort by Status (Pending first) then by Submitted date
+    const DEFAULT_SORT_FIELD = "pirStatus";
+    const DEFAULT_SORT_ORDER: DataTableSortOrder = "asc";
 
     const locationName = computed(() => {
       return getLocationName(props.locationId);
@@ -207,13 +195,32 @@ export default defineComponent({
       });
     };
 
-    /**
-     * Function to load PIR list with search, filter, and pagination
-     * @param page page number
-     * @param pageLimit items per page
-     * @param sortField field to sort by
-     * @param sortOrder sort direction
-     */
+    // Helper functions for displaying correct data based on PIR status
+    const getProgramName = (item: PIRSummaryAPIOutDTO): string => {
+      if (item.pirStatus === "Required" || item.pirStatus === "Declined") {
+        // For Pending or Declined, use student selected program or manual entry
+        return item.applicationData?.programName || item.program || "-";
+      }
+      // For Completed, use the program from assigned offering
+      return item.program || "-";
+    };
+
+    const getStartDate = (item: PIRSummaryAPIOutDTO): string => {
+      const date =
+        item.pirStatus === "Required" || item.pirStatus === "Declined"
+          ? item.applicationData?.startDate
+          : item.studyStartPeriod;
+      return date ? dateOnlyLongString(date) : "-";
+    };
+
+    const getEndDate = (item: PIRSummaryAPIOutDTO): string => {
+      const date =
+        item.pirStatus === "Required" || item.pirStatus === "Declined"
+          ? item.applicationData?.endDate
+          : item.studyEndPeriod;
+      return date ? dateOnlyLongString(date) : "-";
+    };
+
     const loadApplications = async (
       page = 1,
       pageLimit = DEFAULT_PAGE_LIMIT,
@@ -233,23 +240,13 @@ export default defineComponent({
             : undefined,
         };
 
-        const response = await ProgramInfoRequestService.shared.getPIRSummary(
-          props.locationId,
-          searchCriteria,
-        );
-
-        // Handle array response format
-        if (Array.isArray(response)) {
-          paginatedApplications.value = {
-            results: response,
-            count: response.length,
-          };
-        } else {
-          paginatedApplications.value = response;
-        }
+        paginatedApplications.value =
+          await ProgramInfoRequestService.shared.getPIRSummary(
+            props.locationId,
+            searchCriteria,
+          );
       } catch (error: unknown) {
         console.error("Error loading PIR applications:", error);
-        // Initialize empty state on error
         paginatedApplications.value = {
           results: [],
           count: 0,
@@ -259,16 +256,14 @@ export default defineComponent({
       }
     };
 
-    // Handle search with debounce
+    // Handle search
     const handleSearch = () => {
-      // Reset to first page when searching
       currentPage.value = 1;
       loadApplications(currentPage.value, currentPageLimit.value);
     };
 
     // Handle intensity filter
     const filterByIntensity = () => {
-      // Reset to first page when filtering
       currentPage.value = 1;
       loadApplications(currentPage.value, currentPageLimit.value);
     };
@@ -287,35 +282,6 @@ export default defineComponent({
       );
     };
 
-    // Helper function to get the appropriate program name based on PIR status
-    const getProgramName = (item: PIRSummaryAPIOutDTO): string => {
-      if (item.pirStatus === "Required" || item.pirStatus === "Declined") {
-        // For Pending or Declined, use student selected program or manual entry
-        if (item.applicationData?.programName) {
-          return item.applicationData.programName;
-        }
-        return item.program || ""; // Fallback to selected program if available
-      }
-      // For Completed, use the program from assigned offering
-      return item.offeringData?.programName || item.program || "";
-    };
-
-    // Helper function to get the appropriate dates based on PIR status
-    const getStudyDates = (item: PIRSummaryAPIOutDTO) => {
-      if (item.pirStatus === "Required" || item.pirStatus === "Declined") {
-        // For Pending or Declined, use dates from application data
-        return {
-          startDate: item.applicationData?.startDate || item.studyStartPeriod,
-          endDate: item.applicationData?.endDate || item.studyEndPeriod,
-        };
-      }
-      // For Completed, use dates from offering data
-      return {
-        startDate: item.offeringData?.startDate || item.studyStartPeriod,
-        endDate: item.offeringData?.endDate || item.studyEndPeriod,
-      };
-    };
-
     // Initialize with default sorting
     onMounted(async () => {
       await loadApplications();
@@ -325,7 +291,7 @@ export default defineComponent({
     watch(
       () => props.locationId,
       async () => {
-        currentPage.value = 1; // Reset to first page when location changes
+        currentPage.value = 1;
         await loadApplications();
       },
     );
@@ -347,8 +313,11 @@ export default defineComponent({
       ITEMS_PER_PAGE,
       paginationAndSortEvent,
       LayoutTemplates,
+      DEFAULT_SORT_FIELD,
+      DEFAULT_SORT_ORDER,
       getProgramName,
-      getStudyDates,
+      getStartDate,
+      getEndDate,
     };
   },
 });

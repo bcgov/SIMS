@@ -9,6 +9,7 @@ import {
   NotFoundException,
   UnauthorizedException,
   ParseIntPipe,
+  Query,
 } from "@nestjs/common";
 import {
   CompleteProgramInfoRequestAPIInDTO,
@@ -279,35 +280,53 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
    * Get all applications of a location in an institution
    * with Program Info Request (PIR) status completed and required
    * @param locationId location that is completing the PIR.
-   * @returns student application list of an institution location.
+   * @param page page number for pagination.
+   * @param pageLimit number of items per page.
+   * @param sortField field to sort by.
+   * @param sortOrder sort direction.
+   * @returns paginated student application list of an institution location.
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request")
   async getPIRSummary(
     @Param("locationId", ParseIntPipe) locationId: number,
-  ): Promise<PIRSummaryAPIOutDTO[]> {
-    const applications = await this.applicationService.getPIRApplications(
-      locationId,
-    );
-    return applications.map((eachApplication: Application) => {
-      const offering = eachApplication.currentAssessment?.offering;
-      const user = eachApplication.student.user;
-      return {
-        applicationId: eachApplication.id,
-        applicationNumber: eachApplication.applicationNumber,
-        studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
-        studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
-        pirStatus: eachApplication.pirStatus,
-        fullName: getUserFullName(user),
-        submittedDate: getISODateOnlyString(eachApplication.submittedDate),
-        givenNames: user.firstName,
-        lastName: user.lastName,
-        studentNumber: eachApplication.studentNumber,
-        studyIntensity: offering?.offeringIntensity,
-        program:
-          offering?.educationProgram?.name || eachApplication.pirProgram?.name,
-      };
-    });
+    @Query("page", ParseIntPipe) page = 1,
+    @Query("pageLimit", ParseIntPipe) pageLimit = 10,
+    @Query("sortField") sortField?: string,
+    @Query("sortOrder") sortOrder?: "ASC" | "DESC",
+  ): Promise<{ results: PIRSummaryAPIOutDTO[]; count: number }> {
+    const { results: applications, count } =
+      await this.applicationService.getPIRApplications(
+        locationId,
+        page,
+        pageLimit,
+        sortField,
+        sortOrder,
+      );
+
+    return {
+      results: applications.map((eachApplication: Application) => {
+        const offering = eachApplication.currentAssessment?.offering;
+        const user = eachApplication.student.user;
+        return {
+          applicationId: eachApplication.id,
+          applicationNumber: eachApplication.applicationNumber,
+          studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
+          studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
+          pirStatus: eachApplication.pirStatus,
+          fullName: getUserFullName(user),
+          submittedDate: getISODateOnlyString(eachApplication.submittedDate),
+          givenNames: user.firstName,
+          lastName: user.lastName,
+          studentNumber: eachApplication.studentNumber,
+          studyIntensity: offering?.offeringIntensity,
+          program:
+            offering?.educationProgram?.name ||
+            eachApplication.pirProgram?.name,
+        };
+      }),
+      count,
+    };
   }
 
   /**
