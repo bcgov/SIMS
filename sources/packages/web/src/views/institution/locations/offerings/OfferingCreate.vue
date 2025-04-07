@@ -10,6 +10,7 @@
     <offering-form-submit
       submitLabel="Add offering now"
       :formMode="OfferingFormModes.Editable"
+      :data="initialData"
       :locationId="locationId"
       :programId="programId"
       @submit="submit"
@@ -31,8 +32,15 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import OfferingFormSubmit from "@/components/common/OfferingFormSubmit.vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { EducationProgramOfferingAPIInDTO } from "@/services/http/dto";
-import { useFormioUtils, useSnackBar } from "@/composables";
+import {
+  EducationProgramOfferingAPIInDTO,
+  EducationProgramOfferingAPIOutDTO,
+} from "@/services/http/dto";
+import {
+  useFormioUtils,
+  useInstitutionState,
+  useSnackBar,
+} from "@/composables";
 
 export default defineComponent({
   components: {
@@ -55,8 +63,18 @@ export default defineComponent({
   setup(props) {
     const snackBar = useSnackBar();
     const { excludeExtraneousValues } = useFormioUtils();
+    const { institutionState } = useInstitutionState();
     const router = useRouter();
     const processing = ref(false);
+
+    // Populate the institution type data for form input loading variations.
+    const initialData = computed(
+      () =>
+        ({
+          isInstitutionBCPublic: institutionState.value.isBCPublic,
+          isInstitutionBCPrivate: institutionState.value.isBCPrivate,
+        } as EducationProgramOfferingAPIOutDTO),
+    );
 
     const routeLocation = computed(() => ({
       name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
@@ -105,6 +123,7 @@ export default defineComponent({
       goBack,
       OfferingFormModes,
       submit,
+      initialData,
     };
   },
 });

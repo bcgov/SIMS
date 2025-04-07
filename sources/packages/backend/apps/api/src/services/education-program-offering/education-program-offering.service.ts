@@ -454,12 +454,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institutionLocation.name",
         "institution.legalOperatingName",
         "institution.operatingName",
+        "institutionType.id",
         "educationProgram.isActive",
         "educationProgram.effectiveEndDate",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
+      .innerJoin("institution.institutionType", "institutionType")
       .leftJoin("offerings.assessedBy", "assessedBy")
       .innerJoin("offerings.parentOffering", "parentOffering")
       .andWhere("offerings.id= :offeringId", {
@@ -866,6 +868,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institution.id",
         "institution.legalOperatingName",
         "institution.operatingName",
+        "institutionType.id",
         "educationProgram.id",
         "educationProgram.name",
         "educationProgram.description",
@@ -879,6 +882,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
+      .innerJoin("institution.institutionType", "institutionType")
       .leftJoin("offering.assessedBy", "assessedBy")
       .leftJoin("offering.precedingOffering", "precedingOffering")
       .innerJoin("offering.parentOffering", "parentOffering")

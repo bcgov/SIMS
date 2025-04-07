@@ -369,6 +369,10 @@ export class EducationProgramOfferingControllerService {
         (warning) => warning.typeCode,
       ),
       parentOfferingId: offering.parentOffering.id,
+      isInstitutionBCPrivate:
+        offering.institutionLocation.institution.institutionType.isBCPrivate,
+      isInstitutionBCPublic:
+        offering.institutionLocation.institution.institutionType.isBCPublic,
     };
   }
 

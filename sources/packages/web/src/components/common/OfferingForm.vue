@@ -76,7 +76,9 @@ export default defineComponent({
       required: false,
     },
     data: {
-      type: Object as PropType<OfferingFormModel>,
+      type: Object as PropType<
+        OfferingFormModel | EducationProgramOfferingAPIOutDTO
+      >,
       required: false,
     },
     formMode: {
