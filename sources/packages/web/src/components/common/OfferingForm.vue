@@ -47,7 +47,7 @@
 <script lang="ts">
 import { FormIOForm, OfferingFormModel, OfferingFormModes } from "@/types";
 import { defineComponent, PropType, computed, ref, watchEffect } from "vue";
-import { useInstitutionState, useOffering } from "@/composables";
+import { useOffering } from "@/composables";
 import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
@@ -98,30 +98,15 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { institutionState } = useInstitutionState();
     const offeringData = ref(
       {} as EducationProgramOfferingAPIOutDTO | OfferingFormModel,
     );
     watchEffect(async () => {
-      // If the offeringId is provided, fetch the offering details based on the offeringId.
-      if (props.offeringId) {
-        offeringData.value =
-          await EducationProgramOfferingService.shared.getOfferingDetails(
+      offeringData.value = props.offeringId
+        ? await EducationProgramOfferingService.shared.getOfferingDetails(
             props.offeringId,
-          );
-      }
-      // If the data is provided, set the offeringData to the data passed in.
-      else if (props.data) {
-        offeringData.value = props.data as OfferingFormModel;
-      }
-      // When the offering is created, the component will neither receive the data nor the offeringId.
-      // In this case, set the initial data that is required for the form on the initialization.
-      else {
-        offeringData.value = {
-          isInstitutionBCPublic: institutionState.value.isBCPublic,
-          isInstitutionBCPrivate: institutionState.value.isBCPrivate,
-        } as EducationProgramOfferingAPIOutDTO;
-      }
+          )
+        : (props.data as OfferingFormModel);
     });
     const { mapOfferingChipStatus } = useOffering();
     const submitOffering = (
