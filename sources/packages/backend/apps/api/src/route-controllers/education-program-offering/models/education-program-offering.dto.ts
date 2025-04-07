@@ -126,6 +126,8 @@ export class EducationProgramOfferingAPIOutDTO {
   validationWarnings: string[];
   validationInfos: string[];
   parentOfferingId: number;
+  isInstitutionBCPublic: boolean;
+  isInstitutionBCPrivate: boolean;
 }
 
 export class EducationProgramOfferingSummaryViewAPIOutDTO {

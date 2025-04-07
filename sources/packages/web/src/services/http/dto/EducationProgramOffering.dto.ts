@@ -135,6 +135,8 @@ export interface EducationProgramOfferingAPIOutDTO {
   validationWarnings: string[];
   validationInfos: string[];
   parentOfferingId: number;
+  isInstitutionBCPublic: boolean;
+  isInstitutionBCPrivate: boolean;
 }
 
 export interface StudyBreakAPIOutDTO {
