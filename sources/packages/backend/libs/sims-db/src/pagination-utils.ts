@@ -26,9 +26,7 @@ export function transformToApplicationEntitySortField(
     pirStatus: "application.pirStatus",
   };
   const dbColumnName = fieldSortOptions[sortField];
-  if (dbColumnName) {
-    orderByCondition[dbColumnName] = sortOrder;
-  }
+  orderByCondition[dbColumnName] = sortOrder;
   return orderByCondition;
 }
 

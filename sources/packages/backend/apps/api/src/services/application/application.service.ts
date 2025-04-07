@@ -234,8 +234,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
      * Assessment, Enrollment) then the execution will come here, then the existing application
      * status is set to `Edited` and applicationStatusUpdatedOn is updated and delete the
      * corresponding workflow and creates a new Application with same Application Number and
-     * Program Year as that of the Edited Application and with newly submitted payload with
-     * application status submitted.
+     * Program Year as that of the Edited Application and with newly submitted payload.
      */
 
     // Updating existing Application status to edited
@@ -1213,7 +1212,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "currentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
-        "offering.offeringIntensity",
+        "application.offeringIntensity",
         "educationProgram.name",
         "student.id",
         "user.firstName",
@@ -1237,28 +1236,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     // Add sorting
     if (sortField && sortOrder) {
-      // Map frontend sort fields to database columns
       const dbSortField = transformToApplicationEntitySortField(sortField);
-      // Apply the sort fields
       Object.entries(dbSortField).forEach(([field, orderObj]) => {
         const order = typeof orderObj === "object" ? orderObj.order : orderObj;
         query.addOrderBy(field, order);
       });
-      // Always add application number as secondary sort for consistency
       query.addOrderBy("application.applicationNumber", "ASC");
     } else {
-      // Default sorting by PIR status and application number
       query
-        .orderBy("application.pirStatus", "ASC")
+        .orderBy("application.applicationNumber", "ASC")
         .addOrderBy("application.applicationNumber", "ASC");
     }
-
-    // Add pagination
     query.skip((page - 1) * pageLimit).take(pageLimit);
-
-    // Get both results and count
     const [results, count] = await query.getManyAndCount();
-
     return { results, count };
   }
 

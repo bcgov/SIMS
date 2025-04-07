@@ -1,4 +1,4 @@
-import ApiClient from "@/services/http/ApiClient";
+import ApiClient from "./http/ApiClient";
 import {
   CompleteProgramInfoRequestAPIInDTO,
   DenyProgramInfoRequestAPIInDTO,

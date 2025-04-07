@@ -319,7 +319,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           givenNames: user.firstName,
           lastName: user.lastName,
           studentNumber: eachApplication.studentNumber,
-          studyIntensity: offering?.offeringIntensity,
+          studyIntensity: eachApplication.offeringIntensity,
           program:
             offering?.educationProgram?.name ||
             eachApplication.pirProgram?.name,
