@@ -41,7 +41,7 @@ import {
   APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION,
   allowApplicationChangeRequest,
 } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
@@ -1200,6 +1200,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     pageLimit: number,
     sortField?: string,
     sortOrder?: "ASC" | "DESC",
+    search?: string,
+    intensityFilter?: string[],
   ): Promise<{ results: Application[]; count: number }> {
     const query = this.repo
       .createQueryBuilder("application")
@@ -1209,10 +1211,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.pirStatus",
         "application.submittedDate",
         "application.studentNumber",
+        "application.offeringIntensity",
+        "application.data",
         "currentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
-        "application.offeringIntensity",
         "educationProgram.name",
         "student.id",
         "user.firstName",
@@ -1234,18 +1237,64 @@ export class ApplicationService extends RecordDataModelService<Application> {
         editedStatus: ApplicationStatus.Edited,
       });
 
-    // Add sorting
-    if (sortField && sortOrder) {
-      const dbSortField = transformToApplicationEntitySortField(sortField);
-      Object.entries(dbSortField).forEach(([field, orderObj]) => {
-        const order = typeof orderObj === "object" ? orderObj.order : orderObj;
-        query.addOrderBy(field, order);
+    // Apply search by name or application number if provided
+    if (search) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where(getUserFullNameLikeSearch("user", "search")).orWhere(
+            "application.applicationNumber ILIKE :search",
+          );
+        }),
+      );
+      query.setParameter("search", `%${search}%`);
+    }
+    if (intensityFilter?.length) {
+      query.andWhere("application.offeringIntensity IN (:...intensityFilter)", {
+        intensityFilter,
       });
+    }
+    if (!sortField || !sortOrder) {
+      query.orderBy("application.pirStatus", "DESC");
       query.addOrderBy("application.applicationNumber", "ASC");
     } else {
-      query
-        .orderBy("application.applicationNumber", "ASC")
-        .addOrderBy("application.applicationNumber", "ASC");
+      const fieldSortOrder =
+        sortOrder === "ASC" ? FieldSortOrder.ASC : FieldSortOrder.DESC;
+      const dbSortField = transformToApplicationEntitySortField(
+        sortField,
+        fieldSortOrder,
+      );
+
+      // Handle sort fields one at a time
+      let firstField = true;
+      for (const [field, order] of Object.entries(dbSortField)) {
+        if (firstField) {
+          // First field uses orderBy
+          if (
+            field === "application.submittedDate" ||
+            field === "offering.studyStartDate" ||
+            field === "offering.studyEndDate"
+          ) {
+            query.orderBy(field, order as any, "NULLS LAST");
+          } else {
+            query.orderBy(field, order as any);
+          }
+          firstField = false;
+        } else {
+          // Subsequent fields use addOrderBy
+          if (
+            field === "application.submittedDate" ||
+            field === "offering.studyStartDate" ||
+            field === "offering.studyEndDate"
+          ) {
+            query.addOrderBy(field, order as any, "NULLS LAST");
+          } else {
+            query.addOrderBy(field, order as any);
+          }
+        }
+      }
+
+      // Always add application number as a secondary sort
+      query.addOrderBy("application.applicationNumber", "ASC");
     }
     query.skip((page - 1) * pageLimit).take(pageLimit);
     const [results, count] = await query.getManyAndCount();

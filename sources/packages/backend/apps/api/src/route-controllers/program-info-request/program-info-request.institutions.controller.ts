@@ -284,6 +284,8 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
    * @param pageLimit number of items per page.
    * @param sortField field to sort by.
    * @param sortOrder sort direction.
+   * @param search search query.
+   * @param intensityFilter intensity filter.
    * @returns paginated student application list of an institution location.
    */
   @HasLocationAccess("locationId")
@@ -294,7 +296,16 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @Query("pageLimit", ParseIntPipe) pageLimit = 10,
     @Query("sortField") sortField?: string,
     @Query("sortOrder") sortOrder?: "ASC" | "DESC",
+    @Query("search") search?: string,
+    @Query("intensityFilter") intensityFilter?: string,
   ): Promise<{ results: PIRSummaryAPIOutDTO[]; count: number }> {
+    // Safely process intensityFilter, which could be a comma-separated string
+    let intensityFilterArray: string[] | undefined = undefined;
+    if (intensityFilter) {
+      // Only process if not undefined
+      intensityFilterArray = intensityFilter.split(",");
+    }
+
     const { results: applications, count } =
       await this.applicationService.getPIRApplications(
         locationId,
@@ -302,6 +313,8 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
         pageLimit,
         sortField,
         sortOrder,
+        search,
+        intensityFilterArray,
       );
 
     return {
@@ -323,6 +336,11 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           program:
             offering?.educationProgram?.name ||
             eachApplication.pirProgram?.name,
+          applicationData: {
+            programName: eachApplication.data?.programName,
+            startDate: eachApplication.data?.studystartDate,
+            endDate: eachApplication.data?.studyendDate,
+          },
         };
       }),
       count,

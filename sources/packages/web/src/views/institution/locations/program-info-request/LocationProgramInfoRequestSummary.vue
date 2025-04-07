@@ -1,8 +1,5 @@
 <template>
-  <full-page-container
-    :full-width="true"
-    :layout-template="LayoutTemplates.Centered"
-  >
+  <full-page-container :full-width="true">
     <template #header>
       <header-navigator
         :title="locationName"
@@ -13,13 +10,12 @@
     <body-header
       title="Active applications"
       data-cy="activeApplicationsTab"
-      :recordsCount="paginatedApplications?.count || 0"
+      :recordsCount="applications?.count || 0"
     >
       <template #actions>
         <v-row class="m-0 p-0">
           <v-col cols="auto" class="mr-4">
             <v-btn-toggle
-              mandatory
               v-model="intensityFilter"
               class="float-right btn-toggle"
               selected-class="selected-btn-toggle"
@@ -45,17 +41,15 @@
           </v-col>
           <v-col cols="3">
             <v-text-field
-              v-model="searchQuery"
-              append-inner-icon="mdi-magnify"
-              placeholder="Search by name"
-              variant="outlined"
               density="compact"
-              class="search-field"
-              hide-details
-              clearable
-              @update:model-value="handleSearch"
-              @click:clear="handleSearch"
+              label="Search by name or application #"
+              variant="outlined"
+              v-model="searchQuery"
               data-cy="searchBox"
+              @keyup.enter="searchProgramTable"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
+              placeholder="Enter name or application #"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -63,20 +57,19 @@
     </body-header>
     <content-group>
       <toggle-content
-        :toggled="!paginatedApplications?.count && !applicationsLoading"
+        :toggled="!applications?.count && !applicationsLoading"
         message="No program information requests found"
       >
         <v-data-table-server
-          v-if="paginatedApplications?.count"
+          v-if="applications?.count"
           :headers="pirTableHeaders"
-          :items="paginatedApplications?.results || []"
-          :items-length="paginatedApplications?.count || 0"
+          :items="applications?.results || []"
+          :items-length="applications?.count || 0"
           :loading="applicationsLoading"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
-          :sort-by="[{ key: DEFAULT_SORT_FIELD, order: DEFAULT_SORT_ORDER }]"
-          must-sort
           @update:options="paginationAndSortEvent"
+          class="elevation-1"
         >
           <template #[`item.submittedDate`]="{ item }">
             {{
@@ -129,11 +122,11 @@ import {
 } from "@/services/http/dto";
 import {
   DataTableOptions,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   LayoutTemplates,
 } from "@/types";
-import type { DataTableSortOrder } from "vuetify/lib/composables/index.mjs";
 
 enum StudyIntensity {
   FullTime = "Full Time",
@@ -141,7 +134,12 @@ enum StudyIntensity {
 }
 
 const pirTableHeaders = [
-  { title: "Submitted Date", key: "submittedDate", sortable: true },
+  {
+    title: "Submitted Date",
+    key: "submittedDate",
+    sortable: true,
+    align: "start" as const,
+  },
   { title: "Application #", key: "applicationNumber", sortable: false },
   { title: "Given Names", key: "givenNames", sortable: false },
   { title: "Last Name", key: "lastName", sortable: false },
@@ -174,15 +172,14 @@ export default defineComponent({
     const { dateOnlyLongString } = useFormatters();
     const applicationsLoading = ref(false);
     const searchQuery = ref("");
-    const intensityFilter = ref([IntensityFilter.All]);
-    const paginatedApplications = ref(
-      {} as PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>,
-    );
+    const intensityFilter = ref(IntensityFilter.All);
+    const applications = ref<
+      PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO> | undefined
+    >(undefined);
     const currentPage = ref(1);
     const currentPageLimit = ref(DEFAULT_PAGE_LIMIT);
-    // Initial sort by Status (Pending first) then by Submitted date
-    const DEFAULT_SORT_FIELD = "pirStatus";
-    const DEFAULT_SORT_ORDER: DataTableSortOrder = "asc";
+    const currentSortField = ref<string | undefined>("submittedDate");
+    const currentSortOrder = ref<"ASC" | "DESC" | undefined>("DESC");
 
     const locationName = computed(() => {
       return getLocationName(props.locationId);
@@ -221,11 +218,27 @@ export default defineComponent({
       return date ? dateOnlyLongString(date) : "-";
     };
 
+    // Map UI field names to API field names for sorting
+    const getApiSortField = (uiField?: string): string | undefined => {
+      if (!uiField) return undefined;
+
+      // Define mappings if API field names differ from UI
+      const fieldMapping: Record<string, string> = {
+        // Check if any of these fields need to be mapped differently for the API
+        submittedDate: "submittedDate",
+        studyStartPeriod: "studyStartPeriod",
+        studyEndPeriod: "studyEndPeriod",
+        pirStatus: "pirStatus",
+      };
+
+      return fieldMapping[uiField] || uiField;
+    };
+
     const loadApplications = async (
-      page = 1,
-      pageLimit = DEFAULT_PAGE_LIMIT,
-      sortField = DEFAULT_SORT_FIELD,
-      sortOrder: DataTableSortOrder = DEFAULT_SORT_ORDER,
+      page = currentPage.value,
+      pageLimit = currentPageLimit.value,
+      sortField = currentSortField.value,
+      sortOrder = currentSortOrder.value,
     ) => {
       try {
         applicationsLoading.value = true;
@@ -233,21 +246,26 @@ export default defineComponent({
           page,
           pageLimit,
           sortField,
-          sortOrder: sortOrder === "desc" ? "DESC" : "ASC",
+          sortOrder,
           search: searchQuery.value || undefined,
-          intensityFilter: !intensityFilter.value.includes(IntensityFilter.All)
-            ? intensityFilter.value
-            : undefined,
+          intensityFilter:
+            intensityFilter.value !== IntensityFilter.All
+              ? [intensityFilter.value]
+              : undefined,
         };
 
-        paginatedApplications.value =
+        console.log("Loading PIR applications with criteria:", searchCriteria);
+
+        applications.value =
           await ProgramInfoRequestService.shared.getPIRSummary(
             props.locationId,
             searchCriteria,
           );
+
+        console.log("PIR applications loaded:", applications.value);
       } catch (error: unknown) {
         console.error("Error loading PIR applications:", error);
-        paginatedApplications.value = {
+        applications.value = {
           results: [],
           count: 0,
         };
@@ -256,34 +274,61 @@ export default defineComponent({
       }
     };
 
-    // Handle search
-    const handleSearch = () => {
-      currentPage.value = 1;
-      loadApplications(currentPage.value, currentPageLimit.value);
+    // Search program table - simplified to match LocationPrograms pattern
+    const searchProgramTable = async () => {
+      // Reset to first page when searching
+      currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
+      // Reset applications (helps with UI feedback)
+      applications.value = undefined;
+      // Load applications with search criteria
+      await loadApplications();
     };
 
     // Handle intensity filter
     const filterByIntensity = () => {
-      currentPage.value = 1;
-      loadApplications(currentPage.value, currentPageLimit.value);
+      currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
+      applications.value = undefined;
+      loadApplications();
     };
 
     // Handle pagination and sorting
     const paginationAndSortEvent = async (event: DataTableOptions) => {
+      console.log("Pagination/Sort Event", JSON.stringify(event, null, 2));
+
       currentPage.value = event.page;
       currentPageLimit.value = event.itemsPerPage;
-
       const [sortByOptions] = event.sortBy;
+
+      console.log("Sort options:", sortByOptions);
+
+      // Map the Vuetify sort order to the API expected format ("ASC" or "DESC")
+      // Vuetify uses "asc" and "desc" but API expects uppercase
+      let apiSortOrder: "ASC" | "DESC" | undefined = undefined;
+      if (sortByOptions?.order) {
+        apiSortOrder = sortByOptions.order === "asc" ? "ASC" : "DESC";
+      }
+
+      // Map UI field name to API field name if needed
+      currentSortField.value = getApiSortField(sortByOptions?.key);
+      currentSortOrder.value = apiSortOrder;
+
+      console.log(
+        `Sorting by: ${currentSortField.value}, Order: ${currentSortOrder.value}`,
+      );
+
       await loadApplications(
-        event.page,
-        event.itemsPerPage,
-        sortByOptions?.key || DEFAULT_SORT_FIELD,
-        sortByOptions?.order || DEFAULT_SORT_ORDER,
+        currentPage.value,
+        currentPageLimit.value,
+        currentSortField.value,
+        currentSortOrder.value,
       );
     };
 
-    // Initialize with default sorting
+    // Initialize
     onMounted(async () => {
+      // Simplified initialization - don't set sort field/order in frontend
+      currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
+      currentPageLimit.value = DEFAULT_PAGE_LIMIT;
       await loadApplications();
     });
 
@@ -291,20 +336,24 @@ export default defineComponent({
     watch(
       () => props.locationId,
       async () => {
-        currentPage.value = 1;
+        // Reset all filters and search when location changes
+        currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
+        searchQuery.value = "";
+        intensityFilter.value = IntensityFilter.All;
+        applications.value = undefined; // Clear results first
         await loadApplications();
       },
     );
 
     return {
-      paginatedApplications,
+      applications,
       dateOnlyLongString,
       goToViewApplication,
       locationName,
       pirTableHeaders,
       applicationsLoading,
       searchQuery,
-      handleSearch,
+      searchProgramTable,
       intensityFilter,
       filterByIntensity,
       IntensityFilter,
@@ -313,8 +362,6 @@ export default defineComponent({
       ITEMS_PER_PAGE,
       paginationAndSortEvent,
       LayoutTemplates,
-      DEFAULT_SORT_FIELD,
-      DEFAULT_SORT_ORDER,
       getProgramName,
       getStartDate,
       getEndDate,
