@@ -13,11 +13,11 @@
       :recordsCount="applications?.count || 0"
     >
       <template #actions>
-        <v-row class="m-0 p-0">
-          <v-col cols="auto" class="mr-4">
+        <v-row class="m-0 p-0 d-flex justify-end">
+          <v-col cols="auto">
             <v-btn-toggle
               v-model="intensityFilter"
-              class="float-right btn-toggle"
+              class="btn-toggle"
               selected-class="selected-btn-toggle"
               @update:model-value="filterByIntensity"
             >
@@ -125,7 +125,6 @@ import {
   DEFAULT_DATATABLE_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
-  LayoutTemplates,
 } from "@/types";
 
 enum StudyIntensity {
@@ -178,8 +177,6 @@ export default defineComponent({
     >(undefined);
     const currentPage = ref(1);
     const currentPageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const currentSortField = ref<string | undefined>("submittedDate");
-    const currentSortOrder = ref<"ASC" | "DESC" | undefined>("DESC");
 
     const locationName = computed(() => {
       return getLocationName(props.locationId);
@@ -237,16 +234,21 @@ export default defineComponent({
     const loadApplications = async (
       page = currentPage.value,
       pageLimit = currentPageLimit.value,
-      sortField = currentSortField.value,
-      sortOrder = currentSortOrder.value,
+      sortField?: string,
+      sortOrder?: string,
     ) => {
       try {
         applicationsLoading.value = true;
         const searchCriteria: PIRSearchCriteria = {
           page,
           pageLimit,
-          sortField,
-          sortOrder,
+          sortField: sortField ? getApiSortField(sortField) : undefined,
+          sortOrder:
+            sortOrder === "asc"
+              ? "ASC"
+              : sortOrder === "desc"
+              ? "DESC"
+              : undefined,
           search: searchQuery.value || undefined,
           intensityFilter:
             intensityFilter.value !== IntensityFilter.All
@@ -254,15 +256,11 @@ export default defineComponent({
               : undefined,
         };
 
-        console.log("Loading PIR applications with criteria:", searchCriteria);
-
         applications.value =
           await ProgramInfoRequestService.shared.getPIRSummary(
             props.locationId,
             searchCriteria,
           );
-
-        console.log("PIR applications loaded:", applications.value);
       } catch (error: unknown) {
         console.error("Error loading PIR applications:", error);
         applications.value = {
@@ -291,36 +289,17 @@ export default defineComponent({
       loadApplications();
     };
 
-    // Handle pagination and sorting
+    // Handle pagination and sorting - simplified to match LocationPrograms
     const paginationAndSortEvent = async (event: DataTableOptions) => {
-      console.log("Pagination/Sort Event", JSON.stringify(event, null, 2));
-
       currentPage.value = event.page;
       currentPageLimit.value = event.itemsPerPage;
       const [sortByOptions] = event.sortBy;
 
-      console.log("Sort options:", sortByOptions);
-
-      // Map the Vuetify sort order to the API expected format ("ASC" or "DESC")
-      // Vuetify uses "asc" and "desc" but API expects uppercase
-      let apiSortOrder: "ASC" | "DESC" | undefined = undefined;
-      if (sortByOptions?.order) {
-        apiSortOrder = sortByOptions.order === "asc" ? "ASC" : "DESC";
-      }
-
-      // Map UI field name to API field name if needed
-      currentSortField.value = getApiSortField(sortByOptions?.key);
-      currentSortOrder.value = apiSortOrder;
-
-      console.log(
-        `Sorting by: ${currentSortField.value}, Order: ${currentSortOrder.value}`,
-      );
-
       await loadApplications(
-        currentPage.value,
-        currentPageLimit.value,
-        currentSortField.value,
-        currentSortOrder.value,
+        event.page,
+        event.itemsPerPage,
+        sortByOptions?.key,
+        sortByOptions?.order,
       );
     };
 
@@ -361,7 +340,6 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       paginationAndSortEvent,
-      LayoutTemplates,
       getProgramName,
       getStartDate,
       getEndDate,
