@@ -125,13 +125,27 @@ export default defineComponent({
           props.locationId,
           props.applicationId,
         );
+
+      // Determine which program and dates to show based on status
+      const isPending = programRequestData.value.pirStatus === "Required";
+      const isCancelled = programRequestData.value.pirStatus === "Declined";
+      const showStudentInputs = isPending || isCancelled;
+
       initialData.value = {
         ...programRequestData.value,
-        studentStudyStartDate: dateOnlyLongString(
-          programRequestData.value.studentStudyStartDate,
+        // For Pending or Cancelled records: Show student inputs
+        programSelection: showStudentInputs
+          ? programRequestData.value.studentSelectedProgram
+          : programRequestData.value.selectedProgram,
+        studyStartDate: dateOnlyLongString(
+          showStudentInputs
+            ? programRequestData.value.studentStudyStartDate
+            : programRequestData.value.studyStartPeriod,
         ),
-        studentStudyEndDate: dateOnlyLongString(
-          programRequestData.value.studentStudyEndDate,
+        studyEndDate: dateOnlyLongString(
+          showStudentInputs
+            ? programRequestData.value.studentStudyEndDate
+            : programRequestData.value.studyEndPeriod,
         ),
         courseDetails: programRequestData.value.courseDetails?.map(
           (courseDetail) => ({

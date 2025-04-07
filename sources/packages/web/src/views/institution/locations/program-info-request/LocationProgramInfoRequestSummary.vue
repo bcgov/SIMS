@@ -10,7 +10,7 @@
         data-cy="programInformationRequestsHeader"
       />
     </template>
-    <body-header-container :enableCardView="true">
+    <body-header-container>
       <template #header>
         <body-header
           title="Active applications"
@@ -130,12 +130,12 @@ enum StudyIntensity {
 
 const pirTableHeaders = [
   { title: "Submitted Date", key: "submittedDate", sortable: true },
-  { title: "Application #", key: "applicationNumber", sortable: true },
-  { title: "Given Names", key: "givenNames", sortable: true },
-  { title: "Last Name", key: "lastName", sortable: true },
-  { title: "Student Number", key: "studentNumber", sortable: true },
-  { title: "Intensity", key: "studyIntensity", sortable: true },
-  { title: "Program", key: "program", sortable: true },
+  { title: "Application #", key: "applicationNumber", sortable: false },
+  { title: "Given Names", key: "givenNames", sortable: false },
+  { title: "Last Name", key: "lastName", sortable: false },
+  { title: "Student Number", key: "studentNumber", sortable: false },
+  { title: "Intensity", key: "studyIntensity", sortable: false },
+  { title: "Program", key: "program", sortable: false },
   { title: "Start Date", key: "studyStartPeriod", sortable: true },
   { title: "End Date", key: "studyEndPeriod", sortable: true },
   { title: "Status", key: "pirStatus", sortable: true },
@@ -193,9 +193,24 @@ export default defineComponent({
           props.locationId,
         );
 
+        // Sort the results to show Pending first and then by Submitted date
+        const sortedResults = response.sort((a, b) => {
+          // First sort by status (Pending first)
+          if (a.pirStatus === "Required" && b.pirStatus !== "Required")
+            return -1;
+          if (a.pirStatus !== "Required" && b.pirStatus === "Required")
+            return 1;
+
+          // Then sort by submitted date
+          return (
+            new Date(b.submittedDate).getTime() -
+            new Date(a.submittedDate).getTime()
+          );
+        });
+
         paginatedApplications.value = {
-          results: response,
-          count: response.length,
+          results: sortedResults,
+          count: sortedResults.length,
         };
       } catch (error: unknown) {
         console.error("Error loading PIR applications:", error);
@@ -205,78 +220,143 @@ export default defineComponent({
     };
 
     const handleSearch = async () => {
-      let searchCriteria: Record<string, string | boolean | string[]> =
-        (currentPagination.searchCriteria as Record<
-          string,
-          string | boolean | string[]
-        >) || {};
+      try {
+        applicationsLoading.value = true;
+        const response = await ProgramInfoRequestService.shared.getPIRSummary(
+          props.locationId,
+        );
 
-      if (searchQuery.value) {
-        // Search across multiple fields
-        searchCriteria.search = searchQuery.value;
-        // Keep the intensity filter if it exists
-        if (
-          intensityFilter.value &&
-          !intensityFilter.value.includes(IntensityFilter.All)
-        ) {
-          searchCriteria.intensitySearch = intensityFilter.value.toString();
+        // Filter results based on search query and intensity filter
+        let filteredResults = response;
+
+        if (searchQuery.value) {
+          const searchLower = searchQuery.value.toLowerCase();
+          filteredResults = filteredResults.filter(
+            (item) =>
+              item.givenNames.toLowerCase().includes(searchLower) ||
+              item.lastName.toLowerCase().includes(searchLower) ||
+              item.applicationNumber.toLowerCase().includes(searchLower),
+          );
         }
-      } else {
-        // Clear search but keep intensity filter if it exists
-        delete searchCriteria.search;
-        if (
-          intensityFilter.value &&
-          !intensityFilter.value.includes(IntensityFilter.All)
-        ) {
-          searchCriteria.intensitySearch = intensityFilter.value.toString();
+
+        // Apply intensity filter
+        if (!intensityFilter.value.includes(IntensityFilter.All)) {
+          filteredResults = filteredResults.filter((item) =>
+            intensityFilter.value.includes(item.studyIntensity),
+          );
+        }
+
+        // Sort the filtered results
+        const sortedResults = filteredResults.sort((a, b) => {
+          // First sort by status (Pending first)
+          if (a.pirStatus === "Required" && b.pirStatus !== "Required")
+            return -1;
+          if (a.pirStatus !== "Required" && b.pirStatus === "Required")
+            return 1;
+
+          // Then sort by submitted date
+          return (
+            new Date(b.submittedDate).getTime() -
+            new Date(a.submittedDate).getTime()
+          );
+        });
+
+        paginatedApplications.value = {
+          results: sortedResults,
+          count: sortedResults.length,
+        };
+      } catch (error: unknown) {
+        console.error("Error filtering PIR applications:", error);
+      } finally {
+        applicationsLoading.value = false;
+      }
+    };
+
+    const filterByIntensity = () => {
+      handleSearch();
+    };
+
+    const pageSortEvent = async (options: DataTableOptions) => {
+      try {
+        applicationsLoading.value = true;
+        const response = await ProgramInfoRequestService.shared.getPIRSummary(
+          props.locationId,
+        );
+
+        // Filter results based on search query and intensity filter
+        let filteredResults = response;
+
+        if (searchQuery.value) {
+          const searchLower = searchQuery.value.toLowerCase();
+          filteredResults = filteredResults.filter(
+            (item) =>
+              item.givenNames.toLowerCase().includes(searchLower) ||
+              item.lastName.toLowerCase().includes(searchLower) ||
+              item.applicationNumber.toLowerCase().includes(searchLower),
+          );
+        }
+
+        // Apply intensity filter
+        if (!intensityFilter.value.includes(IntensityFilter.All)) {
+          filteredResults = filteredResults.filter((item) =>
+            intensityFilter.value.includes(item.studyIntensity),
+          );
+        }
+
+        // Apply sorting based on column
+        if (options.sortBy.length > 0) {
+          const sortKey = options.sortBy[0].key;
+          const sortOrder = options.sortBy[0].order;
+
+          filteredResults.sort((a: any, b: any) => {
+            if (
+              sortKey === "submittedDate" ||
+              sortKey === "studyStartPeriod" ||
+              sortKey === "studyEndPeriod"
+            ) {
+              const dateA = new Date(a[sortKey]).getTime();
+              const dateB = new Date(b[sortKey]).getTime();
+              return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+            } else if (sortKey === "pirStatus") {
+              // Custom sort for status to always show Pending first
+              if (sortOrder === "asc") {
+                if (a.pirStatus === "Required" && b.pirStatus !== "Required")
+                  return -1;
+                if (a.pirStatus !== "Required" && b.pirStatus === "Required")
+                  return 1;
+              } else {
+                if (a.pirStatus === "Required" && b.pirStatus !== "Required")
+                  return 1;
+                if (a.pirStatus !== "Required" && b.pirStatus === "Required")
+                  return -1;
+              }
+              return a[sortKey].localeCompare(b[sortKey]);
+            }
+            return 0;
+          });
         } else {
-          // Clear all criteria if no search and no intensity filter
-          searchCriteria = {};
+          // Default sort: Pending first, then by submitted date desc
+          filteredResults.sort((a, b) => {
+            if (a.pirStatus === "Required" && b.pirStatus !== "Required")
+              return -1;
+            if (a.pirStatus !== "Required" && b.pirStatus === "Required")
+              return 1;
+            return (
+              new Date(b.submittedDate).getTime() -
+              new Date(a.submittedDate).getTime()
+            );
+          });
         }
+
+        paginatedApplications.value = {
+          results: filteredResults,
+          count: filteredResults.length,
+        };
+      } catch (error: unknown) {
+        console.error("Error sorting PIR applications:", error);
+      } finally {
+        applicationsLoading.value = false;
       }
-
-      currentPagination.searchCriteria = searchCriteria;
-      await loadApplications();
-    };
-
-    const filterByIntensity = async () => {
-      let searchCriteria: Record<string, string | boolean | string[]> =
-        (currentPagination.searchCriteria as Record<
-          string,
-          string | boolean | string[]
-        >) || {};
-
-      if (intensityFilter.value.includes(IntensityFilter.All)) {
-        delete searchCriteria.intensitySearch;
-        // If no search query, clear all criteria
-        if (!searchQuery.value) {
-          searchCriteria = {};
-        }
-      } else {
-        searchCriteria.intensitySearch = intensityFilter.value.toString();
-      }
-
-      // Preserve search query if it exists
-      if (searchQuery.value) {
-        searchCriteria.search = searchQuery.value;
-      }
-
-      currentPagination.searchCriteria = searchCriteria;
-      await loadApplications();
-    };
-
-    const pageSortEvent = async (event: DataTableOptions) => {
-      currentPagination.page = event.page;
-      currentPagination.pageLimit = event.itemsPerPage;
-      if (event.sortBy.length) {
-        const [sortBy] = event.sortBy;
-        currentPagination.sortField = sortBy.key;
-        currentPagination.sortOrder = sortBy.order;
-      } else {
-        currentPagination.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.sortOrder = DataTableSortOrder.DESC;
-      }
-      await loadApplications();
     };
 
     watch(
