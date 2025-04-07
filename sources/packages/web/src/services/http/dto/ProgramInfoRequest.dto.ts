@@ -43,6 +43,15 @@ export interface PIRDeniedReasonAPIOutDTO {
   description: string;
 }
 
+export interface PIRSearchCriteria {
+  search?: string;
+  intensityFilter?: string[];
+  page: number;
+  pageLimit: number;
+  sortField?: string;
+  sortOrder?: "ASC" | "DESC";
+}
+
 export interface PIRSummaryAPIOutDTO {
   applicationNumber: string;
   studyStartPeriod: string;
@@ -56,6 +65,16 @@ export interface PIRSummaryAPIOutDTO {
   studentNumber: string;
   studyIntensity: OfferingIntensity;
   program: string;
+  applicationData?: {
+    programName?: string;
+    startDate?: string;
+    endDate?: string;
+  };
+  offeringData?: {
+    programName?: string;
+    startDate?: string;
+    endDate?: string;
+  };
 }
 
 export class DenyProgramInfoRequestAPIInDTO {

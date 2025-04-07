@@ -10,95 +10,118 @@
         data-cy="programInformationRequestsHeader"
       />
     </template>
-    <body-header-container>
-      <template #header>
-        <body-header
-          title="Active applications"
-          data-cy="activeApplicationsTab"
-          :recordsCount="paginatedApplications.count"
-        >
-          <template #actions>
-            <v-row align="center" justify="end" no-gutters>
-              <v-col cols="auto" class="mr-4">
-                <v-btn-toggle
-                  mandatory
-                  v-model="intensityFilter"
-                  class="float-right btn-toggle"
-                  selected-class="selected-btn-toggle"
-                  @update:model-value="filterByIntensity"
-                >
-                  <v-btn
-                    rounded="xl"
-                    color="primary"
-                    :value="IntensityFilter.All"
-                    class="mr-2"
-                    >All</v-btn
-                  >
-                  <v-btn
-                    v-for="intensity in StudyIntensity"
-                    :key="intensity"
-                    rounded="xl"
-                    color="primary"
-                    :value="intensity"
-                    class="mr-2"
-                    >{{ intensity }}</v-btn
-                  >
-                </v-btn-toggle>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="searchQuery"
-                  append-inner-icon="mdi-magnify"
-                  placeholder="Search"
-                  variant="outlined"
-                  density="compact"
-                  class="search-field"
-                  hide-details
-                  clearable
-                  @update:model-value="handleSearch"
-                  @click:clear="handleSearch"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </template>
-        </body-header>
-      </template>
-      <content-group>
-        <toggle-content
-          :toggled="!paginatedApplications.count && !applicationsLoading"
-        >
-          <v-data-table-server
-            :headers="pirTableHeaders"
-            :items="paginatedApplications.results"
-            :items-length="paginatedApplications.count"
-            :items-per-page="DEFAULT_PAGE_LIMIT"
-            :items-per-page-options="ITEMS_PER_PAGE"
-            :loading="applicationsLoading"
-            @update:options="pageSortEvent"
-          >
-            <template #[`item.submittedDate`]="{ item }">
-              {{ dateOnlyLongString(item.submittedDate) }}
-            </template>
-            <template #[`item.studyStartPeriod`]="{ item }">
-              {{ dateOnlyLongString(item.studyStartPeriod) }}
-            </template>
-            <template #[`item.studyEndPeriod`]="{ item }">
-              {{ dateOnlyLongString(item.studyEndPeriod) }}
-            </template>
-            <template #[`item.pirStatus`]="{ item }">
-              <status-chip-program-info-request :status="item.pirStatus" />
-            </template>
-            <template #[`item.actions`]="{ item }">
+    <body-header
+      title="Active applications"
+      data-cy="activeApplicationsTab"
+      :recordsCount="paginatedApplications?.count || 0"
+    >
+      <template #actions>
+        <v-row class="m-0 p-0">
+          <v-col cols="auto" class="mr-4">
+            <v-btn-toggle
+              mandatory
+              v-model="intensityFilter"
+              class="float-right btn-toggle"
+              selected-class="selected-btn-toggle"
+              @update:model-value="filterByIntensity"
+            >
               <v-btn
+                rounded="xl"
                 color="primary"
-                @click="goToViewApplication(item.applicationId)"
-                >View</v-btn
+                :value="IntensityFilter.All"
+                class="mr-2"
+                >All</v-btn
               >
-            </template>
-          </v-data-table-server>
-        </toggle-content>
-      </content-group>
-    </body-header-container>
+              <v-btn
+                v-for="intensity in StudyIntensity"
+                :key="intensity"
+                rounded="xl"
+                color="primary"
+                :value="intensity"
+                class="mr-2"
+                >{{ intensity }}</v-btn
+              >
+            </v-btn-toggle>
+          </v-col>
+          <v-col cols="3">
+            <v-text-field
+              v-model="searchQuery"
+              append-inner-icon="mdi-magnify"
+              placeholder="Search"
+              variant="outlined"
+              density="compact"
+              class="search-field"
+              hide-details
+              clearable
+              @update:model-value="handleSearch"
+              @click:clear="handleSearch"
+              data-cy="searchBox"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </template>
+    </body-header>
+    <content-group>
+      <toggle-content
+        :toggled="!paginatedApplications?.count && !applicationsLoading"
+        message="No program information requests found"
+      >
+        <v-data-table-server
+          v-if="paginatedApplications?.count"
+          :headers="pirTableHeaders"
+          :items="paginatedApplications?.results || []"
+          :items-length="paginatedApplications?.count || 0"
+          :loading="applicationsLoading"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :sort-by="[
+            { key: 'pirStatus', order: 'asc' },
+            { key: 'submittedDate', order: 'desc' },
+          ]"
+          @update:options="paginationAndSortEvent"
+        >
+          <template #[`item.submittedDate`]="{ item }">
+            {{
+              item.submittedDate ? dateOnlyLongString(item.submittedDate) : "-"
+            }}
+          </template>
+          <template #[`item.program`]="{ item }">
+            {{ item.program || "-" }}
+          </template>
+          <template #[`item.studyStartPeriod`]="{ item }">
+            {{
+              item.studyStartPeriod
+                ? dateOnlyLongString(item.studyStartPeriod)
+                : "-"
+            }}
+          </template>
+          <template #[`item.studyEndPeriod`]="{ item }">
+            {{
+              item.studyEndPeriod
+                ? dateOnlyLongString(item.studyEndPeriod)
+                : "-"
+            }}
+          </template>
+          <template #[`item.studentNumber`]="{ item }">
+            {{ item.studentNumber || "-" }}
+          </template>
+          <template #[`item.studyIntensity`]="{ item }">
+            {{ item.studyIntensity || "-" }}
+          </template>
+          <template #[`item.pirStatus`]="{ item }">
+            <status-chip-program-info-request :status="item.pirStatus" />
+          </template>
+          <template #[`item.actions`]="{ item }">
+            <v-btn
+              color="primary"
+              @click="goToViewApplication(item.applicationId)"
+              data-cy="viewPIR"
+              >View</v-btn
+            >
+          </template>
+        </v-data-table-server>
+      </toggle-content>
+    </content-group>
   </full-page-container>
 </template>
 
@@ -112,15 +135,15 @@ import StatusChipProgramInfoRequest from "@/components/generic/StatusChipProgram
 import {
   PIRSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  PIRSearchCriteria,
 } from "@/services/http/dto";
 import {
   DataTableOptions,
-  DataTableSortOrder,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   LayoutTemplates,
-  PaginationOptions,
 } from "@/types";
+import type { DataTableSortOrder } from "vuetify/lib/composables/index.mjs";
 
 // Define study intensity enum since it's not exported from types
 enum StudyIntensity {
@@ -147,9 +170,8 @@ const IntensityFilter = {
   ...StudyIntensity,
 };
 
-const DEFAULT_SORT_FIELD = "submittedDate";
-
 export default defineComponent({
+  name: "LocationProgramInfoRequestSummary",
   components: { StatusChipProgramInfoRequest },
   props: {
     locationId: {
@@ -167,17 +189,16 @@ export default defineComponent({
     const paginatedApplications = ref(
       {} as PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>,
     );
+    const currentPage = ref(1);
+    const currentPageLimit = ref(DEFAULT_PAGE_LIMIT);
+    const DEFAULT_SORT_FIELD = "pirStatus"; // Initial sort by status to show Pending first
+    const DEFAULT_SORT_ORDER: DataTableSortOrder = "asc"; // ASC for status to show Pending first
+    const SECONDARY_SORT_FIELD = "submittedDate";
+    const SECONDARY_SORT_ORDER: DataTableSortOrder = "desc";
 
     const locationName = computed(() => {
       return getLocationName(props.locationId);
     });
-
-    const currentPagination: PaginationOptions = {
-      page: 1,
-      pageLimit: DEFAULT_PAGE_LIMIT,
-      sortField: DEFAULT_SORT_FIELD,
-      sortOrder: DataTableSortOrder.DESC,
-    };
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
@@ -186,189 +207,128 @@ export default defineComponent({
       });
     };
 
-    const loadApplications = async () => {
+    /**
+     * Function to load PIR list with search, filter, and pagination
+     * @param page page number
+     * @param pageLimit items per page
+     * @param sortField field to sort by
+     * @param sortOrder sort direction
+     */
+    const loadApplications = async (
+      page = 1,
+      pageLimit = DEFAULT_PAGE_LIMIT,
+      sortField = DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortOrder = DEFAULT_SORT_ORDER,
+    ) => {
       try {
         applicationsLoading.value = true;
+        const searchCriteria: PIRSearchCriteria = {
+          page,
+          pageLimit,
+          sortField,
+          sortOrder: sortOrder === "desc" ? "DESC" : "ASC",
+          search: searchQuery.value || undefined,
+          intensityFilter: !intensityFilter.value.includes(IntensityFilter.All)
+            ? intensityFilter.value
+            : undefined,
+        };
+
         const response = await ProgramInfoRequestService.shared.getPIRSummary(
           props.locationId,
+          searchCriteria,
         );
 
-        // Sort the results to show Pending first and then by Submitted date
-        const sortedResults = response.sort((a, b) => {
-          // First sort by status (Pending first)
-          if (a.pirStatus === "Required" && b.pirStatus !== "Required")
-            return -1;
-          if (a.pirStatus !== "Required" && b.pirStatus === "Required")
-            return 1;
-
-          // Then sort by submitted date
-          return (
-            new Date(b.submittedDate).getTime() -
-            new Date(a.submittedDate).getTime()
-          );
-        });
-
-        paginatedApplications.value = {
-          results: sortedResults,
-          count: sortedResults.length,
-        };
+        // Handle array response format
+        if (Array.isArray(response)) {
+          paginatedApplications.value = {
+            results: response,
+            count: response.length,
+          };
+        } else {
+          paginatedApplications.value = response;
+        }
       } catch (error: unknown) {
         console.error("Error loading PIR applications:", error);
-      } finally {
-        applicationsLoading.value = false;
-      }
-    };
-
-    const handleSearch = async () => {
-      try {
-        applicationsLoading.value = true;
-        const response = await ProgramInfoRequestService.shared.getPIRSummary(
-          props.locationId,
-        );
-
-        // Filter results based on search query and intensity filter
-        let filteredResults = response;
-
-        if (searchQuery.value) {
-          const searchLower = searchQuery.value.toLowerCase();
-          filteredResults = filteredResults.filter(
-            (item) =>
-              item.givenNames.toLowerCase().includes(searchLower) ||
-              item.lastName.toLowerCase().includes(searchLower) ||
-              item.applicationNumber.toLowerCase().includes(searchLower),
-          );
-        }
-
-        // Apply intensity filter
-        if (!intensityFilter.value.includes(IntensityFilter.All)) {
-          filteredResults = filteredResults.filter((item) =>
-            intensityFilter.value.includes(item.studyIntensity),
-          );
-        }
-
-        // Sort the filtered results
-        const sortedResults = filteredResults.sort((a, b) => {
-          // First sort by status (Pending first)
-          if (a.pirStatus === "Required" && b.pirStatus !== "Required")
-            return -1;
-          if (a.pirStatus !== "Required" && b.pirStatus === "Required")
-            return 1;
-
-          // Then sort by submitted date
-          return (
-            new Date(b.submittedDate).getTime() -
-            new Date(a.submittedDate).getTime()
-          );
-        });
-
+        // Initialize empty state on error
         paginatedApplications.value = {
-          results: sortedResults,
-          count: sortedResults.length,
+          results: [],
+          count: 0,
         };
-      } catch (error: unknown) {
-        console.error("Error filtering PIR applications:", error);
       } finally {
         applicationsLoading.value = false;
       }
     };
 
+    // Handle search with debounce
+    const handleSearch = () => {
+      // Reset to first page when searching
+      currentPage.value = 1;
+      loadApplications(currentPage.value, currentPageLimit.value);
+    };
+
+    // Handle intensity filter
     const filterByIntensity = () => {
-      handleSearch();
+      // Reset to first page when filtering
+      currentPage.value = 1;
+      loadApplications(currentPage.value, currentPageLimit.value);
     };
 
-    const pageSortEvent = async (options: DataTableOptions) => {
-      try {
-        applicationsLoading.value = true;
-        const response = await ProgramInfoRequestService.shared.getPIRSummary(
-          props.locationId,
-        );
+    // Handle pagination and sorting
+    const paginationAndSortEvent = async (event: DataTableOptions) => {
+      currentPage.value = event.page;
+      currentPageLimit.value = event.itemsPerPage;
 
-        // Filter results based on search query and intensity filter
-        let filteredResults = response;
+      const [sortByOptions] = event.sortBy;
+      await loadApplications(
+        event.page,
+        event.itemsPerPage,
+        sortByOptions?.key || DEFAULT_SORT_FIELD,
+        sortByOptions?.order || DEFAULT_SORT_ORDER,
+      );
+    };
 
-        if (searchQuery.value) {
-          const searchLower = searchQuery.value.toLowerCase();
-          filteredResults = filteredResults.filter(
-            (item) =>
-              item.givenNames.toLowerCase().includes(searchLower) ||
-              item.lastName.toLowerCase().includes(searchLower) ||
-              item.applicationNumber.toLowerCase().includes(searchLower),
-          );
+    // Helper function to get the appropriate program name based on PIR status
+    const getProgramName = (item: PIRSummaryAPIOutDTO): string => {
+      if (item.pirStatus === "Required" || item.pirStatus === "Declined") {
+        // For Pending or Declined, use student selected program or manual entry
+        if (item.applicationData?.programName) {
+          return item.applicationData.programName;
         }
-
-        // Apply intensity filter
-        if (!intensityFilter.value.includes(IntensityFilter.All)) {
-          filteredResults = filteredResults.filter((item) =>
-            intensityFilter.value.includes(item.studyIntensity),
-          );
-        }
-
-        // Apply sorting based on column
-        if (options.sortBy.length > 0) {
-          const sortKey = options.sortBy[0].key;
-          const sortOrder = options.sortBy[0].order;
-
-          filteredResults.sort((a: any, b: any) => {
-            if (
-              sortKey === "submittedDate" ||
-              sortKey === "studyStartPeriod" ||
-              sortKey === "studyEndPeriod"
-            ) {
-              const dateA = new Date(a[sortKey]).getTime();
-              const dateB = new Date(b[sortKey]).getTime();
-              return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-            } else if (sortKey === "pirStatus") {
-              // Custom sort for status to always show Pending first
-              if (sortOrder === "asc") {
-                if (a.pirStatus === "Required" && b.pirStatus !== "Required")
-                  return -1;
-                if (a.pirStatus !== "Required" && b.pirStatus === "Required")
-                  return 1;
-              } else {
-                if (a.pirStatus === "Required" && b.pirStatus !== "Required")
-                  return 1;
-                if (a.pirStatus !== "Required" && b.pirStatus === "Required")
-                  return -1;
-              }
-              return a[sortKey].localeCompare(b[sortKey]);
-            }
-            return 0;
-          });
-        } else {
-          // Default sort: Pending first, then by submitted date desc
-          filteredResults.sort((a, b) => {
-            if (a.pirStatus === "Required" && b.pirStatus !== "Required")
-              return -1;
-            if (a.pirStatus !== "Required" && b.pirStatus === "Required")
-              return 1;
-            return (
-              new Date(b.submittedDate).getTime() -
-              new Date(a.submittedDate).getTime()
-            );
-          });
-        }
-
-        paginatedApplications.value = {
-          results: filteredResults,
-          count: filteredResults.length,
-        };
-      } catch (error: unknown) {
-        console.error("Error sorting PIR applications:", error);
-      } finally {
-        applicationsLoading.value = false;
+        return item.program || ""; // Fallback to selected program if available
       }
+      // For Completed, use the program from assigned offering
+      return item.offeringData?.programName || item.program || "";
     };
 
-    watch(
-      () => props.locationId,
-      async () => {
-        await loadApplications();
-      },
-    );
+    // Helper function to get the appropriate dates based on PIR status
+    const getStudyDates = (item: PIRSummaryAPIOutDTO) => {
+      if (item.pirStatus === "Required" || item.pirStatus === "Declined") {
+        // For Pending or Declined, use dates from application data
+        return {
+          startDate: item.applicationData?.startDate || item.studyStartPeriod,
+          endDate: item.applicationData?.endDate || item.studyEndPeriod,
+        };
+      }
+      // For Completed, use dates from offering data
+      return {
+        startDate: item.offeringData?.startDate || item.studyStartPeriod,
+        endDate: item.offeringData?.endDate || item.studyEndPeriod,
+      };
+    };
 
+    // Initialize with default sorting
     onMounted(async () => {
       await loadApplications();
     });
+
+    // Watch for location changes
+    watch(
+      () => props.locationId,
+      async () => {
+        currentPage.value = 1; // Reset to first page when location changes
+        await loadApplications();
+      },
+    );
 
     return {
       paginatedApplications,
@@ -385,8 +345,10 @@ export default defineComponent({
       StudyIntensity,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
-      pageSortEvent,
+      paginationAndSortEvent,
       LayoutTemplates,
+      getProgramName,
+      getStudyDates,
     };
   },
 });
