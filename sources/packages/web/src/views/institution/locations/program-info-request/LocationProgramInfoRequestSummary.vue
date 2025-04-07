@@ -98,7 +98,6 @@
             <v-btn
               color="primary"
               @click="goToViewApplication(item.applicationId)"
-              data-cy="viewPIR"
               >View</v-btn
             >
           </template>
@@ -157,7 +156,6 @@ const IntensityFilter = {
 };
 
 export default defineComponent({
-  name: "LocationProgramInfoRequestSummary",
   components: { StatusChipProgramInfoRequest },
   props: {
     locationId: {
@@ -192,10 +190,8 @@ export default defineComponent({
     // Helper functions for displaying correct data based on PIR status
     const getProgramName = (item: PIRSummaryAPIOutDTO): string => {
       if (item.pirStatus === "Required" || item.pirStatus === "Declined") {
-        // For Pending or Declined, use student selected program or manual entry
         return item.applicationData?.programName || item.program || "-";
       }
-      // For Completed, use the program from assigned offering
       return item.program || "-";
     };
 
@@ -219,9 +215,7 @@ export default defineComponent({
     const getApiSortField = (uiField?: string): string | undefined => {
       if (!uiField) return undefined;
 
-      // Define mappings if API field names differ from UI
       const fieldMapping: Record<string, string> = {
-        // Check if any of these fields need to be mapped differently for the API
         submittedDate: "submittedDate",
         studyStartPeriod: "studyStartPeriod",
         studyEndPeriod: "studyEndPeriod",
@@ -272,13 +266,9 @@ export default defineComponent({
       }
     };
 
-    // Search program table - simplified to match LocationPrograms pattern
     const searchProgramTable = async () => {
-      // Reset to first page when searching
       currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
-      // Reset applications (helps with UI feedback)
       applications.value = undefined;
-      // Load applications with search criteria
       await loadApplications();
     };
 
@@ -289,7 +279,6 @@ export default defineComponent({
       loadApplications();
     };
 
-    // Handle pagination and sorting - simplified to match LocationPrograms
     const paginationAndSortEvent = async (event: DataTableOptions) => {
       currentPage.value = event.page;
       currentPageLimit.value = event.itemsPerPage;
@@ -305,7 +294,6 @@ export default defineComponent({
 
     // Initialize
     onMounted(async () => {
-      // Simplified initialization - don't set sort field/order in frontend
       currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
       currentPageLimit.value = DEFAULT_PAGE_LIMIT;
       await loadApplications();

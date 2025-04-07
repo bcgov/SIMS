@@ -299,13 +299,10 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @Query("search") search?: string,
     @Query("intensityFilter") intensityFilter?: string,
   ): Promise<{ results: PIRSummaryAPIOutDTO[]; count: number }> {
-    // Safely process intensityFilter, which could be a comma-separated string
     let intensityFilterArray: string[] | undefined = undefined;
     if (intensityFilter) {
-      // Only process if not undefined
       intensityFilterArray = intensityFilter.split(",");
     }
-
     const { results: applications, count } =
       await this.applicationService.getPIRApplications(
         locationId,
