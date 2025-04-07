@@ -84,9 +84,15 @@ export default defineComponent({
       allowChangeRequest: boolean,
     ) => {
       if (allowChangeRequest) {
-        snackBar.warn(
-          "Change requests for the 2025-2026 program year are not available at this moment.",
-        );
+        const applicationWithPY = await getApplicationWithPY(applicationId);
+        router.push({
+          name: StudentRoutesConst.DYNAMIC_FINANCIAL_CHANGE_REQUEST_APP_FORM,
+          params: {
+            selectedForm: applicationWithPY.formName,
+            programYearId: applicationWithPY.programYearId,
+            id: applicationId,
+          },
+        });
       } else {
         router.push({
           name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,

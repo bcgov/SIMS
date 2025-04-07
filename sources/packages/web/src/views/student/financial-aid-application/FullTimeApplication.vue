@@ -3,7 +3,9 @@
     <template #header>
       <header-navigator
         title="Applications"
-        subTitle="Financial Aid Application"
+        :sub-title="
+          changeRequest ? 'Change request' : 'Financial Aid Application'
+        "
       >
         <template #buttons>
           <v-btn
@@ -93,6 +95,7 @@ import {
   useSnackBar,
   ModalDialog,
   useFormatters,
+  useOffering,
 } from "@/composables";
 import {
   FormIOCustomEvent,
@@ -100,12 +103,14 @@ import {
   ApplicationStatus,
   ApiProcessError,
   BannerTypes,
+  FormIOForm,
 } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import {
   STUDY_DATE_OVERLAP_ERROR,
   ACTIVE_STUDENT_RESTRICTION,
+  APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
 } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { AppConfigService } from "@/services/AppConfigService";
@@ -132,6 +137,11 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    changeRequest: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   setup(props) {
     const {
@@ -139,6 +149,7 @@ export default defineComponent({
       getFormattedAddress,
       disabilityStatusToDisplay,
     } = useFormatters();
+    const { mapOfferingIntensity } = useOffering();
     const router = useRouter();
     const initialData = ref({});
     const isStudyEndDateWithinDeadline = ref(true);
@@ -181,13 +192,25 @@ export default defineComponent({
         ApplicationService.shared.getApplicationData(props.id),
       ]);
 
-      // Adjust the spaces when optional fields are not present.
-      isReadOnly.value =
-        [
+      // Define if the form should be read-only.
+      if (props.readOnly) {
+        // If some value is provided in the read-only prop, then the form should be readonly.
+        isReadOnly.value = true;
+      } else if (
+        // If a change request is being made in the expected application status,
+        // then the form should be editable.
+        props.changeRequest &&
+        applicationData.applicationStatus === ApplicationStatus.Completed
+      ) {
+        isReadOnly.value = false;
+      } else {
+        // If the application status is Completed, Cancelled or Edited, then the form should be read-only.
+        isReadOnly.value = [
           ApplicationStatus.Completed,
           ApplicationStatus.Cancelled,
           ApplicationStatus.Edited,
-        ].includes(applicationData.applicationStatus) || !!props.readOnly;
+        ].includes(applicationData.applicationStatus);
+      }
 
       notDraft.value =
         !!props.readOnly ||
@@ -215,6 +238,11 @@ export default defineComponent({
       };
       initialData.value = {
         ...applicationData.data,
+        howWillYouBeAttendingTheProgram:
+          applicationData.applicationOfferingIntensity,
+        applicationOfferingIntensity: mapOfferingIntensity(
+          applicationData.applicationOfferingIntensity,
+        ),
         ...studentFormData,
         ...programYear,
         isReadOnly: isReadOnly.value,
@@ -256,19 +284,75 @@ export default defineComponent({
     };
 
     // Execute the final submission of the student application.
-    const submitApplication = async (args: any, form: any) => {
+    const submitApplication = async (data: unknown, form: FormIOForm) => {
+      const associatedFiles = formioUtils.getAssociatedFiles(form);
+      if (props.changeRequest) {
+        await changeRequestSubmission(data, associatedFiles);
+        return;
+      }
+      await applicationSubmission(data, associatedFiles);
+    };
+
+    const changeRequestSubmission = async (
+      data: unknown,
+      associatedFiles: string[],
+    ): Promise<void> => {
       submittingApplication.value = true;
       try {
-        const associatedFiles = formioUtils.getAssociatedFiles(form);
+        await ApplicationService.shared.submitApplication(
+          props.id,
+          {
+            programYearId: props.programYearId,
+            data,
+            associatedFiles,
+          },
+          { isChangeRequest: true },
+        );
+        snackBar.success("Thank you, your change request has been submitted.");
+        await router.push({
+          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          params: {
+            id: props.id,
+          },
+        });
+      } catch (error: unknown) {
+        let errorLabel = "Unexpected error!";
+        let errorMsg = "An unexpected error has happened.";
+        if (error instanceof ApiProcessError) {
+          switch (error.errorType) {
+            case APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS:
+              snackBar.warn(error.message);
+              return;
+            case ACTIVE_STUDENT_RESTRICTION:
+              errorLabel = "Active restriction!";
+              errorMsg = error.message;
+              break;
+            default:
+              errorMsg = error.message;
+              break;
+          }
+        }
+        snackBar.error(`${errorLabel} ${errorMsg}`);
+      } finally {
+        submittingApplication.value = false;
+      }
+    };
+
+    const applicationSubmission = async (
+      data: unknown,
+      associatedFiles: string[],
+    ): Promise<void> => {
+      submittingApplication.value = true;
+      try {
         await ApplicationService.shared.submitApplication(props.id, {
           programYearId: props.programYearId,
-          data: args,
+          data,
           associatedFiles,
         });
-        router.push({
+        snackBar.success("Thank you, your application has been submitted.");
+        await router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         });
-        snackBar.success("Thank you, your application has been submitted.");
       } catch (error: unknown) {
         let errorLabel = "Unexpected error!";
         let errorMsg = "An unexpected error has happened.";
@@ -280,6 +364,9 @@ export default defineComponent({
               break;
             case ACTIVE_STUDENT_RESTRICTION:
               errorLabel = "Active restriction!";
+              errorMsg = error.message;
+              break;
+            default:
               errorMsg = error.message;
               break;
           }

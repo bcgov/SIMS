@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -15,6 +16,8 @@ import {
   CRAIncomeVerificationService,
   SupportingUserService,
   APPLICATION_NOT_FOUND,
+  ProgramYearService,
+  FormService,
 } from "../../services";
 import {
   ApplicationFormData,
@@ -29,6 +32,7 @@ import {
   InProgressApplicationDetailsAPIOutDTO,
   ApplicationDataChangeAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
+  SaveApplicationAPIInDTO,
 } from "./models/application.dto";
 import {
   credentialTypeToDisplay,
@@ -62,6 +66,7 @@ import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { AssessmentSequentialProcessingService } from "@sims/services";
+import { ConfigService } from "@sims/utilities/config";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
@@ -82,6 +87,9 @@ export class ApplicationControllerService {
     private readonly craIncomeVerificationService: CRAIncomeVerificationService,
     private readonly supportingUserService: SupportingUserService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
+    private readonly programYearService: ProgramYearService,
+    private readonly formService: FormService,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -773,6 +781,124 @@ export class ApplicationControllerService {
         throw new NotFoundException("Application not found.");
       }
       throw error;
+    }
+  }
+
+  /**
+   * Validate the application submission and get the validated result.
+   * @param applicationId application ID.
+   * @param studentId student used for authorization.
+   * @param payload payload to create the application.
+   * @returns validated application data.
+   */
+  async validateApplicationSubmission(
+    applicationId: number,
+    studentId: number,
+    payload: SaveApplicationAPIInDTO,
+  ): Promise<ApplicationData> {
+    const application =
+      await this.applicationService.getApplicationForSubmissionValidation(
+        applicationId,
+        studentId,
+      );
+    if (!application) {
+      throw new NotFoundException("Application not found.");
+    }
+    if (!application.programYear.active) {
+      throw new UnprocessableEntityException("Program year is not active.");
+    }
+    // Validate the values in the submitted application before submitting.
+    await this.validateSubmitApplicationData(
+      payload,
+      application.offeringIntensity,
+    );
+    const submissionResult =
+      await this.formService.dryRunSubmission<ApplicationData>(
+        application.programYear.formName,
+        payload.data,
+      );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to create an application due to an invalid request.",
+      );
+    }
+    await this.offeringIntensityRestrictionCheck(
+      studentId,
+      application.offeringIntensity,
+    );
+    return submissionResult.data.data;
+  }
+
+  /**
+   * Validates and updates the payload values with the offering values (where the server is the source of truth) before submitting.
+   * This is required to the values in the payload to be the same as the values in the offering and to prevent the user from modifying them.
+   * @param payload payload to create the application.
+   * @param offeringIntensity offering intensity of the application.
+   */
+  private async validateSubmitApplicationData(
+    payload: SaveApplicationAPIInDTO,
+    offeringIntensity: OfferingIntensity,
+  ): Promise<void> {
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
+    if (
+      !isFulltimeAllowed &&
+      offeringIntensity === OfferingIntensity.fullTime
+    ) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
+
+    // For program years still relying on the form.io variable howWillYouBeAttendingTheProgram
+    // to determine the offering intensity, we need to set the value in the payload
+    // to the offering intensity value from the database.
+    if (payload.data.howWillYouBeAttendingTheProgram) {
+      payload.data.howWillYouBeAttendingTheProgram = offeringIntensity;
+    }
+
+    // studyStartDate from payload is set as studyStartDate
+    let studyStartDate = payload.data.studystartDate;
+    let studyEndDate = payload.data.studyendDate;
+    if (payload.data.selectedOffering) {
+      const offering = await this.offeringService.getOfferingById(
+        payload.data.selectedOffering,
+        { programId: payload.data.selectedProgram },
+      );
+      if (!offering) {
+        throw new UnprocessableEntityException(
+          "Selected offering id is invalid.",
+        );
+      }
+      if (
+        !isFulltimeAllowed &&
+        offering.offeringIntensity === OfferingIntensity.fullTime
+      ) {
+        throw new UnprocessableEntityException("Invalid offering intensity.");
+      }
+      if (!offering.educationProgram.isActive) {
+        throw new UnprocessableEntityException(
+          "The education program is not active.",
+        );
+      }
+      if (offering.educationProgram.isExpired) {
+        throw new UnprocessableEntityException(
+          "The education program is expired.",
+        );
+      }
+      if (offering.offeringIntensity !== offeringIntensity) {
+        throw new UnprocessableEntityException(
+          "The intensity of the selected offering does not match with the application's offering intensity.",
+        );
+      }
+      // if  studyStartDate is not in payload
+      // then selectedOffering will be there in payload,
+      // then study start date taken from offering
+      studyStartDate = offering.studyStartDate;
+      studyEndDate = offering.studyEndDate;
+      // This ensures that if an offering is selected in student application,
+      // then the study start date and study end date present in form submission payload
+      // belongs to the selected offering and hence prevents these dates being modified in the
+      // middle before coming to API.
+      payload.data.selectedOfferingDate = studyStartDate;
+      payload.data.selectedOfferingEndDate = studyEndDate;
     }
   }
 }

@@ -22,6 +22,8 @@ import {
   FileOriginType,
   ApplicationEditStatus,
   OfferingIntensity,
+  InstitutionLocation,
+  StudentAppeal,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -37,6 +39,7 @@ import {
   PaginatedResults,
   offeringBelongToProgramYear,
   APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION,
+  allowApplicationChangeRequest,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -77,6 +80,8 @@ export const COE_DENIED_REASON_NOT_FOUND_ERROR =
   "COE_DENIED_REASON_NOT_FOUND_ERROR";
 export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
   "INSUFFICIENT_APPLICATION_SEARCH_PARAMS";
+export const APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS =
+  "APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS";
 
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
@@ -126,7 +131,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     auditUserId: number,
     studentId: number,
-    programYearId: number,
     applicationData: ApplicationData,
     associatedFiles: string[],
   ): Promise<ApplicationSubmissionResult> {
@@ -142,14 +146,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       throw new CustomNamedError(
         "Student Application not found or it is not in the correct status to be submitted.",
         APPLICATION_NOT_FOUND,
-      );
-    }
-    // If the the existing application was created under a different program year than
-    // the one being used to submit it, it is not valid.
-    if (application.programYear.id !== programYearId) {
-      throw new CustomNamedError(
-        "Student Application program year is not the expected one.",
-        APPLICATION_NOT_VALID,
       );
     }
 
@@ -305,6 +301,151 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     });
     return { application, createdAssessment: originalAssessment };
+  }
+
+  /**
+   * Starts a change request for an existing student application.
+   * A new application will be created in edited status and will be assessed by the Ministry.
+   * @param applicationId application ID to be changed.
+   * @param studentId student ID.
+   * @param applicationData application dynamic data to be saved.
+   * @param associatedFiles files to be associated with the application.
+   * @param auditUserId user that should be considered the one that is making the change request.
+   * @returns application ID of the created application that represents the change request.
+   */
+  async submitApplicationChangeRequest(
+    applicationId: number,
+    studentId: number,
+    applicationData: ApplicationData,
+    associatedFiles: string[],
+    auditUserId: number,
+  ): Promise<ApplicationSubmissionResult> {
+    const application = await this.getApplicationToSave(
+      studentId,
+      ApplicationStatus.Completed,
+      applicationId,
+    );
+    // If the application was not found it is because it does not belong to the student or it is not completed.
+    if (!application) {
+      throw new CustomNamedError(
+        "Student application not found or it is not in the correct status to be changed.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+    if (!allowApplicationChangeRequest(application.programYear)) {
+      throw new CustomNamedError(
+        "The program year associated to this application does not allow a change request submission.",
+        APPLICATION_NOT_VALID,
+      );
+    }
+    // Check if there is already a change request in progress.
+    const hasChangeInProgress = application.parentApplication.versions.some(
+      (version) =>
+        [
+          ApplicationEditStatus.ChangeInProgress,
+          ApplicationEditStatus.ChangePendingApproval,
+        ].includes(version.applicationEditStatus),
+    );
+    if (hasChangeInProgress) {
+      throw new CustomNamedError(
+        "An application change request is already in progress.",
+        APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
+      );
+    }
+    // Validates selected location and selected offering as key values that
+    // should not be changed. Even if some other values are changed (tampered by the user),
+    // there will be no impact for application processing since the location and offering
+    // are copied from the current application retrieved from the database.
+    if (
+      applicationData.selectedLocation !== application.data.selectedLocation
+    ) {
+      throw new CustomNamedError(
+        "Change request has a different location from its original submission.",
+        APPLICATION_NOT_VALID,
+      );
+    }
+    if (
+      applicationData.selectedOffering !== application.data.selectedOffering
+    ) {
+      // Applications are expected to have the same offering value populated, even for PIRs.
+      // PIRs will not have the offering value populated and the assessment will be created
+      // based on the most recent offering associated with the current application version.
+      throw new CustomNamedError(
+        "Change request has a different offering from its original submission.",
+        APPLICATION_NOT_VALID,
+      );
+    }
+
+    // Create the new assessment.
+    const now = new Date();
+    const auditUser = { id: auditUserId } as User;
+    const originalAssessment = new StudentAssessment();
+    originalAssessment.triggerType = AssessmentTriggerType.OriginalAssessment;
+    originalAssessment.submittedBy = auditUser;
+    originalAssessment.submittedDate = now;
+    originalAssessment.creator = auditUser;
+    originalAssessment.offering = {
+      id: application.currentAssessment.offering.id,
+    } as EducationProgramOffering;
+    if (application.currentAssessment.studentAppeal) {
+      originalAssessment.studentAppeal = {
+        id: application.currentAssessment.studentAppeal.id,
+      } as StudentAppeal;
+    }
+    // Creating new Application with same application number.
+    const newApplication = new Application();
+    // Current date is set as submitted date.
+    newApplication.submittedDate = now;
+    newApplication.applicationNumber = application.applicationNumber;
+    newApplication.relationshipStatus = applicationData.relationshipStatus;
+    newApplication.studentNumber = applicationData.studentNumber;
+    newApplication.programYear = application.programYear;
+    newApplication.data = applicationData;
+    newApplication.location = {
+      id: application.location.id,
+    } as InstitutionLocation;
+    newApplication.parentApplication = {
+      id: application.parentApplication.id,
+    } as Application;
+    newApplication.precedingApplication = {
+      id: application.id,
+    } as Application;
+    newApplication.student = { id: studentId } as Student;
+    newApplication.studentFiles = await this.getSyncedApplicationFiles(
+      studentId,
+      [],
+      associatedFiles,
+    );
+    // Application status related properties.
+    newApplication.applicationStatus = ApplicationStatus.Edited;
+    newApplication.applicationStatusUpdatedOn = now;
+    // Application edit status related properties.
+    newApplication.applicationEditStatus =
+      ApplicationEditStatus.ChangeInProgress;
+    newApplication.applicationEditStatusUpdatedOn = now;
+    newApplication.applicationEditStatusUpdatedBy = auditUser;
+    // While editing an application, a new application record is created and a new
+    // assessment record is also created to be the used as a "current Assessment" record.
+    // The application and the assessment records have a DB relationship and the
+    // assessment record also has a second relationship to the application that
+    // keeps its history. Due to this double relationships the application record
+    // and the assessment cannot be create at the same moment what causes a
+    // "cyclic dependency error" on Typeorm. Saving the application record and later
+    // having it associated with the assessment solves the issue.
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const applicationRepository =
+        transactionalEntityManager.getRepository(Application);
+      await applicationRepository.save(newApplication);
+      newApplication.modifier = auditUser;
+      newApplication.updatedAt = now;
+      newApplication.studentAssessments = [originalAssessment];
+      newApplication.currentAssessment = originalAssessment;
+      await applicationRepository.save(newApplication);
+    });
+    return {
+      application: newApplication,
+      createdAssessment: originalAssessment,
+    };
   }
 
   /**
@@ -811,16 +952,36 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "parentApplication.id",
         "precedingApplication.id",
         "programYear.id",
+        "programYear.programYear",
         "programYear.programYearPrefix",
         "studentFiles",
         "studentFile.uniqueFileName",
         "currentAssessment.id",
         "currentAssessment.assessmentWorkflowId",
+        "location.id",
+        "offering.id",
+        "studentAppeal.id",
+        "versions.id",
+        "versions.applicationEditStatus",
       ])
       .innerJoin("application.programYear", "programYear")
+      .leftJoin("application.location", "location")
       .leftJoin("application.parentApplication", "parentApplication")
+      .leftJoin(
+        "parentApplication.versions",
+        "versions",
+        "versions.applicationEditStatus IN (:...inProgressEditedStatuses)",
+        {
+          inProgressEditedStatuses: [
+            ApplicationEditStatus.ChangeInProgress,
+            ApplicationEditStatus.ChangePendingApproval,
+          ],
+        },
+      )
       .leftJoin("application.precedingApplication", "precedingApplication")
       .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
+      .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
       .leftJoin("application.studentFiles", "studentFiles")
       .leftJoin("studentFiles.studentFile", "studentFile")
       .where("application.student.id = :studentId", { studentId })
@@ -1693,6 +1854,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: {
         id: true,
         applicationNumber: true,
+        offeringIntensity: true,
         data: true as unknown,
         programYear: {
           id: true,
@@ -1958,6 +2120,32 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: Not(ApplicationStatus.Edited),
       },
       order: { submittedDate: "DESC" },
+    });
+  }
+
+  /**
+   * Get information required for an application submission validation.
+   * @param applicationId application ID.
+   * @param studentId student to check for authorization.
+   * @returns application data for submission validation.
+   */
+  async getApplicationForSubmissionValidation(
+    applicationId: number,
+    studentId: number,
+  ): Promise<Application> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        programYear: { id: true, formName: true, active: true },
+        offeringIntensity: true,
+      },
+      relations: {
+        programYear: true,
+      },
+      where: {
+        id: applicationId,
+        student: { id: studentId },
+      },
     });
   }
 

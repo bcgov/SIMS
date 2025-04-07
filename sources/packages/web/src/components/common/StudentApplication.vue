@@ -106,7 +106,6 @@ export default defineComponent({
     const LOCATIONS_DROPDOWN_KEY = "selectedLocation";
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
     const OFFERINGS_DROPDOWN_KEY = "selectedOffering";
-    const OFFERING_INTENSITY_DROPDOWN_KEY = "howWillYouBeAttendingTheProgram";
     const SELECTED_OFFERING_START_DATE_KEY = "selectedOfferingDate";
     const SELECTED_OFFERING_END_DATE_KEY = "selectedOfferingEndDate";
     const SELECTED_PROGRAM_DESC_KEY = "selectedProgramDesc";
@@ -134,11 +133,6 @@ export default defineComponent({
         await formioDataLoader.loadLocations(
           formInstance,
           LOCATIONS_DROPDOWN_KEY,
-        );
-        await formioDataLoader.loadProgramIntensityDetails(
-          formInstance,
-          props.initialData.isFulltimeAllowed,
-          OFFERING_INTENSITY_DROPDOWN_KEY,
         );
         const selectedLocationId = getSelectedId(formInstance);
 

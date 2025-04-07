@@ -93,10 +93,26 @@ export class ApplicationService {
     await ApiClient.Application.saveApplicationDraft(applicationId, payload);
   }
 
+  /**
+   * Submits an application to be processed or a change
+   * for a current application previously submitted.
+   * @param applicationId application ID.
+   * @param payload application data.
+   * @param options options for the request.
+   * - `isChangeRequest` true if the application is a change request.
+   */
   async submitApplication(
     applicationId: number,
     payload: SaveApplicationAPIInDTO,
+    options?: { isChangeRequest?: boolean },
   ): Promise<void> {
+    if (options?.isChangeRequest) {
+      await ApiClient.Application.applicationChangeRequest(
+        applicationId,
+        payload,
+      );
+      return;
+    }
     await ApiClient.Application.submitApplication(applicationId, payload);
   }
 

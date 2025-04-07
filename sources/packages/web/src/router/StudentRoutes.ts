@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from "vue-router";
+import { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 import StudentDashboard from "@/views/student/StudentDashboard.vue";
 import Login from "@/views/student/Login.vue";
 import AppStudent from "@/views/student/AppStudent.vue";
@@ -94,6 +94,20 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
         component: DynamicStudentApp,
         props: true,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentApplicationChangeRequest,
+        name: StudentRoutesConst.DYNAMIC_FINANCIAL_CHANGE_REQUEST_APP_FORM,
+        component: DynamicStudentApp,
+        props: (route: RouteLocationNormalized) => ({
+          id: Number(route.params.id),
+          programYearId: Number(route.params.programYearId),
+          selectedForm: route.params.selectedForm as string,
+          changeRequest: true,
+        }),
         meta: {
           clientType: ClientIdType.Student,
         },

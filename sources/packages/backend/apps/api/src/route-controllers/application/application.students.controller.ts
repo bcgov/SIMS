@@ -16,16 +16,15 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
-  FormService,
   StudentService,
   ProgramYearService,
   APPLICATION_DRAFT_NOT_FOUND,
   MORE_THAN_ONE_APPLICATION_DRAFT_ERROR,
   APPLICATION_NOT_FOUND,
   APPLICATION_NOT_VALID,
-  EducationProgramOfferingService,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+  APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -65,7 +64,6 @@ import {
 import { ApplicationControllerService } from "./application.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { ApplicationData } from "@sims/sims-db/entities/application.model";
 import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
@@ -78,10 +76,8 @@ import { ECertPreValidationService } from "@sims/integrations/services/disbursem
 export class ApplicationStudentsController extends BaseController {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly formService: FormService,
     private readonly studentService: StudentService,
     private readonly programYearService: ProgramYearService,
-    private readonly offeringService: EducationProgramOfferingService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly applicationControllerService: ApplicationControllerService,
     private readonly configService: ConfigService,
@@ -135,74 +131,6 @@ export class ApplicationStudentsController extends BaseController {
       application,
       firstCOE,
     );
-  }
-  /**
-   * Validate the values in the submitted application before submitting.
-   * @param payload payload to create the application.
-   */
-  private async validateSubmitApplicationData(
-    payload: SaveApplicationAPIInDTO,
-  ): Promise<void> {
-    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
-
-    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
-    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
-    if (
-      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
-        payload.data.howWillYouBeAttendingTheProgram,
-      )
-    ) {
-      throw new BadRequestException("Offering intensity type is invalid.");
-    }
-    if (
-      !isFulltimeAllowed &&
-      payload.data.howWillYouBeAttendingTheProgram ===
-        OfferingIntensity.fullTime
-    ) {
-      throw new UnprocessableEntityException("Invalid offering intensity.");
-    }
-
-    // studyStartDate from payload is set as studyStartDate
-    let studyStartDate = payload.data.studystartDate;
-    let studyEndDate = payload.data.studyendDate;
-    if (payload.data.selectedOffering) {
-      const offering = await this.offeringService.getOfferingById(
-        payload.data.selectedOffering,
-        { programId: payload.data.selectedProgram },
-      );
-      if (!offering) {
-        throw new UnprocessableEntityException(
-          "Selected offering id is invalid.",
-        );
-      }
-      if (
-        !isFulltimeAllowed &&
-        offering.offeringIntensity === OfferingIntensity.fullTime
-      ) {
-        throw new UnprocessableEntityException("Invalid offering intensity.");
-      }
-      if (!offering.educationProgram.isActive) {
-        throw new UnprocessableEntityException(
-          "The education program is not active.",
-        );
-      }
-      if (offering.educationProgram.isExpired) {
-        throw new UnprocessableEntityException(
-          "The education program is expired.",
-        );
-      }
-      // if  studyStartDate is not in payload
-      // then selectedOffering will be there in payload,
-      // then study start date taken from offering
-      studyStartDate = offering.studyStartDate;
-      studyEndDate = offering.studyEndDate;
-      // This ensures that if an offering is selected in student application,
-      // then the study start date and study end date present in form submission payload
-      // belongs to the selected offering and hence prevents these dates being modified in the
-      // middle before coming to API.
-      payload.data.selectedOfferingDate = studyStartDate;
-      payload.data.selectedOfferingEndDate = studyEndDate;
-    }
   }
 
   /**
@@ -261,7 +189,7 @@ export class ApplicationStudentsController extends BaseController {
       "invalid study dates or selected study start date is not within the program year or " +
       "the education program is not active or " +
       "the education program is expired or " +
-      "or APPLICATION_NOT_VALID or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
+      "or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
       "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
       "or Invalid offering intensity",
   })
@@ -277,42 +205,20 @@ export class ApplicationStudentsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
-    const programYear = await this.programYearService.getActiveProgramYear(
-      payload.programYearId,
-    );
-    if (!programYear) {
-      throw new UnprocessableEntityException(
-        "Program Year is not active. Not able to create an application invalid request.",
+    const validatedResult =
+      await this.applicationControllerService.validateApplicationSubmission(
+        applicationId,
+        studentToken.studentId,
+        payload,
       );
-    }
-    // Validate the values in the submitted application before submitting.
-    await this.validateSubmitApplicationData(payload);
-
-    const submissionResult =
-      await this.formService.dryRunSubmission<ApplicationData>(
-        programYear.formName,
-        payload.data,
-      );
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to create an application due to an invalid request.",
-      );
-    }
-
-    await this.applicationControllerService.offeringIntensityRestrictionCheck(
-      studentToken.studentId,
-      submissionResult.data.data.howWillYouBeAttendingTheProgram,
-    );
 
     // If offering is present, the selected offering's start and end dates will be used.
-    let referenceStudyStartDate =
-      submissionResult.data.data.selectedOfferingDate;
-    let referencedStudyEndDate =
-      submissionResult.data.data.selectedOfferingEndDate;
+    let referenceStudyStartDate = validatedResult.selectedOfferingDate;
+    let referencedStudyEndDate = validatedResult.selectedOfferingEndDate;
     if (!payload.data.selectedOffering) {
       // If offering is not present, the PIR provided study start and end dates will be used instead.
-      referenceStudyStartDate = submissionResult.data.data.studystartDate;
-      referencedStudyEndDate = submissionResult.data.data.studyendDate;
+      referenceStudyStartDate = validatedResult.studystartDate;
+      referencedStudyEndDate = validatedResult.studyendDate;
     }
     try {
       await this.applicationService.validateOverlappingDates(
@@ -326,30 +232,99 @@ export class ApplicationStudentsController extends BaseController {
         applicationId,
         studentToken.userId,
         studentToken.studentId,
-        programYear.id,
-        submissionResult.data.data,
+        validatedResult,
         payload.associatedFiles,
       );
-    } catch (error) {
-      switch (error.name) {
-        case APPLICATION_NOT_FOUND:
-          throw new NotFoundException(error.message);
-        case APPLICATION_NOT_VALID:
-        case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
-        case STUDY_DATE_OVERLAP_ERROR:
-        case INSTITUTION_LOCATION_NOT_VALID:
-        case OFFERING_NOT_VALID:
-          throw new UnprocessableEntityException(
-            new ApiProcessError(error.message, error.name),
-          );
-        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          // TODO: add logger.
-          throw new InternalServerErrorException(
-            "Unexpected error while submitting the application.",
-          );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case APPLICATION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
+          case STUDY_DATE_OVERLAP_ERROR:
+          case INSTITUTION_LOCATION_NOT_VALID:
+          case OFFERING_NOT_VALID:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            throw new UnprocessableEntityException(error.message);
+        }
       }
+      throw error;
+    }
+  }
+
+  /**
+   * Starts a change request for an existing student application.
+   * A new application will be created in edited status and will be assessed by the Ministry.
+   * @param payload complete application payload with all the data that should be considered as a new
+   * application, if approved by the Ministry.
+   * @param applicationId application ID to be changed.
+   * @returns application ID of the created application that represents the change request.
+   */
+  @CheckSinValidation()
+  @Post(":applicationId/change-request")
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Program year is not active " +
+      "or selected offering ID is invalid " +
+      "or the education program is not active " +
+      "or the education program is expired " +
+      "or invalid offering intensity " +
+      "or an application change request is already in progress " +
+      "or application is not in the correct status to be submitted " +
+      "or change request has a different offering from its original submission" +
+      "or change request has a different location from its original submission.",
+  })
+  @ApiBadRequestResponse({
+    description:
+      "Form validation failed or offering intensity type is invalid.",
+  })
+  @ApiNotFoundResponse({
+    description:
+      "Application not found or it is not in the correct status to be changed.",
+  })
+  @ApiForbiddenResponse({
+    description: "The student has a restriction on his account.",
+  })
+  async applicationChangeRequest(
+    @Body() payload: SaveApplicationAPIInDTO,
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const validatedResult =
+      await this.applicationControllerService.validateApplicationSubmission(
+        applicationId,
+        studentToken.studentId,
+        payload,
+      );
+    try {
+      const submissionResult =
+        await this.applicationService.submitApplicationChangeRequest(
+          applicationId,
+          studentToken.studentId,
+          validatedResult,
+          payload.associatedFiles,
+          studentToken.userId,
+        );
+      return {
+        id: submissionResult.application.id,
+      };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case APPLICATION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case APPLICATION_NOT_VALID:
+            throw new UnprocessableEntityException(error.message);
+          case APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
+      }
+      throw error;
     }
   }
 
@@ -447,20 +422,21 @@ export class ApplicationStudentsController extends BaseController {
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
+    const { offeringIntensity } =
+      await this.applicationService.getApplicationInfo(applicationId);
     // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
     // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (
-      payload.data.howWillYouBeAttendingTheProgram &&
+      offeringIntensity &&
       ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
-        payload.data.howWillYouBeAttendingTheProgram,
+        offeringIntensity,
       )
     ) {
       throw new BadRequestException("Offering intensity type is invalid.");
     }
     if (
       !isFulltimeAllowed &&
-      payload.data.howWillYouBeAttendingTheProgram ===
-        OfferingIntensity.fullTime
+      offeringIntensity === OfferingIntensity.fullTime
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
