@@ -45,7 +45,6 @@
               label="Search by name or application #"
               variant="outlined"
               v-model="searchQuery"
-              data-cy="searchBox"
               @keyup.enter="searchProgramTable"
               prepend-inner-icon="mdi-magnify"
               hide-details="auto"
@@ -63,8 +62,8 @@
         <v-data-table-server
           v-if="applications?.count"
           :headers="pirTableHeaders"
-          :items="applications?.results || []"
-          :items-length="applications?.count || 0"
+          :items="applications.results"
+          :items-length="applications.count"
           :loading="applicationsLoading"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
@@ -124,31 +123,13 @@ import {
   DEFAULT_DATATABLE_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
+  PIRSummaryHeaders,
 } from "@/types";
 
 enum StudyIntensity {
   FullTime = "Full Time",
   PartTime = "Part Time",
 }
-
-const pirTableHeaders = [
-  {
-    title: "Submitted Date",
-    key: "submittedDate",
-    sortable: true,
-    align: "start" as const,
-  },
-  { title: "Application #", key: "applicationNumber", sortable: false },
-  { title: "Given Names", key: "givenNames", sortable: false },
-  { title: "Last Name", key: "lastName", sortable: false },
-  { title: "Student Number", key: "studentNumber", sortable: false },
-  { title: "Intensity", key: "studyIntensity", sortable: false },
-  { title: "Program", key: "program", sortable: false },
-  { title: "Start Date", key: "studyStartPeriod", sortable: true },
-  { title: "End Date", key: "studyEndPeriod", sortable: true },
-  { title: "Status", key: "pirStatus", sortable: true },
-  { title: "Actions", key: "actions", sortable: false },
-];
 
 const IntensityFilter = {
   All: "All",
@@ -170,11 +151,13 @@ export default defineComponent({
     const applicationsLoading = ref(false);
     const searchQuery = ref("");
     const intensityFilter = ref(IntensityFilter.All);
-    const applications = ref<
-      PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO> | undefined
-    >(undefined);
-    const currentPage = ref(1);
+    const applications = ref<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>>({
+      results: [],
+      count: 0,
+    });
+    const currentPage = ref(DEFAULT_DATATABLE_PAGE_NUMBER);
     const currentPageLimit = ref(DEFAULT_PAGE_LIMIT);
+    const pirTableHeaders = PIRSummaryHeaders;
 
     const locationName = computed(() => {
       return getLocationName(props.locationId);
@@ -211,18 +194,12 @@ export default defineComponent({
       return date ? dateOnlyLongString(date) : "-";
     };
 
-    // Map UI field names to API field names for sorting
-    const getApiSortField = (uiField?: string): string | undefined => {
-      if (!uiField) return undefined;
-
-      const fieldMapping: Record<string, string> = {
-        submittedDate: "submittedDate",
-        studyStartPeriod: "studyStartPeriod",
-        studyEndPeriod: "studyEndPeriod",
-        pirStatus: "pirStatus",
-      };
-
-      return fieldMapping[uiField] || uiField;
+    // Convert sort order from UI format to API format
+    const getApiSortOrder = (
+      sortOrder?: string,
+    ): "ASC" | "DESC" | undefined => {
+      if (!sortOrder) return undefined;
+      return sortOrder === "asc" ? "ASC" : "DESC";
     };
 
     const loadApplications = async (
@@ -236,13 +213,8 @@ export default defineComponent({
         const searchCriteria: PIRSearchCriteria = {
           page,
           pageLimit,
-          sortField: sortField ? getApiSortField(sortField) : undefined,
-          sortOrder:
-            sortOrder === "asc"
-              ? "ASC"
-              : sortOrder === "desc"
-              ? "DESC"
-              : undefined,
+          sortField,
+          sortOrder: getApiSortOrder(sortOrder),
           search: searchQuery.value || undefined,
           intensityFilter:
             intensityFilter.value !== IntensityFilter.All
@@ -268,14 +240,12 @@ export default defineComponent({
 
     const searchProgramTable = async () => {
       currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
-      applications.value = undefined;
       await loadApplications();
     };
 
     // Handle intensity filter
     const filterByIntensity = () => {
       currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
-      applications.value = undefined;
       loadApplications();
     };
 
@@ -292,10 +262,8 @@ export default defineComponent({
       );
     };
 
-    // Initialize
+    // When component is mounted, load data
     onMounted(async () => {
-      currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
-      currentPageLimit.value = DEFAULT_PAGE_LIMIT;
       await loadApplications();
     });
 
@@ -307,7 +275,7 @@ export default defineComponent({
         currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
         searchQuery.value = "";
         intensityFilter.value = IntensityFilter.All;
-        applications.value = undefined; // Clear results first
+        applications.value = { results: [], count: 0 }; // Clear results first
         await loadApplications();
       },
     );

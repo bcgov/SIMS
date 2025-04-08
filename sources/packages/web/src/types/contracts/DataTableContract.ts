@@ -491,3 +491,25 @@ export const StudentApplicationsExtendedSummaryHeaders = [
   { title: "Actions", sortable: false, key: "actions" },
   { title: "History", sortable: false, key: "data-table-expand" },
 ];
+
+/**
+ * Headers for Program Information Request summary table
+ */
+export const PIRSummaryHeaders = [
+  {
+    title: "Submitted Date",
+    key: "submittedDate",
+    sortable: true,
+    align: "start" as const,
+  },
+  { title: "Application #", key: "applicationNumber", sortable: false },
+  { title: "Given Names", key: "givenNames", sortable: false },
+  { title: "Last Name", key: "lastName", sortable: false },
+  { title: "Student Number", key: "studentNumber", sortable: false },
+  { title: "Intensity", key: "studyIntensity", sortable: false },
+  { title: "Program", key: "program", sortable: false },
+  { title: "Start Date", key: "studyStartPeriod", sortable: true },
+  { title: "End Date", key: "studyEndPeriod", sortable: true },
+  { title: "Status", key: "pirStatus", sortable: true },
+  { title: "Actions", key: "actions", sortable: false },
+];

@@ -278,14 +278,9 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
 
   /**
    * Get all applications of a location in an institution
-   * with Program Info Request (PIR) status completed and required
+   * with Program Info Request (PIR) status completed and required.
    * @param locationId location that is completing the PIR.
-   * @param page page number for pagination.
-   * @param pageLimit number of items per page.
-   * @param sortField field to sort by.
-   * @param sortOrder sort direction.
-   * @param search search query.
-   * @param intensityFilter intensity filter.
+   * @param paginationOptions options for pagination, sorting, and filtering.
    * @returns paginated student application list of an institution location.
    */
   @HasLocationAccess("locationId")
@@ -303,6 +298,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     if (intensityFilter) {
       intensityFilterArray = intensityFilter.split(",");
     }
+
     const { results: applications, count } =
       await this.applicationService.getPIRApplications(
         locationId,

@@ -72,29 +72,43 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
 
   /**
    * Get all applications of a location in an institution
-   * with Program Info Request (PIR) status completed and required
+   * with Program Info Request (PIR) status completed and required.
    * @param locationId location that is completing the PIR.
-   * @param searchCriteria search criteria for filtering and pagination
+   * @param searchCriteria search criteria for filtering and pagination.
    * @returns paginated student application list of an institution location.
    */
   async getPIRSummary(
     locationId: number,
     searchCriteria: PIRSearchCriteria,
   ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
-    let url = `location/${locationId}/program-info-request?`;
-    url += `page=${searchCriteria.page}&pageLimit=${searchCriteria.pageLimit}`;
+    const params = new URLSearchParams();
+
+    // Add required pagination parameters
+    params.append("page", searchCriteria.page.toString());
+    params.append("pageLimit", searchCriteria.pageLimit.toString());
+
+    // Add optional parameters
     if (searchCriteria.sortField) {
-      url += `&sortField=${searchCriteria.sortField}`;
+      params.append("sortField", searchCriteria.sortField);
     }
+
     if (searchCriteria.sortOrder) {
-      url += `&sortOrder=${searchCriteria.sortOrder}`;
+      params.append("sortOrder", searchCriteria.sortOrder);
     }
+
     if (searchCriteria.search) {
-      url += `&search=${encodeURIComponent(searchCriteria.search)}`;
+      params.append("search", searchCriteria.search);
     }
+
     if (searchCriteria.intensityFilter?.length) {
-      url += `&intensityFilter=${searchCriteria.intensityFilter.join(",")}`;
+      params.append(
+        "intensityFilter",
+        searchCriteria.intensityFilter.join(","),
+      );
     }
+
+    const url = `location/${locationId}/program-info-request?${params.toString()}`;
+
     return this.getCall<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>>(
       this.addClientRoot(url),
     );

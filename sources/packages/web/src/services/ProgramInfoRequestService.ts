@@ -76,9 +76,9 @@ export class ProgramInfoRequestService {
 
   /**
    * Get all applications of a location in an institution
-   * with Program Info Request (PIR) status completed and required
+   * with Program Info Request (PIR) status completed and required.
    * @param locationId location that is completing the PIR.
-   * @param searchCriteria search criteria for filtering and pagination
+   * @param searchCriteria search criteria for filtering and pagination.
    * @returns paginated student application list of an institution location.
    */
   async getPIRSummary(
