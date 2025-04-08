@@ -329,6 +329,35 @@ export class ApplicationStudentsController extends BaseController {
   }
 
   /**
+   * Cancels an in-progress change request for an existing student application.
+   * @param applicationId application ID of the change request to be cancelled.
+   */
+  @Patch(":applicationId/cancel-change-request")
+  @ApiNotFoundResponse({
+    description: "Not able to find the in progress change request.",
+  })
+  async applicationCancelChangeRequest(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<void> {
+    try {
+      await this.applicationService.cancelApplicationChangeRequest(
+        applicationId,
+        studentToken.studentId,
+        studentToken.userId,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case APPLICATION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+        }
+      }
+      throw error;
+    }
+  }
+
+  /**
    * Creates a new application draft for the authenticated student.
    * The student is allowed to have only one draft application, so
    * this method will create the draft or throw an exception in case

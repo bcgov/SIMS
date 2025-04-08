@@ -61,6 +61,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   StudentAppealStatus,
+  ApplicationEditStatus,
   ApplicationEditStatusInProgress,
   ApplicationEditStatusInProgressValues,
 } from "@sims/sims-db";
@@ -280,12 +281,9 @@ export class ApplicationControllerService {
       );
     const [scholasticStandingChange] = application.studentScholasticStandings;
     // Check if it is needed to get the in progress change request details.
+    // If the current application is the original application, then it was never edited.
     let changeRequestInProgress: ChangeRequestInProgressAPIOutDTO | undefined;
-    if (
-      ApplicationEditStatusInProgressValues.includes(
-        application.applicationEditStatus,
-      )
-    ) {
+    if (application.applicationEditStatus !== ApplicationEditStatus.Original) {
       changeRequestInProgress = await this.getInProgressChangeRequestDetails(
         application.id,
         options,

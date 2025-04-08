@@ -399,6 +399,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     newApplication.relationshipStatus = applicationData.relationshipStatus;
     newApplication.studentNumber = applicationData.studentNumber;
     newApplication.programYear = application.programYear;
+    newApplication.offeringIntensity = application.offeringIntensity;
     newApplication.data = applicationData;
     newApplication.location = {
       id: application.location.id,
@@ -445,6 +446,45 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application: newApplication,
       createdAssessment: originalAssessment,
     };
+  }
+
+  async cancelApplicationChangeRequest(
+    applicationId: number,
+    studentId: number,
+    auditUserId: number,
+  ): Promise<Application> {
+    const changeRequest = await this.repo.findOne({
+      select: {
+        id: true,
+        applicationEditStatus: true,
+        currentAssessment: { id: true },
+      },
+      where: {
+        id: applicationId,
+        student: { id: studentId },
+        applicationEditStatus: In(ApplicationEditStatusInProgressValues),
+      },
+    });
+    if (!changeRequest) {
+      throw new CustomNamedError(
+        "Not able to find the in progress change request.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+    const now = new Date();
+    const auditUser = { id: auditUserId } as User;
+    // Update in-progress change request.
+    changeRequest.applicationEditStatus = ApplicationEditStatus.ChangeCancelled;
+    changeRequest.applicationEditStatusUpdatedOn = now;
+    changeRequest.applicationEditStatusUpdatedBy = auditUser;
+    changeRequest.modifier = auditUser;
+    changeRequest.updatedAt = now;
+    // Update current assessment to be cancelled.
+    changeRequest.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.CancellationRequested;
+    changeRequest.currentAssessment.modifier = auditUser;
+    changeRequest.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+    return this.repo.save(changeRequest);
   }
 
   /**

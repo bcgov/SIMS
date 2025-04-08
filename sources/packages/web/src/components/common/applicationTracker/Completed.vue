@@ -25,6 +25,7 @@
     icon-color="warning"
     background-color="warning-bg"
     :changeRequest="assessmentDetails.changeRequestInProgress"
+    :areApplicationActionsAllowed="areApplicationActionsAllowed"
   />
   <!-- Student application change request - in progress with student -->
   <application-status-tracker-banner
