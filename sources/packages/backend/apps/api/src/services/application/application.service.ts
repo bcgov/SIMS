@@ -1237,7 +1237,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         editedStatus: ApplicationStatus.Edited,
       });
 
-    // Apply search by name or application number if provided
     if (search) {
       query.andWhere(
         new Brackets((qb) => {
@@ -1248,14 +1247,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
       query.setParameter("search", `%${search}%`);
     }
+
     if (intensityFilter?.length) {
       query.andWhere("application.offeringIntensity IN (:...intensityFilter)", {
         intensityFilter,
       });
     }
+
     if (!sortField || !sortOrder) {
       query.orderBy("application.pirStatus", "DESC");
-      query.addOrderBy("application.applicationNumber", "ASC");
     } else {
       const fieldSortOrder =
         sortOrder === "ASC" ? FieldSortOrder.ASC : FieldSortOrder.DESC;
@@ -1264,38 +1264,25 @@ export class ApplicationService extends RecordDataModelService<Application> {
         fieldSortOrder,
       );
 
-      // Handle sort fields one at a time
-      let firstField = true;
-      for (const [field, order] of Object.entries(dbSortField)) {
-        if (firstField) {
-          // First field uses orderBy
-          if (
-            field === "application.submittedDate" ||
-            field === "offering.studyStartDate" ||
-            field === "offering.studyEndDate"
-          ) {
-            query.orderBy(field, order as any, "NULLS LAST");
-          } else {
-            query.orderBy(field, order as any);
-          }
-          firstField = false;
-        } else {
-          // Subsequent fields use addOrderBy
-          if (
-            field === "application.submittedDate" ||
-            field === "offering.studyStartDate" ||
-            field === "offering.studyEndDate"
-          ) {
-            query.addOrderBy(field, order as any, "NULLS LAST");
-          } else {
-            query.addOrderBy(field, order as any);
-          }
-        }
-      }
-
-      // Always add application number as a secondary sort
-      query.addOrderBy("application.applicationNumber", "ASC");
+      // Apply sorting for each field
+      Object.entries(dbSortField).forEach(([field, order], index) => {
+        const isDateField = [
+          "application.submittedDate",
+          "offering.studyStartDate",
+          "offering.studyEndDate",
+        ].includes(field);
+        const sortMethod = index === 0 ? "orderBy" : "addOrderBy";
+        query[sortMethod](
+          field,
+          order as any,
+          isDateField ? "NULLS LAST" : undefined,
+        );
+      });
     }
+
+    // Always add application number as secondary sort
+    query.addOrderBy("application.applicationNumber", "ASC");
+
     query.skip((page - 1) * pageLimit).take(pageLimit);
     const [results, count] = await query.getManyAndCount();
     return { results, count };
