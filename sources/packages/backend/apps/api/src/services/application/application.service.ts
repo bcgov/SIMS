@@ -249,6 +249,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Current date is set as submitted date.
     newApplication.submittedDate = now;
     newApplication.applicationNumber = application.applicationNumber;
+    newApplication.offeringIntensity = application.offeringIntensity;
     newApplication.relationshipStatus = applicationData.relationshipStatus;
     newApplication.studentNumber = applicationData.studentNumber;
     newApplication.programYear = application.programYear;

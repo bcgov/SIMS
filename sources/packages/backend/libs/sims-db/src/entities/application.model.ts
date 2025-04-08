@@ -69,7 +69,7 @@ export class Application extends RecordDataModel {
     type: "enum",
     enum: OfferingIntensity,
     enumName: "OfferingIntensity",
-    nullable: true,
+    nullable: false,
   })
   offeringIntensity?: OfferingIntensity;
   /**
