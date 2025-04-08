@@ -1956,9 +1956,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     // Check if the newly selected offering intensity
     // is matching with the existing offering intensity.
-    const currentOfferingIntensity = application.offeringIntensity;
-
-    if (currentOfferingIntensity !== offering.offeringIntensity) {
+    if (application.offeringIntensity !== offering.offeringIntensity) {
       throw new CustomNamedError(
         "Offering intensity does not match with the student selected offering.",
         OFFERING_INTENSITY_MISMATCH,

@@ -364,7 +364,7 @@ export class ApplicationStudentsController extends BaseController {
     // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (
       !isFulltimeAllowed &&
-      payload.data.offeringIntensity === OfferingIntensity.fullTime
+      payload.offeringIntensity === OfferingIntensity.fullTime
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
