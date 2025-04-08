@@ -8,6 +8,8 @@ import {
   PIRSearchCriteria,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
+import { getPaginationQueryString } from "@/helpers/helpers/uri";
+import { DataTableSortOrder } from "@/types";
 
 export class ProgramInfoRequestApi extends HttpBaseClient {
   /**
@@ -81,33 +83,22 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
     locationId: number,
     searchCriteria: PIRSearchCriteria,
   ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
-    const params = new URLSearchParams();
+    const paginationOptions = {
+      page: searchCriteria.page,
+      pageLimit: searchCriteria.pageLimit,
+      sortField: searchCriteria.sortField,
+      sortOrder:
+        searchCriteria.sortOrder === "ASC"
+          ? DataTableSortOrder.ASC
+          : DataTableSortOrder.DESC,
+      searchCriteria: {
+        search: searchCriteria.search ?? "",
+        intensityFilter: searchCriteria.intensityFilter?.join(",") ?? "",
+      },
+    };
 
-    // Add required pagination parameters
-    params.append("page", searchCriteria.page.toString());
-    params.append("pageLimit", searchCriteria.pageLimit.toString());
-
-    // Add optional parameters
-    if (searchCriteria.sortField) {
-      params.append("sortField", searchCriteria.sortField);
-    }
-
-    if (searchCriteria.sortOrder) {
-      params.append("sortOrder", searchCriteria.sortOrder);
-    }
-
-    if (searchCriteria.search) {
-      params.append("search", searchCriteria.search);
-    }
-
-    if (searchCriteria.intensityFilter?.length) {
-      params.append(
-        "intensityFilter",
-        searchCriteria.intensityFilter.join(","),
-      );
-    }
-
-    const url = `location/${locationId}/program-info-request?${params.toString()}`;
+    const queryString = getPaginationQueryString(paginationOptions);
+    const url = `location/${locationId}/program-info-request?${queryString}`;
 
     return this.getCall<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>>(
       this.addClientRoot(url),

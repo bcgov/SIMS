@@ -97,8 +97,9 @@
             <v-btn
               color="primary"
               @click="goToViewApplication(item.applicationId)"
-              >View</v-btn
             >
+              View
+            </v-btn>
           </template>
         </v-data-table-server>
       </toggle-content>
@@ -159,9 +160,7 @@ export default defineComponent({
     const currentPageLimit = ref(DEFAULT_PAGE_LIMIT);
     const pirTableHeaders = PIRSummaryHeaders;
 
-    const locationName = computed(() => {
-      return getLocationName(props.locationId);
-    });
+    const locationName = computed(() => getLocationName(props.locationId));
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
@@ -170,7 +169,6 @@ export default defineComponent({
       });
     };
 
-    // Helper functions for displaying correct data based on PIR status
     const getProgramName = (item: PIRSummaryAPIOutDTO): string => {
       if (item.pirStatus === "Required" || item.pirStatus === "Declined") {
         return item.applicationData?.programName || item.program || "-";
@@ -194,7 +192,6 @@ export default defineComponent({
       return date ? dateOnlyLongString(date) : "-";
     };
 
-    // Convert sort order from UI format to API format
     const getApiSortOrder = (
       sortOrder?: string,
     ): "ASC" | "DESC" | undefined => {
@@ -229,10 +226,7 @@ export default defineComponent({
           );
       } catch (error: unknown) {
         console.error("Error loading PIR applications:", error);
-        applications.value = {
-          results: [],
-          count: 0,
-        };
+        applications.value = { results: [], count: 0 };
       } finally {
         applicationsLoading.value = false;
       }
@@ -243,7 +237,6 @@ export default defineComponent({
       await loadApplications();
     };
 
-    // Handle intensity filter
     const filterByIntensity = () => {
       currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
       loadApplications();
@@ -267,15 +260,13 @@ export default defineComponent({
       await loadApplications();
     });
 
-    // Watch for location changes
     watch(
       () => props.locationId,
       async () => {
-        // Reset all filters and search when location changes
         currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
         searchQuery.value = "";
         intensityFilter.value = IntensityFilter.All;
-        applications.value = { results: [], count: 0 }; // Clear results first
+        applications.value = { results: [], count: 0 };
         await loadApplications();
       },
     );
