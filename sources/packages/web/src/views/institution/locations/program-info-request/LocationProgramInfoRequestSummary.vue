@@ -13,7 +13,7 @@
       :recordsCount="applications?.count || 0"
     >
       <template #actions>
-        <v-row class="m-0 p-0 d-flex justify-end">
+        <v-row class="justify-end">
           <v-col cols="auto">
             <v-btn-toggle
               v-model="intensityFilter"
@@ -42,13 +42,13 @@
           <v-col cols="3">
             <v-text-field
               density="compact"
-              label="Search by name or application #"
+              label="Search by name or application"
               variant="outlined"
               v-model="searchQuery"
               @keyup.enter="searchProgramTable"
               prepend-inner-icon="mdi-magnify"
               hide-details="auto"
-              placeholder="Enter name or application #"
+              placeholder="Enter name or application"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -151,10 +151,9 @@ export default defineComponent({
     const applicationsLoading = ref(false);
     const searchQuery = ref("");
     const intensityFilter = ref(IntensityFilter.All);
-    const applications = ref<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>>({
-      results: [],
-      count: 0,
-    });
+    const applications = ref(
+      {} as PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>,
+    );
     const currentPage = ref(DEFAULT_DATATABLE_PAGE_NUMBER);
     const currentPageLimit = ref(DEFAULT_PAGE_LIMIT);
     const pirTableHeaders = PIRSummaryHeaders;
