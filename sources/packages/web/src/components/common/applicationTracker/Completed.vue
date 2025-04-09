@@ -229,6 +229,7 @@ import {
   StudentAppealStatus,
   StudentScholasticStandingChangeType,
   ApplicationEditStatus,
+  SuccessWaitingStatus,
 } from "@/types";
 import { onMounted, ref, defineComponent, computed } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -239,7 +240,6 @@ import MultipleDisbursementBanner from "@/components/common/applicationTracker/M
 import RelatedApplicationChanged from "@/components/common/applicationTracker/RelatedApplicationChanged.vue";
 import ApplicationInProgressChangeRequest from "@/components/common/applicationTracker/ApplicationInProgressChangeRequest.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { SuccessWaitingStatus } from "@/types"; // Ensure this is the correct path to the module
 import { useRouter } from "vue-router";
 import {
   EcertFailedValidationDetail,

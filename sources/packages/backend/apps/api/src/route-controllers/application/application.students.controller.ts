@@ -348,11 +348,11 @@ export class ApplicationStudentsController extends BaseController {
         studentToken.userId,
       );
     } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          case APPLICATION_NOT_FOUND:
-            throw new NotFoundException(error.message);
-        }
+      if (
+        error instanceof CustomNamedError &&
+        error.name === APPLICATION_NOT_FOUND
+      ) {
+        throw new NotFoundException(error.message);
       }
       throw error;
     }
