@@ -1192,6 +1192,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Get applications of an institution location
    * with PIR status required and completed.
    * @param locationId location id .
+   * @param page page number.
+   * @param pageLimit page limit.
+   * @param sortField sort field.
+   * @param sortOrder sort order.
+   * @param search search criteria.
+   * @param intensityFilter intensity filter.
    * @returns student Application list.
    */
   async getPIRApplications(

@@ -10,6 +10,7 @@ import {
   UnauthorizedException,
   ParseIntPipe,
   Query,
+  DefaultValuePipe,
 } from "@nestjs/common";
 import {
   CompleteProgramInfoRequestAPIInDTO,
@@ -31,7 +32,11 @@ import {
   PIRDeniedReasonService,
 } from "../../services";
 import { getUserFullName, STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import {
+  CustomNamedError,
+  getISODateOnlyString,
+  FieldSortOrder,
+} from "@sims/utilities";
 import {
   Application,
   AssessmentTriggerType,
@@ -56,6 +61,8 @@ import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { WorkflowClientService } from "@sims/services";
 import { InstitutionUserTypes } from "../../auth";
+import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
+import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
@@ -280,20 +287,27 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
    * Get all applications of a location in an institution
    * with Program Info Request (PIR) status completed and required.
    * @param locationId location that is completing the PIR.
-   * @param paginationOptions options for pagination, sorting, and filtering.
+   * @param page page number.
+   * @param pageLimit number of items per page.
+   * @param sortField field to sort by.
+   * @param sortOrder sort direction.
+   * @param search search criteria.
+   * @param intensityFilter intensity filter.
    * @returns paginated student application list of an institution location.
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request")
   async getPIRSummary(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query("page", ParseIntPipe) page = 1,
-    @Query("pageLimit", ParseIntPipe) pageLimit = 10,
+    @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query("pageLimit", new DefaultValuePipe(10), ParseIntPipe)
+    pageLimit: number,
     @Query("sortField") sortField?: string,
-    @Query("sortOrder") sortOrder?: "ASC" | "DESC",
+    @Query("sortOrder", new ParseEnumQueryPipe(FieldSortOrder))
+    sortOrder?: FieldSortOrder,
     @Query("search") search?: string,
     @Query("intensityFilter") intensityFilter?: string,
-  ): Promise<{ results: PIRSummaryAPIOutDTO[]; count: number }> {
+  ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
     let intensityFilterArray: string[] | undefined = undefined;
     if (intensityFilter) {
       intensityFilterArray = intensityFilter.split(",");
@@ -314,11 +328,32 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
       results: applications.map((eachApplication: Application) => {
         const offering = eachApplication.currentAssessment?.offering;
         const user = eachApplication.student.user;
+
+        // Conditionally set study start and end periods based on PIR status
+        const isPIRCompleted =
+          eachApplication.pirStatus === ProgramInfoStatus.completed;
+
+        // Get program name based on PIR status
+        // For completed PIRs, prefer the offering's education program name
+        // For non-completed PIRs, prefer application data program name or PIR program name
+        const programName = isPIRCompleted
+          ? offering?.educationProgram?.name
+          : eachApplication.data?.programName ||
+            eachApplication.pirProgram?.name;
+
+        // Get start and end dates based on PIR status
+        const studyStartPeriod = isPIRCompleted
+          ? getISODateOnlyString(offering?.studyStartDate)
+          : eachApplication.data?.studystartDate;
+        const studyEndPeriod = isPIRCompleted
+          ? getISODateOnlyString(offering?.studyEndDate)
+          : eachApplication.data?.studyendDate;
+
         return {
           applicationId: eachApplication.id,
           applicationNumber: eachApplication.applicationNumber,
-          studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
-          studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
+          studyStartPeriod,
+          studyEndPeriod,
           pirStatus: eachApplication.pirStatus,
           fullName: getUserFullName(user),
           submittedDate: getISODateOnlyString(eachApplication.submittedDate),
@@ -326,14 +361,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           lastName: user.lastName,
           studentNumber: eachApplication.studentNumber,
           studyIntensity: eachApplication.offeringIntensity,
-          program:
-            offering?.educationProgram?.name ||
-            eachApplication.pirProgram?.name,
-          applicationData: {
-            programName: eachApplication.data?.programName,
-            startDate: eachApplication.data?.studystartDate,
-            endDate: eachApplication.data?.studyendDate,
-          },
+          program: programName,
         };
       }),
       count,

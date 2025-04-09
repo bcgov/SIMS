@@ -68,7 +68,6 @@
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
           @update:options="paginationAndSortEvent"
-          class="elevation-1"
         >
           <template #[`item.submittedDate`]="{ item }">
             {{

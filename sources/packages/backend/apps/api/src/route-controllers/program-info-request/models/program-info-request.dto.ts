@@ -54,8 +54,14 @@ export class PIRSummaryAPIOutDTO {
   studyStartPeriod: string;
   studyEndPeriod: string;
   applicationId: number;
-  pirStatus: string;
+  pirStatus: ProgramInfoStatus;
   fullName: string;
+  submittedDate: string;
+  givenNames: string;
+  lastName: string;
+  studentNumber: string;
+  studyIntensity: OfferingIntensity;
+  program: string;
 }
 
 export class DenyProgramInfoRequestAPIInDTO {
