@@ -813,11 +813,11 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     sbsdAwardTotal?: string,
   ): string {
     const offering = application.currentAssessment.offering;
-    const offeringIntensity =
-      offering?.offeringIntensity ?? application.offeringIntensity;
     const studentId = application.student.id;
     const applicationRecordType =
-      offeringIntensity === OfferingIntensity.fullTime ? "300" : "301";
+      application.offeringIntensity === OfferingIntensity.fullTime
+        ? "300"
+        : "301";
     const studyStartDate =
       offering?.studyStartDate ?? application.data.studystartDate;
     const studyEndDate =
