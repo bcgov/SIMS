@@ -95,6 +95,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         id: savedApplication.id,
         applicationStatus: savedApplication.applicationStatus,
         applicationNumber: savedApplication.applicationNumber,
+        isArchived: false,
         applicationFormName: "SFAA2022-23",
         applicationProgramYearID: savedApplication.programYear.id,
         studentFullName: getUserFullName(savedApplication.student.user),
@@ -103,6 +104,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         applicationEndDate: offeringInitialValues.studyEndDate,
         applicationInstitutionName:
           savedApplication.location.institution.legalOperatingName,
+        isChangeRequestAllowedForPY: false,
       });
   });
 
@@ -256,6 +258,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         id: thirdApplication.id,
         applicationStatus: thirdApplication.applicationStatus,
         applicationNumber: thirdApplication.applicationNumber,
+        isArchived: false,
         applicationFormName: "SFAA2022-23",
         applicationProgramYearID: thirdApplication.programYear.id,
         studentFullName: getUserFullName(thirdApplication.student.user),
@@ -264,6 +267,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         applicationEndDate: offeringInitialValues.studyEndDate,
         applicationInstitutionName:
           thirdApplication.location.institution.legalOperatingName,
+        isChangeRequestAllowedForPY: false,
       });
   });
 

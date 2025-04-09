@@ -72,6 +72,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         applicationEndDate: offeringInitialValues.studyEndDate,
         applicationInstitutionName:
           application.location.institution.legalOperatingName,
+        isChangeRequestAllowedForPY: false,
       });
   });
 
@@ -115,6 +116,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         applicationEndDate: offeringInitialValues.studyEndDate,
         applicationInstitutionName:
           application.location.institution.legalOperatingName,
+        isChangeRequestAllowedForPY: false,
       });
   });
 
@@ -155,6 +157,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
             application.currentAssessment.offering.studyEndDate,
           applicationInstitutionName:
             application.location.institution.legalOperatingName,
+          isChangeRequestAllowedForPY: false,
         });
     },
   );
@@ -323,6 +326,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         applicationEndDate: offeringInitialValues.studyEndDate,
         applicationInstitutionName:
           thirdApplication.location.institution.legalOperatingName,
+        isChangeRequestAllowedForPY: false,
       });
   });
 
