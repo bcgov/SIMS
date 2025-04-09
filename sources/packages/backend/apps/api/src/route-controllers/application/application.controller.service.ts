@@ -562,6 +562,7 @@ export class ApplicationControllerService {
       id: application.id,
       applicationStatus: application.applicationStatus,
       applicationNumber: application.applicationNumber,
+      isArchived: application.isArchived,
       applicationFormName: application.programYear.formName,
       applicationProgramYearID: application.programYear.id,
       studentFullName: getUserFullName(application.student.user),
@@ -653,6 +654,7 @@ export class ApplicationControllerService {
     const offering = applicationDetail.currentAssessment?.offering;
     return {
       id: applicationDetail.id,
+      isArchived: applicationDetail.isArchived,
       assessmentId: applicationDetail.currentAssessment?.id,
       data: applicationDetail.data,
       applicationStatus: applicationDetail.applicationStatus,

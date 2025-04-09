@@ -332,6 +332,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
         APPLICATION_NOT_FOUND,
       );
     }
+    if (application.isArchived) {
+      throw new CustomNamedError(
+        "The application is archived and cannot be used to create a change request.",
+        APPLICATION_NOT_VALID,
+      );
+    }
     if (!allowApplicationChangeRequest(application.programYear)) {
       throw new CustomNamedError(
         "The program year associated to this application does not allow a change request submission.",
@@ -816,6 +822,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.findOne({
       select: {
         id: true,
+        isArchived: true,
         data: !!options?.loadDynamicData as unknown,
         applicationStatus: true,
         offeringIntensity: true,
@@ -905,6 +912,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .select([
         "application.applicationNumber",
+        "application.isArchived",
         "application.id",
         "parentApplication.id",
         "parentApplication.submittedDate",

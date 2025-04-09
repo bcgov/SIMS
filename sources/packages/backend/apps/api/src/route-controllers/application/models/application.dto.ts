@@ -118,6 +118,7 @@ export class ApplicationProgramYearAPIOutDTO {
 export class ApplicationBaseAPIOutDTO {
   id: number;
   applicationNumber: string;
+  isArchived: boolean;
   assessmentId?: number;
   data: ApplicationFormData;
   applicationStatus: ApplicationStatus;

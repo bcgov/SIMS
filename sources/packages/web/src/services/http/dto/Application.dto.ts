@@ -84,6 +84,7 @@ export interface ApplicationProgramYearAPIOutDTO {
 export interface ApplicationBaseAPIOutDTO {
   id: number;
   applicationNumber: string;
+  isArchived: boolean;
   assessmentId?: number;
   data: any;
   applicationStatus: ApplicationStatus;

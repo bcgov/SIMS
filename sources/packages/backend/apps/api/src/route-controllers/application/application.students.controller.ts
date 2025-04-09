@@ -275,7 +275,8 @@ export class ApplicationStudentsController extends BaseController {
       "or an application change request is already in progress " +
       "or application is not in the correct status to be submitted " +
       "or change request has a different offering from its original submission" +
-      "or change request has a different location from its original submission.",
+      "or change request has a different location from its original submission " +
+      "or the application is archived and cannot be used to create a change request.",
   })
   @ApiBadRequestResponse({
     description:

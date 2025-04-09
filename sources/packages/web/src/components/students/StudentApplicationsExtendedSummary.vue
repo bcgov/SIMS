@@ -52,7 +52,7 @@
               </v-btn>
               <v-btn
                 v-if="canDisplayEditOrCancel(item)"
-                :disabled="!hasSINValidStatus"
+                :disabled="!hasSINValidStatus || item.isArchived"
                 color="primary"
                 @click="$emit('editApplicationAction', item.status, item.id)"
                 append-icon="mdi-pencil-outline"
@@ -63,7 +63,7 @@
               </v-btn>
               <v-btn
                 v-if="canDisplayChangeRequest(item)"
-                :disabled="!hasSINValidStatus"
+                :disabled="!hasSINValidStatus || item.isArchived"
                 color="primary"
                 @click="
                   $emit(
@@ -80,7 +80,7 @@
               </v-btn>
               <v-btn
                 v-if="canDisplayEditOrCancel(item)"
-                :disabled="!hasSINValidStatus"
+                :disabled="!hasSINValidStatus || item.isArchived"
                 color="primary"
                 @click="emitCancel(item.id)"
                 >Cancel
