@@ -1207,7 +1207,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     sortOrder?: "ASC" | "DESC",
     search?: string,
     intensityFilter?: OfferingIntensity,
-  ): Promise<{ results: Application[]; count: number }> {
+  ): Promise<PaginatedResults<Application>> {
     const query = this.repo
       .createQueryBuilder("application")
       .select([
@@ -1217,7 +1217,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.submittedDate",
         "application.studentNumber",
         "application.offeringIntensity",
-        "application.data",
         "currentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
@@ -1227,6 +1226,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "user.lastName",
         "pirProgram.name",
       ])
+      // Extract specific properties from the JSONB data field
+      .addSelect("application.data ->> 'programName'", "programName")
+      .addSelect("application.data ->> 'studystartDate'", "studystartDate")
+      .addSelect("application.data ->> 'studyendDate'", "studyendDate")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
@@ -1250,7 +1253,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           );
         }),
       );
-      query.setParameter("search", `%${search}%`);
+      query.setParameter("search", `%${search.trim()}%`);
     }
 
     if (intensityFilter) {
@@ -1260,7 +1263,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
 
     if (!sortField || !sortOrder) {
-      query.orderBy("application.pirStatus", "DESC");
+      query.orderBy("application.pirStatus", "ASC");
     } else {
       const fieldSortOrder =
         sortOrder === "ASC" ? FieldSortOrder.ASC : FieldSortOrder.DESC;
