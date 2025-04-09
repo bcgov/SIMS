@@ -41,6 +41,7 @@ import {
   Application,
   AssessmentTriggerType,
   ProgramInfoStatus,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import {
   EDUCATION_PROGRAM_IS_EXPIRED,
@@ -292,7 +293,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
    * @param sortField field to sort by.
    * @param sortOrder sort direction.
    * @param search search criteria.
-   * @param intensityFilter intensity filter.
+   * @param intensityFilter filter by a specific offering intensity.
    * @returns paginated student application list of an institution location.
    */
   @HasLocationAccess("locationId")
@@ -306,13 +307,9 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @Query("sortOrder", new ParseEnumQueryPipe(FieldSortOrder))
     sortOrder?: FieldSortOrder,
     @Query("search") search?: string,
-    @Query("intensityFilter") intensityFilter?: string,
+    @Query("intensityFilter", new ParseEnumQueryPipe(OfferingIntensity))
+    intensityFilter?: OfferingIntensity,
   ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
-    let intensityFilterArray: string[] | undefined = undefined;
-    if (intensityFilter) {
-      intensityFilterArray = intensityFilter.split(",");
-    }
-
     const { results: applications, count } =
       await this.applicationService.getPIRApplications(
         locationId,
@@ -321,7 +318,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
         sortField,
         sortOrder,
         search,
-        intensityFilterArray,
+        intensityFilter,
       );
 
     return {

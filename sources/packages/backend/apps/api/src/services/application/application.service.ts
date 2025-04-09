@@ -1189,14 +1189,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get applications of an institution location
-   * with PIR status required and completed.
-   * @param locationId location id .
+   * Get Program Info Request (PIR) Applications of an institution location.
+   * @param locationId location id.
    * @param page page number.
    * @param pageLimit page limit.
    * @param sortField sort field.
    * @param sortOrder sort order.
-   * @param search search criteria.
+   * @param search search.
    * @param intensityFilter intensity filter.
    * @returns student Application list.
    */
@@ -1207,7 +1206,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     sortField?: string,
     sortOrder?: "ASC" | "DESC",
     search?: string,
-    intensityFilter?: string[],
+    intensityFilter?: OfferingIntensity,
   ): Promise<{ results: Application[]; count: number }> {
     const query = this.repo
       .createQueryBuilder("application")
@@ -1254,8 +1253,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       query.setParameter("search", `%${search}%`);
     }
 
-    if (intensityFilter?.length) {
-      query.andWhere("application.offeringIntensity IN (:...intensityFilter)", {
+    if (intensityFilter) {
+      query.andWhere("application.offeringIntensity = :intensityFilter", {
         intensityFilter,
       });
     }
