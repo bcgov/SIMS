@@ -98,9 +98,6 @@
             }"
           >
             <v-btn
-              v-if="
-                internalItem.raw.id !== internalItem.raw.parentApplicationId
-              "
               :append-icon="
                 isExpanded(internalItem)
                   ? '$expanderCollapseIcon'
@@ -149,7 +146,6 @@ import {
   ITEMS_PER_PAGE,
   DataTableOptions,
   PaginationOptions,
-  ApplicationEditStatus,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
@@ -167,20 +163,6 @@ interface ApplicationSummaryModel extends ApplicationSummaryAPIOutDTO {
   versions?: ApplicationVersionAPIOutDTO[];
   loadingVersions?: boolean;
 }
-
-/**
- * Edited applications that should be filtered out from the list of
- * application versions to be displayed in the UI.
- * The student can potentially see all its edited applications versions,
- * the filter is applied at this stage as per the business understanding
- * that it will be best for the student to see only the most relevant
- * versions of the application.
- */
-const APPLICATION_VERSIONS_STATUSES = [
-  ApplicationEditStatus.Original,
-  ApplicationEditStatus.Edited,
-  ApplicationEditStatus.ChangedWithApproval,
-];
 
 export default defineComponent({
   components: { StatusChipApplication, StudentApplicationsVersion },
@@ -282,9 +264,7 @@ export default defineComponent({
           await ApplicationService.shared.getApplicationOverallDetails(
             application.id,
           );
-        application.versions = applications.previousVersions.filter((version) =>
-          APPLICATION_VERSIONS_STATUSES.includes(version.applicationEditStatus),
-        );
+        application.versions = applications.previousVersions;
       } catch (error) {
         console.error(error);
       } finally {
