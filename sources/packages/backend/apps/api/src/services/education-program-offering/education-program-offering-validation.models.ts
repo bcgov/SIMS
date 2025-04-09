@@ -21,6 +21,7 @@ import {
   OFFERING_NAME_MAX_LENGTH,
   OFFERING_WIL_TYPE_MAX_LENGTH,
   StudyBreaksAndWeeks,
+  InstitutionType,
 } from "@sims/sims-db";
 import {
   IsPeriodStartDate,
@@ -163,6 +164,14 @@ export type EducationProgramForOfferingValidationContext = Pick<
   | "hasWILComponent"
   | "deliveredOnSite"
   | "deliveredOnline"
+>;
+
+/**
+ * Institution details required to perform the offering validations.
+ */
+export type InstitutionValidationContext = Pick<
+  InstitutionType,
+  "isBCPublic" | "isBCPrivate"
 >;
 
 /**
@@ -614,6 +623,12 @@ export class OfferingValidationModel {
       "Not able to find a program related to this offering or it was not provided.",
   })
   programContext: EducationProgramForOfferingValidationContext;
+
+  @ValidateIf((offering: OfferingValidationModel) => !!offering.locationId)
+  @IsNotEmptyObject(undefined, {
+    message: "Not able to find the institution of the offering.",
+  })
+  institutionContext: InstitutionValidationContext;
 }
 
 /**

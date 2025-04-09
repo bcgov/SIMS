@@ -82,6 +82,16 @@ export class EducationProgramOfferingAPIInDTO {
   studyBreaks: StudyBreakInDTO[];
   @Allow()
   courseLoad?: number;
+  @Allow()
+  onlineInstructionMode?: string;
+  @Allow()
+  isOnlineDurationSameAlways?: string;
+  @Allow()
+  totalOnlineDuration?: number;
+  @Allow()
+  minimumOnlineDuration?: number;
+  @Allow()
+  maximumOnlineDuration?: number;
 }
 
 /**

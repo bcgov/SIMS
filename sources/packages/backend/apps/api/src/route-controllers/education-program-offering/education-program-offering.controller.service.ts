@@ -197,6 +197,11 @@ export class EducationProgramOfferingControllerService {
       primaryEmail: institutionLocation.institution.primaryEmail,
       studyBreaks: payload.studyBreaks,
       programContext: program,
+      institutionContext: {
+        isBCPrivate:
+          institutionLocation.institution.institutionType.isBCPrivate,
+        isBCPublic: institutionLocation.institution.institutionType.isBCPublic,
+      },
     };
   }
 
