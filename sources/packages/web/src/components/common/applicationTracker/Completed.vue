@@ -26,6 +26,7 @@
     background-color="warning-bg"
     :changeRequest="assessmentDetails.changeRequestInProgress"
     :areApplicationActionsAllowed="areApplicationActionsAllowed"
+    @changeRequestCancelled="changeRequestCancelled"
   />
   <!-- Student application change request - in progress with student -->
   <application-status-tracker-banner
@@ -270,7 +271,7 @@ export default defineComponent({
     const multipleCOEDenialReason = ref<string>();
     const ecertFailedValidationDetails = ref<EcertFailedValidationDetail[]>([]);
 
-    onMounted(async () => {
+    const loadCompletedApplicationDetails = async () => {
       assessmentDetails.value =
         await ApplicationService.shared.getCompletedApplicationDetails(
           props.applicationId,
@@ -290,7 +291,9 @@ export default defineComponent({
         )
           ecertFailedValidationDetails.value.push(detail);
       });
-    });
+    };
+
+    onMounted(loadCompletedApplicationDetails);
 
     const hasDisbursementEvent = computed(() => {
       return (
@@ -315,6 +318,12 @@ export default defineComponent({
       });
     };
 
+    const changeRequestCancelled = async () => {
+      // If a change request is cancelled, the application details
+      // must be reloaded to reflect the changes in the UI.
+      await loadCompletedApplicationDetails();
+    };
+
     return {
       assessmentDetails,
       multipleCOEDenialReason,
@@ -329,6 +338,7 @@ export default defineComponent({
       StudentScholasticStandingChangeType,
       ApplicationOfferingChangeRequestStatus,
       viewApplicationOfferingChangeRequest,
+      changeRequestCancelled,
     };
   },
 });

@@ -61,7 +61,7 @@
         color="primary"
         variant="outlined"
         class="mr-2"
-        @click="cancelRequest"
+        @click="cancelChangeRequest"
         :loading="cancelChangeRequestLoading"
         :disabled="!areApplicationActionsAllowed || cancelChangeRequestLoading"
         >Cancel change request</v-btn
@@ -93,10 +93,15 @@ import { ModalDialog, useSnackBar } from "@/composables";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import router from "@/router";
 import { ApplicationService } from "@/services/ApplicationService";
+import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 
 export default defineComponent({
+  emits: {
+    changeRequestCancelled: () => true,
+  },
   components: {
     ApplicationStatusTrackerBanner,
+    ConfirmModal,
   },
   props: {
     changeRequest: {
@@ -109,7 +114,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const cancelChangeRequestModal = ref({} as ModalDialog<boolean>);
     const snackBar = useSnackBar();
     const cancelChangeRequestLoading = ref(false);
@@ -131,7 +136,7 @@ export default defineComponent({
       });
     };
 
-    const cancelChangeRequest = async (applicationId: number) => {
+    const cancelChangeRequest = async () => {
       if (!props.changeRequest) {
         return;
       }
@@ -142,8 +147,9 @@ export default defineComponent({
       try {
         cancelChangeRequestLoading.value = true;
         await ApplicationService.shared.applicationCancelChangeRequest(
-          applicationId,
+          props.changeRequest.applicationId,
         );
+        emit("changeRequestCancelled");
       } catch {
         snackBar.error(
           "There was an error cancelling your change request. Please try again.",

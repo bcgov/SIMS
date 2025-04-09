@@ -459,6 +459,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationEditStatus: true,
         currentAssessment: { id: true },
       },
+      relations: {
+        currentAssessment: true,
+      },
       where: {
         id: applicationId,
         student: { id: studentId },
@@ -855,6 +858,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           formName: true,
           startDate: true,
           endDate: true,
+          programYear: true,
         },
         student: {
           id: true,

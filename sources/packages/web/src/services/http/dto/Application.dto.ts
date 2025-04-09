@@ -89,6 +89,11 @@ export interface ApplicationBaseAPIOutDTO {
   applicationStatus: ApplicationStatus;
   applicationFormName: string;
   applicationProgramYearID: number;
+  /**
+   * Indicates if the application is able to use the
+   * change request feature. Other conditions may apply.
+   */
+  isChangeRequestAllowedForPY: boolean;
 }
 
 /**

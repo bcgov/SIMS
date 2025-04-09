@@ -35,6 +35,7 @@ import {
   ChangeRequestInProgressAPIOutDTO,
 } from "./models/application.dto";
 import {
+  allowApplicationChangeRequest,
   credentialTypeToDisplay,
   deliveryMethod,
   getCOEDeniedReason,
@@ -572,6 +573,9 @@ export class ApplicationControllerService {
       applicationInstitutionName:
         application.location?.institution.legalOperatingName,
       changes,
+      isChangeRequestAllowedForPY: allowApplicationChangeRequest(
+        application.programYear,
+      ),
     };
   }
 
@@ -672,6 +676,9 @@ export class ApplicationControllerService {
         ? getCOEDeniedReason(disbursement)
         : undefined,
       submittedDate: applicationDetail.submittedDate,
+      isChangeRequestAllowedForPY: allowApplicationChangeRequest(
+        applicationDetail.programYear,
+      ),
     };
   }
 

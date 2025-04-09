@@ -210,8 +210,21 @@ export default defineComponent({
         items.value.push({
           label: "Request a change",
           icon: "fa:fas fa-hand-paper",
-          command: () => {
-            router.push({
+          command: async () => {
+            if (applicationDetails.value.isChangeRequestAllowedForPY) {
+              const applicationWithPY =
+                await ApplicationService.shared.getApplicationWithPY(props.id);
+              await router.push({
+                name: StudentRoutesConst.DYNAMIC_FINANCIAL_CHANGE_REQUEST_APP_FORM,
+                params: {
+                  selectedForm: applicationWithPY.formName,
+                  programYearId: applicationWithPY.programYearId,
+                  id: props.id,
+                },
+              });
+              return;
+            }
+            await router.push({
               name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
               params: {
                 applicationId: props.id,
