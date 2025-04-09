@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -356,25 +355,16 @@ export class ApplicationStudentsController extends BaseController {
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
-    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
-    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
-    if (
-      payload.data.howWillYouBeAttendingTheProgram &&
-      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
-        payload.data.howWillYouBeAttendingTheProgram,
-      )
-    ) {
-      throw new BadRequestException("Offering intensity type is invalid.");
-    }
     if (!programYear) {
       throw new UnprocessableEntityException(
         "Program Year is not active, not able to create a draft application.",
       );
     }
+    // The check to validate the value of offeringIntensity can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
+    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (
       !isFulltimeAllowed &&
-      payload.data.howWillYouBeAttendingTheProgram ===
-        OfferingIntensity.fullTime
+      payload.offeringIntensity === OfferingIntensity.fullTime
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
@@ -424,16 +414,8 @@ export class ApplicationStudentsController extends BaseController {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     const { offeringIntensity } =
       await this.applicationService.getApplicationInfo(applicationId);
-    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
+    // The check to validate the value of offeringIntensity can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
     // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
-    if (
-      offeringIntensity &&
-      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
-        offeringIntensity,
-      )
-    ) {
-      throw new BadRequestException("Offering intensity type is invalid.");
-    }
     if (
       !isFulltimeAllowed &&
       offeringIntensity === OfferingIntensity.fullTime

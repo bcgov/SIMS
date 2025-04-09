@@ -90,6 +90,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       {
         applicationData: {} as ApplicationData,
         applicationStatus: ApplicationStatus.Draft,
+        offeringInitialValues: {
+          offeringIntensity:
+            secondApplicationOfferingInitialValues.offeringIntensity,
+        },
       },
     );
     const auditUser = await db.user.save(createFakeUser());
@@ -190,6 +194,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       {
         applicationData: {} as ApplicationData,
         applicationStatus: ApplicationStatus.Draft,
+        offeringInitialValues: {
+          offeringIntensity:
+            secondApplicationOfferingInitialValues.offeringIntensity,
+        },
       },
     );
     const applicationData = {
@@ -348,6 +356,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       {
         applicationData: {} as ApplicationData,
         applicationStatus: ApplicationStatus.Draft,
+        offeringInitialValues: {
+          offeringIntensity:
+            secondApplicationOfferingInitialValues.offeringIntensity,
+        },
       },
     );
     const auditUser = await db.user.save(createFakeUser());
@@ -434,6 +446,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         {
           applicationData: {} as ApplicationData,
           applicationStatus: ApplicationStatus.Draft,
+          offeringInitialValues: {
+            offeringIntensity:
+              simsApplicationOfferingInitialValues.offeringIntensity,
+          },
         },
       );
       const auditUser = await db.user.save(createFakeUser());
@@ -521,6 +537,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         {
           applicationData: {} as ApplicationData,
           applicationStatus: ApplicationStatus.Draft,
+          offeringInitialValues: {
+            offeringIntensity:
+              simsApplicationOfferingInitialValues.offeringIntensity,
+          },
         },
       );
       const auditUser = await db.user.save(createFakeUser());
