@@ -55,7 +55,6 @@ export class PIRSummaryAPIOutDTO {
   studyEndPeriod: string;
   applicationId: number;
   pirStatus: ProgramInfoStatus;
-  fullName: string;
   submittedDate: string;
   givenNames: string;
   lastName: string;

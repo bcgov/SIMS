@@ -352,7 +352,6 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           studyStartPeriod,
           studyEndPeriod,
           pirStatus: eachApplication.pirStatus,
-          fullName: getUserFullName(user),
           submittedDate: getISODateOnlyString(eachApplication.submittedDate),
           givenNames: user.firstName,
           lastName: user.lastName,
