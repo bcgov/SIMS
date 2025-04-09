@@ -10,7 +10,7 @@
       <p><strong>Currently your change request is waiting for:</strong></p>
       <ul>
         <li v-if="waitingList.includes(WaitingTypes.MinistryApproval)">
-          Waiting on Student Aid BC to approve the change.
+          Waiting on StudentAid BC to approve the change.
         </li>
         <li v-if="waitingList.includes(WaitingTypes.StudentIncomeVerification)">
           Pending student income verification information.

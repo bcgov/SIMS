@@ -48,7 +48,7 @@ export enum ApplicationEditStatus {
 /**
  * Subset of the {@link ApplicationEditStatus} that are used to track the status of
  * an application edited that is considered in progress, either being processed or
- * waiting for a the Ministry decision.
+ * waiting for a Ministry decision.
  */
 export type ApplicationEditStatusInProgress =
   | ApplicationEditStatus.ChangeInProgress
@@ -57,7 +57,7 @@ export type ApplicationEditStatusInProgress =
 /**
  * Subset of the {@link ApplicationEditStatus} values that are used to track the status of
  * an application edited that is considered in progress, either being processed or
- * waiting for a the Ministry decision.
+ * waiting for a Ministry decision.
  */
 export const ApplicationEditStatusInProgressValues = [
   ApplicationEditStatus.ChangeInProgress,

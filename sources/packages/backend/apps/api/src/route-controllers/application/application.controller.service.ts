@@ -299,6 +299,15 @@ export class ApplicationControllerService {
     };
   }
 
+  /**
+   * Gets the information of an in progress change request for the application, if one exists.
+   * Checks for he existence of an in progress change request for the application to get a list
+   * of sub-processes status, for instance, income verifications and supporting user information.
+   * @param applicationId current application ID to verify a possible in progress change request.
+   * @param options options.
+   * - `studentId` student ID used for authorization, when required.
+   * @returns information of the in progress change request for the application, if one exists.
+   */
   private async getInProgressChangeRequestDetails(
     applicationId: number,
     options?: { studentId?: number },
@@ -314,7 +323,7 @@ export class ApplicationControllerService {
     if (!inProgressChangeRequest) {
       return;
     }
-    // If there is a in progress change request, then get the income verification and supporting user details.
+    // If there is an in progress change request, then get the income verification and supporting user details.
     const incomePromise =
       this.craIncomeVerificationService.getAllIncomeVerificationsForAnApplication(
         inProgressChangeRequest.id,

@@ -454,6 +454,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     };
   }
 
+  /**
+   * Cancels an in progress application change request and request the workflow cancellation.
+   * @param applicationId application ID that represents the change request to be cancelled.
+   * @param studentId student ID requesting the cancellation.
+   * @param auditUserId audit user ID that will be used to update the application.
+   * @returns the updated application.
+   */
   async cancelApplicationChangeRequest(
     applicationId: number,
     studentId: number,
@@ -491,8 +498,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Update current assessment to be cancelled.
     changeRequest.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.CancellationRequested;
-    changeRequest.currentAssessment.modifier = auditUser;
     changeRequest.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+    changeRequest.currentAssessment.modifier = auditUser;
+    changeRequest.currentAssessment.updatedAt = now;
     return this.repo.save(changeRequest);
   }
 
@@ -2202,36 +2210,46 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
   }
 
+  /**
+   * Get versions of the application by edit status.
+   * @param applicationId application ID.
+   * @param editStatuses edit statuses to filter by.
+   * @param options options.
+   * - `studentId` student ID used for authorization.
+   * @returns versions of the application that match the edit statuses,
+   * or an empty array if none was found.
+   */
   async getApplicationsVersionByEditStatus(
     applicationId: number,
     editStatuses: ApplicationEditStatus[],
     options?: { studentId?: number },
   ): Promise<Application[]> {
-    const query = this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application",
-        "versions.id",
-        "parentApplication.id",
-        "versions.id",
-        "versions.applicationEditStatus",
-      ])
-      .leftJoin("application.parentApplication", "parentApplication")
-      .leftJoin(
-        "parentApplication.versions",
-        "versions",
-        "versions.applicationEditStatus IN (:...editStatuses)",
-        {
-          editStatuses,
+    const application = await this.repo.findOne({
+      select: {
+        id: true,
+        parentApplication: {
+          id: true,
+          versions: {
+            id: true,
+            applicationEditStatus: true,
+          },
         },
-      )
-      .where("application.id = :applicationId", { applicationId });
-    if (options?.studentId) {
-      query.andWhere("application.student.id = :studentId", {
-        studentId: options.studentId,
-      });
-    }
-    const application = await query.getOne();
+      },
+      relations: {
+        parentApplication: {
+          versions: true,
+        },
+      },
+      where: {
+        id: applicationId,
+        parentApplication: {
+          versions: {
+            applicationEditStatus: In(editStatuses),
+          },
+        },
+        student: { id: options?.studentId },
+      },
+    });
     return application?.parentApplication?.versions ?? [];
   }
 
