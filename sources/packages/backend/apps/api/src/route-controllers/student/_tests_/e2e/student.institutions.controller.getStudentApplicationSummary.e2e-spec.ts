@@ -81,6 +81,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             {
               id: savedApplication.id,
               applicationNumber: savedApplication.applicationNumber,
+              isArchived: false,
               studyStartPeriod:
                 savedApplication.currentAssessment.offering.studyStartDate,
               studyEndPeriod:
@@ -133,6 +134,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             {
               id: savedApplication1.id,
               applicationNumber: savedApplication1.applicationNumber,
+              isArchived: false,
               studyStartPeriod:
                 savedApplication1.currentAssessment.offering.studyStartDate,
               studyEndPeriod:
@@ -190,6 +192,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             {
               id: savedApplication1.id,
               applicationNumber: savedApplication1.applicationNumber,
+              isArchived: false,
               studyStartPeriod:
                 savedApplication1.currentAssessment.offering.studyStartDate,
               studyEndPeriod:
@@ -251,6 +254,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             {
               id: savedApplication2.id,
               applicationNumber: savedApplication2.applicationNumber,
+              isArchived: false,
               studyStartPeriod:
                 savedApplication2.currentAssessment.offering.studyStartDate,
               studyEndPeriod:
@@ -263,6 +267,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             {
               id: savedApplication1.id,
               applicationNumber: savedApplication1.applicationNumber,
+              isArchived: false,
               studyStartPeriod:
                 savedApplication1.currentAssessment.offering.studyStartDate,
               studyEndPeriod:
