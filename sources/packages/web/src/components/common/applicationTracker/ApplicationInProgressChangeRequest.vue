@@ -1,57 +1,30 @@
 <template>
   <application-status-tracker-banner
-    v-if="!!changeRequest"
-    label="You have a submitted change request that is still pending. Please see below for the next steps."
+    v-if="changeRequest"
+    :label="trackerLabel"
     icon="fa:fas fa-exclamation-triangle"
     icon-color="warning"
     background-color="warning-bg"
   >
-    <template #content
-      ><p><strong>Currently your change request is waiting for:</strong></p>
+    <template #content v-if="waitingList.length">
+      <p><strong>Currently your change request is waiting for:</strong></p>
       <ul>
-        <li
-          v-if="
-            changeRequest?.applicationEditStatus ===
-            ApplicationEditStatus.ChangePendingApproval
-          "
-        >
+        <li v-if="waitingList.includes(WaitingTypes.MinistryApproval)">
           Waiting on Student Aid BC to approve the change.
         </li>
-        <li
-          v-if="
-            changeRequest.parent1Info === SuccessWaitingStatus.Waiting ||
-            changeRequest.parent2Info === SuccessWaitingStatus.Waiting
-          "
-        >
-          Pending parent declaration information.
-        </li>
-        <li v-if="changeRequest.partnerInfo === SuccessWaitingStatus.Waiting">
-          Pending partner declaration information.
-        </li>
-        <li
-          v-if="
-            changeRequest.studentIncomeVerificationStatus ===
-            SuccessWaitingStatus.Waiting
-          "
-        >
+        <li v-if="waitingList.includes(WaitingTypes.StudentIncomeVerification)">
           Pending student income verification information.
         </li>
-        <li
-          v-if="
-            changeRequest.parent1IncomeVerificationStatus ===
-              SuccessWaitingStatus.Waiting ||
-            changeRequest.parent2IncomeVerificationStatus ===
-              SuccessWaitingStatus.Waiting
-          "
-        >
+        <li v-if="waitingList.includes(WaitingTypes.ParentsDeclaration)">
+          Pending parent declaration information.
+        </li>
+        <li v-if="waitingList.includes(WaitingTypes.PartnerDeclaration)">
+          Pending partner declaration information.
+        </li>
+        <li v-if="waitingList.includes(WaitingTypes.ParentsIncomeVerification)">
           Pending parent income verification information.
         </li>
-        <li
-          v-if="
-            changeRequest.partnerIncomeVerificationStatus ===
-            SuccessWaitingStatus.Waiting
-          "
-        >
+        <li v-if="waitingList.includes(WaitingTypes.PartnerIncomeVerification)">
           Pending partner income verification information.
         </li>
       </ul>
@@ -87,13 +60,25 @@
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/common/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import { ChangeRequestInProgressAPIOutDTO } from "@/services/http/dto";
-import { defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, PropType, ref } from "vue";
 import { ApplicationEditStatus, SuccessWaitingStatus } from "@/types";
 import { ModalDialog, useSnackBar } from "@/composables";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import router from "@/router";
 import { ApplicationService } from "@/services/ApplicationService";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
+
+/**
+ * Possible waiting processes to be displayed to the student.
+ */
+enum WaitingTypes {
+  MinistryApproval = "MinistryApproval",
+  ParentsDeclaration = "ParentsDeclaration",
+  PartnerDeclaration = "PartnerDeclaration",
+  StudentIncomeVerification = "StudentIncomeVerification",
+  ParentsIncomeVerification = "ParentsIncomeVerification",
+  PartnerIncomeVerification = "PartnerIncomeVerification",
+}
 
 export default defineComponent({
   emits: {
@@ -159,6 +144,62 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Creates the list of processes currently waiting that are
+     * meaningful to be displayed to the student.
+     */
+    const waitingList = computed(() => {
+      if (!props.changeRequest) {
+        return [];
+      }
+      const waitingList: WaitingTypes[] = [];
+      const change = props.changeRequest;
+      if (
+        change.applicationEditStatus ===
+        ApplicationEditStatus.ChangePendingApproval
+      ) {
+        waitingList.push(WaitingTypes.MinistryApproval);
+      }
+      if (
+        [change.parent1Info, change.parent2Info].includes(
+          SuccessWaitingStatus.Waiting,
+        )
+      ) {
+        waitingList.push(WaitingTypes.ParentsDeclaration);
+      }
+      if (change.partnerInfo === SuccessWaitingStatus.Waiting) {
+        waitingList.push(WaitingTypes.PartnerDeclaration);
+      }
+      if (
+        change.studentIncomeVerificationStatus === SuccessWaitingStatus.Waiting
+      ) {
+        waitingList.push(WaitingTypes.StudentIncomeVerification);
+      }
+      if (
+        [
+          change.parent1IncomeVerificationStatus,
+          change.parent2IncomeVerificationStatus,
+        ].includes(SuccessWaitingStatus.Waiting)
+      ) {
+        waitingList.push(WaitingTypes.ParentsIncomeVerification);
+      }
+      if (
+        change.partnerIncomeVerificationStatus === SuccessWaitingStatus.Waiting
+      ) {
+        waitingList.push(WaitingTypes.PartnerIncomeVerification);
+      }
+      return waitingList;
+    });
+
+    /**
+     * Adjust the label based on the waiting list.
+     */
+    const trackerLabel = computed(() => {
+      return waitingList.value.length
+        ? "You have a submitted change request that is still pending. Please see below for the next steps."
+        : "You have a submitted change request that is still pending.";
+    });
+
     return {
       SuccessWaitingStatus,
       ApplicationEditStatus,
@@ -166,6 +207,9 @@ export default defineComponent({
       cancelChangeRequestModal,
       viewChangeRequest,
       cancelChangeRequestLoading,
+      waitingList,
+      WaitingTypes,
+      trackerLabel,
     };
   },
 });

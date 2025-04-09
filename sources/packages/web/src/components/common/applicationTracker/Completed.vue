@@ -19,7 +19,6 @@
   />
   <!-- Student request an application change (after COE) - change in progress -->
   <application-in-progress-change-request
-    v-if="!!assessmentDetails.changeRequestInProgress"
     label="You have a submitted change request that is still pending. Please see below for the next steps."
     icon="fa:fas fa-exclamation-triangle"
     icon-color="warning"

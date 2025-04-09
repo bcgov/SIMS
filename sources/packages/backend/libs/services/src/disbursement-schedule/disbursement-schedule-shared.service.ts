@@ -5,8 +5,6 @@ import {
   DisbursementSchedule,
   DisbursementValue,
   StudentAssessment,
-  AssessmentTriggerType,
-  ApplicationStatus,
   DisbursementValueType,
   DisbursementScheduleStatus,
   DisbursementOveraward,
@@ -17,7 +15,6 @@ import {
 import { DisbursementSaveModel } from "./disbursement-schedule.models";
 import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
 import {
-  ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
   GRANTS_TYPES,
@@ -228,16 +225,6 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       throw new CustomNamedError(
         `Disbursements were already created for this Student Assessment.`,
         DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
-      );
-    }
-
-    if (
-      assessment.triggerType === AssessmentTriggerType.OriginalAssessment &&
-      assessment.application.applicationStatus !== ApplicationStatus.InProgress
-    ) {
-      throw new CustomNamedError(
-        `Student Assessment and Student Application are not in the expected status. Expecting assessment status '${AssessmentTriggerType.OriginalAssessment}' when the application status is '${ApplicationStatus.InProgress}'.`,
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
 

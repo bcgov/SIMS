@@ -62,7 +62,6 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   StudentAppealStatus,
-  ApplicationEditStatus,
   ApplicationEditStatusInProgress,
   ApplicationEditStatusInProgressValues,
 } from "@sims/sims-db";
@@ -282,14 +281,8 @@ export class ApplicationControllerService {
       );
     const [scholasticStandingChange] = application.studentScholasticStandings;
     // Check if it is needed to get the in progress change request details.
-    // If the current application is the original application, then it was never edited.
-    let changeRequestInProgress: ChangeRequestInProgressAPIOutDTO | undefined;
-    if (application.applicationEditStatus !== ApplicationEditStatus.Original) {
-      changeRequestInProgress = await this.getInProgressChangeRequestDetails(
-        application.id,
-        options,
-      );
-    }
+    const changeRequestInProgress =
+      await this.getInProgressChangeRequestDetails(application.id, options);
 
     return {
       firstDisbursement: enrolmentDetails.firstDisbursement,
@@ -324,11 +317,11 @@ export class ApplicationControllerService {
     // If there is a in progress change request, then get the income verification and supporting user details.
     const incomePromise =
       this.craIncomeVerificationService.getAllIncomeVerificationsForAnApplication(
-        applicationId,
+        inProgressChangeRequest.id,
       );
     const supportingUsersPromise =
       this.supportingUserService.getSupportingUsersByApplicationId(
-        applicationId,
+        inProgressChangeRequest.id,
       );
     const [incomeVerificationDetails, supportingUserDetails] =
       await Promise.all([incomePromise, supportingUsersPromise]);
