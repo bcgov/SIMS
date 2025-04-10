@@ -10,7 +10,6 @@ import {
   UnauthorizedException,
   ParseIntPipe,
   Query,
-  DefaultValuePipe,
 } from "@nestjs/common";
 import {
   CompleteProgramInfoRequestAPIInDTO,
@@ -32,11 +31,7 @@ import {
   PIRDeniedReasonService,
 } from "../../services";
 import { getUserFullName, STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
-import {
-  CustomNamedError,
-  getISODateOnlyString,
-  FieldSortOrder,
-} from "@sims/utilities";
+import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
   Application,
   AssessmentTriggerType,
@@ -62,8 +57,10 @@ import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { WorkflowClientService } from "@sims/services";
 import { InstitutionUserTypes } from "../../auth";
-import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
-import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
+import {
+  PaginatedResultsAPIOutDTO,
+  PIRPaginationOptionsAPIInDTO,
+} from "../models/pagination.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
@@ -288,37 +285,24 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
    * Get all applications of a location in an institution
    * with Program Info Request (PIR) status completed and required.
    * @param locationId location that is completing the PIR.
-   * @param page page number.
-   * @param pageLimit number of items per page.
-   * @param sortField field to sort by.
-   * @param sortOrder sort direction.
-   * @param search search criteria.
-   * @param intensityFilter filter by a specific offering intensity.
+   * @param paginationOptions pagination options.
    * @returns paginated student application list of an institution location.
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request")
   async getPIRSummary(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query("pageLimit", new DefaultValuePipe(10), ParseIntPipe)
-    pageLimit: number,
-    @Query("sortField") sortField?: string,
-    @Query("sortOrder", new ParseEnumQueryPipe(FieldSortOrder))
-    sortOrder?: FieldSortOrder,
-    @Query("search") search?: string,
-    @Query("intensityFilter", new ParseEnumQueryPipe(OfferingIntensity))
-    intensityFilter?: OfferingIntensity,
+    @Query() paginationOptions: PIRPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
     const { results: applications, count } =
       await this.applicationService.getPIRApplications({
         locationId,
-        page,
-        pageLimit,
-        sortField,
-        sortOrder,
-        search,
-        intensityFilter,
+        page: paginationOptions.page,
+        pageLimit: paginationOptions.pageLimit,
+        sortField: paginationOptions.sortField,
+        sortOrder: paginationOptions.sortOrder,
+        search: paginationOptions.search,
+        intensityFilter: paginationOptions.intensityFilter as OfferingIntensity,
       });
 
     return {

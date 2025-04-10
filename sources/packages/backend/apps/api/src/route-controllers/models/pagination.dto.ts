@@ -142,6 +142,27 @@ export class CASInvoiceBatchesPaginationOptionsAPIInDTO extends PaginationOption
 }
 
 /**
+ * Program Info Request specific pagination options.
+ */
+export class PIRPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn([
+    "applicationNumber",
+    "pirStatus",
+    "submittedDate",
+    "studyStartPeriod",
+    "studyEndPeriod",
+  ])
+  sortField?: string;
+
+  @IsOptional()
+  search?: string;
+
+  @IsOptional()
+  intensityFilter?: string;
+}
+
+/**
  * Common DTO result used when an API endpoint
  * must enable pagination and search options.
  */
