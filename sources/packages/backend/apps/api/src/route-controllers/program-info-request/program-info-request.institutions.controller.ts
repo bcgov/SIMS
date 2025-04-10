@@ -311,7 +311,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     intensityFilter?: OfferingIntensity,
   ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
     const { results: applications, count } =
-      await this.applicationService.getPIRApplications(
+      await this.applicationService.getPIRApplications({
         locationId,
         page,
         pageLimit,
@@ -319,7 +319,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
         sortOrder,
         search,
         intensityFilter,
-      );
+      });
 
     return {
       results: applications.map((eachApplication: Application) => {
