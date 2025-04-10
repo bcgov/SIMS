@@ -36,6 +36,7 @@ import {
   STUDY_DATE_OVERLAP_ERROR_MESSAGE,
   STUDY_DATE_OVERLAP_ERROR,
   PaginationOptions,
+  PIRPaginationOptions,
   PaginatedResults,
   offeringBelongToProgramYear,
   APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION,
@@ -1190,24 +1191,21 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Get Program Info Request (PIR) Applications of an institution location.
-   * @param locationId location id.
-   * @param page page number.
-   * @param pageLimit page limit.
-   * @param sortField sort field.
-   * @param sortOrder sort order.
-   * @param search search.
-   * @param intensityFilter intensity filter.
+   * @param paginationOptions pagination options.
    * @returns student Application list.
    */
   async getPIRApplications(
-    locationId: number,
-    page: number,
-    pageLimit: number,
-    sortField?: string,
-    sortOrder?: "ASC" | "DESC",
-    search?: string,
-    intensityFilter?: OfferingIntensity,
+    paginationOptions: PIRPaginationOptions,
   ): Promise<PaginatedResults<Application>> {
+    const {
+      locationId,
+      page,
+      pageLimit,
+      sortField,
+      sortOrder,
+      search,
+      intensityFilter,
+    } = paginationOptions;
     const query = this.repo
       .createQueryBuilder("application")
       .select([
