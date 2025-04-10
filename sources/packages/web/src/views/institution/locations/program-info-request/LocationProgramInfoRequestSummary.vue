@@ -19,7 +19,7 @@
               v-model="intensityFilter"
               class="btn-toggle"
               selected-class="selected-btn-toggle"
-              @update:model-value="filterByIntensity"
+              @update:model-value="resetPageAndLoadApplications"
             >
               <v-btn
                 rounded="xl"
@@ -45,7 +45,7 @@
               label="Search by name or application"
               variant="outlined"
               v-model="searchQuery"
-              @keyup.enter="searchProgramTable"
+              @keyup.enter="resetPageAndLoadApplications"
               prepend-inner-icon="mdi-magnify"
               hide-details="auto"
               placeholder="Enter name or application"
@@ -230,14 +230,9 @@ export default defineComponent({
       }
     };
 
-    const searchProgramTable = async () => {
+    const resetPageAndLoadApplications = async () => {
       currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
       await loadApplications();
-    };
-
-    const filterByIntensity = () => {
-      currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
-      loadApplications();
     };
 
     const paginationAndSortEvent = async (event: DataTableOptions) => {
@@ -277,9 +272,7 @@ export default defineComponent({
       pirTableHeaders,
       applicationsLoading,
       searchQuery,
-      searchProgramTable,
       intensityFilter,
-      filterByIntensity,
       IntensityFilter,
       StudyIntensity,
       DEFAULT_PAGE_LIMIT,
@@ -288,6 +281,7 @@ export default defineComponent({
       getProgramName,
       getStartDate,
       getEndDate,
+      resetPageAndLoadApplications,
     };
   },
 });

@@ -1273,14 +1273,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
 
       // Apply sorting for each field
-      Object.entries(dbSortField).forEach(([field, order], index) => {
+      Object.entries(dbSortField).forEach(([field, order]) => {
         const isDateField = [
           "application.submittedDate",
           "offering.studyStartDate",
           "offering.studyEndDate",
         ].includes(field);
-        const sortMethod = index === 0 ? "orderBy" : "addOrderBy";
-        query[sortMethod](
+        query.orderBy(
           field,
           order as any,
           isDateField ? "NULLS LAST" : undefined,
