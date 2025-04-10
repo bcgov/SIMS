@@ -59,7 +59,7 @@ export type ApplicationEditStatusInProgress =
  * an application edited that is considered in progress, either being processed or
  * waiting for a Ministry decision.
  */
-export const ApplicationEditStatusInProgressValues = [
+export const APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES = [
   ApplicationEditStatus.ChangeInProgress,
   ApplicationEditStatus.ChangePendingApproval,
 ];

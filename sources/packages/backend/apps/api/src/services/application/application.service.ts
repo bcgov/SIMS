@@ -24,7 +24,7 @@ import {
   OfferingIntensity,
   InstitutionLocation,
   StudentAppeal,
-  ApplicationEditStatusInProgressValues,
+  APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -347,7 +347,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Check if there is already a change request in progress.
     const hasChangeInProgress = application.parentApplication.versions.some(
       (version) =>
-        ApplicationEditStatusInProgressValues.includes(
+        APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES.includes(
           version.applicationEditStatus,
         ),
     );
@@ -455,7 +455,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Cancels an in progress application change request and request the workflow cancellation.
+   * Cancels an in-progress application change request and request the workflow cancellation.
    * @param applicationId application ID that represents the change request to be cancelled.
    * @param studentId student ID requesting the cancellation.
    * @param auditUserId audit user ID that will be used to update the application.
@@ -478,12 +478,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       where: {
         id: applicationId,
         student: { id: studentId },
-        applicationEditStatus: In(ApplicationEditStatusInProgressValues),
+        applicationEditStatus: In(APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES),
       },
     });
     if (!changeRequest) {
       throw new CustomNamedError(
-        "Not able to find the in progress change request.",
+        "Not able to find the in-progress change request.",
         APPLICATION_NOT_FOUND,
       );
     }
@@ -495,7 +495,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     changeRequest.applicationEditStatusUpdatedBy = auditUser;
     changeRequest.modifier = auditUser;
     changeRequest.updatedAt = now;
-    // Update current assessment to be cancelled.
+    // Update the assessment to be cancelled.
     changeRequest.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.CancellationRequested;
     changeRequest.currentAssessment.studentAssessmentStatusUpdatedOn = now;
@@ -1033,7 +1033,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         {
           // Other statuses are not needed right now but the list can be extended
           // to other statuses if needed.
-          inProgressEditedStatuses: ApplicationEditStatusInProgressValues,
+          inProgressEditedStatuses: APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
         },
       )
       .leftJoin("application.precedingApplication", "precedingApplication")

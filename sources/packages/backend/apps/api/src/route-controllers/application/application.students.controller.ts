@@ -335,7 +335,7 @@ export class ApplicationStudentsController extends BaseController {
    */
   @Patch(":applicationId/cancel-change-request")
   @ApiNotFoundResponse({
-    description: "Not able to find the in progress change request.",
+    description: "Not able to find the in-progress change request.",
   })
   async applicationCancelChangeRequest(
     @Param("applicationId", ParseIntPipe) applicationId: number,

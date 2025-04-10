@@ -63,7 +63,7 @@ import {
   ApplicationStatus,
   StudentAppealStatus,
   ApplicationEditStatusInProgress,
-  ApplicationEditStatusInProgressValues,
+  APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
@@ -280,7 +280,6 @@ export class ApplicationControllerService {
         application.currentAssessment.disbursementSchedules,
       );
     const [scholasticStandingChange] = application.studentScholasticStandings;
-    // Check if it is needed to get the in progress change request details.
     const changeRequestInProgress =
       await this.getInProgressChangeRequestDetails(application.id, options);
 
@@ -300,30 +299,30 @@ export class ApplicationControllerService {
   }
 
   /**
-   * Gets the information of an in progress change request for the application, if one exists.
-   * Checks for he existence of an in progress change request for the application to get a list
+   * Gets the information of an in-progress change request for the application, if one exists.
+   * Checks for he existence of an in-progress change request for the application to get a list
    * of sub-processes status, for instance, income verifications and supporting user information.
    * @param applicationId current application ID to verify a possible in progress change request.
    * @param options options.
    * - `studentId` student ID used for authorization, when required.
-   * @returns information of the in progress change request for the application, if one exists.
+   * @returns information of the in-progress change request for the application, if one exists.
    */
   private async getInProgressChangeRequestDetails(
     applicationId: number,
     options?: { studentId?: number },
-  ): Promise<ChangeRequestInProgressAPIOutDTO> {
+  ): Promise<ChangeRequestInProgressAPIOutDTO | undefined> {
     const [inProgressChangeRequest] =
       await this.applicationService.getApplicationsVersionByEditStatus(
         applicationId,
-        ApplicationEditStatusInProgressValues,
+        APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
         {
           studentId: options?.studentId,
         },
       );
     if (!inProgressChangeRequest) {
-      return;
+      return undefined;
     }
-    // If there is an in progress change request, then get the income verification and supporting user details.
+    // If there is an in-progress change request, then get the income verification and supporting user details.
     const incomePromise =
       this.craIncomeVerificationService.getAllIncomeVerificationsForAnApplication(
         inProgressChangeRequest.id,
