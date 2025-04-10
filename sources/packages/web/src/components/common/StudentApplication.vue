@@ -232,6 +232,7 @@ export default defineComponent({
       if (educationProgramIdFromForm && selectedIntensity) {
         // when isReadOnly.value is true, then consider
         // both active and inactive program year.
+        formioUtils.setComponentValue(form, OFFERINGS_DROPDOWN_KEY, "");
         await formioDataLoader.loadOfferingsForLocation(
           form,
           educationProgramIdFromForm,
@@ -249,10 +250,7 @@ export default defineComponent({
         form,
         LOCATIONS_DROPDOWN_KEY,
       );
-      if (
-        event.changed?.component.key === LOCATIONS_DROPDOWN_KEY ||
-        event.changed?.component.key === OFFERING_INTENSITY_KEY
-      ) {
+      if (event.changed?.component.key === LOCATIONS_DROPDOWN_KEY) {
         /*
         If `programnotListed` is already checked in the draft and
         when student edit the draft application and changes the
@@ -266,6 +264,7 @@ export default defineComponent({
         if (selectedLocationId) {
           // when isReadOnly.value is true, then consider
           // both active and inactive program year.
+          formioUtils.setComponentValue(form, PROGRAMS_DROPDOWN_KEY, "");
           await formioDataLoader.loadProgramsForLocation(
             form,
             +selectedLocationId,

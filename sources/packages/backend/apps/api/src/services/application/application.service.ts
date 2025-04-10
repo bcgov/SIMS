@@ -249,6 +249,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Current date is set as submitted date.
     newApplication.submittedDate = now;
     newApplication.applicationNumber = application.applicationNumber;
+    newApplication.offeringIntensity = application.offeringIntensity;
     newApplication.relationshipStatus = applicationData.relationshipStatus;
     newApplication.studentNumber = applicationData.studentNumber;
     newApplication.programYear = application.programYear;
@@ -743,6 +744,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.pirStatus",
         "application.data",
         "application.pirDeniedOtherDesc",
+        "application.offeringIntensity",
         "location.name",
         "student.id",
         "student.birthDate",
@@ -1548,6 +1550,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .select([
         "application.id",
+        "application.offeringIntensity",
         "programYear.parentFormName",
         "programYear.partnerFormName",
         "programYear.startDate",
@@ -1812,7 +1815,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         data: {
           studyendDate: true,
           studystartDate: true,
-          howWillYouBeAttendingTheProgram: true,
         },
         studentScholasticStandings: {
           id: true,
@@ -2024,10 +2026,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     // Check if the newly selected offering intensity
     // is matching with the existing offering intensity.
-    const currentOfferingIntensity =
-      application.data.howWillYouBeAttendingTheProgram;
-
-    if (currentOfferingIntensity !== offering.offeringIntensity) {
+    if (application.offeringIntensity !== offering.offeringIntensity) {
       throw new CustomNamedError(
         "Offering intensity does not match with the student selected offering.",
         OFFERING_INTENSITY_MISMATCH,

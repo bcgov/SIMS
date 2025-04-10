@@ -71,6 +71,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { institutionLocation: collegeFLocation },
       {
         applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     // Student SIN Validation.
@@ -211,6 +212,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     );
     applicationRequestForChange.data.howWillYouBeAttendingTheProgram =
       OfferingIntensity.fullTime;
+    applicationRequestForChange.offeringIntensity = OfferingIntensity.fullTime;
 
     await db.student.save(applicationRequestForChange.student);
     await db.application.save(applicationRequestForChange);
@@ -253,7 +255,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "There is an existing application already with overlapping study period or a pending PIR.",
+          "There is an existing application already with overlapping study dates or a pending program information request. Please contact your institution for further assistance.",
         errorType: STUDY_DATE_OVERLAP_ERROR,
       });
   });
@@ -267,6 +269,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { institutionLocation: collegeFLocation },
       {
         applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     // Student SIN Validation.
@@ -316,6 +319,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { institutionLocation: collegeFLocation },
       {
         applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     // Student SIN Validation.
@@ -448,6 +452,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { institutionLocation: collegeFLocation },
       {
         applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     application.isArchived = true;
@@ -504,6 +509,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { institutionLocation: collegeFLocation },
       {
         applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     // Student SIN Validation.

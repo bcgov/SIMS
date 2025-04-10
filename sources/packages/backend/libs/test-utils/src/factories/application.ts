@@ -330,7 +330,7 @@ export async function saveFakeApplication(
         isArchived: options?.isArchived ? options?.isArchived : false,
         submittedDate: options?.submittedDate,
         applicationEditStatus: options?.applicationEditStatus,
-        offeringIntensity: options?.offeringInitialValues?.offeringIntensity,
+        offeringIntensity: options?.offeringIntensity,
       },
     },
   );
