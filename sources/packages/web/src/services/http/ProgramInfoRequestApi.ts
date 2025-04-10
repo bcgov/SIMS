@@ -93,7 +93,7 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
           : DataTableSortOrder.DESC,
       searchCriteria: {
         search: searchCriteria.search ?? "",
-        intensityFilter: searchCriteria.intensityFilter?.join(",") ?? "",
+        intensityFilter: searchCriteria.intensityFilter ?? "",
       },
     };
 

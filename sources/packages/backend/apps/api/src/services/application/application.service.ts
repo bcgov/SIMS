@@ -1265,24 +1265,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
     if (!sortField || !sortOrder) {
       query.orderBy("application.pirStatus", "ASC");
     } else {
-      const fieldSortOrder =
+      const sortDirection =
         sortOrder === "ASC" ? FieldSortOrder.ASC : FieldSortOrder.DESC;
-      const dbSortField = transformToApplicationEntitySortField(
+      const sortMappings = transformToApplicationEntitySortField(
         sortField,
-        fieldSortOrder,
+        sortDirection,
       );
-
-      // Apply sorting for each field
-      Object.entries(dbSortField).forEach(([field, order]) => {
-        const isDateField = [
-          "application.submittedDate",
-          "offering.studyStartDate",
-          "offering.studyEndDate",
-        ].includes(field);
+      const dateFields = [
+        "application.submittedDate",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+      ];
+      Object.entries(sortMappings).forEach(([field, order]) => {
         query.orderBy(
           field,
           order as any,
-          isDateField ? "NULLS LAST" : undefined,
+          dateFields.includes(field) ? "NULLS LAST" : undefined,
         );
       });
     }

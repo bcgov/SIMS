@@ -45,7 +45,7 @@ export interface PIRDeniedReasonAPIOutDTO {
 
 export interface PIRSearchCriteria {
   search?: string;
-  intensityFilter?: string[];
+  intensityFilter?: string;
   page: number;
   pageLimit: number;
   sortField?: string;

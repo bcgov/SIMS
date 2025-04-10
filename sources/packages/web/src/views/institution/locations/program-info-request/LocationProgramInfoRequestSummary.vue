@@ -61,7 +61,7 @@
       >
         <v-data-table-server
           v-if="applications?.count"
-          :headers="pirTableHeaders"
+          :headers="PIRSummaryHeaders"
           :items="applications.results"
           :items-length="applications.count"
           :loading="applicationsLoading"
@@ -154,9 +154,6 @@ export default defineComponent({
     const applications = ref(
       {} as PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>,
     );
-    const currentPage = ref(DEFAULT_DATATABLE_PAGE_NUMBER);
-    const currentPageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const pirTableHeaders = PIRSummaryHeaders;
 
     const locationName = computed(() => getLocationName(props.locationId));
 
@@ -198,8 +195,8 @@ export default defineComponent({
     };
 
     const loadApplications = async (
-      page = currentPage.value,
-      pageLimit = currentPageLimit.value,
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
+      pageLimit = DEFAULT_PAGE_LIMIT,
       sortField?: string,
       sortOrder?: string,
     ) => {
@@ -213,7 +210,7 @@ export default defineComponent({
           search: searchQuery.value || undefined,
           intensityFilter:
             intensityFilter.value !== IntensityFilter.All
-              ? [intensityFilter.value]
+              ? intensityFilter.value
               : undefined,
         };
 
@@ -231,13 +228,10 @@ export default defineComponent({
     };
 
     const resetPageAndLoadApplications = async () => {
-      currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
       await loadApplications();
     };
 
     const paginationAndSortEvent = async (event: DataTableOptions) => {
-      currentPage.value = event.page;
-      currentPageLimit.value = event.itemsPerPage;
       const [sortByOptions] = event.sortBy;
 
       await loadApplications(
@@ -256,7 +250,6 @@ export default defineComponent({
     watch(
       () => props.locationId,
       async () => {
-        currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
         searchQuery.value = "";
         intensityFilter.value = IntensityFilter.All;
         applications.value = { results: [], count: 0 };
@@ -269,7 +262,7 @@ export default defineComponent({
       dateOnlyLongString,
       goToViewApplication,
       locationName,
-      pirTableHeaders,
+      PIRSummaryHeaders,
       applicationsLoading,
       searchQuery,
       intensityFilter,
