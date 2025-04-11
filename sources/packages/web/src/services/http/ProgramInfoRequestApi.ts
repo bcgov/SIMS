@@ -5,7 +5,11 @@ import {
   PIRDeniedReasonAPIOutDTO,
   PIRSummaryAPIOutDTO,
   ProgramInfoRequestAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+  PIRSearchCriteria,
 } from "@/services/http/dto";
+import { getPaginationQueryString } from "@/helpers/helpers/uri";
+import { DataTableSortOrder, PaginationOptions } from "@/types";
 
 export class ProgramInfoRequestApi extends HttpBaseClient {
   /**
@@ -70,13 +74,37 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
 
   /**
    * Get all applications of a location in an institution
-   * with Program Info Request (PIR) status completed and required
+   * with Program Info Request (PIR) status completed and required.
    * @param locationId location that is completing the PIR.
-   * @returns student application list of an institution location.
+   * @param searchCriteria search criteria for filtering and pagination.
+   * @returns paginated student application list of an institution location.
    */
-  async getPIRSummary(locationId: number): Promise<PIRSummaryAPIOutDTO[]> {
-    return this.getCall<PIRSummaryAPIOutDTO[]>(
-      this.addClientRoot(`location/${locationId}/program-info-request`),
+  async getPIRSummary(
+    locationId: number,
+    searchCriteria: PIRSearchCriteria,
+  ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
+    // Convert search criteria to pagination options
+    const paginationOptions: PaginationOptions = {
+      page: searchCriteria.page,
+      pageLimit: searchCriteria.pageLimit,
+      sortField: searchCriteria.sortField,
+      sortOrder:
+        searchCriteria.sortOrder === "ASC"
+          ? DataTableSortOrder.ASC
+          : DataTableSortOrder.DESC,
+      searchCriteria: {
+        ...(searchCriteria.search && { search: searchCriteria.search }),
+        ...(searchCriteria.intensityFilter && {
+          intensityFilter: searchCriteria.intensityFilter,
+        }),
+      },
+    };
+
+    let url = `location/${locationId}/program-info-request?`;
+    url += getPaginationQueryString(paginationOptions);
+
+    return this.getCall<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>>(
+      this.addClientRoot(url),
     );
   }
 

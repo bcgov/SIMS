@@ -20,6 +20,10 @@ export function transformToApplicationEntitySortField(
 
   const fieldSortOptions = {
     applicationNumber: "application.applicationNumber",
+    submittedDate: "application.submittedDate",
+    studyStartPeriod: "offering.studyStartDate",
+    studyEndPeriod: "offering.studyEndDate",
+    pirStatus: "application.pirStatus",
   };
   const dbColumnName = fieldSortOptions[sortField];
   orderByCondition[dbColumnName] = sortOrder;

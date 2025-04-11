@@ -3,6 +3,7 @@ import {
   OfferingIntensity,
   OfferingTypes,
   ProgramInfoStatus,
+  FieldSortOrder,
 } from "@/types";
 import { Expose } from "class-transformer";
 
@@ -43,13 +44,48 @@ export interface PIRDeniedReasonAPIOutDTO {
   description: string;
 }
 
+export interface PIRSearchCriteria {
+  page: number;
+  pageLimit: number;
+  sortField?: string;
+  sortOrder?: FieldSortOrder;
+  search?: string;
+  intensityFilter?: OfferingIntensity;
+}
+
+export class PIRSummaryAPIInDTO {
+  @Expose()
+  search?: string;
+
+  @Expose()
+  intensityFilter?: OfferingIntensity;
+
+  @Expose()
+  page: number;
+
+  @Expose()
+  pageLimit: number;
+
+  @Expose()
+  sortField?: string;
+
+  @Expose()
+  sortOrder?: FieldSortOrder;
+}
+
 export interface PIRSummaryAPIOutDTO {
   applicationNumber: string;
   studyStartPeriod: string;
   studyEndPeriod: string;
   applicationId: number;
-  pirStatus: string;
+  pirStatus: ProgramInfoStatus;
   fullName: string;
+  submittedDate: string;
+  givenNames?: string;
+  lastName: string;
+  studentNumber?: string;
+  studyIntensity: OfferingIntensity;
+  program: string;
 }
 
 export class DenyProgramInfoRequestAPIInDTO {

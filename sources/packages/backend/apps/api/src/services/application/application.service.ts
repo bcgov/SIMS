@@ -37,12 +37,13 @@ import {
   STUDY_DATE_OVERLAP_ERROR_MESSAGE,
   STUDY_DATE_OVERLAP_ERROR,
   PaginationOptions,
+  PIRPaginationOptions,
   PaginatedResults,
   offeringBelongToProgramYear,
   APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION,
   allowApplicationChangeRequest,
 } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
@@ -1249,49 +1250,108 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get applications of an institution location
-   * with PIR status required and completed.
-   * @param locationId location id .
+   * Get Program Info Request (PIR) Applications of an institution location.
+   * @param paginationOptions pagination options.
    * @returns student Application list.
    */
-  async getPIRApplications(locationId: number): Promise<Application[]> {
-    return (
-      this.repo
-        .createQueryBuilder("application")
-        .select([
-          "application.applicationNumber",
-          "application.id",
-          "application.pirStatus",
-          "currentAssessment.id",
-          "offering.studyStartDate",
-          "offering.studyEndDate",
-          "student",
-        ])
-        .leftJoin("application.currentAssessment", "currentAssessment")
-        .leftJoin("currentAssessment.offering", "offering")
-        .innerJoin("application.student", "student")
-        .innerJoinAndSelect("student.user", "user")
-        .where("application.location.id = :locationId", { locationId })
-        .andWhere("application.pirStatus is not null")
-        .andWhere("application.pirStatus != :nonPirStatus", {
-          nonPirStatus: ProgramInfoStatus.notRequired,
-        })
-        .andWhere("application.applicationStatus != :editedStatus", {
-          editedStatus: ApplicationStatus.Edited,
-        })
-        // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
-        .orderBy(
-          `CASE application.pir_status
-            WHEN '${ProgramInfoStatus.required}' THEN 1
-            WHEN '${ProgramInfoStatus.submitted}' THEN 2
-            WHEN '${ProgramInfoStatus.completed}' THEN 3
-            WHEN '${ProgramInfoStatus.declined}' THEN 4
-            ELSE 5
-          END`,
-        )
-        .addOrderBy("application.applicationNumber")
-        .getMany()
-    );
+  async getPIRApplications(
+    locationId: number,
+    paginationOptions: PIRPaginationOptions,
+  ): Promise<PaginatedResults<Application>> {
+    const { page, pageLimit, sortField, sortOrder, search, intensityFilter } =
+      paginationOptions;
+    const query = this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationNumber",
+        "application.id",
+        "application.pirStatus",
+        "application.submittedDate",
+        "application.studentNumber",
+        "application.offeringIntensity",
+        "currentAssessment.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "educationProgram.name",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+        "pirProgram.name",
+      ])
+      // Extract specific properties from the JSONB data field
+      .addSelect("application.data ->> 'programName'", "programName")
+      .addSelect("application.data ->> 'studystartDate'", "studystartDate")
+      .addSelect("application.data ->> 'studyendDate'", "studyendDate")
+      .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
+      .leftJoin("offering.educationProgram", "educationProgram")
+      .leftJoin("application.pirProgram", "pirProgram")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.pirStatus is not null")
+      .andWhere("application.pirStatus != :nonPirStatus", {
+        nonPirStatus: ProgramInfoStatus.notRequired,
+      })
+      .andWhere("application.applicationStatus != :editedStatus", {
+        editedStatus: ApplicationStatus.Edited,
+      });
+
+    if (search) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where(getUserFullNameLikeSearch("user", "search")).orWhere(
+            "application.applicationNumber ILIKE :search",
+          );
+        }),
+      );
+      query.setParameter("search", `%${search.trim()}%`);
+    }
+
+    if (intensityFilter) {
+      query.andWhere("application.offeringIntensity = :intensityFilter", {
+        intensityFilter,
+      });
+    }
+
+    if (!sortField || !sortOrder) {
+      // Add a custom order by priority for PIR status
+      query.addSelect(
+        `CASE WHEN 
+        application.pir_status = '${ProgramInfoStatus.required}' THEN 1 
+        WHEN application.pir_status = '${ProgramInfoStatus.completed}' THEN 2 
+        WHEN application.pir_status = '${ProgramInfoStatus.declined}' THEN 3
+        ELSE 4 END`,
+        "status_order",
+      );
+      query.orderBy("status_order", "ASC");
+    } else {
+      const sortDirection =
+        sortOrder === "ASC" ? FieldSortOrder.ASC : FieldSortOrder.DESC;
+      const sortMappings = transformToApplicationEntitySortField(
+        sortField,
+        sortDirection,
+      );
+      const dateFields = [
+        "application.submittedDate",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+      ];
+      Object.entries(sortMappings).forEach(([field, order]) => {
+        query.orderBy(
+          field,
+          order as any,
+          dateFields.includes(field) ? "NULLS LAST" : undefined,
+        );
+      });
+    }
+
+    // Always add application number as secondary sort
+    query.addOrderBy("application.applicationNumber", "ASC");
+
+    query.skip((page - 1) * pageLimit).take(pageLimit);
+    const [results, count] = await query.getManyAndCount();
+    return { results, count };
   }
 
   /**
