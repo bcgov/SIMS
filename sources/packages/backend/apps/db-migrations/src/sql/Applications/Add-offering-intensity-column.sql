@@ -1,7 +1,7 @@
 ALTER TABLE
   sims.applications
 ADD
-  COLUMN offering_intensity sims.offering_intensity DEFAULT 'Part Time';
+  COLUMN offering_intensity sims.offering_intensity NOT NULL DEFAULT 'Part Time';
 
 COMMENT ON COLUMN sims.applications.offering_intensity IS 'Offering intensity related to the application.';
 

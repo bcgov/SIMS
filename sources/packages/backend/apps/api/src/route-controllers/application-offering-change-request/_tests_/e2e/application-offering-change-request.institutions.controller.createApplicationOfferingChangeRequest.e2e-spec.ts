@@ -71,6 +71,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { institutionLocation: collegeFLocation },
       {
         applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     // Student SIN Validation.
@@ -211,6 +212,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     );
     applicationRequestForChange.data.howWillYouBeAttendingTheProgram =
       OfferingIntensity.fullTime;
+    applicationRequestForChange.offeringIntensity = OfferingIntensity.fullTime;
 
     await db.student.save(applicationRequestForChange.student);
     await db.application.save(applicationRequestForChange);
@@ -267,6 +269,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { institutionLocation: collegeFLocation },
       {
         applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     // Student SIN Validation.
@@ -316,6 +319,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { institutionLocation: collegeFLocation },
       {
         applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     // Student SIN Validation.
@@ -448,6 +452,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { institutionLocation: collegeFLocation },
       {
         applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     application.isArchived = true;
@@ -504,6 +509,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       { institutionLocation: collegeFLocation },
       {
         applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     // Student SIN Validation.
