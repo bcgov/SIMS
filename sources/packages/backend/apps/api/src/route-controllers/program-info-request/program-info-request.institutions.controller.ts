@@ -304,13 +304,11 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
         const offering = eachApplication.currentAssessment?.offering;
         const user = eachApplication.student.user;
 
-        // Conditionally set study start and end periods based on PIR status
+        // Determine if PIR is completed
         const isPIRCompleted =
           eachApplication.pirStatus === ProgramInfoStatus.completed;
 
-        // Get program name based on PIR status
-        // For completed PIRs, prefer the offering's education program name
-        // For non-completed PIRs, prefer application data program name or PIR program name
+        // Get program name based on current data
         const programName = isPIRCompleted
           ? offering?.educationProgram?.name
           : eachApplication.data?.programName ||
@@ -324,7 +322,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           ? getISODateOnlyString(offering?.studyEndDate)
           : eachApplication.data?.studyendDate;
 
-        return {
+        const result: PIRSummaryAPIOutDTO = {
           applicationId: eachApplication.id,
           applicationNumber: eachApplication.applicationNumber,
           studyStartPeriod,
@@ -337,6 +335,29 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           studyIntensity: eachApplication.offeringIntensity,
           program: programName,
         };
+
+        // Add application data for "Required" or "Declined" PIR status
+        if (
+          eachApplication.pirStatus === ProgramInfoStatus.required ||
+          eachApplication.pirStatus === ProgramInfoStatus.declined
+        ) {
+          result.applicationData = {
+            programName: eachApplication.data?.programName,
+            startDate: eachApplication.data?.studystartDate,
+            endDate: eachApplication.data?.studyendDate,
+          };
+        }
+
+        // Add offering data for completed PIRs
+        if (isPIRCompleted && offering) {
+          result.offeringData = {
+            programName: offering.educationProgram?.name,
+            startDate: getISODateOnlyString(offering.studyStartDate),
+            endDate: getISODateOnlyString(offering.studyEndDate),
+          };
+        }
+
+        return result;
       }),
       count,
     };

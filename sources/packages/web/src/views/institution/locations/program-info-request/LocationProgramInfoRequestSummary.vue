@@ -10,7 +10,7 @@
     <body-header
       title="Active applications"
       data-cy="activeApplicationsTab"
-      :recordsCount="applications?.count || 0"
+      :recordsCount="applications.count"
     >
       <template #actions>
         <v-row class="justify-end">
@@ -56,7 +56,7 @@
     </body-header>
     <content-group>
       <toggle-content
-        :toggled="!applications?.count && !applicationsLoading"
+        :toggled="!applications.count"
         message="No program information requests found"
       >
         <v-data-table-server
@@ -70,9 +70,7 @@
           @update:options="paginationAndSortEvent"
         >
           <template #[`item.submittedDate`]="{ item }">
-            {{
-              item.submittedDate ? dateOnlyLongString(item.submittedDate) : "-"
-            }}
+            {{ dateOnlyLongString(item.submittedDate) }}
           </template>
           <template #[`item.program`]="{ item }">
             {{ getProgramName(item) }}
@@ -124,6 +122,8 @@ import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   PIRSummaryHeaders,
+  FieldSortOrder,
+  OfferingIntensity,
 } from "@/types";
 
 enum StudyIntensity {
@@ -165,33 +165,28 @@ export default defineComponent({
     };
 
     const getProgramName = (item: PIRSummaryAPIOutDTO): string => {
-      if (item.pirStatus === "Required" || item.pirStatus === "Declined") {
-        return item.applicationData?.programName || item.program || "-";
-      }
       return item.program || "-";
     };
 
     const getStartDate = (item: PIRSummaryAPIOutDTO): string => {
-      const date =
-        item.pirStatus === "Required" || item.pirStatus === "Declined"
-          ? item.applicationData?.startDate
-          : item.studyStartPeriod;
-      return date ? dateOnlyLongString(date) : "-";
+      return item.studyStartPeriod
+        ? dateOnlyLongString(item.studyStartPeriod)
+        : "-";
     };
 
     const getEndDate = (item: PIRSummaryAPIOutDTO): string => {
-      const date =
-        item.pirStatus === "Required" || item.pirStatus === "Declined"
-          ? item.applicationData?.endDate
-          : item.studyEndPeriod;
-      return date ? dateOnlyLongString(date) : "-";
+      return item.studyEndPeriod
+        ? dateOnlyLongString(item.studyEndPeriod)
+        : "-";
     };
 
     const getApiSortOrder = (
       sortOrder?: string,
-    ): "ASC" | "DESC" | undefined => {
+    ): FieldSortOrder | undefined => {
       if (!sortOrder) return undefined;
-      return sortOrder === "asc" ? "ASC" : "DESC";
+      return sortOrder === "asc"
+        ? ("ASC" as FieldSortOrder)
+        : ("DESC" as FieldSortOrder);
     };
 
     const loadApplications = async (
@@ -210,7 +205,7 @@ export default defineComponent({
           search: searchQuery.value || undefined,
           intensityFilter:
             intensityFilter.value !== IntensityFilter.All
-              ? intensityFilter.value
+              ? (intensityFilter.value as OfferingIntensity)
               : undefined,
         };
 

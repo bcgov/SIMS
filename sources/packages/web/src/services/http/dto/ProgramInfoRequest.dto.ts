@@ -81,21 +81,11 @@ export interface PIRSummaryAPIOutDTO {
   pirStatus: ProgramInfoStatus;
   fullName: string;
   submittedDate: string;
-  givenNames: string;
+  givenNames?: string;
   lastName: string;
-  studentNumber: string;
+  studentNumber?: string;
   studyIntensity: OfferingIntensity;
   program: string;
-  applicationData?: {
-    programName?: string;
-    startDate?: string;
-    endDate?: string;
-  };
-  offeringData?: {
-    programName?: string;
-    startDate?: string;
-    endDate?: string;
-  };
 }
 
 export class DenyProgramInfoRequestAPIInDTO {
