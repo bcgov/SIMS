@@ -3,7 +3,7 @@
     :toggled="!filteredVersions.length && !loading"
     message="There are no versions available for viewing in this application."
   >
-    <v-table v-if="filteredVersions.length">
+    <v-table>
       <thead>
         <tr>
           <th id="submitted-header">Submitted</th>

@@ -223,8 +223,6 @@ import {
   ECertFailedValidation,
   StudentAppealStatus,
   StudentScholasticStandingChangeType,
-  ApplicationEditStatus,
-  SuccessWaitingStatus,
 } from "@/types";
 import { onMounted, ref, defineComponent, computed } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -327,8 +325,6 @@ export default defineComponent({
       COEStatus,
       AssessmentTriggerType,
       StudentAppealStatus,
-      ApplicationEditStatus,
-      SuccessWaitingStatus,
       hasDisbursementEvent,
       StudentScholasticStandingChangeType,
       ApplicationOfferingChangeRequestStatus,
