@@ -24,6 +24,7 @@ import {
   OfferingIntensity,
   InstitutionLocation,
   StudentAppeal,
+  APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -67,7 +68,7 @@ import {
   NotificationService,
 } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
-import { EducationProgramService, StudentService } from "..";
+import { StudentService } from "..";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -94,7 +95,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly fileService: StudentFileService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly offeringService: EducationProgramOfferingService,
-    private readonly educationProgramService: EducationProgramService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly notificationService: NotificationService,
@@ -333,6 +333,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
         APPLICATION_NOT_FOUND,
       );
     }
+    if (application.isArchived) {
+      throw new CustomNamedError(
+        "The application is archived and cannot be used to create a change request.",
+        APPLICATION_NOT_VALID,
+      );
+    }
     if (!allowApplicationChangeRequest(application.programYear)) {
       throw new CustomNamedError(
         "The program year associated to this application does not allow a change request submission.",
@@ -342,10 +348,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Check if there is already a change request in progress.
     const hasChangeInProgress = application.parentApplication.versions.some(
       (version) =>
-        [
-          ApplicationEditStatus.ChangeInProgress,
-          ApplicationEditStatus.ChangePendingApproval,
-        ].includes(version.applicationEditStatus),
+        APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES.includes(
+          version.applicationEditStatus,
+        ),
     );
     if (hasChangeInProgress) {
       throw new CustomNamedError(
@@ -401,6 +406,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     newApplication.relationshipStatus = applicationData.relationshipStatus;
     newApplication.studentNumber = applicationData.studentNumber;
     newApplication.programYear = application.programYear;
+    newApplication.offeringIntensity = application.offeringIntensity;
     newApplication.data = applicationData;
     newApplication.location = {
       id: application.location.id,
@@ -447,6 +453,56 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application: newApplication,
       createdAssessment: originalAssessment,
     };
+  }
+
+  /**
+   * Cancels an in-progress application change request and request the workflow cancellation.
+   * @param applicationId application ID that represents the change request to be cancelled.
+   * @param studentId student ID requesting the cancellation.
+   * @param auditUserId audit user ID that will be used to update the application.
+   * @returns the updated application.
+   */
+  async cancelApplicationChangeRequest(
+    applicationId: number,
+    studentId: number,
+    auditUserId: number,
+  ): Promise<Application> {
+    const changeRequest = await this.repo.findOne({
+      select: {
+        id: true,
+        applicationEditStatus: true,
+        currentAssessment: { id: true },
+      },
+      relations: {
+        currentAssessment: true,
+      },
+      where: {
+        id: applicationId,
+        student: { id: studentId },
+        applicationEditStatus: In(APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES),
+      },
+    });
+    if (!changeRequest) {
+      throw new CustomNamedError(
+        "Not able to find the in-progress change request.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+    const now = new Date();
+    const auditUser = { id: auditUserId } as User;
+    // Update in-progress change request.
+    changeRequest.applicationEditStatus = ApplicationEditStatus.ChangeCancelled;
+    changeRequest.applicationEditStatusUpdatedOn = now;
+    changeRequest.applicationEditStatusUpdatedBy = auditUser;
+    changeRequest.modifier = auditUser;
+    changeRequest.updatedAt = now;
+    // Update the assessment to be cancelled.
+    changeRequest.currentAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.CancellationRequested;
+    changeRequest.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+    changeRequest.currentAssessment.modifier = auditUser;
+    changeRequest.currentAssessment.updatedAt = now;
+    return this.repo.save(changeRequest);
   }
 
   /**
@@ -776,6 +832,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.findOne({
       select: {
         id: true,
+        isArchived: true,
         data: !!options?.loadDynamicData as unknown,
         applicationStatus: true,
         offeringIntensity: true,
@@ -818,6 +875,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           formName: true,
           startDate: true,
           endDate: true,
+          programYear: true,
         },
         student: {
           id: true,
@@ -864,6 +922,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .createQueryBuilder("application")
       .select([
         "application.applicationNumber",
+        "application.isArchived",
         "application.id",
         "parentApplication.id",
         "parentApplication.submittedDate",
@@ -974,10 +1033,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "versions",
         "versions.applicationEditStatus IN (:...inProgressEditedStatuses)",
         {
-          inProgressEditedStatuses: [
-            ApplicationEditStatus.ChangeInProgress,
-            ApplicationEditStatus.ChangePendingApproval,
-          ],
+          // Other statuses are not needed right now but the list can be extended
+          // to other statuses if needed.
+          inProgressEditedStatuses: APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
         },
       )
       .leftJoin("application.precedingApplication", "precedingApplication")
@@ -1512,8 +1570,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
       .andWhere("student.birthDate = :birthDate", { birthDate })
-      .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.InProgress,
+      .andWhere((qb) => {
+        qb.where(
+          "application.applicationStatus = :inProgressApplicationStatus",
+          {
+            inProgressApplicationStatus: ApplicationStatus.InProgress,
+          },
+        ).orWhere(
+          "application.applicationEditStatus = :changeInProgressApplicationEditStatus",
+          {
+            changeInProgressApplicationEditStatus:
+              ApplicationEditStatus.ChangeInProgress,
+          },
+        );
       })
       .getOne();
   }
@@ -1795,6 +1864,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.findOne({
       select: {
         id: true,
+        applicationEditStatus: true,
         currentAssessment: {
           id: true,
           triggerType: true,
@@ -2137,6 +2207,49 @@ export class ApplicationService extends RecordDataModelService<Application> {
         student: { id: studentId },
       },
     });
+  }
+
+  /**
+   * Get versions of the application by edit status.
+   * @param applicationId application ID.
+   * @param editStatuses edit statuses to filter by.
+   * @param options options.
+   * - `studentId` student ID used for authorization.
+   * @returns versions of the application that match the edit statuses,
+   * or an empty array if none was found.
+   */
+  async getApplicationsVersionByEditStatus(
+    applicationId: number,
+    editStatuses: ApplicationEditStatus[],
+    options?: { studentId?: number },
+  ): Promise<Application[]> {
+    const application = await this.repo.findOne({
+      select: {
+        id: true,
+        parentApplication: {
+          id: true,
+          versions: {
+            id: true,
+            applicationEditStatus: true,
+          },
+        },
+      },
+      relations: {
+        parentApplication: {
+          versions: true,
+        },
+      },
+      where: {
+        id: applicationId,
+        parentApplication: {
+          versions: {
+            applicationEditStatus: In(editStatuses),
+          },
+        },
+        student: { id: options?.studentId },
+      },
+    });
+    return application?.parentApplication?.versions ?? [];
   }
 
   @InjectLogger()

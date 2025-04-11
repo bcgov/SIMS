@@ -150,6 +150,7 @@ export interface SearchStudentAPIOutDTO {
  */
 export interface ApplicationSummaryAPIOutDTO {
   applicationNumber: string;
+  isArchived: boolean;
   studyStartPeriod: string;
   studyEndPeriod: string;
   id: number;

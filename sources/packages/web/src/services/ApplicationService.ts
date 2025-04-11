@@ -116,6 +116,14 @@ export class ApplicationService {
     await ApiClient.Application.submitApplication(applicationId, payload);
   }
 
+  /**
+   * Cancels an in-progress change request for an existing student application.
+   * @param applicationId application ID of the change request to be cancelled.
+   */
+  async applicationCancelChangeRequest(applicationId: number): Promise<void> {
+    await ApiClient.Application.applicationCancelChangeRequest(applicationId);
+  }
+
   async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,

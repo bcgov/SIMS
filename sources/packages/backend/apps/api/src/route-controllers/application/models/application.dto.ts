@@ -15,6 +15,7 @@ import {
   ApplicationOfferingChangeRequestStatus,
   StudentAssessmentStatus,
   ApplicationEditStatus,
+  ApplicationEditStatusInProgress,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
@@ -117,11 +118,17 @@ export class ApplicationProgramYearAPIOutDTO {
 export class ApplicationBaseAPIOutDTO {
   id: number;
   applicationNumber: string;
+  isArchived: boolean;
   assessmentId?: number;
   data: ApplicationFormData;
   applicationStatus: ApplicationStatus;
   applicationFormName: string;
   applicationProgramYearID: number;
+  /**
+   * Indicates if the application is able to use the
+   * change request feature. Other conditions may apply.
+   */
+  isChangeRequestAllowedForPY: boolean;
 }
 
 export class ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
@@ -234,6 +241,15 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
   eCertFailedValidations: ECertFailedValidation[];
+  changeRequestInProgress?: ChangeRequestInProgressAPIOutDTO;
+}
+
+export class ChangeRequestInProgressAPIOutDTO extends IntersectionType(
+  ApplicationSupportingUserDetails,
+  ApplicationIncomeVerification,
+) {
+  applicationId: number;
+  applicationEditStatus: ApplicationEditStatusInProgress;
 }
 
 export class ApplicationAssessmentStatusDetailsAPIOutDTO {

@@ -214,6 +214,7 @@ export class AESTFileUploadToStudentAPIInDTO {
  */
 export class ApplicationSummaryAPIOutDTO {
   applicationNumber: string;
+  isArchived: boolean;
   studyStartPeriod: string;
   studyEndPeriod: string;
   id: number;

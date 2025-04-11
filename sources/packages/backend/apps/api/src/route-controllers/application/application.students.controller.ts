@@ -274,7 +274,8 @@ export class ApplicationStudentsController extends BaseController {
       "or an application change request is already in progress " +
       "or application is not in the correct status to be submitted " +
       "or change request has a different offering from its original submission" +
-      "or change request has a different location from its original submission.",
+      "or change request has a different location from its original submission " +
+      "or the application is archived and cannot be used to create a change request.",
   })
   @ApiBadRequestResponse({
     description:
@@ -322,6 +323,35 @@ export class ApplicationStudentsController extends BaseController {
               new ApiProcessError(error.message, error.name),
             );
         }
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Cancels an in-progress change request for an existing student application.
+   * @param applicationId application ID of the change request to be cancelled.
+   */
+  @Patch(":applicationId/cancel-change-request")
+  @ApiNotFoundResponse({
+    description: "Not able to find the in-progress change request.",
+  })
+  async applicationCancelChangeRequest(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<void> {
+    try {
+      await this.applicationService.cancelApplicationChangeRequest(
+        applicationId,
+        studentToken.studentId,
+        studentToken.userId,
+      );
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === APPLICATION_NOT_FOUND
+      ) {
+        throw new NotFoundException(error.message);
       }
       throw error;
     }

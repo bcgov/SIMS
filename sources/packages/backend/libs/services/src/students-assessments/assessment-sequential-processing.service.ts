@@ -667,6 +667,7 @@ export class AssessmentSequentialProcessingService {
         .andWhere("assessment.offering IS NOT NULL")
         .andWhere("application.student.id = :studentId")
         .andWhere("application.programYear.id = :programYearId")
+        .andWhere("application.applicationStatus != :applicationEditedStatus")
         .setParameter("triggerType", AssessmentTriggerType.OriginalAssessment)
         .setParameter("studentAssessmentStatus", [
           StudentAssessmentStatus.Completed,
@@ -676,6 +677,7 @@ export class AssessmentSequentialProcessingService {
         ])
         .setParameter("studentId", studentId)
         .setParameter("programYearId", programYearId)
+        .setParameter("applicationEditedStatus", ApplicationStatus.Edited)
         .orderBy(`"${originalAssessmentStudyStartDateAlias}"`)
         .addOrderBy("assessment.createdAt")
         .limit(1)

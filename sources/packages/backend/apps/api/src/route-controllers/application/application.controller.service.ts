@@ -16,7 +16,6 @@ import {
   CRAIncomeVerificationService,
   SupportingUserService,
   APPLICATION_NOT_FOUND,
-  ProgramYearService,
   FormService,
 } from "../../services";
 import {
@@ -33,8 +32,10 @@ import {
   ApplicationDataChangeAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
   SaveApplicationAPIInDTO,
+  ChangeRequestInProgressAPIOutDTO,
 } from "./models/application.dto";
 import {
+  allowApplicationChangeRequest,
   credentialTypeToDisplay,
   deliveryMethod,
   getCOEDeniedReason,
@@ -61,6 +62,8 @@ import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   StudentAppealStatus,
+  ApplicationEditStatusInProgress,
+  APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
@@ -87,7 +90,6 @@ export class ApplicationControllerService {
     private readonly craIncomeVerificationService: CRAIncomeVerificationService,
     private readonly supportingUserService: SupportingUserService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
-    private readonly programYearService: ProgramYearService,
     private readonly formService: FormService,
     private readonly configService: ConfigService,
   ) {}
@@ -278,6 +280,8 @@ export class ApplicationControllerService {
         application.currentAssessment.disbursementSchedules,
       );
     const [scholasticStandingChange] = application.studentScholasticStandings;
+    const changeRequestInProgress =
+      await this.getInProgressChangeRequestDetails(application.id, options);
 
     return {
       firstDisbursement: enrolmentDetails.firstDisbursement,
@@ -290,6 +294,57 @@ export class ApplicationControllerService {
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
       hasBlockFundingFeedbackError,
       eCertFailedValidations: [...eCertValidationResult.failedValidations],
+      changeRequestInProgress,
+    };
+  }
+
+  /**
+   * Gets the information of an in-progress change request for the application, if one exists.
+   * Checks for he existence of an in-progress change request for the application to get a list
+   * of sub-processes status, for instance, income verifications and supporting user information.
+   * @param applicationId current application ID to verify a possible in progress change request.
+   * @param options options.
+   * - `studentId` student ID used for authorization, when required.
+   * @returns information of the in-progress change request for the application, if one exists.
+   */
+  private async getInProgressChangeRequestDetails(
+    applicationId: number,
+    options?: { studentId?: number },
+  ): Promise<ChangeRequestInProgressAPIOutDTO | undefined> {
+    const [inProgressChangeRequest] =
+      await this.applicationService.getApplicationsVersionByEditStatus(
+        applicationId,
+        APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
+        {
+          studentId: options?.studentId,
+        },
+      );
+    if (!inProgressChangeRequest) {
+      return undefined;
+    }
+    // If there is an in-progress change request, then get the income verification and supporting user details.
+    const incomePromise =
+      this.craIncomeVerificationService.getAllIncomeVerificationsForAnApplication(
+        inProgressChangeRequest.id,
+      );
+    const supportingUsersPromise =
+      this.supportingUserService.getSupportingUsersByApplicationId(
+        inProgressChangeRequest.id,
+      );
+    const [incomeVerificationDetails, supportingUserDetails] =
+      await Promise.all([incomePromise, supportingUsersPromise]);
+    const incomeVerification = this.processApplicationIncomeVerificationDetails(
+      incomeVerificationDetails,
+    );
+    const supportingUser = this.processApplicationSupportingUserDetails(
+      supportingUserDetails,
+    );
+    return {
+      applicationId: inProgressChangeRequest.id,
+      applicationEditStatus:
+        inProgressChangeRequest.applicationEditStatus as ApplicationEditStatusInProgress,
+      ...incomeVerification,
+      ...supportingUser,
     };
   }
 
@@ -508,6 +563,7 @@ export class ApplicationControllerService {
       id: application.id,
       applicationStatus: application.applicationStatus,
       applicationNumber: application.applicationNumber,
+      isArchived: application.isArchived,
       applicationFormName: application.programYear.formName,
       applicationProgramYearID: application.programYear.id,
       studentFullName: getUserFullName(application.student.user),
@@ -519,6 +575,9 @@ export class ApplicationControllerService {
       applicationInstitutionName:
         application.location?.institution.legalOperatingName,
       changes,
+      isChangeRequestAllowedForPY: allowApplicationChangeRequest(
+        application.programYear,
+      ),
     };
   }
 
@@ -596,6 +655,7 @@ export class ApplicationControllerService {
     const offering = applicationDetail.currentAssessment?.offering;
     return {
       id: applicationDetail.id,
+      isArchived: applicationDetail.isArchived,
       assessmentId: applicationDetail.currentAssessment?.id,
       data: applicationDetail.data,
       applicationStatus: applicationDetail.applicationStatus,
@@ -619,6 +679,9 @@ export class ApplicationControllerService {
         ? getCOEDeniedReason(disbursement)
         : undefined,
       submittedDate: applicationDetail.submittedDate,
+      isChangeRequestAllowedForPY: allowApplicationChangeRequest(
+        applicationDetail.programYear,
+      ),
     };
   }
 

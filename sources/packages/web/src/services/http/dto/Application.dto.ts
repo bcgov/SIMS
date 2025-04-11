@@ -17,7 +17,22 @@ import {
   ApplicationEditStatus,
 } from "@/types";
 
-export interface InProgressApplicationDetailsAPIOutDTO {
+interface ApplicationSupportingUserDetails {
+  parent1Info?: SuccessWaitingStatus;
+  parent2Info?: SuccessWaitingStatus;
+  partnerInfo?: SuccessWaitingStatus;
+}
+
+export interface ApplicationIncomeVerification {
+  parent1IncomeVerificationStatus?: SuccessWaitingStatus;
+  parent2IncomeVerificationStatus?: SuccessWaitingStatus;
+  partnerIncomeVerificationStatus?: SuccessWaitingStatus;
+  studentIncomeVerificationStatus?: SuccessWaitingStatus;
+}
+
+export interface InProgressApplicationDetailsAPIOutDTO
+  extends ApplicationSupportingUserDetails,
+    ApplicationIncomeVerification {
   id: number;
   applicationStatus: ApplicationStatus;
   pirStatus: ProgramInfoStatus;
@@ -69,11 +84,17 @@ export interface ApplicationProgramYearAPIOutDTO {
 export interface ApplicationBaseAPIOutDTO {
   id: number;
   applicationNumber: string;
+  isArchived: boolean;
   assessmentId?: number;
   data: any;
   applicationStatus: ApplicationStatus;
   applicationFormName: string;
   applicationProgramYearID: number;
+  /**
+   * Indicates if the application is able to use the
+   * change request feature. Other conditions may apply.
+   */
+  isChangeRequestAllowedForPY: boolean;
 }
 
 /**
@@ -167,6 +188,23 @@ export interface CompletedApplicationDetailsAPIOutDTO
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
   eCertFailedValidations: ECertFailedValidation[];
+  changeRequestInProgress?: ChangeRequestInProgressAPIOutDTO;
+}
+
+export interface ChangeRequestInProgressAPIOutDTO
+  extends ApplicationSupportingUserDetails,
+    ApplicationIncomeVerification {
+  applicationId: number;
+  applicationEditStatus:
+    | ApplicationEditStatus.ChangeInProgress
+    | ApplicationEditStatus.ChangePendingApproval;
+  parent1IncomeVerificationStatus?: SuccessWaitingStatus;
+  parent2IncomeVerificationStatus?: SuccessWaitingStatus;
+  partnerIncomeVerificationStatus?: SuccessWaitingStatus;
+  studentIncomeVerificationStatus?: SuccessWaitingStatus;
+  parent1Info?: SuccessWaitingStatus;
+  parent2Info?: SuccessWaitingStatus;
+  partnerInfo?: SuccessWaitingStatus;
 }
 
 export interface ApplicationAssessmentStatusDetailsAPIOutDTO {
