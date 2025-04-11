@@ -60,7 +60,6 @@ export enum SortPriority {
  * PIR specific parameters.
  */
 export interface PIRPaginationOptions extends BasePaginationOptions {
-  locationId: number;
   search?: string;
   intensityFilter?: OfferingIntensity;
 }

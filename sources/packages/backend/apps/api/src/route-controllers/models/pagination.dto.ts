@@ -13,6 +13,7 @@ import { FieldSortOrder } from "@sims/utilities";
 import {
   CASInvoiceBatchApprovalStatus,
   CASInvoiceStatus,
+  OfferingIntensity,
   ProgramStatus,
 } from "@sims/sims-db";
 import { Transform } from "class-transformer";
@@ -159,7 +160,8 @@ export class PIRPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   search?: string;
 
   @IsOptional()
-  intensityFilter?: string;
+  @IsEnum(OfferingIntensity)
+  intensityFilter?: OfferingIntensity;
 }
 
 /**

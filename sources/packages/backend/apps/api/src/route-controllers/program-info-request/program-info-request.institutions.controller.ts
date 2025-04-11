@@ -36,7 +36,6 @@ import {
   Application,
   AssessmentTriggerType,
   ProgramInfoStatus,
-  OfferingIntensity,
 } from "@sims/sims-db";
 import {
   EDUCATION_PROGRAM_IS_EXPIRED,
@@ -295,15 +294,10 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     @Query() paginationOptions: PIRPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
     const { results: applications, count } =
-      await this.applicationService.getPIRApplications({
+      await this.applicationService.getPIRApplications(
         locationId,
-        page: paginationOptions.page,
-        pageLimit: paginationOptions.pageLimit,
-        sortField: paginationOptions.sortField,
-        sortOrder: paginationOptions.sortOrder,
-        search: paginationOptions.search,
-        intensityFilter: paginationOptions.intensityFilter as OfferingIntensity,
-      });
+        paginationOptions,
+      );
 
     return {
       results: applications.map((eachApplication: Application) => {

@@ -1195,17 +1195,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @returns student Application list.
    */
   async getPIRApplications(
+    locationId: number,
     paginationOptions: PIRPaginationOptions,
   ): Promise<PaginatedResults<Application>> {
-    const {
-      locationId,
-      page,
-      pageLimit,
-      sortField,
-      sortOrder,
-      search,
-      intensityFilter,
-    } = paginationOptions;
+    const { page, pageLimit, sortField, sortOrder, search, intensityFilter } =
+      paginationOptions;
     const query = this.repo
       .createQueryBuilder("application")
       .select([
@@ -1261,7 +1255,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
 
     if (!sortField || !sortOrder) {
-      query.orderBy("application.pirStatus", "ASC");
+      // Add a custom order by priority for PIR status
+      query.addSelect(
+        `CASE WHEN 
+        application.pir_status = '${ProgramInfoStatus.required}' THEN 1 
+        WHEN application.pir_status = '${ProgramInfoStatus.completed}' THEN 2 
+        WHEN application.pir_status = '${ProgramInfoStatus.declined}' THEN 3
+        ELSE 4 END`,
+        "status_order",
+      );
+      query.orderBy("status_order", "ASC");
     } else {
       const sortDirection =
         sortOrder === "ASC" ? FieldSortOrder.ASC : FieldSortOrder.DESC;

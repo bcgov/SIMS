@@ -5,11 +5,11 @@ import {
   PIRDeniedReasonAPIOutDTO,
   PIRSummaryAPIOutDTO,
   ProgramInfoRequestAPIOutDTO,
-  PIRSearchCriteria,
   PaginatedResultsAPIOutDTO,
+  PIRSearchCriteria,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers/helpers/uri";
-import { DataTableSortOrder } from "@/types";
+import { DataTableSortOrder, PaginationOptions } from "@/types";
 
 export class ProgramInfoRequestApi extends HttpBaseClient {
   /**
@@ -83,7 +83,8 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
     locationId: number,
     searchCriteria: PIRSearchCriteria,
   ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
-    const paginationOptions = {
+    // Convert search criteria to pagination options
+    const paginationOptions: PaginationOptions = {
       page: searchCriteria.page,
       pageLimit: searchCriteria.pageLimit,
       sortField: searchCriteria.sortField,
@@ -92,13 +93,15 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
           ? DataTableSortOrder.ASC
           : DataTableSortOrder.DESC,
       searchCriteria: {
-        search: searchCriteria.search ?? "",
-        intensityFilter: searchCriteria.intensityFilter ?? "",
+        ...(searchCriteria.search && { search: searchCriteria.search }),
+        ...(searchCriteria.intensityFilter && {
+          intensityFilter: searchCriteria.intensityFilter,
+        }),
       },
     };
 
-    const queryString = getPaginationQueryString(paginationOptions);
-    const url = `location/${locationId}/program-info-request?${queryString}`;
+    let url = `location/${locationId}/program-info-request?`;
+    url += getPaginationQueryString(paginationOptions);
 
     return this.getCall<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>>(
       this.addClientRoot(url),

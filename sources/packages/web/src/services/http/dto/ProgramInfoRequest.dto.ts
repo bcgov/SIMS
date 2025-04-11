@@ -3,6 +3,7 @@ import {
   OfferingIntensity,
   OfferingTypes,
   ProgramInfoStatus,
+  FieldSortOrder,
 } from "@/types";
 import { Expose } from "class-transformer";
 
@@ -44,12 +45,32 @@ export interface PIRDeniedReasonAPIOutDTO {
 }
 
 export interface PIRSearchCriteria {
-  search?: string;
-  intensityFilter?: string;
   page: number;
   pageLimit: number;
   sortField?: string;
-  sortOrder?: "ASC" | "DESC";
+  sortOrder?: FieldSortOrder;
+  search?: string;
+  intensityFilter?: OfferingIntensity;
+}
+
+export class PIRSummaryAPIInDTO {
+  @Expose()
+  search?: string;
+
+  @Expose()
+  intensityFilter?: OfferingIntensity;
+
+  @Expose()
+  page: number;
+
+  @Expose()
+  pageLimit: number;
+
+  @Expose()
+  sortField?: string;
+
+  @Expose()
+  sortOrder?: FieldSortOrder;
 }
 
 export interface PIRSummaryAPIOutDTO {
