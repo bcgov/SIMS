@@ -201,8 +201,6 @@ export default defineComponent({
     });
 
     return {
-      SuccessWaitingStatus,
-      ApplicationEditStatus,
       cancelChangeRequest,
       cancelChangeRequestModal,
       viewChangeRequest,

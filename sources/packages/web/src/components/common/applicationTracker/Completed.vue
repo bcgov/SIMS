@@ -1,4 +1,10 @@
 <template>
+  <!-- Student request an application change (after COE) - change in progress -->
+  <application-in-progress-change-request
+    :changeRequest="assessmentDetails.changeRequestInProgress"
+    :areApplicationActionsAllowed="areApplicationActionsAllowed"
+    @changeRequestCancelled="changeRequestCancelled"
+  />
   <!-- Student application having one or more disbursement feedback errors that block funding. -->
   <application-status-tracker-banner
     v-if="assessmentDetails.hasBlockFundingFeedbackError"
@@ -16,15 +22,6 @@
     icon-color="warning"
     background-color="warning-bg"
     content="StudentAid BC is reviewing your requested change. If your requested change is approved, your application will be re-evaluated with a new assessment below."
-  />
-  <!-- Student request an application change (after COE) - change in progress -->
-  <application-in-progress-change-request
-    icon="fa:fas fa-exclamation-triangle"
-    icon-color="warning"
-    background-color="warning-bg"
-    :changeRequest="assessmentDetails.changeRequestInProgress"
-    :areApplicationActionsAllowed="areApplicationActionsAllowed"
-    @changeRequestCancelled="changeRequestCancelled"
   />
   <!-- Student application change request - in progress with student -->
   <application-status-tracker-banner
