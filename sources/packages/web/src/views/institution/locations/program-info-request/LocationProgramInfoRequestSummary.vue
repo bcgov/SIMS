@@ -73,7 +73,7 @@
             {{ dateOnlyLongString(item.submittedDate) }}
           </template>
           <template #[`item.program`]="{ item }">
-            {{ emptyStringFiller(item.program) }}
+            {{ item.program }}
           </template>
           <template #[`item.studyStartPeriod`]="{ item }">
             {{ dateOnlyLongString(item.studyStartPeriod) }}
@@ -85,7 +85,7 @@
             {{ emptyStringFiller(item.studentNumber) }}
           </template>
           <template #[`item.studyIntensity`]="{ item }">
-            {{ emptyStringFiller(item.studyIntensity) }}
+            {{ item.studyIntensity }}
           </template>
           <template #[`item.pirStatus`]="{ item }">
             <status-chip-program-info-request :status="item.pirStatus" />

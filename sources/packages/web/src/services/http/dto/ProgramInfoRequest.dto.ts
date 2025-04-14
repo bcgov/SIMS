@@ -3,7 +3,6 @@ import {
   OfferingIntensity,
   OfferingTypes,
   ProgramInfoStatus,
-  FieldSortOrder,
 } from "@/types";
 import { Expose } from "class-transformer";
 import { PaginationOptions } from "@/types";
@@ -50,33 +49,12 @@ export interface PIRSearchCriteria extends PaginationOptions {
   intensityFilter?: OfferingIntensity;
 }
 
-export class PIRSummaryAPIInDTO {
-  @Expose()
-  search?: string;
-
-  @Expose()
-  intensityFilter?: OfferingIntensity;
-
-  @Expose()
-  page: number;
-
-  @Expose()
-  pageLimit: number;
-
-  @Expose()
-  sortField?: string;
-
-  @Expose()
-  sortOrder?: FieldSortOrder;
-}
-
 export interface PIRSummaryAPIOutDTO {
   applicationNumber: string;
   studyStartPeriod: string;
   studyEndPeriod: string;
   applicationId: number;
   pirStatus: ProgramInfoStatus;
-  fullName: string;
   submittedDate: string;
   givenNames?: string;
   lastName: string;
