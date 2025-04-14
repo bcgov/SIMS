@@ -332,11 +332,10 @@ export default defineComponent({
       ),
     );
 
-    const fileValidationRules = (files: InputFile[]) => {
-      if (files?.length !== 1) {
+    const fileValidationRules = (file: InputFile) => {
+      if (!file) {
         return "CSV file is required.";
       }
-      const [file] = files;
       if (file.size > MAX_OFFERING_UPLOAD_SIZE) {
         return "CSV file size should not be greater than 15MB";
       }
