@@ -1229,7 +1229,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .addSelect("application.data ->> 'programName'", "programName")
       .addSelect("application.data ->> 'studystartDate'", "studystartDate")
       .addSelect("application.data ->> 'studyendDate'", "studyendDate")
-      .leftJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
       .leftJoin("application.pirProgram", "pirProgram")
