@@ -449,6 +449,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.offeringStatus",
         "offerings.courseLoad",
         "offerings.parentOffering",
+        "offerings.onlineInstructionMode",
+        "offerings.isOnlineDurationSameAlways",
+        "offerings.totalOnlineDuration",
+        "offerings.maximumOnlineDuration",
+        "offerings.minimumOnlineDuration",
         "assessedBy.firstName",
         "assessedBy.lastName",
         "institutionLocation.name",
@@ -577,7 +582,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   private populateProgramOffering(
     educationProgramOffering: OfferingValidationModel,
   ): EducationProgramOffering {
-    console.log(educationProgramOffering);
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.offeringName;
     programOffering.studyStartDate = educationProgramOffering.studyStartDate;
@@ -621,6 +625,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       EducationProgramOfferingService.assignStudyBreaks(calculatedBreaks);
     programOffering.onlineInstructionMode =
       educationProgramOffering.onlineInstructionMode;
+    programOffering.isOnlineDurationSameAlways =
+      educationProgramOffering.isOnlineDurationSameAlways;
+    programOffering.totalOnlineDuration =
+      educationProgramOffering.totalOnlineDuration;
+    programOffering.minimumOnlineDuration =
+      educationProgramOffering.minimumOnlineDuration;
+    programOffering.maximumOnlineDuration =
+      educationProgramOffering.maximumOnlineDuration;
 
     return programOffering;
   }
@@ -863,6 +875,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.assessedDate",
         "offering.submittedDate",
         "offering.courseLoad",
+        "offering.onlineInstructionMode",
+        "offering.isOnlineDurationSameAlways",
+        "offering.totalOnlineDuration",
+        "offering.minimumOnlineDuration",
+        "offering.maximumOnlineDuration",
         "offering.offeringStatus",
         "precedingOffering.id",
         "assessedBy.firstName",

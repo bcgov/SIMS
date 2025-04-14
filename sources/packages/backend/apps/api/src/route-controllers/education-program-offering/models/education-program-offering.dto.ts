@@ -139,6 +139,11 @@ export class EducationProgramOfferingAPIOutDTO {
   parentOfferingId: number;
   isInstitutionBCPublic: boolean;
   isInstitutionBCPrivate: boolean;
+  onlineInstructionMode?: OnlineInstructionModeOptions;
+  isOnlineDurationSameAlways?: OfferingYesNoOptions;
+  totalOnlineDuration?: number;
+  minimumOnlineDuration?: number;
+  maximumOnlineDuration?: number;
 }
 
 export class EducationProgramOfferingSummaryViewAPIOutDTO {

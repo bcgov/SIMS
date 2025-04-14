@@ -29,6 +29,8 @@ import {
   OfferingValidationModel,
   CreateFromValidatedOfferingError,
   InstitutionLocationService,
+  OnlineInstructionModeOptions,
+  OfferingYesNoOptions,
 } from "../../services";
 import {
   credentialTypeToDisplay,
@@ -188,10 +190,6 @@ export class EducationProgramOfferingControllerService {
     // Get institution location details.
     const institutionLocation =
       await this.institutionLocationService.getInstitutionLocation(locationId);
-    console.log(
-      "Is BC Public",
-      institutionLocation.institution.institutionType.isBCPrivate,
-    );
     return {
       ...payload,
       locationId,
@@ -382,6 +380,13 @@ export class EducationProgramOfferingControllerService {
         offering.institutionLocation.institution.institutionType.isBCPrivate,
       isInstitutionBCPublic:
         offering.institutionLocation.institution.institutionType.isBCPublic,
+      onlineInstructionMode:
+        offering.onlineInstructionMode as OnlineInstructionModeOptions,
+      isOnlineDurationSameAlways:
+        offering.isOnlineDurationSameAlways as OfferingYesNoOptions,
+      totalOnlineDuration: offering.totalOnlineDuration,
+      minimumOnlineDuration: offering.minimumOnlineDuration,
+      maximumOnlineDuration: offering.maximumOnlineDuration,
     };
   }
 

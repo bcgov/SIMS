@@ -34,6 +34,7 @@ import {
   ValidationResult,
   ValidationContext,
   IsMaxCostValue,
+  AllowIf,
 } from "../../utilities/class-validation";
 import { Type } from "class-transformer";
 import { ProgramAllowsOfferingIntensity } from "./custom-validators/program-allows-offering-intensity";
@@ -41,6 +42,7 @@ import { ProgramAllowsOfferingDelivery } from "./custom-validators/program-allow
 import { ProgramAllowsOfferingWIL } from "./custom-validators/program-allows-offering-wil";
 import { StudyBreaksCombinedMustNotExceedsThreshold } from "./custom-validators/study-break-has-valid-consecutive-threshold";
 import { HasValidOfferingPeriodForFundedWeeks } from "./custom-validators/has-valid-offering-period-for-funded-weeks";
+
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -82,6 +84,8 @@ const userFriendlyNames = {
   breakStartDate: "Study break start date",
   breakEndDate: "Study break end date",
   onlineInstructionMode: "Online instruction mode",
+  isOnlineDurationSameAlways: "Online duration same always",
+  totalOnlineDuration: "Total online duration",
 };
 
 /**
@@ -635,13 +639,20 @@ export class OfferingValidationModel {
   })
   programContext: EducationProgramForOfferingValidationContext;
 
+  /**
+   * Institution information required to execute the offering validation.
+   */
   @ValidateIf((offering: OfferingValidationModel) => !!offering.locationId)
   @IsNotEmptyObject(undefined, {
     message: "Not able to find the institution of the offering.",
   })
   institutionContext?: InstitutionValidationContext;
 
+  /**
+   * Offering mode(s) of online instruction.
+   */
   @ValidateIf(
+    // Validate when the property must have a value or it already has a value.
     (offering: OfferingValidationModel) =>
       (offering.institutionContext?.isBCPrivate &&
         [
@@ -650,6 +661,16 @@ export class OfferingValidationModel {
         ].includes(offering.offeringDelivered)) ||
       !!offering.onlineInstructionMode,
   )
+  // Allow the property only when the institution either BC Public or BC Private and the offering is online or blended.
+  @AllowIf(
+    (offering: OfferingValidationModel) =>
+      (offering.institutionContext?.isBCPrivate ||
+        offering.institutionContext?.isBCPublic) &&
+      [
+        OfferingDeliveryOptions.Online,
+        OfferingDeliveryOptions.Blended,
+      ].includes(offering.offeringDelivered),
+  )
   @IsEnum(OnlineInstructionModeOptions, {
     message: getEnumFormatMessage(
       userFriendlyNames.onlineInstructionMode,
@@ -657,6 +678,116 @@ export class OfferingValidationModel {
     ),
   })
   onlineInstructionMode?: OnlineInstructionModeOptions;
+
+  /**
+   * Specifies if the blended offering will always be provided with the same total duration of online delivery.
+   * Values can be "yes" or "no".
+   */
+  @ValidateIf(
+    // Validate when the property must have a value or it already has a value.
+    (offering: OfferingValidationModel) =>
+      (offering.institutionContext?.isBCPrivate &&
+        offering.offeringDelivered == OfferingDeliveryOptions.Blended) ||
+      !!offering.isOnlineDurationSameAlways,
+  )
+  // Allow the property only when the institution either BC Public or BC Private and the offering is blended.
+  @AllowIf(
+    (offering: OfferingValidationModel) =>
+      (offering.institutionContext?.isBCPrivate ||
+        offering.institutionContext?.isBCPublic) &&
+      offering.offeringDelivered == OfferingDeliveryOptions.Blended,
+  )
+  @IsEnum(OfferingYesNoOptions, {
+    message: getEnumFormatMessage(
+      userFriendlyNames.isOnlineDurationSameAlways,
+      OfferingYesNoOptions,
+    ),
+  })
+  isOnlineDurationSameAlways?: OfferingYesNoOptions;
+
+  /**
+   * Percentage of total duration that will be provided by online delivery in the blended offering.
+   */
+  @ValidateIf(
+    // Validate when the property must have a value or it already has a value.
+    (offering: OfferingValidationModel) =>
+      (offering.institutionContext?.isBCPrivate &&
+        offering.offeringDelivered == OfferingDeliveryOptions.Blended &&
+        offering.isOnlineDurationSameAlways === OfferingYesNoOptions.Yes) ||
+      (offering.totalOnlineDuration !== null &&
+        offering.totalOnlineDuration !== undefined),
+  )
+  // Allow the property only when the institution either BC Public or BC Private and the offering is blended
+  // and the online duration is same always.
+  @AllowIf(
+    (offering: OfferingValidationModel) =>
+      (offering.institutionContext?.isBCPrivate ||
+        offering.institutionContext?.isBCPublic) &&
+      offering.offeringDelivered == OfferingDeliveryOptions.Blended &&
+      offering.isOnlineDurationSameAlways === OfferingYesNoOptions.Yes,
+  )
+  @IsNumber()
+  @Min(1, {
+    message: getMinFormatMessage(userFriendlyNames.totalOnlineDuration),
+  })
+  @Max(99)
+  totalOnlineDuration?: number;
+
+  /**
+   * Percentage of minimum duration that will be provided by online delivery in the blended offering.
+   */
+  @ValidateIf(
+    // Validate when the property must have a value or it already has a value.
+    (offering: OfferingValidationModel) =>
+      (offering.institutionContext?.isBCPrivate &&
+        offering.offeringDelivered == OfferingDeliveryOptions.Blended &&
+        offering.isOnlineDurationSameAlways === OfferingYesNoOptions.No) ||
+      (offering.minimumOnlineDuration !== null &&
+        offering.minimumOnlineDuration !== undefined),
+  )
+  // Allow the property only when the institution either BC Public or BC Private and the offering is blended
+  // and the online duration is not same always.
+  @AllowIf(
+    (offering: OfferingValidationModel) =>
+      (offering.institutionContext?.isBCPrivate ||
+        offering.institutionContext?.isBCPublic) &&
+      offering.offeringDelivered == OfferingDeliveryOptions.Blended &&
+      offering.isOnlineDurationSameAlways === OfferingYesNoOptions.No,
+  )
+  @IsNumber()
+  @Min(1, {
+    message: getMinFormatMessage(userFriendlyNames.totalOnlineDuration),
+  })
+  @Max(99)
+  minimumOnlineDuration?: number;
+
+  /**
+   * Percentage of maximum duration that will be provided by online delivery in the blended offering.
+   */
+  @ValidateIf(
+    // Validate when the property must have a value or it already has a value.
+    (offering: OfferingValidationModel) =>
+      (offering.institutionContext?.isBCPrivate &&
+        offering.offeringDelivered == OfferingDeliveryOptions.Blended &&
+        offering.isOnlineDurationSameAlways === OfferingYesNoOptions.No) ||
+      (offering.minimumOnlineDuration !== null &&
+        offering.minimumOnlineDuration !== undefined),
+  )
+  // Allow the property only when the institution either BC Public or BC Private and the offering is blended
+  // and the online duration is not same always.
+  @AllowIf(
+    (offering: OfferingValidationModel) =>
+      (offering.institutionContext?.isBCPrivate ||
+        offering.institutionContext?.isBCPublic) &&
+      offering.offeringDelivered == OfferingDeliveryOptions.Blended &&
+      offering.isOnlineDurationSameAlways === OfferingYesNoOptions.No,
+  )
+  @IsNumber()
+  @Min(1, {
+    message: getMinFormatMessage(userFriendlyNames.totalOnlineDuration),
+  })
+  @Max(99)
+  maximumOnlineDuration?: number;
 }
 
 /**
