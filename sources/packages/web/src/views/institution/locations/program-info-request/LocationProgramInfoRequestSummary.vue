@@ -122,8 +122,8 @@ import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   PIRSummaryHeaders,
-  FieldSortOrder,
   OfferingIntensity,
+  DataTableSortByOrder,
 } from "@/types";
 
 enum StudyIntensity {
@@ -164,33 +164,25 @@ export default defineComponent({
       });
     };
 
-    const getApiSortOrder = (
-      sortOrder?: string,
-    ): FieldSortOrder | undefined => {
-      if (!sortOrder) return undefined;
-      return sortOrder === "asc"
-        ? ("ASC" as FieldSortOrder)
-        : ("DESC" as FieldSortOrder);
-    };
-
     const loadApplications = async (
       page = DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit = DEFAULT_PAGE_LIMIT,
-      sortField?: string,
-      sortOrder?: string,
+      inputSortField?: string,
+      inputSortOrder?: DataTableSortByOrder,
     ) => {
       try {
         applicationsLoading.value = true;
+
         const searchCriteria: PIRSearchCriteria = {
           page,
           pageLimit,
-          sortField,
-          sortOrder: getApiSortOrder(sortOrder),
           search: searchQuery.value || undefined,
           intensityFilter:
             intensityFilter.value !== IntensityFilter.All
               ? (intensityFilter.value as OfferingIntensity)
               : undefined,
+          sortField: inputSortField,
+          sortOrder: inputSortOrder,
         };
         applications.value =
           await ProgramInfoRequestService.shared.getPIRSummary(

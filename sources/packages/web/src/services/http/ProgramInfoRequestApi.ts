@@ -9,7 +9,7 @@ import {
   PIRSearchCriteria,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers/helpers/uri";
-import { DataTableSortOrder, PaginationOptions } from "@/types";
+import { PaginationOptions } from "@/types";
 
 export class ProgramInfoRequestApi extends HttpBaseClient {
   /**
@@ -84,17 +84,15 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
     searchCriteria: PIRSearchCriteria,
     enableZeroPage = true,
   ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
-    // Convert search criteria to pagination options
     const paginationOptions: PaginationOptions = {
       page: searchCriteria.page,
       pageLimit: searchCriteria.pageLimit,
       sortField: searchCriteria.sortField,
-      sortOrder:
-        searchCriteria.sortOrder === "ASC"
-          ? DataTableSortOrder.ASC
-          : DataTableSortOrder.DESC,
+      sortOrder: searchCriteria.sortOrder,
       searchCriteria: {
-        ...(searchCriteria.search && { search: searchCriteria.search }),
+        ...(searchCriteria.search && {
+          search: searchCriteria.search,
+        }),
         ...(searchCriteria.intensityFilter && {
           intensityFilter: searchCriteria.intensityFilter,
         }),

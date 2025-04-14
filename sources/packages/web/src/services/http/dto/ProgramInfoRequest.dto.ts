@@ -6,6 +6,7 @@ import {
   FieldSortOrder,
 } from "@/types";
 import { Expose } from "class-transformer";
+import { PaginationOptions } from "@/types";
 
 export class CompleteProgramInfoRequestAPIInDTO {
   @Expose()
@@ -44,11 +45,7 @@ export interface PIRDeniedReasonAPIOutDTO {
   description: string;
 }
 
-export interface PIRSearchCriteria {
-  page: number;
-  pageLimit: number;
-  sortField?: string;
-  sortOrder?: FieldSortOrder;
+export interface PIRSearchCriteria extends PaginationOptions {
   search?: string;
   intensityFilter?: OfferingIntensity;
 }
