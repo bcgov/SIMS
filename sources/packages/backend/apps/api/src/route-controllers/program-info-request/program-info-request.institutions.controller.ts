@@ -298,7 +298,6 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
         locationId,
         paginationOptions,
       );
-
     return {
       results: applications.map((eachApplication: Application) => {
         const offering = eachApplication.currentAssessment?.offering;
@@ -310,17 +309,17 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
 
         // Get program name based on current data
         const programName = isPIRCompleted
-          ? offering?.educationProgram?.name
-          : eachApplication.data?.programName ||
-            eachApplication.pirProgram?.name;
+          ? offering.educationProgram.name
+          : eachApplication.pirProgram?.name ||
+            eachApplication.data.programName;
 
         // Get start and end dates based on PIR status
         const studyStartPeriod = isPIRCompleted
-          ? getISODateOnlyString(offering?.studyStartDate)
-          : eachApplication.data?.studystartDate;
+          ? getISODateOnlyString(offering.studyStartDate)
+          : eachApplication.data.studystartDate;
         const studyEndPeriod = isPIRCompleted
-          ? getISODateOnlyString(offering?.studyEndDate)
-          : eachApplication.data?.studyendDate;
+          ? getISODateOnlyString(offering.studyEndDate)
+          : eachApplication.data.studyendDate;
 
         const result: PIRSummaryAPIOutDTO = {
           applicationId: eachApplication.id,
@@ -335,27 +334,6 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
           studyIntensity: eachApplication.offeringIntensity,
           program: programName,
         };
-
-        // Add application data for "Required" or "Declined" PIR status
-        if (
-          eachApplication.pirStatus === ProgramInfoStatus.required ||
-          eachApplication.pirStatus === ProgramInfoStatus.declined
-        ) {
-          result.applicationData = {
-            programName: eachApplication.data?.programName,
-            startDate: eachApplication.data?.studystartDate,
-            endDate: eachApplication.data?.studyendDate,
-          };
-        }
-
-        // Add offering data for completed PIRs
-        if (isPIRCompleted && offering) {
-          result.offeringData = {
-            programName: offering.educationProgram?.name,
-            startDate: getISODateOnlyString(offering.studyStartDate),
-            endDate: getISODateOnlyString(offering.studyEndDate),
-          };
-        }
 
         return result;
       }),

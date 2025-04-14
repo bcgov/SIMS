@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, Not, Brackets, EntityManager } from "typeorm";
+import {
+  DataSource,
+  In,
+  Not,
+  Brackets,
+  EntityManager,
+  SelectQueryBuilder,
+} from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -1254,44 +1261,44 @@ export class ApplicationService extends RecordDataModelService<Application> {
       });
     }
 
-    if (!sortField || !sortOrder) {
-      // Add a custom order by priority for PIR status
-      query.addSelect(
-        `CASE WHEN 
-        application.pir_status = '${ProgramInfoStatus.required}' THEN 1 
-        WHEN application.pir_status = '${ProgramInfoStatus.completed}' THEN 2 
-        WHEN application.pir_status = '${ProgramInfoStatus.declined}' THEN 3
-        ELSE 4 END`,
-        "status_order",
-      );
-      query.orderBy("status_order", "ASC");
-    } else {
-      const sortDirection =
-        sortOrder === "ASC" ? FieldSortOrder.ASC : FieldSortOrder.DESC;
-      const sortMappings = transformToApplicationEntitySortField(
-        sortField,
-        sortDirection,
-      );
-      const dateFields = [
-        "application.submittedDate",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-      ];
-      Object.entries(sortMappings).forEach(([field, order]) => {
-        query.orderBy(
-          field,
-          order as any,
-          dateFields.includes(field) ? "NULLS LAST" : undefined,
-        );
-      });
-    }
-
-    // Always add application number as secondary sort
-    query.addOrderBy("application.applicationNumber", "ASC");
-
+    this.addPIRSort(query, sortField, sortOrder);
     query.offset(page * pageLimit).limit(pageLimit);
     const [results, count] = await query.getManyAndCount();
     return { results, count };
+  }
+
+  private addPIRSort(
+    query: SelectQueryBuilder<Application>,
+    sortField?: string,
+    sortOrder?: FieldSortOrder,
+  ): void {
+    const pirStatusSort = `CASE application.pirStatus WHEN '${ProgramInfoStatus.required}' THEN 1 
+        WHEN '${ProgramInfoStatus.completed}' THEN 2 
+        WHEN '${ProgramInfoStatus.declined}' THEN 3 
+        ELSE 4 END`;
+    const sortFieldMapping = {
+      submittedDate: "application.submittedDate",
+      studyStartPeriod: "offering.studyStartDate",
+      studyEndPeriod: "offering.studyEndDate",
+    };
+    if (!sortField) {
+      // Default sort with PIR status pending first and then by submitted date.
+      query.orderBy(
+        `CASE application.pir_status
+          WHEN '${ProgramInfoStatus.required}' THEN 1
+          WHEN '${ProgramInfoStatus.submitted}' THEN 2
+          WHEN '${ProgramInfoStatus.completed}' THEN 3
+          WHEN '${ProgramInfoStatus.declined}' THEN 4
+          ELSE 5
+        END`,
+      );
+      query.addOrderBy("application.submittedDate", "ASC");
+    } else if (sortField === "pirStatus") {
+      // Sort by PIR status using custom order.
+      query.orderBy(pirStatusSort, sortOrder);
+    } else {
+      query.orderBy(sortFieldMapping[sortField], sortOrder);
+    }
   }
 
   /**

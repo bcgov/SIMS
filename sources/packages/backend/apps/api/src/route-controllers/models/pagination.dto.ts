@@ -147,13 +147,7 @@ export class CASInvoiceBatchesPaginationOptionsAPIInDTO extends PaginationOption
  */
 export class PIRPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn([
-    "applicationNumber",
-    "pirStatus",
-    "submittedDate",
-    "studyStartPeriod",
-    "studyEndPeriod",
-  ])
+  @IsIn(["pirStatus", "submittedDate", "studyStartPeriod", "studyEndPeriod"])
   sortField?: string;
 
   @IsOptional()
