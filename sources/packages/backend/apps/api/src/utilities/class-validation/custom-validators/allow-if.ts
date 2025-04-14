@@ -7,8 +7,8 @@ import {
 } from "class-validator";
 
 /**
- *  Allow a value to the property only if a condition is met.
- *  This validates the property against receiving a value when is it not suppose to.
+ * Allow a value to the property only if a condition is met.
+ * This validates the property against receiving a value when is it not suppose to.
  */
 @ValidatorConstraint()
 class AllowIfConstraint implements ValidatorConstraintInterface {

@@ -125,6 +125,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         programId,
         payload,
       );
+
     const offeringValidation =
       this.offeringValidationService.validateOfferingModel(
         offeringValidationModel,

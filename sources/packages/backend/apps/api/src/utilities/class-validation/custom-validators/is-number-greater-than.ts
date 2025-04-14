@@ -7,13 +7,13 @@ import {
 } from "class-validator";
 
 /**
- *  Check if the value is greater than the reference number.
+ * Check if the value is greater than the reference number.
  */
 @ValidatorConstraint()
 class IsNumberGreaterThanConstraint implements ValidatorConstraintInterface {
   validate(value: number, args: ValidationArguments): boolean {
-    const [condition] = args.constraints;
-    const referenceNumber = condition(args.object) as number;
+    const [getReferenceNumber] = args.constraints;
+    const referenceNumber = getReferenceNumber(args.object) as number;
     if (referenceNumber === null || referenceNumber === undefined) {
       return false;
     }
@@ -21,8 +21,11 @@ class IsNumberGreaterThanConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    const [, propertyDisplayName] = args.constraints;
-    return `${propertyDisplayName ?? args.property} input is not allowed.`;
+    const [getReferenceNumber, propertyDisplayName] = args.constraints;
+    const referenceNumber = getReferenceNumber(args.object) as number;
+    return `${
+      propertyDisplayName ?? args.property
+    } must be greater than ${referenceNumber}.`;
   }
 }
 
