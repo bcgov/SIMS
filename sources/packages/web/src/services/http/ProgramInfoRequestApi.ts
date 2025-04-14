@@ -82,6 +82,7 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
   async getPIRSummary(
     locationId: number,
     searchCriteria: PIRSearchCriteria,
+    enableZeroPage = true,
   ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
     // Convert search criteria to pagination options
     const paginationOptions: PaginationOptions = {
@@ -101,7 +102,7 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
     };
 
     let url = `location/${locationId}/program-info-request?`;
-    url += getPaginationQueryString(paginationOptions);
+    url += getPaginationQueryString(paginationOptions, enableZeroPage);
 
     return this.getCall<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>>(
       this.addClientRoot(url),

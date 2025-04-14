@@ -504,11 +504,11 @@ export const PIRSummaryHeaders = [
   { title: "Application", key: "applicationNumber", sortable: false },
   { title: "Given Names", key: "givenNames", sortable: false },
   { title: "Last Name", key: "lastName", sortable: false },
-  { title: "Student Number", key: "studentNumber", sortable: false },
-  { title: "Intensity", key: "studyIntensity", sortable: false },
   { title: "Program", key: "program", sortable: false },
   { title: "Start Date", key: "studyStartPeriod", sortable: true },
   { title: "End Date", key: "studyEndPeriod", sortable: true },
+  { title: "Student Number", key: "studentNumber", sortable: false },
+  { title: "Intensity", key: "studyIntensity", sortable: false },
   { title: "Status", key: "pirStatus", sortable: true },
   { title: "Actions", key: "actions", sortable: false },
 ];

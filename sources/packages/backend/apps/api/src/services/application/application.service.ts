@@ -1289,7 +1289,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Always add application number as secondary sort
     query.addOrderBy("application.applicationNumber", "ASC");
 
-    query.skip((page - 1) * pageLimit).take(pageLimit);
+    query.offset(page * pageLimit).limit(pageLimit);
     const [results, count] = await query.getManyAndCount();
     return { results, count };
   }
