@@ -176,7 +176,7 @@
       "label": "Detail",
       "labelWidth": "",
       "labelMargin": "",
-      "tag": "p",
+      "tag": "div",
       "className": "",
       "attrs": [
         {
@@ -184,7 +184,7 @@
           "value": ""
         }
       ],
-      "content": "<strong>Instructions:</strong>\n<br>\n<ul>\n  <li>You must complete all fields on the change request form.</li>\n  <li>All information that has not changed should match what was entered on your application.</li>\n  <li>Information from previously approved changes requests attached to an application must be re-entered here.</li>\n</ul>",
+      "content": "<strong>Instructions:</strong>\n<br>\n<ul>\n  <li>You must complete all fields on the change request form.</li>\n  <li>All information that has not changed should match what was entered on your application.</li>\n  <li>Information from previously approved change requests on this application must be re-entered for each subsequent change.</li>\n</ul>",
       "refreshOnChange": false,
       "customClass": "align-bullets",
       "hidden": false,

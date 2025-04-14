@@ -1556,34 +1556,31 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.startDate",
         "user.userName",
         "student.id",
-        "application.data",
-        "currentAssessment",
-        "offering.offeringIntensity",
       ])
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .innerJoin("application.programYear", "programYear")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "offering")
       .where("application.applicationNumber = :applicationNumber", {
         applicationNumber,
       })
       .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
       .andWhere("student.birthDate = :birthDate", { birthDate })
-      .andWhere((qb) => {
-        qb.where(
-          "application.applicationStatus = :inProgressApplicationStatus",
-          {
-            inProgressApplicationStatus: ApplicationStatus.InProgress,
-          },
-        ).orWhere(
-          "application.applicationEditStatus = :changeInProgressApplicationEditStatus",
-          {
-            changeInProgressApplicationEditStatus:
-              ApplicationEditStatus.ChangeInProgress,
-          },
-        );
-      })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            "application.applicationStatus = :inProgressApplicationStatus",
+            {
+              inProgressApplicationStatus: ApplicationStatus.InProgress,
+            },
+          ).orWhere(
+            "application.applicationEditStatus = :changeInProgressApplicationEditStatus",
+            {
+              changeInProgressApplicationEditStatus:
+                ApplicationEditStatus.ChangeInProgress,
+            },
+          );
+        }),
+      )
       .getOne();
   }
 
