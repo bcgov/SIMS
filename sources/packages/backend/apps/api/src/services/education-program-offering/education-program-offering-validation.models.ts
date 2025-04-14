@@ -7,6 +7,7 @@ import {
   IsNotEmptyObject,
   IsNumber,
   IsNumberOptions,
+  IsOptional,
   IsPositive,
   Max,
   MaxLength,
@@ -642,7 +643,8 @@ export class OfferingValidationModel {
   /**
    * Institution information required to execute the offering validation.
    */
-  @ValidateIf((offering: OfferingValidationModel) => !!offering.locationId)
+  @IsOptional()
+  // When the context is provided, it must be valid.
   @IsNotEmptyObject(undefined, {
     message: "Not able to find the institution of the offering.",
   })
