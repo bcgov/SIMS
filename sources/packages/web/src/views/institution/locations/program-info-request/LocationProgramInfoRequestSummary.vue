@@ -73,19 +73,19 @@
             {{ dateOnlyLongString(item.submittedDate) }}
           </template>
           <template #[`item.program`]="{ item }">
-            {{ getProgramName(item) }}
+            {{ emptyStringFiller(item.program) }}
           </template>
           <template #[`item.studyStartPeriod`]="{ item }">
-            {{ getStartDate(item) }}
+            {{ dateOnlyLongString(item.studyStartPeriod) }}
           </template>
           <template #[`item.studyEndPeriod`]="{ item }">
-            {{ getEndDate(item) }}
+            {{ dateOnlyLongString(item.studyEndPeriod) }}
           </template>
           <template #[`item.studentNumber`]="{ item }">
-            {{ item.studentNumber || "-" }}
+            {{ emptyStringFiller(item.studentNumber) }}
           </template>
           <template #[`item.studyIntensity`]="{ item }">
-            {{ item.studyIntensity || "-" }}
+            {{ emptyStringFiller(item.studyIntensity) }}
           </template>
           <template #[`item.pirStatus`]="{ item }">
             <status-chip-program-info-request :status="item.pirStatus" />
@@ -147,7 +147,7 @@ export default defineComponent({
   setup(props) {
     const { getLocationName } = useInstitutionState();
     const router = useRouter();
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, emptyStringFiller } = useFormatters();
     const applicationsLoading = ref(false);
     const searchQuery = ref("");
     const intensityFilter = ref(IntensityFilter.All);
@@ -162,22 +162,6 @@ export default defineComponent({
         name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
         params: { locationId: props.locationId, applicationId },
       });
-    };
-
-    const getProgramName = (item: PIRSummaryAPIOutDTO): string => {
-      return item.program || "-";
-    };
-
-    const getStartDate = (item: PIRSummaryAPIOutDTO): string => {
-      return item.studyStartPeriod
-        ? dateOnlyLongString(item.studyStartPeriod)
-        : "-";
-    };
-
-    const getEndDate = (item: PIRSummaryAPIOutDTO): string => {
-      return item.studyEndPeriod
-        ? dateOnlyLongString(item.studyEndPeriod)
-        : "-";
     };
 
     const getApiSortOrder = (
@@ -208,7 +192,6 @@ export default defineComponent({
               ? (intensityFilter.value as OfferingIntensity)
               : undefined,
         };
-
         applications.value =
           await ProgramInfoRequestService.shared.getPIRSummary(
             props.locationId,
@@ -266,10 +249,8 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       paginationAndSortEvent,
-      getProgramName,
-      getStartDate,
-      getEndDate,
       resetPageAndLoadApplications,
+      emptyStringFiller,
     };
   },
 });
