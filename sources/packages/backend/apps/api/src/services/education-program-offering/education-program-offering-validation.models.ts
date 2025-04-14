@@ -675,6 +675,10 @@ export class OfferingValidationModel {
         OfferingDeliveryOptions.Online,
         OfferingDeliveryOptions.Blended,
       ].includes(offering.offeringDelivered),
+    undefined,
+    {
+      message: `${userFriendlyNames.onlineInstructionMode} is not allowed for provided institution type or offering delivery type and offering online delivery inputs.`,
+    },
   )
   @IsEnum(OnlineInstructionModeOptions, {
     message: getEnumFormatMessage(
@@ -701,6 +705,10 @@ export class OfferingValidationModel {
       (offering.institutionContext?.isBCPrivate ||
         offering.institutionContext?.isBCPublic) &&
       offering.offeringDelivered == OfferingDeliveryOptions.Blended,
+    undefined,
+    {
+      message: `${userFriendlyNames.isOnlineDurationSameAlways} is not allowed for provided institution type or offering delivery type and offering online delivery inputs.`,
+    },
   )
   @IsEnum(OfferingYesNoOptions, {
     message: getEnumFormatMessage(
@@ -730,6 +738,10 @@ export class OfferingValidationModel {
         offering.institutionContext?.isBCPublic) &&
       offering.offeringDelivered == OfferingDeliveryOptions.Blended &&
       offering.isOnlineDurationSameAlways === OfferingYesNoOptions.Yes,
+    undefined,
+    {
+      message: `${userFriendlyNames.totalOnlineDuration} is not allowed for provided institution type or offering delivery type and offering online delivery inputs.`,
+    },
   )
   @IsNumber()
   @Min(1, {
@@ -758,6 +770,10 @@ export class OfferingValidationModel {
         offering.institutionContext?.isBCPublic) &&
       offering.offeringDelivered == OfferingDeliveryOptions.Blended &&
       offering.isOnlineDurationSameAlways === OfferingYesNoOptions.No,
+    undefined,
+    {
+      message: `${userFriendlyNames.minimumOnlineDuration} is not allowed for provided institution type or offering delivery type and offering online delivery inputs.`,
+    },
   )
   @IsNumber()
   @Min(1, {
@@ -788,6 +804,10 @@ export class OfferingValidationModel {
         offering.institutionContext?.isBCPublic) &&
       offering.offeringDelivered == OfferingDeliveryOptions.Blended &&
       offering.isOnlineDurationSameAlways === OfferingYesNoOptions.No,
+    undefined,
+    {
+      message: `${userFriendlyNames.maximumOnlineDuration} is not allowed for provided institution type or offering delivery type and offering online delivery inputs.`,
+    },
   )
   @IsNumber()
   @Min(1, {
