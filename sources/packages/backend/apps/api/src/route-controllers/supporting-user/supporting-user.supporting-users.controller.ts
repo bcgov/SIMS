@@ -186,10 +186,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
       application.programYear,
     );
     // Ensure the offering intensity provided is the same from the application.
-    if (
-      payload.offeringIntensity !==
-      application.currentAssessment.offering.offeringIntensity
-    ) {
+    if (payload.offeringIntensity !== application.offeringIntensity) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
     const submissionResult: DryRunSubmissionResult =
