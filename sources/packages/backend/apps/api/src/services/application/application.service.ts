@@ -1276,6 +1276,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.submittedDate",
         "application.studentNumber",
         "application.offeringIntensity",
+        "application.data",
         "currentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
@@ -1285,10 +1286,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "user.lastName",
         "pirProgram.name",
       ])
-      // Extract specific properties from the JSONB data field
-      .addSelect("application.data ->> 'programName'", "programName")
-      .addSelect("application.data ->> 'studystartDate'", "studystartDate")
-      .addSelect("application.data ->> 'studyendDate'", "studyendDate")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
