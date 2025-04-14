@@ -3717,7 +3717,7 @@
                   },
                   "properties": {},
                   "customClass": "banner-warning",
-                  "customConditional": "show = !!!data.isReadOnly && !!data.studyEndDateBeforeSixWeeksFromToday;",
+                  "customConditional": "show = !!!data.isReadOnly && !!data.selectedStudyEndDateBeforeSixWeeksFromToday;",
                   "hideLabel": true
                 },
                 {
