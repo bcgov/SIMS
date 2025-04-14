@@ -90,6 +90,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       {
         applicationData: {} as ApplicationData,
         applicationStatus: ApplicationStatus.Draft,
+        offeringInitialValues: {
+          offeringIntensity:
+            secondApplicationOfferingInitialValues.offeringIntensity,
+        },
       },
     );
     const auditUser = await db.user.save(createFakeUser());
@@ -139,7 +143,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "There is an existing application already with overlapping study period or a pending PIR.",
+          "There is an existing application already with overlapping study dates or a pending program information request. Please contact your institution for further assistance.",
         errorType: "STUDY_DATE_OVERLAP_ERROR",
       });
   });
@@ -190,6 +194,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       {
         applicationData: {} as ApplicationData,
         applicationStatus: ApplicationStatus.Draft,
+        offeringInitialValues: {
+          offeringIntensity:
+            secondApplicationOfferingInitialValues.offeringIntensity,
+        },
       },
     );
     const applicationData = {
@@ -227,7 +235,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "There is an existing application already with overlapping study period or a pending PIR.",
+          "There is an existing application already with overlapping study dates or a pending program information request. Please contact your institution for further assistance.",
         errorType: "STUDY_DATE_OVERLAP_ERROR",
       });
   });
@@ -311,7 +319,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "There is an existing application already with overlapping study period or a pending PIR.",
+          "There is an existing application already with overlapping study dates or a pending program information request. Please contact your institution for further assistance.",
         errorType: "STUDY_DATE_OVERLAP_ERROR",
       });
   });
@@ -348,6 +356,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       {
         applicationData: {} as ApplicationData,
         applicationStatus: ApplicationStatus.Draft,
+        offeringInitialValues: {
+          offeringIntensity:
+            secondApplicationOfferingInitialValues.offeringIntensity,
+        },
       },
     );
     const auditUser = await db.user.save(createFakeUser());
@@ -434,6 +446,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         {
           applicationData: {} as ApplicationData,
           applicationStatus: ApplicationStatus.Draft,
+          offeringInitialValues: {
+            offeringIntensity:
+              simsApplicationOfferingInitialValues.offeringIntensity,
+          },
         },
       );
       const auditUser = await db.user.save(createFakeUser());
@@ -521,6 +537,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         {
           applicationData: {} as ApplicationData,
           applicationStatus: ApplicationStatus.Draft,
+          offeringInitialValues: {
+            offeringIntensity:
+              simsApplicationOfferingInitialValues.offeringIntensity,
+          },
         },
       );
       const auditUser = await db.user.save(createFakeUser());

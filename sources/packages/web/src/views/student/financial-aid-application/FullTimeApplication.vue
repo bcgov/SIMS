@@ -53,34 +53,47 @@
     cancelLabel="No"
     :disable-primary-button="!conditionsAccepted"
     ><template #content>
-      <div class="m-4">
-        <v-checkbox
-          color="primary"
-          v-model="conditionsAccepted"
-          label="I acknowledge that by editing my application, I may be required to
-        resubmit previously approved exception requests. My institution may be
-        required to resubmit program information, and my parent or partner may be
-        required to resubmit supporting information."
-          hide-details="auto"
-        ></v-checkbox>
-      </div>
-      <div class="m-4">
-        <banner v-if="isStudyEndDateWithinDeadline" :type="BannerTypes.Warning">
-          <template #content
-            >Please note your application has now passed the six week deadline
-            for completed applications to be received by StudentAid BC. All
-            edits to your application will require additional review from
-            StudentAid BC to be considered for funding. Please see the following
-            link for information on the
-            <a
-              rel="noopener"
-              target="_blank"
-              href="https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf"
-              >funding after end date appeal</a
-            >.
-          </template>
-        </banner>
-      </div>
+      <v-checkbox
+        class="mt-2"
+        color="primary"
+        v-model="conditionsAccepted"
+        :hide-details="true"
+      >
+        <template #label>
+          <template v-if="changeRequest"
+            >I acknowledge that by editing my application, I may be required to
+            resubmit previously approved exception requests and my parent or
+            partner may be required to resubmit supporting
+            information.</template
+          >
+          <template v-else
+            >I acknowledge that by editing my application, I may be required to
+            resubmit previously approved exception requests. My institution may
+            be required to resubmit program information, and my parent or
+            partner may be required to resubmit supporting
+            information.</template
+          >
+        </template>
+      </v-checkbox>
+      <banner
+        v-if="isStudyEndDateWithinDeadline"
+        :type="BannerTypes.Warning"
+        class="mt-4"
+      >
+        <template #content
+          >Please note your application has now passed the six week deadline for
+          completed applications to be received by StudentAid BC. All edits to
+          your application will require additional review from StudentAid BC to
+          be considered for funding. Please see the following link for
+          information on the
+          <a
+            rel="noopener"
+            target="_blank"
+            href="https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf"
+            >funding after end date appeal</a
+          >.
+        </template>
+      </banner>
     </template></confirm-modal
   >
 </template>

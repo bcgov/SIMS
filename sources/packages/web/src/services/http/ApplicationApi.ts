@@ -118,6 +118,17 @@ export class ApplicationApi extends HttpBaseClient {
     );
   }
 
+  /**
+   * Cancels an in-progress change request for an existing student application.
+   * @param applicationId application ID of the change request to be cancelled.
+   */
+  async applicationCancelChangeRequest(applicationId: number): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`application/${applicationId}/cancel-change-request`),
+      null,
+    );
+  }
+
   async getApplicationWithPY(
     applicationId: number,
     isIncludeInActiveProgramYear?: boolean,

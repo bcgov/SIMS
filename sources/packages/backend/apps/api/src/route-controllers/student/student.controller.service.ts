@@ -368,6 +368,7 @@ export class StudentControllerService {
     return {
       id: application.id,
       applicationNumber: application.applicationNumber,
+      isArchived: application.isArchived,
       studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
       studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
       status: application.applicationStatus,

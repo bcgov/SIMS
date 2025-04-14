@@ -25,7 +25,12 @@
               color="primary"
             >
               <template v-for="(item, index) in items" :key="index">
-                <v-list-item :value="index" @click="item.command" tabindex="0">
+                <v-list-item
+                  :value="index"
+                  @click="item.command"
+                  :disabled="item.disabled"
+                  tabindex="0"
+                >
                   <template v-slot:prepend>
                     <v-icon :icon="item.icon" :color="item.iconColor"></v-icon>
                   </template>
@@ -210,8 +215,22 @@ export default defineComponent({
         items.value.push({
           label: "Request a change",
           icon: "fa:fas fa-hand-paper",
-          command: () => {
-            router.push({
+          disabled: applicationDetails.value.isArchived,
+          command: async () => {
+            if (applicationDetails.value.isChangeRequestAllowedForPY) {
+              const applicationWithPY =
+                await ApplicationService.shared.getApplicationWithPY(props.id);
+              await router.push({
+                name: StudentRoutesConst.DYNAMIC_FINANCIAL_CHANGE_REQUEST_APP_FORM,
+                params: {
+                  selectedForm: applicationWithPY.formName,
+                  programYearId: applicationWithPY.programYearId,
+                  id: props.id,
+                },
+              });
+              return;
+            }
+            await router.push({
               name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
               params: {
                 applicationId: props.id,

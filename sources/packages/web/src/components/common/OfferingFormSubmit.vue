@@ -156,6 +156,8 @@ export default defineComponent({
             warningsTypes,
           );
         }
+        // Update the validation date from the API result.
+        lastCalculationDate = validationResult.validationDate;
       }
       return validationResult;
     };

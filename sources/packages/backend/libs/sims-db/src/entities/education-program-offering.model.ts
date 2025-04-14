@@ -271,6 +271,55 @@ export class EducationProgramOffering extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   precedingOffering?: EducationProgramOffering;
+
+  /**
+   * Offering mode(s) of online instruction.
+   */
+  @Column({
+    name: "online_instruction_mode",
+    nullable: true,
+  })
+  onlineInstructionMode?: string;
+
+  /**
+   * Specifies if the blended offering will always be provided with the same total duration of online delivery.
+   * Values can be "yes" or "no".
+   */
+  @Column({
+    name: "is_online_duration_same_always",
+    nullable: true,
+  })
+  isOnlineDurationSameAlways?: string;
+
+  /**
+   * Percentage of total duration that will be provided by online delivery in the blended offering.
+   */
+  @Column({
+    name: "total_online_duration",
+    type: "smallint",
+    nullable: true,
+  })
+  totalOnlineDuration?: number;
+
+  /**
+   * Percentage of minimum duration that will be provided by online delivery in the blended offering.
+   */
+  @Column({
+    name: "minimum_online_duration",
+    type: "smallint",
+    nullable: true,
+  })
+  minimumOnlineDuration?: number;
+
+  /**
+   * Percentage of maximum duration that will be provided by online delivery in the blended offering.
+   */
+  @Column({
+    name: "maximum_online_duration",
+    type: "smallint",
+    nullable: true,
+  })
+  maximumOnlineDuration?: number;
 }
 
 /**

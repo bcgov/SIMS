@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -275,7 +274,8 @@ export class ApplicationStudentsController extends BaseController {
       "or an application change request is already in progress " +
       "or application is not in the correct status to be submitted " +
       "or change request has a different offering from its original submission" +
-      "or change request has a different location from its original submission.",
+      "or change request has a different location from its original submission " +
+      "or the application is archived and cannot be used to create a change request.",
   })
   @ApiBadRequestResponse({
     description:
@@ -329,6 +329,35 @@ export class ApplicationStudentsController extends BaseController {
   }
 
   /**
+   * Cancels an in-progress change request for an existing student application.
+   * @param applicationId application ID of the change request to be cancelled.
+   */
+  @Patch(":applicationId/cancel-change-request")
+  @ApiNotFoundResponse({
+    description: "Not able to find the in-progress change request.",
+  })
+  async applicationCancelChangeRequest(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<void> {
+    try {
+      await this.applicationService.cancelApplicationChangeRequest(
+        applicationId,
+        studentToken.studentId,
+        studentToken.userId,
+      );
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === APPLICATION_NOT_FOUND
+      ) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  /**
    * Creates a new application draft for the authenticated student.
    * The student is allowed to have only one draft application, so
    * this method will create the draft or throw an exception in case
@@ -356,25 +385,16 @@ export class ApplicationStudentsController extends BaseController {
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
-    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
-    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
-    if (
-      payload.data.howWillYouBeAttendingTheProgram &&
-      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
-        payload.data.howWillYouBeAttendingTheProgram,
-      )
-    ) {
-      throw new BadRequestException("Offering intensity type is invalid.");
-    }
     if (!programYear) {
       throw new UnprocessableEntityException(
         "Program Year is not active, not able to create a draft application.",
       );
     }
+    // The check to validate the value of offeringIntensity can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
+    // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (
       !isFulltimeAllowed &&
-      payload.data.howWillYouBeAttendingTheProgram ===
-        OfferingIntensity.fullTime
+      payload.offeringIntensity === OfferingIntensity.fullTime
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
@@ -424,16 +444,8 @@ export class ApplicationStudentsController extends BaseController {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     const { offeringIntensity } =
       await this.applicationService.getApplicationInfo(applicationId);
-    // The check to validate the values for howWillYouBeAttendingTheProgram can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
+    // The check to validate the value of offeringIntensity can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
     // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
-    if (
-      offeringIntensity &&
-      ![OfferingIntensity.fullTime, OfferingIntensity.partTime].includes(
-        offeringIntensity,
-      )
-    ) {
-      throw new BadRequestException("Offering intensity type is invalid.");
-    }
     if (
       !isFulltimeAllowed &&
       offeringIntensity === OfferingIntensity.fullTime
