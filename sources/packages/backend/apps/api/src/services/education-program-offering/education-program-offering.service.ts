@@ -64,7 +64,7 @@ import {
   OfferingValidationResult,
   OfferingValidationModel,
   OfferingDeliveryOptions,
-  WILComponentOptions,
+  OfferingYesNoOptions,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
@@ -577,6 +577,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   private populateProgramOffering(
     educationProgramOffering: OfferingValidationModel,
   ): EducationProgramOffering {
+    console.log(educationProgramOffering);
     const programOffering = new EducationProgramOffering();
     programOffering.name = educationProgramOffering.offeringName;
     programOffering.studyStartDate = educationProgramOffering.studyStartDate;
@@ -618,6 +619,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       );
     programOffering.studyBreaks =
       EducationProgramOfferingService.assignStudyBreaks(calculatedBreaks);
+    programOffering.onlineInstructionMode =
+      educationProgramOffering.onlineInstructionMode;
 
     return programOffering;
   }
@@ -670,7 +673,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringValidationModel.offeringIntensity = offering.offeringIntensity;
     offeringValidationModel.yearOfStudy = offering.yearOfStudy;
     offeringValidationModel.hasOfferingWILComponent =
-      offering.hasOfferingWILComponent as WILComponentOptions;
+      offering.hasOfferingWILComponent as OfferingYesNoOptions;
     offeringValidationModel.offeringWILComponentType = offering.offeringWILType;
     offeringValidationModel.offeringDeclaration = offering.offeringDeclaration;
     offeringValidationModel.offeringType = offering.offeringType;

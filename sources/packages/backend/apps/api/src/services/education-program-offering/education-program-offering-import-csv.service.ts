@@ -3,7 +3,7 @@ import { EducationProgram, OfferingTypes } from "@sims/sims-db";
 import { EducationProgramService, InstitutionLocationService } from "..";
 import {
   OfferingValidationModel,
-  WILComponentOptions,
+  OfferingYesNoOptions,
 } from "./education-program-offering-validation.models";
 import {
   CSVHeaders,
@@ -65,8 +65,8 @@ export class EducationProgramOfferingImportCSVService {
       offeringDelivered: csvModel.offeringDelivered,
       hasOfferingWILComponent:
         csvModel.WILComponent === YesNoOptions.Yes
-          ? WILComponentOptions.Yes
-          : WILComponentOptions.No,
+          ? OfferingYesNoOptions.Yes
+          : OfferingYesNoOptions.No,
       offeringWILComponentType: csvModel.WILComponentType,
       studyStartDate: csvModel.studyStartDate,
       studyEndDate: csvModel.studyEndDate,

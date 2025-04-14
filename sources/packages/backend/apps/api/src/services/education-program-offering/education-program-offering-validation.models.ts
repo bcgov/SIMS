@@ -55,6 +55,7 @@ import {
   OFFERING_YEAR_OF_STUDY_MIN_VALUE,
 } from "../../utilities";
 import { DATE_ONLY_ISO_FORMAT } from "@sims/utilities";
+import { YesNoOptions } from "@sims/test-utils";
 
 const userFriendlyNames = {
   offeringName: "Name",
@@ -80,6 +81,7 @@ const userFriendlyNames = {
   programContext: "Program",
   breakStartDate: "Study break start date",
   breakEndDate: "Study break end date",
+  onlineInstructionMode: "Online instruction mode",
 };
 
 /**
@@ -223,11 +225,20 @@ export enum OfferingDeliveryOptions {
 }
 
 /**
- * WIL(work-integrated learning) options.
+ * Offering Yes/No options.
  */
-export enum WILComponentOptions {
+export enum OfferingYesNoOptions {
   Yes = "yes",
   No = "no",
+}
+
+/**
+ * Offering online instruction modes.
+ */
+export enum OnlineInstructionModeOptions {
+  SynchronousOnly = "synchronousOnly",
+  AsynchronousOnly = "asynchronousOnly",
+  SynchronousAndAsynchronous = "synchronousAndAsynchronous",
 }
 
 /**
@@ -479,10 +490,10 @@ export class OfferingValidationModel {
   /**
    * Indicates if the offering has a WIL(work-integrated learning).
    */
-  @IsEnum(WILComponentOptions, {
+  @IsEnum(OfferingYesNoOptions, {
     message: getEnumFormatMessage(
       userFriendlyNames.hasOfferingWILComponent,
-      WILComponentOptions,
+      OfferingYesNoOptions,
     ),
   })
   @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
@@ -491,17 +502,17 @@ export class OfferingValidationModel {
       OfferingValidationWarnings.ProgramOfferingWILMismatch,
     ),
   })
-  hasOfferingWILComponent: WILComponentOptions;
+  hasOfferingWILComponent: OfferingYesNoOptions;
   /**
    * For an offering that has a WIL(work-integrated learning),
    * indicates which type.
    */
   @ValidateIf(
     (offering: OfferingValidationModel) =>
-      offering.hasOfferingWILComponent === WILComponentOptions.Yes,
+      offering.hasOfferingWILComponent === OfferingYesNoOptions.Yes,
   )
   @IsNotEmpty({
-    message: `${userFriendlyNames.offeringWILComponentType} is required when ${userFriendlyNames.hasOfferingWILComponent} is set to '${WILComponentOptions.Yes}'.`,
+    message: `${userFriendlyNames.offeringWILComponentType} is required when ${userFriendlyNames.hasOfferingWILComponent} is set to '${YesNoOptions.Yes}'.`,
   })
   @MaxLength(OFFERING_WIL_TYPE_MAX_LENGTH, {
     message: getMaxLengthFormatMessage(
@@ -628,7 +639,24 @@ export class OfferingValidationModel {
   @IsNotEmptyObject(undefined, {
     message: "Not able to find the institution of the offering.",
   })
-  institutionContext: InstitutionValidationContext;
+  institutionContext?: InstitutionValidationContext;
+
+  @ValidateIf(
+    (offering: OfferingValidationModel) =>
+      (offering.institutionContext?.isBCPrivate &&
+        [
+          OfferingDeliveryOptions.Online,
+          OfferingDeliveryOptions.Blended,
+        ].includes(offering.offeringDelivered)) ||
+      !!offering.onlineInstructionMode,
+  )
+  @IsEnum(OnlineInstructionModeOptions, {
+    message: getEnumFormatMessage(
+      userFriendlyNames.onlineInstructionMode,
+      OnlineInstructionModeOptions,
+    ),
+  })
+  onlineInstructionMode?: OnlineInstructionModeOptions;
 }
 
 /**

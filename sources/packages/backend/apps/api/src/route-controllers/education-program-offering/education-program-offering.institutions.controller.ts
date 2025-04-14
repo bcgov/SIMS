@@ -261,6 +261,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
     }
 
     try {
+      console.log("Online mode payload", payload.onlineInstructionMode);
       const offeringValidationModel =
         await this.educationProgramOfferingControllerService.buildOfferingValidationModel(
           userToken.authorizations.institutionId,

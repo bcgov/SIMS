@@ -188,6 +188,10 @@ export class EducationProgramOfferingControllerService {
     // Get institution location details.
     const institutionLocation =
       await this.institutionLocationService.getInstitutionLocation(locationId);
+    console.log(
+      "Is BC Public",
+      institutionLocation.institution.institutionType.isBCPrivate,
+    );
     return {
       ...payload,
       locationId,
