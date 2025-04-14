@@ -955,8 +955,7 @@
                   "addons": [],
                   "id": "emuvfb",
                   "defaultValue": "",
-                  "inputType": "number",
-                  "isNew": false
+                  "inputType": "number"
                 }
               ],
               "placeholder": "",
@@ -1118,7 +1117,6 @@
               "fieldSet": false,
               "id": "edsywf7",
               "defaultValue": "",
-              "isNew": false,
               "lockKey": true
             },
             {
@@ -1410,8 +1408,7 @@
                   "properties": {},
                   "requireDecimal": false,
                   "delimiter": false,
-                  "lockKey": true,
-                  "isNew": false
+                  "lockKey": true
                 },
                 {
                   "autofocus": false,
@@ -1471,8 +1468,7 @@
                     "eq": "no"
                   },
                   "properties": {},
-                  "lockKey": true,
-                  "isNew": false
+                  "lockKey": true
                 },
                 {
                   "autofocus": false,
@@ -1545,8 +1541,7 @@
                 "eq": ""
               },
               "properties": {},
-              "customConditional": "/**\n * Allow the online delivery option inputs only for\n * BC Public and BC Private Institutions\n * when the delivery type is either online or blended.\n */\nshow = ['online','blended'].includes(data.offeringDelivered) && (data.isInstitutionBCPublic || data.isInstitutionBCPrivate);",
-              "isNew": false
+              "customConditional": "/**\n * Allow the online delivery option inputs only for\n * BC Public and BC Private Institutions\n * when the delivery type is either online or blended.\n */\nshow = ['online','blended'].includes(data.offeringDelivered) && (data.isInstitutionBCPublic || data.isInstitutionBCPrivate);"
             },
             {
               "label": "Does this contain a work-integrated learning component?",
@@ -3695,8 +3690,7 @@
                               },
                               "properties": {},
                               "disabled": true,
-                              "lockKey": true,
-                              "isNew": false
+                              "lockKey": true
                             }
                           ],
                           "width": 6,
@@ -3742,8 +3736,7 @@
                               },
                               "properties": {},
                               "lockKey": true,
-                              "disabled": true,
-                              "isNew": false
+                              "disabled": true
                             }
                           ],
                           "width": 6,
@@ -3789,8 +3782,7 @@
                               },
                               "properties": {},
                               "disabled": true,
-                              "lockKey": true,
-                              "isNew": false
+                              "lockKey": true
                             }
                           ],
                           "size": "md",
@@ -3836,8 +3828,7 @@
                               },
                               "properties": {},
                               "disabled": true,
-                              "lockKey": true,
-                              "isNew": false
+                              "lockKey": true
                             }
                           ],
                           "size": "md",
@@ -5954,8 +5945,7 @@
       "properties": {},
       "lockKey": true,
       "customDefaultValue": "",
-      "calculateValue": "value = data.offeringIntensity === 'Full Time' ? 84 : 42;",
-      "isNew": false
+      "calculateValue": "value = data.offeringIntensity === 'Full Time' ? 84 : 42;"
     },
     {
       "input": true,
@@ -5974,8 +5964,7 @@
       },
       "properties": {},
       "defaultValue": "365",
-      "lockKey": true,
-      "isNew": false
+      "lockKey": true
     },
     {
       "input": true,
@@ -6014,7 +6003,7 @@
       },
       "properties": {},
       "lockKey": true,
-      "calculateValue": "console.log(\"allowOnlineDeliveryInputs: \",allowOnlineDeliveryInputs);\nvalue = data.offeringIntensity === 'Full Time' ? 'Full-time' : 'Part-time';"
+      "calculateValue": "value = data.offeringIntensity === 'Full Time' ? 'Full-time' : 'Part-time';"
     },
     {
       "input": true,
@@ -6050,8 +6039,7 @@
         "eq": ""
       },
       "properties": {},
-      "lockKey": true,
-      "isNew": false
+      "lockKey": true
     },
     {
       "input": true,
@@ -6070,8 +6058,7 @@
       },
       "properties": {},
       "lockKey": true,
-      "calculateValue": "value = data.isInstitutionBCPublic || data.isInstitutionBCPrivate;",
-      "isNew": false
+      "calculateValue": "value = data.isInstitutionBCPublic || data.isInstitutionBCPrivate;"
     }
   ]
 }

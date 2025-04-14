@@ -10,3 +10,4 @@ export * from "./custom-validators/is-date-after";
 export * from "./custom-validators/json-max-size";
 export * from "./custom-validators/is-max-cost-value";
 export * from "./custom-validators/allow-if";
+export * from "./custom-validators/is-number-greater-than";

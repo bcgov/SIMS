@@ -36,6 +36,7 @@ import {
   ValidationContext,
   IsMaxCostValue,
   AllowIf,
+  IsNumberGreaterThan,
 } from "../../utilities/class-validation";
 import { Type } from "class-transformer";
 import { ProgramAllowsOfferingIntensity } from "./custom-validators/program-allows-offering-intensity";
@@ -87,6 +88,8 @@ const userFriendlyNames = {
   onlineInstructionMode: "Online instruction mode",
   isOnlineDurationSameAlways: "Online duration same always",
   totalOnlineDuration: "Total online duration",
+  minimumOnlineDuration: "Minimum online duration",
+  maximumOnlineDuration: "Maximum online duration",
 };
 
 /**
@@ -760,7 +763,9 @@ export class OfferingValidationModel {
   @Min(1, {
     message: getMinFormatMessage(userFriendlyNames.totalOnlineDuration),
   })
-  @Max(99)
+  @Max(99, {
+    message: getMaxFormatMessage(userFriendlyNames.maximumOnlineDuration, 99),
+  })
   minimumOnlineDuration?: number;
 
   /**
@@ -786,9 +791,18 @@ export class OfferingValidationModel {
   )
   @IsNumber()
   @Min(1, {
-    message: getMinFormatMessage(userFriendlyNames.totalOnlineDuration),
+    message: getMinFormatMessage(userFriendlyNames.maximumOnlineDuration, 1),
   })
-  @Max(99)
+  @Max(99, {
+    message: getMaxFormatMessage(userFriendlyNames.maximumOnlineDuration, 99),
+  })
+  @IsNumberGreaterThan(
+    (offering: OfferingValidationModel) => offering.minimumOnlineDuration,
+    undefined,
+    {
+      message: `${userFriendlyNames.maximumOnlineDuration} must be greater than ${userFriendlyNames.minimumOnlineDuration}.`,
+    },
+  )
   maximumOnlineDuration?: number;
 }
 
