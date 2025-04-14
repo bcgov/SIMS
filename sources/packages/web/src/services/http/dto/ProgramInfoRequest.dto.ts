@@ -3,9 +3,9 @@ import {
   OfferingIntensity,
   OfferingTypes,
   ProgramInfoStatus,
+  PaginationOptions,
 } from "@/types";
 import { Expose } from "class-transformer";
-import { PaginationOptions } from "@/types";
 
 export class CompleteProgramInfoRequestAPIInDTO {
   @Expose()
