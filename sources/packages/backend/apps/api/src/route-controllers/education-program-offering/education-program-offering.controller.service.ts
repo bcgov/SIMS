@@ -376,9 +376,9 @@ export class EducationProgramOfferingControllerService {
         (warning) => warning.typeCode,
       ),
       parentOfferingId: offering.parentOffering.id,
-      isInstitutionBCPrivate:
+      isBCPrivate:
         offering.institutionLocation.institution.institutionType.isBCPrivate,
-      isInstitutionBCPublic:
+      isBCPublic:
         offering.institutionLocation.institution.institutionType.isBCPublic,
       onlineInstructionMode:
         offering.onlineInstructionMode as OnlineInstructionModeOptions,

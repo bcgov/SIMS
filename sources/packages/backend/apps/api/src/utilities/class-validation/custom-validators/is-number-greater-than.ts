@@ -14,7 +14,11 @@ class IsNumberGreaterThanConstraint implements ValidatorConstraintInterface {
   validate(value: number, args: ValidationArguments): boolean {
     const [getReferenceNumber] = args.constraints;
     const referenceNumber = getReferenceNumber(args.object) as number;
-    if (referenceNumber === null || referenceNumber === undefined) {
+    if (
+      referenceNumber === null ||
+      referenceNumber === undefined ||
+      isNaN(referenceNumber)
+    ) {
       return false;
     }
     return value > referenceNumber;

@@ -71,8 +71,8 @@ export default defineComponent({
     const initialData = computed(
       () =>
         ({
-          isInstitutionBCPublic: institutionState.value.isBCPublic,
-          isInstitutionBCPrivate: institutionState.value.isBCPrivate,
+          isBCPublic: institutionState.value.isBCPublic,
+          isBCPrivate: institutionState.value.isBCPrivate,
         } as EducationProgramOfferingAPIOutDTO),
     );
 

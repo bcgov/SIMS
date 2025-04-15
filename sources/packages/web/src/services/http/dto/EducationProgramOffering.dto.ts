@@ -154,8 +154,8 @@ export interface EducationProgramOfferingAPIOutDTO {
   validationWarnings: string[];
   validationInfos: string[];
   parentOfferingId: number;
-  isInstitutionBCPublic: boolean;
-  isInstitutionBCPrivate: boolean;
+  isBCPublic: boolean;
+  isBCPrivate: boolean;
   onlineInstructionMode?: OnlineInstructionModeOptions;
   isOnlineDurationSameAlways?: OfferingYesNoOptions;
   totalOnlineDuration?: number;

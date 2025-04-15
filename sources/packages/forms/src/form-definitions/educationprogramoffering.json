@@ -1223,7 +1223,7 @@
                         "type": "simple",
                         "simple": {
                           "show": true,
-                          "when": "isInstitutionBCPrivate",
+                          "when": "isBCPrivate",
                           "eq": "true"
                         }
                       },
@@ -1295,7 +1295,7 @@
                         "type": "simple",
                         "simple": {
                           "show": true,
-                          "when": "isInstitutionBCPrivate",
+                          "when": "isBCPrivate",
                           "eq": "true"
                         }
                       },
@@ -1362,7 +1362,7 @@
                         "type": "simple",
                         "simple": {
                           "show": true,
-                          "when": "isInstitutionBCPrivate",
+                          "when": "isBCPrivate",
                           "eq": "true"
                         }
                       },
@@ -1424,7 +1424,7 @@
                         "type": "simple",
                         "simple": {
                           "show": true,
-                          "when": "isInstitutionBCPrivate",
+                          "when": "isBCPrivate",
                           "eq": "true"
                         }
                       },
@@ -1484,7 +1484,7 @@
                         "type": "simple",
                         "simple": {
                           "show": true,
-                          "when": "isInstitutionBCPrivate",
+                          "when": "isBCPrivate",
                           "eq": "true"
                         }
                       },
@@ -1541,7 +1541,7 @@
                 "eq": ""
               },
               "properties": {},
-              "customConditional": "/**\n * Allow the online delivery option inputs only for\n * BC Public and BC Private Institutions\n * when the delivery type is either online or blended.\n */\nshow = ['online','blended'].includes(data.offeringDelivered) && (data.isInstitutionBCPublic || data.isInstitutionBCPrivate);"
+              "customConditional": "/**\n * Allow the online delivery option inputs only for\n * BC Public and BC Private Institutions\n * when the delivery type is either online or blended.\n */\nshow = ['online','blended'].includes(data.offeringDelivered) && (data.isBCPublic || data.isBCPrivate);"
             },
             {
               "label": "Does this contain a work-integrated learning component?",
@@ -6008,8 +6008,8 @@
     {
       "input": true,
       "tableView": false,
-      "key": "isInstitutionBCPublic",
-      "label": "Is institution BC Public",
+      "key": "isBCPublic",
+      "label": "Is BC Public",
       "protected": false,
       "unique": false,
       "persistent": false,
@@ -6026,8 +6026,8 @@
     {
       "input": true,
       "tableView": false,
-      "key": "isInstitutionBCPrivate",
-      "label": "Is institution BC Private",
+      "key": "isBCPrivate",
+      "label": "Is BC Private",
       "protected": false,
       "unique": false,
       "persistent": false,
@@ -6058,7 +6058,7 @@
       },
       "properties": {},
       "lockKey": true,
-      "calculateValue": "value = data.isInstitutionBCPublic || data.isInstitutionBCPrivate;"
+      "calculateValue": "value = data.isBCPublic || data.isBCPrivate;"
     }
   ]
 }
