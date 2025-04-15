@@ -699,7 +699,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong> This program is ineligible for StudentAid BC funding</strong>",
+              "content": "<strong> This program requires review by StudentAid BC to determine eligibility.</strong>",
               "refreshOnChange": false,
               "customClass": "banner-warning",
               "key": "html20",
