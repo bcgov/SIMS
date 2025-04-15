@@ -29,13 +29,13 @@
                 >All</v-btn
               >
               <v-btn
-                v-for="intensity in StudyIntensity"
+                v-for="intensity in Object.values(OfferingIntensity)"
                 :key="intensity"
                 rounded="xl"
                 color="primary"
                 :value="intensity"
                 class="mr-2"
-                >{{ intensity }}</v-btn
+                >{{ mapOfferingIntensity(intensity) }}</v-btn
               >
             </v-btn-toggle>
           </v-col>
@@ -85,7 +85,7 @@
             {{ emptyStringFiller(item.studentNumber) }}
           </template>
           <template #[`item.studyIntensity`]="{ item }">
-            {{ item.studyIntensity }}
+            {{ mapOfferingIntensity(item.studyIntensity) }}
           </template>
           <template #[`item.pirStatus`]="{ item }">
             <status-chip-program-info-request :status="item.pirStatus" />
@@ -109,7 +109,7 @@ import { onMounted, ref, watch, computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { useFormatters, useInstitutionState } from "@/composables";
+import { useFormatters, useInstitutionState, useOffering } from "@/composables";
 import StatusChipProgramInfoRequest from "@/components/generic/StatusChipProgramInfoRequest.vue";
 import {
   PIRSummaryAPIOutDTO,
@@ -123,16 +123,12 @@ import {
   PIRSummaryHeaders,
   PaginationOptions,
   DataTableSortByOrder,
+  OfferingIntensity,
 } from "@/types";
-
-enum StudyIntensity {
-  FullTime = "Full Time",
-  PartTime = "Part Time",
-}
 
 const IntensityFilter = {
   All: "All",
-  ...StudyIntensity,
+  ...OfferingIntensity,
 };
 
 export default defineComponent({
@@ -147,6 +143,7 @@ export default defineComponent({
     const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
+    const { mapOfferingIntensity } = useOffering();
     const applicationsLoading = ref(false);
     const searchQuery = ref("");
     const intensityFilter = ref(IntensityFilter.All);
@@ -184,7 +181,7 @@ export default defineComponent({
         ) {
           searchCriteria.searchCriteria = {
             search: searchQuery.value,
-            intensityFilter: intensityFilter.value,
+            intensityFilter: intensityFilter.value as OfferingIntensity,
           };
         } else {
           searchCriteria.searchCriteria = {
@@ -244,12 +241,13 @@ export default defineComponent({
       searchQuery,
       intensityFilter,
       IntensityFilter,
-      StudyIntensity,
+      OfferingIntensity,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       paginationAndSortEvent,
       resetPageAndLoadApplications,
       emptyStringFiller,
+      mapOfferingIntensity,
     };
   },
 });
