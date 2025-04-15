@@ -1508,8 +1508,7 @@
               "customClass": "font-weight-bold",
               "disabled": true,
               "calculateValue": "",
-              "lockKey": true,
-              "isNew": false
+              "lockKey": true
             },
             {
               "title": "Program",
@@ -2627,13 +2626,13 @@
                       "hideLabel": true,
                       "tags": [],
                       "conditional": {
-                        "show": "true",
-                        "when": "studyEndDateBeforeSixWeeksFromToday",
-                        "eq": "true"
+                        "show": "",
+                        "when": "",
+                        "eq": ""
                       },
                       "properties": {},
                       "customClass": "banner-warning",
-                      "customConditional": ""
+                      "customConditional": "show = !!!data.isReadOnly && !!data.studyEndDateBeforeSixWeeksFromToday;"
                     }
                   ],
                   "allowPrevious": false,
@@ -3710,13 +3709,13 @@
                   "type": "htmlelement",
                   "tags": [],
                   "conditional": {
-                    "show": "true",
-                    "when": "selectedStudyEndDateBeforeSixWeeksFromToday",
-                    "eq": "true"
+                    "show": "",
+                    "when": "",
+                    "eq": ""
                   },
                   "properties": {},
                   "customClass": "banner-warning",
-                  "customConditional": "",
+                  "customConditional": "show = !!!data.isReadOnly && !!data.selectedStudyEndDateBeforeSixWeeksFromToday;",
                   "hideLabel": true
                 },
                 {
