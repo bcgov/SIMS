@@ -680,7 +680,43 @@
               "protected": false,
               "persistent": true,
               "hidden": false,
-              "clearOnHide": true
+              "clearOnHide": true,
+              "labelPosition": "top",
+              "isNew": false,
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program requires review by StudentAid BC to determine eligibility.</strong>",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "html20",
+              "customConditional": "show = (data.isBCPrivate && data.programDeliveryTypes.deliveredOnline && !data.programDeliveryTypes.deliveredOnSite);",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "tag": "p",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {},
+              "isNew": false
             },
             {
               "label": "Will the program also be offered and delivered at 100% course load on site?",
@@ -789,7 +825,16 @@
               "fieldSet": false,
               "persistent": true,
               "hidden": false,
-              "clearOnHide": true
+              "clearOnHide": true,
+              "labelPosition": "top",
+              "isNew": false,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
             },
             {
               "label": "HTML",
@@ -809,7 +854,15 @@
               "input": false,
               "tableView": false,
               "hideLabel": true,
-              "tag": "p"
+              "tag": "p",
+              "isNew": false,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {}
             },
             {
               "label": "HTML",
@@ -2249,7 +2302,16 @@
       "tableView": false,
       "protected": false,
       "unique": false,
-      "persistent": true
+      "persistent": true,
+      "isNew": false,
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true
     },
     {
       "input": true,
@@ -2264,7 +2326,7 @@
     },
     {
       "label": "Program Status",
-      "calculateValue": "if (\r\n  data.hasJointDesignatedInstitution === \"no\" ||\r\n  data.eslEligibility === \"20OrMore\" ||\r\n  data.entranceRequirements.noneOfTheAboveEntranceRequirements === true ||\r\n  (data.deliveredOnlineAlsoOnsite === \"no\" &&\r\n    data.sameOnlineCreditsEarned === \"no\" &&\r\n    data.earnAcademicCreditsOtherInstitution === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"yes\" &&\r\n    data.minHoursWeekAvi === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" &&\r\n    data.isWILApproved === \"yes\" &&\r\n    data.wilProgramEligibility === \"no\") ||\r\n  (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\") ||\r\n  (data.hasIntlExchange === \"yes\" &&\r\n    data.intlExchangeProgramEligibility === \"no\")\r\n) {\r\n  value = \"Pending\";\r\n} else {\r\n  value = \"Approved\";\r\n}",
+      "calculateValue": "if (\r\n  (data.isBCPrivate && data.programDeliveryTypes.deliveredOnline && !data.programDeliveryTypes.deliveredOnSite) ||\r\n  data.hasJointDesignatedInstitution === \"no\" ||\r\n  data.eslEligibility === \"20OrMore\" ||\r\n  data.entranceRequirements.noneOfTheAboveEntranceRequirements === true ||\r\n  (data.deliveredOnlineAlsoOnsite === \"no\" &&\r\n    data.sameOnlineCreditsEarned === \"no\" &&\r\n    data.earnAcademicCreditsOtherInstitution === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"yes\" &&\r\n    data.minHoursWeekAvi === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" &&\r\n    data.isWILApproved === \"yes\" &&\r\n    data.wilProgramEligibility === \"no\") ||\r\n  (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\") ||\r\n  (data.hasIntlExchange === \"yes\" &&\r\n    data.intlExchangeProgramEligibility === \"no\")\r\n) {\r\n  value = \"Pending\";\r\n} else {\r\n  value = \"Approved\";\r\n}",
       "calculateServer": true,
       "key": "programStatus",
       "type": "hidden",
@@ -2272,7 +2334,16 @@
       "tableView": false,
       "protected": false,
       "unique": false,
-      "persistent": true
+      "persistent": true,
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true,
+      "customDefaultValue": ""
     }
   ]
 }
