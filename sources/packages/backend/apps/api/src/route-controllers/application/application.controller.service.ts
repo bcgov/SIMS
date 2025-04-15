@@ -568,7 +568,8 @@ export class ApplicationControllerService {
       applicationProgramYearID: application.programYear.id,
       studentFullName: getUserFullName(application.student.user),
       applicationOfferingIntensity:
-        application.currentAssessment?.offering?.offeringIntensity,
+        application.currentAssessment?.offering?.offeringIntensity ??
+        application.offeringIntensity,
       applicationStartDate:
         application.currentAssessment?.offering?.studyStartDate,
       applicationEndDate: application.currentAssessment?.offering?.studyEndDate,

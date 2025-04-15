@@ -88,6 +88,7 @@ export interface ApplicationBaseAPIOutDTO {
   assessmentId?: number;
   data: any;
   applicationStatus: ApplicationStatus;
+  applicationOfferingIntensity: OfferingIntensity;
   applicationFormName: string;
   applicationProgramYearID: number;
   /**
@@ -129,7 +130,7 @@ export interface ApplicationDataChangeAPIOutDTO {
 export interface ApplicationSupplementalDataAPIOutDTO
   extends ApplicationBaseAPIOutDTO {
   studentFullName: string;
-  applicationOfferingIntensity?: OfferingIntensity;
+  applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate?: string;
   applicationEndDate?: string;
   applicationInstitutionName?: string;
