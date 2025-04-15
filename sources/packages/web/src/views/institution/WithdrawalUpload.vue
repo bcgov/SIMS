@@ -248,11 +248,10 @@ export default defineComponent({
       validationResults.value.some((validation) => validation.errors.length),
     );
 
-    const fileValidationRules = (files: InputFile[]) => {
-      if (files?.length !== 1) {
+    const fileValidationRules = (file: InputFile) => {
+      if (!file) {
         return "Withdrawal text file is required.";
       }
-      const [file] = files;
       if (file.size > MAX_APPLICATION_WITHDRAWAL_UPLOAD_SIZE) {
         return "Text file size should not be greater than 15MB";
       }
