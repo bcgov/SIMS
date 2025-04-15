@@ -6040,25 +6040,6 @@
       },
       "properties": {},
       "lockKey": true
-    },
-    {
-      "input": true,
-      "tableView": false,
-      "key": "allowOnlineDeliveryInputs",
-      "label": "Allow online delivery inputs",
-      "protected": false,
-      "unique": false,
-      "persistent": false,
-      "type": "hidden",
-      "tags": [],
-      "conditional": {
-        "show": "",
-        "when": null,
-        "eq": ""
-      },
-      "properties": {},
-      "lockKey": true,
-      "calculateValue": "value = data.isBCPublic || data.isBCPrivate;"
     }
   ]
 }
