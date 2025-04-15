@@ -85,7 +85,7 @@
             {{ emptyStringFiller(item.studentNumber) }}
           </template>
           <template #[`item.studyIntensity`]="{ item }">
-            {{ item.studyIntensity }}
+            {{ mapOfferingIntensity(item.studyIntensity) }}
           </template>
           <template #[`item.pirStatus`]="{ item }">
             <status-chip-program-info-request :status="item.pirStatus" />
@@ -109,7 +109,7 @@ import { onMounted, ref, watch, computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
-import { useFormatters, useInstitutionState } from "@/composables";
+import { useFormatters, useInstitutionState, useOffering } from "@/composables";
 import StatusChipProgramInfoRequest from "@/components/generic/StatusChipProgramInfoRequest.vue";
 import {
   PIRSummaryAPIOutDTO,
@@ -147,6 +147,7 @@ export default defineComponent({
     const { getLocationName } = useInstitutionState();
     const router = useRouter();
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
+    const { mapOfferingIntensity } = useOffering();
     const applicationsLoading = ref(false);
     const searchQuery = ref("");
     const intensityFilter = ref(IntensityFilter.All);
@@ -250,6 +251,7 @@ export default defineComponent({
       paginationAndSortEvent,
       resetPageAndLoadApplications,
       emptyStringFiller,
+      mapOfferingIntensity,
     };
   },
 });
