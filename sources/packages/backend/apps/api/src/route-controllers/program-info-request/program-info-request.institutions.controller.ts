@@ -9,6 +9,7 @@ import {
   NotFoundException,
   UnauthorizedException,
   ParseIntPipe,
+  Query,
 } from "@nestjs/common";
 import {
   CompleteProgramInfoRequestAPIInDTO,
@@ -55,6 +56,10 @@ import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { WorkflowClientService } from "@sims/services";
 import { InstitutionUserTypes } from "../../auth";
+import {
+  PaginatedResultsAPIOutDTO,
+  PIRPaginationOptionsAPIInDTO,
+} from "../models/pagination.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
@@ -276,29 +281,63 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
 
   /**
    * Get all applications of a location in an institution
-   * with Program Info Request (PIR) status completed and required
+   * with Program Info Request (PIR) status completed and required.
    * @param locationId location that is completing the PIR.
-   * @returns student application list of an institution location.
+   * @param paginationOptions pagination options.
+   * @returns paginated student application list of an institution location.
    */
   @HasLocationAccess("locationId")
   @Get(":locationId/program-info-request")
   async getPIRSummary(
     @Param("locationId", ParseIntPipe) locationId: number,
-  ): Promise<PIRSummaryAPIOutDTO[]> {
-    const applications = await this.applicationService.getPIRApplications(
-      locationId,
-    );
-    return applications.map((eachApplication: Application) => {
-      const offering = eachApplication.currentAssessment?.offering;
-      return {
-        applicationId: eachApplication.id,
-        applicationNumber: eachApplication.applicationNumber,
-        studyStartPeriod: getISODateOnlyString(offering?.studyStartDate),
-        studyEndPeriod: getISODateOnlyString(offering?.studyEndDate),
-        pirStatus: eachApplication.pirStatus,
-        fullName: getUserFullName(eachApplication.student.user),
-      };
-    });
+    @Query() paginationOptions: PIRPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
+    const { results: applications, count } =
+      await this.applicationService.getPIRApplications(
+        locationId,
+        paginationOptions,
+      );
+    return {
+      results: applications.map((eachApplication: Application) => {
+        const offering = eachApplication.currentAssessment?.offering;
+        const user = eachApplication.student.user;
+
+        // Determine if PIR is completed
+        const isPIRCompleted =
+          eachApplication.pirStatus === ProgramInfoStatus.completed;
+
+        // Get program name based on current data
+        const programName = isPIRCompleted
+          ? offering.educationProgram.name
+          : eachApplication.pirProgram?.name ||
+            eachApplication.data.programName;
+
+        // Get start and end dates based on PIR status
+        const studyStartPeriod = isPIRCompleted
+          ? getISODateOnlyString(offering.studyStartDate)
+          : eachApplication.data.studystartDate;
+        const studyEndPeriod = isPIRCompleted
+          ? getISODateOnlyString(offering.studyEndDate)
+          : eachApplication.data.studyendDate;
+
+        const result: PIRSummaryAPIOutDTO = {
+          applicationId: eachApplication.id,
+          applicationNumber: eachApplication.applicationNumber,
+          studyStartPeriod,
+          studyEndPeriod,
+          pirStatus: eachApplication.pirStatus,
+          submittedDate: getISODateOnlyString(eachApplication.submittedDate),
+          givenNames: user.firstName,
+          lastName: user.lastName,
+          studentNumber: eachApplication.studentNumber,
+          studyIntensity: eachApplication.offeringIntensity,
+          program: programName,
+        };
+
+        return result;
+      }),
+      count,
+    };
   }
 
   /**

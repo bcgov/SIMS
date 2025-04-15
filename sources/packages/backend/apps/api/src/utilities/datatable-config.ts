@@ -2,6 +2,7 @@ import {
   CASInvoiceBatchApprovalStatus,
   CASInvoiceStatus,
   ProgramStatus,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
 
@@ -53,4 +54,12 @@ export enum SortPriority {
   Priority3 = 3,
   Priority4 = 4,
   Priority5 = 5,
+}
+
+/**
+ * PIR specific parameters.
+ */
+export interface PIRPaginationOptions extends BasePaginationOptions {
+  search?: string;
+  intensityFilter?: OfferingIntensity;
 }

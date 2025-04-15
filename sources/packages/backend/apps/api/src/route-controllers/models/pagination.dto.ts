@@ -13,6 +13,7 @@ import { FieldSortOrder } from "@sims/utilities";
 import {
   CASInvoiceBatchApprovalStatus,
   CASInvoiceStatus,
+  OfferingIntensity,
   ProgramStatus,
 } from "@sims/sims-db";
 import { Transform } from "class-transformer";
@@ -139,6 +140,22 @@ export class CASInvoiceBatchesPaginationOptionsAPIInDTO extends PaginationOption
   @Transform(({ value }) => value.split(","))
   @IsEnum(CASInvoiceBatchApprovalStatus, { each: true })
   approvalStatusSearch?: CASInvoiceBatchApprovalStatus[];
+}
+
+/**
+ * Program Info Request specific pagination options.
+ */
+export class PIRPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["pirStatus", "submittedDate", "studyStartPeriod", "studyEndPeriod"])
+  sortField?: string;
+
+  @IsOptional()
+  search?: string;
+
+  @IsOptional()
+  @IsEnum(OfferingIntensity)
+  intensityFilter?: OfferingIntensity;
 }
 
 /**

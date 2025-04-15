@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, Not, Brackets, EntityManager } from "typeorm";
+import {
+  DataSource,
+  In,
+  Not,
+  Brackets,
+  EntityManager,
+  SelectQueryBuilder,
+} from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
@@ -37,12 +44,13 @@ import {
   STUDY_DATE_OVERLAP_ERROR_MESSAGE,
   STUDY_DATE_OVERLAP_ERROR,
   PaginationOptions,
+  PIRPaginationOptions,
   PaginatedResults,
   offeringBelongToProgramYear,
   APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION,
   allowApplicationChangeRequest,
 } from "../../utilities";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
@@ -1249,49 +1257,105 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get applications of an institution location
-   * with PIR status required and completed.
-   * @param locationId location id .
+   * Get Program Info Request (PIR) Applications of an institution location.
+   * @param paginationOptions pagination options.
    * @returns student Application list.
    */
-  async getPIRApplications(locationId: number): Promise<Application[]> {
-    return (
-      this.repo
-        .createQueryBuilder("application")
-        .select([
-          "application.applicationNumber",
-          "application.id",
-          "application.pirStatus",
-          "currentAssessment.id",
-          "offering.studyStartDate",
-          "offering.studyEndDate",
-          "student",
-        ])
-        .leftJoin("application.currentAssessment", "currentAssessment")
-        .leftJoin("currentAssessment.offering", "offering")
-        .innerJoin("application.student", "student")
-        .innerJoinAndSelect("student.user", "user")
-        .where("application.location.id = :locationId", { locationId })
-        .andWhere("application.pirStatus is not null")
-        .andWhere("application.pirStatus != :nonPirStatus", {
-          nonPirStatus: ProgramInfoStatus.notRequired,
-        })
-        .andWhere("application.applicationStatus != :editedStatus", {
-          editedStatus: ApplicationStatus.Edited,
-        })
-        // TODO:Further investigation needed as the CASE translation does not work in orderby queries.
-        .orderBy(
-          `CASE application.pir_status
-            WHEN '${ProgramInfoStatus.required}' THEN 1
-            WHEN '${ProgramInfoStatus.submitted}' THEN 2
-            WHEN '${ProgramInfoStatus.completed}' THEN 3
-            WHEN '${ProgramInfoStatus.declined}' THEN 4
-            ELSE 5
-          END`,
-        )
-        .addOrderBy("application.applicationNumber")
-        .getMany()
-    );
+  async getPIRApplications(
+    locationId: number,
+    paginationOptions: PIRPaginationOptions,
+  ): Promise<PaginatedResults<Application>> {
+    const { page, pageLimit, sortField, sortOrder, search, intensityFilter } =
+      paginationOptions;
+    const query = this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.applicationNumber",
+        "application.id",
+        "application.pirStatus",
+        "application.submittedDate",
+        "application.studentNumber",
+        "application.offeringIntensity",
+        "application.data",
+        "currentAssessment.id",
+        "offering.studyStartDate",
+        "offering.studyEndDate",
+        "educationProgram.name",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+        "pirProgram.name",
+      ])
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
+      .leftJoin("offering.educationProgram", "educationProgram")
+      .leftJoin("application.pirProgram", "pirProgram")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("application.location.id = :locationId", { locationId })
+      .andWhere("application.pirStatus is not null")
+      .andWhere("application.pirStatus != :nonPirStatus", {
+        nonPirStatus: ProgramInfoStatus.notRequired,
+      })
+      .andWhere("application.applicationStatus != :editedStatus", {
+        editedStatus: ApplicationStatus.Edited,
+      });
+
+    if (search) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where(getUserFullNameLikeSearch("user", "search")).orWhere(
+            "application.applicationNumber ILIKE :search",
+          );
+        }),
+      );
+      query.setParameter("search", `%${search.trim()}%`);
+    }
+
+    if (intensityFilter) {
+      query.andWhere("application.offeringIntensity = :intensityFilter", {
+        intensityFilter,
+      });
+    }
+
+    this.addPIRSort(query, sortField, sortOrder);
+    query.offset(page * pageLimit).limit(pageLimit);
+    const [results, count] = await query.getManyAndCount();
+    return { results, count };
+  }
+
+  private addPIRSort(
+    query: SelectQueryBuilder<Application>,
+    sortField?: string,
+    sortOrder?: FieldSortOrder,
+  ): void {
+    const pirStatusSort = `CASE application.pirStatus WHEN '${ProgramInfoStatus.required}' THEN 1 
+        WHEN '${ProgramInfoStatus.completed}' THEN 2 
+        WHEN '${ProgramInfoStatus.declined}' THEN 3 
+        ELSE 4 END`;
+    const sortFieldMapping = {
+      submittedDate: "application.submittedDate",
+      studyStartPeriod: "offering.studyStartDate",
+      studyEndPeriod: "offering.studyEndDate",
+    };
+    if (!sortField) {
+      // Default sort with PIR status pending first and then by submitted date.
+      query.orderBy(
+        `CASE application.pir_status
+          WHEN '${ProgramInfoStatus.required}' THEN 1
+          WHEN '${ProgramInfoStatus.submitted}' THEN 2
+          WHEN '${ProgramInfoStatus.completed}' THEN 3
+          WHEN '${ProgramInfoStatus.declined}' THEN 4
+          ELSE 5
+        END`,
+      );
+      query.addOrderBy("application.submittedDate", "ASC");
+    } else if (sortField === "pirStatus") {
+      // Sort by PIR status using custom order.
+      query.orderBy(pirStatusSort, sortOrder);
+    } else {
+      query.orderBy(sortFieldMapping[sortField], sortOrder);
+    }
   }
 
   /**

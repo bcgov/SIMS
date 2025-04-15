@@ -1,3 +1,4 @@
+import { PaginationOptions } from "@/types";
 import ApiClient from "./http/ApiClient";
 import {
   CompleteProgramInfoRequestAPIInDTO,
@@ -5,6 +6,7 @@ import {
   PIRDeniedReasonAPIOutDTO,
   PIRSummaryAPIOutDTO,
   ProgramInfoRequestAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 
 export class ProgramInfoRequestService {
@@ -74,12 +76,19 @@ export class ProgramInfoRequestService {
 
   /**
    * Get all applications of a location in an institution
-   * with Program Info Request (PIR) status completed and required
+   * with Program Info Request (PIR) status completed and required.
    * @param locationId location that is completing the PIR.
-   * @returns student application list of an institution location.
+   * @param searchCriteria search criteria for filtering and pagination.
+   * @returns paginated student application list of an institution location.
    */
-  async getPIRSummary(locationId: number): Promise<PIRSummaryAPIOutDTO[]> {
-    return ApiClient.ProgramInfoRequest.getPIRSummary(locationId);
+  async getPIRSummary(
+    locationId: number,
+    searchCriteria: PaginationOptions,
+  ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
+    return ApiClient.ProgramInfoRequest.getPIRSummary(
+      locationId,
+      searchCriteria,
+    );
   }
 
   /**

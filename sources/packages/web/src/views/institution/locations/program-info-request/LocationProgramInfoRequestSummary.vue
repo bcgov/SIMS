@@ -10,48 +10,95 @@
     <body-header
       title="Active applications"
       data-cy="activeApplicationsTab"
-      :recordsCount="applications.length"
-    />
-    <content-group>
-      <toggle-content :toggled="!applications.length">
-        <DataTable
-          :autoLayout="true"
-          :value="applications"
-          class="p-m-4"
-          :paginator="true"
-          :rows="10"
-        >
-          <Column field="fullName" header="Name">
-            <template #body="slotProps">
-              <span>{{ slotProps.data.fullName }}</span>
-            </template>
-          </Column>
-          <Column field="studyStartPeriod" header="Study Period">
-            <template #body="slotProps">
-              <span>
-                {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
-                {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
-              </span>
-            </template></Column
-          >
-          <Column field="applicationNumber" header="Application #"></Column>
-          <Column field="pirStatus" header="Status">
-            <template #body="slotProps">
-              <status-chip-program-info-request
-                :status="slotProps.data.pirStatus"
-              />
-            </template>
-          </Column>
-          <Column field="applicationId" header="">
-            <template #body="slotProps">
+      :recordsCount="applications.count"
+    >
+      <template #actions>
+        <v-row class="justify-end">
+          <v-col cols="auto">
+            <v-btn-toggle
+              v-model="intensityFilter"
+              class="btn-toggle"
+              selected-class="selected-btn-toggle"
+              @update:model-value="resetPageAndLoadApplications"
+            >
               <v-btn
+                rounded="xl"
                 color="primary"
-                @click="goToViewApplication(slotProps.data.applicationId)"
-                >View</v-btn
+                :value="IntensityFilter.All"
+                class="mr-2"
+                >All</v-btn
               >
-            </template>
-          </Column>
-        </DataTable>
+              <v-btn
+                v-for="intensity in StudyIntensity"
+                :key="intensity"
+                rounded="xl"
+                color="primary"
+                :value="intensity"
+                class="mr-2"
+                >{{ intensity }}</v-btn
+              >
+            </v-btn-toggle>
+          </v-col>
+          <v-col cols="3">
+            <v-text-field
+              density="compact"
+              label="Search by name or application"
+              variant="outlined"
+              v-model="searchQuery"
+              @keyup.enter="resetPageAndLoadApplications"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
+              placeholder="Enter name or application"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </template>
+    </body-header>
+    <content-group>
+      <toggle-content
+        :toggled="!applications.count"
+        message="No program information requests found"
+      >
+        <v-data-table-server
+          v-if="applications?.count"
+          :headers="PIRSummaryHeaders"
+          :items="applications.results"
+          :items-length="applications.count"
+          :loading="applicationsLoading"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          @update:options="paginationAndSortEvent"
+        >
+          <template #[`item.submittedDate`]="{ item }">
+            {{ dateOnlyLongString(item.submittedDate) }}
+          </template>
+          <template #[`item.program`]="{ item }">
+            {{ item.program }}
+          </template>
+          <template #[`item.studyStartPeriod`]="{ item }">
+            {{ dateOnlyLongString(item.studyStartPeriod) }}
+          </template>
+          <template #[`item.studyEndPeriod`]="{ item }">
+            {{ dateOnlyLongString(item.studyEndPeriod) }}
+          </template>
+          <template #[`item.studentNumber`]="{ item }">
+            {{ emptyStringFiller(item.studentNumber) }}
+          </template>
+          <template #[`item.studyIntensity`]="{ item }">
+            {{ item.studyIntensity }}
+          </template>
+          <template #[`item.pirStatus`]="{ item }">
+            <status-chip-program-info-request :status="item.pirStatus" />
+          </template>
+          <template #[`item.actions`]="{ item }">
+            <v-btn
+              color="primary"
+              @click="goToViewApplication(item.applicationId)"
+            >
+              View
+            </v-btn>
+          </template>
+        </v-data-table-server>
       </toggle-content>
     </content-group>
   </full-page-container>
@@ -64,7 +111,29 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramInfoRequestService } from "@/services/ProgramInfoRequestService";
 import { useFormatters, useInstitutionState } from "@/composables";
 import StatusChipProgramInfoRequest from "@/components/generic/StatusChipProgramInfoRequest.vue";
-import { PIRSummaryAPIOutDTO } from "@/services/http/dto";
+import {
+  PIRSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
+import {
+  DataTableOptions,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
+  DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
+  PIRSummaryHeaders,
+  PaginationOptions,
+  DataTableSortByOrder,
+} from "@/types";
+
+enum StudyIntensity {
+  FullTime = "Full Time",
+  PartTime = "Part Time",
+}
+
+const IntensityFilter = {
+  All: "All",
+  ...StudyIntensity,
+};
 
 export default defineComponent({
   components: { StatusChipProgramInfoRequest },
@@ -77,12 +146,15 @@ export default defineComponent({
   setup(props) {
     const { getLocationName } = useInstitutionState();
     const router = useRouter();
-    const { dateOnlyLongString } = useFormatters();
-    const applications = ref([] as PIRSummaryAPIOutDTO[]);
+    const { dateOnlyLongString, emptyStringFiller } = useFormatters();
+    const applicationsLoading = ref(false);
+    const searchQuery = ref("");
+    const intensityFilter = ref(IntensityFilter.All);
+    const applications = ref(
+      {} as PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>,
+    );
 
-    const locationName = computed(() => {
-      return getLocationName(props.locationId);
-    });
+    const locationName = computed(() => getLocationName(props.locationId));
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
@@ -91,29 +163,93 @@ export default defineComponent({
       });
     };
 
-    const updateSummaryList = async (locationId: number) => {
-      applications.value = await ProgramInfoRequestService.shared.getPIRSummary(
-        locationId,
+    const loadApplications = async (
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
+      pageLimit = DEFAULT_PAGE_LIMIT,
+      inputSortField?: string,
+      inputSortOrder?: DataTableSortByOrder,
+    ) => {
+      try {
+        applicationsLoading.value = true;
+
+        const searchCriteria: PaginationOptions = {
+          page,
+          pageLimit,
+          sortField: inputSortField,
+          sortOrder: inputSortOrder,
+        };
+        if (
+          intensityFilter.value &&
+          intensityFilter.value !== IntensityFilter.All
+        ) {
+          searchCriteria.searchCriteria = {
+            search: searchQuery.value,
+            intensityFilter: intensityFilter.value,
+          };
+        } else {
+          searchCriteria.searchCriteria = {
+            search: searchQuery.value,
+          };
+        }
+        applications.value =
+          await ProgramInfoRequestService.shared.getPIRSummary(
+            props.locationId,
+            searchCriteria,
+          );
+      } catch (error: unknown) {
+        console.error("Error loading PIR applications:", error);
+        applications.value = { results: [], count: 0 };
+      } finally {
+        applicationsLoading.value = false;
+      }
+    };
+
+    const resetPageAndLoadApplications = async () => {
+      await loadApplications();
+    };
+
+    const paginationAndSortEvent = async (event: DataTableOptions) => {
+      const [sortByOptions] = event.sortBy;
+
+      await loadApplications(
+        event.page,
+        event.itemsPerPage,
+        sortByOptions?.key,
+        sortByOptions?.order,
       );
     };
 
+    // When component is mounted, load data
+    onMounted(async () => {
+      await loadApplications();
+    });
+
     watch(
       () => props.locationId,
-      async (currValue) => {
-        //update the list
-        await updateSummaryList(currValue);
+      async () => {
+        searchQuery.value = "";
+        intensityFilter.value = IntensityFilter.All;
+        applications.value = { results: [], count: 0 };
+        await loadApplications();
       },
     );
-
-    onMounted(async () => {
-      await updateSummaryList(props.locationId);
-    });
 
     return {
       applications,
       dateOnlyLongString,
       goToViewApplication,
       locationName,
+      PIRSummaryHeaders,
+      applicationsLoading,
+      searchQuery,
+      intensityFilter,
+      IntensityFilter,
+      StudyIntensity,
+      DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
+      paginationAndSortEvent,
+      resetPageAndLoadApplications,
+      emptyStringFiller,
     };
   },
 });
