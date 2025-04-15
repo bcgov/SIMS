@@ -114,7 +114,6 @@ import StatusChipProgramInfoRequest from "@/components/generic/StatusChipProgram
 import {
   PIRSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
-  PIRSearchCriteria,
 } from "@/services/http/dto";
 import {
   DataTableOptions,
@@ -122,7 +121,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   PIRSummaryHeaders,
-  OfferingIntensity,
+  PaginationOptions,
   DataTableSortByOrder,
 } from "@/types";
 
@@ -173,17 +172,25 @@ export default defineComponent({
       try {
         applicationsLoading.value = true;
 
-        const searchCriteria: PIRSearchCriteria = {
+        const searchCriteria: PaginationOptions = {
           page,
           pageLimit,
-          search: searchQuery.value || undefined,
-          intensityFilter:
-            intensityFilter.value !== IntensityFilter.All
-              ? (intensityFilter.value as OfferingIntensity)
-              : undefined,
           sortField: inputSortField,
           sortOrder: inputSortOrder,
         };
+        if (
+          intensityFilter.value &&
+          intensityFilter.value !== IntensityFilter.All
+        ) {
+          searchCriteria.searchCriteria = {
+            search: searchQuery.value,
+            intensityFilter: intensityFilter.value,
+          };
+        } else {
+          searchCriteria.searchCriteria = {
+            search: searchQuery.value,
+          };
+        }
         applications.value =
           await ProgramInfoRequestService.shared.getPIRSummary(
             props.locationId,

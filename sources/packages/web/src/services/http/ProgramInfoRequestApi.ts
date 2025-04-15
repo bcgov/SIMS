@@ -6,7 +6,6 @@ import {
   PIRSummaryAPIOutDTO,
   ProgramInfoRequestAPIOutDTO,
   PaginatedResultsAPIOutDTO,
-  PIRSearchCriteria,
 } from "@/services/http/dto";
 import { getPaginationQueryString } from "@/helpers/helpers/uri";
 import { PaginationOptions } from "@/types";
@@ -81,26 +80,11 @@ export class ProgramInfoRequestApi extends HttpBaseClient {
    */
   async getPIRSummary(
     locationId: number,
-    searchCriteria: PIRSearchCriteria,
+    searchCriteria: PaginationOptions,
     enableZeroPage = true,
   ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
-    const paginationOptions: PaginationOptions = {
-      page: searchCriteria.page,
-      pageLimit: searchCriteria.pageLimit,
-      sortField: searchCriteria.sortField,
-      sortOrder: searchCriteria.sortOrder,
-      searchCriteria: {
-        ...(searchCriteria.search && {
-          search: searchCriteria.search,
-        }),
-        ...(searchCriteria.intensityFilter && {
-          intensityFilter: searchCriteria.intensityFilter,
-        }),
-      },
-    };
-
     let url = `location/${locationId}/program-info-request?`;
-    url += getPaginationQueryString(paginationOptions, enableZeroPage);
+    url += getPaginationQueryString(searchCriteria, enableZeroPage);
 
     return this.getCall<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>>(
       this.addClientRoot(url),

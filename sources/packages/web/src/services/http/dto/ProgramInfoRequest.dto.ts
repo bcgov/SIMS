@@ -3,7 +3,6 @@ import {
   OfferingIntensity,
   OfferingTypes,
   ProgramInfoStatus,
-  PaginationOptions,
 } from "@/types";
 import { Expose } from "class-transformer";
 
@@ -42,11 +41,6 @@ export interface ProgramInfoRequestAPIOutDTO {
 export interface PIRDeniedReasonAPIOutDTO {
   id: number;
   description: string;
-}
-
-export interface PIRSearchCriteria extends PaginationOptions {
-  search?: string;
-  intensityFilter?: OfferingIntensity;
 }
 
 export interface PIRSummaryAPIOutDTO {

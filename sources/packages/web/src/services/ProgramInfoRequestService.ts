@@ -1,3 +1,4 @@
+import { PaginationOptions } from "@/types";
 import ApiClient from "./http/ApiClient";
 import {
   CompleteProgramInfoRequestAPIInDTO,
@@ -5,7 +6,6 @@ import {
   PIRDeniedReasonAPIOutDTO,
   PIRSummaryAPIOutDTO,
   ProgramInfoRequestAPIOutDTO,
-  PIRSearchCriteria,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 
@@ -83,7 +83,7 @@ export class ProgramInfoRequestService {
    */
   async getPIRSummary(
     locationId: number,
-    searchCriteria: PIRSearchCriteria,
+    searchCriteria: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>> {
     return ApiClient.ProgramInfoRequest.getPIRSummary(
       locationId,
