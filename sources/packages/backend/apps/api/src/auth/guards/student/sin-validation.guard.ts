@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { StudentService } from "../../../services";
 import { CHECK_SIN_VALIDATION_KEY } from "../../decorators/student/check-sin-status.decorator";
@@ -30,6 +35,14 @@ export class SINValidationGuard implements CanActivate {
     }
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as IUserToken;
-    return this.studentService.getStudentSinStatus(userToken.userId);
+    const hasValidSin = await this.studentService.getStudentSinStatus(
+      userToken.userId,
+    );
+    if (!hasValidSin) {
+      throw new UnauthorizedException(
+        "A valid SIN is required to access this resource.",
+      );
+    }
+    return true;
   }
 }
