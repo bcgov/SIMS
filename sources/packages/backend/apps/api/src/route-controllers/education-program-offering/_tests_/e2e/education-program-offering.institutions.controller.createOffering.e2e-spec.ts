@@ -35,7 +35,7 @@ import {
   StudyBreakAPIOutDTO,
   StudyBreaksAndWeeksOutDTO,
 } from "../../models/education-program-offering.dto";
-import { WILComponentOptions } from "../../../../services";
+import { OfferingYesNoOptions } from "../../../../services";
 import { getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
 
@@ -80,7 +80,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       yearOfStudy: 1,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
-      hasOfferingWILComponent: WILComponentOptions.No,
+      hasOfferingWILComponent: OfferingYesNoOptions.No,
       studyStartDate: "2023-09-01",
       studyEndDate: "2024-06-30",
       lacksStudyBreaks: false,

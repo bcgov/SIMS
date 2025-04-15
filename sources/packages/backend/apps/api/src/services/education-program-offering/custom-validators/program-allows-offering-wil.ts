@@ -7,7 +7,7 @@ import {
 } from "class-validator";
 import {
   OfferingValidationModel,
-  WILComponentOptions,
+  OfferingYesNoOptions,
 } from "../education-program-offering-validation.models";
 
 /**
@@ -19,7 +19,7 @@ class ProgramAllowsOfferingWILConstraint
   implements ValidatorConstraintInterface
 {
   validate(
-    offeringWIL: WILComponentOptions,
+    offeringWIL: OfferingYesNoOptions,
     args: ValidationArguments,
   ): boolean {
     const offeringModel = args.object as OfferingValidationModel;
@@ -27,8 +27,8 @@ class ProgramAllowsOfferingWILConstraint
       return false;
     }
     if (
-      offeringWIL === WILComponentOptions.Yes &&
-      offeringModel.programContext.hasWILComponent === WILComponentOptions.No
+      offeringWIL === OfferingYesNoOptions.Yes &&
+      offeringModel.programContext.hasWILComponent === OfferingYesNoOptions.No
     ) {
       return false;
     }
@@ -38,7 +38,7 @@ class ProgramAllowsOfferingWILConstraint
   defaultMessage(args: ValidationArguments) {
     const [propertyDisplayName] = args.constraints;
     return `${propertyDisplayName ?? args.property} is defined as ${
-      WILComponentOptions.Yes
+      OfferingYesNoOptions.Yes
     } but the program does not allow WIL(work-integrated learning).`;
   }
 }

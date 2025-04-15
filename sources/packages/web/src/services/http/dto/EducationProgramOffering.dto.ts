@@ -70,7 +70,7 @@ export class EducationProgramOfferingAPIInDTO {
   @Expose()
   yearOfStudy: number;
   @Expose()
-  hasOfferingWILComponent: WILComponentOptions;
+  hasOfferingWILComponent: OfferingYesNoOptions;
   @Expose()
   offeringDeclaration: boolean;
   @Expose()
@@ -84,6 +84,16 @@ export class EducationProgramOfferingAPIInDTO {
   studyBreaks: StudyBreakInDTO[];
   @Expose()
   courseLoad?: number;
+  @Expose()
+  onlineInstructionMode?: OnlineInstructionModeOptions;
+  @Expose()
+  isOnlineDurationSameAlways?: OfferingYesNoOptions;
+  @Expose()
+  totalOnlineDuration?: number;
+  @Expose()
+  minimumOnlineDuration?: number;
+  @Expose()
+  maximumOnlineDuration?: number;
 }
 
 /**
@@ -96,11 +106,20 @@ export enum OfferingDeliveryOptions {
 }
 
 /**
- * WIL(work-integrated learning) options.
+ * Offering Yes/No options.
  */
-export enum WILComponentOptions {
+export enum OfferingYesNoOptions {
   Yes = "yes",
   No = "no",
+}
+
+/**
+ * Offering online instruction modes.
+ */
+export enum OnlineInstructionModeOptions {
+  SynchronousOnly = "synchronousOnly",
+  AsynchronousOnly = "asynchronousOnly",
+  SynchronousAndAsynchronous = "synchronousAndAsynchronous",
 }
 
 export interface EducationProgramOfferingAPIOutDTO {
@@ -135,8 +154,13 @@ export interface EducationProgramOfferingAPIOutDTO {
   validationWarnings: string[];
   validationInfos: string[];
   parentOfferingId: number;
-  isInstitutionBCPublic: boolean;
-  isInstitutionBCPrivate: boolean;
+  isBCPublic: boolean;
+  isBCPrivate: boolean;
+  onlineInstructionMode?: OnlineInstructionModeOptions;
+  isOnlineDurationSameAlways?: OfferingYesNoOptions;
+  totalOnlineDuration?: number;
+  minimumOnlineDuration?: number;
+  maximumOnlineDuration?: number;
 }
 
 export interface StudyBreakAPIOutDTO {

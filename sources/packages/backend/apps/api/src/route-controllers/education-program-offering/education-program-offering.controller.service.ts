@@ -29,6 +29,8 @@ import {
   OfferingValidationModel,
   CreateFromValidatedOfferingError,
   InstitutionLocationService,
+  OnlineInstructionModeOptions,
+  OfferingYesNoOptions,
 } from "../../services";
 import {
   credentialTypeToDisplay,
@@ -197,6 +199,11 @@ export class EducationProgramOfferingControllerService {
       primaryEmail: institutionLocation.institution.primaryEmail,
       studyBreaks: payload.studyBreaks,
       programContext: program,
+      institutionContext: {
+        isBCPrivate:
+          institutionLocation.institution.institutionType.isBCPrivate,
+        isBCPublic: institutionLocation.institution.institutionType.isBCPublic,
+      },
     };
   }
 
@@ -369,10 +376,17 @@ export class EducationProgramOfferingControllerService {
         (warning) => warning.typeCode,
       ),
       parentOfferingId: offering.parentOffering.id,
-      isInstitutionBCPrivate:
+      isBCPrivate:
         offering.institutionLocation.institution.institutionType.isBCPrivate,
-      isInstitutionBCPublic:
+      isBCPublic:
         offering.institutionLocation.institution.institutionType.isBCPublic,
+      onlineInstructionMode:
+        offering.onlineInstructionMode as OnlineInstructionModeOptions,
+      isOnlineDurationSameAlways:
+        offering.isOnlineDurationSameAlways as OfferingYesNoOptions,
+      totalOnlineDuration: offering.totalOnlineDuration,
+      minimumOnlineDuration: offering.minimumOnlineDuration,
+      maximumOnlineDuration: offering.maximumOnlineDuration,
     };
   }
 

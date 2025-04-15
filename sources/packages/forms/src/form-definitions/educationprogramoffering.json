@@ -1116,7 +1116,8 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "edsywf7",
-              "defaultValue": ""
+              "defaultValue": "",
+              "lockKey": true
             },
             {
               "label": "HTML",
@@ -1199,6 +1200,348 @@
               "allowMultipleMasks": false,
               "addons": [],
               "id": "e0fns5b"
+            },
+            {
+              "clearOnHide": false,
+              "key": "panelPanel",
+              "input": false,
+              "title": "Online delivery instructions panel",
+              "theme": "default",
+              "tableView": false,
+              "components": [
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "radio",
+                  "label": "Please indicate the option that best describes this offering's mode(s) of online instruction.",
+                  "key": "onlineInstructionMode",
+                  "logic": [
+                    {
+                      "name": "Mandatory for BC Private",
+                      "trigger": {
+                        "type": "simple",
+                        "simple": {
+                          "show": true,
+                          "when": "isBCPrivate",
+                          "eq": "true"
+                        }
+                      },
+                      "actions": [
+                        {
+                          "name": "Set Mandatory",
+                          "type": "property",
+                          "property": {
+                            "label": "Required",
+                            "value": "validate.required",
+                            "type": "boolean"
+                          },
+                          "state": true
+                        }
+                      ]
+                    }
+                  ],
+                  "values": [
+                    {
+                      "value": "synchronousOnly",
+                      "label": "Synchronous only",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "asynchronousOnly",
+                      "label": "Asynchronous only",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "synchronousAndAsynchronous",
+                      "label": "Synchronous and Asynchronous",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "radio",
+                  "label": "Will this offering always be provided with the same total duration of online delivery?",
+                  "key": "isOnlineDurationSameAlways",
+                  "logic": [
+                    {
+                      "name": "Mandatory for BC Private",
+                      "trigger": {
+                        "type": "simple",
+                        "simple": {
+                          "show": true,
+                          "when": "isBCPrivate",
+                          "eq": "true"
+                        }
+                      },
+                      "actions": [
+                        {
+                          "name": "Set Mandatory",
+                          "type": "property",
+                          "property": {
+                            "label": "Required",
+                            "value": "validate.required",
+                            "type": "boolean"
+                          },
+                          "state": true
+                        }
+                      ]
+                    }
+                  ],
+                  "values": [
+                    {
+                      "value": "yes",
+                      "label": "Yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "value": "no",
+                      "label": "No",
+                      "shortcut": ""
+                    }
+                  ],
+                  "defaultValue": "",
+                  "protected": false,
+                  "fieldSet": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false
+                  },
+                  "type": "radio",
+                  "labelPosition": "top",
+                  "optionsLabelPosition": "right",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "offeringDelivered",
+                    "eq": "blended"
+                  },
+                  "properties": {},
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "number",
+                  "label": "What percentage of this blended offering total duration will be provided by online delivery?",
+                  "key": "totalOnlineDuration",
+                  "logic": [
+                    {
+                      "name": "Mandatory for BC Private",
+                      "trigger": {
+                        "type": "simple",
+                        "simple": {
+                          "show": true,
+                          "when": "isBCPrivate",
+                          "eq": "true"
+                        }
+                      },
+                      "actions": [
+                        {
+                          "name": "Set Mandatory",
+                          "type": "property",
+                          "property": {
+                            "label": "Required",
+                            "value": "validate.required",
+                            "type": "boolean"
+                          },
+                          "state": true
+                        }
+                      ]
+                    }
+                  ],
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": false,
+                    "min": 1,
+                    "max": 99,
+                    "step": "any",
+                    "integer": "",
+                    "multiple": "",
+                    "custom": ""
+                  },
+                  "type": "number",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "isOnlineDurationSameAlways",
+                    "eq": "yes"
+                  },
+                  "properties": {},
+                  "requireDecimal": false,
+                  "delimiter": false,
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "number",
+                  "label": "What is the minimum duration as a percentage that this offering will be delivered online?",
+                  "key": "minimumOnlineDuration",
+                  "logic": [
+                    {
+                      "name": "Mandatory for BC Private",
+                      "trigger": {
+                        "type": "simple",
+                        "simple": {
+                          "show": true,
+                          "when": "isBCPrivate",
+                          "eq": "true"
+                        }
+                      },
+                      "actions": [
+                        {
+                          "name": "Set Mandatory",
+                          "type": "property",
+                          "property": {
+                            "label": "Required",
+                            "value": "validate.required",
+                            "type": "boolean"
+                          },
+                          "state": true
+                        }
+                      ]
+                    }
+                  ],
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": false,
+                    "min": 1,
+                    "max": 99,
+                    "step": "any",
+                    "integer": "",
+                    "multiple": "",
+                    "custom": ""
+                  },
+                  "type": "number",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "isOnlineDurationSameAlways",
+                    "eq": "no"
+                  },
+                  "properties": {},
+                  "lockKey": true
+                },
+                {
+                  "autofocus": false,
+                  "input": true,
+                  "tableView": true,
+                  "inputType": "number",
+                  "label": "What is the maximum duration as a percentage that this offering will be delivered online?",
+                  "key": "maximumOnlineDuration",
+                  "logic": [
+                    {
+                      "name": "Mandatory for BC Private",
+                      "trigger": {
+                        "type": "simple",
+                        "simple": {
+                          "show": true,
+                          "when": "isBCPrivate",
+                          "eq": "true"
+                        }
+                      },
+                      "actions": [
+                        {
+                          "name": "Set Mandatory",
+                          "type": "property",
+                          "property": {
+                            "label": "Required",
+                            "value": "validate.required",
+                            "type": "boolean"
+                          },
+                          "state": true
+                        }
+                      ]
+                    }
+                  ],
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "defaultValue": "",
+                  "protected": false,
+                  "persistent": true,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "validate": {
+                    "required": false,
+                    "min": 1,
+                    "max": 99,
+                    "step": "any",
+                    "integer": "",
+                    "multiple": "",
+                    "custom": "valid = input > data.minimumOnlineDuration ? true : \"The maximum percentage must be greater than the minimum percentage\""
+                  },
+                  "type": "number",
+                  "labelPosition": "top",
+                  "tags": [],
+                  "conditional": {
+                    "show": "true",
+                    "when": "isOnlineDurationSameAlways",
+                    "eq": "no"
+                  },
+                  "properties": {},
+                  "lockKey": true
+                }
+              ],
+              "type": "panel",
+              "breadcrumb": "default",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {},
+              "customConditional": "/**\n * Allow the online delivery option inputs only for\n * BC Public and BC Private Institutions\n * when the delivery type is either online or blended.\n */\nshow = ['online','blended'].includes(data.offeringDelivered) && (data.isBCPublic || data.isBCPrivate);"
             },
             {
               "label": "Does this contain a work-integrated learning component?",
@@ -3347,8 +3690,7 @@
                               },
                               "properties": {},
                               "disabled": true,
-                              "lockKey": true,
-                              "isNew": false
+                              "lockKey": true
                             }
                           ],
                           "width": 6,
@@ -3394,8 +3736,7 @@
                               },
                               "properties": {},
                               "lockKey": true,
-                              "disabled": true,
-                              "isNew": false
+                              "disabled": true
                             }
                           ],
                           "width": 6,
@@ -3441,8 +3782,7 @@
                               },
                               "properties": {},
                               "disabled": true,
-                              "lockKey": true,
-                              "isNew": false
+                              "lockKey": true
                             }
                           ],
                           "size": "md",
@@ -3488,8 +3828,7 @@
                               },
                               "properties": {},
                               "disabled": true,
-                              "lockKey": true,
-                              "isNew": false
+                              "lockKey": true
                             }
                           ],
                           "size": "md",
@@ -5665,6 +6004,42 @@
       "properties": {},
       "lockKey": true,
       "calculateValue": "value = data.offeringIntensity === 'Full Time' ? 'Full-time' : 'Part-time';"
+    },
+    {
+      "input": true,
+      "tableView": false,
+      "key": "isBCPublic",
+      "label": "Is BC Public",
+      "protected": false,
+      "unique": false,
+      "persistent": false,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true
+    },
+    {
+      "input": true,
+      "tableView": false,
+      "key": "isBCPrivate",
+      "label": "Is BC Private",
+      "protected": false,
+      "unique": false,
+      "persistent": false,
+      "type": "hidden",
+      "tags": [],
+      "conditional": {
+        "show": "",
+        "when": null,
+        "eq": ""
+      },
+      "properties": {},
+      "lockKey": true
     }
   ]
 }

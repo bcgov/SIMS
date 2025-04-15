@@ -120,3 +120,13 @@ export const PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS: RestrictionCode[] = [
   RestrictionCode.PTSSR,
   RestrictionCode.PTWTHD,
 ];
+
+/**
+ * Minimum percentage of an offering duration that should be online.
+ */
+export const OFFERING_MINIMUM_ONLINE_DURATION_PERCENTAGE = 1;
+
+/**
+ * Maximum percentage of an offering duration that should be online.
+ */
+export const OFFERING_MAXIMUM_ONLINE_DURATION_PERCENTAGE = 99;

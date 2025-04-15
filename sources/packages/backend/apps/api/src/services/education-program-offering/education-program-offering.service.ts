@@ -64,7 +64,7 @@ import {
   OfferingValidationResult,
   OfferingValidationModel,
   OfferingDeliveryOptions,
-  WILComponentOptions,
+  OfferingYesNoOptions,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
@@ -449,6 +449,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.offeringStatus",
         "offerings.courseLoad",
         "offerings.parentOffering",
+        "offerings.onlineInstructionMode",
+        "offerings.isOnlineDurationSameAlways",
+        "offerings.totalOnlineDuration",
+        "offerings.maximumOnlineDuration",
+        "offerings.minimumOnlineDuration",
         "assessedBy.firstName",
         "assessedBy.lastName",
         "institutionLocation.name",
@@ -618,6 +623,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       );
     programOffering.studyBreaks =
       EducationProgramOfferingService.assignStudyBreaks(calculatedBreaks);
+    programOffering.onlineInstructionMode =
+      educationProgramOffering.onlineInstructionMode;
+    programOffering.isOnlineDurationSameAlways =
+      educationProgramOffering.isOnlineDurationSameAlways;
+    programOffering.totalOnlineDuration =
+      educationProgramOffering.totalOnlineDuration;
+    programOffering.minimumOnlineDuration =
+      educationProgramOffering.minimumOnlineDuration;
+    programOffering.maximumOnlineDuration =
+      educationProgramOffering.maximumOnlineDuration;
 
     return programOffering;
   }
@@ -670,7 +685,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringValidationModel.offeringIntensity = offering.offeringIntensity;
     offeringValidationModel.yearOfStudy = offering.yearOfStudy;
     offeringValidationModel.hasOfferingWILComponent =
-      offering.hasOfferingWILComponent as WILComponentOptions;
+      offering.hasOfferingWILComponent as OfferingYesNoOptions;
     offeringValidationModel.offeringWILComponentType = offering.offeringWILType;
     offeringValidationModel.offeringDeclaration = offering.offeringDeclaration;
     offeringValidationModel.offeringType = offering.offeringType;
@@ -860,6 +875,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.assessedDate",
         "offering.submittedDate",
         "offering.courseLoad",
+        "offering.onlineInstructionMode",
+        "offering.isOnlineDurationSameAlways",
+        "offering.totalOnlineDuration",
+        "offering.minimumOnlineDuration",
+        "offering.maximumOnlineDuration",
         "offering.offeringStatus",
         "precedingOffering.id",
         "assessedBy.firstName",

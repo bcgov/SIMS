@@ -9,7 +9,8 @@ import { Allow, IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 import { Type } from "class-transformer";
 import {
   OfferingDeliveryOptions,
-  WILComponentOptions,
+  OnlineInstructionModeOptions,
+  OfferingYesNoOptions,
 } from "../../../services";
 
 export class StudyBreakAPIOutDTO {
@@ -68,7 +69,7 @@ export class EducationProgramOfferingAPIInDTO {
   @Allow()
   yearOfStudy: number;
   @Allow()
-  hasOfferingWILComponent: WILComponentOptions;
+  hasOfferingWILComponent: OfferingYesNoOptions;
   @Allow()
   offeringDeclaration: boolean;
   @Allow()
@@ -82,6 +83,16 @@ export class EducationProgramOfferingAPIInDTO {
   studyBreaks: StudyBreakInDTO[];
   @Allow()
   courseLoad?: number;
+  @Allow()
+  onlineInstructionMode?: OnlineInstructionModeOptions;
+  @Allow()
+  isOnlineDurationSameAlways?: OfferingYesNoOptions;
+  @Allow()
+  totalOnlineDuration?: number;
+  @Allow()
+  minimumOnlineDuration?: number;
+  @Allow()
+  maximumOnlineDuration?: number;
 }
 
 /**
@@ -126,8 +137,13 @@ export class EducationProgramOfferingAPIOutDTO {
   validationWarnings: string[];
   validationInfos: string[];
   parentOfferingId: number;
-  isInstitutionBCPublic: boolean;
-  isInstitutionBCPrivate: boolean;
+  isBCPublic: boolean;
+  isBCPrivate: boolean;
+  onlineInstructionMode?: OnlineInstructionModeOptions;
+  isOnlineDurationSameAlways?: OfferingYesNoOptions;
+  totalOnlineDuration?: number;
+  minimumOnlineDuration?: number;
+  maximumOnlineDuration?: number;
 }
 
 export class EducationProgramOfferingSummaryViewAPIOutDTO {
