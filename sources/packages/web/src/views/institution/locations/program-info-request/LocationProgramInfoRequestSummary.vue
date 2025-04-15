@@ -29,10 +29,7 @@
                 >All</v-btn
               >
               <v-btn
-                v-for="intensity in [
-                  OfferingIntensity.fullTime,
-                  OfferingIntensity.partTime,
-                ]"
+                v-for="intensity in Object.values(OfferingIntensity)"
                 :key="intensity"
                 rounded="xl"
                 color="primary"
@@ -131,8 +128,7 @@ import {
 
 const IntensityFilter = {
   All: "All",
-  [OfferingIntensity.fullTime]: OfferingIntensity.fullTime,
-  [OfferingIntensity.partTime]: OfferingIntensity.partTime,
+  ...OfferingIntensity,
 };
 
 export default defineComponent({
@@ -150,9 +146,7 @@ export default defineComponent({
     const { mapOfferingIntensity } = useOffering();
     const applicationsLoading = ref(false);
     const searchQuery = ref("");
-    const intensityFilter = ref<typeof IntensityFilter.All | OfferingIntensity>(
-      IntensityFilter.All,
-    );
+    const intensityFilter = ref(IntensityFilter.All);
     const applications = ref(
       {} as PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>,
     );
