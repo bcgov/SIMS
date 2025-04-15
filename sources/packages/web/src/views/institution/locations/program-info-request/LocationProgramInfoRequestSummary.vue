@@ -29,13 +29,16 @@
                 >All</v-btn
               >
               <v-btn
-                v-for="intensity in StudyIntensity"
+                v-for="intensity in [
+                  OfferingIntensity.fullTime,
+                  OfferingIntensity.partTime,
+                ]"
                 :key="intensity"
                 rounded="xl"
                 color="primary"
                 :value="intensity"
                 class="mr-2"
-                >{{ intensity }}</v-btn
+                >{{ mapOfferingIntensity(intensity) }}</v-btn
               >
             </v-btn-toggle>
           </v-col>
@@ -123,16 +126,13 @@ import {
   PIRSummaryHeaders,
   PaginationOptions,
   DataTableSortByOrder,
+  OfferingIntensity,
 } from "@/types";
-
-enum StudyIntensity {
-  FullTime = "Full Time",
-  PartTime = "Part Time",
-}
 
 const IntensityFilter = {
   All: "All",
-  ...StudyIntensity,
+  [OfferingIntensity.fullTime]: OfferingIntensity.fullTime,
+  [OfferingIntensity.partTime]: OfferingIntensity.partTime,
 };
 
 export default defineComponent({
@@ -150,7 +150,9 @@ export default defineComponent({
     const { mapOfferingIntensity } = useOffering();
     const applicationsLoading = ref(false);
     const searchQuery = ref("");
-    const intensityFilter = ref(IntensityFilter.All);
+    const intensityFilter = ref<typeof IntensityFilter.All | OfferingIntensity>(
+      IntensityFilter.All,
+    );
     const applications = ref(
       {} as PaginatedResultsAPIOutDTO<PIRSummaryAPIOutDTO>,
     );
@@ -185,7 +187,7 @@ export default defineComponent({
         ) {
           searchCriteria.searchCriteria = {
             search: searchQuery.value,
-            intensityFilter: intensityFilter.value,
+            intensityFilter: intensityFilter.value as OfferingIntensity,
           };
         } else {
           searchCriteria.searchCriteria = {
@@ -245,7 +247,7 @@ export default defineComponent({
       searchQuery,
       intensityFilter,
       IntensityFilter,
-      StudyIntensity,
+      OfferingIntensity,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       paginationAndSortEvent,
