@@ -21,6 +21,7 @@ import {
   ApplicationEditStatus,
   ApplicationStatus,
   ProgramYear,
+  RelationshipStatus,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import {
@@ -29,7 +30,8 @@ import {
   FormService,
 } from "../../../services";
 import { AppStudentsModule } from "../../../app.students.module";
-import { SaveApplicationAPIInDTO } from "apps/api/src/route-controllers/application/models/application.dto";
+import { SaveApplicationAPIInDTO } from "../models/application.dto";
+import MockDate from "mockdate";
 
 describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
   let app: INestApplication;
@@ -51,19 +53,28 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       FormService,
     );
     programYear = await ensureProgramYearExists(db, 2050);
+    // Application mocked data.
+    const data = {
+      relationshipStatus: RelationshipStatus.Other,
+      studentNumber: "123456789",
+    };
     // Change request default payload.
     defaultPayload = {
       associatedFiles: [],
-      data: {},
+      data,
       programYearId: programYear.id,
     } as SaveApplicationAPIInDTO;
     // Form.io mock.
     const dryRunSubmissionMock = jest.fn().mockResolvedValue({
       valid: true,
       formName: FormNames.Application,
-      data: { data: {} },
+      data: { data },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
+  });
+
+  beforeEach(async () => {
+    MockDate.reset();
   });
 
   it("Should create a change request when the application is completed.", async () => {
@@ -74,7 +85,6 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       { student, programYear },
       {
         applicationStatus: ApplicationStatus.Completed,
-        studentNumber: "987654321",
       },
     );
     const endpoint = `/students/application/${completedApplication.id}/change-request`;
@@ -82,6 +92,8 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
     await mockUserLoginInfo(appModule, student);
+    const now = new Date();
+    MockDate.set(now);
 
     // Act/Assert
     let createApplicationId: number;
@@ -115,8 +127,11 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
         currentAssessment: {
           id: true,
           studentAssessmentStatus: true,
+          studentAssessmentStatusUpdatedOn: true,
           offering: { id: true },
           studentAppeal: { id: true },
+          creator: { id: true },
+          createdAt: true,
         },
       },
       relations: {
@@ -126,19 +141,27 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
         precedingApplication: true,
         student: true,
         applicationEditStatusUpdatedBy: true,
-        currentAssessment: { offering: true, studentAppeal: true },
+        currentAssessment: {
+          offering: true,
+          studentAppeal: true,
+          creator: true,
+        },
       },
       where: {
         id: createApplicationId,
       },
       loadEagerRelations: false,
     });
+    // Expected user object.
+    const expectedUserObject = expect.objectContaining({
+      id: student.user.id,
+    });
     expect(createdApplication).toEqual({
-      id: expect.any(Number),
-      submittedDate: expect.any(Date),
+      id: createApplicationId,
+      submittedDate: now,
       applicationNumber: completedApplication.applicationNumber,
-      relationshipStatus: completedApplication.relationshipStatus,
-      studentNumber: completedApplication.studentNumber,
+      relationshipStatus: defaultPayload.data.relationshipStatus,
+      studentNumber: defaultPayload.data.studentNumber,
       programYear: expect.objectContaining({
         id: completedApplication.programYear.id,
       }),
@@ -154,17 +177,20 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       }),
       student: expect.objectContaining({ id: student.id }),
       applicationStatus: ApplicationStatus.Edited,
-      applicationStatusUpdatedOn: expect.any(Date),
+      applicationStatusUpdatedOn: now,
       applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
-      applicationEditStatusUpdatedOn: expect.any(Date),
-      applicationEditStatusUpdatedBy: expect.objectContaining({
-        id: expect.any(Number),
-      }),
+      applicationEditStatusUpdatedOn: now,
+      applicationEditStatusUpdatedBy: expectedUserObject,
       currentAssessment: expect.objectContaining({
         id: expect.any(Number),
         studentAssessmentStatus: StudentAssessmentStatus.Submitted,
-        offering: { id: completedApplication.currentAssessment.offering.id },
+        studentAssessmentStatusUpdatedOn: now,
+        offering: expect.objectContaining({
+          id: completedApplication.currentAssessment.offering.id,
+        }),
         studentAppeal: null,
+        creator: expectedUserObject,
+        createdAt: now,
       }),
     });
   });

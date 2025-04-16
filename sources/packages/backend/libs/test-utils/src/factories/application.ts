@@ -56,7 +56,6 @@ export function createFakeApplication(
   // TODO get programYear from relations instead of setting the id here.
   application.programYear.id = relations?.programYear?.id ?? 2;
   application.student = relations?.student ?? createFakeStudent();
-  application.studentNumber = options?.initialValue?.studentNumber;
   application.offeringIntensity =
     options?.initialValue?.offeringIntensity ?? OfferingIntensity.partTime;
   application.applicationStatusUpdatedOn =
@@ -261,7 +260,6 @@ export async function saveFakeApplicationDisbursements(
  * @param options additional options:
  * - `applicationStatus` application status for the application.
  * - `applicationNumber` application number for the application.
- * - `studentNumber` student number for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
  * - `applicationData` related application data.
  * - `pirStatus` program info status.
@@ -287,7 +285,6 @@ export async function saveFakeApplication(
     applicationStatus?: ApplicationStatus;
     applicationEditStatus?: ApplicationEditStatus;
     applicationNumber?: string;
-    studentNumber?: string;
     offeringIntensity?: OfferingIntensity;
     applicationData?: ApplicationData;
     pirStatus?: ProgramInfoStatus;
@@ -334,7 +331,6 @@ export async function saveFakeApplication(
         submittedDate: options?.submittedDate,
         applicationEditStatus: options?.applicationEditStatus,
         offeringIntensity: options?.offeringIntensity,
-        studentNumber: options?.studentNumber,
       },
     },
   );

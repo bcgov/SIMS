@@ -387,9 +387,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const auditUser = { id: auditUserId } as User;
     const originalAssessment = new StudentAssessment();
     originalAssessment.triggerType = AssessmentTriggerType.OriginalAssessment;
+    originalAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.Submitted;
+    originalAssessment.studentAssessmentStatusUpdatedOn = now;
     originalAssessment.submittedBy = auditUser;
     originalAssessment.submittedDate = now;
     originalAssessment.creator = auditUser;
+    originalAssessment.createdAt = now;
     originalAssessment.offering = {
       id: application.currentAssessment.offering.id,
     } as EducationProgramOffering;
@@ -403,8 +407,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // Current date is set as submitted date.
     newApplication.submittedDate = now;
     newApplication.applicationNumber = application.applicationNumber;
-    newApplication.relationshipStatus = application.relationshipStatus;
-    newApplication.studentNumber = application.studentNumber;
+    newApplication.relationshipStatus = applicationData.relationshipStatus;
+    newApplication.studentNumber = applicationData.studentNumber;
     newApplication.programYear = application.programYear;
     newApplication.offeringIntensity = application.offeringIntensity;
     newApplication.data = applicationData;
