@@ -215,7 +215,7 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
     });
   });
 
-  it("Should throw a Unauthorized exception when the student does not have a valid SIN.", async () => {
+  it("Should throw an Unauthorized exception when the student does not have a valid SIN.", async () => {
     // Arrange
 
     // Application created with the default student without a valid SIN.
@@ -245,7 +245,7 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       });
   });
 
-  it("Should throw an UnprocessableEntity exception when a change request submission happen for a not allowed program year.", async () => {
+  it("Should throw an UnprocessableEntity exception when a change request submission happens for a not allowed program year.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const completedApplication = await saveFakeApplication(
