@@ -2578,7 +2578,9 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "eod06e7"
+                  "id": "eod06e7",
+                  "isNew": false,
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -2650,7 +2652,7 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "tag": "p",
+                  "tag": "div",
                   "id": "eity25i",
                   "className": "",
                   "tags": [],

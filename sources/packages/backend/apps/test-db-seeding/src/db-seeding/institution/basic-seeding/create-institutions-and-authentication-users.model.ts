@@ -33,6 +33,7 @@ export interface InstitutionBaseData {
   institutionTypeId: number;
   users: InstitutionUserBaseData[];
 }
+const INSTITUTION_TYPE_OUT_OF_PROVINCE = 3;
 
 export const INSTITUTIONS_INITIAL_DATA: InstitutionBaseData[] = [
   {
@@ -61,7 +62,7 @@ export const INSTITUTIONS_INITIAL_DATA: InstitutionBaseData[] = [
     legalOperatingName: "College D - Business BCeID",
     operatingName: "College D (non-legal operating name)",
     businessGuid: COLLEGE_D_BUSINESS_GUID,
-    institutionTypeId: INSTITUTION_TYPE_BC_PRIVATE,
+    institutionTypeId: INSTITUTION_TYPE_OUT_OF_PROVINCE,
     users: [
       {
         userName: SIMS_COLLD_ADMIN_NON_LEGAL_SIGNING_USER,
