@@ -46,12 +46,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeF: Institution;
-  // BC Private Institution.
+  // BC Private institution.
   let institutionCollegeC: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeCLocation: InstitutionLocation;
   let collegeFUser: User;
-  // BC Public Institution.
+  // BC Private institution user.
   let institutionCollegeCUser: User;
   let studyPeriodBreakdown: Omit<StudyBreaksAndWeeksOutDTO, "studyBreaks">;
   let payload: Partial<EducationProgramOfferingAPIInDTO>;
@@ -65,7 +65,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
-    // Get BC Private Institution and institution user.
+    // Get BC Private institution and institution user.
     const { institution: collegeC, user: collegeCUser } =
       await getAuthRelatedEntities(
         db.dataSource,
@@ -622,6 +622,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
             offeringDeclaration: true,
             offeringStatus: true,
             onlineInstructionMode: true,
+            isOnlineDurationSameAlways: true,
+            totalOnlineDuration: true,
           },
           where: { id: educationProgramOfferingId },
         });
@@ -657,6 +659,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         offeringDeclaration: payload.offeringDeclaration,
         offeringStatus: OfferingStatus.CreationPending,
         onlineInstructionMode: payload.onlineInstructionMode,
+        isOnlineDurationSameAlways: payload.isOnlineDurationSameAlways,
+        totalOnlineDuration: payload.totalOnlineDuration,
       });
     },
   );
