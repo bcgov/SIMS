@@ -224,6 +224,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         applicationStatus: ApplicationStatus.Edited,
         applicationNumber: savedFirstApplication.applicationNumber,
         offeringInitialValues: offeringInitialValues,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
 
@@ -241,6 +242,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         applicationStatus: ApplicationStatus.InProgress,
         applicationNumber: savedFirstApplication.applicationNumber,
         offeringInitialValues: offeringInitialValues,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
 
