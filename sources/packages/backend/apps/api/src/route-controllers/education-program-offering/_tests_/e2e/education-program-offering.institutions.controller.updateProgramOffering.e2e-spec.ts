@@ -71,16 +71,17 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     collegeCLocation = createFakeInstitutionLocation({
       institution: institutionCollegeC,
     });
-    await authorizeUserTokenForLocation(
+    const authorizeCollegeFPromise = authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    await authorizeUserTokenForLocation(
+    const authorizeCollegeCPromise = authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
     );
+    await Promise.all([authorizeCollegeFPromise, authorizeCollegeCPromise]);
   });
 
   it("Should update a new offering when passed valid data.", async () => {
@@ -199,7 +200,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         institution: collegeF,
         user: collegeFUser,
       });
-      fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
       const savedFakeEducationProgram = await db.educationProgram.save(
         fakeEducationProgram,
       );
@@ -325,7 +325,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         institution: institutionCollegeC,
         user: institutionCollegeCUser,
       });
-      fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
       const savedFakeEducationProgram = await db.educationProgram.save(
         fakeEducationProgram,
       );

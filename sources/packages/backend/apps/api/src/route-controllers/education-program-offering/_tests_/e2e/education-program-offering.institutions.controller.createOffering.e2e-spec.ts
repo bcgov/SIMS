@@ -93,21 +93,26 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     collegeDLocation = createFakeInstitutionLocation({
       institution: institutionCollegeD,
     });
-    await authorizeUserTokenForLocation(
+    const authorizeCollegeFPromise = authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    await authorizeUserTokenForLocation(
+    const authorizeCollegeCPromise = authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
     );
-    await authorizeUserTokenForLocation(
+    const authorizeCollegeDPromise = authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeDUser,
       collegeDLocation,
     );
+    await Promise.all([
+      authorizeCollegeFPromise,
+      authorizeCollegeCPromise,
+      authorizeCollegeDPromise,
+    ]);
     studyBreak = {
       breakStartDate: "2023-12-01",
       breakEndDate: "2024-01-01",
@@ -268,7 +273,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         institution: collegeF,
         user: collegeFUser,
       });
-      fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
       const savedFakeEducationProgram = await db.educationProgram.save(
         fakeEducationProgram,
       );
@@ -389,7 +393,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         institution: collegeF,
         user: collegeFUser,
       });
-      fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
       const savedFakeEducationProgram = await db.educationProgram.save(
         fakeEducationProgram,
       );
@@ -449,7 +452,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       institution: institutionCollegeC,
       user: institutionCollegeCUser,
     });
-    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
     const savedFakeEducationProgram = await db.educationProgram.save(
       fakeEducationProgram,
     );
@@ -569,7 +571,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         institution: institutionCollegeC,
         user: institutionCollegeCUser,
       });
-      fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
       const savedFakeEducationProgram = await db.educationProgram.save(
         fakeEducationProgram,
       );
@@ -693,7 +694,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       institution: institutionCollegeC,
       user: institutionCollegeCUser,
     });
-    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
     const savedFakeEducationProgram = await db.educationProgram.save(
       fakeEducationProgram,
     );
