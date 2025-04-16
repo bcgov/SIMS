@@ -46,16 +46,19 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeF: Institution;
-  // BC Private institution.
-  let institutionCollegeC: Institution;
   let collegeFLocation: InstitutionLocation;
-  let collegeCLocation: InstitutionLocation;
   let collegeFUser: User;
-  // BC Private institution user.
-  let institutionCollegeCUser: User;
   let studyPeriodBreakdown: Omit<StudyBreaksAndWeeksOutDTO, "studyBreaks">;
   let payload: Partial<EducationProgramOfferingAPIInDTO>;
   let studyBreak: StudyBreakAPIOutDTO;
+  // BC Private institution.
+  let institutionCollegeC: Institution;
+  let collegeCLocation: InstitutionLocation;
+  let institutionCollegeCUser: User;
+  // Out of province institution.
+  let institutionCollegeD: Institution;
+  let collegeDLocation: InstitutionLocation;
+  let institutionCollegeDUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -71,14 +74,24 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         db.dataSource,
         InstitutionTokenTypes.CollegeCUser,
       );
-
+    // Get out of province institution and institution user.
+    const { institution: collegeD, user: collegeDUser } =
+      await getAuthRelatedEntities(
+        db.dataSource,
+        InstitutionTokenTypes.CollegeDUser,
+      );
     institutionCollegeC = collegeC;
     institutionCollegeCUser = collegeCUser;
+    institutionCollegeD = collegeD;
+    institutionCollegeDUser = collegeDUser;
     collegeF = institution;
     collegeFUser = institutionUser;
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     collegeCLocation = createFakeInstitutionLocation({
       institution: institutionCollegeC,
+    });
+    collegeDLocation = createFakeInstitutionLocation({
+      institution: institutionCollegeD,
     });
     await authorizeUserTokenForLocation(
       db.dataSource,
@@ -89,6 +102,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
+    );
+    await authorizeUserTokenForLocation(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeDUser,
+      collegeDLocation,
     );
     studyBreak = {
       breakStartDate: "2023-12-01",
@@ -722,6 +740,120 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         ],
         error: "The validated offerings have critical errors.",
       });
+  });
+
+  it("Should create new offering when the institution type is out of province and the offering delivery is online.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeDUser,
+    );
+    const fakeEducationProgram = createFakeEducationProgram({
+      institution: institutionCollegeD,
+      user: institutionCollegeDUser,
+    });
+    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
+    const savedFakeEducationProgram = await db.educationProgram.save(
+      fakeEducationProgram,
+    );
+    const endpoint = `/institutions/education-program-offering/location/${collegeDLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const studyBreak = {
+      breakStartDate: "2023-12-01",
+      breakEndDate: "2024-01-01",
+    };
+    const studyPeriodBreakdown = {
+      totalDays: 304,
+      totalFundedWeeks: 42,
+      fundedStudyPeriodDays: 293,
+      unfundedStudyPeriodDays: 11,
+    };
+    const payload = {
+      offeringName: "Offering 1",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Online,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2023-09-01",
+      studyEndDate: "2024-06-30",
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: studyBreak.breakStartDate,
+          breakEndDate: studyBreak.breakEndDate,
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+    };
+
+    // Act/Assert
+    let educationProgramOfferingId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        educationProgramOfferingId = response.body.id;
+      });
+    const createdEducationProgramOffering =
+      await db.educationProgramOffering.findOne({
+        select: {
+          name: true,
+          studyStartDate: true,
+          studyEndDate: true,
+          actualTuitionCosts: true,
+          programRelatedCosts: true,
+          mandatoryFees: true,
+          exceptionalExpenses: true,
+          offeringDelivered: true,
+          lacksStudyBreaks: true,
+          offeringType: true,
+          offeringIntensity: true,
+          yearOfStudy: true,
+          hasOfferingWILComponent: true,
+          studyBreaks: true as unknown,
+          offeringDeclaration: true,
+          offeringStatus: true,
+        },
+        where: { id: educationProgramOfferingId },
+      });
+    expect(createdEducationProgramOffering).toEqual({
+      name: payload.offeringName,
+      studyStartDate: payload.studyStartDate,
+      studyEndDate: payload.studyEndDate,
+      actualTuitionCosts: payload.actualTuitionCosts,
+      programRelatedCosts: payload.programRelatedCosts,
+      mandatoryFees: payload.mandatoryFees,
+      exceptionalExpenses: payload.exceptionalExpenses,
+      offeringDelivered: payload.offeringDelivered,
+      lacksStudyBreaks: payload.lacksStudyBreaks,
+      offeringType: payload.offeringType,
+      offeringIntensity: payload.offeringIntensity,
+      yearOfStudy: payload.yearOfStudy,
+      hasOfferingWILComponent: payload.hasOfferingWILComponent,
+      studyBreaks: {
+        totalDays: studyPeriodBreakdown.totalDays,
+        studyBreaks: [
+          {
+            breakStartDate: studyBreak.breakStartDate,
+            breakEndDate: studyBreak.breakEndDate,
+            breakDays: 32,
+            eligibleBreakDays: 21,
+            ineligibleBreakDays: 11,
+          },
+        ],
+        totalFundedWeeks: studyPeriodBreakdown.totalFundedWeeks,
+        fundedStudyPeriodDays: studyPeriodBreakdown.fundedStudyPeriodDays,
+        unfundedStudyPeriodDays: studyPeriodBreakdown.unfundedStudyPeriodDays,
+      },
+      offeringDeclaration: payload.offeringDeclaration,
+      offeringStatus: OfferingStatus.CreationPending,
+    });
   });
 
   it("Should not create a new offering when user is read-only.", async () => {
