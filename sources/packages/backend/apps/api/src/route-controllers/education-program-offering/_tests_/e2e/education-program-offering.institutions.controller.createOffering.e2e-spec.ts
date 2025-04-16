@@ -423,6 +423,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
 
   it("Should create a new offering for a BC Private institution when the offering delivery is online.", async () => {
     // Arrange
+    // College C is a BC Private institution.
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
@@ -535,6 +536,188 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       offeringStatus: OfferingStatus.CreationPending,
       onlineInstructionMode: payload.onlineInstructionMode,
     });
+  });
+
+  it(
+    "Should create a new offering for a BC Private institution when the offering delivery is blended" +
+      " and percentage of online duration is always the same.",
+    async () => {
+      // Arrange
+      // College C is a BC Private institution.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeCUser,
+      );
+      const fakeEducationProgram = createFakeEducationProgram({
+        institution: institutionCollegeC,
+        user: institutionCollegeCUser,
+      });
+      fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
+      const savedFakeEducationProgram = await db.educationProgram.save(
+        fakeEducationProgram,
+      );
+      const endpoint = `/institutions/education-program-offering/location/${collegeCLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+      const studyBreak = {
+        breakStartDate: "2023-12-01",
+        breakEndDate: "2024-01-01",
+      };
+      const studyPeriodBreakdown = {
+        totalDays: 304,
+        totalFundedWeeks: 42,
+        fundedStudyPeriodDays: 293,
+        unfundedStudyPeriodDays: 11,
+      };
+      const payload: Partial<EducationProgramOfferingAPIInDTO> = {
+        offeringName: "Offering 1",
+        yearOfStudy: 1,
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringDelivered: OfferingDeliveryOptions.Blended,
+        hasOfferingWILComponent: OfferingYesNoOptions.No,
+        studyStartDate: "2023-09-01",
+        studyEndDate: "2024-06-30",
+        lacksStudyBreaks: false,
+        studyBreaks: [
+          {
+            breakStartDate: studyBreak.breakStartDate,
+            breakEndDate: studyBreak.breakEndDate,
+          },
+        ],
+        offeringType: OfferingTypes.Public,
+        offeringDeclaration: true,
+        actualTuitionCosts: 1234,
+        programRelatedCosts: 3211,
+        mandatoryFees: 456,
+        exceptionalExpenses: 555,
+        onlineInstructionMode: OnlineInstructionModeOptions.SynchronousOnly,
+        isOnlineDurationSameAlways: OfferingYesNoOptions.Yes,
+        totalOnlineDuration: 45,
+      };
+
+      // Act/Assert
+      let educationProgramOfferingId: number;
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .then((response) => {
+          expect(response.body.id).toBeGreaterThan(0);
+          educationProgramOfferingId = response.body.id;
+        });
+      const createdEducationProgramOffering =
+        await db.educationProgramOffering.findOne({
+          select: {
+            name: true,
+            studyStartDate: true,
+            studyEndDate: true,
+            actualTuitionCosts: true,
+            programRelatedCosts: true,
+            mandatoryFees: true,
+            exceptionalExpenses: true,
+            offeringDelivered: true,
+            lacksStudyBreaks: true,
+            offeringType: true,
+            offeringIntensity: true,
+            yearOfStudy: true,
+            hasOfferingWILComponent: true,
+            studyBreaks: true as unknown,
+            offeringDeclaration: true,
+            offeringStatus: true,
+            onlineInstructionMode: true,
+          },
+          where: { id: educationProgramOfferingId },
+        });
+      expect(createdEducationProgramOffering).toEqual({
+        name: payload.offeringName,
+        studyStartDate: payload.studyStartDate,
+        studyEndDate: payload.studyEndDate,
+        actualTuitionCosts: payload.actualTuitionCosts,
+        programRelatedCosts: payload.programRelatedCosts,
+        mandatoryFees: payload.mandatoryFees,
+        exceptionalExpenses: payload.exceptionalExpenses,
+        offeringDelivered: payload.offeringDelivered,
+        lacksStudyBreaks: payload.lacksStudyBreaks,
+        offeringType: payload.offeringType,
+        offeringIntensity: payload.offeringIntensity,
+        yearOfStudy: payload.yearOfStudy,
+        hasOfferingWILComponent: payload.hasOfferingWILComponent,
+        studyBreaks: {
+          totalDays: studyPeriodBreakdown.totalDays,
+          studyBreaks: [
+            {
+              breakStartDate: studyBreak.breakStartDate,
+              breakEndDate: studyBreak.breakEndDate,
+              breakDays: 32,
+              eligibleBreakDays: 21,
+              ineligibleBreakDays: 11,
+            },
+          ],
+          totalFundedWeeks: studyPeriodBreakdown.totalFundedWeeks,
+          fundedStudyPeriodDays: studyPeriodBreakdown.fundedStudyPeriodDays,
+          unfundedStudyPeriodDays: studyPeriodBreakdown.unfundedStudyPeriodDays,
+        },
+        offeringDeclaration: payload.offeringDeclaration,
+        offeringStatus: OfferingStatus.CreationPending,
+        onlineInstructionMode: payload.onlineInstructionMode,
+      });
+    },
+  );
+
+  it("Should throw bad request error when trying to create offering for a BC Private institution when the offering delivery is online and mode of online instruction is not provided.", async () => {
+    // Arrange
+    // College C is a BC Private institution.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
+    const fakeEducationProgram = createFakeEducationProgram({
+      institution: institutionCollegeC,
+      user: institutionCollegeCUser,
+    });
+    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
+    const savedFakeEducationProgram = await db.educationProgram.save(
+      fakeEducationProgram,
+    );
+    const endpoint = `/institutions/education-program-offering/location/${collegeCLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const studyBreak = {
+      breakStartDate: "2023-12-01",
+      breakEndDate: "2024-01-01",
+    };
+    const payload: Partial<EducationProgramOfferingAPIInDTO> = {
+      offeringName: "Offering 1",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Online,
+      hasOfferingWILComponent: OfferingYesNoOptions.No,
+      studyStartDate: "2023-09-01",
+      studyEndDate: "2024-06-30",
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: studyBreak.breakStartDate,
+          breakEndDate: studyBreak.breakEndDate,
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: [
+          `Online instruction mode must be one of the following options: ${Object.values(
+            OnlineInstructionModeOptions,
+          ).join(",")}`,
+        ],
+        error: "The validated offerings have critical errors.",
+      });
   });
 
   it("Should not create a new offering when user is read-only.", async () => {
