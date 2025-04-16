@@ -76,6 +76,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       },
       {
         offeringInitialValues: offeringInitialValues,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
 
@@ -202,6 +203,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       {
         applicationStatus: ApplicationStatus.Edited,
         offeringInitialValues: offeringInitialValues,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     firstApplication.parentApplication = {
