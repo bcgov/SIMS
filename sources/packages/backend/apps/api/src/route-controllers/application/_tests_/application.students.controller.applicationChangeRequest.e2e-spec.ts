@@ -195,7 +195,7 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
     });
   });
 
-  describe("Should throw an UnprocessableEntity exception when the application edit status is considered 'in-progress'", () => {
+  describe("Should throw an UnprocessableEntity exception when there is already an in-progress change request application", () => {
     APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES.forEach((status) => {
       it(`with an edit status defined as '${status}'.`, async () => {
         // Arrange
