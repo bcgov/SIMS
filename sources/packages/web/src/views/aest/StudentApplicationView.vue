@@ -36,7 +36,7 @@ import {
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
-import { useFormioUtils } from "@/composables";
+import { useFormioUtils, useOffering } from "@/composables";
 import {
   ChangeTypes,
   FormIOComponent,
@@ -64,6 +64,7 @@ export default defineComponent({
   },
   setup(props) {
     const { emptyStringFiller } = useFormatters();
+    const { mapOfferingIntensity } = useOffering();
     const { searchByKey } = useFormioUtils();
     const applicationDetail = ref({} as ApplicationSupplementalDataAPIOutDTO);
     const initialData = ref({});
@@ -95,6 +96,9 @@ export default defineComponent({
       selectedForm.value = applicationDetail.value.applicationFormName;
       initialData.value = {
         ...applicationDetail.value.data,
+        applicationOfferingIntensity: mapOfferingIntensity(
+          applicationDetail.value.applicationOfferingIntensity,
+        ),
         isReadOnly: true,
       };
     });

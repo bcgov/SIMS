@@ -122,6 +122,7 @@ export class ApplicationBaseAPIOutDTO {
   assessmentId?: number;
   data: ApplicationFormData;
   applicationStatus: ApplicationStatus;
+  applicationOfferingIntensity: OfferingIntensity;
   applicationFormName: string;
   applicationProgramYearID: number;
   /**
@@ -138,7 +139,6 @@ export class ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
    * associated with the current offering or the selected intensity in the application
    * if the offering is not available (if a PIR is needed).
    */
-  applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate: string;
   applicationEndDate: string;
   applicationInstitutionName: string;
@@ -161,7 +161,6 @@ export class ApplicationDataChangeAPIOutDTO {
 
 export class ApplicationSupplementalDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   studentFullName: string;
-  applicationOfferingIntensity?: OfferingIntensity;
   applicationStartDate?: string;
   applicationEndDate?: string;
   applicationInstitutionName?: string;

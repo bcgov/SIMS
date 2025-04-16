@@ -567,8 +567,7 @@ export class ApplicationControllerService {
       applicationFormName: application.programYear.formName,
       applicationProgramYearID: application.programYear.id,
       studentFullName: getUserFullName(application.student.user),
-      applicationOfferingIntensity:
-        application.currentAssessment?.offering?.offeringIntensity,
+      applicationOfferingIntensity: application.offeringIntensity,
       applicationStartDate:
         application.currentAssessment?.offering?.studyStartDate,
       applicationEndDate: application.currentAssessment?.offering?.studyEndDate,
@@ -661,8 +660,7 @@ export class ApplicationControllerService {
       applicationStatus: applicationDetail.applicationStatus,
       applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,
       applicationNumber: applicationDetail.applicationNumber,
-      applicationOfferingIntensity:
-        offering?.offeringIntensity ?? applicationDetail.offeringIntensity,
+      applicationOfferingIntensity: applicationDetail.offeringIntensity,
       applicationStartDate: getDateOnlyFormat(offering?.studyStartDate),
       applicationEndDate: getDateOnlyFormat(offering?.studyEndDate),
       applicationInstitutionName: applicationDetail?.location?.name,

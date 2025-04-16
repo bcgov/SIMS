@@ -30,6 +30,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationBaseAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
 import StudentApplication from "@/components/common/StudentApplication.vue";
+import { useOffering } from "@/composables";
 
 export default defineComponent({
   components: {
@@ -47,6 +48,7 @@ export default defineComponent({
   },
   setup(props) {
     const applicationDetail = ref({} as ApplicationBaseAPIOutDTO);
+    const { mapOfferingIntensity } = useOffering();
     const initialData = ref({});
     const selectedForm = ref();
 
@@ -61,6 +63,9 @@ export default defineComponent({
       selectedForm.value = applicationDetail.value.applicationFormName;
       initialData.value = {
         ...applicationDetail.value.data,
+        applicationOfferingIntensity: mapOfferingIntensity(
+          applicationDetail.value.applicationOfferingIntensity,
+        ),
         isReadOnly: true,
       };
     });

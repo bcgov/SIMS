@@ -44,6 +44,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       {},
       {
         offeringInitialValues: offeringInitialValues,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
 
@@ -89,6 +90,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       {},
       {
         offeringInitialValues: offeringInitialValues,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
 
@@ -125,8 +127,10 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       "the optional query parameter to load dynamic data is not passed.",
     async () => {
       // Arrange
+      const applicationOfferingIntensity = OfferingIntensity.fullTime;
       const application = await saveFakeApplication(db.dataSource, undefined, {
         applicationStatus: ApplicationStatus.Edited,
+        offeringIntensity: applicationOfferingIntensity,
       });
 
       await db.application.save(application);
@@ -149,8 +153,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
           applicationFormName: "SFAA2022-23",
           applicationProgramYearID: application.programYear.id,
           studentFullName: getUserFullName(application.student.user),
-          applicationOfferingIntensity:
-            application.currentAssessment.offering.offeringIntensity,
+          applicationOfferingIntensity: applicationOfferingIntensity,
           applicationStartDate:
             application.currentAssessment.offering.studyStartDate,
           applicationEndDate:
@@ -263,6 +266,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
       {
         applicationStatus: ApplicationStatus.Edited,
         offeringInitialValues: offeringInitialValues,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     firstApplication.parentApplication = {
@@ -283,6 +287,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         applicationStatus: ApplicationStatus.Edited,
         applicationNumber: savedFirstApplication.applicationNumber,
         offeringInitialValues: offeringInitialValues,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
 
@@ -300,6 +305,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         applicationStatus: ApplicationStatus.InProgress,
         applicationNumber: savedFirstApplication.applicationNumber,
         offeringInitialValues: offeringInitialValues,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
 
