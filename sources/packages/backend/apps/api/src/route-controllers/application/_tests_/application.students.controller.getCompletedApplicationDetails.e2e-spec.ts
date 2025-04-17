@@ -24,9 +24,13 @@ import {
   MSFAAStates,
   saveFakeStudent,
   createFakeDisbursementValue,
+  saveFakeApplication,
+  createFakeCRAIncomeVerification,
+  createFakeSupportingUser,
 } from "@sims/test-utils";
 import {
   Application,
+  ApplicationEditStatus,
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   AssessmentTriggerType,
@@ -43,11 +47,13 @@ import {
   StudentAppealStatus,
   StudentScholasticStanding,
   StudentScholasticStandingChangeType,
+  SupportingUserType,
   User,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
+import { SuccessWaitingStatus } from "../models/application.dto";
 
 describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", () => {
   let app: INestApplication;
@@ -907,6 +913,214 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         });
     },
   );
+
+  it("Should get application with change request details when there is an in-progress change request pending Ministry approval.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
+    const [firstDisbursement] =
+      application.currentAssessment.disbursementSchedules;
+    // Change request for the existing application.
+    const changeRequestApplication = await saveFakeApplication(
+      appDataSource,
+      {
+        student: sharedStudent,
+        parentApplication: application,
+        precedingApplication: application,
+      },
+      {
+        applicationStatus: ApplicationStatus.Edited,
+        applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
+      },
+    );
+
+    const endpoint = `/students/application/${application.id}/completed`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        firstDisbursement: {
+          coeStatus: firstDisbursement.coeStatus,
+          disbursementScheduleStatus:
+            firstDisbursement.disbursementScheduleStatus,
+        },
+        assessmentTriggerType: application.currentAssessment.triggerType,
+        hasBlockFundingFeedbackError: false,
+        eCertFailedValidations: [],
+        changeRequestInProgress: {
+          applicationId: changeRequestApplication.id,
+          applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
+        },
+      });
+  });
+
+  it("Should get application with change request details including waiting student income and waiting partner data when there is an in-progress change request with a partner associated.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
+    const [firstDisbursement] =
+      application.currentAssessment.disbursementSchedules;
+    // Change request for the existing application.
+    const changeRequestApplication = await saveFakeApplication(
+      appDataSource,
+      {
+        student: sharedStudent,
+        parentApplication: application,
+        precedingApplication: application,
+      },
+      {
+        applicationStatus: ApplicationStatus.Edited,
+        applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
+      },
+    );
+    // Create CRA income verifications for student.
+    const studentCRAIncomeVerification = createFakeCRAIncomeVerification({
+      application: changeRequestApplication,
+      applicationEditStatusUpdatedBy: sharedStudent.user,
+    });
+    await db.craIncomeVerification.save(studentCRAIncomeVerification);
+    // Create supporting users.
+    const partner = createFakeSupportingUser(
+      { application: changeRequestApplication },
+      {
+        initialValues: {
+          supportingUserType: SupportingUserType.Partner,
+        },
+      },
+    );
+    await db.supportingUser.save(partner);
+
+    const endpoint = `/students/application/${application.id}/completed`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        firstDisbursement: {
+          coeStatus: firstDisbursement.coeStatus,
+          disbursementScheduleStatus:
+            firstDisbursement.disbursementScheduleStatus,
+        },
+        assessmentTriggerType: application.currentAssessment.triggerType,
+        hasBlockFundingFeedbackError: false,
+        eCertFailedValidations: [],
+        changeRequestInProgress: {
+          applicationId: changeRequestApplication.id,
+          applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
+          studentIncomeVerificationStatus: SuccessWaitingStatus.Waiting,
+          partnerInfo: SuccessWaitingStatus.Waiting,
+        },
+      });
+  });
+
+  it("Should get application with change request details including a received student income, parent 1 waiting income, parent 2 waiting data when there is an in-progress change request with parents associated.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      { student: sharedStudent, msfaaNumber: sharedSignedMSFAANumber },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
+    const [firstDisbursement] =
+      application.currentAssessment.disbursementSchedules;
+    // Change request for the existing application.
+    const changeRequestApplication = await saveFakeApplication(
+      appDataSource,
+      {
+        student: sharedStudent,
+        parentApplication: application,
+        precedingApplication: application,
+      },
+      {
+        applicationStatus: ApplicationStatus.Edited,
+        applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
+      },
+    );
+    // Create supporting user parent 1 with data received waiting for income verification.
+    const parentWaitingIncome = createFakeSupportingUser(
+      { application: changeRequestApplication },
+      {
+        initialValues: {
+          supportingUserType: SupportingUserType.Parent,
+          supportingData: { someDataReceived: "some value" },
+        },
+      },
+    );
+    // Create supporting user parent 2 waiting for its data.
+    const parentWaitingData = createFakeSupportingUser(
+      { application: changeRequestApplication },
+      {
+        initialValues: {
+          supportingUserType: SupportingUserType.Parent,
+        },
+      },
+    );
+    await db.supportingUser.save([parentWaitingIncome, parentWaitingData]);
+    // Create CRA income verifications for the student.
+    const studentCompletedIncomeCRAVerification =
+      createFakeCRAIncomeVerification(
+        {
+          application: changeRequestApplication,
+        },
+        {
+          initialValues: { dateReceived: new Date() },
+        },
+      );
+    // Create CRA income verifications for parent 1 waiting for income verification.
+    const parentWaitingIncomeCRAVerification = createFakeCRAIncomeVerification({
+      application: changeRequestApplication,
+      supportingUser: parentWaitingIncome,
+    });
+    await db.craIncomeVerification.save([
+      studentCompletedIncomeCRAVerification,
+      parentWaitingIncomeCRAVerification,
+    ]);
+
+    const endpoint = `/students/application/${application.id}/completed`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        firstDisbursement: {
+          coeStatus: firstDisbursement.coeStatus,
+          disbursementScheduleStatus:
+            firstDisbursement.disbursementScheduleStatus,
+        },
+        assessmentTriggerType: application.currentAssessment.triggerType,
+        hasBlockFundingFeedbackError: false,
+        eCertFailedValidations: [],
+        changeRequestInProgress: {
+          applicationId: changeRequestApplication.id,
+          applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
+          studentIncomeVerificationStatus: SuccessWaitingStatus.Success,
+          parent1Info: SuccessWaitingStatus.Success,
+          parent1IncomeVerificationStatus: SuccessWaitingStatus.Waiting,
+          parent2Info: SuccessWaitingStatus.Waiting,
+        },
+      });
+  });
 
   afterAll(async () => {
     await app?.close();
