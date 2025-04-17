@@ -1032,7 +1032,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       });
   });
 
-  it("Should get application with change request details including with a received student income, parent 1 waiting income, parent 2 waiting data when there is an in-progress change request with parents associated.", async () => {
+  it("Should get application with change request details including a received student income, parent 1 waiting income, parent 2 waiting data when there is an in-progress change request with parents associated.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
