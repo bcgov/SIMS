@@ -923,7 +923,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     );
     const [firstDisbursement] =
       application.currentAssessment.disbursementSchedules;
-    await disbursementScheduleRepo.save(firstDisbursement);
     // Change request for the existing application.
     const changeRequestApplication = await saveFakeApplication(
       appDataSource,
@@ -973,7 +972,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     );
     const [firstDisbursement] =
       application.currentAssessment.disbursementSchedules;
-    await disbursementScheduleRepo.save(firstDisbursement);
     // Change request for the existing application.
     const changeRequestApplication = await saveFakeApplication(
       appDataSource,
@@ -992,7 +990,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       application: changeRequestApplication,
       applicationEditStatusUpdatedBy: sharedStudent.user,
     });
-    await db.craIncomeVerification.save([studentCRAIncomeVerification]);
+    await db.craIncomeVerification.save(studentCRAIncomeVerification);
     // Create supporting users.
     const partner = createFakeSupportingUser(
       { application: changeRequestApplication },
@@ -1041,7 +1039,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
     );
     const [firstDisbursement] =
       application.currentAssessment.disbursementSchedules;
-    await disbursementScheduleRepo.save(firstDisbursement);
     // Change request for the existing application.
     const changeRequestApplication = await saveFakeApplication(
       appDataSource,
