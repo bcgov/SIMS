@@ -395,9 +395,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const auditUser = { id: auditUserId } as User;
     const originalAssessment = new StudentAssessment();
     originalAssessment.triggerType = AssessmentTriggerType.OriginalAssessment;
+    originalAssessment.studentAssessmentStatus =
+      StudentAssessmentStatus.Submitted;
+    originalAssessment.studentAssessmentStatusUpdatedOn = now;
     originalAssessment.submittedBy = auditUser;
     originalAssessment.submittedDate = now;
     originalAssessment.creator = auditUser;
+    originalAssessment.createdAt = now;
     originalAssessment.offering = {
       id: application.currentAssessment.offering.id,
     } as EducationProgramOffering;

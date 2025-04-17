@@ -81,6 +81,15 @@
         "problemMatcher": []
       },
       {
+        "label": "Database - Reset for API E2E Tests",
+        "type": "shell",
+        "command": "npm run db:seed:test:clean && npm run test:e2e:api:seed",
+        "options": {
+          "cwd": "${workspaceFolder:Backend}"
+        },
+        "problemMatcher": []
+      },
+      {
         "label": "View Outdated Web Packages",
         "type": "shell",
         "command": "npm outdated",
