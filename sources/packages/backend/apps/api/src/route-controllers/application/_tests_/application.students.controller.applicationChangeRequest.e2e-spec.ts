@@ -152,46 +152,32 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       },
       loadEagerRelations: false,
     });
-    // Expected user object.
-    const expectedUserObject = expect.objectContaining({
-      id: student.user.id,
-    });
     expect(createdApplication).toEqual({
       id: createApplicationId,
       submittedDate: now,
       applicationNumber: completedApplication.applicationNumber,
       relationshipStatus: defaultPayload.data.relationshipStatus,
       studentNumber: defaultPayload.data.studentNumber,
-      programYear: expect.objectContaining({
-        id: completedApplication.programYear.id,
-      }),
+      programYear: { id: completedApplication.programYear.id },
       offeringIntensity: completedApplication.offeringIntensity,
-      location: expect.objectContaining({
-        id: completedApplication.location.id,
-      }),
-      parentApplication: expect.objectContaining({
-        id: completedApplication.id,
-      }),
-      precedingApplication: expect.objectContaining({
-        id: completedApplication.id,
-      }),
-      student: expect.objectContaining({ id: student.id }),
+      location: { id: completedApplication.location.id },
+      parentApplication: { id: completedApplication.id },
+      precedingApplication: { id: completedApplication.id },
+      student: { id: student.id },
       applicationStatus: ApplicationStatus.Edited,
       applicationStatusUpdatedOn: now,
       applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
       applicationEditStatusUpdatedOn: now,
-      applicationEditStatusUpdatedBy: expectedUserObject,
-      currentAssessment: expect.objectContaining({
+      applicationEditStatusUpdatedBy: { id: student.user.id },
+      currentAssessment: {
         id: expect.any(Number),
         studentAssessmentStatus: StudentAssessmentStatus.Submitted,
         studentAssessmentStatusUpdatedOn: now,
-        offering: expect.objectContaining({
-          id: completedApplication.currentAssessment.offering.id,
-        }),
+        offering: { id: completedApplication.currentAssessment.offering.id },
         studentAppeal: null,
-        creator: expectedUserObject,
+        creator: { id: student.user.id },
         createdAt: now,
-      }),
+      },
     });
   });
 

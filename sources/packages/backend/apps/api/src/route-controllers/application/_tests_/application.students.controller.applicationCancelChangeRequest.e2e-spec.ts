@@ -85,8 +85,6 @@ describe("ApplicationStudentsController(e2e)-applicationCancelChangeRequest", ()
             applicationEditStatusUpdatedBy: true,
             modifier: true,
             currentAssessment: {
-              offering: true,
-              studentAppeal: true,
               modifier: true,
             },
           },
@@ -95,26 +93,22 @@ describe("ApplicationStudentsController(e2e)-applicationCancelChangeRequest", ()
           },
           loadEagerRelations: false,
         });
-        // Expected user object.
-        const expectedUserObject = expect.objectContaining({
-          id: student.user.id,
-        });
         // Expected updated fields.
         expect(cancelledChangeRequestApplication).toEqual({
           id: completedApplication.id,
           applicationEditStatus: ApplicationEditStatus.ChangeCancelled,
           applicationEditStatusUpdatedOn: now,
-          applicationEditStatusUpdatedBy: expectedUserObject,
-          modifier: expectedUserObject,
+          applicationEditStatusUpdatedBy: { id: student.user.id },
+          modifier: { id: student.user.id },
           updatedAt: now,
-          currentAssessment: expect.objectContaining({
+          currentAssessment: {
             id: completedApplication.currentAssessment.id,
             studentAssessmentStatus:
               StudentAssessmentStatus.CancellationRequested,
             studentAssessmentStatusUpdatedOn: now,
-            modifier: expectedUserObject,
+            modifier: { id: student.user.id },
             updatedAt: now,
-          }),
+          },
         });
       });
     });
