@@ -152,7 +152,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "craIncomeVerification.id",
         "craIncomeVerification.craReportedIncome",
         "craIncomeVerification.taxYear",
-        "craIncomeVerification.supportingUser.id",
+        "incomeVerificationSupportingUser.id",
         "studentAppeal.id",
         "appealRequest.id",
         "institutionLocation.data",
@@ -176,6 +176,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         { appealStatus: StudentAppealStatus.Approved },
       )
       .leftJoin("application.craIncomeVerifications", "craIncomeVerification")
+      .leftJoin(
+        "craIncomeVerification.supportingUser",
+        "incomeVerificationSupportingUser",
+      )
       .where("assessment.id = :assessmentId", {
         assessmentId,
       })
