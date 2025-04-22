@@ -16,6 +16,7 @@ import {
   StudentAssessmentStatus,
   ApplicationEditStatus,
   ApplicationEditStatusInProgress,
+  SupportingUserType,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
@@ -263,12 +264,25 @@ export class ApplicationWarningsAPIOutDTO {
   canAcceptAssessment: boolean;
 }
 
+export interface ApplicationSupportingUsersAPIOutDTO {
+  supportingUserId: number;
+  supportingUserType: SupportingUserType;
+}
+
+export class ApplicationSupportingUsersAPIOutDTO {
+  supportingUserId: number;
+  supportingUserType: SupportingUserType;
+}
+
 export class ApplicationVersionAPIOutDTO {
   id: number;
   submittedDate: Date;
   applicationEditStatus: ApplicationEditStatus;
+  supportingUsers: ApplicationSupportingUsersAPIOutDTO[];
 }
 
 export class ApplicationOverallDetailsAPIOutDTO {
+  currentApplication: ApplicationVersionAPIOutDTO;
+  inProgressChangeRequest?: ApplicationVersionAPIOutDTO;
   previousVersions: ApplicationVersionAPIOutDTO[];
 }

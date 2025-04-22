@@ -15,7 +15,6 @@ import {
   ApplicationOfferingChangeRequestService,
   CRAIncomeVerificationService,
   SupportingUserService,
-  APPLICATION_NOT_FOUND,
   FormService,
 } from "../../services";
 import {
@@ -47,7 +46,6 @@ import {
   ApplicationDataChange,
   getDateOnlyFormat,
   compareApplicationData,
-  CustomNamedError,
 } from "@sims/utilities";
 import {
   Application,
@@ -822,27 +820,52 @@ export class ApplicationControllerService {
     applicationId: number,
     options?: { studentId?: number },
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
-    try {
-      const applications =
-        await this.applicationService.getAllApplicationVersions(applicationId, {
-          studentId: options?.studentId,
-        });
-      return {
-        previousVersions: applications.map((application) => ({
-          id: application.id,
-          submittedDate: application.submittedDate,
-          applicationEditStatus: application.applicationEditStatus,
-        })),
-      };
-    } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === APPLICATION_NOT_FOUND
-      ) {
-        throw new NotFoundException("Application not found.");
-      }
-      throw error;
+    const application = await this.applicationService.getAllApplicationVersions(
+      applicationId,
+      {
+        studentId: options?.studentId,
+      },
+    );
+    if (!application) {
+      throw new NotFoundException("Application not found.");
     }
+    const currentApplication = {
+      id: application.id,
+      submittedDate: application.submittedDate,
+      applicationEditStatus: application.applicationEditStatus,
+      supportingUsers: application.supportingUsers.map((user) => ({
+        supportingUserId: user.id,
+        supportingUserType: user.supportingUserType,
+      })),
+    };
+    let previousVersions = application.parentApplication.versions.map(
+      (version) => ({
+        id: version.id,
+        submittedDate: version.submittedDate,
+        applicationEditStatus: version.applicationEditStatus,
+        supportingUsers: version.supportingUsers.map((user) => ({
+          supportingUserId: user.id,
+          supportingUserType: user.supportingUserType,
+        })),
+      }),
+    );
+    // Check if there is an in-progress change request for the application.
+    const inProgressChangeRequest = previousVersions.find((version) =>
+      APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES.includes(
+        version.applicationEditStatus,
+      ),
+    );
+    // Remove the in-progress change request from the previous versions list.
+    if (inProgressChangeRequest) {
+      previousVersions = previousVersions.filter(
+        (version) => version.id !== inProgressChangeRequest.id,
+      );
+    }
+    return {
+      currentApplication,
+      inProgressChangeRequest,
+      previousVersions,
+    };
   }
 
   /**

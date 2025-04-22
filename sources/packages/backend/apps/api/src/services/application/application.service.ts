@@ -2180,22 +2180,39 @@ export class ApplicationService extends RecordDataModelService<Application> {
   async getAllApplicationVersions(
     applicationId: number,
     options?: { studentId?: number },
-  ): Promise<Application[]> {
+  ): Promise<Application> {
     const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
         "application.id",
+        "application.applicationEditStatus",
+        "application.submittedDate",
         "parentApplication.id",
         "version.id",
         "version.submittedDate",
         "version.applicationEditStatus",
+        "version.submittedDate",
+        "supportingUser.id",
+        "supportingUser.supportingUserType",
+        "versionSupportingUser.id",
+        "versionSupportingUser.supportingUserType",
       ])
       .innerJoin("application.parentApplication", "parentApplication")
+      .leftJoin(
+        "application.supportingUsers",
+        "supportingUser",
+        "supportingUser.id IS NOT NULL",
+      )
       .leftJoin(
         "parentApplication.versions",
         "version",
         "version.applicationStatus = :editedStatus",
         { editedStatus: ApplicationStatus.Edited },
+      )
+      .leftJoin(
+        "version.supportingUsers",
+        "versionSupportingUser",
+        "versionSupportingUser.id IS NOT NULL",
       )
       .where("application.id = :applicationId", {
         applicationId: applicationId,
@@ -2206,14 +2223,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         studentId: options.studentId,
       });
     }
-    const application = await applicationQuery.getOne();
-    if (!application) {
-      throw new CustomNamedError(
-        "Application not found.",
-        APPLICATION_NOT_FOUND,
-      );
-    }
-    return application.parentApplication.versions;
+    return applicationQuery.getOne();
   }
 
   /**
