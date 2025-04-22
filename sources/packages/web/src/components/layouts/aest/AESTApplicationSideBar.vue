@@ -12,7 +12,10 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, SupportingUserType } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
-import { ApplicationOverallDetailsAPIOutDTO } from "@/services/http/dto";
+import {
+  ApplicationOverallDetailsAPIOutDTO,
+  ApplicationSupportingUsersAPIOutDTO,
+} from "@/services/http/dto";
 
 export interface StudentApplicationMenu {
   studentApplication: MenuItemModel;
@@ -40,10 +43,11 @@ export default defineComponent({
     const { getISODateHourMinuteString } = useFormatters();
     const overallDetails = ref<ApplicationOverallDetailsAPIOutDTO | null>(null);
 
-    const currentApplicationMenuItems = computed(() => {
-      const currentVersion = overallDetails.value?.currentApplication;
-      const supportingUsers =
-        currentVersion?.supportingUsers.map((supportingUser, index) => {
+    const createSupportingUsersMenu = (
+      supportingUsers?: ApplicationSupportingUsersAPIOutDTO[],
+    ) => {
+      return (
+        supportingUsers?.map((supportingUser, index) => {
           const title =
             supportingUser.supportingUserType === SupportingUserType.Parent
               ? `Parent ${index + 1}`
@@ -62,11 +66,22 @@ export default defineComponent({
               },
             },
           };
-        }) ?? [];
+        }) ?? []
+      );
+    };
+
+    const currentApplicationMenuItems = computed(() => {
+      const currentVersion = overallDetails.value?.currentApplication;
+      const supportingUsers = createSupportingUsersMenu(
+        currentVersion?.supportingUsers,
+      );
       return [
         {
           title: "Current application",
           props: {
+            style: {
+              color: "gray",
+            },
             subtitle: `Submitted on ${getISODateHourMinuteString(
               currentVersion?.submittedDate,
             )}`,
@@ -140,6 +155,9 @@ export default defineComponent({
       if (!inProgressChangeRequest) {
         return [];
       }
+      const supportingUsers = createSupportingUsersMenu(
+        inProgressChangeRequest?.supportingUsers,
+      );
       const menuItems = [
         {
           type: "divider",
@@ -153,6 +171,9 @@ export default defineComponent({
         {
           title: "Change request",
           props: {
+            style: {
+              color: "gray",
+            },
             subtitle: `Submitted on ${getISODateHourMinuteString(
               inProgressChangeRequest?.submittedDate,
             )}`,
@@ -175,6 +196,7 @@ export default defineComponent({
             },
           },
         },
+        ...supportingUsers,
       ];
       return menuItems;
     });
@@ -197,6 +219,9 @@ export default defineComponent({
         {
           title: "Versions",
           props: {
+            style: {
+              color: "gray",
+            },
             subtitle: "Past submitted applications",
             slim: true,
           },
