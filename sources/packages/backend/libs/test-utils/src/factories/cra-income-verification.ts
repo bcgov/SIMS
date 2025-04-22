@@ -30,6 +30,8 @@ export function createFakeCRAIncomeVerification(
   const application =
     relations?.application ?? createFakeApplication(relations);
   craIncomeVerification.taxYear = options?.initialValues?.taxYear ?? 2022;
+  craIncomeVerification.craReportedIncome =
+    options?.initialValues?.craReportedIncome ?? null;
   craIncomeVerification.reportedIncome =
     options?.initialValues?.reportedIncome ?? 5000;
   craIncomeVerification.application = application;
