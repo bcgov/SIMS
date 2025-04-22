@@ -63,7 +63,7 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
       const programYear = application.programYear;
       const program = offering.educationProgram;
 
-      const customHeaders: ICustomHeaders = createBaseCustomHeaders();
+      const customHeaders = createBaseCustomHeaders();
 
       // Act
       const result = await assessmentController.loadAssessmentConsolidatedData(
@@ -165,7 +165,7 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
       const programYear = application.programYear;
       const program = offering.educationProgram;
 
-      const customHeaders: ICustomHeaders = {
+      const customHeaders = {
         ...createBaseCustomHeaders(),
         partner1SupportingUserId: "$.supportingUsers.Partner1.id",
         partner1CRAReportedIncome:
