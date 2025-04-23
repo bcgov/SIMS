@@ -2171,11 +2171,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get all the application versions for an application through parent application.
+   * Get the active application version and all past versions
+   * for an application through parent application.
    * @param applicationId application id.
    * @param options query options.
    * - `studentId` student ID used for authorization.
-   * @returns application versions if any, otherwise empty array.
+   * @returns active (current) application and its versions, if any.
    */
   async getAllApplicationVersions(
     applicationId: number,

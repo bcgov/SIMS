@@ -72,7 +72,7 @@ export default defineComponent({
     };
 
     /**
-     * Create one more more menu items for one to tow parents or one partner.
+     * Create one or more menu items for one to two parents or one partner.
      * @param supportingUsers supporting users information.
      */
     const createSupportingUsersMenu = (

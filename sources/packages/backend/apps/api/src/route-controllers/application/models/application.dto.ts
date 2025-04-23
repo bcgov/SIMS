@@ -274,6 +274,11 @@ export class ApplicationSupportingUsersAPIOutDTO {
   supportingUserType: SupportingUserType;
 }
 
+/**
+ * Represents a version of an application at any given time,
+ * including the current application, any in-progress
+ * change requests, and any past versions.
+ */
 export class ApplicationVersionAPIOutDTO {
   id: number;
   submittedDate: Date;
@@ -281,6 +286,11 @@ export class ApplicationVersionAPIOutDTO {
   supportingUsers: ApplicationSupportingUsersAPIOutDTO[];
 }
 
+/**
+ * Represents the overall details of an application,
+ * including the current application, any in-progress
+ * change requests, and any previous versions.
+ */
 export class ApplicationOverallDetailsAPIOutDTO {
   currentApplication: ApplicationVersionAPIOutDTO;
   inProgressChangeRequest?: ApplicationVersionAPIOutDTO;

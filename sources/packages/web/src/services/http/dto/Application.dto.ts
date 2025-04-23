@@ -226,6 +226,11 @@ export class ApplicationSupportingUsersAPIOutDTO {
   supportingUserType: SupportingUserType;
 }
 
+/**
+ * Represents a version of an application at any given time,
+ * including the current application, any in-progress
+ * change requests, and any past versions.
+ */
 export interface ApplicationVersionAPIOutDTO {
   id: number;
   submittedDate: Date;
