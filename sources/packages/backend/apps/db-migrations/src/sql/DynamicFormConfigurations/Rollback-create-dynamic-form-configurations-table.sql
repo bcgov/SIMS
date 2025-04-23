@@ -1,0 +1,1 @@
+DROP TABLE sims.dynamic_form_configurations;
