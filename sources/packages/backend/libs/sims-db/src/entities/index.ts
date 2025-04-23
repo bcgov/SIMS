@@ -110,3 +110,4 @@ export * from "./restriction-bypass-behaviors.type";
 export * from "./beta-users-authorizations.model";
 export * from "./sfas-bridge-log.model";
 export * from "./application-edit-status.type";
+export * from "./dynamic-form-configuration.model";
