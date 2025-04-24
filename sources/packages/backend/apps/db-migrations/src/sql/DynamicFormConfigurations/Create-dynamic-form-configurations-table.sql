@@ -16,7 +16,7 @@ COMMENT ON TABLE sims.dynamic_form_configurations IS 'Dynamic form configuration
 
 COMMENT ON COLUMN sims.dynamic_form_configurations.id IS 'Auto-generated sequential primary key column.';
 
-COMMENT ON COLUMN sims.dynamic_form_configurations.form_type IS 'Form type which is configured.';
+COMMENT ON COLUMN sims.dynamic_form_configurations.form_type IS 'Form type which is dynamically configured.';
 
 COMMENT ON COLUMN sims.dynamic_form_configurations.program_year_id IS 'Program year to identify the dynamic form for the form type.';
 

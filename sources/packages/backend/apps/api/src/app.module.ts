@@ -33,6 +33,7 @@ import { QueueModule } from "@sims/services/queue";
 import { AppExternalModule } from "./app.external.module";
 import { AccessLoggerMiddleware } from "./middlewares";
 import { TerminusModule } from "@nestjs/terminus";
+import { DynamicFormConfigurationModule } from "./dynamic-form-configuration.module";
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { TerminusModule } from "@nestjs/terminus";
     QueueModule,
     ClamAntivirusModule,
     TerminusModule,
+    DynamicFormConfigurationModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,

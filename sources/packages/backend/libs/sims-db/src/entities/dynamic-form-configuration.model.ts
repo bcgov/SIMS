@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { BaseModel, OfferingIntensity, ProgramYear } from ".";
+import { BaseModel, DynamicFormType, OfferingIntensity, ProgramYear } from ".";
 import { ColumnNames, TableNames } from "../constant";
 
 /**
@@ -20,12 +20,12 @@ export class DynamicFormConfiguration extends BaseModel {
   id: number;
 
   /**
-   * Form type which is configured.
+   * Form type which is dynamically configured.
    */
   @Column({
     name: "form_type",
   })
-  formType: string;
+  formType: DynamicFormType;
 
   /**
    * Program year to identify the dynamic form for the form type.

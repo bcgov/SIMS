@@ -12,6 +12,7 @@ import { KeycloakConfig } from "@sims/auth/config";
 import helmet from "helmet";
 import { SystemUsersService } from "@sims/services";
 import { AppExternalModule } from "./app.external.module";
+import { DynamicFormConfigurationService } from "apps/api/src/services";
 
 async function bootstrap() {
   await KeycloakConfig.load();
@@ -26,6 +27,12 @@ async function bootstrap() {
   logger.log("Loading system user...");
   const systemUsersService = app.get(SystemUsersService);
   await systemUsersService.loadSystemUser();
+
+  // Load dynamic form configurations.
+  const dynamicFormConfigurationService = app.get(
+    DynamicFormConfigurationService,
+  );
+  await dynamicFormConfigurationService.loadAllDynamicFormConfigurations();
 
   // Setting global prefix
   app.setGlobalPrefix("api", { exclude: ["health"] });
