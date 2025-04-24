@@ -2192,7 +2192,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "version.id",
         "version.submittedDate",
         "version.applicationEditStatus",
-        "version.submittedDate",
         "supportingUser.id",
         "supportingUser.supportingUserType",
         "versionSupportingUser.id",
