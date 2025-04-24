@@ -1751,7 +1751,7 @@
                   "lockKey": true
                 },
                 {
-                  "label": "Your program is not listed",
+                  "label": "Your program is not listed.",
                   "optionsLabelPosition": "right",
                   "hideLabel": true,
                   "tableView": false,
@@ -1761,7 +1761,7 @@
                   },
                   "values": [
                     {
-                      "label": "Your program is not listed",
+                      "label": "Your program is not listed.",
                       "value": "programnotListed",
                       "shortcut": ""
                     }
@@ -3615,13 +3615,13 @@
                   "lockKey": true
                 },
                 {
-                  "label": "Your study dates are not listed",
+                  "label": "Your study dates are not listed.",
                   "optionsLabelPosition": "right",
                   "hideLabel": true,
                   "tableView": false,
                   "values": [
                     {
-                      "label": "Your study dates are not listed",
+                      "label": "Your study dates are not listed.",
                       "value": "offeringnotListed",
                       "shortcut": ""
                     }
@@ -31883,7 +31883,7 @@
           "id": "eiwesth"
         },
         {
-          "label": "I give StudentAid BC consent to verify the data I have provided in my application",
+          "label": "I give StudentAid BC consent to verify the data I have provided in my application.",
           "labelWidth": "",
           "labelMargin": "",
           "description": "",
