@@ -5,7 +5,7 @@ CREATE TABLE sims.dynamic_form_configurations(
     offering_intensity sims.offering_intensity,
     form_definition_name VARCHAR(100) NOT NULL,
     -- Audit columns.
-    -- Creator and modifier are not provided as the configurations cannot by created or updated by application users.
+    -- Creator and modifier are not provided as the configurations cannot be created or updated by application users.
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     CONSTRAINT form_type_program_year_offering_intensity_unique UNIQUE (form_type, program_year_id, offering_intensity)

@@ -21,9 +21,12 @@ export class DynamicFormConfiguration extends BaseModel {
 
   /**
    * Form type which is dynamically configured.
+   * The column is a varchar in the database to allow for future expansion of form types
+   * without database migrations.
    */
   @Column({
     name: "form_type",
+    type: "varchar",
   })
   formType: DynamicFormType;
 
