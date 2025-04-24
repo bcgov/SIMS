@@ -16,8 +16,13 @@ export interface MenuModel {
 export interface MenuItemModel {
   title?: string;
   props?: {
+    subtitle?: string;
+    class?: string;
     prependIcon?: string;
     to?: RouteLocationRaw;
+    slim?: boolean;
+    color?: string | null;
+    opacity?: number;
   };
   type?: string;
   children?: MenuItemModel[];

@@ -1,43 +1,24 @@
 <template>
   <v-navigation-drawer app color="default" permanent width="300">
     <v-list
-      :items="activeApplicationMenuItems"
+      :items="menuItems"
       density="compact"
-      bg-color="default"
       color="primary"
-    ></v-list>
-    <v-list
-      :items="changeRequestMenuItems"
-      density="compact"
       bg-color="default"
-      color="primary"
-    ></v-list>
-    <v-list
-      :items="versionsMenuItems"
-      density="compact"
-      bg-color="default"
-    ></v-list>
+    />
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
-import { ref, onMounted, defineComponent, computed } from "vue";
+import { ref, onMounted, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, SupportingUserType } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
-import { useFormatters } from "@/composables";
+import { useFormatters, useApplication } from "@/composables";
 import {
-  ApplicationOverallDetailsAPIOutDTO,
   ApplicationSupportingUsersAPIOutDTO,
   ApplicationVersionAPIOutDTO,
 } from "@/services/http/dto";
-
-export interface StudentApplicationMenu {
-  studentApplication: MenuItemModel;
-  assessments: MenuItemModel;
-  applicationRestrictionsManagement: MenuItemModel;
-  applicationStatus: MenuItemModel;
-}
 
 export default defineComponent({
   props: {
@@ -56,18 +37,29 @@ export default defineComponent({
   },
   setup(props) {
     const { getISODateHourMinuteString } = useFormatters();
-    const overallDetails = ref<ApplicationOverallDetailsAPIOutDTO | null>(null);
+    const { mapApplicationEditStatusForMinistry } = useApplication();
+    const menuItems = ref<MenuItemModel[]>([]);
+
+    onMounted(async () => {
+      const overallDetails =
+        await ApplicationService.shared.getApplicationOverallDetails(
+          props.applicationId,
+        );
+      menuItems.value = [
+        ...createCurrentApplicationMenuItems(overallDetails.currentApplication),
+        ...createChangeRequestMenuItems(overallDetails.inProgressChangeRequest),
+        ...createVersionsMenuItems(overallDetails.previousVersions),
+      ];
+    });
 
     /**
      * Basic divider for the sections.
      */
-    const DIVIDER_MENU_ITEM = {
+    const DIVIDER_MENU_ITEM: MenuItemModel = {
       type: "divider",
       props: {
-        class: "my-1",
-        style: {
-          backgroundColor: "gray",
-        },
+        opacity: 0.75,
+        class: "mx-2",
       },
     };
 
@@ -77,7 +69,7 @@ export default defineComponent({
      */
     const createSupportingUsersMenu = (
       supportingUsers?: ApplicationSupportingUsersAPIOutDTO[],
-    ) => {
+    ): MenuItemModel[] => {
       return (
         supportingUsers?.map((supportingUser, index) => {
           const title =
@@ -108,11 +100,13 @@ export default defineComponent({
      */
     const createApplicationVersionMenu = (
       applicationVersion: ApplicationVersionAPIOutDTO,
-    ) => {
+    ): MenuItemModel => {
       return {
         title: "Application",
         props: {
-          subtitle: applicationVersion.applicationEditStatus,
+          subtitle: mapApplicationEditStatusForMinistry(
+            applicationVersion.applicationEditStatus,
+          ),
           prependIcon: "mdi-school-outline",
           slim: true,
           to: {
@@ -131,8 +125,9 @@ export default defineComponent({
      * Create the menu for the current application (Active).
      * @param applicationVersion application version information.
      */
-    const activeApplicationMenuItems = computed(() => {
-      const currentVersion = overallDetails.value?.currentApplication;
+    const createCurrentApplicationMenuItems = (
+      currentVersion: ApplicationVersionAPIOutDTO,
+    ): MenuItemModel[] => {
       const supportingUsers = createSupportingUsersMenu(
         currentVersion?.supportingUsers,
       );
@@ -149,7 +144,9 @@ export default defineComponent({
         {
           title: "Application",
           props: {
-            subtitle: currentVersion?.applicationEditStatus,
+            subtitle: mapApplicationEditStatusForMinistry(
+              currentVersion.applicationEditStatus,
+            ),
             prependIcon: "mdi-school-outline",
             slim: true,
             to: {
@@ -205,15 +202,15 @@ export default defineComponent({
           },
         },
       ];
-    });
+    };
 
     /**
      * Create the menu for an in-progress change (Pending Change Request).
-     * @param applicationVersion application version information.
+     * @param inProgressChangeRequest application version information.
      */
-    const changeRequestMenuItems = computed(() => {
-      const inProgressChangeRequest =
-        overallDetails.value?.inProgressChangeRequest;
+    const createChangeRequestMenuItems = (
+      inProgressChangeRequest?: ApplicationVersionAPIOutDTO,
+    ): MenuItemModel[] => {
       if (!inProgressChangeRequest) {
         return [];
       }
@@ -238,22 +235,22 @@ export default defineComponent({
         ...supportingUsersMenuItems,
       ];
       return menuItems;
-    });
+    };
 
     /**
      * Create the menu for the past applications (Application History).
      * @param applicationVersion application version information.
      */
-    const versionsMenuItems = computed(() => {
-      const versions = overallDetails.value?.previousVersions;
+    const createVersionsMenuItems = (
+      versions?: ApplicationVersionAPIOutDTO[],
+    ): MenuItemModel[] => {
       if (!versions?.length) {
         return [];
       }
-      const menuItems = [
+      const menuItems: MenuItemModel[] = [
         DIVIDER_MENU_ITEM,
         {
           title: "Application History",
-          class: "mb-10",
           props: {
             subtitle: "Past submitted applications",
             slim: true,
@@ -263,14 +260,18 @@ export default defineComponent({
       versions.forEach((version) => {
         menuItems.push({
           title: `${getISODateHourMinuteString(version.submittedDate)}`,
+          props: {
+            color: null,
+          },
           children: [
             {
               title: "Application",
               props: {
                 slim: true,
-                color: "primary",
                 prependIcon: "mdi-school-outline",
-                subtitle: version.applicationEditStatus,
+                subtitle: mapApplicationEditStatusForMinistry(
+                  version.applicationEditStatus,
+                ),
                 to: {
                   name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
                   params: {
@@ -285,19 +286,10 @@ export default defineComponent({
         });
       });
       return menuItems;
-    });
-
-    onMounted(async () => {
-      overallDetails.value =
-        await ApplicationService.shared.getApplicationOverallDetails(
-          props.applicationId,
-        );
-    });
+    };
 
     return {
-      activeApplicationMenuItems,
-      changeRequestMenuItems,
-      versionsMenuItems,
+      menuItems,
     };
   },
 });
