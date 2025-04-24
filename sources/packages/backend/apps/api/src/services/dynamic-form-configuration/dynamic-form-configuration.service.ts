@@ -27,7 +27,7 @@ export class DynamicFormConfigurationService {
         select: {
           id: true,
           formType: true,
-          programYear: { id: true, programYear: true },
+          programYear: { id: true },
           offeringIntensity: true,
           formDefinitionName: true,
         },
@@ -44,7 +44,7 @@ export class DynamicFormConfigurationService {
    * @param offeringIntensity offering intensity.
    * @returns form definition name.
    */
-  getFormByFormTypeAndProgramYear(
+  getDynamicFormName(
     dynamicFormType: DynamicFormType,
     programYearId: number,
     offeringIntensity?: OfferingIntensity,
