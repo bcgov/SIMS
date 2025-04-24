@@ -1,4 +1,4 @@
-import { OfferingIntensity, SupportingUserType } from "@/types";
+import { OfferingIntensity } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { Expose } from "class-transformer";
 
@@ -46,11 +46,6 @@ export interface ApplicationAPIOutDTO {
   programYearStartDate: string;
   formName: string;
   offeringIntensity: OfferingIntensity;
-}
-
-export interface ApplicationSupportingUsersAPIOutDTO {
-  supportingUserId: number;
-  supportingUserType: SupportingUserType;
 }
 
 export interface SupportingUserFormDataAPIOutDTO {
