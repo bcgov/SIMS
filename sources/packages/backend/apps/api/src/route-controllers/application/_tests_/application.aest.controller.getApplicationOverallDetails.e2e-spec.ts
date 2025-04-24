@@ -75,6 +75,11 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
+        currentApplication: {
+          id: currentApplication.id,
+          submittedDate: currentApplication.submittedDate.toISOString(),
+          applicationEditStatus: currentApplication.applicationEditStatus,
+        },
         previousVersions: [
           {
             id: secondVersionApplication.id,
@@ -92,7 +97,7 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
       });
   });
 
-  it("Should get no application versions in overall details when there is no edited application associated with the given application.", async () => {
+  it("Should get the original application and no application versions in overall details when there is no edited application associated with the given application.", async () => {
     // Arrange
     // Create the parent application and also the first application version.
     const originalApplication = await saveFakeApplication(db.dataSource);
@@ -106,6 +111,11 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
+        currentApplication: {
+          id: originalApplication.id,
+          submittedDate: originalApplication.submittedDate.toISOString(),
+          applicationEditStatus: originalApplication.applicationEditStatus,
+        },
         previousVersions: [],
       });
   });

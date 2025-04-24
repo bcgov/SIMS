@@ -283,7 +283,7 @@ export class ApplicationVersionAPIOutDTO {
   id: number;
   submittedDate: Date;
   applicationEditStatus: ApplicationEditStatus;
-  supportingUsers: ApplicationSupportingUsersAPIOutDTO[];
+  supportingUsers?: ApplicationSupportingUsersAPIOutDTO[];
 }
 
 /**

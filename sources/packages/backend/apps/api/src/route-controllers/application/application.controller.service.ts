@@ -872,10 +872,12 @@ export class ApplicationControllerService {
       id: application.id,
       submittedDate: application.submittedDate,
       applicationEditStatus: application.applicationEditStatus,
-      supportingUsers: application.supportingUsers.map((user) => ({
-        supportingUserId: user.id,
-        supportingUserType: user.supportingUserType,
-      })),
+      supportingUsers: application.supportingUsers.length
+        ? application.supportingUsers.map((user) => ({
+            supportingUserId: user.id,
+            supportingUserType: user.supportingUserType,
+          }))
+        : undefined,
     };
   }
 
