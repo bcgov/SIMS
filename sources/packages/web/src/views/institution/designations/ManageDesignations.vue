@@ -13,7 +13,7 @@
     >
       <template #subtitle>
         Ensure you have an approved designation to administer financial aid to
-        students
+        students.
         <tooltip-icon
           >You must have the role of a Legal Signing Authority to request a
           designation.</tooltip-icon
