@@ -221,7 +221,7 @@ export interface ApplicationWarningsAPIOutDTO {
   canAcceptAssessment: boolean;
 }
 
-export class ApplicationSupportingUsersAPIOutDTO {
+export interface ApplicationSupportingUsersAPIOutDTO {
   supportingUserId: number;
   supportingUserType: SupportingUserType;
 }
