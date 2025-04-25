@@ -2205,11 +2205,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "version.applicationStatus = :editedStatus",
         { editedStatus: ApplicationStatus.Edited },
       )
-      .leftJoin(
-        "version.supportingUsers",
-        "versionSupportingUser",
-        "versionSupportingUser.id IS NOT NULL",
-      )
+      .leftJoin("version.supportingUsers", "versionSupportingUser")
       .where("application.id = :applicationId", {
         applicationId: applicationId,
       })
