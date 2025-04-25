@@ -3,7 +3,6 @@ import ApiClient from "./http/ApiClient";
 import {
   ApplicationAPIOutDTO,
   ApplicationIdentifierAPIInDTO,
-  ApplicationSupportingUsersAPIOutDTO,
   SupportingUserFormDataAPIOutDTO,
   UpdateSupportingUserAPIInDTO,
 } from "@/services/http/dto";
@@ -33,14 +32,6 @@ export class SupportingUsersService {
     await ApiClient.SupportingUserApi.updateSupportingInformation(
       supportingUserType,
       payload,
-    );
-  }
-
-  async getSupportingUsersForSideBar(
-    applicationId: number,
-  ): Promise<ApplicationSupportingUsersAPIOutDTO[]> {
-    return ApiClient.SupportingUserApi.getSupportingUsersForSideBar(
-      applicationId,
     );
   }
 

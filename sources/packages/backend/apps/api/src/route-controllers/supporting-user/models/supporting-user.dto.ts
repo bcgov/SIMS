@@ -8,7 +8,6 @@ import {
 } from "class-validator";
 import {
   ContactInfo,
-  SupportingUserType,
   APPLICATION_NUMBER_LENGTH,
   USER_LAST_NAME_MAX_LENGTH,
   OfferingIntensity,
@@ -71,11 +70,6 @@ export class ApplicationAPIOutDTO {
   programYearStartDate: string;
   formName: string;
   offeringIntensity: OfferingIntensity;
-}
-
-export class ApplicationSupportingUsersAPIOutDTO {
-  supportingUserId: number;
-  supportingUserType: SupportingUserType;
 }
 
 export class SupportingUserFormDataAPIOutDTO {

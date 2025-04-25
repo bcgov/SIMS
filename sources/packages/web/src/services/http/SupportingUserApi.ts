@@ -3,7 +3,6 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import {
   ApplicationAPIOutDTO,
   ApplicationIdentifierAPIInDTO,
-  ApplicationSupportingUsersAPIOutDTO,
   SupportingUserFormDataAPIOutDTO,
   UpdateSupportingUserAPIInDTO,
 } from "@/services/http/dto";
@@ -26,14 +25,6 @@ export class SupportingUserApi extends HttpBaseClient {
     await this.patchCall(
       this.addClientRoot(`supporting-user/${supportingUserType}`),
       payload,
-    );
-  }
-
-  async getSupportingUsersForSideBar(
-    applicationId: number,
-  ): Promise<ApplicationSupportingUsersAPIOutDTO[]> {
-    return this.getCall<ApplicationSupportingUsersAPIOutDTO[]>(
-      this.addClientRoot(`supporting-user/application/${applicationId}`),
     );
   }
 
