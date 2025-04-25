@@ -24,6 +24,16 @@ export class ZeebeTransportStrategy
   extends Server
   implements CustomTransportStrategy
 {
+  on<
+    EventKey extends string = string,
+    EventCallback extends Function = Function,
+  >(event: EventKey, callback: EventCallback) {
+    throw new Error("Method not implemented.");
+  }
+  unwrap<T>(): T {
+    throw new Error("Method not implemented.");
+  }
+
   constructor(
     private readonly zeebeClient: ZeebeGrpcClient,
     private readonly zeebeHealthIndicator: ZeebeHealthIndicator,
