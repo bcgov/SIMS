@@ -13,7 +13,7 @@ import {
   PendingInvoicePayload,
   SendInvoicesResponse,
 } from "./models/cas-service.model";
-import { AxiosError, AxiosRequestConfig } from "axios";
+import { AxiosError } from "axios";
 import { HttpService } from "@nestjs/axios";
 import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import { stringify } from "querystring";
@@ -69,7 +69,7 @@ export class CASService {
       Authorization: `Basic ${auth}`,
     };
     const body = { grant_type: "client_credentials" };
-    const config: AxiosRequestConfig = {
+    const config = {
       headers,
     };
     const data = stringify(body);
@@ -93,7 +93,7 @@ export class CASService {
    * Get authenticated header to execute API calls.
    * @returns authenticated header configuration.
    */
-  private async getAuthConfig(): Promise<AxiosRequestConfig> {
+  private async getAuthConfig(): Promise<unknown> {
     const auth = await this.getToken();
     const headers = {
       Authorization: `Bearer ${auth.access_token}`,
