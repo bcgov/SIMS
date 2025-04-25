@@ -68,10 +68,10 @@ export default defineComponent({
      * @param supportingUsers supporting users information.
      */
     const createSupportingUsersMenu = (
-      supportingUsers?: ApplicationSupportingUsersAPIOutDTO[],
+      supportingUsers: ApplicationSupportingUsersAPIOutDTO[],
     ): MenuItemModel[] => {
       return (
-        supportingUsers?.map((supportingUser, index) => {
+        supportingUsers.map((supportingUser, index) => {
           const title =
             supportingUser.supportingUserType === SupportingUserType.Parent
               ? `Parent ${index + 1}`
@@ -129,14 +129,14 @@ export default defineComponent({
       currentVersion: ApplicationVersionAPIOutDTO,
     ): MenuItemModel[] => {
       const supportingUsers = createSupportingUsersMenu(
-        currentVersion?.supportingUsers,
+        currentVersion.supportingUsers,
       );
       return [
         {
           title: "Active",
           props: {
             subtitle: `Submitted on ${getISODateHourMinuteString(
-              currentVersion?.submittedDate,
+              currentVersion.submittedDate,
             )}`,
             slim: true,
           },
@@ -242,9 +242,9 @@ export default defineComponent({
      * @param applicationVersion application version information.
      */
     const createVersionsMenuItems = (
-      versions?: ApplicationVersionAPIOutDTO[],
+      versions: ApplicationVersionAPIOutDTO[],
     ): MenuItemModel[] => {
-      if (!versions?.length) {
+      if (!versions.length) {
         return [];
       }
       const menuItems: MenuItemModel[] = [
