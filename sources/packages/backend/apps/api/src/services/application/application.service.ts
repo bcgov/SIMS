@@ -2199,11 +2199,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "versionSupportingUser.supportingUserType",
       ])
       .innerJoin("application.parentApplication", "parentApplication")
-      .leftJoin(
-        "application.supportingUsers",
-        "supportingUser",
-        "supportingUser.id IS NOT NULL",
-      )
+      .leftJoin("application.supportingUsers", "supportingUser")
       .leftJoin(
         "parentApplication.versions",
         "version",
