@@ -22,7 +22,7 @@ COMMENT ON COLUMN sims.dynamic_form_configurations.program_year_id IS 'Program y
 
 COMMENT ON COLUMN sims.dynamic_form_configurations.offering_intensity IS 'Offering intensity to identify the dynamic form for the form type.';
 
-COMMENT ON COLUMN sims.dynamic_form_configurations.form_definition_name IS 'Form definition for the form type based on configurations.';
+COMMENT ON COLUMN sims.dynamic_form_configurations.form_definition_name IS 'Form definition name for the form type based on configurations.';
 
 COMMENT ON COLUMN sims.dynamic_form_configurations.created_at IS 'Record creation timestamp.';
 

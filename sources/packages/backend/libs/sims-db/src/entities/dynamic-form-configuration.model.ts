@@ -53,7 +53,7 @@ export class DynamicFormConfiguration extends BaseModel {
   offeringIntensity?: OfferingIntensity;
 
   /**
-   * Form definition for the form type based on configurations.
+   * Form definition name for the form type based on configurations.
    */
   @Column({
     name: "form_definition_name",

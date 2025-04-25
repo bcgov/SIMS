@@ -10,7 +10,7 @@ import { Repository } from "typeorm";
 @Injectable()
 export class DynamicFormConfigurationService {
   /**
-   * All dynamic form configurations.
+   * @private All dynamic form configurations.
    */
   private dynamicFormConfigurations: DynamicFormConfiguration[] = [];
   constructor(
