@@ -85,6 +85,7 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
           id: currentApplication.id,
           submittedDate: currentApplication.submittedDate.toISOString(),
           applicationEditStatus: currentApplication.applicationEditStatus,
+          supportingUsers: [],
         },
         previousVersions: [
           {
@@ -92,12 +93,14 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
             submittedDate: secondVersionApplication.submittedDate.toISOString(),
             applicationEditStatus:
               secondVersionApplication.applicationEditStatus,
+            supportingUsers: [],
           },
           {
             id: firstVersionApplication.id,
             submittedDate: firstVersionApplication.submittedDate.toISOString(),
             applicationEditStatus:
               firstVersionApplication.applicationEditStatus,
+            supportingUsers: [],
           },
         ],
       });
@@ -121,6 +124,7 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
           id: originalApplication.id,
           submittedDate: originalApplication.submittedDate.toISOString(),
           applicationEditStatus: originalApplication.applicationEditStatus,
+          supportingUsers: [],
         },
         previousVersions: [],
       });
@@ -179,6 +183,7 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
             id: currentApplication.id,
             submittedDate: currentApplication.submittedDate.toISOString(),
             applicationEditStatus: currentApplication.applicationEditStatus,
+            supportingUsers: [],
           },
           inProgressChangeRequest: {
             id: changeRequestApplication.id,
@@ -237,6 +242,7 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
           id: currentApplication.id,
           submittedDate: currentApplication.submittedDate.toISOString(),
           applicationEditStatus: currentApplication.applicationEditStatus,
+          supportingUsers: [],
         },
         previousVersions: [
           {
@@ -244,6 +250,7 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
             submittedDate: changeRequestApplication.submittedDate.toISOString(),
             applicationEditStatus:
               changeRequestApplication.applicationEditStatus,
+            supportingUsers: [],
           },
         ],
       });
