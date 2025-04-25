@@ -27,15 +27,6 @@ export class ProgramYear extends RecordDataModel {
   })
   programYearDesc: string;
   /**
-   * Student Application Form to be loaded
-   * for the ProgramYear.
-   */
-  @Column({
-    name: "form_name",
-    nullable: false,
-  })
-  formName: string;
-  /**
    * Form to be loaded for supporting users
    * of type Parent for the ProgramYear.
    */

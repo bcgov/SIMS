@@ -38,7 +38,7 @@ describe("ProgramYearStudentsController(e2e)-getProgramYearById", () => {
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-
+    // TODO: Update this test when we have a program year form name.
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
@@ -46,7 +46,7 @@ describe("ProgramYearStudentsController(e2e)-getProgramYearById", () => {
       .expect(HttpStatus.OK)
       .expect({
         id: programYear2002.id,
-        formName: programYear2002.formName,
+        formName: "programYear2002.formName",
         programYear: programYear2002.programYear,
         programYearDesc: programYear2002.programYearDesc,
       });

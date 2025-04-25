@@ -3,18 +3,23 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseEnumPipe,
   ParseIntPipe,
 } from "@nestjs/common";
-import { ProgramYearService } from "../../services";
+import {
+  DynamicFormConfigurationService,
+  ProgramYearService,
+} from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ProgramYearAPIOutDTO } from "./models/program-year.dto";
+import { ProgramYearAndFormDetailsAPIOutDTO } from "./models/program-year.dto";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { RequiresStudentAccount } from "../../auth/decorators";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { ProgramYearControllerService } from "./program-year.controller.service";
+import { DynamicFormType, OfferingIntensity } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -24,6 +29,7 @@ export class ProgramYearStudentsController extends BaseController {
   constructor(
     private readonly programYearControllerService: ProgramYearControllerService,
     private readonly programYearService: ProgramYearService,
+    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
   ) {
     super();
   }
@@ -38,27 +44,36 @@ export class ProgramYearStudentsController extends BaseController {
   }
 
   /**
-   * Gets an active program year given an id.
+   * Get program year and form name for an active program year.
    * @param id program year id.
+   * @param offeringIntensity application offering intensity.
    * @returns an active program year with the id provided.
    */
-  @Get(":id/active")
+  @Get(":id/:offeringIntensity")
   @ApiNotFoundResponse({
-    description:
-      "Not able to find an active program year with the provided id.",
+    description: "Program year not found or is not active.",
   })
-  async getActiveProgramYearById(
+  async getProgramYearAndFormDetails(
     @Param("id", ParseIntPipe) id: number,
-  ): Promise<ProgramYearAPIOutDTO> {
+    @Param("offeringIntensity", new ParseEnumPipe(OfferingIntensity))
+    offeringIntensity: OfferingIntensity,
+  ): Promise<ProgramYearAndFormDetailsAPIOutDTO> {
     const programYear = await this.programYearService.getActiveProgramYear(id);
     if (!programYear) {
-      throw new NotFoundException(`Program Year Id ${id} was not found.`);
+      throw new NotFoundException(
+        `Program year ${id} not found or is not active.`,
+      );
     }
+    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
+      DynamicFormType.StudentFinancialAidApplication,
+      programYear.id,
+      offeringIntensity,
+    );
     return {
-      id: programYear.id,
+      programYearId: programYear.id,
       programYear: programYear.programYear,
       programYearDesc: programYear.programYearDesc,
-      formName: programYear.formName,
+      formName,
     };
   }
 }

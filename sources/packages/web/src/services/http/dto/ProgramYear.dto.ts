@@ -1,6 +1,6 @@
-export interface ProgramYearAPIOutDTO {
+export interface ProgramYearAndFormDetailsAPIOutDTO {
   programYear: string;
   programYearDesc: string;
   formName: string;
-  id: number;
+  programYearId: number;
 }

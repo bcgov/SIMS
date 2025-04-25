@@ -530,11 +530,15 @@ export class ApplicationStudentsController extends BaseController {
         applicationId,
         includeInActivePY,
       );
-
+    const formName =
+      this.applicationControllerService.getStudentApplicationFormName(
+        applicationProgramYear.programYear.id,
+        applicationProgramYear.offeringIntensity,
+      );
     return {
       applicationId: applicationId,
       programYearId: applicationProgramYear.programYear.id,
-      formName: applicationProgramYear.programYear.formName,
+      formName,
       active: applicationProgramYear.programYear.active,
     };
   }

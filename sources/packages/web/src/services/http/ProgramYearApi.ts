@@ -1,5 +1,9 @@
+import { OfferingIntensity } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { OptionItemAPIOutDTO, ProgramYearAPIOutDTO } from "@/services/http/dto";
+import {
+  OptionItemAPIOutDTO,
+  ProgramYearAndFormDetailsAPIOutDTO,
+} from "@/services/http/dto";
 
 export class ProgramYearApi extends HttpBaseClient {
   /**
@@ -13,15 +17,17 @@ export class ProgramYearApi extends HttpBaseClient {
   }
 
   /**
-   * Gets an active program year given an id.
+   * Get program year and form name for an active program year.
    * @param id program year id.
+   * @param offeringIntensity application offering intensity.
    * @returns an active program year with the id provided.
    */
-  async getActiveProgramYearById(
+  async getProgramYearAndFormDetails(
     programYearId: number,
-  ): Promise<ProgramYearAPIOutDTO> {
-    return this.getCall<ProgramYearAPIOutDTO>(
-      this.addClientRoot(`program-year/${programYearId}/active`),
+    offeringIntensity: OfferingIntensity,
+  ): Promise<ProgramYearAndFormDetailsAPIOutDTO> {
+    return this.getCall<ProgramYearAndFormDetailsAPIOutDTO>(
+      this.addClientRoot(`program-year/${programYearId}/${offeringIntensity}`),
     );
   }
 }

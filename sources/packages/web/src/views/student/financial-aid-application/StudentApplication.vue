@@ -35,6 +35,7 @@
           class="px-2 pb-4"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Offering intensity')]"
           hide-details="auto"
+          required
         ></v-select>
         <p class="px-2">
           Please select your program year. This is for students attending
@@ -49,6 +50,7 @@
           class="px-2 pb-4"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Year')]"
           hide-details="auto"
+          required
         ></v-select>
         <v-btn
           class="ma-2"
@@ -81,6 +83,7 @@ import {
   SelectItemType,
   LayoutTemplates,
   ApiProcessError,
+  OfferingIntensity,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -98,7 +101,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const programYearOptions = ref([] as SelectItemType[]);
     const programYearId = ref();
-    const offeringIntensity = ref();
+    const offeringIntensity = ref<OfferingIntensity>();
     const startApplicationForm = ref({} as VForm);
     const { checkNullOrEmptyRule } = useRules();
     const { mapOfferingIntensities } = useOffering();
@@ -126,11 +129,13 @@ export default defineComponent({
         if (!validationResult.valid) {
           return;
         }
+        // When the form is valid, the selected offering intensity cannot be null.
+        const selectedIntensity = offeringIntensity.value as OfferingIntensity;
         if (programYearId.value) {
           const { id }: PrimaryIdentifierAPIOutDTO =
             await ApplicationService.shared.createApplicationDraft({
               programYearId: programYearId.value,
-              offeringIntensity: offeringIntensity.value,
+              offeringIntensity: selectedIntensity,
               data: {},
               associatedFiles: [],
             });
@@ -139,15 +144,16 @@ export default defineComponent({
             draftAlreadyExists: false,
             draftId: id,
           };
-          const programYear =
-            await ProgramYearService.shared.getActiveProgramYear(
+          const programYearAndFormDetails =
+            await ProgramYearService.shared.getProgramYearAndFormDetails(
               programYearId.value,
+              selectedIntensity,
             );
-          if (programYear) {
+          if (programYearAndFormDetails) {
             router.push({
               name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
               params: {
-                selectedForm: programYear.formName,
+                selectedForm: programYearAndFormDetails.formName,
                 programYearId: programYearId.value,
                 id: createDraftResult.draftId,
               },

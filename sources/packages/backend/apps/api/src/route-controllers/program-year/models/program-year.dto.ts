@@ -1,6 +1,6 @@
-export class ProgramYearAPIOutDTO {
+export class ProgramYearAndFormDetailsAPIOutDTO {
   programYear: string;
   programYearDesc: string;
   formName: string;
-  id: number;
+  programYearId: number;
 }

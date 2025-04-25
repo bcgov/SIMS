@@ -1,5 +1,9 @@
 import ApiClient from "@/services/http/ApiClient";
-import { OptionItemAPIOutDTO, ProgramYearAPIOutDTO } from "@/services/http/dto";
+import {
+  OptionItemAPIOutDTO,
+  ProgramYearAndFormDetailsAPIOutDTO,
+} from "@/services/http/dto";
+import { OfferingIntensity } from "@/types";
 
 export class ProgramYearService {
   // Share Instance
@@ -13,9 +17,19 @@ export class ProgramYearService {
     return ApiClient.ProgramYear.getProgramYears();
   }
 
-  async getActiveProgramYear(
+  /**
+   * Get program year and form name for an active program year.
+   * @param id program year id.
+   * @param offeringIntensity application offering intensity.
+   * @returns an active program year with the id provided.
+   */
+  async getProgramYearAndFormDetails(
     programYearId: number,
-  ): Promise<ProgramYearAPIOutDTO> {
-    return ApiClient.ProgramYear.getActiveProgramYearById(programYearId);
+    offeringIntensity: OfferingIntensity,
+  ): Promise<ProgramYearAndFormDetailsAPIOutDTO> {
+    return ApiClient.ProgramYear.getProgramYearAndFormDetails(
+      programYearId,
+      offeringIntensity,
+    );
   }
 }
