@@ -258,6 +258,9 @@ export default defineComponent({
         },
       ];
       versions.forEach((version) => {
+        const versionSupportingUsersMenuItems = createSupportingUsersMenu(
+          version.supportingUsers,
+        );
         menuItems.push({
           title: `${getISODateHourMinuteString(version.submittedDate)}`,
           props: {
@@ -282,6 +285,7 @@ export default defineComponent({
                 },
               },
             },
+            ...versionSupportingUsersMenuItems,
           ],
         });
       });
