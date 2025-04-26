@@ -12,6 +12,7 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
+  DynamicFormConfigurationService,
   FormService,
   SupportingUserService,
   UserService,
@@ -37,7 +38,7 @@ import {
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
-import { getSupportingUserForm } from "../../utilities";
+import { getSupportingUserFormType } from "../../utilities";
 import {
   ApiBadRequestResponse,
   ApiTags,
@@ -57,6 +58,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     private readonly userService: UserService,
     private readonly formService: FormService,
     private readonly workflowClientService: WorkflowClientService,
+    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
   ) {
     super();
   }
@@ -113,13 +115,13 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-
+    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
+      getSupportingUserFormType(supportingUserType),
+      application.programYear.id,
+    );
     return {
       programYearStartDate: application.programYear.startDate,
-      formName: getSupportingUserForm(
-        supportingUserType,
-        application.programYear,
-      ),
+      formName,
       offeringIntensity: application.offeringIntensity,
     };
   }
@@ -181,9 +183,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
       );
     }
 
-    const formName = getSupportingUserForm(
-      supportingUserType,
-      application.programYear,
+    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
+      getSupportingUserFormType(supportingUserType),
+      application.programYear.id,
     );
     // Ensure the offering intensity provided is the same from the application.
     if (payload.offeringIntensity !== application.offeringIntensity) {

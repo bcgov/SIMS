@@ -27,24 +27,6 @@ export class ProgramYear extends RecordDataModel {
   })
   programYearDesc: string;
   /**
-   * Form to be loaded for supporting users
-   * of type Parent for the ProgramYear.
-   */
-  @Column({
-    name: "parent_form_name",
-    nullable: false,
-  })
-  parentFormName: string;
-  /**
-   * Form to be loaded for supporting users
-   * of type Partner for the ProgramYear.
-   */
-  @Column({
-    name: "partner_form_name",
-    nullable: false,
-  })
-  partnerFormName: string;
-  /**
    * Program Year Prefix for the
    * particular ProgramYear.
    */

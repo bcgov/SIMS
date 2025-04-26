@@ -5,7 +5,10 @@ import {
   Param,
   ParseIntPipe,
 } from "@nestjs/common";
-import { SupportingUserService } from "../../services";
+import {
+  DynamicFormConfigurationService,
+  SupportingUserService,
+} from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -13,7 +16,7 @@ import {
   ApplicationSupportingUsersAPIOutDTO,
   SupportingUserFormDataAPIOutDTO,
 } from "./models/supporting-user.dto";
-import { getSupportingUserForm } from "../../utilities";
+import { getSupportingUserFormType } from "../../utilities";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 
@@ -22,7 +25,10 @@ import { ClientTypeBaseRoute } from "../../types";
 @Controller("supporting-user")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-supporting-user`)
 export class SupportingUserAESTController {
-  constructor(private readonly supportingUserService: SupportingUserService) {}
+  constructor(
+    private readonly supportingUserService: SupportingUserService,
+    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
+  ) {}
   /**
    * Get the list of supporting users respective to
    * an application id for AEST user.
@@ -66,11 +72,14 @@ export class SupportingUserAESTController {
         `Supporting user ${supportingUserId} details not found or Supporting user has not submitted the form`,
       );
     }
-    return {
-      formName: getSupportingUserForm(
+    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
+      getSupportingUserFormType(
         supportingUserForApplication.supportingUserType,
-        supportingUserForApplication.application.programYear,
       ),
+      supportingUserForApplication.application.programYear.id,
+    );
+    return {
+      formName,
       supportingData: supportingUserForApplication.supportingData,
       contactInfo: supportingUserForApplication.contactInfo,
       sin: supportingUserForApplication.sin,
