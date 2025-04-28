@@ -80,7 +80,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
     description:
       "Not able to find a Student Application with the requested data " +
       "or the user searching for applications to provide data must be " +
-      "different from the user associated with the student application.",
+      "different from the user associated with the student application or " +
+      "dynamic form configuration not found.",
   })
   async getApplicationDetails(
     @UserToken() userToken: IUserToken,
@@ -115,10 +116,16 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
+    const formType = getSupportingUserFormType(supportingUserType);
     const formName = this.dynamicFormConfigurationService.getDynamicFormName(
-      getSupportingUserFormType(supportingUserType),
+      formType,
       { programYearId: application.programYear.id },
     );
+    if (!formName) {
+      throw new UnprocessableEntityException(
+        `Dynamic form configuration for ${formType} not found.`,
+      );
+    }
     return {
       programYearStartDate: application.programYear.startDate,
       formName,
@@ -141,7 +148,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
       "Invalid offering intensity or " +
       "student application not found to update the supporting data or " +
       "the user currently authenticated is the same user that submitted " +
-      "the application or supporting user already submitted the information.",
+      "the application or supporting user already submitted the information or " +
+      "dynamic form configuration not found.",
   })
   @ApiBadRequestResponse({ description: "Invalid request." })
   async updateSupportingInformation(
@@ -182,11 +190,16 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-
+    const formType = getSupportingUserFormType(supportingUserType);
     const formName = this.dynamicFormConfigurationService.getDynamicFormName(
-      getSupportingUserFormType(supportingUserType),
+      formType,
       { programYearId: application.programYear.id },
     );
+    if (!formName) {
+      throw new UnprocessableEntityException(
+        `Dynamic form configuration for ${formType} not found.`,
+      );
+    }
     // Ensure the offering intensity provided is the same from the application.
     if (payload.offeringIntensity !== application.offeringIntensity) {
       throw new UnprocessableEntityException("Invalid offering intensity.");

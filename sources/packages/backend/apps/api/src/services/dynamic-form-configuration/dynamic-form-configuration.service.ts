@@ -48,7 +48,7 @@ export class DynamicFormConfigurationService {
   getDynamicFormName(
     dynamicFormType: DynamicFormType,
     options?: { programYearId?: number; offeringIntensity?: OfferingIntensity },
-  ): string {
+  ): string | undefined {
     const programYearId = options?.programYearId ?? null;
     const offeringIntensity = options?.offeringIntensity ?? null;
     const dynamicForm = this.dynamicFormConfigurations.find(
@@ -57,11 +57,6 @@ export class DynamicFormConfigurationService {
         dynamicFormConfiguration.programYear.id === programYearId &&
         dynamicFormConfiguration.offeringIntensity === offeringIntensity,
     );
-    if (!dynamicForm) {
-      throw new Error(
-        "Form definition for the provided configuration not found.",
-      );
-    }
-    return dynamicForm.formDefinitionName;
+    return dynamicForm?.formDefinitionName;
   }
 }

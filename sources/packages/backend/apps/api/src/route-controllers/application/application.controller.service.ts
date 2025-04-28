@@ -1022,9 +1022,15 @@ export class ApplicationControllerService {
     programYearId: number,
     offeringIntensity: OfferingIntensity,
   ): string {
-    return this.dynamicFormConfigurationService.getDynamicFormName(
+    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
       DynamicFormType.StudentFinancialAidApplication,
       { programYearId, offeringIntensity },
     );
+    if (!formName) {
+      throw new UnprocessableEntityException(
+        `Dynamic form configuration for ${DynamicFormType.StudentFinancialAidApplication} not found.`,
+      );
+    }
+    return formName;
   }
 }

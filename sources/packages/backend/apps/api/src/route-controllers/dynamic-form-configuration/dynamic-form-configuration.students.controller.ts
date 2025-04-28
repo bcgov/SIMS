@@ -1,10 +1,10 @@
 import {
   Controller,
   Get,
-  NotFoundException,
   Param,
   ParseEnumPipe,
   Query,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   DynamicFormConfigurationService,
@@ -14,7 +14,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { RequiresStudentAccount } from "../../auth/decorators";
 import { DynamicFormType } from "@sims/sims-db";
 import {
@@ -44,8 +44,9 @@ export class DynamicFormConfigurationStudentsController extends BaseController {
    * @returns dynamic form configuration.
    */
   @Get("form-type/:formType")
-  @ApiNotFoundResponse({
-    description: "Program year not found or is not active.",
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Dynamic form configuration not found or program year not found or is not active.",
   })
   async getDynamicFormConfiguration(
     @Param("formType", new ParseEnumPipe(DynamicFormType))
@@ -58,7 +59,9 @@ export class DynamicFormConfigurationStudentsController extends BaseController {
         dynamicFormOptions?.programYearId,
       );
       if (!programYear) {
-        throw new NotFoundException(`Program year not found or is not active.`);
+        throw new UnprocessableEntityException(
+          "Program year not found or is not active.",
+        );
       }
     }
     const formDefinitionName =
@@ -66,6 +69,11 @@ export class DynamicFormConfigurationStudentsController extends BaseController {
         programYearId: dynamicFormOptions?.programYearId,
         offeringIntensity: dynamicFormOptions?.offeringIntensity,
       });
+    if (!formDefinitionName) {
+      throw new UnprocessableEntityException(
+        `Dynamic form configuration for ${formType} not found.`,
+      );
+    }
     return { formDefinitionName };
   }
 }

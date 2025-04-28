@@ -4,6 +4,7 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   DynamicFormConfigurationService,
@@ -14,7 +15,11 @@ import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { SupportingUserFormDataAPIOutDTO } from "./models/supporting-user.dto";
 import { getSupportingUserFormType } from "../../utilities";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
@@ -38,6 +43,9 @@ export class SupportingUserAESTController {
     description:
       "Supporting user details not found or Supporting user has not submitted the form.",
   })
+  @ApiUnprocessableEntityResponse({
+    description: "Dynamic form configuration not found.",
+  })
   async getSupportingUserFormDetails(
     @Param("supportingUserId", ParseIntPipe) supportingUserId: number,
   ): Promise<SupportingUserFormDataAPIOutDTO> {
@@ -50,14 +58,20 @@ export class SupportingUserAESTController {
         `Supporting user ${supportingUserId} details not found or Supporting user has not submitted the form`,
       );
     }
+    const formType = getSupportingUserFormType(
+      supportingUserForApplication.supportingUserType,
+    );
     const formName = this.dynamicFormConfigurationService.getDynamicFormName(
-      getSupportingUserFormType(
-        supportingUserForApplication.supportingUserType,
-      ),
+      formType,
       {
         programYearId: supportingUserForApplication.application.programYear.id,
       },
     );
+    if (!formName) {
+      throw new UnprocessableEntityException(
+        `Dynamic form configuration for ${formType} not found.`,
+      );
+    }
     return {
       formName,
       supportingData: supportingUserForApplication.supportingData,
