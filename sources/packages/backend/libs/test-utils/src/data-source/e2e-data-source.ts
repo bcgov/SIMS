@@ -63,6 +63,7 @@ import {
   SFASApplicationDependant,
   SFASApplicationDisbursement,
   InstitutionUser,
+  DynamicFormConfiguration,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -165,6 +166,9 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     studentLoanBalance: dataSource.getRepository(StudentLoanBalance),
     eCertFeedbackError: dataSource.getRepository(ECertFeedbackError),
     sfasBridgeLog: dataSource.getRepository(SFASBridgeLog),
+    dynamicFormConfiguration: dataSource.getRepository(
+      DynamicFormConfiguration,
+    ),
   };
 }
 
@@ -237,4 +241,5 @@ export interface E2EDataSources {
   studentLoanBalance: Repository<StudentLoanBalance>;
   eCertFeedbackError: Repository<ECertFeedbackError>;
   sfasBridgeLog: Repository<SFASBridgeLog>;
+  dynamicFormConfiguration: Repository<DynamicFormConfiguration>;
 }

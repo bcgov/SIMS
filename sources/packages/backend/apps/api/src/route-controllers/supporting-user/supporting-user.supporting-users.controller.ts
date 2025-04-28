@@ -117,7 +117,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     }
     const formName = this.dynamicFormConfigurationService.getDynamicFormName(
       getSupportingUserFormType(supportingUserType),
-      application.programYear.id,
+      { programYearId: application.programYear.id },
     );
     return {
       programYearStartDate: application.programYear.startDate,
@@ -185,7 +185,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
 
     const formName = this.dynamicFormConfigurationService.getDynamicFormName(
       getSupportingUserFormType(supportingUserType),
-      application.programYear.id,
+      { programYearId: application.programYear.id },
     );
     // Ensure the offering intensity provided is the same from the application.
     if (payload.offeringIntensity !== application.offeringIntensity) {

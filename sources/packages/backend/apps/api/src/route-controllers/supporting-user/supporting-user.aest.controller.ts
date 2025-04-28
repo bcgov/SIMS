@@ -54,7 +54,9 @@ export class SupportingUserAESTController {
       getSupportingUserFormType(
         supportingUserForApplication.supportingUserType,
       ),
-      supportingUserForApplication.application.programYear.id,
+      {
+        programYearId: supportingUserForApplication.application.programYear.id,
+      },
     );
     return {
       formName,

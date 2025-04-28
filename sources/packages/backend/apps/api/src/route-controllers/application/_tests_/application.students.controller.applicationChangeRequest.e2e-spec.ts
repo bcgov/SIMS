@@ -15,11 +15,13 @@ import {
   getProviderInstanceForModule,
   saveFakeStudent,
   ensureProgramYearExists,
+  ensureDynamicFormConfigurationExists,
 } from "@sims/test-utils";
 import {
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
   ApplicationEditStatus,
   ApplicationStatus,
+  DynamicFormType,
   ProgramYear,
   RelationshipStatus,
   StudentAssessmentStatus,
@@ -86,6 +88,13 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       {
         applicationStatus: ApplicationStatus.Completed,
       },
+    );
+    // Ensure the dynamic form configuration exists.
+    await ensureDynamicFormConfigurationExists(
+      db,
+      programYear,
+      DynamicFormType.StudentFinancialAidApplication,
+      { offeringIntensity: completedApplication.offeringIntensity },
     );
     const endpoint = `/students/application/${completedApplication.id}/change-request`;
     const token = await getStudentToken(

@@ -1024,8 +1024,7 @@ export class ApplicationControllerService {
   ): string {
     return this.dynamicFormConfigurationService.getDynamicFormName(
       DynamicFormType.StudentFinancialAidApplication,
-      programYearId,
-      offeringIntensity,
+      { programYearId, offeringIntensity },
     );
   }
 }

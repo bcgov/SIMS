@@ -40,22 +40,22 @@ export class DynamicFormConfigurationService {
   /**
    * Get form definition name by form type and program year.
    * @param dynamicFormType dynamic form type.
-   * @param programYearId program year id.
-   * @param offeringIntensity offering intensity.
+   * @param options dynamic form options
+   * - `programYearId` program year id.
+   * - `offeringIntensity` offering intensity.
    * @returns form definition name.
    */
   getDynamicFormName(
     dynamicFormType: DynamicFormType,
-    programYearId: number,
-    offeringIntensity?: OfferingIntensity,
+    options?: { programYearId?: number; offeringIntensity?: OfferingIntensity },
   ): string {
-    const offeringIntensityConfiguration = offeringIntensity ?? null;
+    const programYearId = options?.programYearId ?? null;
+    const offeringIntensity = options?.offeringIntensity ?? null;
     const dynamicForm = this.dynamicFormConfigurations.find(
       (dynamicFormConfiguration) =>
         dynamicFormConfiguration.formType === dynamicFormType &&
         dynamicFormConfiguration.programYear.id === programYearId &&
-        dynamicFormConfiguration.offeringIntensity ===
-          offeringIntensityConfiguration,
+        dynamicFormConfiguration.offeringIntensity === offeringIntensity,
     );
     if (!dynamicForm) {
       throw new Error(

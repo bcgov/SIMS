@@ -84,6 +84,7 @@ import {
   LayoutTemplates,
   ApiProcessError,
   OfferingIntensity,
+  DynamicFormType,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -92,6 +93,7 @@ import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import { PrimaryIdentifierAPIOutDTO } from "@/services/http/dto";
 import { AppConfigService } from "@/services/AppConfigService";
+import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigurationService";
 
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
@@ -100,7 +102,7 @@ export default defineComponent({
     const router = useRouter();
     const snackBar = useSnackBar();
     const programYearOptions = ref([] as SelectItemType[]);
-    const programYearId = ref();
+    const programYearId = ref<number>();
     const offeringIntensity = ref<OfferingIntensity>();
     const startApplicationForm = ref({} as VForm);
     const { checkNullOrEmptyRule } = useRules();
@@ -144,16 +146,19 @@ export default defineComponent({
             draftAlreadyExists: false,
             draftId: id,
           };
-          const programYearAndFormDetails =
-            await ProgramYearService.shared.getProgramYearAndFormDetails(
-              programYearId.value,
-              selectedIntensity,
+          const dynamicFormConfiguration =
+            await DynamicFormConfigurationService.shared.getDynamicFormConfiguration(
+              DynamicFormType.StudentFinancialAidApplication,
+              {
+                programYearId: programYearId.value,
+                offeringIntensity: selectedIntensity,
+              },
             );
-          if (programYearAndFormDetails) {
+          if (dynamicFormConfiguration) {
             router.push({
               name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
               params: {
-                selectedForm: programYearAndFormDetails.formName,
+                selectedForm: dynamicFormConfiguration.formDefinitionName,
                 programYearId: programYearId.value,
                 id: createDraftResult.draftId,
               },
