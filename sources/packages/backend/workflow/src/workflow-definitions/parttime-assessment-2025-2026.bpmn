@@ -594,7 +594,7 @@ dmnX (comes from dmn)</bpmn:text>
         <zeebe:ioMapping>
           <zeebe:output source="=offeringActualTuitionCosts" target="calculatedDataActualTuitionCosts" />
           <zeebe:output source="=offeringMandatoryFees" target="calculatedDataMandatoryFees" />
-          <zeebe:output source="=min(offeringProgramRelatedCosts, dmnPartTimeProgramYearMaximums.limitWeeklyBooksAndSupplies * offeringWeeks)" target="calculatedDataProgramRelatedCosts" />
+          <zeebe:output source="=max(min(offeringProgramRelatedCosts, dmnPartTimeProgramYearMaximums.limitBooksAndSupplies - programYearTotalPartTimeBooksAndSuppliesCost), 0)" target="calculatedDataProgramRelatedCosts" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_08xi7o2</bpmn:incoming>
@@ -687,7 +687,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_19hr2p7" name="calculate CSLP">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=dmnPartTimeAwardAllowableLimits.limitAwardCSLPAmount - latestCSLPBalance" target="limitAwardCSLPRemaining" />
+          <zeebe:output source="=max(dmnPartTimeAwardAllowableLimits.limitAwardCSLPAmount - latestCSLPBalance, 0)" target="limitAwardCSLPRemaining" />
           <zeebe:output source="=if (awardEligibilityCSLP = true)&#10;then&#10;    min(limitAwardCSLPRemaining,calculatedDataTotalRemainingNeed4)&#10;else&#10;0" target="federalAwardNetCSLPAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -853,7 +853,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_1yndxhv" name="awardEligibilityCSGD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;    and (calculatedDataTotalEligibleDependants &#62;= 1)&#10;    and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDThresholdIncome)&#10;then true&#10;else false" target="awardEligibilityCSGD" />
+          <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;    and (calculatedDataTotalEligibleDependants &#62;= 1)&#10;  and (calculatedDataDependants11YearsOrUnder &#62;= 1 or calculatedDataDependants12YearsOverOnTaxes &#62;= 1)&#10;    and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDThresholdIncome)&#10;then true&#10;else false" target="awardEligibilityCSGD" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0f51edb</bpmn:incoming>

@@ -151,7 +151,6 @@ export class AssessmentSequentialProcessingService {
   ): Promise<ProgramYearTotal> {
     // Get the current assessment from the assessment id.
     const currentAssessment = await this.getCurrentAssessment(assessmentId);
-    const offeringIntensity = currentAssessment.offering.offeringIntensity;
     // The chronology of the applications is defined by the method {@link getSequencedApplications}.
     // Only the current assessment awards are considered since it must reflect the most updated
     // workflow calculated values.
@@ -167,7 +166,6 @@ export class AssessmentSequentialProcessingService {
     );
     // Only get the full-time workflow output totals if the offering intensity is full-time.
     const shouldGetProgramYearWorkflowOutputTotals =
-      OfferingIntensity.fullTime === offeringIntensity &&
       !!applicationNumbers?.length;
     const [awardTotals, workflowOutputTotals] = await Promise.all([
       // Get the program year awards totals for part-time and full-time.
@@ -317,30 +315,32 @@ export class AssessmentSequentialProcessingService {
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
       .select(
-        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC')::NUMERIC)",
+        "COALESCE(SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC')::NUMERIC), 0)",
         WorkflowOutputType.FederalFSC,
       )
       .addSelect(
-        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC')::NUMERIC)",
+        "COALESCE(SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC')::NUMERIC), 0)",
         WorkflowOutputType.ProvincialFSC,
       )
       .addSelect(
-        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'exemptScholarshipsBursaries')::NUMERIC)",
+        "COALESCE(SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'exemptScholarshipsBursaries')::NUMERIC), 0)",
         WorkflowOutputType.ScholarshipsBursaries,
       )
       .addSelect(
-        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContributionWeeks')::NUMERIC)",
+        "COALESCE(SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContributionWeeks')::NUMERIC), 0)",
         WorkflowOutputType.SpouseContributionWeeks,
       )
       .addSelect(
-        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalBookCost')::NUMERIC)",
-        WorkflowOutputType.BookCost,
+        "COALESCE(SUM((currentAssessment.assessmentData ->> 'booksAndSuppliesCost')::NUMERIC), 0)",
+        WorkflowOutputType.BooksAndSuppliesCost,
       )
       .addSelect(
-        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'returnTransportationCost')::NUMERIC)",
+        "COALESCE(SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'returnTransportationCost')::NUMERIC), 0)",
         WorkflowOutputType.ReturnTransportationCost,
       )
+      .addSelect("offering.offeringIntensity", "offeringIntensity")
       .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .where("application.applicationNumber IN (:...applicationNumbers)", {
         applicationNumbers,
       }) // Edited application can have awards associated with and they should not be considered.
@@ -354,19 +354,24 @@ export class AssessmentSequentialProcessingService {
           completedStudentAssessmentStatus: StudentAssessmentStatus.Completed,
         },
       )
+      .groupBy("offering.offeringIntensity")
       .getRawOne<{
         [WorkflowOutputType.FederalFSC]: string;
         [WorkflowOutputType.ProvincialFSC]: string;
         [WorkflowOutputType.ScholarshipsBursaries]: string;
         [WorkflowOutputType.SpouseContributionWeeks]: string;
-        [WorkflowOutputType.BookCost]: string;
+        [WorkflowOutputType.BooksAndSuppliesCost]: string;
         [WorkflowOutputType.ReturnTransportationCost]: string;
+        offeringIntensity: OfferingIntensity;
       }>();
 
-    return Object.keys(WorkflowOutputType).map((key) => ({
-      workflowOutput: key as WorkflowOutputType,
-      total: +totals[key] || 0,
-    }));
+    return totals
+      ? Object.keys(WorkflowOutputType).map((key) => ({
+          workflowOutput: key as WorkflowOutputType,
+          total: totals ? +totals[key] : 0,
+          offeringIntensity: totals?.offeringIntensity,
+        }))
+      : null;
   }
 
   /**

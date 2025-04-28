@@ -139,6 +139,7 @@ export interface ProgramYearTotal {
  * Full-time program year cost and contribution and its totals.
  */
 export interface ProgramYearWorkflowOutputTotal {
+  offeringIntensity: OfferingIntensity;
   workflowOutput: WorkflowOutputType;
   total: number;
 }
