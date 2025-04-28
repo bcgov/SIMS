@@ -22,12 +22,14 @@ import {
   ApplicationEditStatus,
   ApplicationStatus,
   DynamicFormType,
+  OfferingIntensity,
   ProgramYear,
   RelationshipStatus,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
 import {
   APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
+  DynamicFormConfigurationService,
   FormNames,
   FormService,
 } from "../../../services";
@@ -41,6 +43,7 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
   let db: E2EDataSources;
   let programYear: ProgramYear;
   let defaultPayload: SaveApplicationAPIInDTO;
+  let dynamicFormConfigurationService: DynamicFormConfigurationService;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -48,6 +51,7 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
+    dynamicFormConfigurationService = app.get(DynamicFormConfigurationService);
     // Program Year for the following tests.
     const formService = await getProviderInstanceForModule(
       appModule,
@@ -55,6 +59,11 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       FormService,
     );
     programYear = await ensureProgramYearExists(db, 2050);
+    // Ensure the dynamic form configuration for part time exists.
+    await createPYStudentApplicationFormConfiguration(
+      programYear,
+      dynamicFormConfigurationService,
+    );
     // Application mocked data.
     const data = {
       relationshipStatus: RelationshipStatus.Other,
@@ -88,13 +97,6 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       {
         applicationStatus: ApplicationStatus.Completed,
       },
-    );
-    // Ensure the dynamic form configuration exists.
-    await ensureDynamicFormConfigurationExists(
-      db,
-      programYear,
-      DynamicFormType.StudentFinancialAidApplication,
-      { offeringIntensity: completedApplication.offeringIntensity },
     );
     const endpoint = `/students/application/${completedApplication.id}/change-request`;
     const token = await getStudentToken(
@@ -295,6 +297,36 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
   });
+
+  /**
+   * Creates a student application form configuration for the given program year for both Full-time and Part-time.
+   * @param programYear program year.
+   */
+  async function createPYStudentApplicationFormConfiguration(
+    programYear: ProgramYear,
+    dynamicFormConfigurationService: DynamicFormConfigurationService,
+  ) {
+    // Ensure the dynamic form configuration exists.
+    const fullTimeConfiguration = ensureDynamicFormConfigurationExists(
+      db,
+      DynamicFormType.StudentFinancialAidApplication,
+      {
+        programYear,
+        offeringIntensity: OfferingIntensity.fullTime,
+      },
+    );
+    const partTimeConfiguration = ensureDynamicFormConfigurationExists(
+      db,
+      DynamicFormType.StudentFinancialAidApplication,
+      {
+        programYear,
+        offeringIntensity: OfferingIntensity.partTime,
+      },
+    );
+    await Promise.all([fullTimeConfiguration, partTimeConfiguration]);
+    // Reload all dynamic form configurations.
+    await dynamicFormConfigurationService.loadAllDynamicFormConfigurations();
+  }
 
   afterAll(async () => {
     await app?.close();

@@ -18,7 +18,7 @@ import * as faker from "faker";
  */
 export function createFakeDynamicFormConfiguration(
   formType: DynamicFormType,
-  relations: { programYear: ProgramYear },
+  relations?: { programYear?: ProgramYear },
   options?: {
     offeringIntensity?: OfferingIntensity;
     formDefinitionName?: string;
@@ -36,17 +36,17 @@ export function createFakeDynamicFormConfiguration(
 /**
  * Ensure dynamic form configuration exists.
  * @param db e2e DataSources.
- * @param programYear program year.
  * @param formType dynamic form type.
  * @param options dynamic form configuration options
  * - `offeringIntensity` offering intensity.
+ * - `programYear` program year.
  * @returns dynamic form configuration.
  */
 export async function ensureDynamicFormConfigurationExists(
   db: E2EDataSources,
-  programYear: ProgramYear,
   formType: DynamicFormType,
   options?: {
+    programYear?: ProgramYear;
     offeringIntensity?: OfferingIntensity;
   },
 ): Promise<DynamicFormConfiguration> {
@@ -61,7 +61,7 @@ export async function ensureDynamicFormConfigurationExists(
       relations: { programYear: true },
       where: {
         formType,
-        programYear: { id: programYear.id },
+        programYear: { id: options?.programYear.id },
         offeringIntensity: options?.offeringIntensity,
       },
     });
@@ -70,7 +70,7 @@ export async function ensureDynamicFormConfigurationExists(
   }
   const dynamicFormConfiguration = createFakeDynamicFormConfiguration(
     formType,
-    { programYear },
+    { programYear: options?.programYear },
     { offeringIntensity: options?.offeringIntensity },
   );
   return db.dynamicFormConfiguration.save(dynamicFormConfiguration);
