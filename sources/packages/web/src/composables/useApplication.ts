@@ -74,9 +74,24 @@ export function useApplication() {
     }
   };
 
+  /**
+   * Application edit status targeting the Ministry.
+   * @param editStatus application edit status.
+   * @returns Ministry friendly edit status.
+   */
+  const mapApplicationEditStatusForMinistry = (
+    editStatus: ApplicationEditStatus,
+  ): string => {
+    if (editStatus === ApplicationEditStatus.ChangedWithApproval) {
+      return "Changed";
+    }
+    return editStatus;
+  };
+
   return {
     mapApplicationChipStatus,
     mapApplicationDetailHeader,
     mapApplicationEditStatusForStudents,
+    mapApplicationEditStatusForMinistry,
   };
 }

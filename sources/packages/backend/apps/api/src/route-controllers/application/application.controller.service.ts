@@ -15,7 +15,6 @@ import {
   ApplicationOfferingChangeRequestService,
   CRAIncomeVerificationService,
   SupportingUserService,
-  APPLICATION_NOT_FOUND,
   FormService,
   DynamicFormConfigurationService,
 } from "../../services";
@@ -34,6 +33,7 @@ import {
   ApplicationOverallDetailsAPIOutDTO,
   SaveApplicationAPIInDTO,
   ChangeRequestInProgressAPIOutDTO,
+  ApplicationVersionAPIOutDTO,
 } from "./models/application.dto";
 import {
   allowApplicationChangeRequest,
@@ -48,7 +48,6 @@ import {
   ApplicationDataChange,
   getDateOnlyFormat,
   compareApplicationData,
-  CustomNamedError,
 } from "@sims/utilities";
 import {
   Application,
@@ -823,7 +822,9 @@ export class ApplicationControllerService {
   }
 
   /**
-   * Get application overall details for the given application.
+   * Get application overall details for the given application,
+   * including the active application, in-progress change request,
+   * and previous versions of the application.
    * @param applicationId application ID.
    * @param options options.
    * - `studentId` student ID used for authorization.
@@ -833,27 +834,60 @@ export class ApplicationControllerService {
     applicationId: number,
     options?: { studentId?: number },
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
-    try {
-      const applications =
-        await this.applicationService.getAllApplicationVersions(applicationId, {
-          studentId: options?.studentId,
-        });
-      return {
-        previousVersions: applications.map((application) => ({
-          id: application.id,
-          submittedDate: application.submittedDate,
-          applicationEditStatus: application.applicationEditStatus,
-        })),
-      };
-    } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === APPLICATION_NOT_FOUND
-      ) {
-        throw new NotFoundException("Application not found.");
-      }
-      throw error;
+    const application = await this.applicationService.getAllApplicationVersions(
+      applicationId,
+      {
+        studentId: options?.studentId,
+      },
+    );
+    if (!application) {
+      throw new NotFoundException("Application not found.");
     }
+    // Current application, the only one that will not have its main status as 'Edited'.
+    const currentApplication =
+      this.transformToApplicationOverallDetailsAPIOutDTO(application);
+    // Convert all the past versions of the application.
+    let previousVersions = application.parentApplication.versions.map(
+      (version) => this.transformToApplicationOverallDetailsAPIOutDTO(version),
+    );
+    // Check if there is an in-progress change request for the application.
+    const inProgressChangeRequest = previousVersions.find((version) =>
+      APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES.includes(
+        version.applicationEditStatus,
+      ),
+    );
+    // Remove the in-progress change request from the previous versions list.
+    // A maximum of one in-progress change request is allowed.
+    if (inProgressChangeRequest) {
+      previousVersions = previousVersions.filter(
+        (version) => version.id !== inProgressChangeRequest.id,
+      );
+    }
+    return {
+      currentApplication,
+      inProgressChangeRequest,
+      previousVersions,
+    };
+  }
+
+  /**
+   * Convert application to the overall details DTO,
+   * including supporting users.
+   * @param application application to be converted.
+   * @returns application overall details DTO.
+   */
+  private transformToApplicationOverallDetailsAPIOutDTO(
+    application: Application,
+  ): ApplicationVersionAPIOutDTO {
+    return {
+      id: application.id,
+      submittedDate: application.submittedDate,
+      applicationEditStatus: application.applicationEditStatus,
+      supportingUsers: application.supportingUsers.map((user) => ({
+        supportingUserId: user.id,
+        supportingUserType: user.supportingUserType,
+      })),
+    };
   }
 
   /**

@@ -15,6 +15,7 @@ import {
   ECertFailedValidation,
   ChangeTypes,
   ApplicationEditStatus,
+  SupportingUserType,
 } from "@/types";
 
 interface ApplicationSupportingUserDetails {
@@ -220,12 +221,25 @@ export interface ApplicationWarningsAPIOutDTO {
   canAcceptAssessment: boolean;
 }
 
+export interface ApplicationSupportingUsersAPIOutDTO {
+  supportingUserId: number;
+  supportingUserType: SupportingUserType;
+}
+
+/**
+ * Represents a version of an application at any given time,
+ * including the current application, any in-progress
+ * change requests, and any past versions.
+ */
 export interface ApplicationVersionAPIOutDTO {
   id: number;
   submittedDate: Date;
   applicationEditStatus: ApplicationEditStatus;
+  supportingUsers: ApplicationSupportingUsersAPIOutDTO[];
 }
 
 export interface ApplicationOverallDetailsAPIOutDTO {
+  currentApplication: ApplicationVersionAPIOutDTO;
+  inProgressChangeRequest?: ApplicationVersionAPIOutDTO;
   previousVersions: ApplicationVersionAPIOutDTO[];
 }
