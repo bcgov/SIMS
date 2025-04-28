@@ -24,16 +24,6 @@ export class ZeebeTransportStrategy
   extends Server
   implements CustomTransportStrategy
 {
-  on<
-    EventKey extends string = string,
-    EventCallback extends Function = Function,
-  >(event: EventKey, callback: EventCallback) {
-    throw new Error("Method not implemented.");
-  }
-  unwrap<T>(): T {
-    throw new Error("Method not implemented.");
-  }
-
   constructor(
     private readonly zeebeClient: ZeebeGrpcClient,
     private readonly zeebeHealthIndicator: ZeebeHealthIndicator,
@@ -122,5 +112,23 @@ export class ZeebeTransportStrategy
     if (this.zeebeClient) {
       await this.zeebeClient.close();
     }
+  }
+
+  /**
+   * Prevents the event listener registration that is not expected for this transport.
+   * This is an abstract method from the Server class.
+   * @see https://docs.nestjs.com/microservices/custom-transport#creating-a-strategy
+   */
+  on() {
+    throw new Error("Not available for this transport strategy.");
+  }
+
+  /**
+   * Prevent the retrieval of the server that does not need to be allowed for this transport
+   * This is an abstract method from the Server class.
+   * @see https://docs.nestjs.com/microservices/custom-transport#creating-a-strategy
+   */
+  unwrap<T = never>(): T {
+    throw new Error("Not available for this transport strategy.");
   }
 }
