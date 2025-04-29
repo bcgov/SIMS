@@ -12,7 +12,7 @@ on:
           - dev
           - test
           - prod
-        default: "test"
+        default: "dev"
       applications:
         description: "Comma seperated list of application Image Streams to prune"
         required: true
