@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Set default inputs when triggered via schedule
         run: |
-          echo "ENVIRONMENT=${{ inputs.environment || 'test' }}" >> $GITHUB_ENV
+          echo "ENVIRONMENT=${{ inputs.environment || 'dev' }}" >> $GITHUB_ENV
           echo "APPLICATIONS=${{ inputs.applications || 'web-sims, api-sims, queue-consumers-sims, workers-sims' }}" >> $GITHUB_ENV
           echo "OCJOBS=${{ inputs.ocjobs || 'db.migrations' }}" >> $GITHUB_ENV
           echo "PREFIX=${{ inputs.prefix || 'main' }}" >> $GITHUB_ENV
