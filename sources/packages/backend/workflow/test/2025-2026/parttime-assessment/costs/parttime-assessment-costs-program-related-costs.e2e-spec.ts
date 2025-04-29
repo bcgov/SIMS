@@ -8,13 +8,12 @@ import {
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-costs.`, () => {
   it(
     "Should get program related costs as offering program related costs when the DMN limit for books and supplies " +
-      "multiplied by offering weeks has the greater value.",
+      "minus the program year total part-time books and supplies cost has the greater value.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.offeringWeeks = 30;
-      // A lower value than dmnPartTimeProgramYearMaximums.limitWeeklyBooksAndSupplies * offeringWeeks.
       assessmentConsolidatedData.offeringProgramRelatedCosts = 1730;
 
       // Act
@@ -31,15 +30,14 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
   );
 
   it(
-    "Should get DMN limit for books and supplies multiplied by offering weeks " +
-      "when offering program related costs has a higher value.",
+    "Should get program related costs as the DMN limit for books and supplies " +
+      "minus the program year total part-time books and supplies cost when offering program related costs has the greater value.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.offeringWeeks = 30;
-      // A higher value than dmnPartTimeProgramYearMaximums.limitWeeklyBooksAndSupplies * offeringWeeks.
-      assessmentConsolidatedData.offeringProgramRelatedCosts = 1750;
+      assessmentConsolidatedData.offeringProgramRelatedCosts = 4000;
 
       // Act
       const calculatedAssessment =
@@ -50,7 +48,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
       // Assert
       expect(
         calculatedAssessment.variables.calculatedDataTotalAssessedNeed,
-      ).toBe(22972);
+      ).toBe(24232);
     },
   );
 

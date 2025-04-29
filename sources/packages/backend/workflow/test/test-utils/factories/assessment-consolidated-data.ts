@@ -207,6 +207,18 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     partner1HasEmploymentInsuranceBenefits: null,
     partner1HasFedralProvincialPDReceipt: null,
     partner1HasTotalIncomeAssistance: null,
+    programYearTotalPartTimeScholarshipsBursaries: 0,
+    programYearTotalFullTimeScholarshipsBursaries: 0,
+    programYearTotalPartTimeSpouseContributionWeeks: 0,
+    programYearTotalFullTimeSpouseContributionWeeks: 0,
+    programYearTotalPartTimeFederalFSC: 0,
+    programYearTotalFullTimeFederalFSC: 0,
+    programYearTotalPartTimeProvincialFSC: 0,
+    programYearTotalFullTimeProvincialFSC: 0,
+    programYearTotalPartTimeBooksAndSuppliesCost: 0,
+    programYearTotalFullTimeBooksAndSuppliesCost: 500,
+    programYearTotalPartTimeReturnTransportationCost: 0,
+    programYearTotalFullTimeReturnTransportationCost: 500,
   } as AssessmentConsolidatedData;
 }
 
