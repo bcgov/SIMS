@@ -1,3 +1,3 @@
-export class DynamicFormConfigurationAPIOutDTO {
+export interface DynamicFormConfigurationAPIOutDTO {
   formDefinitionName: string;
 }

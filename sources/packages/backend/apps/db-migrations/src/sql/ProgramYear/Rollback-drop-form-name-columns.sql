@@ -1,15 +1,9 @@
 ALTER TABLE
     sims.program_years
 ADD
-    COLUMN form_name VARCHAR(100);
-
-ALTER TABLE
-    sims.program_years
+    COLUMN form_name VARCHAR(100),
 ADD
-    COLUMN parent_form_name VARCHAR(100);
-
-ALTER TABLE
-    sims.program_years
+    COLUMN parent_form_name VARCHAR(100),
 ADD
     COLUMN partner_form_name VARCHAR(100);
 

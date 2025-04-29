@@ -154,16 +154,14 @@ export default defineComponent({
                 offeringIntensity: selectedIntensity,
               },
             );
-          if (dynamicFormConfiguration) {
-            router.push({
-              name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
-              params: {
-                selectedForm: dynamicFormConfiguration.formDefinitionName,
-                programYearId: programYearId.value,
-                id: createDraftResult.draftId,
-              },
-            });
-          }
+          router.push({
+            name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
+            params: {
+              selectedForm: dynamicFormConfiguration.formDefinitionName,
+              programYearId: programYearId.value,
+              id: createDraftResult.draftId,
+            },
+          });
         }
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
@@ -173,7 +171,7 @@ export default defineComponent({
           }
         }
         snackBar.error(
-          "An error happened while trying to start a new application.",
+          "An error happened while starting an application or obtaining the dynamic form configuration.",
         );
       }
     };
