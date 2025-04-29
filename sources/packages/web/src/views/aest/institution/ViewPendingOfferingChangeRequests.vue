@@ -1,15 +1,14 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Institution requests" subTitle="Applications" />
+      <header-navigator title="Institution requests" subTitle="Change Requests" />
     </template>
     <body-header
-      title="Requested application changes"
+      title="Pending change requests"
       :recordsCount="applications?.count"
     >
       <template #subtitle>
-        Make a determination on a requested change for a program and offering in
-        an application.
+        Change requests that require ministry review.
       </template>
       <template #actions>
         <v-text-field
