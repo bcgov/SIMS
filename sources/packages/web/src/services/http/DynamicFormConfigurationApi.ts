@@ -28,8 +28,6 @@ export class DynamicFormConfigurationApi extends HttpBaseClient {
     if (parameters.length) {
       url += `?${parameters.join("&")}`;
     }
-    return this.getCall<DynamicFormConfigurationAPIOutDTO>(
-      this.addClientRoot(url),
-    );
+    return this.getCall<DynamicFormConfigurationAPIOutDTO>(url);
   }
 }

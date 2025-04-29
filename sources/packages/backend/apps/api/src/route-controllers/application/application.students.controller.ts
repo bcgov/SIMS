@@ -191,7 +191,7 @@ export class ApplicationStudentsController extends BaseController {
       "or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
       "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
       "or Invalid offering intensity " +
-      "dynamic form configuration not found.",
+      "or dynamic form configuration not found.",
   })
   @ApiBadRequestResponse({
     description: "Form validation failed or Offering intensity type is invalid",

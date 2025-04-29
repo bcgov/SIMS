@@ -1016,6 +1016,7 @@ export class ApplicationControllerService {
    * Get the name of the student application form definition.
    * @param programYearId program year ID.
    * @param offeringIntensity offering intensity.
+   * @throws {UnprocessableEntityException} if dynamic form configuration not found.
    * @returns student application form name.
    */
   getStudentApplicationFormName(

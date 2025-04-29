@@ -10,23 +10,25 @@ import {
   DynamicFormConfigurationService,
   ProgramYearService,
 } from "../../services";
-import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
-import { RequiresStudentAccount } from "../../auth/decorators";
 import { DynamicFormType } from "@sims/sims-db";
 import {
   DynamicFormConfigurationAPIInDTO,
   DynamicFormConfigurationAPIOutDTO,
 } from "..";
 
-@AllowAuthorizedParty(AuthorizedParties.student)
-@RequiresStudentAccount()
+@AllowAuthorizedParty(
+  AuthorizedParties.institution,
+  AuthorizedParties.student,
+  AuthorizedParties.supportingUsers,
+  AuthorizedParties.aest,
+)
 @Controller("dynamic-form-configuration")
-@ApiTags(`${ClientTypeBaseRoute.Student}-dynamic-form-configuration`)
-export class DynamicFormConfigurationStudentsController extends BaseController {
+@ApiTags("dynamic-form-configuration")
+export class DynamicFormConfigurationController extends BaseController {
   constructor(
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
     private readonly programYearService: ProgramYearService,

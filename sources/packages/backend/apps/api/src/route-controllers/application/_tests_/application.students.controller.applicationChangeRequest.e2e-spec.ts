@@ -15,14 +15,12 @@ import {
   getProviderInstanceForModule,
   saveFakeStudent,
   ensureProgramYearExists,
-  ensureDynamicFormConfigurationExists,
+  createPYStudentApplicationFormConfiguration,
 } from "@sims/test-utils";
 import {
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
   ApplicationEditStatus,
   ApplicationStatus,
-  DynamicFormType,
-  OfferingIntensity,
   ProgramYear,
   RelationshipStatus,
   StudentAssessmentStatus,
@@ -59,8 +57,9 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       FormService,
     );
     programYear = await ensureProgramYearExists(db, 2050);
-    // Ensure the dynamic form configuration for part time exists.
+    // Ensure the dynamic form configuration for the program year.
     await createPYStudentApplicationFormConfiguration(
+      db,
       programYear,
       dynamicFormConfigurationService,
     );
@@ -297,36 +296,6 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
   });
-
-  /**
-   * Creates a student application form configuration for the given program year for both Full-time and Part-time.
-   * @param programYear program year.
-   */
-  async function createPYStudentApplicationFormConfiguration(
-    programYear: ProgramYear,
-    dynamicFormConfigurationService: DynamicFormConfigurationService,
-  ) {
-    // Ensure the dynamic form configuration exists.
-    const fullTimeConfiguration = ensureDynamicFormConfigurationExists(
-      db,
-      DynamicFormType.StudentFinancialAidApplication,
-      {
-        programYear,
-        offeringIntensity: OfferingIntensity.fullTime,
-      },
-    );
-    const partTimeConfiguration = ensureDynamicFormConfigurationExists(
-      db,
-      DynamicFormType.StudentFinancialAidApplication,
-      {
-        programYear,
-        offeringIntensity: OfferingIntensity.partTime,
-      },
-    );
-    await Promise.all([fullTimeConfiguration, partTimeConfiguration]);
-    // Reload all dynamic form configurations.
-    await dynamicFormConfigurationService.loadAllDynamicFormConfigurations();
-  }
 
   afterAll(async () => {
     await app?.close();
