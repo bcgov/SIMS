@@ -54,9 +54,28 @@ export function createFakeAssessmentConsolidatedData(
     studentDataApplicationPDPPDStatus: "no",
     applicationStatus: ApplicationStatus.Assessment,
     applicationHasNOAApproval: false,
-    programYearTotalBookCost: 500,
-    programYearTotalReturnTransportationCost: 500,
   };
+}
+
+/**
+ * Populate default program year totals.
+ * @param assessmentConsolidatedData assessment consolidated data.
+ */
+function populateDefaultProgramYearTotals(
+  assessmentConsolidatedData: AssessmentConsolidatedData,
+): void {
+  assessmentConsolidatedData.programYearTotalPartTimeScholarshipsBursaries = 0;
+  assessmentConsolidatedData.programYearTotalFullTimeScholarshipsBursaries = 0;
+  assessmentConsolidatedData.programYearTotalPartTimeSpouseContributionWeeks = 0;
+  assessmentConsolidatedData.programYearTotalFullTimeSpouseContributionWeeks = 0;
+  assessmentConsolidatedData.programYearTotalPartTimeFederalFSC = 0;
+  assessmentConsolidatedData.programYearTotalFullTimeFederalFSC = 0;
+  assessmentConsolidatedData.programYearTotalPartTimeProvincialFSC = 0;
+  assessmentConsolidatedData.programYearTotalFullTimeProvincialFSC = 0;
+  assessmentConsolidatedData.programYearTotalPartTimeBooksAndSuppliesCost = 0;
+  assessmentConsolidatedData.programYearTotalFullTimeBooksAndSuppliesCost = 500;
+  assessmentConsolidatedData.programYearTotalPartTimeReturnTransportationCost = 0;
+  assessmentConsolidatedData.programYearTotalFullTimeReturnTransportationCost = 500;
 }
 
 /**
@@ -203,6 +222,7 @@ export function createFakeConsolidatedFulltimeData(
   const [, programEndYear] = programYear.split("-");
   const assessmentConsolidatedData =
     createFakeAssessmentConsolidatedData(programYear);
+  populateDefaultProgramYearTotals(assessmentConsolidatedData);
   assessmentConsolidatedData.offeringIntensity = OfferingIntensity.fullTime;
   assessmentConsolidatedData.offeringStudyStartDate = `${programEndYear}-02-01`;
   assessmentConsolidatedData.offeringStudyEndDate = `${programEndYear}-05-24`;
@@ -221,6 +241,7 @@ export function createFakeConsolidatedPartTimeData(
   const [, programEndYear] = programYear.split("-");
   const assessmentConsolidatedData =
     createFakePartTimeAssessmentConsolidatedData(programYear);
+  populateDefaultProgramYearTotals(assessmentConsolidatedData);
   assessmentConsolidatedData.offeringIntensity = OfferingIntensity.partTime;
   assessmentConsolidatedData.offeringStudyStartDate = `${programEndYear}-02-01`;
   assessmentConsolidatedData.offeringStudyEndDate = `${programEndYear}-05-24`;

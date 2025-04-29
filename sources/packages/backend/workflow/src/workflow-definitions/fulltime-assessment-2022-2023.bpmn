@@ -1621,7 +1621,7 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
           <zeebe:output source="=null" target="calculatedDataTotalParentalContribution" />
           <zeebe:output source="=null" target="calculatedDataTotalSpouseContribution" />
           <zeebe:output source="=null" target="calculatedDataSpouseContributionWeeks" />
-          <zeebe:output source="=programYearTotalSpouseContributionWeeks" target="programYearSpouseContributionWeeks" />
+          <zeebe:output source="=programYearTotalFullTimeSpouseContributionWeeks" target="programYearTotalFullTimeSpouseContributionWeeks" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1avpaqy</bpmn:incoming>
@@ -1716,7 +1716,7 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=dmnFullTimeContributionLimits.limitSpouseContributionRate *(calculatedDataTotalFamilyIncome - dmnFullTimeIncomeThreshold.partnerProvincialContributionIncomeThreshold)" target="calculatedDataWeeklySpousalContribution" />
-          <zeebe:output source="=max(0,dmnFullTimeContributionLimits.limitSpouseMaxContributionWeeks-programYearSpouseContributionWeeks)" target="calculatedDataRemainingSpouseContributionWeeks" />
+          <zeebe:output source="=max(0,dmnFullTimeContributionLimits.limitSpouseMaxContributionWeeks-programYearTotalFullTimeSpouseContributionWeeks)" target="calculatedDataRemainingSpouseContributionWeeks" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0txpzpm</bpmn:incoming>
@@ -1767,7 +1767,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_06wn0u9" name="Program Year S&#38;B Initialization">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=programYearTotalScholarshipsBursaries" target="programYearTotalScholarshipsBursaries" />
+          <zeebe:output source="=programYearTotalFullTimeScholarshipsBursaries" target="programYearTotalFullTimeScholarshipsBursaries" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1cec10j</bpmn:incoming>
@@ -1776,7 +1776,7 @@ or (calculatedDataPartnerFedralProvincialPDReceiptCost &gt; 0)</bpmn:conditionEx
     <bpmn:intermediateThrowEvent id="Event_0cktmsz" name="Scholarships &#38; Bursaries">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=max(dmnFullTimeProgramYearMaximums.limitProgramYearScholarshipBursaries - programYearTotalScholarshipsBursaries,0)" target="calculatedDataRemainingScholarshipsBursariesLimit" />
+          <zeebe:output source="=max(dmnFullTimeProgramYearMaximums.limitProgramYearScholarshipBursaries - programYearTotalFullTimeScholarshipsBursaries,0)" target="calculatedDataRemainingScholarshipsBursariesLimit" />
           <zeebe:output source="=if (calculatedDataRemainingScholarshipsBursariesLimit &#62;= studentDataScholarshipAmount)&#10;  then studentDataScholarshipAmount&#10;else&#10;  calculatedDataRemainingScholarshipsBursariesLimit" target="calculatedDataExemptScholarshipsBursaries" />
           <zeebe:output source="=//amount declared by student that is above their exemption limit and goes to their contribution&#10;studentDataScholarshipAmount-calculatedDataExemptScholarshipsBursaries" target="calculatedDataTotalScholarshipsBursaries" />
         </zeebe:ioMapping>
@@ -1870,8 +1870,8 @@ FEDERAL: There is one limit for at or below the income threshold and another for
 PROVINCIAL: One limit for students at or below income threshold</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=programYearTotalFederalFSC" target="programYearTotalFederalFSC" />
-          <zeebe:output source="=programYearTotalProvincialFSC" target="programYearTotalProvincialFSC" />
+          <zeebe:output source="=programYearTotalFullTimeFederalFSC" target="programYearTotalFullTimeFederalFSC" />
+          <zeebe:output source="=programYearTotalFullTimeProvincialFSC" target="programYearTotalFullTimeProvincialFSC" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jtpb8r</bpmn:incoming>
@@ -2035,7 +2035,7 @@ There is an application limit based on offering weeks and a total program year l
     <bpmn:intermediateThrowEvent id="Event_0rfsu30" name="PY Return Transportation">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearReturnTransportation - programYearTotalReturnTransportationCost)" target="calculatedDataRemainingReturnTransportation" />
+          <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearReturnTransportation - programYearTotalFullTimeReturnTransportationCost)" target="calculatedDataRemainingReturnTransportation" />
           <zeebe:output source="=if offeringDelivered = &#34;onsite&#34;&#10;then&#10;min(dmnFullTimeApplicationReturnTransportation, calculatedDataRemainingReturnTransportation)&#10;else &#10;  0" target="calculatedDataReturnTransportationCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -2179,7 +2179,7 @@ There is an application limit based on offering weeks and a total program year l
 The remaining limit in the program year is calculated with a floor of 0.</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearBooks-programYearTotalBookCost)" target="calculatedDataRemainingBookLimit" />
+          <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearBooks-programYearTotalFullTimeBooksAndSuppliesCost)" target="calculatedDataRemainingBookLimit" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_10egxdo</bpmn:incoming>

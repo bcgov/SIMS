@@ -194,7 +194,6 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   applicationStatus: string;
   applicationEditStatus: ApplicationEditStatus;
   applicationHasNOAApproval: boolean;
-  programYearTotalBookCost: number;
   studentDataPartnerHasEmploymentInsuranceBenefits?: YesNoOptions;
   studentDataPartnerHasFedralProvincialPDReceipt?: YesNoOptions;
   studentDataPartnerHasTotalIncomeAssistance?: YesNoOptions;
@@ -202,6 +201,18 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   partner1HasFedralProvincialPDReceipt?: YesNoOptions;
   partner1HasTotalIncomeAssistance?: YesNoOptions;
   studentDataExceptionalExpense?: number;
+  programYearTotalPartTimeScholarshipsBursaries: number;
+  programYearTotalFullTimeScholarshipsBursaries: number;
+  programYearTotalPartTimeSpouseContributionWeeks: number;
+  programYearTotalFullTimeSpouseContributionWeeks: number;
+  programYearTotalPartTimeFederalFSC: number;
+  programYearTotalFullTimeFederalFSC: number;
+  programYearTotalPartTimeProvincialFSC: number;
+  programYearTotalFullTimeProvincialFSC: number;
+  programYearTotalPartTimeBooksAndSuppliesCost: number;
+  programYearTotalFullTimeBooksAndSuppliesCost: number;
+  programYearTotalPartTimeReturnTransportationCost: number;
+  programYearTotalFullTimeReturnTransportationCost: number;
 }
 
 /**
