@@ -7,6 +7,7 @@ import {
   FakeStudentUsersTypes,
   getStudentToken,
   mockUserLoginInfo,
+  createPYStudentApplicationFormConfiguration,
 } from "../../../testHelpers";
 import {
   createE2EDataSources,
@@ -15,7 +16,6 @@ import {
   getProviderInstanceForModule,
   saveFakeStudent,
   ensureProgramYearExists,
-  createPYStudentApplicationFormConfiguration,
 } from "@sims/test-utils";
 import {
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,

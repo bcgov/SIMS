@@ -5,7 +5,6 @@ import {
   ProgramYear,
 } from "@sims/sims-db";
 import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
-import { DynamicFormConfigurationService } from "apps/api/src/services";
 import * as faker from "faker";
 
 /**
@@ -75,36 +74,4 @@ export async function ensureDynamicFormConfigurationExists(
     { offeringIntensity: options?.offeringIntensity },
   );
   return db.dynamicFormConfiguration.save(dynamicFormConfiguration);
-}
-
-/**
- * Creates a student application form configuration for the given program year for both Full-time and Part-time.
- * @param db e2e DataSources.
- * @param programYear program year.
- */
-export async function createPYStudentApplicationFormConfiguration(
-  db: E2EDataSources,
-  programYear: ProgramYear,
-  dynamicFormConfigurationService: DynamicFormConfigurationService,
-): Promise<void> {
-  // Ensure the dynamic form configuration exists.
-  const fullTimeConfiguration = ensureDynamicFormConfigurationExists(
-    db,
-    DynamicFormType.StudentFinancialAidApplication,
-    {
-      programYear,
-      offeringIntensity: OfferingIntensity.fullTime,
-    },
-  );
-  const partTimeConfiguration = ensureDynamicFormConfigurationExists(
-    db,
-    DynamicFormType.StudentFinancialAidApplication,
-    {
-      programYear,
-      offeringIntensity: OfferingIntensity.partTime,
-    },
-  );
-  await Promise.all([fullTimeConfiguration, partTimeConfiguration]);
-  // Reload all dynamic form configurations.
-  await dynamicFormConfigurationService.loadAllDynamicFormConfigurations();
 }
