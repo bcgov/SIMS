@@ -113,4 +113,22 @@ export class ZeebeTransportStrategy
       await this.zeebeClient.close();
     }
   }
+
+  /**
+   * Prevents the event listener registration that is not expected for this transport.
+   * This is an abstract method from the Server class.
+   * @see https://docs.nestjs.com/microservices/custom-transport#creating-a-strategy
+   */
+  on() {
+    throw new Error("Not available for this transport strategy.");
+  }
+
+  /**
+   * Prevent the retrieval of the server that does not need to be allowed for this transport
+   * This is an abstract method from the Server class.
+   * @see https://docs.nestjs.com/microservices/custom-transport#creating-a-strategy
+   */
+  unwrap<T = never>(): T {
+    throw new Error("Not available for this transport strategy.");
+  }
 }
