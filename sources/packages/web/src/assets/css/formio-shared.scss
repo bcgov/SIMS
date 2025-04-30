@@ -309,12 +309,41 @@
   box-sizing: border-box;
   border-radius: 8px;
 }
+
 .banner-warning p,
 .banner-warning div {
   @extend .banner-font;
   background: $banner-background-warning;
   border: 2px solid $banner-color-warning;
   box-sizing: border-box;
+  border-radius: 8px;
+}
+
+.banner-warning-container {
+  @extend .banner-font;
+  background: $banner-background-warning;
+  border: 2px solid $banner-color-warning;
+  border-radius: 8px;
+}
+
+.banner-warning-container .alert {
+  padding: 0px;
+}
+
+.form-check-input {
+  vertical-align: top;
+}
+
+.banner-warning-container .card.border {
+  margin-bottom: 0px !important;
+  border: none !important;
+}
+
+.banner-warning-container p,
+.banner-warning-container div {
+  @extend .banner-font;
+  background: $banner-background-warning;
+  border: none !important;
   border-radius: 8px;
 }
 
@@ -396,6 +425,10 @@
 }
 
 .banner-warning .fa-exclamation-triangle:before {
+  color: $banner-color-warning;
+}
+
+.banner-warning-container .fa-exclamation-triangle:before {
   color: $banner-color-warning;
 }
 
