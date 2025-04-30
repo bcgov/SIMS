@@ -1,4 +1,5 @@
 import {
+  DynamicFormType,
   EducationProgramOffering,
   ProgramYear,
   SupportingUserType,
@@ -6,22 +7,18 @@ import {
 import { isBetweenPeriod } from "@sims/utilities";
 
 /**
- * Define the form name to be used from a program year based
- * on the supporting user type.
+ * Get supporting user dynamic form type.
  * @param userType supporting user type.
- * @param programYear program year object that contains the form
- * definition name for every supporting user type.
- * @returns supporting user form name.
+ * @returns supporting user form type.
  */
-export function getSupportingUserForm(
+export function getSupportingUserFormType(
   userType: SupportingUserType,
-  programYear: Pick<ProgramYear, "parentFormName" | "partnerFormName">,
-): string {
+): DynamicFormType {
   switch (userType) {
     case SupportingUserType.Parent:
-      return programYear.parentFormName;
+      return DynamicFormType.SupportingUsersParent;
     case SupportingUserType.Partner:
-      return programYear.partnerFormName;
+      return DynamicFormType.SupportingUsersPartner;
     default:
       throw new Error(`Unknown supporting user type: ${userType}`);
   }

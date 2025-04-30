@@ -74,6 +74,9 @@ export class ApplicationAESTController extends BaseController {
     description:
       "Application not found or current application for provided parent application not found.",
   })
+  @ApiUnprocessableEntityResponse({
+    description: "Dynamic form configuration not found.",
+  })
   async getApplication(
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Query("loadDynamicData", new DefaultValuePipe(true), ParseBoolPipe)

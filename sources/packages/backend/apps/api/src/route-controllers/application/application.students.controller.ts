@@ -190,7 +190,8 @@ export class ApplicationStudentsController extends BaseController {
       "the education program is expired or " +
       "or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
       "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
-      "or Invalid offering intensity",
+      "or Invalid offering intensity " +
+      "or dynamic form configuration not found.",
   })
   @ApiBadRequestResponse({
     description: "Form validation failed or Offering intensity type is invalid",
@@ -275,7 +276,8 @@ export class ApplicationStudentsController extends BaseController {
       "or application is not in the correct status to be submitted " +
       "or change request has a different offering from its original submission" +
       "or change request has a different location from its original submission " +
-      "or the application is archived and cannot be used to create a change request.",
+      "or the application is archived and cannot be used to create a change request " +
+      "or dynamic form configuration not found.",
   })
   @ApiBadRequestResponse({
     description:
@@ -530,11 +532,15 @@ export class ApplicationStudentsController extends BaseController {
         applicationId,
         includeInActivePY,
       );
-
+    const formName =
+      this.applicationControllerService.getStudentApplicationFormName(
+        applicationProgramYear.programYear.id,
+        applicationProgramYear.offeringIntensity,
+      );
     return {
       applicationId: applicationId,
       programYearId: applicationProgramYear.programYear.id,
-      formName: applicationProgramYear.programYear.formName,
+      formName,
       active: applicationProgramYear.programYear.active,
     };
   }

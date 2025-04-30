@@ -12,6 +12,7 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
+  DynamicFormConfigurationService,
   FormService,
   SupportingUserService,
   UserService,
@@ -37,7 +38,7 @@ import {
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
-import { getSupportingUserForm } from "../../utilities";
+import { getSupportingUserFormType } from "../../utilities";
 import {
   ApiBadRequestResponse,
   ApiTags,
@@ -57,6 +58,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     private readonly userService: UserService,
     private readonly formService: FormService,
     private readonly workflowClientService: WorkflowClientService,
+    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
   ) {
     super();
   }
@@ -78,7 +80,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
     description:
       "Not able to find a Student Application with the requested data " +
       "or the user searching for applications to provide data must be " +
-      "different from the user associated with the student application.",
+      "different from the user associated with the student application or " +
+      "dynamic form configuration not found.",
   })
   async getApplicationDetails(
     @UserToken() userToken: IUserToken,
@@ -113,13 +116,19 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-
+    const formType = getSupportingUserFormType(supportingUserType);
+    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
+      formType,
+      { programYearId: application.programYear.id },
+    );
+    if (!formName) {
+      throw new UnprocessableEntityException(
+        `Dynamic form configuration for ${formType} not found.`,
+      );
+    }
     return {
       programYearStartDate: application.programYear.startDate,
-      formName: getSupportingUserForm(
-        supportingUserType,
-        application.programYear,
-      ),
+      formName,
       offeringIntensity: application.offeringIntensity,
     };
   }
@@ -139,7 +148,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
       "Invalid offering intensity or " +
       "student application not found to update the supporting data or " +
       "the user currently authenticated is the same user that submitted " +
-      "the application or supporting user already submitted the information.",
+      "the application or supporting user already submitted the information or " +
+      "dynamic form configuration not found.",
   })
   @ApiBadRequestResponse({ description: "Invalid request." })
   async updateSupportingInformation(
@@ -180,11 +190,16 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-
-    const formName = getSupportingUserForm(
-      supportingUserType,
-      application.programYear,
+    const formType = getSupportingUserFormType(supportingUserType);
+    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
+      formType,
+      { programYearId: application.programYear.id },
     );
+    if (!formName) {
+      throw new UnprocessableEntityException(
+        `Dynamic form configuration for ${formType} not found.`,
+      );
+    }
     // Ensure the offering intensity provided is the same from the application.
     if (payload.offeringIntensity !== application.offeringIntensity) {
       throw new UnprocessableEntityException("Invalid offering intensity.");

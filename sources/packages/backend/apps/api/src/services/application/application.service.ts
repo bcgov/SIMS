@@ -884,7 +884,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
         programYear: {
           id: true,
-          formName: true,
           startDate: true,
           endDate: true,
           programYear: true,
@@ -1619,8 +1618,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .select([
         "application.id",
         "application.offeringIntensity",
-        "programYear.parentFormName",
-        "programYear.partnerFormName",
+        "programYear.id",
         "programYear.startDate",
         "user.userName",
         "student.id",
@@ -2263,7 +2261,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.findOne({
       select: {
         id: true,
-        programYear: { id: true, formName: true, active: true },
+        programYear: { id: true, active: true },
         offeringIntensity: true,
       },
       relations: {

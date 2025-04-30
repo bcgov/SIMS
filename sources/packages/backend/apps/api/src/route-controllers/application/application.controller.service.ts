@@ -16,6 +16,7 @@ import {
   CRAIncomeVerificationService,
   SupportingUserService,
   FormService,
+  DynamicFormConfigurationService,
 } from "../../services";
 import {
   ApplicationFormData,
@@ -63,6 +64,7 @@ import {
   StudentAppealStatus,
   ApplicationEditStatusInProgress,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
+  DynamicFormType,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
@@ -91,6 +93,7 @@ export class ApplicationControllerService {
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly formService: FormService,
     private readonly configService: ConfigService,
+    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
   ) {}
 
   /**
@@ -191,7 +194,7 @@ export class ApplicationControllerService {
       assessmentTriggerType,
       hasBlockFundingFeedbackError,
       hasECertFailedValidations,
-      currentAssessmentId: application.currentAssessment.id,
+      currentAssessmentId: application.currentAssessment?.id,
     };
   }
 
@@ -542,10 +545,10 @@ export class ApplicationControllerService {
    * - `previousData` previous application to allow changes detection.
    * @returns application DTO.
    */
-  async transformToApplicationDTO(
+  transformToApplicationDTO(
     application: Application,
     options?: { previousData?: unknown },
-  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+  ): ApplicationSupplementalDataAPIOutDTO {
     let changes: ApplicationDataChangeAPIOutDTO[];
     if (options?.previousData) {
       const applicationDataChanges = compareApplicationData(
@@ -557,13 +560,17 @@ export class ApplicationControllerService {
         this.transformToApplicationChangesDTO(applicationDataChanges, changes);
       }
     }
+    const applicationFormName = this.getStudentApplicationFormName(
+      application.programYear.id,
+      application.offeringIntensity,
+    );
     return {
       data: application.data,
       id: application.id,
       applicationStatus: application.applicationStatus,
       applicationNumber: application.applicationNumber,
       isArchived: application.isArchived,
-      applicationFormName: application.programYear.formName,
+      applicationFormName,
       applicationProgramYearID: application.programYear.id,
       studentFullName: getUserFullName(application.student.user),
       applicationOfferingIntensity: application.offeringIntensity,
@@ -646,11 +653,15 @@ export class ApplicationControllerService {
    * @param disbursement
    * @returns Application DTO
    */
-  async transformToApplicationDetailForStudentDTO(
+  transformToApplicationDetailForStudentDTO(
     applicationDetail: Application,
     disbursement: DisbursementSchedule,
-  ): Promise<ApplicationDataAPIOutDTO> {
+  ): ApplicationDataAPIOutDTO {
     const offering = applicationDetail.currentAssessment?.offering;
+    const applicationFormName = this.getStudentApplicationFormName(
+      applicationDetail.programYear.id,
+      applicationDetail.offeringIntensity,
+    );
     return {
       id: applicationDetail.id,
       isArchived: applicationDetail.isArchived,
@@ -666,7 +677,7 @@ export class ApplicationControllerService {
       applicationPIRStatus: applicationDetail.pirStatus,
       applicationAssessmentStatus:
         applicationDetail.currentAssessment?.noaApprovalStatus,
-      applicationFormName: applicationDetail.programYear.formName,
+      applicationFormName,
       applicationProgramYearID: applicationDetail.programYear.id,
       applicationPIRDeniedReason: getPIRDeniedReason(applicationDetail),
       programYearStartDate: applicationDetail.programYear.startDate,
@@ -907,9 +918,13 @@ export class ApplicationControllerService {
       payload,
       application.offeringIntensity,
     );
+    const formName = this.getStudentApplicationFormName(
+      application.programYear.id,
+      application.offeringIntensity,
+    );
     const submissionResult =
       await this.formService.dryRunSubmission<ApplicationData>(
-        application.programYear.formName,
+        formName,
         payload.data,
       );
     if (!submissionResult.valid) {
@@ -995,5 +1010,28 @@ export class ApplicationControllerService {
       payload.data.selectedOfferingDate = studyStartDate;
       payload.data.selectedOfferingEndDate = studyEndDate;
     }
+  }
+
+  /**
+   * Get the name of the student application form definition.
+   * @param programYearId program year ID.
+   * @param offeringIntensity offering intensity.
+   * @throws {UnprocessableEntityException} if dynamic form configuration not found.
+   * @returns student application form name.
+   */
+  getStudentApplicationFormName(
+    programYearId: number,
+    offeringIntensity: OfferingIntensity,
+  ): string {
+    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
+      DynamicFormType.StudentFinancialAidApplication,
+      { programYearId, offeringIntensity },
+    );
+    if (!formName) {
+      throw new UnprocessableEntityException(
+        `Dynamic form configuration for ${DynamicFormType.StudentFinancialAidApplication} not found.`,
+      );
+    }
+    return formName;
   }
 }
