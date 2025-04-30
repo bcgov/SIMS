@@ -319,34 +319,6 @@
   border-radius: 8px;
 }
 
-.banner-warning-container {
-  @extend .banner-font;
-  background: $banner-background-warning;
-  border: 2px solid $banner-color-warning;
-  border-radius: 8px;
-}
-
-.banner-warning-container .alert {
-  padding: 0px;
-}
-
-.form-check-input {
-  vertical-align: top;
-}
-
-.banner-warning-container .card.border {
-  margin-bottom: 0px !important;
-  border: none !important;
-}
-
-.banner-warning-container p,
-.banner-warning-container div {
-  @extend .banner-font;
-  background: $banner-background-warning;
-  border: none !important;
-  border-radius: 8px;
-}
-
 .banner-info p,
 .banner-info div {
   @extend .banner-font;
@@ -354,6 +326,34 @@
   border: 2px solid $banner-color-info;
   box-sizing: border-box;
   border-radius: 8px;
+}
+
+/**
+* The banner-warning-container style should be used when the banners
+* must also contain a formio component.
+* It should be applied to a form.io panel with a child html component with its
+* tag defined as "div" and using the CSS class
+* "alert alert-warning fa fa-exclamation-triangle w-100".
+*/
+.banner-warning-container .card-body {
+  @extend .banner-font;
+  background: $banner-background-warning;
+  border: 2px solid $banner-color-warning !important;
+  border-radius: 8px;
+}
+
+.banner-warning-container .alert {
+  padding: 0px;
+}
+
+.banner-warning-container div {
+  @extend .banner-font;
+  background: $banner-background-warning;
+  border: none !important;
+}
+
+.form-check-input {
+  vertical-align: top;
 }
 
 /**
@@ -831,4 +831,14 @@ td .formio-custom-tooltip:hover .tooltip-text {
 
 .grid-row-indentation-first-level {
   margin-left: 1rem;
+}
+
+/**
+* Align the container children to the left and to the right
+* to have the allowed files aligned to the left and
+* file size aligned to the right.
+*/
+.file-upload-info-container {
+  display: flex;
+  justify-content: space-between;
 }
