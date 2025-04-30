@@ -340,8 +340,11 @@
   border-radius: 8px;
 }
 
-.alert-banner-container div {
+.alert-banner-container .formio-component-htmlelement {
   @extend .banner-font;
+}
+
+.alert-banner-container div {
   border: none;
 }
 
@@ -848,4 +851,8 @@ td .formio-custom-tooltip:hover .tooltip-text {
 .file-upload-info-container {
   display: flex;
   justify-content: space-between;
+}
+
+.formio-component-weight-bold > div:first-child {
+  font-weight: $font-weight-bold;
 }

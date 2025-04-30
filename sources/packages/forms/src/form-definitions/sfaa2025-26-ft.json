@@ -8289,14 +8289,14 @@
                   "hideLabel": true
                 },
                 {
-                  "label": "I confirm I am eligible for this exception category and understand that this process requires ministry review and may lead to delays in my application.",
+                  "label": "I confirm I am eligible for this exception category and understand that this process requires ministry review and will lead to delays in my funding.",
                   "labelWidth": "",
                   "labelMargin": "",
                   "description": "",
                   "tooltip": "",
                   "shortcut": "",
                   "inputType": "checkbox",
-                  "customClass": "",
+                  "customClass": "formio-component-weight-bold",
                   "tabindex": "",
                   "hidden": false,
                   "autofocus": false,
