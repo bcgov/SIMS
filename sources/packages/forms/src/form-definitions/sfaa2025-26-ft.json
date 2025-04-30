@@ -8668,9 +8668,9 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "tag": "div",
+                      "tag": "h4",
                       "id": "exvzcx",
-                      "className": "",
+                      "className": "category-header-medium-small",
                       "tags": []
                     },
                     {
