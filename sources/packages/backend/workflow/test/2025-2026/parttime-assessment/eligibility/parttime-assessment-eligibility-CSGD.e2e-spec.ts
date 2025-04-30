@@ -14,7 +14,8 @@ import { YesNoOptions } from "@sims/test-utils";
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD.`, () => {
   it(
     "Should determine CSGD as eligible when total assessed need is greater than or equal to 1 " +
-      ", total eligible dependants is at least 1 and total family income is less than the threshold.",
+      ", total eligible dependants 11 years or under is at least 1 or total eligible dependants over " +
+      "12 years on taxes is at least 1 and total family income is less than the threshold.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -23,6 +24,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligible(
           DependentEligibility.Eligible0To18YearsOld,
+          { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+        ),
+        createFakeStudentDependentEligible(
+          DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
           { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
         ),
       ];
