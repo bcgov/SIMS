@@ -72,8 +72,16 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           paginationOptions.sortOrder,
         ),
       )
-      .offset(paginationOptions.page * paginationOptions.pageLimit)
-      .limit(paginationOptions.pageLimit);
+      .skip(paginationOptions.page * paginationOptions.pageLimit)
+      .take(paginationOptions.pageLimit);
+
+    // Log the generated SQL query and parameters
+    const [sql, parameters] = disbursementCOEQuery.getQueryAndParameters();
+    console.log("Executing COE query:");
+    console.log(sql);
+    console.log("Parameters:");
+    console.log(parameters);
+
     const [result, count] = await disbursementCOEQuery.getManyAndCount();
     return {
       results: result,
