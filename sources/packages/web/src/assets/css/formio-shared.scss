@@ -329,9 +329,9 @@
 }
 
 /**
-* The alert-banner-container style should be used when the banners must also contain a formio component.
+* The alert-banner-container style should be used when the banners must also contain a form.io component.
 * It should be applied to a form.io panel with a child html component with its tag defined as "div"
-* and using the CSS class"alert alert-warning fa fa-exclamation-triangle w-100".
+* and using the CSS class "alert alert-warning fa fa-exclamation-triangle w-100".
 */
 .alert-banner-container .card-body {
   @extend .banner-font;
