@@ -4,14 +4,22 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  UnprocessableEntityException,
 } from "@nestjs/common";
-import { SupportingUserService } from "../../services";
+import {
+  DynamicFormConfigurationService,
+  SupportingUserService,
+} from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { SupportingUserFormDataAPIOutDTO } from "./models/supporting-user.dto";
-import { getSupportingUserForm } from "../../utilities";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import { getSupportingUserFormType } from "../../utilities";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
@@ -19,7 +27,10 @@ import { ClientTypeBaseRoute } from "../../types";
 @Controller("supporting-user")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-supporting-user`)
 export class SupportingUserAESTController {
-  constructor(private readonly supportingUserService: SupportingUserService) {}
+  constructor(
+    private readonly supportingUserService: SupportingUserService,
+    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
+  ) {}
 
   /**
    * Get supporting user formName and the form data
@@ -31,6 +42,9 @@ export class SupportingUserAESTController {
   @ApiNotFoundResponse({
     description:
       "Supporting user details not found or Supporting user has not submitted the form.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Dynamic form configuration not found.",
   })
   async getSupportingUserFormDetails(
     @Param("supportingUserId", ParseIntPipe) supportingUserId: number,
@@ -44,11 +58,22 @@ export class SupportingUserAESTController {
         `Supporting user ${supportingUserId} details not found or Supporting user has not submitted the form`,
       );
     }
+    const formType = getSupportingUserFormType(
+      supportingUserForApplication.supportingUserType,
+    );
+    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
+      formType,
+      {
+        programYearId: supportingUserForApplication.application.programYear.id,
+      },
+    );
+    if (!formName) {
+      throw new UnprocessableEntityException(
+        `Dynamic form configuration for ${formType} not found.`,
+      );
+    }
     return {
-      formName: getSupportingUserForm(
-        supportingUserForApplication.supportingUserType,
-        supportingUserForApplication.application.programYear,
-      ),
+      formName,
       supportingData: supportingUserForApplication.supportingData,
       contactInfo: supportingUserForApplication.contactInfo,
       sin: supportingUserForApplication.sin,

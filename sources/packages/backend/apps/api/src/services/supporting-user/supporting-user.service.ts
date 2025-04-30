@@ -161,8 +161,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         "user.lastName",
         "user.email",
         "application.id",
-        "programYear.parentFormName",
-        "programYear.partnerFormName",
+        "programYear.id",
       ])
       .innerJoin("supportingUser.user", "user")
       .innerJoin("supportingUser.application", "application")

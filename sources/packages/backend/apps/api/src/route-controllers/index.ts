@@ -90,3 +90,5 @@ export * from "./cas-invoice/models/cas-invoice.dto";
 export * from "./models/primary.identifier.dto";
 export * from "./models/common.dto";
 export * from "./health-check/health.controller";
+export * from "./dynamic-form-configuration/models/dynamic-form-configuration.dto";
+export * from "./dynamic-form-configuration/dynamic-form-configuration.students.controller";

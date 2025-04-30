@@ -35,6 +35,7 @@
           class="px-2 pb-4"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Offering intensity')]"
           hide-details="auto"
+          required
         ></v-select>
         <p class="px-2">
           Please select your program year. This is for students attending
@@ -49,6 +50,7 @@
           class="px-2 pb-4"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Year')]"
           hide-details="auto"
+          required
         ></v-select>
         <v-btn
           class="ma-2"
@@ -81,6 +83,8 @@ import {
   SelectItemType,
   LayoutTemplates,
   ApiProcessError,
+  OfferingIntensity,
+  DynamicFormType,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -89,6 +93,7 @@ import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
 import { PrimaryIdentifierAPIOutDTO } from "@/services/http/dto";
 import { AppConfigService } from "@/services/AppConfigService";
+import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigurationService";
 
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
@@ -97,8 +102,8 @@ export default defineComponent({
     const router = useRouter();
     const snackBar = useSnackBar();
     const programYearOptions = ref([] as SelectItemType[]);
-    const programYearId = ref();
-    const offeringIntensity = ref();
+    const programYearId = ref<number>();
+    const offeringIntensity = ref<OfferingIntensity>();
     const startApplicationForm = ref({} as VForm);
     const { checkNullOrEmptyRule } = useRules();
     const { mapOfferingIntensities } = useOffering();
@@ -126,11 +131,13 @@ export default defineComponent({
         if (!validationResult.valid) {
           return;
         }
+        // When the form is valid, the selected offering intensity cannot be null.
+        const selectedIntensity = offeringIntensity.value as OfferingIntensity;
         if (programYearId.value) {
           const { id }: PrimaryIdentifierAPIOutDTO =
             await ApplicationService.shared.createApplicationDraft({
               programYearId: programYearId.value,
-              offeringIntensity: offeringIntensity.value,
+              offeringIntensity: selectedIntensity,
               data: {},
               associatedFiles: [],
             });
@@ -139,20 +146,22 @@ export default defineComponent({
             draftAlreadyExists: false,
             draftId: id,
           };
-          const programYear =
-            await ProgramYearService.shared.getActiveProgramYear(
-              programYearId.value,
-            );
-          if (programYear) {
-            router.push({
-              name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
-              params: {
-                selectedForm: programYear.formName,
+          const dynamicFormConfiguration =
+            await DynamicFormConfigurationService.shared.getDynamicFormConfiguration(
+              DynamicFormType.StudentFinancialAidApplication,
+              {
                 programYearId: programYearId.value,
-                id: createDraftResult.draftId,
+                offeringIntensity: selectedIntensity,
               },
-            });
-          }
+            );
+          router.push({
+            name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM,
+            params: {
+              selectedForm: dynamicFormConfiguration.formDefinitionName,
+              programYearId: programYearId.value,
+              id: createDraftResult.draftId,
+            },
+          });
         }
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
@@ -162,7 +171,7 @@ export default defineComponent({
           }
         }
         snackBar.error(
-          "An error happened while trying to start a new application.",
+          "An error happened while starting an application or obtaining the dynamic form configuration.",
         );
       }
     };

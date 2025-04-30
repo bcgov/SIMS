@@ -144,7 +144,7 @@ export default defineComponent({
         },
       },
       {
-        title: "Applications",
+        title: "Change requests",
         props: {
           prependIcon: "mdi-folder-outline",
           to: {
