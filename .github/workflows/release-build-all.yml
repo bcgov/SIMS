@@ -1,6 +1,8 @@
 name: Release - Build All
 run-name: Release - Build all from ${{ github.ref_name }}(build ${{ github.run_number }})
 
+concurrency: release-build-all
+
 on:
   pull_request:
     types: [opened, reopened, synchronize, closed]
