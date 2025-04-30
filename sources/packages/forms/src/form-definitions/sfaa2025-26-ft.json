@@ -8379,7 +8379,7 @@
                 "eq": "marriedUnable"
               },
               "properties": {},
-              "customClass": "banner-warning-container",
+              "customClass": "alert-banner-container alert-banner-warning",
               "lockKey": true,
               "hideLabel": true
             },
