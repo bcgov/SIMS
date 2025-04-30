@@ -34,6 +34,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         DependentEligibility.Eligible0To18YearsOld,
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
+      createFakeStudentDependentEligible(
+        DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      ),
     ];
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     // Act
@@ -58,7 +62,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 42000;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 52000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
     assessmentConsolidatedData.partner1CRAReportedIncome = 42000;
@@ -74,6 +78,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      ),
+      createFakeStudentDependentEligible(
+        DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
@@ -125,10 +133,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      1221.455424,
+      1223.98549371,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      1221.455424,
+      1223.98549371,
     );
   });
 
@@ -180,14 +188,18 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 35000;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 40000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
-    assessmentConsolidatedData.partner1CRAReportedIncome = 35000;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 40000;
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      ),
+      createFakeStudentDependentEligible(
+        DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
@@ -238,10 +250,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      736.5661968,
+      766.92144165,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      736.5661968,
+      766.92144165,
     );
   });
 
