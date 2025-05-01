@@ -309,6 +309,7 @@
   box-sizing: border-box;
   border-radius: 8px;
 }
+
 .banner-warning p,
 .banner-warning div {
   @extend .banner-font;
@@ -325,6 +326,47 @@
   border: 2px solid $banner-color-info;
   box-sizing: border-box;
   border-radius: 8px;
+}
+
+/**
+* The alert-banner-container style should be used when the banners must also contain a form.io component.
+* It should be applied to a form.io panel with a child html component with its tag defined as "div"
+* and using the CSS class "alert alert-warning fa fa-exclamation-triangle w-100".
+*/
+.alert-banner-container .card-body {
+  @extend .banner-font;
+  border-width: 2px !important;
+  border-style: solid !important;
+  border-radius: 8px;
+}
+
+.alert-banner-container .formio-component-htmlelement {
+  @extend .banner-font;
+}
+
+.alert-banner-container div {
+  border: none;
+}
+
+.alert-banner-container .alert {
+  padding: 0px;
+}
+
+/**
+* Below are the alert-banner-container specific styles for the different types of alert banners.
+* Please add new ones as required.
+*/
+.alert-banner-container.alert-banner-warning {
+  .card-body {
+    color: $banner-color-warning;
+    background: $banner-background-warning;
+  }
+  .fa-exclamation-triangle:before {
+    color: $banner-color-warning;
+  }
+  .alert {
+    background: $banner-background-warning;
+  }
 }
 
 /**
@@ -457,6 +499,7 @@
 
 .form-check-input {
   position: inherit;
+  vertical-align: top;
 }
 
 .img-background {
@@ -798,4 +841,22 @@ td .formio-custom-tooltip:hover .tooltip-text {
 
 .grid-row-indentation-first-level {
   margin-left: 1rem;
+}
+
+/**
+* Align the container children to the left and to the right
+* to have the allowed files aligned to the left and
+* file size aligned to the right.
+*/
+.file-upload-info-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+/**
+* Apply a bold text to a component without interfering with other
+* component items, for instance, error validators.
+*/
+.formio-component-weight-bold > div:first-child {
+  font-weight: $font-weight-bold;
 }

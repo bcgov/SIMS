@@ -44,7 +44,11 @@ export interface StudentAdditionalTransportationAppealData extends JSONDoc {
   additionalTransportPlacement?: YesNoOptions;
 }
 
-export type RelationshipStatusType = "single" | "other" | "married";
+export type RelationshipStatusType =
+  | "single"
+  | "other"
+  | "married"
+  | "marriedUnable";
 
 export interface PartnerInformationAndIncomeAppealData extends JSONDoc {
   relationshipStatus: RelationshipStatusType;

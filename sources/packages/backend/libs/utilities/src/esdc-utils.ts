@@ -9,15 +9,20 @@ export function getOfferingIntensityCode(offeringIntensity: string): string {
 }
 
 /**
- * Gets the marital status code conversion for the MSFAA request file
+ * Gets the marital status code conversion for the MSFAA request file.
  */
 export function getMaritalStatusCode(
   maritalStatus: RelationshipStatus,
 ): string {
-  if (maritalStatus === RelationshipStatus.Married) {
-    return "M";
+  switch (maritalStatus) {
+    case RelationshipStatus.Single:
+      return "S";
+    case RelationshipStatus.Married:
+    case RelationshipStatus.MarriedUnable:
+      return "M";
+    default:
+      return "O";
   }
-  return maritalStatus === RelationshipStatus.Single ? "S" : "O";
 }
 
 /**
@@ -54,10 +59,15 @@ export function getFormattedPhone(phone: string): string {
 export function getPartTimeMaritalStatusCode(
   maritalStatus: RelationshipStatus,
 ): string {
-  if (maritalStatus === RelationshipStatus.Married) {
-    return "MA";
+  switch (maritalStatus) {
+    case RelationshipStatus.Single:
+      return "SI";
+    case RelationshipStatus.Married:
+    case RelationshipStatus.MarriedUnable:
+      return "MA";
+    default:
+      return "SP";
   }
-  return maritalStatus === RelationshipStatus.Single ? "SI" : "SP";
 }
 
 /**
