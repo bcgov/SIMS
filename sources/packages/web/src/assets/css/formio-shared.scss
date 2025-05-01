@@ -853,6 +853,10 @@ td .formio-custom-tooltip:hover .tooltip-text {
   justify-content: space-between;
 }
 
+/**
+* Apply a bold text to a component without interfering with other
+* component items, for instance, error validators.
+*/
 .formio-component-weight-bold > div:first-child {
   font-weight: $font-weight-bold;
 }
