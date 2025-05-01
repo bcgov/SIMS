@@ -1,4 +1,9 @@
-import { ProgramYear, DynamicFormType, OfferingIntensity } from "@sims/sims-db";
+import {
+  ProgramYear,
+  DynamicFormType,
+  OfferingIntensity,
+  DynamicFormConfiguration,
+} from "@sims/sims-db";
 import {
   E2EDataSources,
   ensureDynamicFormConfigurationExists,
@@ -9,14 +14,18 @@ import { DynamicFormConfigurationService } from "../../services";
  * Creates a student application form configuration for the given program year for both Full-time and Part-time.
  * @param db e2e DataSources.
  * @param programYear program year.
+ * @returns student application form configuration for both full-time and part-time.
  */
 export async function createPYStudentApplicationFormConfiguration(
   db: E2EDataSources,
   programYear: ProgramYear,
   dynamicFormConfigurationService: DynamicFormConfigurationService,
-): Promise<void> {
+): Promise<{
+  fullTimeConfiguration: DynamicFormConfiguration;
+  partTimeConfiguration: DynamicFormConfiguration;
+}> {
   // Ensure the dynamic form configuration exists.
-  const fullTimeConfiguration = ensureDynamicFormConfigurationExists(
+  const fullTimeConfigurationPromise = ensureDynamicFormConfigurationExists(
     db,
     DynamicFormType.StudentFinancialAidApplication,
     {
@@ -24,7 +33,7 @@ export async function createPYStudentApplicationFormConfiguration(
       offeringIntensity: OfferingIntensity.fullTime,
     },
   );
-  const partTimeConfiguration = ensureDynamicFormConfigurationExists(
+  const partTimeConfigurationPromise = ensureDynamicFormConfigurationExists(
     db,
     DynamicFormType.StudentFinancialAidApplication,
     {
@@ -32,7 +41,15 @@ export async function createPYStudentApplicationFormConfiguration(
       offeringIntensity: OfferingIntensity.partTime,
     },
   );
-  await Promise.all([fullTimeConfiguration, partTimeConfiguration]);
+  const [fullTimeConfiguration, partTimeConfiguration] = await Promise.all([
+    fullTimeConfigurationPromise,
+    partTimeConfigurationPromise,
+  ]);
   // Reload all dynamic form configurations.
   await dynamicFormConfigurationService.loadAllDynamicFormConfigurations();
+
+  return {
+    fullTimeConfiguration,
+    partTimeConfiguration,
+  };
 }
