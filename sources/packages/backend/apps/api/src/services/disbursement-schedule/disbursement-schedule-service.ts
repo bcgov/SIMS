@@ -72,8 +72,9 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           paginationOptions.sortOrder,
         ),
       )
-      .offset(paginationOptions.page * paginationOptions.pageLimit)
-      .limit(paginationOptions.pageLimit);
+      .skip(paginationOptions.page * paginationOptions.pageLimit)
+      .take(paginationOptions.pageLimit);
+
     const [result, count] = await disbursementCOEQuery.getManyAndCount();
     return {
       results: result,
