@@ -14,6 +14,7 @@ import { DynamicFormConfigurationService } from "../../services";
  * Creates a student application form configuration for the given program year for both Full-time and Part-time.
  * @param db e2e DataSources.
  * @param programYear program year.
+ * @returns student application form configuration for both full-time and part-time.
  */
 export async function createPYStudentApplicationFormConfiguration(
   db: E2EDataSources,
