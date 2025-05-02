@@ -8085,7 +8085,8 @@
               "validate": {
                 "required": true,
                 "custom": "",
-                "customPrivate": false
+                "customPrivate": false,
+                "onlyAvailableItems": true
               },
               "type": "radio",
               "labelPosition": "top",
