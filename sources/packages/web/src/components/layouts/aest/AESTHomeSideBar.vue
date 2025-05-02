@@ -47,6 +47,16 @@
             />
           </template>
         </check-permission-role>
+        <check-permission-role :role="Role.AESTQueueDashboardAdmin">
+          <template #="{ isAllowed }">
+            <v-list-item
+              v-if="isAllowed"
+              :to="{ name: AESTRoutesConst.DYNAMIC_FORM_EDITOR }"
+              prepend-icon="mdi-monitor-dashboard"
+              title="Dynamic Forms Editor"
+            />
+          </template>
+        </check-permission-role>
       </v-list>
     </template>
   </v-navigation-drawer>
