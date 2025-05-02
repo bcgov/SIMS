@@ -8167,7 +8167,8 @@
               "validate": {
                 "required": true,
                 "custom": "",
-                "customPrivate": false
+                "customPrivate": false,
+                "onlyAvailableItems": true
               },
               "type": "radio",
               "labelPosition": "top",
@@ -8687,7 +8688,7 @@
                       "hideLabel": true,
                       "tableView": false,
                       "storage": "url",
-                      "dir": "Not a BC Resident - Supporting Documents",
+                      "dir": "Married/common-law domestic violence - Supporting Documents",
                       "webcam": false,
                       "fileTypes": [
                         {

@@ -6506,7 +6506,7 @@
               "tooltip": "",
               "shortcut": "",
               "inputType": "checkbox",
-              "customClass": "font-weight-bold",
+              "customClass": "formio-component-weight-bold",
               "tabindex": "",
               "hidden": false,
               "hideLabel": false,
@@ -6541,7 +6541,7 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": "",
                 "json": ""
@@ -8069,6 +8069,11 @@
                   "value": "other",
                   "label": "Separated/divorced/widowed",
                   "shortcut": ""
+                },
+                {
+                  "value": "marriedUnable",
+                  "label": "Married/common-law and unable to provide partner income due to domestic abuse",
+                  "shortcut": ""
                 }
               ],
               "defaultValue": "",
@@ -8080,7 +8085,8 @@
               "validate": {
                 "required": true,
                 "custom": "",
-                "customPrivate": false
+                "customPrivate": false,
+                "onlyAvailableItems": true
               },
               "type": "radio",
               "labelPosition": "top",
@@ -8092,9 +8098,716 @@
                 "eq": ""
               },
               "properties": {},
-              "tooltip": "Marital status is defined below. Please read the definitions carefully.  \n<strong>Single</strong>: If you are not married or in a common-law relationship  \n<strong>Married</strong>: If you are married as of the first day of classes  \n<strong>Common-Law</strong>: You and your partner are considered to be common-law if you meet both of the following:\n- you are currently living together in a marriage-like relationship; and\n- you will have been living together for at least 12 consecutive months before the first day of classes.  \n<strong>Separated/Divorced/Widowed</strong>: If you are separated, divorced or widowed before the first day of classes.",
+              "tooltip": "Marital status is defined below. Please read the definitions carefully.  \n<strong>Single</strong>: If you are not married or in a common-law relationship  \n<strong>Married</strong>: If you are married as of the first day of classes  \n<strong>Common-Law</strong>: You and your partner are considered to be common-law if you meet both of the following:\n- you are currently living together in a marriage-like relationship; and\n- you will have been living together for at least 12 consecutive months before the first day of classes.  \n<strong>Separated/Divorced/Widowed</strong>: If you are separated, divorced or widowed before the first day of classes.\n<strong>Married/common-law and unable to provide partner income due to domestic abuse</strong>: You would be considered married or common-law but are unable to provide partner income due to experiencing domestic abuse (intimate partner violence) which includes, but is not limited to physical, financial, emotional, and/or sexual abuse.",
               "errorLabel": "Relationship Status",
               "lockKey": true
+            },
+            {
+              "clearOnHide": false,
+              "key": "marriedCommonLawDomesticViolenceExceptionConfirmPanel",
+              "input": false,
+              "title": "",
+              "theme": "default",
+              "tableView": false,
+              "components": [
+                {
+                  "key": "marriedCommonLawDomesticViolenceExceptionPanelContent",
+                  "label": "Content",
+                  "input": false,
+                  "tag": "div",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are married or common-law and are unable to provide partner income due to experiencing domestic abuse (intimate partner violence) which includes, but is not limited to physical, financial, emotional, and/or sexual abuse.",
+                  "type": "htmlelement",
+                  "tags": [],
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "properties": {},
+                  "hideLabel": true
+                },
+                {
+                  "label": "I confirm I am eligible for this exception category and understand that this process requires ministry review and will lead to delays in my funding.",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "description": "",
+                  "tooltip": "",
+                  "shortcut": "",
+                  "inputType": "checkbox",
+                  "customClass": "formio-component-weight-bold",
+                  "tabindex": "",
+                  "hidden": false,
+                  "autofocus": false,
+                  "disabled": false,
+                  "tableView": true,
+                  "modalEdit": false,
+                  "defaultValue": "",
+                  "persistent": true,
+                  "protected": false,
+                  "dbIndex": false,
+                  "encrypted": false,
+                  "redrawOn": "",
+                  "clearOnHide": true,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
+                  "allowCalculateOverride": false,
+                  "validate": {
+                    "required": true,
+                    "customMessage": "You must confirm you understand the exception eligibility criteria.",
+                    "custom": "",
+                    "customPrivate": false,
+                    "json": "",
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "errorLabel": "",
+                  "errors": "",
+                  "key": "marriedUnableConfirmation",
+                  "tags": [],
+                  "properties": {},
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": "",
+                    "json": ""
+                  },
+                  "customConditional": "",
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "type": "checkbox",
+                  "name": "",
+                  "value": "",
+                  "input": true,
+                  "dataGridLabel": false,
+                  "lockKey": true,
+                  "hideOnChildrenHidden": false,
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "multiple": false,
+                  "unique": false,
+                  "refreshOn": "",
+                  "labelPosition": "right",
+                  "widget": null,
+                  "validateOn": "change",
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "id": "e2ll48j",
+                  "hideLabel": false
+                }
+              ],
+              "type": "panel",
+              "breadcrumb": "default",
+              "tags": [],
+              "conditional": {
+                "show": "true",
+                "when": "relationshipStatus",
+                "eq": "marriedUnable"
+              },
+              "properties": {},
+              "customClass": "alert-banner-container alert-banner-warning",
+              "lockKey": true,
+              "hideLabel": true
+            },
+            {
+              "title": "Married/Common-law domestic violence Exception",
+              "breadcrumbClickable": false,
+              "buttonSettings": {
+                "previous": false,
+                "cancel": false,
+                "next": false
+              },
+              "scrollToTop": false,
+              "collapsible": false,
+              "key": "marriedCommonLawDomesticViolenceExceptionPanel",
+              "conditional": {
+                "show": "true",
+                "when": "marriedUnableConfirmation",
+                "eq": "true"
+              },
+              "type": "panel",
+              "label": "Not a BC Resident Panel",
+              "input": false,
+              "tableView": false,
+              "components": [
+                {
+                  "label": "Application Exception - Married/Common-law domestic violence",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "customClass": "",
+                  "modalEdit": false,
+                  "defaultValue": null,
+                  "persistent": true,
+                  "protected": false,
+                  "dbIndex": false,
+                  "encrypted": false,
+                  "redrawOn": "",
+                  "customDefaultValue": "",
+                  "calculateValue": "value = \"studentApplicationException\";",
+                  "calculateServer": true,
+                  "key": "marriedCommonLawDomesticViolenceApplicationException",
+                  "tags": [],
+                  "properties": {},
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "type": "hidden",
+                  "input": true,
+                  "tableView": false,
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "multiple": false,
+                  "unique": false,
+                  "hidden": false,
+                  "clearOnHide": true,
+                  "refreshOn": "",
+                  "dataGridLabel": false,
+                  "labelPosition": "top",
+                  "description": "",
+                  "errorLabel": "",
+                  "tooltip": "",
+                  "tabindex": "",
+                  "disabled": false,
+                  "autofocus": false,
+                  "widget": {
+                    "type": "input"
+                  },
+                  "validateOn": "change",
+                  "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false,
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "conditional": {
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "allowCalculateOverride": false,
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "inputType": "hidden",
+                  "id": "ed8czgf",
+                  "lockKey": true
+                },
+                {
+                  "title": "Upload supporting documents",
+                  "labelWidth": "",
+                  "labelMargin": "",
+                  "theme": "default",
+                  "tooltip": "",
+                  "customClass": "formio-panel-unset",
+                  "collapsible": false,
+                  "hidden": false,
+                  "disabled": false,
+                  "modalEdit": false,
+                  "key": "marriedCommonLawDomesticViolenceExceptionSupportingDocumentsPanel",
+                  "tags": [],
+                  "properties": {},
+                  "customConditional": "",
+                  "conditional": {
+                    "json": "",
+                    "show": "",
+                    "when": null,
+                    "eq": ""
+                  },
+                  "logic": [],
+                  "attributes": {},
+                  "overlay": {
+                    "style": "",
+                    "page": "",
+                    "left": "",
+                    "top": "",
+                    "width": "",
+                    "height": ""
+                  },
+                  "type": "panel",
+                  "label": "Upload supporting documents",
+                  "breadcrumb": "default",
+                  "buttonSettings": {
+                    "previous": true,
+                    "cancel": true,
+                    "next": true
+                  },
+                  "tabindex": "",
+                  "breadcrumbClickable": true,
+                  "scrollToTop": false,
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "label": "HTML",
+                      "tag": "h3",
+                      "className": "category-header-medium primary-color",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": "Upload supporting documents",
+                      "refreshOnChange": false,
+                      "key": "html56",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false,
+                      "placeholder": "",
+                      "prefix": "",
+                      "customClass": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": false,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "modalEdit": false,
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "hideLabel": false,
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "attributes": {},
+                      "validateOn": "change",
+                      "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "properties": {},
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "id": "eawr0fg"
+                    },
+                    {
+                      "label": "HTML",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": "Please provide all of the documents listed below:",
+                      "refreshOnChange": false,
+                      "key": "html4",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false,
+                      "placeholder": "",
+                      "prefix": "",
+                      "customClass": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": false,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "modalEdit": false,
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "hideLabel": false,
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "attributes": {},
+                      "validateOn": "change",
+                      "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "properties": {},
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "tag": "h4",
+                      "id": "exvzcx",
+                      "className": "category-header-medium-small",
+                      "tags": []
+                    },
+                    {
+                      "label": "HTML",
+                      "labelWidth": "",
+                      "labelMargin": "",
+                      "tag": "div",
+                      "className": "",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": "<ul>\n<li>A written statement outlining, in detail, the nature of the circumstances;</li>\n<li>A letter from a professional third party confirming your statement and providing an independent assessment of the situation. A professional ‘third party’ includes, but is not limited to: counselor, psychologist, religious advisor, doctor, teacher, police, and/or staff at a social service agency, such as an organization supporting those experiencing abuse or violence.\n</li>\n</ul>",
+                      "refreshOnChange": false,
+                      "customClass": "align-bullets",
+                      "hidden": false,
+                      "modalEdit": false,
+                      "key": "html23",
+                      "tags": [],
+                      "properties": {},
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": "",
+                        "json": ""
+                      },
+                      "customConditional": "",
+                      "logic": [],
+                      "attributes": {},
+                      "overlay": {
+                        "style": "",
+                        "page": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false,
+                      "placeholder": "",
+                      "prefix": "",
+                      "suffix": "",
+                      "multiple": false,
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": false,
+                      "clearOnHide": true,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "hideLabel": false,
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "validateOn": "change",
+                      "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "id": "eznitl"
+                    },
+                    {
+                      "label": "Upload supporting documents",
+                      "customClass": "font-weight-bold",
+                      "hideLabel": true,
+                      "tableView": false,
+                      "storage": "url",
+                      "dir": "Married/common-law domestic violence - Supporting Documents",
+                      "webcam": false,
+                      "fileTypes": [
+                        {
+                          "label": "",
+                          "value": ""
+                        }
+                      ],
+                      "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+                      "fileMaxSize": "15MB",
+                      "multiple": true,
+                      "key": "marriedCommonLawDomesticViolenceExceptionDocuments",
+                      "type": "file",
+                      "url": "student/files",
+                      "input": true,
+                      "placeholder": "",
+                      "prefix": "",
+                      "suffix": "",
+                      "defaultValue": null,
+                      "protected": false,
+                      "unique": false,
+                      "persistent": true,
+                      "hidden": false,
+                      "clearOnHide": true,
+                      "refreshOn": "",
+                      "redrawOn": "",
+                      "modalEdit": false,
+                      "dataGridLabel": false,
+                      "labelPosition": "top",
+                      "description": "",
+                      "errorLabel": "",
+                      "tooltip": "",
+                      "tabindex": "",
+                      "disabled": false,
+                      "autofocus": false,
+                      "dbIndex": false,
+                      "customDefaultValue": "",
+                      "calculateValue": "",
+                      "calculateServer": false,
+                      "widget": null,
+                      "attributes": {},
+                      "validateOn": "change",
+                      "validate": {
+                        "required": true,
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                      },
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                      },
+                      "allowCalculateOverride": false,
+                      "encrypted": false,
+                      "showCharCount": false,
+                      "showWordCount": false,
+                      "properties": {},
+                      "allowMultipleMasks": false,
+                      "addons": [],
+                      "image": false,
+                      "privateDownload": false,
+                      "imageSize": "200",
+                      "fileMinSize": "0KB",
+                      "uploadOnly": false,
+                      "id": "e15yoie",
+                      "tags": [],
+                      "lockKey": true
+                    },
+                    {
+                      "key": "marriedCommonLawDomesticViolenceExceptionSupportingDocumentsPanelContent",
+                      "label": "Content",
+                      "input": false,
+                      "tag": "div",
+                      "attrs": [],
+                      "className": "file-upload-info-container",
+                      "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
+                      "type": "htmlelement",
+                      "hideLabel": true,
+                      "tags": [],
+                      "conditional": {
+                        "show": "",
+                        "when": null,
+                        "eq": ""
+                      },
+                      "properties": {}
+                    }
+                  ],
+                  "placeholder": "",
+                  "prefix": "",
+                  "suffix": "",
+                  "multiple": false,
+                  "defaultValue": null,
+                  "protected": false,
+                  "unique": false,
+                  "persistent": false,
+                  "clearOnHide": false,
+                  "refreshOn": "",
+                  "redrawOn": "",
+                  "dataGridLabel": false,
+                  "labelPosition": "top",
+                  "description": "",
+                  "errorLabel": "",
+                  "autofocus": false,
+                  "dbIndex": false,
+                  "customDefaultValue": "",
+                  "calculateValue": "",
+                  "calculateServer": false,
+                  "widget": null,
+                  "validateOn": "change",
+                  "validate": {
+                    "required": false,
+                    "custom": "",
+                    "customPrivate": false,
+                    "strictDateValidation": false,
+                    "multiple": false,
+                    "unique": false
+                  },
+                  "allowCalculateOverride": false,
+                  "encrypted": false,
+                  "showCharCount": false,
+                  "showWordCount": false,
+                  "allowMultipleMasks": false,
+                  "addons": [],
+                  "tree": false,
+                  "lazyLoad": false,
+                  "id": "e7zmnf6",
+                  "lockKey": true,
+                  "hideLabel": true
+                }
+              ],
+              "allowPrevious": false,
+              "placeholder": "",
+              "prefix": "",
+              "customClass": "",
+              "suffix": "",
+              "multiple": false,
+              "defaultValue": null,
+              "protected": false,
+              "unique": false,
+              "persistent": false,
+              "hidden": false,
+              "clearOnHide": false,
+              "refreshOn": "",
+              "redrawOn": "",
+              "modalEdit": false,
+              "dataGridLabel": false,
+              "labelPosition": "top",
+              "description": "",
+              "errorLabel": "",
+              "tooltip": "",
+              "tabindex": "",
+              "disabled": false,
+              "autofocus": false,
+              "dbIndex": false,
+              "customDefaultValue": "",
+              "calculateValue": "",
+              "calculateServer": false,
+              "widget": null,
+              "attributes": {},
+              "validateOn": "change",
+              "validate": {
+                "required": false,
+                "custom": "",
+                "customPrivate": false,
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+              },
+              "overlay": {
+                "style": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+              },
+              "allowCalculateOverride": false,
+              "encrypted": false,
+              "showCharCount": false,
+              "showWordCount": false,
+              "properties": {},
+              "allowMultipleMasks": false,
+              "tree": false,
+              "theme": "default",
+              "breadcrumb": "default",
+              "id": "eo7yj4f",
+              "addons": [],
+              "lazyLoad": false,
+              "tags": [],
+              "hideLabel": true,
+              "lockKey": true,
+              "isNew": false
             },
             {
               "label": "Do you identify as an Indigenous person; that is, First Nations, Métis or Inuit?",
@@ -17236,8 +17949,7 @@
               "inputMask": "",
               "decimalLimit": 0,
               "requireDecimal": false,
-              "tags": [],
-              "isNew": false
+              "tags": []
             },
             {
               "title": "CRA consent panel",
@@ -17474,8 +18186,7 @@
                   "tags": []
                 }
               ],
-              "id": "eo4yj69",
-              "isNew": false
+              "id": "eo4yj69"
             },
             {
               "label": "I give the Canada Revenue Agency consent to verify the data I have provided in my application.",
@@ -17587,8 +18298,7 @@
           "tree": false,
           "id": "e910xkr",
           "addons": [],
-          "lazyLoad": false,
-          "isNew": false
+          "lazyLoad": false
         },
         {
           "title": "Award types panel",
@@ -17759,8 +18469,7 @@
               },
               "properties": {},
               "customClass": "",
-              "lockKey": true,
-              "isNew": false
+              "lockKey": true
             },
             {
               "key": "partTimeAwardTypePanelContent",
@@ -17785,8 +18494,7 @@
               },
               "properties": {},
               "customClass": "banner-info",
-              "customConditional": "",
-              "isNew": false
+              "customConditional": ""
             }
           ],
           "allowPrevious": false,
@@ -17829,8 +18537,7 @@
           "id": "e910xkr",
           "addons": [],
           "lazyLoad": false,
-          "lockKey": true,
-          "isNew": false
+          "lockKey": true
         },
         {
           "title": "Financial circumstances panel",
@@ -17951,8 +18658,7 @@
               "showWordCount": false,
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "ez1i9pw",
-              "isNew": false
+              "id": "ez1i9pw"
             },
             {
               "label": "HTML",
@@ -18127,8 +18833,7 @@
               "inputType": "radio",
               "fieldSet": false,
               "id": "ee3su14",
-              "defaultValue": "",
-              "isNew": false
+              "defaultValue": ""
             },
             {
               "title": "Decrease in income panel",
@@ -18194,8 +18899,7 @@
                   "properties": {},
                   "calculateValue": "value = \"studentApplicationException\";",
                   "calculateServer": true,
-                  "lockKey": true,
-                  "isNew": false
+                  "lockKey": true
                 },
                 {
                   "label": "HTML",
@@ -18439,8 +19143,7 @@
                   "decimalLimit": 0,
                   "requireDecimal": false,
                   "tags": [],
-                  "lockKey": true,
-                  "isNew": false
+                  "lockKey": true
                 },
                 {
                   "label": "Select the reason for your significant decrease in gross income.",
@@ -18550,8 +19253,7 @@
                   "inputType": "radio",
                   "fieldSet": false,
                   "id": "edde5i9",
-                  "defaultValue": "",
-                  "isNew": false
+                  "defaultValue": ""
                 },
                 {
                   "title": "Other exceptional circumstance Panel",
@@ -18682,8 +19384,7 @@
                       "displayMask": "",
                       "truncateMultipleSpaces": false,
                       "tags": [],
-                      "lockKey": true,
-                      "isNew": false
+                      "lockKey": true
                     }
                   ],
                   "allowPrevious": false,
@@ -18725,8 +19426,7 @@
                   "tree": false,
                   "id": "ermw1li",
                   "addons": [],
-                  "lazyLoad": false,
-                  "isNew": false
+                  "lazyLoad": false
                 },
                 {
                   "key": "decreaseInIncomePanelContent",
@@ -18985,8 +19685,7 @@
               "tree": false,
               "id": "e0c3le4",
               "addons": [],
-              "lazyLoad": false,
-              "isNew": false
+              "lazyLoad": false
             }
           ],
           "placeholder": "",
@@ -19027,8 +19726,7 @@
           "addons": [],
           "tree": false,
           "lazyLoad": false,
-          "id": "erkahla",
-          "isNew": false
+          "id": "erkahla"
         },
         {
           "title": "Additional transportation cost",
@@ -20650,8 +21348,7 @@
             }
           ],
           "id": "emvzoox",
-          "lockKey": true,
-          "isNew": false
+          "lockKey": true
         }
       ],
       "input": false,
@@ -20694,8 +21391,7 @@
       "tree": false,
       "id": "e9pkm6d",
       "addons": [],
-      "lazyLoad": false,
-      "isNew": false
+      "lazyLoad": false
     },
     {
       "title": "Confirm submission",
@@ -20820,8 +21516,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "eghrup9",
-          "isNew": false
+          "id": "eghrup9"
         },
         {
           "label": "HTML",
@@ -20901,8 +21596,7 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "id": "enm7da",
-          "addons": [],
-          "isNew": false
+          "addons": []
         },
         {
           "title": "Declarations panel",
