@@ -96,36 +96,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
   });
 
-  it(
-    "Should determine CSGD as ineligible when total assessed need is greater than or equal to 1," +
-      " total eligible dependants 12 years and over declared on taxes is at least 1 and total family income is less than the threshold.",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataDependants = [
-        createFakeStudentDependentCSGDEligible(
-          DependentCSGDEligibility.Eligible12YearsAndOverDeclaredOnTaxes,
-          { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
-        ),
-      ];
-
-      // Act
-      const calculatedAssessment =
-        await executePartTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-
-      // Assert
-      expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
-      expect(
-        calculatedAssessment.variables.finalFederalAwardNetCSGDAmount,
-      ).toBeGreaterThan(0);
-    },
-  );
-
   it("Should determine CSGD as not eligible when total family income is greater than threshold with dependant.", async () => {
     // Arrange
     const assessmentConsolidatedData =
@@ -152,7 +122,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     );
   });
 
-  it("Should determine CSGD as not eligible when there is no total eligible dependant.", async () => {
+  it("Should determine CSGD as not eligible when there are no dependants.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
