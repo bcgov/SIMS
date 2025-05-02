@@ -365,6 +365,9 @@ export class AssessmentSequentialProcessingService {
         offeringIntensity: OfferingIntensity;
       }>();
 
+    if (!totals) {
+      return [];
+    }
     return Object.entries(WorkflowOutputType)
       .filter(([key]) => totals[key])
       .map(([key]) => ({
