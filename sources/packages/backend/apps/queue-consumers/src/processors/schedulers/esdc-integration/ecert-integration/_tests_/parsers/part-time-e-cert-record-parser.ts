@@ -43,4 +43,11 @@ export class PartTimeCertRecordParser extends ECertRecordParser {
   get disbursementAmount(): string {
     return this.record.substring(457, 466);
   }
+
+  /**
+   * Marital status from application.
+   */
+  get maritalStatus(): string {
+    return this.record.substring(63, 67).trim();
+  }
 }

@@ -140,8 +140,11 @@ describe(
         db.dataSource,
         { student, msfaaNumber },
         {
+          applicationInitialValues: {
+            applicationStatus: ApplicationStatus.Completed,
+            relationshipStatus: RelationshipStatus.MarriedUnable,
+          },
           offeringIntensity: OfferingIntensity.fullTime,
-          applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
             assessmentDate: new Date(),
@@ -196,6 +199,7 @@ describe(
       );
       expect(record1Parsed.postalCode).toBe("V1V 1V1");
       expect(record1Parsed.gender).toBe("X");
+      expect(record1Parsed.maritalStatus).toBe("M");
       // TODO Add other fields as needed.
     });
 
