@@ -178,12 +178,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       programYearTotalPartTimeCSGP: 4,
       programYearTotalPartTimeCSPT: 2,
       programYearTotalPartTimeSBSD: 6,
-      programYearTotalPartTimeBooksAndSuppliesCost: 0,
-      programYearTotalPartTimeFederalFSC: 0,
-      programYearTotalPartTimeProvincialFSC: 0,
-      programYearTotalPartTimeReturnTransportationCost: 0,
-      programYearTotalPartTimeScholarshipsBursaries: 0,
-      programYearTotalPartTimeSpouseContributionWeeks: 0,
     });
   });
 
@@ -258,12 +252,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       isReadyForCalculation: true,
       latestCSLPBalance: 0,
       programYearTotalPartTimeCSGP: 1000,
-      programYearTotalPartTimeBooksAndSuppliesCost: 0,
-      programYearTotalPartTimeFederalFSC: 0,
-      programYearTotalPartTimeProvincialFSC: 0,
-      programYearTotalPartTimeReturnTransportationCost: 0,
-      programYearTotalPartTimeScholarshipsBursaries: 0,
-      programYearTotalPartTimeSpouseContributionWeeks: 0,
     });
   });
 
@@ -1254,7 +1242,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     // The calculation will only take full-time and part-time application data where the start date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
-      programYearTotalFullTimeBooksAndSuppliesCost: 0,
       programYearTotalFullTimeFederalFSC: 6000,
       programYearTotalFullTimeProvincialFSC: 8000,
       programYearTotalFullTimeReturnTransportationCost: 1000,
@@ -1385,12 +1372,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         latestCSLPBalance: 0,
         programYearTotalPartTimeCSPT: 1150,
         programYearTotalPartTimeCSGD: 460,
-        programYearTotalPartTimeBooksAndSuppliesCost: 0,
-        programYearTotalPartTimeFederalFSC: 0,
-        programYearTotalPartTimeProvincialFSC: 0,
-        programYearTotalPartTimeReturnTransportationCost: 0,
-        programYearTotalPartTimeScholarshipsBursaries: 0,
-        programYearTotalPartTimeSpouseContributionWeeks: 0,
       });
     },
   );
@@ -1517,12 +1498,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         latestCSLPBalance: 0,
         programYearTotalPartTimeCSPT: 1000,
         programYearTotalPartTimeCSGD: 420,
-        programYearTotalPartTimeBooksAndSuppliesCost: 0,
-        programYearTotalPartTimeFederalFSC: 0,
-        programYearTotalPartTimeProvincialFSC: 0,
-        programYearTotalPartTimeReturnTransportationCost: 0,
-        programYearTotalPartTimeScholarshipsBursaries: 0,
-        programYearTotalPartTimeSpouseContributionWeeks: 0,
       });
     },
   );
