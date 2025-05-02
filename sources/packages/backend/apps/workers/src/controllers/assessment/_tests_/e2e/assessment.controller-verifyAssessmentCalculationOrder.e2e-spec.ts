@@ -22,7 +22,9 @@ import {
   COEStatus,
   DisbursementScheduleStatus,
   DisbursementValueType,
+  FullTimeAssessment,
   OfferingIntensity,
+  PartTimeAssessment,
   StudentAssessmentStatus,
   WorkflowData,
 } from "@sims/sims-db";
@@ -349,6 +351,18 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
           assessmentDate: addDays(10, programYear.startDate),
+          workflowData: {
+            calculatedData: {
+              studentSpouseContributionWeeks: 0,
+              exemptScholarshipsBursaries: 2000,
+              totalFederalFSC: 3000,
+              totalProvincialFSC: 4000,
+              returnTransportationCost: 5000,
+            },
+          } as WorkflowData,
+          assessmentData: {
+            booksAndSuppliesCost: 6000,
+          } as PartTimeAssessment,
         },
       },
     );
@@ -394,6 +408,18 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
           assessmentDate: addDays(20, programYear.startDate),
+          workflowData: {
+            calculatedData: {
+              studentSpouseContributionWeeks: 1000,
+              exemptScholarshipsBursaries: 0,
+              totalFederalFSC: 3000,
+              totalProvincialFSC: 4000,
+              returnTransportationCost: 5000,
+            },
+          } as WorkflowData,
+          assessmentData: {
+            booksAndSuppliesCost: 0,
+          } as FullTimeAssessment,
         },
       },
     );
@@ -545,11 +571,11 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       programYearTotalPartTimeCSGP: 8,
       programYearTotalPartTimeSBSD: 12,
       programYearTotalPartTimeBCAG: 14,
-      programYearTotalPartTimeBooksAndSuppliesCost: 0,
-      programYearTotalPartTimeFederalFSC: 0,
-      programYearTotalPartTimeProvincialFSC: 0,
-      programYearTotalPartTimeReturnTransportationCost: 0,
-      programYearTotalPartTimeScholarshipsBursaries: 0,
+      programYearTotalPartTimeBooksAndSuppliesCost: 6000,
+      programYearTotalPartTimeFederalFSC: 3000,
+      programYearTotalPartTimeProvincialFSC: 4000,
+      programYearTotalPartTimeReturnTransportationCost: 5000,
+      programYearTotalPartTimeScholarshipsBursaries: 2000,
       programYearTotalPartTimeSpouseContributionWeeks: 0,
     });
   });

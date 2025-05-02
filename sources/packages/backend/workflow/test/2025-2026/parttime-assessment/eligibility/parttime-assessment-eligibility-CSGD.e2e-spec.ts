@@ -5,29 +5,108 @@ import {
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import {
+  DependentCSGDEligibility,
   DependentEligibility,
   createFakeStudentDependentBornAfterStudyEndDate,
+  createFakeStudentDependentCSGDEligible,
+  createFakeStudentDependentCSGDIneligible,
   createFakeStudentDependentEligible,
 } from "../../../test-utils/factories";
 import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD.`, () => {
   it(
-    "Should determine CSGD as eligible when total assessed need is greater than or equal to 1 " +
-      ", total eligible dependants 11 years or under is at least 1 or total eligible dependants over " +
-      "12 years on taxes is at least 1 and total family income is less than the threshold.",
+    "Should determine CSGD as eligible when total assessed need is greater than or equal to 1," +
+      " total eligible dependants 11 years or under is at least 1 and total family income is less than the threshold.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
-        createFakeStudentDependentEligible(
-          DependentEligibility.Eligible0To18YearsOld,
+        createFakeStudentDependentCSGDEligible(
+          DependentCSGDEligibility.Eligible0To11YearsOld,
           { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
         ),
-        createFakeStudentDependentEligible(
-          DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
+      ];
+
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+
+      // Assert
+      expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
+      expect(
+        calculatedAssessment.variables.finalFederalAwardNetCSGDAmount,
+      ).toBeGreaterThan(0);
+    },
+  );
+
+  it(
+    "Should determine CSGD as eligible when total assessed need is greater than or equal to 1," +
+      " total eligible dependants 12 years and over declared on taxes is at least 1 and total family income is less than the threshold.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataDependants = [
+        createFakeStudentDependentCSGDEligible(
+          DependentCSGDEligibility.Eligible12YearsAndOverDeclaredOnTaxes,
+          { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+        ),
+      ];
+
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+
+      // Assert
+      expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
+      expect(
+        calculatedAssessment.variables.finalFederalAwardNetCSGDAmount,
+      ).toBeGreaterThan(0);
+    },
+  );
+
+  it("Should determine CSGD as ineligible when there are no eligible dependants.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataDependants = [
+      createFakeStudentDependentCSGDIneligible({
+        referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+      }),
+    ];
+
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+
+    // Assert
+    expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
+  });
+
+  it(
+    "Should determine CSGD as ineligible when total assessed need is greater than or equal to 1," +
+      " total eligible dependants 12 years and over declared on taxes is at least 1 and total family income is less than the threshold.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataDependants = [
+        createFakeStudentDependentCSGDEligible(
+          DependentCSGDEligibility.Eligible12YearsAndOverDeclaredOnTaxes,
           { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
         ),
       ];

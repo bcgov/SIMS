@@ -315,27 +315,27 @@ export class AssessmentSequentialProcessingService {
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
       .select(
-        "COALESCE(SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC')::NUMERIC), 0)",
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalFederalFSC')::NUMERIC)",
         WorkflowOutputType.FederalFSC,
       )
       .addSelect(
-        "COALESCE(SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC')::NUMERIC), 0)",
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalProvincialFSC')::NUMERIC)",
         WorkflowOutputType.ProvincialFSC,
       )
       .addSelect(
-        "COALESCE(SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'exemptScholarshipsBursaries')::NUMERIC), 0)",
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'exemptScholarshipsBursaries')::NUMERIC)",
         WorkflowOutputType.ScholarshipsBursaries,
       )
       .addSelect(
-        "COALESCE(SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContributionWeeks')::NUMERIC), 0)",
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'studentSpouseContributionWeeks')::NUMERIC)",
         WorkflowOutputType.SpouseContributionWeeks,
       )
       .addSelect(
-        "COALESCE(SUM((currentAssessment.assessmentData ->> 'booksAndSuppliesCost')::NUMERIC), 0)",
+        "SUM((currentAssessment.assessmentData ->> 'booksAndSuppliesCost')::NUMERIC)",
         WorkflowOutputType.BooksAndSuppliesCost,
       )
       .addSelect(
-        "COALESCE(SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'returnTransportationCost')::NUMERIC), 0)",
+        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'returnTransportationCost')::NUMERIC)",
         WorkflowOutputType.ReturnTransportationCost,
       )
       .addSelect("offering.offeringIntensity", "offeringIntensity")
@@ -365,13 +365,13 @@ export class AssessmentSequentialProcessingService {
         offeringIntensity: OfferingIntensity;
       }>();
 
-    return totals
-      ? Object.keys(WorkflowOutputType).map((key) => ({
-          workflowOutput: key as WorkflowOutputType,
-          total: totals ? +totals[key] : 0,
-          offeringIntensity: totals?.offeringIntensity,
-        }))
-      : null;
+    return Object.entries(WorkflowOutputType)
+      .filter(([key]) => totals[key])
+      .map(([key]) => ({
+        workflowOutput: key as WorkflowOutputType,
+        total: +totals[key],
+        offeringIntensity: totals.offeringIntensity,
+      }));
   }
 
   /**

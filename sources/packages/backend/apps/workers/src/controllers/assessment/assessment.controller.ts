@@ -498,11 +498,8 @@ export class AssessmentController {
     output: VerifyAssessmentCalculationOrderJobOutDTO,
   ): void {
     // Create the dynamic variables to be outputted.
-    this.formulateDynamicVariables(programYearTotal.awardTotals, output);
-    this.formulateDynamicVariables(
-      programYearTotal.workflowOutputTotals,
-      output,
-    );
+    this.createDynamicVariables(programYearTotal.awardTotals, output);
+    this.createDynamicVariables(programYearTotal.workflowOutputTotals, output);
   }
 
   /**
@@ -515,7 +512,7 @@ export class AssessmentController {
    * @param total awards/contributions to be added to the output.
    * @param output output to receive the dynamic property.
    */
-  private formulateDynamicVariables(
+  private createDynamicVariables(
     total: AwardTotal[] | ProgramYearWorkflowOutputTotal[],
     output: VerifyAssessmentCalculationOrderJobOutDTO,
   ): void {

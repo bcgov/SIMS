@@ -33,6 +33,17 @@ export enum DependentChildCareEligibility {
   Eligible12YearsAndOver = "Eligible12YearsAndOver",
 }
 
+export enum DependentCSGDEligibility {
+  /**
+   * Dependent of age between 0 and 11 years.
+   */
+  Eligible0To11YearsOld = "Eligible0To11YearsOld",
+  /**
+   * Dependent of age above 12 years and declared on taxes for disability.
+   */
+  Eligible12YearsAndOverDeclaredOnTaxes = "Eligible12YearsAndOverDeclaredOnTaxes",
+}
+
 /**
  * Creates a student dependent that will be eligible.
  * @param eligibility eligibility rule.
@@ -166,6 +177,52 @@ export function createFakeStudentDependentBornAfterStudyEndDate(
 ): StudentDependent {
   return {
     dateOfBirth: addToDateOnlyString(studyEndDate, 1, "day"),
+    attendingPostSecondarySchool: YesNoOptions.No,
+    declaredOnTaxes: YesNoOptions.No,
+  };
+}
+
+/**
+ * Create a student dependent who is eligible for CSGD.
+ * @param eligibility eligibility rule.
+ * @param studyStartDate study start date of the offering.
+ * @param options method options.
+ * - `referenceDate` reference date to define the dependent birthday.
+ * @returns an eligible dependent.
+ */
+export function createFakeStudentDependentCSGDEligible(
+  eligibility: DependentCSGDEligibility,
+  options?: { referenceDate?: Date | string },
+): StudentDependent {
+  const referenceDate = options?.referenceDate ?? new Date();
+  switch (eligibility) {
+    case DependentCSGDEligibility.Eligible0To11YearsOld:
+      return {
+        dateOfBirth: addToDateOnlyString(referenceDate, -11, "years"),
+        attendingPostSecondarySchool: YesNoOptions.No,
+        declaredOnTaxes: YesNoOptions.No,
+      };
+    case DependentCSGDEligibility.Eligible12YearsAndOverDeclaredOnTaxes:
+      return {
+        dateOfBirth: addToDateOnlyString(referenceDate, -12, "years"),
+        attendingPostSecondarySchool: YesNoOptions.No,
+        declaredOnTaxes: YesNoOptions.Yes,
+      };
+  }
+}
+
+/**
+ * Creates a student dependent who is ineligible for CSGD.
+ * @param options method options.
+ * - `referenceDate` reference date to define the dependent birthday.
+ * @returns an ineligible dependent.
+ */
+export function createFakeStudentDependentCSGDIneligible(options?: {
+  referenceDate?: Date | string;
+}): StudentDependent {
+  const referenceDate = options?.referenceDate ?? new Date();
+  return {
+    dateOfBirth: addToDateOnlyString(referenceDate, -12, "years"),
     attendingPostSecondarySchool: YesNoOptions.No,
     declaredOnTaxes: YesNoOptions.No,
   };
