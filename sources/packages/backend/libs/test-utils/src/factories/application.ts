@@ -138,19 +138,21 @@ export async function saveFakeApplicationDisbursements(
     firstDisbursementInitialValues?: Partial<DisbursementSchedule>;
     secondDisbursementInitialValues?: Partial<DisbursementSchedule>;
     offeringInitialValues?: Partial<EducationProgramOffering>;
+    applicationInitialValues?: Partial<Application>;
   },
 ): Promise<Application> {
   const applicationRepo = dataSource.getRepository(Application);
   const studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
-  const savedApplication = await saveFakeApplication(
-    dataSource,
-    relations,
-    options,
-  );
+  const savedApplication = await saveFakeApplication(dataSource, relations, {
+    ...options,
+    initialValues: options?.applicationInitialValues,
+  });
   // Using Assessment as a default status since it the first status when
   // the application has the disbursement already generated.
   savedApplication.applicationStatus =
-    options?.applicationStatus ?? ApplicationStatus.Assessment;
+    options?.applicationStatus ??
+    options?.applicationInitialValues?.applicationStatus ??
+    ApplicationStatus.Assessment;
   await applicationRepo.save(savedApplication);
   const disbursementSchedules: DisbursementSchedule[] = [];
   // Original assessment - first disbursement.
@@ -258,12 +260,13 @@ export async function saveFakeApplicationDisbursements(
  * - `offering` related education program offering.
  * - `programYear` related program year.
  * @param options additional options:
- * - `applicationStatus` application status for the application.
- * - `applicationNumber` application number for the application.
+ * - `initialValues` initial values related to the application. Please use this instead the individual applications properties.
+ * - `applicationStatus` [obsolete, please use initialValues] application status for the application.
+ * - `applicationNumber` [obsolete, please use initialValues] application number for the application.
  * - `offeringIntensity` if provided sets the offering intensity for the created fakeApplication, otherwise sets it to fulltime by default.
- * - `applicationData` related application data.
- * - `pirStatus` program info status.
- * - `isArchived` archived status.
+ * - `applicationData` [obsolete, please use initialValues] related application data.
+ * - `pirStatus` [obsolete, please use initialValues] program info status.
+ * - `isArchived` [obsolete, please use initialValues] archived status.
  * - `currentAssessmentInitialValues` initial values related to the current assessment.
  * - `offeringInitialValues` initial values related to the offering for the original assessment.
  * @returns the created application.
@@ -282,6 +285,7 @@ export async function saveFakeApplication(
     parentApplication?: Application;
   },
   options?: {
+    initialValues?: Partial<Application>;
     applicationStatus?: ApplicationStatus;
     applicationEditStatus?: ApplicationEditStatus;
     applicationNumber?: string;
@@ -300,7 +304,9 @@ export async function saveFakeApplication(
   const studentAssessmentRepo = dataSource.getRepository(StudentAssessment);
   const offeringRepo = dataSource.getRepository(EducationProgramOffering);
   const applicationStatus =
-    options?.applicationStatus ?? ApplicationStatus.Submitted;
+    options?.applicationStatus ??
+    options?.initialValues?.applicationStatus ??
+    ApplicationStatus.Submitted;
   // Ensure student/user creation.
   let savedUser: User;
   let savedStudent: Student;
@@ -331,6 +337,10 @@ export async function saveFakeApplication(
         submittedDate: options?.submittedDate,
         applicationEditStatus: options?.applicationEditStatus,
         offeringIntensity: options?.offeringIntensity,
+        ...options?.initialValues,
+        // Allow the application creation without parent and preceding application.
+        // The status is adjusted next.
+        applicationStatus: ApplicationStatus.Draft,
       },
     },
   );
