@@ -39,6 +39,25 @@
       boilerplate
     ></v-skeleton-loader>
     <div v-show="!formDefinitionLoading" ref="formioBuilderRef"></div>
+    <v-expansion-panels>
+      <v-expansion-panel
+        collapse-icon="$expanderCollapseIcon"
+        expand-icon="$expanderExpandIcon"
+        title="Form definition inspector"
+      >
+        <v-expansion-panel-text>
+          <content-group>
+            <v-textarea v-model="formDefinition" rows="30"></v-textarea>
+            <footer-buttons
+              primaryLabel="Apply form definition to editor"
+              @primaryClick="applyDynamicFormDefinition"
+              :showSecondaryButton="false"
+              justify="end"
+              class="mr-1"
+            />
+          </content-group>
+        </v-expansion-panel-text> </v-expansion-panel
+    ></v-expansion-panels>
   </full-page-container>
   <confirm-modal
     title="Save dynamic form"
@@ -46,6 +65,13 @@
     okLabel="Save"
     cancelLabel="Cancel"
     text="Are you sure you want to save this version of the dynamic form?"
+  />
+  <confirm-modal
+    title="Apply dynamic form definition"
+    ref="applyDynamicFormDefinitionModal"
+    okLabel="Apply"
+    cancelLabel="Cancel"
+    text="Are you sure you want to override the current form definition in the editor by the new one provided here?"
   />
 </template>
 
@@ -67,12 +93,14 @@ export default defineComponent({
   setup() {
     const snackBar = useSnackBar();
     const saveDynamicFormModal = ref({} as ModalDialog<boolean>);
+    const applyDynamicFormDefinitionModal = ref({} as ModalDialog<boolean>);
     const formioBuilderRef = ref();
     const formsListOptionsLoading = ref(false);
     const formDefinitionLoading = ref(false);
     const formsListOptions = ref<FormAPIOutDTO[]>([]);
     const selectedForm = ref<FormAPIOutDTO>();
     let builder: any = undefined;
+    const formDefinition = ref<string>("");
 
     onMounted(async () => {
       // Load the formio definitions list.
@@ -98,6 +126,13 @@ export default defineComponent({
           },
         },
       );
+      builder.on("change", () => {
+        formDefinition.value = JSON.stringify(
+          getReadyToSaveFormDefinition(),
+          null,
+          2,
+        );
+      });
     });
 
     /**
@@ -182,9 +217,19 @@ export default defineComponent({
       window.open(url, "_blank");
     };
 
+    const applyDynamicFormDefinition = async (): Promise<void> => {
+      const apply = await applyDynamicFormDefinitionModal.value.showModal();
+      if (!apply) {
+        return;
+      }
+      builder.form = JSON.parse(formDefinition.value);
+    };
+
     return {
       Role,
       saveDynamicFormModal,
+      applyDynamicFormDefinitionModal,
+      applyDynamicFormDefinition,
       formioBuilderRef,
       formsListOptions,
       selectedForm,
@@ -194,6 +239,7 @@ export default defineComponent({
       saveDynamicForm,
       copyToClipboard,
       viewOnRepo,
+      formDefinition,
     };
   },
 });
