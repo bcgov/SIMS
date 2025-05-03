@@ -26,7 +26,7 @@ describe("StudentAESTController(e2e)-getStudentProfile", () => {
     db = dataSource;
   });
 
-  it("Should get the student profile when student the student exists and no legacy profile is associated.", async () => {
+  it("Should get the student profile when the student exists and no legacy profile is associated.", async () => {
     // Arrange
     const user = createFakeUser();
     user.identityProviderType = IdentityProviders.BCSC;
@@ -66,7 +66,7 @@ describe("StudentAESTController(e2e)-getStudentProfile", () => {
       });
   });
 
-  it("Should get the student profile when student the student exists and legacy profile is associated.", async () => {
+  it("Should get the student profile when the student exists and legacy profile is associated.", async () => {
     // Arrange
     const user = createFakeUser();
     user.identityProviderType = IdentityProviders.BCSC;
