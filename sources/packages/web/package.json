@@ -14,11 +14,11 @@
   "dependencies": {
     "@bcgov/bc-sans": "^2.1.0",
     "@formio/js": "^5.0.0",
-    "@formio/vue": "^5.0.0",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
     "@vee-validate/rules": "^4.0.4",
     "axios": "^1.8.4",
+    "bootstrap-icons": "^1.11.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "dayjs": "^1.11.10",

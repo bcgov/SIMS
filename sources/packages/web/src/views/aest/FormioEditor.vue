@@ -34,46 +34,13 @@ export default defineComponent({
   setup() {
     const snackBar = useSnackBar();
     const saveDynamicFormModal = ref({} as ModalDialog<boolean>);
-    const formioBuilderRef = ref(null);
+    const formioBuilderRef = ref();
 
     onMounted(async () => {
-      const shadowRoot = formioBuilderRef.value.attachShadow({ mode: "open" });
-      const css1 = document.createElement("link");
-      css1.rel = "stylesheet";
-      css1.href =
-        "https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css";
-      shadowRoot.appendChild(css1);
-
-      const css2 = document.createElement("link");
-      css2.rel = "stylesheet";
-      css2.href =
-        "https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css";
-      shadowRoot.appendChild(css2);
-
-      const css3 = document.createElement("link");
-      css3.rel = "stylesheet";
-      css3.href = "https://cdn.form.io/js/formio.full.min.css";
-      shadowRoot.appendChild(css3);
-
-      const js1 = document.createElement("script");
-      js1.src = "https://cdn.form.io/js/formio.full.min.js";
-      js1.onload = async () => {
-        const formioBuilder = shadowRoot.getElementById("formioBuilder");
-        if (formioBuilder) {
-          Formio.setProjectUrl("sims");
-          const formDefinition = await ApiClient.DynamicForms.getFormDefinition(
-            "sfaa2025-26-pt",
-          );
-          await Formio.builder(formioBuilder, formDefinition);
-        } else {
-          console.error("Form builder container not found in shadow DOM.");
-        }
-      };
-      shadowRoot.appendChild(js1);
-
-      const formioBuilder = document.createElement("div");
-      formioBuilder.id = "formioBuilder";
-      shadowRoot.appendChild(formioBuilder);
+      const formDefinition = await ApiClient.DynamicForms.getFormDefinition(
+        "sfaa2025-26-pt",
+      );
+      await Formio.builder(formioBuilderRef.value, formDefinition);
     });
 
     return {
