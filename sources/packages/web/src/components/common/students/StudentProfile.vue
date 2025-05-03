@@ -127,7 +127,9 @@
         <v-col>
           <title-value
             propertyTitle="Date of birth"
-            :propertyValue="studentDetail.legacyProfile.dateOfBirth"
+            :propertyValue="
+              dateOnlyLongString(studentDetail.legacyProfile.dateOfBirth)
+            "
         /></v-col>
       </v-row>
       <v-row>
@@ -195,8 +197,12 @@ export default defineComponent({
     );
     const studentDetail = ref({} as SharedStudentProfile);
     const address = ref({} as AddressAPIOutDTO);
-    const { genderDisplayFormat, sinDisplayFormat, emptyStringFiller } =
-      useFormatters();
+    const {
+      genderDisplayFormat,
+      sinDisplayFormat,
+      emptyStringFiller,
+      dateOnlyLongString,
+    } = useFormatters();
 
     const loadStudentProfile = async () => {
       studentDetail.value = (await StudentService.shared.getStudentProfile(
@@ -250,6 +256,7 @@ export default defineComponent({
       address,
       sinDisplayFormat,
       genderDisplayFormat,
+      dateOnlyLongString,
       emptyStringFiller,
       loadStudentProfile,
       Role,
