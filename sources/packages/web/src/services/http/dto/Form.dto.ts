@@ -6,3 +6,7 @@ export interface FormAPIOutDTO {
 export interface FormsAPIOutDTO {
   forms: FormAPIOutDTO[];
 }
+
+export interface FormUpdateAPIInDTO {
+  formDefinition: unknown;
+}

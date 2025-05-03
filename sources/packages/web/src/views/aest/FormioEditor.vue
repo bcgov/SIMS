@@ -10,6 +10,13 @@
             @click="copyToClipboard"
             >Copy to clipboard</v-btn
           >
+          <v-btn
+            color="primary"
+            variant="outlined"
+            class="mr-2"
+            @click="viewOnRepo"
+            >View on repository</v-btn
+          >
           <v-btn color="primary" @click="saveDynamicForm"
             >Save dynamic form</v-btn
           ></template
@@ -98,6 +105,9 @@ export default defineComponent({
      * @param form form to be loaded.
      */
     const formSelected = async (form: FormAPIOutDTO): Promise<void> => {
+      if (!form?.name) {
+        return;
+      }
       formDefinitionLoading.value = true;
       try {
         const formDefinition = await ApiClient.DynamicForms.getFormDefinition(
@@ -132,26 +142,44 @@ export default defineComponent({
       nonRequiredProperties.forEach((property) => {
         delete clonedForm[property];
       });
-      return JSON.stringify(clonedForm, null, 2);
+      return clonedForm;
     };
 
     const saveDynamicForm = async (): Promise<void> => {
+      if (selectedForm.value?.name === undefined) {
+        snackBar.warn("Please select a form to save.");
+        return;
+      }
       const shouldContinue = await saveDynamicFormModal.value.showModal();
       if (!shouldContinue) {
         return;
       }
-      // Save the form definition.
-      // TODO: To be implemented.
-      console.info(getReadyToSaveFormDefinition());
+      await ApiClient.DynamicForms.updateForm(selectedForm.value.name, {
+        formDefinition: getReadyToSaveFormDefinition(),
+      });
     };
 
     const copyToClipboard = async (): Promise<void> => {
       try {
-        await navigator.clipboard.writeText(getReadyToSaveFormDefinition());
+        const formDefinition = JSON.stringify(
+          getReadyToSaveFormDefinition(),
+          null,
+          2,
+        );
+        await navigator.clipboard.writeText(formDefinition);
         snackBar.success("Form definition copied to clipboard.");
       } catch {
         snackBar.error("Error copying form definition to clipboard.");
       }
+    };
+
+    const viewOnRepo = async (): Promise<void> => {
+      if (selectedForm.value === undefined) {
+        snackBar.warn("Please select a form.");
+        return;
+      }
+      const url = `https://github.dev/bcgov/SIMS/blob/main/sources/packages/forms/src/form-definitions/${selectedForm.value.name.toLowerCase()}.json`;
+      window.open(url, "_blank");
     };
 
     return {
@@ -165,6 +193,7 @@ export default defineComponent({
       formSelected,
       saveDynamicForm,
       copyToClipboard,
+      viewOnRepo,
     };
   },
 });

@@ -43,13 +43,29 @@ export class FormService {
   }
 
   /**
-   * Lists form definitions that contains the tag 'common'.
+   * Lists form definitions that contains the tag 'common' ordered by title.
    */
   async list() {
+    const authHeader = await this.createAuthHeader();
     const content = await this.httpService.axiosRef.get(
       `${this.config.formsUrl}/form?tags=common&limit=100&sort=title`,
+      authHeader,
     );
     return content.data;
+  }
+
+  /**
+   * Updates a form definition in Form.io.
+   * @param formAlias alias of the form to be updated.
+   * @param formDefinition the new definition of the form.
+   */
+  async updateForm(formAlias: string, formDefinition: unknown) {
+    const authHeader = await this.createAuthHeader();
+    await this.httpService.axiosRef.put(
+      `${this.config.formsUrl}/${formAlias}`,
+      formDefinition,
+      authHeader,
+    );
   }
 
   /**

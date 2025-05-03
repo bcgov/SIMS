@@ -12,12 +12,16 @@ import { KeycloakConfig } from "@sims/auth/config";
 import helmet from "helmet";
 import { SystemUsersService } from "@sims/services";
 import { AppExternalModule } from "./app.external.module";
+import { json } from "express";
 
 async function bootstrap() {
   await KeycloakConfig.load();
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
+
+  // TODO: Adjust to the single route or convert the payload to a string.
+  app.use(json({ limit: "200Kb" }));
 
   // Get the injected logger.
   const logger = await app.resolve(LoggerService);
