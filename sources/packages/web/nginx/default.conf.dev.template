@@ -19,7 +19,7 @@ server {
     try_files $uri $uri/ /index.html;
   }
   add_header 'X-Content-Type-Options' "nosniff";
-  add_header 'Content-Security-Policy' "default-src 'self'; connect-src 'self' *.gov.bc.ca http://localhost:*; script-src 'self' 'unsafe-eval' https://cdn.form.io/flatpickr-formio/; style-src 'self' 'unsafe-inline' https://stackpath.bootstrapcdn.com/bootstrap/ https://cdn.form.io/flatpickr-formio/; font-src 'self' data:; img-src 'self' data:";
+  add_header 'Content-Security-Policy' "default-src 'self'; connect-src 'self' *.gov.bc.ca http://localhost:*; script-src 'self' 'unsafe-eval' https://cdn.form.io/flatpickr-formio/; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/ https://cdn.form.io/flatpickr-formio/; font-src 'self' data:; img-src 'self' data:";
   add_header 'Strict-Transport-Security' "max-age=31536000; includeSubDomains; preload";
   add_header 'Referrer-Policy' "same-origin";
   add_header 'X-Frame-Options' "sameorigin";

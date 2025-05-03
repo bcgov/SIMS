@@ -24,18 +24,15 @@ export default createVuetify({
   default: {},
   defaults: {
     VDividerOpaque: {
-      class: "border-opacity-100",
       thickness: 2,
       color: "secondary",
     },
     VDividerInsetOpaque: {
-      class: "border-opacity-100",
       thickness: 2,
       color: "secondary",
       inset: true,
     },
     VDividerVerticalOpaque: {
-      class: "border-opacity-100",
       thickness: 2,
       color: "secondary",
       vertical: true,

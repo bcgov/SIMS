@@ -47,7 +47,7 @@ export class FormService {
    */
   async list() {
     const content = await this.httpService.axiosRef.get(
-      `${this.config.formsUrl}/form?tags=common&limit=100`,
+      `${this.config.formsUrl}/form?tags=common&limit=100&sort=title`,
     );
     return content.data;
   }
