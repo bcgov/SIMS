@@ -109,6 +109,41 @@
         /></v-col>
       </v-row>
     </content-group>
+    <h3 class="category-header-medium mt-4">Legacy Match</h3>
+    <content-group v-if="studentDetail.legacyProfile">
+      <v-row>
+        <v-col
+          ><title-value
+            propertyTitle="Given names"
+            :propertyValue="studentDetail.legacyProfile.firstName"
+          />
+        </v-col>
+        <v-col
+          ><title-value
+            propertyTitle="Last name"
+            :propertyValue="studentDetail.legacyProfile.lastName"
+          />
+        </v-col>
+        <v-col>
+          <title-value
+            propertyTitle="Date of birth"
+            :propertyValue="studentDetail.legacyProfile.dateOfBirth"
+        /></v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          ><title-value
+            propertyTitle="SIN"
+            :propertyValue="sinDisplayFormat(studentDetail.legacyProfile?.sin)"
+          />
+        </v-col>
+      </v-row>
+    </content-group>
+    <banner
+      v-else
+      :type="BannerTypes.Info"
+      summary="The student is not currently associated with any legacy record."
+    ></banner>
     <edit-student-profile-modal
       ref="studentEditProfile"
     ></edit-student-profile-modal>
@@ -123,7 +158,7 @@ import {
   AddressAPIOutDTO,
   UpdateStudentDetailsAPIInDTO,
 } from "@/services/http/dto";
-import { IdentityProviders, Role, StudentProfile } from "@/types";
+import { IdentityProviders, Role, StudentProfile, BannerTypes } from "@/types";
 import DisabilityStatusUpdateTileValue from "@/components/aest/students/DisabilityStatusUpdateTileValue.vue";
 import EditStudentProfileModal from "@/components/aest/students/modals/EditStudentProfileModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -221,6 +256,7 @@ export default defineComponent({
       editStudentProfile,
       canEditProfile,
       studentEditProfile,
+      BannerTypes,
     };
   },
 });

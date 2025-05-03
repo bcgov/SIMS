@@ -59,10 +59,15 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Gets the student by id.
    * @param studentId student id.
+   * @param options options to include legacy data.
+   * - `includeLegacy`: if true, include legacy profile data.
    * @returns the student found or null.
    */
-  async getStudentById(studentId: number): Promise<Student> {
-    return this.repo
+  async getStudentById(
+    studentId: number,
+    options?: { includeLegacy?: boolean },
+  ): Promise<Student> {
+    const studentQuery = this.repo
       .createQueryBuilder("student")
       .select([
         "student.id",
@@ -83,8 +88,19 @@ export class StudentService extends RecordDataModelService<Student> {
       ])
       .innerJoin("student.user", "user")
       .leftJoin("student.sinValidation", "sinValidation")
-      .where("student.id = :studentId", { studentId })
-      .getOne();
+      .where("student.id = :studentId", { studentId });
+    if (options?.includeLegacy) {
+      studentQuery
+        .addSelect([
+          "sfasIndividual.id",
+          "sfasIndividual.firstName",
+          "sfasIndividual.lastName",
+          "sfasIndividual.birthDate",
+          "sfasIndividual.sin",
+        ])
+        .leftJoin("student.sfasIndividual", "sfasIndividual");
+    }
+    return studentQuery.getOne();
   }
 
   /**
