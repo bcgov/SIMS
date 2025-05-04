@@ -40,6 +40,7 @@
               item-value="name"
               :clearable="true"
               :loading="formsListOptionsLoading"
+              :disabled="formsListOptionsLoading"
               :return-object="true"
               variant="outlined"
               density="compact"
@@ -104,8 +105,7 @@
 
 <script lang="ts">
 import { ModalDialog, useSnackBar } from "@/composables";
-//import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { FORMIO_CUSTOM_COMPONENTS, Role } from "@/types";
+import { FORMIO_CUSTOM_COMPONENTS, FormIOBuilder, Role } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import ApiClient from "@/services/http/ApiClient";
@@ -114,7 +114,6 @@ import { Formio } from "@formio/js";
 
 export default defineComponent({
   components: {
-    //CheckPermissionRole,
     ConfirmModal,
   },
   setup() {
@@ -127,7 +126,7 @@ export default defineComponent({
     const saveDynamicFormLoading = ref(false);
     const formsListOptions = ref<FormAPIOutDTO[]>([]);
     const selectedForm = ref<FormAPIOutDTO>();
-    let builder: any = undefined;
+    let builder: FormIOBuilder | undefined = undefined;
     const formDefinition = ref<string>("");
 
     onMounted(async () => {
@@ -165,23 +164,26 @@ export default defineComponent({
             custom: FORMIO_CUSTOM_COMPONENTS,
           },
         });
-        formDefinition.value = JSON.stringify(
-          getReadyToSaveFormDefinition(),
-          null,
-          2,
-        );
-        builder.on("change", () => {
-          formDefinition.value = JSON.stringify(
-            getReadyToSaveFormDefinition(),
-            null,
-            2,
-          );
+        updateFormDefinitionInspector();
+        builder?.on("change", () => {
+          updateFormDefinitionInspector();
         });
       } catch {
         snackBar.error("Unexpected error loading form definition.");
       } finally {
         formDefinitionLoading.value = false;
       }
+    };
+
+    /**
+     * Update the form definition inspector with the current form definition.
+     */
+    const updateFormDefinitionInspector = async (): Promise<void> => {
+      formDefinition.value = JSON.stringify(
+        getReadyToSaveFormDefinition(),
+        null,
+        2,
+      );
     };
 
     /**
@@ -208,6 +210,9 @@ export default defineComponent({
       return clonedForm;
     };
 
+    /**
+     * Persists the change to the dynamic form definition database.
+     */
     const saveDynamicForm = async (): Promise<void> => {
       if (selectedForm.value?.name === undefined) {
         snackBar.warn("Please select a form to save.");
@@ -229,6 +234,9 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Copy the form definition to the clipboard.
+     */
     const copyToClipboard = async (): Promise<void> => {
       try {
         const formDefinition = JSON.stringify(
@@ -243,6 +251,9 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Open the form definition in the GitHub repository.
+     */
     const viewOnRepo = async (): Promise<void> => {
       if (selectedForm.value === undefined) {
         snackBar.warn("Please select a form.");
@@ -252,6 +263,9 @@ export default defineComponent({
       window.open(url, "_blank");
     };
 
+    /**
+     * Apply the dynamic form definition to the builder.
+     */
     const applyDynamicFormDefinition = async (): Promise<void> => {
       const apply = await applyDynamicFormDefinitionModal.value.showModal();
       if (!apply) {

@@ -47,7 +47,7 @@
             />
           </template>
         </check-permission-role>
-        <check-permission-role :role="Role.AESTQueueDashboardAdmin">
+        <check-permission-role :role="Role.AESTFormEditor">
           <template #="{ isAllowed }">
             <v-list-item
               v-if="isAllowed"

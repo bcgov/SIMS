@@ -4,8 +4,9 @@ import { FormService } from "../../services";
 import {
   AllowAuthorizedParty,
   RequiresUserAccount,
+  Roles,
 } from "../../auth/decorators";
-import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { AuthorizedParties, Role } from "../../auth";
 import { ApiTags } from "@nestjs/swagger";
 import {
   FormNameParamAPIInDTO,
@@ -20,6 +21,7 @@ import {
   AuthorizedParties.aest,
 )
 @RequiresUserAccount(false)
+@Roles(Role.AESTFormEditor)
 @Controller("dynamic-form")
 @ApiTags("dynamic-form")
 export class DynamicFormController extends BaseController {

@@ -13,6 +13,7 @@ export enum Role {
   AESTCASExpenseAuthority = "aest-cas-expense-authority",
   AESTBypassStudentRestriction = "aest-bypass-student-restriction",
   AESTQueueDashboardAdmin = "aest-queue-dashboard-admin",
+  AESTFormEditor = "aest-form-editor",
   StudentAddRestriction = "student-add-restriction",
   StudentResolveRestriction = "student-resolve-restriction",
   StudentUploadFile = "student-upload-file",
