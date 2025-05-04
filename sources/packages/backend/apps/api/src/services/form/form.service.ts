@@ -6,6 +6,7 @@ import { JwtService } from "@nestjs/jwt";
 import { TokenCacheService } from "..";
 import { TokenCacheResponse } from "../auth/token-cache.service.models";
 import { HttpService } from "@nestjs/axios";
+import { FormDefinition } from "./form.service.models";
 
 // Expected header name to send the authorization token to formio API.
 const FORMIO_TOKEN_NAME = "x-jwt-token";
@@ -45,13 +46,16 @@ export class FormService {
   /**
    * Lists form definitions that contains the tag 'common' ordered by title.
    */
-  async list() {
+  async list(): Promise<FormDefinition[]> {
     const authHeader = await this.createAuthHeader();
     const content = await this.httpService.axiosRef.get(
       `${this.config.formsUrl}/form?tags=common&limit=100&sort=title`,
       authHeader,
     );
-    return content.data;
+    return content.data.map((form: FormDefinition) => ({
+      name: form.name,
+      title: form.title,
+    }));
   }
 
   /**

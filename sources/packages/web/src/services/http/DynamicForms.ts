@@ -2,10 +2,19 @@ import { FormsAPIOutDTO, FormUpdateAPIInDTO } from "@/services/http/dto";
 import HttpBaseClient from "./common/HttpBaseClient";
 
 export class DynamicFormsApi extends HttpBaseClient {
+  /**
+   * Get a form definition from Form.io.
+   * @param formName name of the form to be retrieved.
+   * @returns form definition.
+   */
   async getFormDefinition(formName: string): Promise<any> {
     return this.getCall(`dynamic-form/${formName}`);
   }
 
+  /**
+   * List all form definitions that contains the tag 'common' ordered by title.
+   * @returns list of form definitions.
+   */
   async getFormsList(): Promise<FormsAPIOutDTO> {
     return this.getCall(`dynamic-form`);
   }

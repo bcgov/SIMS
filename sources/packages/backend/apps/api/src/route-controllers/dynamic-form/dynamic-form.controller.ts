@@ -21,7 +21,6 @@ import {
   AuthorizedParties.aest,
 )
 @RequiresUserAccount(false)
-@Roles(Role.AESTFormEditor)
 @Controller("dynamic-form")
 @ApiTags("dynamic-form")
 export class DynamicFormController extends BaseController {
@@ -29,6 +28,11 @@ export class DynamicFormController extends BaseController {
     super();
   }
 
+  /**
+   * List all form definitions that contains the tag 'common' ordered by title.
+   * @returns list of form definitions.
+   */
+  @Roles(Role.AESTFormEditor)
   @Get()
   async list(): Promise<FormsAPIOutDTO> {
     const allForms = await this.formService.list();
@@ -40,6 +44,11 @@ export class DynamicFormController extends BaseController {
     };
   }
 
+  /**
+   * Get a form definition from Form.io.
+   * @param formName name of the form to be retrieved.
+   * @returns form definition.
+   */
   @Get(":formName")
   async getForm(@Param() formNameParam: FormNameParamAPIInDTO): Promise<any> {
     return this.formService.fetch(formNameParam.formName);
@@ -50,6 +59,7 @@ export class DynamicFormController extends BaseController {
    * @param formName Name of the form to be updated.
    * @param payload Form definition to be updated.
    */
+  @Roles(Role.AESTFormEditor)
   @Put(":formName")
   async updateForm(
     @Param() formNameParam: FormNameParamAPIInDTO,
