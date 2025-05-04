@@ -52,7 +52,7 @@
             <v-list-item
               v-if="isAllowed"
               :to="{ name: AESTRoutesConst.DYNAMIC_FORM_EDITOR }"
-              prepend-icon="mdi-monitor-dashboard"
+              prepend-icon="mdi-format-float-left"
               title="Dynamic Forms Editor"
             />
           </template>

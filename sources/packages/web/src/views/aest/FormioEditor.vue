@@ -1,63 +1,90 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Dynamic Forms Editor" subTitle="Dynamic Forms">
-        <template #buttons>
-          <v-btn
-            color="primary"
-            variant="outlined"
-            class="mr-2"
-            @click="copyToClipboard"
-            >Copy to clipboard</v-btn
-          >
-          <v-btn
-            color="primary"
-            variant="outlined"
-            class="mr-2"
-            @click="viewOnRepo"
-            >View on repository</v-btn
-          >
-          <v-btn color="primary" @click="saveDynamicForm"
-            >Save dynamic form</v-btn
-          ></template
-        ></header-navigator
-      >
+      <header-navigator title="Dynamic Forms Editor" subTitle="Dynamic Forms" />
     </template>
-    <v-combobox
-      v-model="selectedForm"
-      :items="formsListOptions"
-      label="Select a dynamic form"
-      item-text="title"
-      item-value="name"
-      :loading="formsListOptionsLoading"
-      @update:modelValue="formSelected"
-    ></v-combobox>
-    <v-skeleton-loader
-      v-if="formDefinitionLoading"
-      class="mx-auto"
-      type="card, paragraph, table-row@4, paragraph, actions"
-      boilerplate
-    ></v-skeleton-loader>
-    <div v-show="!formDefinitionLoading" ref="formioBuilderRef"></div>
-    <v-expansion-panels>
-      <v-expansion-panel
-        collapse-icon="$expanderCollapseIcon"
-        expand-icon="$expanderExpandIcon"
-        title="Form definition inspector"
-      >
-        <v-expansion-panel-text>
-          <content-group>
-            <v-textarea v-model="formDefinition" rows="30"></v-textarea>
-            <footer-buttons
-              primaryLabel="Apply form definition to editor"
-              @primaryClick="applyDynamicFormDefinition"
-              :showSecondaryButton="false"
-              justify="end"
-              class="mr-1"
-            />
-          </content-group>
-        </v-expansion-panel-text> </v-expansion-panel
-    ></v-expansion-panels>
+    <body-header-container>
+      <template #header>
+        <body-header title="Editor">
+          <template #actions>
+            <v-btn
+              color="primary"
+              @click="saveDynamicForm"
+              class="mr-2 float-right"
+              :loading="saveDynamicFormLoading"
+              prepend-icon="fa:fa fa-save"
+              :disabled="!selectedForm"
+              >Save</v-btn
+            >
+            <v-btn
+              color="primary"
+              prepend-icon="fa:fa fa-copy"
+              class="mr-2 float-right"
+              @click="copyToClipboard"
+              :disabled="!selectedForm"
+              >Copy</v-btn
+            >
+            <v-btn
+              color="primary"
+              prepend-icon="fa:fa-brands fa-github"
+              class="mr-2 float-right"
+              @click="viewOnRepo"
+              :disabled="!selectedForm"
+              >Repo</v-btn
+            >
+            <v-autocomplete
+              v-model="selectedForm"
+              :items="formsListOptions"
+              label="Select a dynamic form"
+              item-text="title"
+              item-value="name"
+              :clearable="true"
+              :loading="formsListOptionsLoading"
+              :return-object="true"
+              variant="outlined"
+              density="compact"
+              class="mr-2 float-right"
+              width="400"
+              hide-details="auto"
+              @update:modelValue="formSelected"
+            ></v-autocomplete>
+          </template>
+        </body-header>
+      </template>
+      <content-group>
+        <toggle-content
+          :toggled="!selectedForm"
+          message="Please select a dynamic form to be edited."
+        >
+          <v-skeleton-loader
+            v-if="formDefinitionLoading"
+            class="mx-auto"
+            type="card, paragraph, table-row@4, paragraph, actions"
+            boilerplate
+          ></v-skeleton-loader>
+          <div v-show="!formDefinitionLoading" ref="formioBuilderRef"></div>
+          <v-expansion-panels class="mt-4">
+            <v-expansion-panel
+              collapse-icon="$expanderCollapseIcon"
+              expand-icon="$expanderExpandIcon"
+              title="Form definition inspector"
+            >
+              <v-expansion-panel-text>
+                <content-group>
+                  <v-textarea v-model="formDefinition" rows="30"></v-textarea>
+                  <footer-buttons
+                    primaryLabel="Apply form definition to editor"
+                    @primaryClick="applyDynamicFormDefinition"
+                    :showSecondaryButton="false"
+                    justify="end"
+                    class="mr-1"
+                  />
+                </content-group>
+              </v-expansion-panel-text> </v-expansion-panel
+          ></v-expansion-panels>
+        </toggle-content>
+      </content-group>
+    </body-header-container>
   </full-page-container>
   <confirm-modal
     title="Save dynamic form"
@@ -97,6 +124,7 @@ export default defineComponent({
     const formioBuilderRef = ref();
     const formsListOptionsLoading = ref(false);
     const formDefinitionLoading = ref(false);
+    const saveDynamicFormLoading = ref(false);
     const formsListOptions = ref<FormAPIOutDTO[]>([]);
     const selectedForm = ref<FormAPIOutDTO>();
     let builder: any = undefined;
@@ -113,26 +141,6 @@ export default defineComponent({
       } finally {
         formsListOptionsLoading.value = false;
       }
-      // Create the formio builder.
-      builder = await Formio.builder(
-        formioBuilderRef.value,
-        {},
-        {
-          noNewEdit: true,
-          noDefaultSubmitButton: true,
-          alwaysConfirmComponentRemoval: true,
-          builder: {
-            custom: FORMIO_CUSTOM_COMPONENTS,
-          },
-        },
-      );
-      builder.on("change", () => {
-        formDefinition.value = JSON.stringify(
-          getReadyToSaveFormDefinition(),
-          null,
-          2,
-        );
-      });
     });
 
     /**
@@ -145,10 +153,30 @@ export default defineComponent({
       }
       formDefinitionLoading.value = true;
       try {
-        const formDefinition = await ApiClient.DynamicForms.getFormDefinition(
+        const definition = await ApiClient.DynamicForms.getFormDefinition(
           form.name,
         );
-        builder.form = formDefinition;
+        // Recreate the formio builder.
+        builder = await Formio.builder(formioBuilderRef.value, definition, {
+          noNewEdit: true,
+          noDefaultSubmitButton: true,
+          alwaysConfirmComponentRemoval: true,
+          builder: {
+            custom: FORMIO_CUSTOM_COMPONENTS,
+          },
+        });
+        formDefinition.value = JSON.stringify(
+          getReadyToSaveFormDefinition(),
+          null,
+          2,
+        );
+        builder.on("change", () => {
+          formDefinition.value = JSON.stringify(
+            getReadyToSaveFormDefinition(),
+            null,
+            2,
+          );
+        });
       } catch {
         snackBar.error("Unexpected error loading form definition.");
       } finally {
@@ -159,7 +187,7 @@ export default defineComponent({
     /**
      * Save the dynamic form definition removing unwanted properties.
      */
-    const getReadyToSaveFormDefinition = (): string => {
+    const getReadyToSaveFormDefinition = (): unknown => {
       // Properties that are not required to be saved.
       const nonRequiredProperties = [
         "_id",
@@ -189,9 +217,16 @@ export default defineComponent({
       if (!shouldContinue) {
         return;
       }
-      await ApiClient.DynamicForms.updateForm(selectedForm.value.name, {
-        formDefinition: getReadyToSaveFormDefinition(),
-      });
+      try {
+        saveDynamicFormLoading.value = true;
+        await ApiClient.DynamicForms.updateForm(selectedForm.value.name, {
+          formDefinition: getReadyToSaveFormDefinition(),
+        });
+      } catch {
+        snackBar.error("Unexpected error saving form definition.");
+      } finally {
+        saveDynamicFormLoading.value = false;
+      }
     };
 
     const copyToClipboard = async (): Promise<void> => {
@@ -223,6 +258,9 @@ export default defineComponent({
         return;
       }
       builder.form = JSON.parse(formDefinition.value);
+      snackBar.success(
+        "Editor updated with the content from the definition inspector.",
+      );
     };
 
     return {
@@ -235,6 +273,7 @@ export default defineComponent({
       selectedForm,
       formsListOptionsLoading,
       formDefinitionLoading,
+      saveDynamicFormLoading,
       formSelected,
       saveDynamicForm,
       copyToClipboard,
