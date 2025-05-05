@@ -9079,7 +9079,7 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "Youth In Care is an invalid value.",
                 "custom": "",
                 "customPrivate": false,

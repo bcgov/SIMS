@@ -483,7 +483,8 @@
           "hideOnChildrenHidden": false,
           "id": "evh64v3",
           "addons": [],
-          "lazyLoad": false
+          "lazyLoad": false,
+          "tags": []
         },
         {
           "label": "Workflow Name",
@@ -1468,51 +1469,6 @@
               "id": "e0atgwd"
             },
             {
-              "autofocus": false,
-              "input": true,
-              "tableView": false,
-              "inputType": "text",
-              "inputMask": "",
-              "label": "Capacity in which you will be attending this program:",
-              "key": "applicationOfferingIntensity",
-              "placeholder": "",
-              "prefix": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": "",
-              "protected": false,
-              "unique": false,
-              "persistent": false,
-              "hidden": false,
-              "clearOnHide": false,
-              "spellcheck": false,
-              "validate": {
-                "required": false,
-                "minLength": "",
-                "maxLength": "",
-                "pattern": "",
-                "custom": "",
-                "customPrivate": false
-              },
-              "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
-              },
-              "type": "textfield",
-              "labelPosition": "top",
-              "inputFormat": "plain",
-              "tags": [],
-              "properties": {},
-              "hideLabel": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "disabled": true,
-              "tooltip": "A student is considered to be in part-time studies when taking between 20% and 59% of a full-time course load in a course or continuous period of study.",
-              "customClass": "font-weight-bold",
-              "lockKey": true
-            },
-            {
               "title": "Program",
               "labelWidth": "",
               "labelMargin": "",
@@ -1527,10 +1483,10 @@
               "key": "program",
               "tags": [],
               "properties": {},
-              "customConditional": "show = \n  (data.howWillYouBeAttendingTheProgram === 'Full Time' ||\n   data.howWillYouBeAttendingTheProgram === 'Part Time')",
+              "customConditional": "",
               "conditional": {
                 "json": "",
-                "show": null,
+                "show": "",
                 "when": null,
                 "eq": ""
               },
@@ -1588,8 +1544,8 @@
                   "valueProperty": "",
                   "limit": 100,
                   "template": "<span>{{ item.label }}</span>",
-                  "refreshOn": "howWillYouBeAttendingTheProgram",
-                  "refreshOnBlur": "howWillYouBeAttendingTheProgram",
+                  "refreshOn": "",
+                  "refreshOnBlur": "",
                   "clearOnRefresh": true,
                   "searchEnabled": true,
                   "selectThreshold": 0.3,
@@ -1629,7 +1585,7 @@
                     "eq": "",
                     "json": ""
                   },
-                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !!data.howWillYouBeAttendingTheProgram &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !!!data.isReadOnly;\r\n  \r\n\r\n",
+                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !!!data.isReadOnly;\r\n  \r\n\r\n",
                   "logic": [],
                   "attributes": {},
                   "overlay": {
@@ -2243,7 +2199,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "evgar2",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -2319,7 +2276,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "e4deel",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     },
                     {
                       "label": "Columns",
@@ -2870,7 +2828,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "eyhhx9p",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     },
                     {
                       "label": "Columns",
@@ -3360,7 +3319,8 @@
                       "tree": false,
                       "lazyLoad": false,
                       "autoAdjust": false,
-                      "id": "e4ubed9"
+                      "id": "e4ubed9",
+                      "tags": []
                     }
                   ],
                   "placeholder": "",
@@ -3824,913 +3784,6 @@
           "id": "ek4n7vq"
         },
         {
-          "title": "Course information panel",
-          "labelWidth": "",
-          "labelMargin": "",
-          "theme": "default",
-          "tooltip": "",
-          "customClass": "",
-          "collapsible": false,
-          "hidden": false,
-          "hideLabel": true,
-          "disabled": false,
-          "modalEdit": false,
-          "key": "panel1",
-          "tags": [],
-          "properties": {},
-          "customConditional": "",
-          "conditional": {
-            "json": "",
-            "show": true,
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Part Time"
-          },
-          "logic": [],
-          "attributes": {},
-          "overlay": {
-            "style": "",
-            "page": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "type": "panel",
-          "label": "Panel",
-          "breadcrumb": "default",
-          "tabindex": "",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "tag": "h3",
-              "className": "category-header-medium primary-color",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Course information",
-              "refreshOnChange": false,
-              "key": "html112",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "placeholder": "",
-              "prefix": "",
-              "customClass": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": null,
-              "protected": false,
-              "unique": false,
-              "persistent": false,
-              "hidden": false,
-              "clearOnHide": true,
-              "refreshOn": "",
-              "redrawOn": "",
-              "modalEdit": false,
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "hideLabel": false,
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "widget": null,
-              "attributes": {},
-              "validateOn": "change",
-              "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-              },
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-              },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
-              "allowCalculateOverride": false,
-              "encrypted": false,
-              "showCharCount": false,
-              "showWordCount": false,
-              "properties": {},
-              "allowMultipleMasks": false,
-              "addons": [],
-              "id": "efhriqd"
-            },
-            {
-              "label": "HTML",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Please provide information about the courses you will be taking during this study period.",
-              "refreshOnChange": false,
-              "key": "html113",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "placeholder": "",
-              "prefix": "",
-              "customClass": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": null,
-              "protected": false,
-              "unique": false,
-              "persistent": false,
-              "hidden": false,
-              "clearOnHide": true,
-              "refreshOn": "",
-              "redrawOn": "",
-              "modalEdit": false,
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "hideLabel": false,
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "widget": null,
-              "attributes": {},
-              "validateOn": "change",
-              "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-              },
-              "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
-              },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
-              "allowCalculateOverride": false,
-              "encrypted": false,
-              "showCharCount": false,
-              "showWordCount": false,
-              "properties": {},
-              "allowMultipleMasks": false,
-              "addons": [],
-              "tag": "p",
-              "id": "emh3t8f",
-              "className": "",
-              "tags": []
-            },
-            {
-              "label": "Course information",
-              "reorder": false,
-              "addAnother": "Add course",
-              "addAnotherPosition": "bottom",
-              "layoutFixed": false,
-              "enableRowGroups": false,
-              "initEmpty": false,
-              "hideLabel": true,
-              "tableView": false,
-              "defaultValue": [
-                {
-                  "courseName": "",
-                  "courseCode": "",
-                  "courseStartDate": "",
-                  "courseEndDate": ""
-                }
-              ],
-              "key": "courseDetails",
-              "type": "datagrid",
-              "input": true,
-              "components": [
-                {
-                  "key": "fieldset",
-                  "type": "fieldset",
-                  "label": "",
-                  "input": false,
-                  "tableView": false,
-                  "components": [
-                    {
-                      "label": "Columns",
-                      "columns": [
-                        {
-                          "components": [
-                            {
-                              "label": "Course name",
-                              "customClass": "label-bold",
-                              "tableView": true,
-                              "validate": {
-                                "required": true,
-                                "custom": "",
-                                "customPrivate": false,
-                                "strictDateValidation": false,
-                                "multiple": false,
-                                "unique": false,
-                                "minLength": "",
-                                "maxLength": "",
-                                "pattern": ""
-                              },
-                              "key": "courseName",
-                              "type": "textfield",
-                              "input": true,
-                              "placeholder": "",
-                              "prefix": "",
-                              "suffix": "",
-                              "multiple": false,
-                              "defaultValue": null,
-                              "protected": false,
-                              "unique": false,
-                              "persistent": true,
-                              "hidden": false,
-                              "clearOnHide": true,
-                              "refreshOn": "",
-                              "redrawOn": "",
-                              "modalEdit": false,
-                              "dataGridLabel": false,
-                              "labelPosition": "top",
-                              "description": "",
-                              "errorLabel": "",
-                              "tooltip": "",
-                              "hideLabel": false,
-                              "tabindex": "",
-                              "disabled": false,
-                              "autofocus": false,
-                              "dbIndex": false,
-                              "customDefaultValue": "",
-                              "calculateValue": "",
-                              "calculateServer": false,
-                              "widget": {
-                                "type": "input"
-                              },
-                              "attributes": {},
-                              "validateOn": "change",
-                              "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                              },
-                              "overlay": {
-                                "style": "",
-                                "left": "",
-                                "top": "",
-                                "width": "",
-                                "height": ""
-                              },
-                              "allowCalculateOverride": false,
-                              "encrypted": false,
-                              "showCharCount": false,
-                              "showWordCount": false,
-                              "properties": {},
-                              "allowMultipleMasks": false,
-                              "addons": [],
-                              "mask": false,
-                              "inputType": "text",
-                              "inputFormat": "plain",
-                              "inputMask": "",
-                              "displayMask": "",
-                              "spellcheck": true,
-                              "truncateMultipleSpaces": false,
-                              "id": "e6uctnl",
-                              "tags": []
-                            }
-                          ],
-                          "width": 6,
-                          "offset": 0,
-                          "push": 0,
-                          "pull": 0,
-                          "size": "md",
-                          "currentWidth": 6
-                        },
-                        {
-                          "components": [
-                            {
-                              "label": "Course code",
-                              "tooltip": "Your course code is also known as your course registration number typically shown beside your course name (e.g. MGMT 101)",
-                              "customClass": "label-bold",
-                              "tableView": true,
-                              "case": "uppercase",
-                              "validate": {
-                                "required": true,
-                                "custom": "",
-                                "customPrivate": false,
-                                "strictDateValidation": false,
-                                "multiple": false,
-                                "unique": false,
-                                "minLength": "",
-                                "maxLength": "",
-                                "pattern": ""
-                              },
-                              "key": "courseCode",
-                              "type": "textfield",
-                              "input": true,
-                              "placeholder": "",
-                              "prefix": "",
-                              "suffix": "",
-                              "multiple": false,
-                              "defaultValue": null,
-                              "protected": false,
-                              "unique": false,
-                              "persistent": true,
-                              "hidden": false,
-                              "clearOnHide": true,
-                              "refreshOn": "",
-                              "redrawOn": "",
-                              "modalEdit": false,
-                              "dataGridLabel": false,
-                              "labelPosition": "top",
-                              "description": "",
-                              "errorLabel": "",
-                              "hideLabel": false,
-                              "tabindex": "",
-                              "disabled": false,
-                              "autofocus": false,
-                              "dbIndex": false,
-                              "customDefaultValue": "",
-                              "calculateValue": "",
-                              "calculateServer": false,
-                              "widget": {
-                                "type": "input"
-                              },
-                              "attributes": {},
-                              "validateOn": "change",
-                              "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                              },
-                              "overlay": {
-                                "style": "",
-                                "left": "",
-                                "top": "",
-                                "width": "",
-                                "height": ""
-                              },
-                              "allowCalculateOverride": false,
-                              "encrypted": false,
-                              "showCharCount": false,
-                              "showWordCount": false,
-                              "properties": {},
-                              "allowMultipleMasks": false,
-                              "addons": [],
-                              "mask": false,
-                              "inputType": "text",
-                              "inputFormat": "plain",
-                              "inputMask": "",
-                              "displayMask": "",
-                              "spellcheck": true,
-                              "truncateMultipleSpaces": false,
-                              "id": "eqkr5x",
-                              "tags": []
-                            }
-                          ],
-                          "size": "md",
-                          "width": 6,
-                          "offset": 0,
-                          "push": 0,
-                          "pull": 0,
-                          "currentWidth": 6
-                        }
-                      ],
-                      "key": "columns2",
-                      "type": "columns",
-                      "hideOnChildrenHidden": false,
-                      "input": false,
-                      "tableView": false,
-                      "placeholder": "",
-                      "prefix": "",
-                      "customClass": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": null,
-                      "protected": false,
-                      "unique": false,
-                      "persistent": false,
-                      "hidden": false,
-                      "clearOnHide": false,
-                      "refreshOn": "",
-                      "redrawOn": "",
-                      "modalEdit": false,
-                      "dataGridLabel": false,
-                      "labelPosition": "top",
-                      "description": "",
-                      "errorLabel": "",
-                      "tooltip": "",
-                      "hideLabel": false,
-                      "tabindex": "",
-                      "disabled": false,
-                      "autofocus": false,
-                      "dbIndex": false,
-                      "customDefaultValue": "",
-                      "calculateValue": "",
-                      "calculateServer": false,
-                      "widget": null,
-                      "attributes": {},
-                      "validateOn": "change",
-                      "validate": {
-                        "required": false,
-                        "custom": "",
-                        "customPrivate": false,
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false
-                      },
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": ""
-                      },
-                      "overlay": {
-                        "style": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
-                      "allowCalculateOverride": false,
-                      "encrypted": false,
-                      "showCharCount": false,
-                      "showWordCount": false,
-                      "properties": {},
-                      "allowMultipleMasks": false,
-                      "addons": [],
-                      "tree": false,
-                      "lazyLoad": false,
-                      "autoAdjust": false,
-                      "id": "e1cu6ql"
-                    },
-                    {
-                      "label": "Columns",
-                      "columns": [
-                        {
-                          "components": [
-                            {
-                              "label": "Course start date",
-                              "placeholder": "Select date",
-                              "widget": {
-                                "type": "calendar",
-                                "allowInput": true,
-                                "clickOpens": true,
-                                "enableDate": true,
-                                "enableTime": false,
-                                "mode": "single",
-                                "noCalendar": false,
-                                "format": "yyyy-MM-dd",
-                                "dateFormat": "yyyy-MM-dd",
-                                "useLocaleSettings": false,
-                                "hourIncrement": 1,
-                                "minuteIncrement": 5,
-                                "time_24hr": false,
-                                "saveAs": "text",
-                                "locale": "en"
-                              },
-                              "customClass": "label-bold",
-                              "tableView": true,
-                              "validate": {
-                                "required": true,
-                                "custom": "",
-                                "customPrivate": false,
-                                "strictDateValidation": false,
-                                "multiple": false,
-                                "unique": false,
-                                "minLength": "",
-                                "maxLength": "",
-                                "pattern": ""
-                              },
-                              "key": "courseStartDate",
-                              "type": "textfield",
-                              "input": true,
-                              "prefix": "",
-                              "suffix": "",
-                              "multiple": false,
-                              "defaultValue": null,
-                              "protected": false,
-                              "unique": false,
-                              "persistent": true,
-                              "hidden": false,
-                              "clearOnHide": true,
-                              "refreshOn": "",
-                              "redrawOn": "",
-                              "modalEdit": false,
-                              "dataGridLabel": false,
-                              "labelPosition": "top",
-                              "description": "",
-                              "errorLabel": "",
-                              "tooltip": "",
-                              "hideLabel": false,
-                              "tabindex": "",
-                              "disabled": false,
-                              "autofocus": false,
-                              "dbIndex": false,
-                              "customDefaultValue": "",
-                              "calculateValue": "",
-                              "calculateServer": false,
-                              "attributes": {},
-                              "validateOn": "change",
-                              "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                              },
-                              "overlay": {
-                                "style": "",
-                                "left": "",
-                                "top": "",
-                                "width": "",
-                                "height": ""
-                              },
-                              "allowCalculateOverride": false,
-                              "encrypted": false,
-                              "showCharCount": false,
-                              "showWordCount": false,
-                              "properties": {},
-                              "allowMultipleMasks": false,
-                              "addons": [],
-                              "mask": false,
-                              "inputType": "text",
-                              "inputFormat": "plain",
-                              "inputMask": "",
-                              "displayMask": "",
-                              "spellcheck": true,
-                              "truncateMultipleSpaces": false,
-                              "id": "ehhui5b",
-                              "tags": []
-                            }
-                          ],
-                          "width": 6,
-                          "offset": 0,
-                          "push": 0,
-                          "pull": 0,
-                          "size": "md",
-                          "currentWidth": 6
-                        },
-                        {
-                          "components": [
-                            {
-                              "label": "Course end date",
-                              "placeholder": "Select date",
-                              "widget": {
-                                "type": "calendar",
-                                "allowInput": true,
-                                "clickOpens": true,
-                                "enableDate": true,
-                                "enableTime": false,
-                                "mode": "single",
-                                "noCalendar": false,
-                                "format": "yyyy-MM-dd",
-                                "dateFormat": "yyyy-MM-dd",
-                                "useLocaleSettings": false,
-                                "hourIncrement": 1,
-                                "minuteIncrement": 5,
-                                "time_24hr": false,
-                                "saveAs": "text",
-                                "locale": "en"
-                              },
-                              "customClass": "label-bold",
-                              "tableView": true,
-                              "validate": {
-                                "required": true,
-                                "custom": "",
-                                "customPrivate": false,
-                                "strictDateValidation": false,
-                                "multiple": false,
-                                "unique": false,
-                                "minLength": "",
-                                "maxLength": "",
-                                "pattern": ""
-                              },
-                              "key": "courseEndDate",
-                              "type": "textfield",
-                              "input": true,
-                              "prefix": "",
-                              "suffix": "",
-                              "multiple": false,
-                              "defaultValue": null,
-                              "protected": false,
-                              "unique": false,
-                              "persistent": true,
-                              "hidden": false,
-                              "clearOnHide": true,
-                              "refreshOn": "",
-                              "redrawOn": "",
-                              "modalEdit": false,
-                              "dataGridLabel": false,
-                              "labelPosition": "top",
-                              "description": "",
-                              "errorLabel": "",
-                              "tooltip": "",
-                              "hideLabel": false,
-                              "tabindex": "",
-                              "disabled": false,
-                              "autofocus": false,
-                              "dbIndex": false,
-                              "customDefaultValue": "",
-                              "calculateValue": "",
-                              "calculateServer": false,
-                              "attributes": {},
-                              "validateOn": "change",
-                              "conditional": {
-                                "show": null,
-                                "when": null,
-                                "eq": ""
-                              },
-                              "overlay": {
-                                "style": "",
-                                "left": "",
-                                "top": "",
-                                "width": "",
-                                "height": ""
-                              },
-                              "allowCalculateOverride": false,
-                              "encrypted": false,
-                              "showCharCount": false,
-                              "showWordCount": false,
-                              "properties": {},
-                              "allowMultipleMasks": false,
-                              "addons": [],
-                              "mask": false,
-                              "inputType": "text",
-                              "inputFormat": "plain",
-                              "inputMask": "",
-                              "displayMask": "",
-                              "spellcheck": true,
-                              "truncateMultipleSpaces": false,
-                              "id": "epcwxa",
-                              "tags": []
-                            }
-                          ],
-                          "size": "md",
-                          "width": 6,
-                          "offset": 0,
-                          "push": 0,
-                          "pull": 0,
-                          "currentWidth": 6
-                        }
-                      ],
-                      "key": "columns",
-                      "type": "columns",
-                      "input": false,
-                      "tableView": false,
-                      "placeholder": "",
-                      "prefix": "",
-                      "customClass": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": null,
-                      "protected": false,
-                      "unique": false,
-                      "persistent": false,
-                      "hidden": false,
-                      "clearOnHide": false,
-                      "refreshOn": "",
-                      "redrawOn": "",
-                      "modalEdit": false,
-                      "dataGridLabel": false,
-                      "labelPosition": "top",
-                      "description": "",
-                      "errorLabel": "",
-                      "tooltip": "",
-                      "hideLabel": false,
-                      "tabindex": "",
-                      "disabled": false,
-                      "autofocus": false,
-                      "dbIndex": false,
-                      "customDefaultValue": "",
-                      "calculateValue": "",
-                      "calculateServer": false,
-                      "widget": null,
-                      "attributes": {},
-                      "validateOn": "change",
-                      "validate": {
-                        "required": false,
-                        "custom": "",
-                        "customPrivate": false,
-                        "strictDateValidation": false,
-                        "multiple": false,
-                        "unique": false
-                      },
-                      "conditional": {
-                        "show": null,
-                        "when": null,
-                        "eq": ""
-                      },
-                      "overlay": {
-                        "style": "",
-                        "left": "",
-                        "top": "",
-                        "width": "",
-                        "height": ""
-                      },
-                      "allowCalculateOverride": false,
-                      "encrypted": false,
-                      "showCharCount": false,
-                      "showWordCount": false,
-                      "properties": {},
-                      "allowMultipleMasks": false,
-                      "addons": [],
-                      "tree": false,
-                      "lazyLoad": false,
-                      "autoAdjust": false,
-                      "id": "ebc86yc"
-                    }
-                  ],
-                  "id": "eler3if00000000000000000000000000000000000000",
-                  "placeholder": "",
-                  "prefix": "",
-                  "customClass": "",
-                  "suffix": "",
-                  "multiple": false,
-                  "defaultValue": null,
-                  "protected": false,
-                  "unique": false,
-                  "persistent": false,
-                  "hidden": false,
-                  "clearOnHide": true,
-                  "refreshOn": "",
-                  "redrawOn": "",
-                  "modalEdit": false,
-                  "dataGridLabel": false,
-                  "labelPosition": "top",
-                  "description": "",
-                  "errorLabel": "",
-                  "tooltip": "",
-                  "hideLabel": false,
-                  "tabindex": "",
-                  "disabled": false,
-                  "autofocus": false,
-                  "dbIndex": false,
-                  "customDefaultValue": "",
-                  "calculateValue": "",
-                  "calculateServer": false,
-                  "widget": null,
-                  "attributes": {},
-                  "validateOn": "change",
-                  "validate": {
-                    "required": false,
-                    "custom": "",
-                    "customPrivate": false,
-                    "strictDateValidation": false,
-                    "multiple": false,
-                    "unique": false
-                  },
-                  "conditional": {
-                    "show": null,
-                    "when": null,
-                    "eq": ""
-                  },
-                  "overlay": {
-                    "style": "",
-                    "left": "",
-                    "top": "",
-                    "width": "",
-                    "height": ""
-                  },
-                  "allowCalculateOverride": false,
-                  "encrypted": false,
-                  "showCharCount": false,
-                  "showWordCount": false,
-                  "properties": {},
-                  "allowMultipleMasks": false,
-                  "addons": [],
-                  "tree": false,
-                  "lazyLoad": false,
-                  "legend": "",
-                  "inDataGrid": true
-                }
-              ],
-              "placeholder": "",
-              "prefix": "",
-              "customClass": "",
-              "suffix": "",
-              "multiple": false,
-              "protected": false,
-              "unique": false,
-              "persistent": true,
-              "hidden": false,
-              "clearOnHide": true,
-              "refreshOn": "",
-              "redrawOn": "",
-              "modalEdit": false,
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "widget": null,
-              "attributes": {},
-              "validateOn": "change",
-              "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-              },
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-              },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
-              "allowCalculateOverride": false,
-              "encrypted": false,
-              "showCharCount": false,
-              "showWordCount": false,
-              "properties": {},
-              "allowMultipleMasks": false,
-              "addons": [],
-              "tree": true,
-              "lazyLoad": false,
-              "disableAddingRemovingRows": false,
-              "id": "eh5vyhe"
-            }
-          ],
-          "placeholder": "",
-          "prefix": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "persistent": false,
-          "clearOnHide": false,
-          "refreshOn": "",
-          "redrawOn": "",
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "widget": null,
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "allowMultipleMasks": false,
-          "addons": [],
-          "tree": false,
-          "lazyLoad": false,
-          "id": "emhghx5"
-        },
-        {
           "title": "Additonal Information Panel",
           "collapsible": false,
           "hideLabel": true,
@@ -4962,43 +4015,8 @@
           "lazyLoad": false,
           "theme": "default",
           "breadcrumb": "default",
-          "id": "epd92wk"
-        },
-        {
-          "input": true,
-          "tableView": false,
-          "key": "isFullTimeAllowed",
-          "label": "Toggle switch for Full time and Part Time",
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "type": "hidden",
-          "tags": [],
-          "conditional": {
-            "show": "",
-            "when": null,
-            "eq": ""
-          },
-          "properties": {},
-          "lockKey": true
-        },
-        {
-          "input": true,
-          "tableView": false,
-          "key": "howWillYouBeAttendingTheProgram",
-          "label": "Application Offering Intensity",
-          "protected": false,
-          "unique": false,
-          "persistent": true,
-          "type": "hidden",
-          "tags": [],
-          "conditional": {
-            "show": "",
-            "when": null,
-            "eq": ""
-          },
-          "properties": {},
-          "lockKey": true
+          "id": "epd92wk",
+          "tags": []
         },
         {
           "label": "programYearStartDate",
@@ -6722,7 +5740,8 @@
           "breadcrumb": "default",
           "id": "e1llrtm",
           "addons": [],
-          "lazyLoad": false
+          "lazyLoad": false,
+          "tags": []
         },
         {
           "title": "Personal Information panel",
@@ -9130,7 +8149,18 @@
               "disabled": false,
               "tableView": true,
               "modalEdit": false,
-              "values": [],
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
               "dataType": "",
               "persistent": true,
               "protected": false,
@@ -9144,9 +8174,9 @@
               "allowCalculateOverride": false,
               "validate": {
                 "required": true,
-                "onlyAvailableItems": false,
+                "onlyAvailableItems": true,
                 "customMessage": "Youth In Care is an invalid value.",
-                "custom": "valid = (input === 'yes' || input === 'no' || (input === 'preferNotToAnswer' && data.howWillYouBeAttendingTheProgram === 'Part Time'));",
+                "custom": "",
                 "customPrivate": false,
                 "json": "",
                 "strictDateValidation": false,
@@ -9165,22 +8195,7 @@
                 "json": ""
               },
               "customConditional": "",
-              "logic": [
-                {
-                  "name": "Check Youth In Care Options",
-                  "trigger": {
-                    "type": "javascript",
-                    "javascript": "data.howWillYouBeAttendingTheProgram"
-                  },
-                  "actions": [
-                    {
-                      "name": "Update Youth In Care Options",
-                      "type": "customAction",
-                      "customAction": "var options = [\n  { label: 'Yes', value: 'yes' },\n  { label: 'No', value: 'no' }\n];\n\nif (data.howWillYouBeAttendingTheProgram === 'Part Time') {\n  options.push({ label: 'Prefer not to answer', value: 'preferNotToAnswer' });\n}\n\ncomponent.values = options;"
-                    }
-                  ]
-                }
-              ],
+              "logic": [],
               "attributes": {
                 "data-cy": "youthInCare"
               },
@@ -9234,12 +8249,12 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "",
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "youthInCare",
+                "eq": "yes",
                 "json": ""
               },
-              "customConditional": "show = (data.youthInCare === \"yes\" || data.youthInCare === \"preferNotToAnswer\");",
+              "customConditional": "",
               "logic": [],
               "attributes": {},
               "overlay": {
@@ -9353,14 +8368,14 @@
               "hideLabel": true,
               "tags": [],
               "conditional": {
-                "show": "",
-                "when": null,
-                "eq": "",
+                "show": "true",
+                "when": "youthInCare",
+                "eq": "yes",
                 "json": ""
               },
               "properties": {},
               "lockKey": true,
-              "customConditional": "show = (data.howWillYouBeAttendingTheProgram !== \"Part Time\" \n       && data.youthInCare === \"yes\");"
+              "customConditional": ""
             },
             {
               "label": "At the time of your course study start date, will you have been out of high school for 4 years?",
@@ -9416,9 +8431,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -9532,9 +8547,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -9617,9 +8632,9 @@
               "attributes": {},
               "validateOn": "change",
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time"
+                "show": "",
+                "when": "",
+                "eq": ""
               },
               "overlay": {
                 "style": "",
@@ -9853,9 +8868,9 @@
           "breadcrumb": "default",
           "tags": [],
           "conditional": {
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": "",
+            "when": "",
+            "eq": ""
           },
           "properties": {},
           "hideLabel": true
@@ -13104,7 +12119,7 @@
           },
           "properties": {},
           "calculateServer": true,
-          "calculateValue": "// If the intensity is Part-time, student is always considered 'independant'.\r\nif (data.howWillYouBeAttendingTheProgram === \"Part Time\") {\r\n  instance.setValue(\"independant\");\r\n}\r\n// If the intensity is Full-time, dependant status is calculated based on personal information answers.\r\nelse if (data.howWillYouBeAttendingTheProgram === \"Full Time\") {\r\n  const isStudentIndependant =\r\n    data.hasDependents === \"yes\" ||\r\n    [\"married\", \"other\", \"marriedUnable\"].includes(data.relationshipStatus) ||\r\n    data.outOfHighSchoolFor4Years === \"yes\" ||\r\n    data.fulltimelabourForce === \"yes\" ||\r\n    data.parentsDeceased === \"yes\" ||\r\n    data.estranged === \"yes\" ||\r\n    data.custodyOfChildWelfare === \"yes\";\r\n  // If the student is not independant, dependant status is calculated based on personal information answer inputs.\r\n  if (!isStudentIndependant) {\r\n    const isPersonalInfoAnswered =\r\n      !!data.hasDependents &&\r\n      !!data.relationshipStatus &&\r\n      !!data.outOfHighSchoolFor4Years &&\r\n      !!data.fulltimelabourForce &&\r\n      !!data.parentsDeceased &&\r\n      !!data.estranged &&\r\n      !!data.youthInCare &&\r\n      (data.youthInCare === \"no\" || !!data.custodyOfChildWelfare);\r\n    // If the answers to required personal information inputs are not provided, set the dependant status to null.\r\n    // Otherwise, dependant status is calculated based on personal information answers.\r\n    const calculatedStatusFromPersonalInfo = isPersonalInfoAnswered\r\n      ? \"dependant\"\r\n      : null;\r\n    instance.setValue(calculatedStatusFromPersonalInfo);\r\n  } else {\r\n    instance.setValue(\"independant\");\r\n  }\r\n}\r\n// If the intensity is not provided, set the value to null.\r\nelse {\r\n  instance.setValue(null);\r\n}\r\n",
+          "calculateValue": "const isStudentIndependant =\r\n  data.hasDependents === \"yes\" ||\r\n  [\"married\", \"other\", \"marriedUnable\"].includes(data.relationshipStatus) ||\r\n  data.outOfHighSchoolFor4Years === \"yes\" ||\r\n  data.fulltimelabourForce === \"yes\" ||\r\n  data.parentsDeceased === \"yes\" ||\r\n  data.estranged === \"yes\" ||\r\n  data.custodyOfChildWelfare === \"yes\";\r\n// If the student is not independant, dependant status is calculated based on personal information answer inputs.\r\nif (!isStudentIndependant) {\r\n  const isPersonalInfoAnswered =\r\n    !!data.hasDependents &&\r\n    !!data.relationshipStatus &&\r\n    !!data.outOfHighSchoolFor4Years &&\r\n    !!data.fulltimelabourForce &&\r\n    !!data.parentsDeceased &&\r\n    !!data.estranged &&\r\n    !!data.youthInCare &&\r\n    (data.youthInCare === \"no\" || !!data.custodyOfChildWelfare);\r\n  // If the answers to required personal information inputs are not provided, set the dependant status to null.\r\n  // Otherwise, dependant status is calculated based on personal information answers.\r\n  const calculatedStatusFromPersonalInfo = isPersonalInfoAnswered\r\n    ? \"dependant\"\r\n    : null;\r\n  instance.setValue(calculatedStatusFromPersonalInfo);\r\n} else {\r\n  instance.setValue(\"independant\");\r\n}",
           "lockKey": true
         }
       ],
@@ -18010,9 +17025,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -18084,9 +17099,9 @@
               "optionsLabelPosition": "right",
               "tags": [],
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time"
+                "show": "",
+                "when": "",
+                "eq": ""
               },
               "properties": {},
               "lockKey": true
@@ -18127,9 +17142,9 @@
               "optionsLabelPosition": "right",
               "tags": [],
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time"
+                "show": "",
+                "when": "",
+                "eq": ""
               },
               "properties": {},
               "lockKey": true
@@ -18170,9 +17185,9 @@
               "optionsLabelPosition": "right",
               "tags": [],
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time"
+                "show": "",
+                "when": "",
+                "eq": ""
               },
               "properties": {},
               "lockKey": true
@@ -18234,9 +17249,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -18329,9 +17344,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -18424,9 +17439,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -18632,7 +17647,8 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "eum6wts"
+              "id": "eum6wts",
+              "tags": []
             },
             {
               "label": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your study period?",
@@ -18691,9 +17707,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -18888,7 +17904,8 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "e5j24i"
+              "id": "e5j24i",
+              "tags": []
             },
             {
               "label": "Will your partner be paying for child support and/or spousal support during your study period?",
@@ -18947,9 +17964,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -19144,7 +18161,8 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "ei7pb6"
+              "id": "ei7pb6",
+              "tags": []
             },
             {
               "label": "Durring your study period, will your partner be taking care of eligible dependants?",
@@ -19203,9 +18221,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -20128,7 +19146,8 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "e0qlfa"
+                  "id": "e0qlfa",
+                  "tags": []
                 },
                 {
                   "label": "I have been authorized by my parent(s) to submit their financial information including their net income (previous tax year's return's Line 15000 information)",
@@ -20852,7 +19871,8 @@
                   "addons": [],
                   "content": "",
                   "id": "e1nb57p",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -20927,7 +19947,8 @@
                   "properties": {},
                   "allowMultipleMasks": false,
                   "addons": [],
-                  "id": "ec3y9t"
+                  "id": "ec3y9t",
+                  "tags": []
                 },
                 {
                   "label": "HTML",
@@ -21002,7 +20023,8 @@
                   "addons": [],
                   "tag": "p",
                   "id": "e9av6ha",
-                  "className": ""
+                  "className": "",
+                  "tags": []
                 },
                 {
                   "label": "Do your parents have dependants other than yourself?",
@@ -21183,7 +20205,8 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eodfyhh"
+                      "id": "eodfyhh",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -21258,7 +20281,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "et0uyjp",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     },
                     {
                       "label": "<h4 class='category-header-medium-small'>Parent dependent table</h4>",
@@ -23601,245 +22625,6 @@
           "lazyLoad": false
         },
         {
-          "title": "Part time award types panel",
-          "theme": "default",
-          "breadcrumb": "default",
-          "breadcrumbClickable": false,
-          "buttonSettings": {
-            "previous": false,
-            "cancel": false,
-            "next": false
-          },
-          "scrollToTop": false,
-          "tooltip": "",
-          "customClass": "",
-          "collapsible": false,
-          "hidden": false,
-          "hideLabel": true,
-          "disabled": false,
-          "modalEdit": false,
-          "key": "PartTimeAwardTypePanel",
-          "tags": [],
-          "properties": {},
-          "customConditional": "",
-          "conditional": {
-            "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Part Time"
-          },
-          "nextPage": "",
-          "logic": [],
-          "attributes": {},
-          "overlay": {
-            "style": "",
-            "page": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "type": "panel",
-          "label": "2020 Tax Return Income Panel",
-          "tabindex": "",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "labelWidth": "",
-              "labelMargin": "",
-              "tag": "h3",
-              "className": "category-header-medium primary-color",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Award types",
-              "refreshOnChange": false,
-              "customClass": "",
-              "hidden": false,
-              "modalEdit": false,
-              "key": "html96",
-              "tags": [],
-              "properties": {},
-              "conditional": {
-                "show": "",
-                "when": null,
-                "eq": "",
-                "json": ""
-              },
-              "customConditional": "",
-              "logic": [],
-              "attributes": {},
-              "overlay": {
-                "style": "",
-                "page": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "placeholder": "",
-              "prefix": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": null,
-              "protected": false,
-              "unique": false,
-              "persistent": false,
-              "clearOnHide": true,
-              "refreshOn": "",
-              "redrawOn": "",
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "hideLabel": false,
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "widget": null,
-              "validateOn": "change",
-              "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-              },
-              "allowCalculateOverride": false,
-              "encrypted": false,
-              "showCharCount": false,
-              "showWordCount": false,
-              "allowMultipleMasks": false,
-              "addons": [],
-              "id": "eoetsejm"
-            },
-            {
-              "autofocus": false,
-              "input": true,
-              "tableView": true,
-              "inputType": "radio",
-              "label": "Do you want to receive loans and grants, or only grants?",
-              "key": "partTimeAwardTypesToBeConsidered",
-              "values": [
-                {
-                  "value": "loansAndGrants",
-                  "label": "Loans and Grants",
-                  "shortcut": ""
-                },
-                {
-                  "value": "grantsOnly",
-                  "label": "Grants Only",
-                  "shortcut": ""
-                }
-              ],
-              "defaultValue": "",
-              "protected": false,
-              "fieldSet": false,
-              "persistent": true,
-              "hidden": false,
-              "clearOnHide": true,
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true,
-                "custom": "",
-                "customPrivate": false
-              },
-              "type": "radio",
-              "labelPosition": "top",
-              "optionsLabelPosition": "right",
-              "tags": [],
-              "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
-              },
-              "properties": {},
-              "customClass": "",
-              "lockKey": true
-            },
-            {
-              "key": "partTimeAwardTypePanelContent",
-              "label": "Content",
-              "input": false,
-              "tag": "p",
-              "attrs": [
-                {
-                  "value": "",
-                  "attr": ""
-                }
-              ],
-              "className": "alert alert-info fa fa-info-circle",
-              "content": "<strong> Info!</strong><br /> You have six months from your study period end date before you must start paying back your loans.",
-              "type": "htmlelement",
-              "hideLabel": false,
-              "tags": [],
-              "conditional": {
-                "show": "true",
-                "when": "partTimeAwardTypesToBeConsidered",
-                "eq": "loansAndGrants"
-              },
-              "properties": {},
-              "customClass": "banner-info",
-              "customConditional": ""
-            }
-          ],
-          "allowPrevious": false,
-          "placeholder": "",
-          "prefix": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "persistent": false,
-          "clearOnHide": false,
-          "refreshOn": "",
-          "redrawOn": "",
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "widget": null,
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "allowMultipleMasks": false,
-          "tree": false,
-          "id": "e910xkr",
-          "addons": [],
-          "lazyLoad": false,
-          "lockKey": true
-        },
-        {
           "title": "Financial circumstances panel",
           "labelWidth": "",
           "labelMargin": "",
@@ -25046,9 +23831,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": "",
+            "when": "",
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -25216,7 +24001,8 @@
               "addons": [],
               "tag": "p",
               "id": "elz4uo",
-              "className": ""
+              "className": "",
+              "tags": []
             },
             {
               "label": "Do you want to submit an exemption request for exceptional expenses?",
@@ -26284,7 +25070,8 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "ejevzg"
+              "id": "ejevzg",
+              "tags": []
             }
           ],
           "placeholder": "",
@@ -26342,7 +25129,7 @@
           "key": "dependantCareCostsPanel",
           "tags": [],
           "properties": {},
-          "customConditional": "show = (data.howWillYouBeAttendingTheProgram === \"Full Time\");",
+          "customConditional": "",
           "conditional": {
             "json": "",
             "show": "",
@@ -26754,7 +25541,8 @@
               "breadcrumb": "default",
               "id": "es4kfrt",
               "addons": [],
-              "lazyLoad": false
+              "lazyLoad": false,
+              "tags": []
             }
           ],
           "id": "e8eyzqr"
@@ -27308,9 +26096,9 @@
           "hideLabel": true,
           "tags": [],
           "conditional": {
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": "",
+            "when": "",
+            "eq": ""
           },
           "properties": {}
         },
@@ -27332,9 +26120,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": "",
+            "when": "",
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -27553,9 +26341,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -27709,7 +26497,8 @@
                   "inputType": "text",
                   "inputMask": "",
                   "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": true,
+                  "tags": []
                 }
               ],
               "placeholder": "",
@@ -27809,9 +26598,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -28065,9 +26854,9 @@
               "tags": [],
               "properties": {},
               "conditional": {
-                "show": "true",
-                "when": "howWillYouBeAttendingTheProgram",
-                "eq": "Full Time",
+                "show": "",
+                "when": "",
+                "eq": "",
                 "json": ""
               },
               "customConditional": "",
@@ -28286,9 +27075,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": "",
+            "when": "",
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -28380,7 +27169,8 @@
               "properties": {},
               "allowMultipleMasks": false,
               "addons": [],
-              "id": "eo59fct"
+              "id": "eo59fct",
+              "tags": []
             },
             {
               "label": "Will you be living in a home paid for by your parent(s)/step-parent/sponsor/legal guardian during your study period?",
@@ -28731,7 +27521,8 @@
                       "properties": {},
                       "allowMultipleMasks": false,
                       "addons": [],
-                      "id": "eja07mq"
+                      "id": "eja07mq",
+                      "tags": []
                     },
                     {
                       "label": "HTML",
@@ -28806,7 +27597,8 @@
                       "addons": [],
                       "tag": "p",
                       "id": "eupcebe",
-                      "className": ""
+                      "className": "",
+                      "tags": []
                     },
                     {
                       "label": "Which of the following best describes your parent(s)/step-parent/sponsor/legal guardian situation?",
@@ -29583,7 +28375,8 @@
                   "lazyLoad": false,
                   "theme": "default",
                   "breadcrumb": "default",
-                  "id": "evufcu"
+                  "id": "evufcu",
+                  "tags": []
                 }
               ],
               "placeholder": "",
@@ -29641,7 +28434,8 @@
               "lazyLoad": false,
               "theme": "default",
               "breadcrumb": "default",
-              "id": "e9ztmvn"
+              "id": "e9ztmvn",
+              "tags": []
             }
           ],
           "placeholder": "",
@@ -29702,9 +28496,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": "",
+            "when": "",
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -31889,7 +30683,8 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "eghrup9"
+          "id": "eghrup9",
+          "isNew": false
         },
         {
           "label": "HTML",
@@ -31969,7 +30764,8 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "id": "enm7da",
-          "addons": []
+          "addons": [],
+          "isNew": false
         },
         {
           "title": "Declarations panel",
@@ -31989,9 +30785,9 @@
           "customConditional": "",
           "conditional": {
             "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Full Time"
+            "show": "",
+            "when": "",
+            "eq": ""
           },
           "logic": [],
           "attributes": {},
@@ -32278,250 +31074,6 @@
           "id": "eiwesth"
         },
         {
-          "title": "Declarations panel for part time",
-          "labelWidth": "",
-          "labelMargin": "",
-          "theme": "default",
-          "tooltip": "",
-          "customClass": "formio-panel-bg-secondary",
-          "collapsible": false,
-          "hidden": false,
-          "hideLabel": true,
-          "disabled": false,
-          "modalEdit": false,
-          "key": "declarationsPanel2",
-          "tags": [],
-          "properties": {},
-          "customConditional": "",
-          "conditional": {
-            "json": "",
-            "show": "true",
-            "when": "howWillYouBeAttendingTheProgram",
-            "eq": "Part Time"
-          },
-          "logic": [],
-          "attributes": {},
-          "overlay": {
-            "style": "",
-            "page": "",
-            "left": "",
-            "top": "",
-            "width": "",
-            "height": ""
-          },
-          "type": "panel",
-          "label": "Panel",
-          "breadcrumb": "default",
-          "tabindex": "",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "className": "category-header-medium-small pb-2",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Declarations",
-              "refreshOnChange": false,
-              "customClass": "header-md",
-              "key": "html123",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "placeholder": "",
-              "prefix": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": null,
-              "protected": false,
-              "unique": false,
-              "persistent": false,
-              "hidden": false,
-              "clearOnHide": true,
-              "refreshOn": "",
-              "redrawOn": "",
-              "modalEdit": false,
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "hideLabel": false,
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "widget": null,
-              "attributes": {},
-              "validateOn": "change",
-              "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-              },
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-              },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
-              "allowCalculateOverride": false,
-              "encrypted": false,
-              "showCharCount": false,
-              "showWordCount": false,
-              "properties": {},
-              "allowMultipleMasks": false,
-              "addons": [],
-              "tag": "p",
-              "id": "e342tgn"
-            },
-            {
-              "label": "HTML",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "<strong>StudentAid BC consent</strong>",
-              "refreshOnChange": false,
-              "key": "html124",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "placeholder": "",
-              "prefix": "",
-              "customClass": "",
-              "suffix": "",
-              "multiple": false,
-              "defaultValue": null,
-              "protected": false,
-              "unique": false,
-              "persistent": false,
-              "hidden": false,
-              "clearOnHide": true,
-              "refreshOn": "",
-              "redrawOn": "",
-              "modalEdit": false,
-              "dataGridLabel": false,
-              "labelPosition": "top",
-              "description": "",
-              "errorLabel": "",
-              "tooltip": "",
-              "hideLabel": false,
-              "tabindex": "",
-              "disabled": false,
-              "autofocus": false,
-              "dbIndex": false,
-              "customDefaultValue": "",
-              "calculateValue": "",
-              "calculateServer": false,
-              "widget": null,
-              "attributes": {},
-              "validateOn": "change",
-              "validate": {
-                "required": false,
-                "custom": "",
-                "customPrivate": false,
-                "strictDateValidation": false,
-                "multiple": false,
-                "unique": false
-              },
-              "conditional": {
-                "show": null,
-                "when": null,
-                "eq": ""
-              },
-              "overlay": {
-                "style": "",
-                "left": "",
-                "top": "",
-                "width": "",
-                "height": ""
-              },
-              "allowCalculateOverride": false,
-              "encrypted": false,
-              "showCharCount": false,
-              "showWordCount": false,
-              "properties": {},
-              "allowMultipleMasks": false,
-              "addons": [],
-              "tag": "p",
-              "id": "ebh8ug",
-              "className": ""
-            },
-            {
-              "key": "declarationsPanelContentPartTime2",
-              "input": false,
-              "html": "<p>I am applying for funding to assist with my education under one or all of the following programs: British Columbia Access Grant for Part-Time Studies, Canada Student Loan for Part-time Students, Canada Student Grant for Students with Disabilities, the B.C. Supplemental Bursary for Students with Disabilities, Canada Student Grant for Part-time Studies, and if eligible, Canada Student Grant for Part-time Students with Dependents.</p>\n\n<p><strong>I. I understand that:</strong></p>\n\n<ol>\n\t<li><strong>It is against the law</strong> to make false or misleading statements on this application or all documents related to it.</li>\n\t<li>It is my responsibility to make sure the information on this application, and/or all the documents forming part of it are accurate.</li>\n\t<li><strong>All information is subject to verification and review.</strong></li>\n\t<li>If I do not provide complete, accurate information or if I obtain or attempt to access financial assistance by fraudulent means, I may be denied any further federal or provincial student financial assistance, including full- and part-time Canada Student Loans and Grants, now or in the future.</li>\n\t<li>If I receive money (loan or grant) and then it is discovered that this application, or documents forming a part of it, are not accurate, I will be required to repay all or part of the money, with interest. I will be required to do this if my spouse/common-law partner, post-secondary institution, StudentAid BC or I made the mistake.</li>\n</ol>\n\n<p><strong>II. I understand that by signing my name on this application form means:</strong></p>\n\n<ol>\n\t<li>I certify that all information is complete and accurate and I have not altered or added to any of the StudentAid BC application and/or questions;</li>\n\t<li>I will use the money I receive to pay my academic fees first.</li>\n\t<li>None of the courses used to meet the minimum 20 per cent course load requirements are repeats/duplicates of courses for which I previously received credits.</li>\n\t<li>I must successfully complete all courses for which my Canada Student Financial Assistance Program funding was issued or my eligibility for student financial assistance in future years of part-time studies will be affected.</li>\n\t<li>I will immediately notify the financial aid office of any changes to the information initially submitted by myself or my spouse/common-law partner. This includes my or my spouse/common-law partner&#39;s financial information (including income), changes to address, academic status, marital status, number of dependents, or any other information captured on the application form.&nbsp;</li>\n\t<li>I consent to the exchange of information between StudentAid BC, the post-secondary institution and/or other appropriate financial aid office about my academic standing, awards, program of study, course load, attendance, living arrangements, marital status and financial status. This consent takes effect when I sign this declaration.</li>\n\t<li>I consent to the verification of my Social Insurance Number, name, date of birth and gender, with information contained in Employment and Social Development Canada Social Insurance Registry. This information will be disclosed to Employment and Social Development Canada for the purpose of confirming the accuracy of my identification in the context of this application for a Canada Student Loans and Grants for part-time studies. This consent takes effect when I sign this declaration.</li>\n\t<li>For the purpose of verifying and/or investigating information pertaining to this application, related documents, and the eventual repayment of my loan awards, whether defaulted or not and any other money repayable, I consent to the collection, use and disclosure of my personal information between the BC Ministry of Post-Secondary Education and Future Skills, the BC Ministry of Finance, National Student Loans Service Centre, and any of their contractors, subcontractors or agents, each with each other, and with the following: financial institutions, educational institutions, &nbsp;employers, credit bureaus, credit reporting agencies, indigenous organizations, federal and provincial Crown corporations, and federal, provincial, municipal ministries/departments/agencies, including but not limited to: BC Ministry of Social Development and Poverty Reduction, BC Ministry of Children and Family Development, BC Ministry of Health, BC Ministry of Attorney General, BC Ministry of Education and Child Care, BC Public Service Agency, RoadSafety BC, Insurance Corporation of BC (and Service BC acting in the role of ICBC), BC Hydro, BC Assessment Authority, Land Title and Survey Authority of BC, BC Registry Services, WorkSafeBC, BC Vital Statistics Agency, the Office of the Superintendent of Bankruptcy Canada, Employment and Social Development Canada, Canada Revenue Agency, Immigration, Refugees and Citizenship Canada. This consent takes effect on the date that I submit this Application to StudentAid BC.</li>\n\t<li>I have not applied nor will I apply to or receive government funded student loans, grants or bursaries from another province or territory or government funded loans outside of Canada during the study period stated in this application.</li>\n</ol>\n\n<p><strong>Collection and use of information</strong>. The information included in this form and authorized above is collected under ss. 26(c) and 26(e) of the Freedom of Information and Protection of Privacy Act, R.S.B.C. 1996, c. 165, and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for research, statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Executive Director, StudentAid BC, Ministry of Post-Secondary Education and Future Skills, PO Box 9173, Stn Prov Govt, Victoria BC, V8W 9H7, telephone 1-800-561-1818 (toll-free in Canada/U.S.) or 1-778-309-4621 from outside North America.</p>\n",
-              "type": "content",
-              "tags": [],
-              "conditional": {
-                "show": "",
-                "when": "",
-                "eq": ""
-              },
-              "properties": {},
-              "lockKey": true
-            }
-          ],
-          "placeholder": "",
-          "prefix": "",
-          "suffix": "",
-          "multiple": false,
-          "defaultValue": null,
-          "protected": false,
-          "unique": false,
-          "persistent": false,
-          "clearOnHide": false,
-          "refreshOn": "",
-          "redrawOn": "",
-          "dataGridLabel": false,
-          "labelPosition": "top",
-          "description": "",
-          "errorLabel": "",
-          "autofocus": false,
-          "dbIndex": false,
-          "customDefaultValue": "",
-          "calculateValue": "",
-          "calculateServer": false,
-          "widget": null,
-          "validateOn": "change",
-          "validate": {
-            "required": false,
-            "custom": "",
-            "customPrivate": false,
-            "strictDateValidation": false,
-            "multiple": false,
-            "unique": false
-          },
-          "allowCalculateOverride": false,
-          "encrypted": false,
-          "showCharCount": false,
-          "showWordCount": false,
-          "allowMultipleMasks": false,
-          "addons": [],
-          "tree": false,
-          "lazyLoad": false,
-          "id": "eiwesth"
-        },
-        {
           "label": "I give StudentAid BC consent to verify the data I have provided in my application.",
           "labelWidth": "",
           "labelMargin": "",
@@ -32598,7 +31150,8 @@
           "showWordCount": false,
           "allowMultipleMasks": false,
           "addons": [],
-          "id": "e53huch"
+          "id": "e53huch",
+          "isNew": false
         }
       ],
       "input": false,
@@ -32641,7 +31194,8 @@
       "tree": false,
       "id": "e602qx",
       "addons": [],
-      "lazyLoad": false
+      "lazyLoad": false,
+      "isNew": false
     },
     {
       "autofocus": false,
