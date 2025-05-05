@@ -92,13 +92,14 @@ export class StudentService extends RecordDataModelService<Student> {
     if (options?.includeLegacy) {
       studentQuery
         .addSelect([
-          "sfasIndividual.id",
-          "sfasIndividual.firstName",
-          "sfasIndividual.lastName",
-          "sfasIndividual.birthDate",
-          "sfasIndividual.sin",
+          "sfasIndividuals.id",
+          "sfasIndividuals.firstName",
+          "sfasIndividuals.lastName",
+          "sfasIndividuals.birthDate",
+          "sfasIndividuals.sin",
         ])
-        .leftJoin("student.sfasIndividual", "sfasIndividual");
+        .leftJoin("student.sfasIndividuals", "sfasIndividuals")
+        .orderBy("sfasIndividuals.updatedAt", "DESC");
     }
     return studentQuery.getOne();
   }

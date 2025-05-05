@@ -154,9 +154,11 @@ export class Student extends RecordDataModel {
 
   /**
    * Legacy student profile.
+   * The student can potentially be associated with multiple legacy profiles,
+   * but only one is currently supported.
    */
-  @OneToOne(() => SFASIndividual, (sfasIndividual) => sfasIndividual.student, {
+  @OneToMany(() => SFASIndividual, (sfasIndividual) => sfasIndividual.student, {
     nullable: true,
   })
-  sfasIndividual?: SFASIndividual;
+  sfasIndividuals?: SFASIndividual[];
 }

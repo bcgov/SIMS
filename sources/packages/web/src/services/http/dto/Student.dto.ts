@@ -53,6 +53,11 @@ export interface LegacyStudentProfileAPIOutDTO {
   lastName: string;
   dateOfBirth: string;
   sin: string;
+  /**
+   * Indicates if the student on SIMS is associated
+   * with multiple profiles on the legacy system.
+   */
+  hasMultipleProfiles: boolean;
 }
 
 export interface StudentProfileAPIOutDTO {

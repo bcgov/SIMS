@@ -11,7 +11,7 @@ import { createFakeStudent } from "@sims/test-utils/factories/student";
  * - `includeAddressLine2` include address line 2.
  * @returns created sfas individual.
  */
-function createFakeSFASIndividual(options?: {
+export function createFakeSFASIndividual(options?: {
   initialValues?: Partial<SFASIndividual>;
   includeAddressLine2?: boolean;
 }) {
@@ -67,6 +67,7 @@ function createFakeSFASIndividual(options?: {
     sfasIndividual.addressLine2 =
       options?.initialValues?.addressLine2 ?? faker.address.secondaryAddress();
   }
+  sfasIndividual.updatedAt = options?.initialValues?.updatedAt;
   return sfasIndividual;
 }
 

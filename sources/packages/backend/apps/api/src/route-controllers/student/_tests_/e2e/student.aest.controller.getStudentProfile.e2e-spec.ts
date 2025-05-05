@@ -1,6 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource } from "typeorm";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -8,29 +7,32 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import {
+  createE2EDataSources,
+  createFakeSFASIndividual,
   createFakeUser,
+  E2EDataSources,
   saveFakeSFASIndividual,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { getUserFullName } from "../../../../utilities";
-import { getISODateOnlyString } from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { IdentityProviders } from "@sims/sims-db";
 
 describe("StudentAESTController(e2e)-getStudentProfile", () => {
   let app: INestApplication;
-  let db: DataSource;
+  let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    db = dataSource;
+    db = createE2EDataSources(dataSource);
   });
 
   it("Should get the student profile when the student exists and no legacy profile is associated.", async () => {
     // Arrange
     const user = createFakeUser();
     user.identityProviderType = IdentityProviders.BCSC;
-    const student = await saveFakeStudent(db, { user });
+    const student = await saveFakeStudent(db.dataSource, { user });
     const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/student/${student.id}`;
 
@@ -66,12 +68,12 @@ describe("StudentAESTController(e2e)-getStudentProfile", () => {
       });
   });
 
-  it("Should get the student profile when the student exists and legacy profile is associated.", async () => {
+  it("Should get the student profile when the student exists and legacy one profile is associated.", async () => {
     // Arrange
     const user = createFakeUser();
     user.identityProviderType = IdentityProviders.BCSC;
-    const student = await saveFakeStudent(db, { user });
-    const legacyProfile = await saveFakeSFASIndividual(db, {
+    const student = await saveFakeStudent(db.dataSource, { user });
+    const legacyProfile = await saveFakeSFASIndividual(db.dataSource, {
       initialValues: { student },
     });
     const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -112,6 +114,64 @@ describe("StudentAESTController(e2e)-getStudentProfile", () => {
           lastName: legacyProfile.lastName,
           dateOfBirth: legacyProfile.birthDate,
           sin: legacyProfile.sin,
+          hasMultipleProfiles: false,
+        },
+      });
+  });
+
+  it("Should get the student profile when the student exists and multiple legacy profiles are associated.", async () => {
+    // Arrange
+    const user = createFakeUser();
+    user.identityProviderType = IdentityProviders.BCSC;
+    const student = await saveFakeStudent(db.dataSource, { user });
+    // Create two legacy profiles for the same student.
+    const oldLegacyProfile = createFakeSFASIndividual({
+      initialValues: { student, updatedAt: addDays(-1) },
+    });
+    const recentLegacyProfile = createFakeSFASIndividual({
+      initialValues: { student, updatedAt: new Date() },
+    });
+    await db.sfasIndividual.save([oldLegacyProfile, recentLegacyProfile]);
+
+    const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/student/${student.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(aestUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        firstName: student.user.firstName,
+        lastName: student.user.lastName,
+        fullName: getUserFullName(student.user),
+        email: student.user.email,
+        gender: student.gender,
+        dateOfBirth: getISODateOnlyString(student.birthDate),
+        contact: {
+          address: {
+            addressLine1: student.contactInfo.address.addressLine1,
+            provinceState: student.contactInfo.address.provinceState,
+            country: student.contactInfo.address.country,
+            city: student.contactInfo.address.city,
+            postalCode: student.contactInfo.address.postalCode,
+            canadaPostalCode: student.contactInfo.address.postalCode,
+            selectedCountry: student.contactInfo.address.selectedCountry,
+          },
+          phone: student.contactInfo.phone,
+        },
+        disabilityStatus: student.disabilityStatus,
+        validSin: student.sinValidation.isValidSIN,
+        hasRestriction: false,
+        identityProviderType: IdentityProviders.BCSC,
+        sin: student.sinValidation.sin,
+        legacyProfile: {
+          id: recentLegacyProfile.id,
+          firstName: recentLegacyProfile.firstName,
+          lastName: recentLegacyProfile.lastName,
+          dateOfBirth: recentLegacyProfile.birthDate,
+          sin: recentLegacyProfile.sin,
+          hasMultipleProfiles: true,
         },
       });
   });

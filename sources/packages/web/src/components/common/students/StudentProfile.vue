@@ -140,6 +140,15 @@
           />
         </v-col>
       </v-row>
+      <v-row>
+        <v-col
+          ><banner
+            v-if="studentDetail.legacyProfile?.hasMultipleProfiles"
+            :type="BannerTypes.Warning"
+            summary="The student is associated with multiple legacy profiles. Above is shown the most recent updated profile."
+          ></banner>
+        </v-col>
+      </v-row>
     </content-group>
     <banner
       v-else

@@ -283,13 +283,16 @@ export class StudentControllerService {
         identityProviderType: student.user
           .identityProviderType as SpecificIdentityProviders,
       };
-      if (student.sfasIndividual) {
+      if (student.sfasIndividuals.length) {
+        // Get the most recently updated profile.
+        const [profile] = student.sfasIndividuals;
         legacyProfile = {
-          id: student.sfasIndividual.id,
-          firstName: student.sfasIndividual.firstName,
-          lastName: student.sfasIndividual.lastName,
-          dateOfBirth: student.sfasIndividual.birthDate,
-          sin: student.sfasIndividual.sin,
+          id: profile.id,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          dateOfBirth: profile.birthDate,
+          sin: profile.sin,
+          hasMultipleProfiles: student.sfasIndividuals.length > 1,
         };
       }
     }
