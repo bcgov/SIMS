@@ -92,3 +92,5 @@ export * from "./models/common.dto";
 export * from "./health-check/health.controller";
 export * from "./dynamic-form-configuration/models/dynamic-form-configuration.dto";
 export * from "./dynamic-form-configuration/dynamic-form-configuration.controller";
+export * from "./application-change-request/models/application-change-request.dto";
+export * from "./application-change-request/application-change-request.aest.controller";
