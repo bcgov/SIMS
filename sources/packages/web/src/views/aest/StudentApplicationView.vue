@@ -36,12 +36,13 @@ import {
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
-import { useFormioUtils, useOffering } from "@/composables";
+import { useFormioUtils } from "@/composables";
 import {
   ChangeTypes,
   FormIOComponent,
   FormIOForm,
   FromIOComponentTypes,
+  StudentApplicationFormData,
 } from "@/types";
 
 export default defineComponent({
@@ -64,10 +65,9 @@ export default defineComponent({
   },
   setup(props) {
     const { emptyStringFiller } = useFormatters();
-    const { mapOfferingIntensity } = useOffering();
     const { searchByKey } = useFormioUtils();
     const applicationDetail = ref({} as ApplicationSupplementalDataAPIOutDTO);
-    const initialData = ref({});
+    const initialData = ref({} as StudentApplicationFormData);
     const selectedForm = ref();
     let applicationWizard: FormIOForm;
 
@@ -96,9 +96,8 @@ export default defineComponent({
       selectedForm.value = applicationDetail.value.applicationFormName;
       initialData.value = {
         ...applicationDetail.value.data,
-        applicationOfferingIntensity: mapOfferingIntensity(
+        applicationOfferingIntensityValue:
           applicationDetail.value.applicationOfferingIntensity,
-        ),
         isReadOnly: true,
       };
     });
