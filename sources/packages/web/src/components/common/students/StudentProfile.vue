@@ -145,7 +145,7 @@
           ><banner
             v-if="studentDetail.legacyProfile?.hasMultipleProfiles"
             :type="BannerTypes.Warning"
-            summary="The student is associated with multiple legacy profiles. Above is shown the most recent updated profile."
+            summary="The student is associated with multiple legacy profiles; the most recent update is shown."
           ></banner>
         </v-col>
       </v-row>
