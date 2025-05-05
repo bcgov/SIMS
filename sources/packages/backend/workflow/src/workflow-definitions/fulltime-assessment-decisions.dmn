@@ -119,7 +119,7 @@
           <text>193</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0l61b15">
-          <text>232</text>
+          <text>241</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1u0w6zl">
           <text>25</text>
@@ -163,7 +163,7 @@
           <text>193</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0qthswo">
-          <text>232</text>
+          <text>241</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1vadz5u">
           <text>25</text>
@@ -449,9 +449,9 @@
           <text>studentDataDependantstatus</text>
         </inputExpression>
       </input>
-      <input id="InputClause_04jj8xv" label="calculatedDataHasEligibleDependants">
-        <inputExpression id="LiteralExpression_04rhdqi" typeRef="string">
-          <text>calculatedDataHasEligibleDependants</text>
+      <input id="InputClause_04jj8xv" label="calculatedDataTotalEligibleDependants">
+        <inputExpression id="LiteralExpression_04rhdqi" typeRef="number">
+          <text>calculatedDataTotalEligibleDependants</text>
         </inputExpression>
       </input>
       <input id="InputClause_070kjf4" label="studentDataLivingWithParents">
@@ -489,13 +489,13 @@
       <rule id="DecisionRule_1ah885h">
         <description>SINGLE PARENT (no dependent considered)</description>
         <inputEntry id="UnaryTests_1chf6od">
-          <text>"single","other"</text>
+          <text>"single","other", "married unable"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_11wucu3">
-          <text>-</text>
+          <text>"independant"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1ekoma4">
-          <text>"yes"</text>
+          <text>&gt;0</text>
         </inputEntry>
         <inputEntry id="UnaryTests_11xjk8g">
           <text></text>
@@ -507,6 +507,69 @@
           <text>"SP"</text>
         </outputEntry>
       </rule>
+      <rule id="DecisionRule_150hgzj">
+        <description>SINGLE INDEPENDANT STUDENT - AWAY FROM HOME</description>
+        <inputEntry id="UnaryTests_0jkshtj">
+          <text>"single","other", "married unable"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_03yw3ba">
+          <text>"independant"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_03idtsg">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0j5im9o">
+          <text>"no"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1hwr7fg">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0p0jalj">
+          <text>"SIA"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1lvxks7">
+        <description>SINGLE INDEPENDANT STUDENT - AT HOME PAYING RENT</description>
+        <inputEntry id="UnaryTests_1sv0r1b">
+          <text>"single","other", "married unable"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ibp4ew">
+          <text>"independant"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_07ft57o">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_13vo5ji">
+          <text>"yes"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0p0ljnr">
+          <text>"yes"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_05mdimk">
+          <text>"SIA"</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_130k9i8">
+        <description>SINGLE INDEPENDANT STUDENT - LIVING AT HOME</description>
+        <inputEntry id="UnaryTests_1hmls9z">
+          <text>"single","other", "married unable"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1e03kpz">
+          <text>"independant"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1yyfhkt">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_081a0ft">
+          <text>"yes"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1l5xrve">
+          <text>"no"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1fmcfdm">
+          <text>"SIH"</text>
+        </outputEntry>
+      </rule>
       <rule id="DecisionRule_1c0t8dl">
         <description>SINGLE DEPENDANT STUDENT - AWAY FROM HOME</description>
         <inputEntry id="UnaryTests_0pdo27s">
@@ -516,7 +579,7 @@
           <text>"dependant"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_0dkx4ao">
-          <text>"no"</text>
+          <text>-</text>
         </inputEntry>
         <inputEntry id="UnaryTests_09csktz">
           <text>"no"</text>
@@ -537,7 +600,7 @@
           <text>"dependant"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1q0da4u">
-          <text>"no"</text>
+          <text>-</text>
         </inputEntry>
         <inputEntry id="UnaryTests_107c8lf">
           <text>"yes"</text>
@@ -558,7 +621,7 @@
           <text>"dependant"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1u006t6">
-          <text>"no"</text>
+          <text>-</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1h1k4ps">
           <text>"yes"</text>
@@ -570,69 +633,6 @@
           <text>"SDH"</text>
         </outputEntry>
       </rule>
-      <rule id="DecisionRule_150hgzj">
-        <description>SINGLE INDEPENDANT STUDENT - AWAY FROM HOME</description>
-        <inputEntry id="UnaryTests_0jkshtj">
-          <text>"single","other"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_03yw3ba">
-          <text>"independant"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_03idtsg">
-          <text>"no"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0j5im9o">
-          <text>"no"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1hwr7fg">
-          <text>-</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0p0jalj">
-          <text>"SIA"</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1lvxks7">
-        <description>SINGLE INDEPENDANT STUDENT - AT HOME PAYING RENT</description>
-        <inputEntry id="UnaryTests_1sv0r1b">
-          <text>"single","other"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1ibp4ew">
-          <text>"independant"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_07ft57o">
-          <text>"no"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_13vo5ji">
-          <text>"yes"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0p0ljnr">
-          <text>"yes"</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_05mdimk">
-          <text>"SIA"</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_130k9i8">
-        <description>SINGLE INDEPENDANT STUDENT - LIVING AT HOME</description>
-        <inputEntry id="UnaryTests_1hmls9z">
-          <text>"single","other"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1e03kpz">
-          <text>"independant"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1yyfhkt">
-          <text>"no"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_081a0ft">
-          <text>"yes"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1l5xrve">
-          <text>"no"</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1fmcfdm">
-          <text>"SIH"</text>
-        </outputEntry>
-      </rule>
     </decisionTable>
   </decision>
   <decision id="dmnFullTimeMSOLAllowance" name="dmnFullTimeMSOLAllowance">
@@ -642,9 +642,9 @@
           <text>programYear</text>
         </inputExpression>
       </input>
-      <input id="InputClause_0fkjedx" label="dmnFullTimeCalculatedDataLivingCategory">
+      <input id="InputClause_0fkjedx" label="calculatedDataLivingCategory">
         <inputExpression id="LiteralExpression_10mpivq" typeRef="string">
-          <text>dmnFullTimeLivingCategory</text>
+          <text>calculatedDataLivingCategory</text>
         </inputExpression>
       </input>
       <input id="InputClause_182s6kc" label="lookupType">
@@ -4041,6 +4041,7 @@
       </input>
       <output id="OutputClause_18fg3u5" label="limitAnnualFlatAmount" name="limitAnnualFlatAmount" typeRef="string" />
       <output id="OutputClause_1204p4x" label="limitAnnualRate" name="limitAnnualRate" typeRef="string" />
+      <output id="OutputClause_04b5pmd" label="limitIncomeReduction" name="limitIncomeReduction" typeRef="string" />
       <rule id="DecisionRule_1ssfz22">
         <inputEntry id="UnaryTests_0zoy7u4">
           <text>"2023-2024"</text>
@@ -4053,6 +4054,9 @@
         </outputEntry>
         <outputEntry id="LiteralExpression_0pr08pl">
           <text>0.15</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_139cq0t">
+          <text>0</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_04gbdkh">
@@ -4068,6 +4072,9 @@
         <outputEntry id="LiteralExpression_15ew8p4">
           <text>0.20</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_0aw3lx1">
+          <text>7000</text>
+        </outputEntry>
       </rule>
       <rule id="DecisionRule_155h8cx">
         <inputEntry id="UnaryTests_0gum190">
@@ -4081,6 +4088,9 @@
         </outputEntry>
         <outputEntry id="LiteralExpression_1rjtez9">
           <text>0.40</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0l30fbu">
+          <text>14000</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1pocowj">
@@ -4096,6 +4106,9 @@
         <outputEntry id="LiteralExpression_0saorb8">
           <text>0.15</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_118nu67">
+          <text>0</text>
+        </outputEntry>
       </rule>
       <rule id="DecisionRule_059wfsv">
         <inputEntry id="UnaryTests_1s5q3p2">
@@ -4109,6 +4122,9 @@
         </outputEntry>
         <outputEntry id="LiteralExpression_1fwxr1r">
           <text>0.20</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0b1wkkn">
+          <text>7000</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1lm9wxm">
@@ -4124,6 +4140,9 @@
         <outputEntry id="LiteralExpression_1fhlcpc">
           <text>0.40</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_1ukxofq">
+          <text>14000</text>
+        </outputEntry>
       </rule>
       <rule id="DecisionRule_102urux">
         <inputEntry id="UnaryTests_04c29h3">
@@ -4137,6 +4156,9 @@
         </outputEntry>
         <outputEntry id="LiteralExpression_1ub6m4c">
           <text>0.15</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ej4tpj">
+          <text>0</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1drsh8a">
@@ -4152,6 +4174,9 @@
         <outputEntry id="LiteralExpression_0k8eith">
           <text>0.2</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_0c7t88j">
+          <text>7000</text>
+        </outputEntry>
       </rule>
       <rule id="DecisionRule_0fh03qj">
         <inputEntry id="UnaryTests_0zslg96">
@@ -4165,6 +4190,9 @@
         </outputEntry>
         <outputEntry id="LiteralExpression_115gvx6">
           <text>0.4</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_087cadu">
+          <text>14000</text>
         </outputEntry>
       </rule>
     </decisionTable>
