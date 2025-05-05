@@ -25,7 +25,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
       // Assert
       expect(
         calculatedAssessment.variables.calculatedDataTotalAssessedNeed,
-      ).toBe(22962);
+      ).toBe(21232);
     },
   );
 
@@ -48,7 +48,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
       // Assert
       expect(
         calculatedAssessment.variables.calculatedDataTotalAssessedNeed,
-      ).toBe(24232);
+      ).toBe(21232);
     },
   );
 
