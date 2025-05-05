@@ -355,7 +355,7 @@ export class AssessmentSequentialProcessingService {
         },
       )
       .groupBy("offering.offeringIntensity")
-      .getRawOne<{
+      .getRawMany<{
         [WorkflowOutputType.FederalFSC]: string;
         [WorkflowOutputType.ProvincialFSC]: string;
         [WorkflowOutputType.ScholarshipsBursaries]: string;
@@ -365,16 +365,24 @@ export class AssessmentSequentialProcessingService {
         offeringIntensity: OfferingIntensity;
       }>();
 
-    if (!totals) {
+    if (!totals?.length) {
       return [];
     }
-    return Object.entries(WorkflowOutputType)
-      .filter(([key]) => totals[key])
-      .map(([key]) => ({
-        workflowOutput: key as WorkflowOutputType,
-        total: +totals[key],
-        offeringIntensity: totals.offeringIntensity,
-      }));
+
+    const result: ProgramYearWorkflowOutputTotal[] = [];
+    totals.forEach((total) => {
+      Object.entries(WorkflowOutputType)
+        .filter(([key]) => total[key])
+        .forEach(([key]) => {
+          result.push({
+            workflowOutput: key as WorkflowOutputType,
+            total: +total[key],
+            offeringIntensity: total.offeringIntensity,
+          });
+        });
+    });
+
+    return result;
   }
 
   /**

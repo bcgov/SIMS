@@ -339,18 +339,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
           assessmentDate: addDays(10, programYear.startDate),
-          workflowData: {
-            calculatedData: {
-              studentSpouseContributionWeeks: 0,
-              exemptScholarshipsBursaries: 2000,
-              totalFederalFSC: 3000,
-              totalProvincialFSC: 4000,
-              returnTransportationCost: 5000,
-            },
-          } as WorkflowData,
-          assessmentData: {
-            booksAndSuppliesCost: 6000,
-          } as PartTimeAssessment,
         },
       },
     );
@@ -396,18 +384,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
           assessmentWorkflowId: "some fake id",
           studentAssessmentStatus: StudentAssessmentStatus.Completed,
           assessmentDate: addDays(20, programYear.startDate),
-          workflowData: {
-            calculatedData: {
-              studentSpouseContributionWeeks: 1000,
-              exemptScholarshipsBursaries: 0,
-              totalFederalFSC: 3000,
-              totalProvincialFSC: 4000,
-              returnTransportationCost: 5000,
-            },
-          } as WorkflowData,
-          assessmentData: {
-            booksAndSuppliesCost: 0,
-          } as FullTimeAssessment,
         },
       },
     );
@@ -559,12 +535,223 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       programYearTotalPartTimeCSGP: 8,
       programYearTotalPartTimeSBSD: 12,
       programYearTotalPartTimeBCAG: 14,
+    });
+  });
+
+  it("Should sum the grants from past applications with different offering intensities when the applications are for the same student and program year.", async () => {
+    // Arrange
+
+    // Create the student and program year to be shared across the applications.
+    const student = await saveFakeStudent(db.dataSource);
+    // Get the program year for the start date.
+    const programYear = await db.programYear.findOne({ where: { id: 2 } });
+
+    // Past part-time application with federal and provincial loans and grants.
+    // Loans will be ignored.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLP",
+            1,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSPT",
+            2,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGD",
+            3,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGP",
+            4,
+          ),
+          // Should not be disbursed due to BCLM restriction.
+          createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 6),
+          // Should not be disbursed due to BCLM restriction.
+          createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 7),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(10, programYear.startDate),
+          workflowData: {
+            calculatedData: {
+              exemptScholarshipsBursaries: 2000,
+              totalFederalFSC: 3000,
+              totalProvincialFSC: 4000,
+              returnTransportationCost: 5000,
+            },
+          } as WorkflowData,
+          assessmentData: {
+            booksAndSuppliesCost: 6000,
+          } as PartTimeAssessment,
+        },
+      },
+    );
+    // Past full-time application with federal and provincial loans and grants.
+    // Loans will be ignored.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            8,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGD",
+            9,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGP",
+            10,
+          ),
+          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 11),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "SBSD",
+            12,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BCAG",
+            13,
+          ),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(20, programYear.startDate),
+          workflowData: {
+            calculatedData: {
+              studentSpouseContributionWeeks: 1000,
+              totalFederalFSC: 3000,
+              totalProvincialFSC: 4000,
+              returnTransportationCost: 5000,
+            },
+          } as WorkflowData,
+          assessmentData: {
+            booksAndSuppliesCost: 100,
+          } as FullTimeAssessment,
+        },
+      },
+    );
+    // Past full-time application with federal and provincial loans and grants.
+    // Loans will be ignored.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 11),
+          createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 4),
+          createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 8),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(25, programYear.startDate),
+          workflowData: {
+            calculatedData: {
+              totalFederalFSC: 300,
+              totalProvincialFSC: 400,
+            },
+          } as WorkflowData,
+          assessmentData: {
+            booksAndSuppliesCost: 150,
+          } as FullTimeAssessment,
+        },
+      },
+    );
+    // Current application having the first assessment already processed.
+    const currentApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.InProgress,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(30, programYear.startDate),
+        },
+      },
+    );
+    const secondAssessment = createFakeStudentAssessment(
+      {
+        auditUser: currentApplication.student.user,
+        application: currentApplication,
+        offering: currentApplication.currentAssessment.offering,
+        applicationEditStatusUpdatedBy: currentApplication.student.user,
+      },
+      {
+        initialValue: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+    currentApplication.currentAssessment = secondAssessment;
+    await db.application.save(currentApplication);
+    // Act
+    const result = await assessmentController.verifyAssessmentCalculationOrder(
+      createFakeVerifyAssessmentCalculationOrderPayload(
+        currentApplication.currentAssessment.id,
+      ),
+    );
+    // Assert
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // The calculation will only take SFAS and SFAS part-time application data where the start date is the date before the first assessment date of the current application.
+    expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+      isReadyForCalculation: true,
+      latestCSLPBalance: 0,
+      // Full-time
+      programYearTotalFullTimeCSGD: 9,
+      programYearTotalFullTimeCSGP: 10,
+      programYearTotalFullTimeSBSD: 16,
+      programYearTotalFullTimeBCAG: 21,
+      // Part-time
+      programYearTotalPartTimeCSPT: 2,
+      programYearTotalPartTimeCSGD: 3,
+      programYearTotalPartTimeCSGP: 4,
+      programYearTotalPartTimeSBSD: 6,
+      programYearTotalPartTimeBCAG: 7,
+      programYearTotalFullTimeBooksAndSuppliesCost: 250,
+      programYearTotalFullTimeFederalFSC: 3300,
+      programYearTotalFullTimeProvincialFSC: 4400,
+      programYearTotalFullTimeReturnTransportationCost: 5000,
+      programYearTotalFullTimeSpouseContributionWeeks: 1000,
       programYearTotalPartTimeBooksAndSuppliesCost: 6000,
       programYearTotalPartTimeFederalFSC: 3000,
       programYearTotalPartTimeProvincialFSC: 4000,
       programYearTotalPartTimeReturnTransportationCost: 5000,
       programYearTotalPartTimeScholarshipsBursaries: 2000,
-      programYearTotalPartTimeSpouseContributionWeeks: 0,
     });
   });
 
