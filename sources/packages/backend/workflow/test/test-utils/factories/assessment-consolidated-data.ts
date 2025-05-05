@@ -58,27 +58,6 @@ export function createFakeAssessmentConsolidatedData(
 }
 
 /**
- * Populate default program year totals.
- * @param assessmentConsolidatedData assessment consolidated data.
- */
-function populateDefaultProgramYearTotals(
-  assessmentConsolidatedData: AssessmentConsolidatedData,
-): void {
-  assessmentConsolidatedData.programYearTotalPartTimeScholarshipsBursaries = 0;
-  assessmentConsolidatedData.programYearTotalFullTimeScholarshipsBursaries = 0;
-  assessmentConsolidatedData.programYearTotalPartTimeSpouseContributionWeeks = 0;
-  assessmentConsolidatedData.programYearTotalFullTimeSpouseContributionWeeks = 0;
-  assessmentConsolidatedData.programYearTotalPartTimeFederalFSC = 0;
-  assessmentConsolidatedData.programYearTotalFullTimeFederalFSC = 0;
-  assessmentConsolidatedData.programYearTotalPartTimeProvincialFSC = 0;
-  assessmentConsolidatedData.programYearTotalFullTimeProvincialFSC = 0;
-  assessmentConsolidatedData.programYearTotalPartTimeBooksAndSuppliesCost = 0;
-  assessmentConsolidatedData.programYearTotalFullTimeBooksAndSuppliesCost = 500;
-  assessmentConsolidatedData.programYearTotalPartTimeReturnTransportationCost = 0;
-  assessmentConsolidatedData.programYearTotalFullTimeReturnTransportationCost = 500;
-}
-
-/**
  * Create fake part time consolidated data
  * based on program year.
  * @param programYear program year.
@@ -207,18 +186,6 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     partner1HasEmploymentInsuranceBenefits: null,
     partner1HasFedralProvincialPDReceipt: null,
     partner1HasTotalIncomeAssistance: null,
-    programYearTotalPartTimeScholarshipsBursaries: 0,
-    programYearTotalFullTimeScholarshipsBursaries: 0,
-    programYearTotalPartTimeSpouseContributionWeeks: 0,
-    programYearTotalFullTimeSpouseContributionWeeks: 0,
-    programYearTotalPartTimeFederalFSC: 0,
-    programYearTotalFullTimeFederalFSC: 0,
-    programYearTotalPartTimeProvincialFSC: 0,
-    programYearTotalFullTimeProvincialFSC: 0,
-    programYearTotalPartTimeBooksAndSuppliesCost: 0,
-    programYearTotalFullTimeBooksAndSuppliesCost: 500,
-    programYearTotalPartTimeReturnTransportationCost: 0,
-    programYearTotalFullTimeReturnTransportationCost: 500,
   } as AssessmentConsolidatedData;
 }
 
@@ -234,7 +201,6 @@ export function createFakeConsolidatedFulltimeData(
   const [, programEndYear] = programYear.split("-");
   const assessmentConsolidatedData =
     createFakeAssessmentConsolidatedData(programYear);
-  populateDefaultProgramYearTotals(assessmentConsolidatedData);
   assessmentConsolidatedData.offeringIntensity = OfferingIntensity.fullTime;
   assessmentConsolidatedData.offeringStudyStartDate = `${programEndYear}-02-01`;
   assessmentConsolidatedData.offeringStudyEndDate = `${programEndYear}-05-24`;
@@ -253,7 +219,6 @@ export function createFakeConsolidatedPartTimeData(
   const [, programEndYear] = programYear.split("-");
   const assessmentConsolidatedData =
     createFakePartTimeAssessmentConsolidatedData(programYear);
-  populateDefaultProgramYearTotals(assessmentConsolidatedData);
   assessmentConsolidatedData.offeringIntensity = OfferingIntensity.partTime;
   assessmentConsolidatedData.offeringStudyStartDate = `${programEndYear}-02-01`;
   assessmentConsolidatedData.offeringStudyEndDate = `${programEndYear}-05-24`;
