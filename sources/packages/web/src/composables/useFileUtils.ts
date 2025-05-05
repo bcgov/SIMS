@@ -79,10 +79,42 @@ export function useFileUtils() {
     return false;
   };
 
+  /**
+   * Generates a JSON file from the provided content and triggers a download.
+   * @param content content to be included in the JSON file.
+   * @param fileName name of the file to be downloaded.
+   */
+  const generateJSONFileFromContent = (
+    content: string,
+    fileName: string,
+  ): void => {
+    const blob = new Blob([content], {
+      type: "application/json;charset=utf-8;",
+    });
+    downloadFile(blob, fileName);
+  };
+
+  /**
+   * Downloads a file using a Blob and a specified file name.
+   * @param blob object representing the file data.
+   * @param fileName name of the file to be downloaded.
+   */
+  const downloadFile = (blob: Blob, fileName: string): void => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return {
     downloadStudentDocument,
     downloadReports,
     handleFileScanProcessError,
     downloadFileAsBlob,
+    generateJSONFileFromContent,
   };
 }

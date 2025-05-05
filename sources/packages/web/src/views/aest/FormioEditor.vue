@@ -18,6 +18,14 @@
             >
             <v-btn
               color="primary"
+              @click="downloadFile"
+              class="mr-2 float-right"
+              prepend-icon="fa:fa fa-download"
+              :disabled="!selectedForm"
+              >Download</v-btn
+            >
+            <v-btn
+              color="primary"
               prepend-icon="fa:fa fa-copy"
               class="mr-2 float-right"
               @click="copyToClipboard"
@@ -68,11 +76,18 @@
             <v-expansion-panel
               collapse-icon="$expanderCollapseIcon"
               expand-icon="$expanderExpandIcon"
-              title="Form definition inspector"
             >
+              <v-expansion-panel-title>
+                <v-icon icon="mdi-code-json"></v-icon
+                ><span
+                  data-cy="locationName"
+                  class="category-header-medium mx-1"
+                  >Form definition inspector</span
+                >
+              </v-expansion-panel-title>
               <v-expansion-panel-text>
                 <content-group>
-                  <v-textarea v-model="formDefinition" rows="30"></v-textarea>
+                  <v-textarea v-model="formDefinition" rows="20"></v-textarea>
                   <footer-buttons
                     primaryLabel="Apply form definition to editor"
                     @primaryClick="applyDynamicFormDefinition"
@@ -104,7 +119,7 @@
 </template>
 
 <script lang="ts">
-import { ModalDialog, useSnackBar } from "@/composables";
+import { ModalDialog, useFileUtils, useSnackBar } from "@/composables";
 import { FORMIO_CUSTOM_COMPONENTS, FormIOBuilder, Role } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
@@ -126,8 +141,9 @@ export default defineComponent({
     const saveDynamicFormLoading = ref(false);
     const formsListOptions = ref<FormAPIOutDTO[]>([]);
     const selectedForm = ref<FormAPIOutDTO>();
-    let builder: FormIOBuilder | undefined = undefined;
+    let builder: FormIOBuilder;
     const formDefinition = ref<string>("");
+    const { generateJSONFileFromContent } = useFileUtils();
 
     onMounted(async () => {
       // Load the formio definitions list.
@@ -277,6 +293,22 @@ export default defineComponent({
       );
     };
 
+    /**
+     * Download the form definition as a JSON file.
+     */
+    const downloadFile = (): void => {
+      if (!selectedForm.value) {
+        return;
+      }
+      const fileContent = JSON.stringify(
+        getReadyToSaveFormDefinition(),
+        null,
+        2,
+      );
+      const fileName = `${selectedForm.value.name.toLowerCase()}.json`;
+      generateJSONFileFromContent(fileContent, fileName);
+    };
+
     return {
       Role,
       saveDynamicFormModal,
@@ -292,6 +324,7 @@ export default defineComponent({
       saveDynamicForm,
       copyToClipboard,
       viewOnRepo,
+      downloadFile,
       formDefinition,
     };
   },
