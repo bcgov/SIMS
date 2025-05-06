@@ -24,7 +24,7 @@
         <v-col
           ><title-value
             propertyTitle="Given names"
-            :propertyValue="studentDetail.firstName"
+            :propertyValue="emptyStringFiller(studentDetail.firstName)"
           />
         </v-col>
         <v-col
@@ -115,7 +115,9 @@
         <v-col
           ><title-value
             propertyTitle="Given names"
-            :propertyValue="studentDetail.legacyProfile.firstName"
+            :propertyValue="
+              emptyStringFiller(studentDetail.legacyProfile.firstName)
+            "
           />
         </v-col>
         <v-col
