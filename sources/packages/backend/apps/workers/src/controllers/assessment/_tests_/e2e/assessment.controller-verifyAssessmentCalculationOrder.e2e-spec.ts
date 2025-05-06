@@ -77,10 +77,8 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
             "CSGP",
             4,
           ),
-          // Should not be disbursed due to BCLM restriction.
           createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 5),
           createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 6),
-          // Should not be disbursed due to BCLM restriction.
           createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 7),
         ],
       },
@@ -538,7 +536,7 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     });
   });
 
-  it("Should sum the grants from past applications with different offering intensities when the applications are for the same student and program year.", async () => {
+  it("Should sum the workflow totals from past applications with different offering intensities when the applications are for the same student and program year.", async () => {
     // Arrange
 
     // Create the student and program year to be shared across the applications.
@@ -554,29 +552,10 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         student,
         firstDisbursementValues: [
           createFakeDisbursementValue(
-            DisbursementValueType.CanadaLoan,
-            "CSLP",
-            1,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaGrant,
-            "CSPT",
-            2,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaGrant,
-            "CSGD",
-            3,
-          ),
-          createFakeDisbursementValue(
             DisbursementValueType.CanadaGrant,
             "CSGP",
             4,
           ),
-          // Should not be disbursed due to BCLM restriction.
-          createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 6),
-          // Should not be disbursed due to BCLM restriction.
-          createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 7),
         ],
       },
       {
@@ -612,27 +591,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
             "CSLF",
             8,
           ),
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaGrant,
-            "CSGD",
-            9,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaGrant,
-            "CSGP",
-            10,
-          ),
-          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 11),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "SBSD",
-            12,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "BCAG",
-            13,
-          ),
         ],
       },
       {
@@ -664,8 +622,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
         student,
         firstDisbursementValues: [
           createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 11),
-          createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 4),
-          createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 8),
         ],
       },
       {
@@ -727,26 +683,17 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     expect(FakeWorkerJobResult.getResultType(result)).toBe(
       MockedZeebeJobResult.Complete,
     );
-    // The calculation will only take SFAS and SFAS part-time application data where the start date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
       latestCSLPBalance: 0,
       // Full-time
-      programYearTotalFullTimeCSGD: 9,
-      programYearTotalFullTimeCSGP: 10,
-      programYearTotalFullTimeSBSD: 16,
-      programYearTotalFullTimeBCAG: 21,
-      // Part-time
-      programYearTotalPartTimeCSPT: 2,
-      programYearTotalPartTimeCSGD: 3,
-      programYearTotalPartTimeCSGP: 4,
-      programYearTotalPartTimeSBSD: 6,
-      programYearTotalPartTimeBCAG: 7,
       programYearTotalFullTimeBooksAndSuppliesCost: 250,
       programYearTotalFullTimeFederalFSC: 3300,
       programYearTotalFullTimeProvincialFSC: 4400,
       programYearTotalFullTimeReturnTransportationCost: 5000,
       programYearTotalFullTimeSpouseContributionWeeks: 1000,
+      // Part-time
+      programYearTotalPartTimeCSGP: 4,
       programYearTotalPartTimeBooksAndSuppliesCost: 6000,
       programYearTotalPartTimeFederalFSC: 3000,
       programYearTotalPartTimeProvincialFSC: 4000,

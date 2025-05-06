@@ -33,17 +33,6 @@ export enum DependentChildCareEligibility {
   Eligible12YearsAndOver = "Eligible12YearsAndOver",
 }
 
-export enum DependentCSGDEligibility {
-  /**
-   * Dependent of age between 0 and 11 years.
-   */
-  Eligible0To11YearsOld = "Eligible0To11YearsOld",
-  /**
-   * Dependent of age above 12 years and declared on taxes for disability.
-   */
-  Eligible12YearsAndOverDeclaredOnTaxes = "Eligible12YearsAndOverDeclaredOnTaxes",
-}
-
 /**
  * Creates a student dependent that will be eligible.
  * @param eligibility eligibility rule.
@@ -191,18 +180,18 @@ export function createFakeStudentDependentBornAfterStudyEndDate(
  * @returns an eligible dependent.
  */
 export function createFakeStudentDependentCSGDEligible(
-  eligibility: DependentCSGDEligibility,
+  eligibility: DependentChildCareEligibility,
   options?: { referenceDate?: Date | string },
 ): StudentDependent {
   const referenceDate = options?.referenceDate ?? new Date();
   switch (eligibility) {
-    case DependentCSGDEligibility.Eligible0To11YearsOld:
+    case DependentChildCareEligibility.Eligible0To11YearsOld:
       return {
         dateOfBirth: addToDateOnlyString(referenceDate, -11, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
       };
-    case DependentCSGDEligibility.Eligible12YearsAndOverDeclaredOnTaxes:
+    case DependentChildCareEligibility.Eligible12YearsAndOver:
       return {
         dateOfBirth: addToDateOnlyString(referenceDate, -12, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
