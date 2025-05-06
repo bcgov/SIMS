@@ -168,7 +168,7 @@ export default defineComponent({
             PROGRAMS_DROPDOWN_KEY,
           );
 
-          if (selectedProgramId && offeringIntensity) {
+          if (selectedProgramId) {
             await formioComponentLoader.loadProgramDesc(
               formInstance,
               selectedProgramId,
@@ -240,7 +240,7 @@ export default defineComponent({
     const getOfferingDetails = async (form: FormIOForm, locationId: number) => {
       const educationProgramIdFromForm: number =
         formioUtils.getComponentValueByKey(form, PROGRAMS_DROPDOWN_KEY);
-      if (educationProgramIdFromForm && offeringIntensity) {
+      if (educationProgramIdFromForm) {
         // when isReadOnly.value is true, then consider
         // both active and inactive program year.
         formioUtils.setComponentValue(form, OFFERINGS_DROPDOWN_KEY, "");
