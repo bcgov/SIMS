@@ -141,8 +141,7 @@ export default defineComponent({
         // Program year forms older than 2025-26 required offering intensity to be injected to the form.
         // Check if the form has the offering intensity component and if so, inject the values.
         if (applicationIntensityComponent) {
-          formData.value.howWillYouBeAttendingTheProgram =
-            props.initialData.applicationOfferingIntensityValue;
+          formData.value.howWillYouBeAttendingTheProgram = offeringIntensity;
         }
         // When the form is editable, load locations and programs.
         if (!props.isReadOnly) {
