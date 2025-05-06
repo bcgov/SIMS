@@ -16,7 +16,11 @@ import {
   IsBCPublicInstitution,
   UserToken,
 } from "../../auth/decorators";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApplicationControllerService } from "./application.controller.service";
 import { AuthorizedParties, IInstitutionUserToken } from "../../auth";
@@ -44,6 +48,9 @@ export class ApplicationInstitutionsController extends BaseController {
   @HasStudentDataAccess("studentId")
   @ApiNotFoundResponse({
     description: `Current application for provided parent application not found.`,
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Dynamic form configuration not found.",
   })
   @Get("student/:studentId/application/:applicationId")
   async getApplication(

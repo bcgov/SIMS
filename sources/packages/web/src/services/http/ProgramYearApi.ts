@@ -1,5 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { OptionItemAPIOutDTO, ProgramYearAPIOutDTO } from "@/services/http/dto";
+import { OptionItemAPIOutDTO } from "@/services/http/dto";
 
 export class ProgramYearApi extends HttpBaseClient {
   /**
@@ -9,19 +9,6 @@ export class ProgramYearApi extends HttpBaseClient {
   async getProgramYears(): Promise<OptionItemAPIOutDTO[]> {
     return this.getCall<OptionItemAPIOutDTO[]>(
       this.addClientRoot("program-year/options-list"),
-    );
-  }
-
-  /**
-   * Gets an active program year given an id.
-   * @param id program year id.
-   * @returns an active program year with the id provided.
-   */
-  async getActiveProgramYearById(
-    programYearId: number,
-  ): Promise<ProgramYearAPIOutDTO> {
-    return this.getCall<ProgramYearAPIOutDTO>(
-      this.addClientRoot(`program-year/${programYearId}/active`),
     );
   }
 }

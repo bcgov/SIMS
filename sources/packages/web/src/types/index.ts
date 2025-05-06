@@ -49,3 +49,4 @@ export * from "@/types/contracts/RestrictionBypassContracts";
 export * from "@/types/contracts/ApplicationDataComparison";
 export * from "@/types/contracts/CASInvoiceBatchContracts";
 export * from "@/types/contracts/CASInvoiceStatus";
+export * from "@/types/contracts/DynamicFormConfigurationContracts";

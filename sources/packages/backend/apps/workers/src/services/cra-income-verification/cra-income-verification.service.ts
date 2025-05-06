@@ -60,9 +60,11 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
    * local developer machine or on an environment where the CRA process is not enabled.
    * !This code should not be executed on production.
    * @param verificationId CRA verification id waiting to be processed.
+   * @param reportedIncome reported income by the user.
    */
   async checkForCRAIncomeVerificationBypass(
     verificationId: number,
+    reportedIncome: number,
   ): Promise<void> {
     if (this.configService.bypassCRAIncomeVerification !== true) {
       return;
@@ -78,6 +80,8 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
         matchStatusCode: "01",
         requestStatusCode: "01",
         inactiveCode: "00",
+        // When the income verification is bypassed, set the CRA reported income as the user reported income.
+        craReportedIncome: reportedIncome,
       },
     );
     await this.workflowClientService.sendCRAIncomeVerificationCompletedMessage(

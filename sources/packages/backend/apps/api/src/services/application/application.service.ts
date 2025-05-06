@@ -884,7 +884,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
         programYear: {
           id: true,
-          formName: true,
           startDate: true,
           endDate: true,
           programYear: true,
@@ -1619,8 +1618,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .select([
         "application.id",
         "application.offeringIntensity",
-        "programYear.parentFormName",
-        "programYear.partnerFormName",
+        "programYear.id",
         "programYear.startDate",
         "user.userName",
         "student.id",
@@ -2171,32 +2169,41 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Get all the application versions for an application through parent application.
+   * Get the active application version and all past versions
+   * for an application through parent application.
    * @param applicationId application id.
    * @param options query options.
    * - `studentId` student ID used for authorization.
-   * @returns application versions if any, otherwise empty array.
+   * @returns active (current) application and its versions, if any.
    */
   async getAllApplicationVersions(
     applicationId: number,
     options?: { studentId?: number },
-  ): Promise<Application[]> {
+  ): Promise<Application> {
     const applicationQuery = this.repo
       .createQueryBuilder("application")
       .select([
         "application.id",
+        "application.applicationEditStatus",
+        "application.submittedDate",
         "parentApplication.id",
         "version.id",
         "version.submittedDate",
         "version.applicationEditStatus",
+        "supportingUser.id",
+        "supportingUser.supportingUserType",
+        "versionSupportingUser.id",
+        "versionSupportingUser.supportingUserType",
       ])
       .innerJoin("application.parentApplication", "parentApplication")
+      .leftJoin("application.supportingUsers", "supportingUser")
       .leftJoin(
         "parentApplication.versions",
         "version",
         "version.applicationStatus = :editedStatus",
         { editedStatus: ApplicationStatus.Edited },
       )
+      .leftJoin("version.supportingUsers", "versionSupportingUser")
       .where("application.id = :applicationId", {
         applicationId: applicationId,
       })
@@ -2206,14 +2213,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         studentId: options.studentId,
       });
     }
-    const application = await applicationQuery.getOne();
-    if (!application) {
-      throw new CustomNamedError(
-        "Application not found.",
-        APPLICATION_NOT_FOUND,
-      );
-    }
-    return application.parentApplication.versions;
+    return applicationQuery.getOne();
   }
 
   /**
@@ -2261,7 +2261,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.findOne({
       select: {
         id: true,
-        programYear: { id: true, formName: true, active: true },
+        programYear: { id: true, active: true },
         offeringIntensity: true,
       },
       relations: {

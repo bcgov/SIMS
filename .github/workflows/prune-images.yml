@@ -12,7 +12,7 @@ on:
           - dev
           - test
           - prod
-        default: "test"
+        default: "dev"
       applications:
         description: "Comma seperated list of application Image Streams to prune"
         required: true
@@ -28,7 +28,7 @@ on:
       minTags:
         description: "Minimum number of Tags to keep"
         required: false
-        default: "10"
+        default: "2"
   schedule:
     - cron: "0 14 * * *" # Runs at 6 AM Pacific every day
 
@@ -38,11 +38,11 @@ jobs:
     steps:
       - name: Set default inputs when triggered via schedule
         run: |
-          echo "ENVIRONMENT=${{ inputs.environment || 'test' }}" >> $GITHUB_ENV
+          echo "ENVIRONMENT=${{ inputs.environment || 'dev' }}" >> $GITHUB_ENV
           echo "APPLICATIONS=${{ inputs.applications || 'web-sims, api-sims, queue-consumers-sims, workers-sims' }}" >> $GITHUB_ENV
           echo "OCJOBS=${{ inputs.ocjobs || 'db.migrations' }}" >> $GITHUB_ENV
           echo "PREFIX=${{ inputs.prefix || 'main' }}" >> $GITHUB_ENV
-          echo "MIN_TAGS=${{ inputs.minTags || '10' }}" >> $GITHUB_ENV
+          echo "MIN_TAGS=${{ inputs.minTags || '2' }}" >> $GITHUB_ENV
 
       - name: Install CLI tools from OpenShift Mirror
         uses: redhat-actions/openshift-tools-installer@v1

@@ -4,8 +4,8 @@
       <header-navigator title="Institution requests" subTitle="Designations" />
     </template>
     <body-header
-      title="Pending Designations"
-      subTitle="Make a determination on each designation after viewing its content."
+      title="Pending designation requests"
+      subTitle="Pending designation requests that require ministry review."
       :recordsCount="designations?.length"
     >
       <template #actions>

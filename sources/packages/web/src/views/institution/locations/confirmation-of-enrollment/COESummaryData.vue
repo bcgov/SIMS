@@ -1,10 +1,7 @@
 <template>
   <v-card class="mt-5">
     <v-container :fluid="true">
-      <body-header
-        :title="header"
-        :recordsCount="disbursements.results?.length"
-      >
+      <body-header :title="header" :recordsCount="disbursements.count">
         <template #subtitle>
           <slot name="coeSummarySubtitle">{{ coeSummarySubtitle }}</slot>
         </template>

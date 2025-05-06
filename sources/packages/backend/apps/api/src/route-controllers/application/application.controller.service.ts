@@ -15,8 +15,8 @@ import {
   ApplicationOfferingChangeRequestService,
   CRAIncomeVerificationService,
   SupportingUserService,
-  APPLICATION_NOT_FOUND,
   FormService,
+  DynamicFormConfigurationService,
 } from "../../services";
 import {
   ApplicationFormData,
@@ -33,6 +33,7 @@ import {
   ApplicationOverallDetailsAPIOutDTO,
   SaveApplicationAPIInDTO,
   ChangeRequestInProgressAPIOutDTO,
+  ApplicationVersionAPIOutDTO,
 } from "./models/application.dto";
 import {
   allowApplicationChangeRequest,
@@ -47,7 +48,6 @@ import {
   ApplicationDataChange,
   getDateOnlyFormat,
   compareApplicationData,
-  CustomNamedError,
 } from "@sims/utilities";
 import {
   Application,
@@ -64,6 +64,7 @@ import {
   StudentAppealStatus,
   ApplicationEditStatusInProgress,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
+  DynamicFormType,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
@@ -92,6 +93,7 @@ export class ApplicationControllerService {
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly formService: FormService,
     private readonly configService: ConfigService,
+    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
   ) {}
 
   /**
@@ -192,7 +194,7 @@ export class ApplicationControllerService {
       assessmentTriggerType,
       hasBlockFundingFeedbackError,
       hasECertFailedValidations,
-      currentAssessmentId: application.currentAssessment.id,
+      currentAssessmentId: application.currentAssessment?.id,
     };
   }
 
@@ -543,10 +545,10 @@ export class ApplicationControllerService {
    * - `previousData` previous application to allow changes detection.
    * @returns application DTO.
    */
-  async transformToApplicationDTO(
+  transformToApplicationDTO(
     application: Application,
     options?: { previousData?: unknown },
-  ): Promise<ApplicationSupplementalDataAPIOutDTO> {
+  ): ApplicationSupplementalDataAPIOutDTO {
     let changes: ApplicationDataChangeAPIOutDTO[];
     if (options?.previousData) {
       const applicationDataChanges = compareApplicationData(
@@ -558,13 +560,17 @@ export class ApplicationControllerService {
         this.transformToApplicationChangesDTO(applicationDataChanges, changes);
       }
     }
+    const applicationFormName = this.getStudentApplicationFormName(
+      application.programYear.id,
+      application.offeringIntensity,
+    );
     return {
       data: application.data,
       id: application.id,
       applicationStatus: application.applicationStatus,
       applicationNumber: application.applicationNumber,
       isArchived: application.isArchived,
-      applicationFormName: application.programYear.formName,
+      applicationFormName,
       applicationProgramYearID: application.programYear.id,
       studentFullName: getUserFullName(application.student.user),
       applicationOfferingIntensity: application.offeringIntensity,
@@ -647,11 +653,15 @@ export class ApplicationControllerService {
    * @param disbursement
    * @returns Application DTO
    */
-  async transformToApplicationDetailForStudentDTO(
+  transformToApplicationDetailForStudentDTO(
     applicationDetail: Application,
     disbursement: DisbursementSchedule,
-  ): Promise<ApplicationDataAPIOutDTO> {
+  ): ApplicationDataAPIOutDTO {
     const offering = applicationDetail.currentAssessment?.offering;
+    const applicationFormName = this.getStudentApplicationFormName(
+      applicationDetail.programYear.id,
+      applicationDetail.offeringIntensity,
+    );
     return {
       id: applicationDetail.id,
       isArchived: applicationDetail.isArchived,
@@ -667,7 +677,7 @@ export class ApplicationControllerService {
       applicationPIRStatus: applicationDetail.pirStatus,
       applicationAssessmentStatus:
         applicationDetail.currentAssessment?.noaApprovalStatus,
-      applicationFormName: applicationDetail.programYear.formName,
+      applicationFormName,
       applicationProgramYearID: applicationDetail.programYear.id,
       applicationPIRDeniedReason: getPIRDeniedReason(applicationDetail),
       programYearStartDate: applicationDetail.programYear.startDate,
@@ -812,7 +822,9 @@ export class ApplicationControllerService {
   }
 
   /**
-   * Get application overall details for the given application.
+   * Get application overall details for the given application,
+   * including the active application, in-progress change request,
+   * and previous versions of the application.
    * @param applicationId application ID.
    * @param options options.
    * - `studentId` student ID used for authorization.
@@ -822,27 +834,60 @@ export class ApplicationControllerService {
     applicationId: number,
     options?: { studentId?: number },
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
-    try {
-      const applications =
-        await this.applicationService.getAllApplicationVersions(applicationId, {
-          studentId: options?.studentId,
-        });
-      return {
-        previousVersions: applications.map((application) => ({
-          id: application.id,
-          submittedDate: application.submittedDate,
-          applicationEditStatus: application.applicationEditStatus,
-        })),
-      };
-    } catch (error: unknown) {
-      if (
-        error instanceof CustomNamedError &&
-        error.name === APPLICATION_NOT_FOUND
-      ) {
-        throw new NotFoundException("Application not found.");
-      }
-      throw error;
+    const application = await this.applicationService.getAllApplicationVersions(
+      applicationId,
+      {
+        studentId: options?.studentId,
+      },
+    );
+    if (!application) {
+      throw new NotFoundException("Application not found.");
     }
+    // Current application, the only one that will not have its main status as 'Edited'.
+    const currentApplication =
+      this.transformToApplicationOverallDetailsAPIOutDTO(application);
+    // Convert all the past versions of the application.
+    let previousVersions = application.parentApplication.versions.map(
+      (version) => this.transformToApplicationOverallDetailsAPIOutDTO(version),
+    );
+    // Check if there is an in-progress change request for the application.
+    const inProgressChangeRequest = previousVersions.find((version) =>
+      APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES.includes(
+        version.applicationEditStatus,
+      ),
+    );
+    // Remove the in-progress change request from the previous versions list.
+    // A maximum of one in-progress change request is allowed.
+    if (inProgressChangeRequest) {
+      previousVersions = previousVersions.filter(
+        (version) => version.id !== inProgressChangeRequest.id,
+      );
+    }
+    return {
+      currentApplication,
+      inProgressChangeRequest,
+      previousVersions,
+    };
+  }
+
+  /**
+   * Convert application to the overall details DTO,
+   * including supporting users.
+   * @param application application to be converted.
+   * @returns application overall details DTO.
+   */
+  private transformToApplicationOverallDetailsAPIOutDTO(
+    application: Application,
+  ): ApplicationVersionAPIOutDTO {
+    return {
+      id: application.id,
+      submittedDate: application.submittedDate,
+      applicationEditStatus: application.applicationEditStatus,
+      supportingUsers: application.supportingUsers.map((user) => ({
+        supportingUserId: user.id,
+        supportingUserType: user.supportingUserType,
+      })),
+    };
   }
 
   /**
@@ -873,9 +918,13 @@ export class ApplicationControllerService {
       payload,
       application.offeringIntensity,
     );
+    const formName = this.getStudentApplicationFormName(
+      application.programYear.id,
+      application.offeringIntensity,
+    );
     const submissionResult =
       await this.formService.dryRunSubmission<ApplicationData>(
-        application.programYear.formName,
+        formName,
         payload.data,
       );
     if (!submissionResult.valid) {
@@ -961,5 +1010,28 @@ export class ApplicationControllerService {
       payload.data.selectedOfferingDate = studyStartDate;
       payload.data.selectedOfferingEndDate = studyEndDate;
     }
+  }
+
+  /**
+   * Get the name of the student application form definition.
+   * @param programYearId program year ID.
+   * @param offeringIntensity offering intensity.
+   * @throws {UnprocessableEntityException} if dynamic form configuration not found.
+   * @returns student application form name.
+   */
+  getStudentApplicationFormName(
+    programYearId: number,
+    offeringIntensity: OfferingIntensity,
+  ): string {
+    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
+      DynamicFormType.StudentFinancialAidApplication,
+      { programYearId, offeringIntensity },
+    );
+    if (!formName) {
+      throw new UnprocessableEntityException(
+        `Dynamic form configuration for ${DynamicFormType.StudentFinancialAidApplication} not found.`,
+      );
+    }
+    return formName;
   }
 }

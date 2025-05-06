@@ -1,83 +1,24 @@
 <template>
-  <!-- TODO: need to use v-list-group and update code with vuetify is -->
-  <v-navigation-drawer app class="body-background" permanent>
-    <v-list-item
+  <v-navigation-drawer app color="default" permanent width="300">
+    <v-list
+      :items="menuItems"
       density="compact"
-      nav
-      :prepend-icon="studentMenu.studentApplication.props?.prependIcon"
-      :title="studentMenu.studentApplication.title"
-      @click="studentMenu.studentApplication.command"
+      color="primary"
+      bg-color="default"
     />
-    <v-list density="compact" nav v-if="relatedParentPartners.length">
-      <v-list-subheader>Supporting users</v-list-subheader>
-      <v-list-item
-        v-for="relatedParentPartner in relatedParentPartners"
-        :key="relatedParentPartner.title"
-        :prepend-icon="relatedParentPartner.props?.prependIcon"
-        :title="relatedParentPartner.title"
-        @click="relatedParentPartner.command"
-      />
-    </v-list>
-    <v-list-item
-      density="compact"
-      nav
-      :prepend-icon="studentMenu.assessments.props?.prependIcon"
-      :title="studentMenu.assessments.title"
-      @click="studentMenu.assessments.command"
-    />
-    <v-list-item
-      density="compact"
-      nav
-      :prepend-icon="
-        studentMenu.applicationRestrictionsManagement.props?.prependIcon
-      "
-      :title="studentMenu.applicationRestrictionsManagement.title"
-      @click="studentMenu.applicationRestrictionsManagement.command"
-    />
-    <v-list-item
-      density="compact"
-      nav
-      :prepend-icon="studentMenu.applicationStatus.props?.prependIcon"
-      :title="studentMenu.applicationStatus.title"
-      @click="studentMenu.applicationStatus.command"
-    />
-    <v-list v-if="applicationHistory.length" density="compact" nav>
-      <v-list-group
-        v-for="application in applicationHistory"
-        :key="application.title"
-        :title="application.title"
-        :value="application.title"
-      >
-        <template #activator="{ props }">
-          <v-list-item v-bind="props" :title="application.title"></v-list-item>
-        </template>
-        <v-list-item
-          v-for="child in application.children"
-          :key="child.title"
-          :title="child.title"
-          :prepend-icon="child.props?.prependIcon"
-          :to="child.props?.to"
-        ></v-list-item>
-      </v-list-group>
-    </v-list>
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
-import { useRouter } from "vue-router";
 import { ref, onMounted, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, SupportingUserType } from "@/types";
-import { SupportingUsersService } from "@/services/SupportingUserService";
 import { ApplicationService } from "@/services/ApplicationService";
-import { useFormatters } from "@/composables";
-
-export interface StudentApplicationMenu {
-  studentApplication: MenuItemModel;
-  assessments: MenuItemModel;
-  applicationRestrictionsManagement: MenuItemModel;
-  applicationStatus: MenuItemModel;
-}
+import { useFormatters, useApplication } from "@/composables";
+import {
+  ApplicationSupportingUsersAPIOutDTO,
+  ApplicationVersionAPIOutDTO,
+} from "@/services/http/dto";
 
 export default defineComponent({
   props: {
@@ -95,133 +36,264 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const router = useRouter();
     const { getISODateHourMinuteString } = useFormatters();
-    const relatedParentPartners = ref([] as MenuItemModel[]);
-    const applicationHistory = ref([] as MenuItemModel[]);
-    const studentMenu = ref<StudentApplicationMenu>({
-      studentApplication: {
-        title: "Application",
-        props: { prependIcon: "mdi-school-outline" },
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.APPLICATION_DETAILS,
-            params: {
-              applicationId: props.applicationId,
-              studentId: props.studentId,
-            },
-          });
-        },
-      },
-      assessments: {
-        title: "Assessments",
-        props: { prependIcon: "mdi-checkbox-marked-outline" },
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-            params: {
-              applicationId: props.applicationId,
-              studentId: props.studentId,
-            },
-          });
-        },
-      },
-      applicationRestrictionsManagement: {
-        title: "Restrictions Management",
-        props: { prependIcon: "mdi-close-circle-outline" },
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.APPLICATION_RESTRICTIONS_MANAGEMENT,
-            params: {
-              applicationId: props.applicationId,
-              studentId: props.studentId,
-            },
-          });
-        },
-      },
-      applicationStatus: {
-        title: "Application Status",
-        props: { prependIcon: "mdi-information-outline" },
-        command: () => {
-          router.push({
-            name: AESTRoutesConst.APPLICATION_STATUS_TRACKER,
-            params: {
-              applicationId: props.applicationId,
-              studentId: props.studentId,
-            },
-          });
-        },
-      },
-    });
-
-    const goToSupportingUser = (supportingUserId: number) => {
-      router.push({
-        name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
-        params: {
-          studentId: props.studentId,
-          supportingUserId: supportingUserId,
-        },
-      });
-    };
+    const { mapApplicationEditStatusForMinistry } = useApplication();
+    const menuItems = ref<MenuItemModel[]>([]);
 
     onMounted(async () => {
-      const supportingUsers =
-        await SupportingUsersService.shared.getSupportingUsersForSideBar(
-          props.applicationId,
-        );
-      supportingUsers.forEach((supportingUser, index) => {
-        if (supportingUser.supportingUserType === SupportingUserType.Parent) {
-          relatedParentPartners.value.push({
-            title: `Parent ${index + 1}`,
-            props: { prependIcon: "mdi-account-outline" },
-            command: () => goToSupportingUser(supportingUser.supportingUserId),
-          });
-        }
-        if (supportingUser.supportingUserType === SupportingUserType.Partner) {
-          relatedParentPartners.value.push({
-            title: "Partner",
-            props: { prependIcon: "mdi-account-outline" },
-            command: () => goToSupportingUser(supportingUser.supportingUserId),
-          });
-        }
-      });
-      const applicationOverallDetails =
+      const overallDetails =
         await ApplicationService.shared.getApplicationOverallDetails(
           props.applicationId,
         );
-      if (applicationOverallDetails.previousVersions.length) {
-        applicationOverallDetails.previousVersions.forEach(
-          (applicationVersion) => {
-            applicationHistory.value.push({
-              title: `${getISODateHourMinuteString(
-                applicationVersion.submittedDate,
-              )}`,
-              children: [
-                {
-                  title: "Application",
-                  props: {
-                    prependIcon: "mdi-school-outline",
-                    to: {
-                      name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
-                      params: {
-                        studentId: props.studentId,
-                        applicationId: props.applicationId,
-                        versionApplicationId: applicationVersion.id,
-                      },
-                    },
-                  },
-                },
-              ],
-            });
-          },
-        );
-      }
+      menuItems.value = [
+        ...createCurrentApplicationMenuItems(overallDetails.currentApplication),
+        ...createChangeRequestMenuItems(overallDetails.inProgressChangeRequest),
+        ...createVersionsMenuItems(overallDetails.previousVersions),
+      ];
     });
 
+    /**
+     * Basic divider for the sections.
+     */
+    const DIVIDER_MENU_ITEM: MenuItemModel = {
+      type: "divider",
+      props: {
+        opacity: 0.75,
+        class: "mx-2",
+      },
+    };
+
+    /**
+     * Create one or more menu items for one to two parents or one partner.
+     * @param supportingUsers supporting users information.
+     */
+    const createSupportingUsersMenu = (
+      supportingUsers: ApplicationSupportingUsersAPIOutDTO[],
+    ): MenuItemModel[] => {
+      return (
+        supportingUsers.map((supportingUser, index) => {
+          const title =
+            supportingUser.supportingUserType === SupportingUserType.Parent
+              ? `Parent ${index + 1}`
+              : "Partner";
+          return {
+            title,
+            props: {
+              prependIcon: "mdi-account-outline",
+              slim: true,
+              to: {
+                name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
+                params: {
+                  studentId: props.studentId,
+                  supportingUserId: supportingUser.supportingUserId,
+                },
+              },
+            },
+          };
+        }) ?? []
+      );
+    };
+
+    /**
+     * Create the menu for an application version (change request or past applications).
+     * @param applicationVersion application version information.
+     */
+    const createApplicationVersionMenu = (
+      applicationVersion: ApplicationVersionAPIOutDTO,
+    ): MenuItemModel => {
+      return {
+        title: "Application",
+        props: {
+          subtitle: mapApplicationEditStatusForMinistry(
+            applicationVersion.applicationEditStatus,
+          ),
+          prependIcon: "mdi-school-outline",
+          slim: true,
+          to: {
+            name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
+            params: {
+              studentId: props.studentId,
+              applicationId: props.applicationId,
+              versionApplicationId: applicationVersion.id,
+            },
+          },
+        },
+      };
+    };
+
+    /**
+     * Create the menu for the current application (Active).
+     * @param applicationVersion application version information.
+     */
+    const createCurrentApplicationMenuItems = (
+      currentVersion: ApplicationVersionAPIOutDTO,
+    ): MenuItemModel[] => {
+      const supportingUsers = createSupportingUsersMenu(
+        currentVersion.supportingUsers,
+      );
+      return [
+        {
+          title: "Active",
+          props: {
+            subtitle: `Submitted on ${getISODateHourMinuteString(
+              currentVersion.submittedDate,
+            )}`,
+            slim: true,
+          },
+        },
+        {
+          title: "Application",
+          props: {
+            subtitle: mapApplicationEditStatusForMinistry(
+              currentVersion.applicationEditStatus,
+            ),
+            prependIcon: "mdi-school-outline",
+            slim: true,
+            to: {
+              name: AESTRoutesConst.APPLICATION_DETAILS,
+              params: {
+                applicationId: props.applicationId,
+                studentId: props.studentId,
+              },
+            },
+          },
+        },
+        ...supportingUsers,
+        {
+          title: "Assessments",
+          props: {
+            prependIcon: "mdi-checkbox-marked-outline",
+            slim: true,
+            to: {
+              name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+              params: {
+                applicationId: props.applicationId,
+                studentId: props.studentId,
+              },
+            },
+          },
+        },
+        {
+          title: "Restrictions Management",
+          props: {
+            prependIcon: "mdi-close-circle-outline",
+            slim: true,
+            to: {
+              name: AESTRoutesConst.APPLICATION_RESTRICTIONS_MANAGEMENT,
+              params: {
+                applicationId: props.applicationId,
+                studentId: props.studentId,
+              },
+            },
+          },
+        },
+        {
+          title: "Application Status",
+          props: {
+            prependIcon: "mdi-information-outline",
+            slim: true,
+            to: {
+              name: AESTRoutesConst.APPLICATION_STATUS_TRACKER,
+              params: {
+                applicationId: props.applicationId,
+                studentId: props.studentId,
+              },
+            },
+          },
+        },
+      ];
+    };
+
+    /**
+     * Create the menu for an in-progress change (Pending Change Request).
+     * @param inProgressChangeRequest application version information.
+     */
+    const createChangeRequestMenuItems = (
+      inProgressChangeRequest?: ApplicationVersionAPIOutDTO,
+    ): MenuItemModel[] => {
+      if (!inProgressChangeRequest) {
+        return [];
+      }
+      const applicationMenuItem = createApplicationVersionMenu(
+        inProgressChangeRequest,
+      );
+      const supportingUsersMenuItems = createSupportingUsersMenu(
+        inProgressChangeRequest?.supportingUsers,
+      );
+      const menuItems = [
+        DIVIDER_MENU_ITEM,
+        {
+          title: "Pending Change Request",
+          props: {
+            subtitle: `Submitted on ${getISODateHourMinuteString(
+              inProgressChangeRequest?.submittedDate,
+            )}`,
+            slim: true,
+          },
+        },
+        applicationMenuItem,
+        ...supportingUsersMenuItems,
+      ];
+      return menuItems;
+    };
+
+    /**
+     * Create the menu for the past applications (Application History).
+     * @param applicationVersion application version information.
+     */
+    const createVersionsMenuItems = (
+      versions: ApplicationVersionAPIOutDTO[],
+    ): MenuItemModel[] => {
+      if (!versions.length) {
+        return [];
+      }
+      const menuItems: MenuItemModel[] = [
+        DIVIDER_MENU_ITEM,
+        {
+          title: "Application History",
+          props: {
+            subtitle: "Past submitted applications",
+            slim: true,
+          },
+        },
+      ];
+      versions.forEach((version) => {
+        const versionSupportingUsersMenuItems = createSupportingUsersMenu(
+          version.supportingUsers,
+        );
+        menuItems.push({
+          title: `${getISODateHourMinuteString(version.submittedDate)}`,
+          props: {
+            color: null,
+          },
+          children: [
+            {
+              title: "Application",
+              props: {
+                slim: true,
+                prependIcon: "mdi-school-outline",
+                subtitle: mapApplicationEditStatusForMinistry(
+                  version.applicationEditStatus,
+                ),
+                to: {
+                  name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
+                  params: {
+                    studentId: props.studentId,
+                    applicationId: props.applicationId,
+                    versionApplicationId: version.id,
+                  },
+                },
+              },
+            },
+            ...versionSupportingUsersMenuItems,
+          ],
+        });
+      });
+      return menuItems;
+    };
+
     return {
-      studentMenu,
-      relatedParentPartners,
-      applicationHistory,
+      menuItems,
     };
   },
 });

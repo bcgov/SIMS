@@ -94,4 +94,11 @@ export class FullTimeCertRecordParser extends ECertRecordParser {
   get postalCode(): string {
     return this.record.substring(303, 310);
   }
+
+  /**
+   * Marital status from application.
+   */
+  get maritalStatus(): string {
+    return this.record.substring(595, 596);
+  }
 }

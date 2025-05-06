@@ -1972,7 +1972,8 @@
                 "when": null,
                 "eq": ""
               },
-              "properties": {}
+              "properties": {},
+              "isNew": false
             }
           ],
           "tableView": false,
@@ -1987,6 +1988,51 @@
           "properties": {},
           "lockKey": true,
           "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;"
+        },
+        {
+          "clearOnHide": false,
+          "key": "marriedCommonLawDomesticViolenceApplicationException",
+          "input": false,
+          "components": [
+            {
+              "key": "marriedCommonLawDomesticViolence",
+              "label": "Married/common-law domestic violence",
+              "input": false,
+              "tag": "strong",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "className": "font-bold",
+              "content": "Married/common-law domestic violence",
+              "type": "htmlelement",
+              "hideLabel": true,
+              "tags": [],
+              "conditional": {
+                "show": "",
+                "when": null,
+                "eq": ""
+              },
+              "properties": {},
+              "lockKey": true,
+              "isNew": false
+            }
+          ],
+          "tableView": false,
+          "type": "well",
+          "hideLabel": true,
+          "tags": [],
+          "conditional": {
+            "show": "",
+            "when": null,
+            "eq": ""
+          },
+          "properties": {},
+          "lockKey": true,
+          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
+          "isNew": false
         }
       ],
       "placeholder": "",

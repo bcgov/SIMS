@@ -64,6 +64,7 @@ export class CRAIntegrationController {
 
       await this.incomeVerificationService.checkForCRAIncomeVerificationBypass(
         identifier.id,
+        job.variables.reportedIncome,
       );
       jobLogger.log("CRA income verification created.");
       return job.complete({ incomeVerificationId: identifier.id });
