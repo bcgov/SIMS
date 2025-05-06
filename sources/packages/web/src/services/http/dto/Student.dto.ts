@@ -223,3 +223,15 @@ export interface UpdateDisabilityStatusAPIInDTO {
   disabilityStatus: DisabilityStatus;
   noteDescription: string;
 }
+
+export interface LegacyStudentMatchAPIOutDTO {
+  studentId: number;
+  firstName?: string;
+  lastName: string;
+  birthDate: string;
+  sin: string;
+}
+
+export interface LegacyStudentMatchesAPIOutDTO {
+  matches: LegacyStudentMatchAPIOutDTO[];
+}

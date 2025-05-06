@@ -17,6 +17,7 @@ import {
   UpdateDisabilityStatusAPIInDTO,
   UpdateStudentDetailsAPIInDTO,
   AESTStudentFileDetailsAPIOutDTO,
+  LegacyStudentMatchesAPIOutDTO,
 } from "@/services/http/dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -224,6 +225,19 @@ export class StudentApi extends HttpBaseClient {
     await this.patchCall(
       this.addClientRoot(`student/${studentId}/disability-status`),
       payload,
+    );
+  }
+
+  /**
+   * Get possible matches for the student from the legacy system.
+   * @param studentId student ID to retrieve the data.
+   * @returns student legacy profile details.
+   */
+  async getStudentLegacyMatches(
+    studentId: number,
+  ): Promise<LegacyStudentMatchesAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(`student/${studentId}/legacy-match`),
     );
   }
 }

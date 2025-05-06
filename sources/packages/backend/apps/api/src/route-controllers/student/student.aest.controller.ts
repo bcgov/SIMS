@@ -51,6 +51,7 @@ import {
   UpdateDisabilityStatusAPIInDTO,
   UpdateStudentDetailsAPIInDTO,
   AESTStudentFileDetailsAPIOutDTO,
+  LegacyStudentMatchesAPIOutDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -77,6 +78,7 @@ import {
 } from "../../constants";
 import { Role } from "../../auth/roles.enum";
 import { EntityManager } from "typeorm";
+import { SFASIndividualService } from "@sims/services";
 
 /**
  * Student controller for AEST Client.
@@ -92,6 +94,7 @@ export class StudentAESTController extends BaseController {
     private readonly studentControllerService: StudentControllerService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly sinValidationService: SINValidationService,
+    private readonly sfasIndividualService: SFASIndividualService,
   ) {
     super();
   }
@@ -463,5 +466,55 @@ export class StudentAESTController extends BaseController {
         "No profile data updated because no changes were detected.",
       );
     }
+  }
+
+  /**
+   * Get possible matches for the student from the legacy system.
+   * @param studentId student ID to retrieve the data.
+   * @returns student legacy profile details.
+   */
+  @Get(":studentId/legacy-match")
+  @ApiNotFoundResponse({ description: "Student not found." })
+  async getStudentLegacyMatches(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<LegacyStudentMatchesAPIOutDTO> {
+    const student = await this.studentService.getStudentById(studentId, {
+      includeLegacy: true,
+    });
+    if (!student) {
+      throw new NotFoundException("Student not found.");
+    }
+    if (student.sfasIndividuals.length) {
+      throw new UnprocessableEntityException(
+        "Student already has a legacy profile associated.",
+      );
+    }
+    const possibleStudentsForAssociation =
+      await this.sfasIndividualService.getIndividualStudentPartialMatchForAssociation(
+        student.user.lastName,
+        student.birthDate,
+        student.sinValidation.sin,
+      );
+    return {
+      matches: possibleStudentsForAssociation.map((student) => ({
+        studentId: student.id,
+        firstName: student.firstName,
+        lastName: student.lastName,
+        birthDate: student.birthDate,
+        sin: student.sin,
+      })),
+    };
+  }
+
+  /**
+   * Associate a student with a legacy profile.
+   * @param studentId student id to be associated.
+   */
+  @Patch(":studentId/legacy-match")
+  @ApiNotFoundResponse({ description: "Student not found." })
+  async getAssociateLegacyStudent(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<void> {
+    // TODO: Implement this method.
   }
 }

@@ -109,53 +109,105 @@
         /></v-col>
       </v-row>
     </content-group>
-    <h3 class="category-header-medium mt-4">Legacy Match</h3>
-    <content-group v-if="studentDetail.legacyProfile">
-      <v-row>
-        <v-col
-          ><title-value
-            propertyTitle="Given names"
-            :propertyValue="
-              emptyStringFiller(studentDetail.legacyProfile.firstName)
-            "
-          />
-        </v-col>
-        <v-col
-          ><title-value
-            propertyTitle="Last name"
-            :propertyValue="studentDetail.legacyProfile.lastName"
-          />
-        </v-col>
-        <v-col>
-          <title-value
-            propertyTitle="Date of birth"
-            :propertyValue="
-              dateOnlyLongString(studentDetail.legacyProfile.dateOfBirth)
-            "
-        /></v-col>
-      </v-row>
-      <v-row>
-        <v-col
-          ><title-value
-            propertyTitle="SIN"
-            :propertyValue="sinDisplayFormat(studentDetail.legacyProfile.sin)"
-          />
-        </v-col>
-      </v-row>
-      <v-row v-if="studentDetail.legacyProfile.hasMultipleProfiles">
-        <v-col
-          ><banner
-            :type="BannerTypes.Warning"
-            summary="The student is associated with multiple legacy profiles; the most recent update is shown."
-          ></banner>
-        </v-col>
-      </v-row>
-    </content-group>
-    <banner
-      v-else
-      :type="BannerTypes.Info"
-      summary="The student is not currently associated with any legacy record."
-    ></banner>
+    <template v-if="showLegacyMatch">
+      <!-- Conditionally displays the legacy match section. -->
+      <h3 class="category-header-medium mt-4">Legacy Match</h3>
+      <content-group>
+        <template v-if="studentDetail.legacyProfile">
+          <v-row>
+            <v-col
+              ><title-value
+                propertyTitle="Given names"
+                :propertyValue="
+                  emptyStringFiller(studentDetail.legacyProfile.firstName)
+                "
+              />
+            </v-col>
+            <v-col
+              ><title-value
+                propertyTitle="Last name"
+                :propertyValue="studentDetail.legacyProfile.lastName"
+              />
+            </v-col>
+            <v-col>
+              <title-value
+                propertyTitle="Date of birth"
+                :propertyValue="
+                  dateOnlyLongString(studentDetail.legacyProfile.dateOfBirth)
+                "
+            /></v-col>
+          </v-row>
+          <v-row>
+            <v-col
+              ><title-value
+                propertyTitle="SIN"
+                :propertyValue="
+                  sinDisplayFormat(studentDetail.legacyProfile.sin)
+                "
+              />
+            </v-col>
+          </v-row>
+          <v-row v-if="studentDetail.legacyProfile.hasMultipleProfiles">
+            <v-col
+              ><banner
+                :type="BannerTypes.Warning"
+                summary="The student is associated with multiple legacy profiles; the most recent update is shown."
+              ></banner>
+            </v-col>
+          </v-row>
+        </template>
+        <banner
+          v-else
+          :type="BannerTypes.Info"
+          summary="The student is not currently associated with any legacy record. Please check the legacy match information to see if there are any potential matches."
+        >
+          <template #actions>
+            <v-btn color="primary" @click="loadStudentLegacyMatches()">
+              Check for legacy matches
+              <v-tooltip activator="parent" location="start"
+                >Click to check for potential legacy matches.</v-tooltip
+              >
+            </v-btn></template
+          >
+        </banner>
+        <toggle-content
+          v-if="showLegacyMatches"
+          :toggled="
+            !legacyStudentMatches?.length && !studentLegacyMatchesLoading
+          "
+          message="No potential legacy matches found."
+        >
+          <v-data-table
+            :headers="StudentProfileLegacyMatchHeaders"
+            :items="legacyStudentMatches"
+            :loading="studentLegacyMatchesLoading"
+            :paginate="false"
+          >
+            <template v-slot:loading>
+              <v-skeleton-loader type="table-row@3"></v-skeleton-loader>
+            </template>
+            <template #[`item.firstName`]="{ item }">
+              {{ item.firstName }}
+            </template>
+            <template #[`item.lastName`]="{ item }">
+              {{ item.lastName }}
+            </template>
+            <template #[`item.birthDate`]="{ item }">
+              {{ dateOnlyLongString(item.birthDate) }}
+            </template>
+            <template #[`item.actions`]="{ item }">
+              <v-btn color="primary">
+                Link
+                <v-tooltip activator="parent" location="start"
+                  >Click to link student with this legacy profile.</v-tooltip
+                >
+              </v-btn>
+            </template>
+          </v-data-table>
+        </toggle-content>
+      </content-group>
+    </template>
+
     <edit-student-profile-modal
       ref="studentEditProfile"
     ></edit-student-profile-modal>
@@ -168,9 +220,16 @@ import { StudentService } from "@/services/StudentService";
 import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
 import {
   AddressAPIOutDTO,
+  LegacyStudentMatchAPIOutDTO,
   UpdateStudentDetailsAPIInDTO,
 } from "@/services/http/dto";
-import { IdentityProviders, Role, StudentProfile, BannerTypes } from "@/types";
+import {
+  IdentityProviders,
+  Role,
+  StudentProfile,
+  BannerTypes,
+  StudentProfileLegacyMatchHeaders,
+} from "@/types";
 import DisabilityStatusUpdateTileValue from "@/components/aest/students/DisabilityStatusUpdateTileValue.vue";
 import EditStudentProfileModal from "@/components/aest/students/modals/EditStudentProfileModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -199,6 +258,11 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    showLegacyMatch: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     const snackBar = useSnackBar();
@@ -213,6 +277,9 @@ export default defineComponent({
       emptyStringFiller,
       dateOnlyLongString,
     } = useFormatters();
+    const legacyStudentMatches = ref<LegacyStudentMatchAPIOutDTO[]>();
+    const studentLegacyMatchesLoading = ref(false);
+    const showLegacyMatches = ref(false);
 
     const loadStudentProfile = async () => {
       studentDetail.value = (await StudentService.shared.getStudentProfile(
@@ -232,6 +299,22 @@ export default defineComponent({
         },
         saveUpdatedProfileInfo,
       );
+    };
+
+    const loadStudentLegacyMatches = async (): Promise<void> => {
+      studentLegacyMatchesLoading.value = true;
+      showLegacyMatches.value = true;
+      try {
+        const legacyMatches =
+          await StudentService.shared.getStudentLegacyMatches(props.studentId);
+        legacyStudentMatches.value = legacyMatches.matches;
+      } catch (error) {
+        snackBar.error(
+          "An unexpected error happened while loading the legacy matches.",
+        );
+      } finally {
+        studentLegacyMatchesLoading.value = false;
+      }
     };
 
     const saveUpdatedProfileInfo = async (
@@ -274,6 +357,11 @@ export default defineComponent({
       canEditProfile,
       studentEditProfile,
       BannerTypes,
+      legacyStudentMatches,
+      loadStudentLegacyMatches,
+      studentLegacyMatchesLoading,
+      StudentProfileLegacyMatchHeaders,
+      showLegacyMatches,
     };
   },
 });

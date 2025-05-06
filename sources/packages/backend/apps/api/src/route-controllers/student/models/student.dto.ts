@@ -330,3 +330,15 @@ export class UpdateStudentDetailsAPIInDTO {
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
 }
+
+export class LegacyStudentMatchAPIOutDTO {
+  studentId: number;
+  firstName?: string;
+  lastName: string;
+  birthDate: string;
+  sin: string;
+}
+
+export class LegacyStudentMatchesAPIOutDTO {
+  matches: LegacyStudentMatchAPIOutDTO[];
+}

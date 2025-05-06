@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Brackets, Repository } from "typeorm";
-import { SFASIndividual, Student } from "@sims/sims-db";
+import { SFASIndividual } from "@sims/sims-db";
 import { SFASIndividualDataSummary } from "./sfas-individual.model";
 import { InjectRepository } from "@nestjs/typeorm";
 
@@ -12,8 +12,6 @@ export class SFASIndividualService {
   constructor(
     @InjectRepository(SFASIndividual)
     private readonly sfasIndividualRepo: Repository<SFASIndividual>,
-    @InjectRepository(Student)
-    private readonly studentRepo: Repository<Student>,
   ) {}
 
   /**
@@ -90,6 +88,44 @@ export class SFASIndividualService {
         }),
       )
       .getOne();
+  }
+
+  /**
+   * Get students that could potentially be associated with the given student.
+   * @param lastName student last name, must be an exact match.
+   * @param birthDate student date of birth.
+   * @param sin student social insurance number.
+   * @returns SFAS students that could be potentially associated to a SIMS student.
+   */
+  async getIndividualStudentPartialMatchForAssociation(
+    lastName: string,
+    birthDate: string,
+    sin: string,
+  ): Promise<SFASIndividual[]> {
+    return this.sfasIndividualRepo
+      .createQueryBuilder("individual")
+      .select([
+        "individual.id",
+        "individual.firstName",
+        "individual.lastName",
+        "individual.sin",
+        "individual.birthDate",
+      ])
+      .where("individual.student.id IS NULL")
+      .andWhere(
+        new Brackets((qb) =>
+          qb.where("individual.sin = :sin", { sin }).orWhere(
+            new Brackets((qb) => {
+              qb.where("lower(individual.lastName) = :lastName", {
+                lastName: lastName.toLowerCase(),
+              }).andWhere("individual.birthDate = :birthDate", {
+                birthDate,
+              });
+            }),
+          ),
+        ),
+      )
+      .getMany();
   }
 
   /**
