@@ -60,7 +60,6 @@ import {
   useFormioComponentLoader,
   useFormioDropdownLoader,
   useFormioUtils,
-  useOffering,
 } from "@/composables";
 
 export default defineComponent({
@@ -115,7 +114,6 @@ export default defineComponent({
     const PROGRAM_NOT_LISTED = "myProgramNotListed";
     const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
     let formInstance: any;
-    const { mapOfferingIntensity } = useOffering();
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
     const formioComponentLoader = useFormioComponentLoader();
@@ -145,8 +143,6 @@ export default defineComponent({
         if (applicationIntensityComponent) {
           formData.value.howWillYouBeAttendingTheProgram =
             props.initialData.applicationOfferingIntensityValue;
-          formData.value.applicationOfferingIntensity =
-            mapOfferingIntensity(offeringIntensity);
         }
         // When the form is editable, load locations and programs.
         if (!props.isReadOnly) {

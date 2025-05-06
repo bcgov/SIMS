@@ -174,7 +174,7 @@ export default defineComponent({
     let savedDraftData: string;
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
-    const isReadOnly = ref(false);
+    const isReadOnly = ref(!!props.readOnly);
     const notDraft = ref(false);
     const existingApplication = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
