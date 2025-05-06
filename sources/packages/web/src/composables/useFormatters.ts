@@ -298,7 +298,7 @@ export function useFormatters() {
    * @param sin value to be converted to be displayed.
    * @returns SIN formatted as 999 999 999.
    */
-  const sinDisplayFormat = (sin: string): string | undefined => {
+  const sinDisplayFormat = (sin?: string): string | undefined => {
     if (!sin) {
       return DEFAULT_EMPTY_VALUE;
     }

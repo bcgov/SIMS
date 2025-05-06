@@ -47,6 +47,19 @@ export interface UpdateStudentDetailsAPIInDTO {
   noteDescription: string;
 }
 
+export interface LegacyStudentProfileAPIOutDTO {
+  id: number;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  sin: string;
+  /**
+   * Indicates if the student on SIMS is associated
+   * with multiple profiles on the legacy system.
+   */
+  hasMultipleProfiles: boolean;
+}
+
 export interface StudentProfileAPIOutDTO {
   firstName: string;
   lastName: string;
@@ -69,6 +82,7 @@ export interface AESTStudentProfileAPIOutDTO
   extends InstitutionStudentProfileAPIOutDTO {
   hasRestriction: boolean;
   identityProvider: SpecificIdentityProviders;
+  legacyProfile?: LegacyStudentProfileAPIOutDTO;
 }
 
 /**
