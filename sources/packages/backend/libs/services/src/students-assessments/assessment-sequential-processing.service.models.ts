@@ -118,28 +118,16 @@ export class SequencedApplications {
 }
 
 /**
- * Award code (e.g. CSPT, CSGD, CSGP, SBSD, BCAG) and its totals.
- */
-export interface AwardTotal {
-  offeringIntensity: OfferingIntensity;
-  valueCode: string;
-  total: number;
-}
-
-/**
  * Program year totals with award code (e.g. CSPT, CSGD, CSGP, SBSD, BCAG) and its totals
  * and for full-time program year cost and contribution (e.g. ScholarshipsBursaries, SpouseContributionWeeks, FederalFSC, ProvincialFSC) and its totals.
  */
 export interface ProgramYearTotal {
-  awardTotals: AwardTotal[];
-  workflowOutputTotals?: ProgramYearWorkflowOutputTotal[];
+  awardTotals: ProgramYearOutputTotal<string>[];
+  workflowOutputTotals?: ProgramYearOutputTotal<WorkflowOutputType>[];
 }
 
-/**
- * Full-time program year cost and contribution and its totals.
- */
-export interface ProgramYearWorkflowOutputTotal {
+export interface ProgramYearOutputTotal<T> {
   offeringIntensity: OfferingIntensity;
-  workflowOutput: WorkflowOutputType;
+  output: T;
   total: number;
 }

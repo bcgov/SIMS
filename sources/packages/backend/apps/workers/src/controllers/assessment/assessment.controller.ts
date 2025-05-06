@@ -54,9 +54,8 @@ import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
 import {
   AssessmentSequentialProcessingService,
-  AwardTotal,
+  ProgramYearOutputTotal,
   ProgramYearTotal,
-  ProgramYearWorkflowOutputTotal,
   SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
@@ -512,19 +511,17 @@ export class AssessmentController {
    * @param total awards/contributions to be added to the output.
    * @param output output to receive the dynamic property.
    */
-  private createDynamicVariables(
-    total: AwardTotal[] | ProgramYearWorkflowOutputTotal[],
+  private createDynamicVariables<T>(
+    total: ProgramYearOutputTotal<T>[],
     output: VerifyAssessmentCalculationOrderJobOutDTO,
   ): void {
     const PROGRAM_YEAR_TOTAL = "programYearTotal";
-    total?.forEach((item: AwardTotal | ProgramYearWorkflowOutputTotal) => {
+    total?.forEach((item) => {
       const intensity =
         item.offeringIntensity === OfferingIntensity.fullTime
           ? "FullTime"
           : "PartTime";
-      const outputName = `${PROGRAM_YEAR_TOTAL}${intensity}${
-        "valueCode" in item ? item.valueCode : item.workflowOutput
-      }`;
+      const outputName = `${PROGRAM_YEAR_TOTAL}${intensity}${item.output.toString()}`;
       output[outputName] = output[outputName]
         ? output[outputName] + item.total
         : item.total;

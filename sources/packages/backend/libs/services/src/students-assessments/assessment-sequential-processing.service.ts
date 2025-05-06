@@ -17,11 +17,10 @@ import {
   User,
 } from "@sims/sims-db";
 import {
-  AwardTotal,
-  ProgramYearWorkflowOutputTotal,
   ProgramYearTotal,
   SequencedApplications,
   SequentialApplication,
+  ProgramYearOutputTotal,
 } from "..";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getISODateOnlyString } from "@sims/utilities";
@@ -203,7 +202,7 @@ export class AssessmentSequentialProcessingService {
     sequencedApplications: SequencedApplications,
     assessment: StudentAssessment,
     options?: { alternativeReferenceDate?: Date },
-  ): Promise<AwardTotal[]> {
+  ): Promise<ProgramYearOutputTotal<string>[]> {
     // Get the first assessment date ever calculated for the current application.
     // If there are multiple assessments for the current application, then set the
     // first assessment date to the assessment date of the first assessment.
@@ -294,7 +293,7 @@ export class AssessmentSequentialProcessingService {
     // The valueAmount from awards are mapped to string by Typeorm Postgres driver.
     const disbursementTotals = totals.map((total) => ({
       offeringIntensity: total.offeringIntensity,
-      valueCode: total.valueCode,
+      output: total.valueCode,
       total: +total.total,
     }));
     return [
@@ -311,7 +310,7 @@ export class AssessmentSequentialProcessingService {
    */
   private async getProgramYearWorkflowOutputTotals(
     applicationNumbers: string[],
-  ): Promise<ProgramYearWorkflowOutputTotal[]> {
+  ): Promise<ProgramYearOutputTotal<WorkflowOutputType>[]> {
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
       .select(
@@ -369,13 +368,13 @@ export class AssessmentSequentialProcessingService {
       return [];
     }
 
-    const result: ProgramYearWorkflowOutputTotal[] = [];
+    const result: ProgramYearOutputTotal<WorkflowOutputType>[] = [];
     totals.forEach((total) => {
       Object.entries(WorkflowOutputType)
         .filter(([key]) => total[key])
         .forEach(([key]) => {
           result.push({
-            workflowOutput: key as WorkflowOutputType,
+            output: key as WorkflowOutputType,
             total: +total[key],
             offeringIntensity: total.offeringIntensity,
           });
@@ -567,7 +566,7 @@ export class AssessmentSequentialProcessingService {
     studentId: number,
     programYearStartDate: string,
     referenceAssessmentDate: string,
-  ): Promise<AwardTotal[]> {
+  ): Promise<ProgramYearOutputTotal<string>[]> {
     const sfasApplicationAwards = this.sfasApplicationsRepo
       .createQueryBuilder("sfasApplication")
       .select("SUM(sfasApplication.csgpAward)", "CSGP")
@@ -586,12 +585,12 @@ export class AssessmentSequentialProcessingService {
     const awards = await sfasApplicationAwards.getRawOne<
       Record<"CSGP" | "SBSD" | "CSGD" | "BCAG", string>
     >();
-    const totals: AwardTotal[] = [];
+    const totals: ProgramYearOutputTotal<string>[] = [];
     Object.entries(awards).forEach(([key, value]) => {
       if (value && +value > 0) {
         totals.push({
           offeringIntensity: OfferingIntensity.fullTime,
-          valueCode: key,
+          output: key,
           total: +value,
         });
       }
@@ -610,7 +609,7 @@ export class AssessmentSequentialProcessingService {
     studentId: number,
     programYearStartDate: string,
     referenceAssessmentDate: string,
-  ): Promise<AwardTotal[]> {
+  ): Promise<ProgramYearOutputTotal<string>[]> {
     const sfasPartTimeApplicationAwards = this.sfasPartTimeApplicationsRepo
       .createQueryBuilder("sfasPTApplication")
       .select("SUM(sfasPTApplication.csgpAward)", "CSGP")
@@ -630,12 +629,12 @@ export class AssessmentSequentialProcessingService {
     const awards = await sfasPartTimeApplicationAwards.getRawOne<
       Record<"CSGP" | "SBSD" | "CSGD" | "BCAG" | "CSPT", string>
     >();
-    const totals: AwardTotal[] = [];
+    const totals: ProgramYearOutputTotal<string>[] = [];
     Object.entries(awards).forEach(([key, value]) => {
       if (value && +value > 0) {
         totals.push({
           offeringIntensity: OfferingIntensity.partTime,
-          valueCode: key,
+          output: key,
           total: +value,
         });
       }
