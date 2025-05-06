@@ -5,7 +5,7 @@ import {
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import {
-  DependentCSGDEligibility,
+  DependentChildCareEligibility,
   DependentEligibility,
   createFakeStudentDependentBornAfterStudyEndDate,
   createFakeStudentDependentCSGDEligible,
@@ -25,7 +25,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentCSGDEligible(
-          DependentCSGDEligibility.Eligible0To11YearsOld,
+          DependentChildCareEligibility.Eligible0To11YearsOld,
           { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
         ),
       ];
@@ -55,7 +55,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentCSGDEligible(
-          DependentCSGDEligibility.Eligible12YearsAndOverDeclaredOnTaxes,
+          DependentChildCareEligibility.Eligible12YearsAndOver,
           { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
         ),
       ];
