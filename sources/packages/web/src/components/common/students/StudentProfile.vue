@@ -136,14 +136,13 @@
         <v-col
           ><title-value
             propertyTitle="SIN"
-            :propertyValue="sinDisplayFormat(studentDetail.legacyProfile?.sin)"
+            :propertyValue="sinDisplayFormat(studentDetail.legacyProfile.sin)"
           />
         </v-col>
       </v-row>
-      <v-row>
+      <v-row v-if="studentDetail.legacyProfile.hasMultipleProfiles">
         <v-col
           ><banner
-            v-if="studentDetail.legacyProfile?.hasMultipleProfiles"
             :type="BannerTypes.Warning"
             summary="The student is associated with multiple legacy profiles; the most recent update is shown."
           ></banner>

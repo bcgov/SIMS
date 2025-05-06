@@ -265,7 +265,7 @@ export class StudentControllerService {
       validSin: student.sinValidation.isValidSIN,
     };
     // Optionally load specific data for the Ministry.
-    let legacyProfile: LegacyStudentProfileAPIOutDTO = undefined;
+    let legacyProfile: LegacyStudentProfileAPIOutDTO;
     let specificData: Pick<
       AESTStudentProfileAPIOutDTO,
       "hasRestriction" | "identityProviderType"
