@@ -108,7 +108,6 @@ import {
   useSnackBar,
   ModalDialog,
   useFormatters,
-  useOffering,
 } from "@/composables";
 import {
   FormIOCustomEvent,
@@ -117,6 +116,7 @@ import {
   ApiProcessError,
   BannerTypes,
   FormIOForm,
+  StudentApplicationFormData,
 } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -162,9 +162,9 @@ export default defineComponent({
       getFormattedAddress,
       disabilityStatusToDisplay,
     } = useFormatters();
-    const { mapOfferingIntensity } = useOffering();
+
     const router = useRouter();
-    const initialData = ref({});
+    const initialData = ref({} as StudentApplicationFormData);
     const isStudyEndDateWithinDeadline = ref(true);
     const formioUtils = useFormioUtils();
     const snackBar = useSnackBar();
@@ -174,7 +174,7 @@ export default defineComponent({
     let savedDraftData: string;
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
-    const isReadOnly = ref(false);
+    const isReadOnly = ref(!!props.readOnly);
     const notDraft = ref(false);
     const existingApplication = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
@@ -251,11 +251,8 @@ export default defineComponent({
       };
       initialData.value = {
         ...applicationData.data,
-        howWillYouBeAttendingTheProgram:
+        applicationOfferingIntensityValue:
           applicationData.applicationOfferingIntensity,
-        applicationOfferingIntensity: mapOfferingIntensity(
-          applicationData.applicationOfferingIntensity,
-        ),
         ...studentFormData,
         ...programYear,
         isReadOnly: isReadOnly.value,
