@@ -115,12 +115,12 @@
         <StudentProfileLegacyMatches
           :studentId="studentId"
           :legacyProfile="studentDetail.legacyProfile"
+          @legacyProfileLinked="loadStudentProfile"
         />
       </content-group>
     </template>
     <edit-student-profile-modal
       ref="studentEditProfile"
-      @legacyProfileLinked="loadStudentProfile"
     ></edit-student-profile-modal>
   </body-header-container>
 </template>
