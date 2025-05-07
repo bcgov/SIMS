@@ -22,7 +22,9 @@ import {
   COEStatus,
   DisbursementScheduleStatus,
   DisbursementValueType,
+  FullTimeAssessment,
   OfferingIntensity,
+  PartTimeAssessment,
   StudentAssessmentStatus,
   WorkflowData,
 } from "@sims/sims-db";
@@ -75,10 +77,8 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
             "CSGP",
             4,
           ),
-          // Should not be disbursed due to BCLM restriction.
           createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 5),
           createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 6),
-          // Should not be disbursed due to BCLM restriction.
           createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 7),
         ],
       },
@@ -533,6 +533,172 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
       programYearTotalPartTimeCSGP: 8,
       programYearTotalPartTimeSBSD: 12,
       programYearTotalPartTimeBCAG: 14,
+    });
+  });
+
+  it("Should sum the workflow totals from past applications with different offering intensities when the applications are for the same student and program year.", async () => {
+    // Arrange
+
+    // Create the student and program year to be shared across the applications.
+    const student = await saveFakeStudent(db.dataSource);
+    // Get the program year for the start date.
+    const programYear = await db.programYear.findOne({ where: { id: 2 } });
+
+    // Past part-time application with federal and provincial loans and grants.
+    // Loans will be ignored.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGP",
+            4,
+          ),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(10, programYear.startDate),
+          workflowData: {
+            calculatedData: {
+              exemptScholarshipsBursaries: 2000,
+              totalFederalFSC: 3000,
+              totalProvincialFSC: 4000,
+              returnTransportationCost: 5000,
+            },
+          } as WorkflowData,
+          assessmentData: {
+            booksAndSuppliesCost: 6000,
+          } as PartTimeAssessment,
+        },
+      },
+    );
+    // Past full-time application with federal and provincial loans and grants.
+    // Loans will be ignored.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            8,
+          ),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(20, programYear.startDate),
+          workflowData: {
+            calculatedData: {
+              studentSpouseContributionWeeks: 1000,
+              totalFederalFSC: 3000,
+              totalProvincialFSC: 4000,
+              returnTransportationCost: 5000,
+            },
+          } as WorkflowData,
+          assessmentData: {
+            booksAndSuppliesCost: 100,
+          } as FullTimeAssessment,
+        },
+      },
+    );
+    // Past full-time application with federal and provincial loans and grants.
+    // Loans will be ignored.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 11),
+        ],
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(25, programYear.startDate),
+          workflowData: {
+            calculatedData: {
+              totalFederalFSC: 300,
+              totalProvincialFSC: 400,
+            },
+          } as WorkflowData,
+          assessmentData: {
+            booksAndSuppliesCost: 150,
+          } as FullTimeAssessment,
+        },
+      },
+    );
+    // Current application having the first assessment already processed.
+    const currentApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.InProgress,
+        currentAssessmentInitialValues: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          assessmentDate: addDays(30, programYear.startDate),
+        },
+      },
+    );
+    const secondAssessment = createFakeStudentAssessment(
+      {
+        auditUser: currentApplication.student.user,
+        application: currentApplication,
+        offering: currentApplication.currentAssessment.offering,
+        applicationEditStatusUpdatedBy: currentApplication.student.user,
+      },
+      {
+        initialValue: {
+          assessmentWorkflowId: "some fake id",
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+    currentApplication.currentAssessment = secondAssessment;
+    await db.application.save(currentApplication);
+    // Act
+    const result = await assessmentController.verifyAssessmentCalculationOrder(
+      createFakeVerifyAssessmentCalculationOrderPayload(
+        currentApplication.currentAssessment.id,
+      ),
+    );
+    // Assert
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
+      isReadyForCalculation: true,
+      latestCSLPBalance: 0,
+      // Full-time
+      programYearTotalFullTimeBooksAndSuppliesCost: 250,
+      programYearTotalFullTimeFederalFSC: 3300,
+      programYearTotalFullTimeProvincialFSC: 4400,
+      programYearTotalFullTimeReturnTransportationCost: 5000,
+      programYearTotalFullTimeSpouseContributionWeeks: 1000,
+      // Part-time
+      programYearTotalPartTimeCSGP: 4,
+      programYearTotalPartTimeBooksAndSuppliesCost: 6000,
+      programYearTotalPartTimeFederalFSC: 3000,
+      programYearTotalPartTimeProvincialFSC: 4000,
+      programYearTotalPartTimeReturnTransportationCost: 5000,
+      programYearTotalPartTimeScholarshipsBursaries: 2000,
     });
   });
 
@@ -1091,13 +1257,6 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     // The result will not have data from SFAS or SFAS part-time application data.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
-      // Student contribution total.
-      programYearTotalFederalFSC: 0,
-      programYearTotalProvincialFSC: 0,
-      programYearTotalScholarshipsBursaries: 0,
-      programYearTotalSpouseContributionWeeks: 0,
-      programYearTotalReturnTransportationCost: 0,
-      programYearTotalBookCost: 0,
     });
   });
 
@@ -1217,13 +1376,11 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     // The calculation will only take full-time and part-time application data where the start date is the date before the first assessment date of the current application.
     expect(FakeWorkerJobResult.getOutputVariables(result)).toStrictEqual({
       isReadyForCalculation: true,
-      // Student contribution total.
-      programYearTotalFederalFSC: 6000,
-      programYearTotalProvincialFSC: 8000,
-      programYearTotalScholarshipsBursaries: 4000,
-      programYearTotalSpouseContributionWeeks: 2000,
-      programYearTotalReturnTransportationCost: 1000,
-      programYearTotalBookCost: 1200,
+      programYearTotalFullTimeFederalFSC: 6000,
+      programYearTotalFullTimeProvincialFSC: 8000,
+      programYearTotalFullTimeReturnTransportationCost: 1000,
+      programYearTotalFullTimeScholarshipsBursaries: 4000,
+      programYearTotalFullTimeSpouseContributionWeeks: 2000,
     });
   });
 

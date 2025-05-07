@@ -49,7 +49,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
           createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
         assessmentConsolidatedData.institutionType = institutionType;
         assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
-        assessmentConsolidatedData.studentDataCRAReportedIncome = 75479;
+        assessmentConsolidatedData.studentDataCRAReportedIncome = 80000;
 
         // Act
         const calculatedAssessment =
