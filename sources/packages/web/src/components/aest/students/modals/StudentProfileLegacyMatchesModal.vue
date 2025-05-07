@@ -2,16 +2,15 @@
   <v-form ref="linkProfileForm">
     <modal-dialog-base :showDialog="showDialog" title="Confirm profile link"
       ><template #content
-        ><p>
-          Please provide some notes and confirm the legacy profile link.<br />
-          <strong>Please note that this action cannot be undone.</strong>
-        </p>
+        ><p>Add a note and confirm the legacy profile link.</p>
+        <strong>This action cannot be undone.</strong>
         <v-textarea
           v-model="noteDescription"
           variant="outlined"
           label="Note"
           :rules="[checkNotesLengthRule]"
           required
+          :min-width="isMobile ? undefined : 600"
           class="mt-4"
           hide-details="auto"
         ></v-textarea>
@@ -32,6 +31,7 @@ import { ref, defineComponent } from "vue";
 import { useModalDialog, useRules } from "@/composables";
 import { VForm } from "@/types";
 import { LegacyStudentMatchesAPIInDTO } from "@/services/http/dto";
+import { useDisplay } from "vuetify/lib/framework.mjs";
 
 export default defineComponent({
   setup() {
@@ -43,6 +43,7 @@ export default defineComponent({
       hideModal,
       showParameter,
     } = useModalDialog<LegacyStudentMatchesAPIInDTO | false>();
+    const { mobile: isMobile } = useDisplay();
     const { checkNotesLengthRule } = useRules();
     const noteDescription = ref("");
     const linkProfileForm = ref({} as VForm);
@@ -75,6 +76,7 @@ export default defineComponent({
       checkNotesLengthRule,
       linkProfile,
       cancel,
+      isMobile,
     };
   },
 });
