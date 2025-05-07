@@ -137,7 +137,7 @@ export class SFASIndividualService {
    * @param individualId legacy individual to have the student associated.
    * @param studentId student to be associated to the legacy profile.
    * @param noteDescription note description to be added to the student notes.
-   * @param auditUserId user crating the profile link.
+   * @param auditUserId user creating the profile link.
    */
   async associateStudentProfile(
     individualId: number,

@@ -77,7 +77,7 @@
           {{ sinDisplayFormat(item.sin) }}
         </template>
         <template #[`item.actions`]="{ item }">
-          <check-permission-role :role="Role.AESTStudentLinkLegacyProfile">
+          <check-permission-role :role="Role.StudentLinkLegacyProfile">
             <template #="{ notAllowed }">
               <v-btn
                 color="primary"
@@ -148,7 +148,7 @@ export default defineComponent({
         const legacyMatches =
           await StudentService.shared.getStudentLegacyMatches(props.studentId);
         legacyStudentMatches.value = legacyMatches.matches;
-      } catch (error) {
+      } catch {
         snackBar.error(
           "An unexpected error happened while loading the legacy matches.",
         );

@@ -474,7 +474,7 @@ export class StudentAESTController extends BaseController {
    * @param studentId student ID to retrieve the data.
    * @returns student legacy profile details.
    */
-  @Roles(Role.AESTStudentLinkLegacyProfile)
+  @Roles(Role.StudentLinkLegacyProfile)
   @Get(":studentId/legacy-match")
   @ApiNotFoundResponse({ description: "Student not found." })
   @ApiUnprocessableEntityResponse({
@@ -503,7 +503,7 @@ export class StudentAESTController extends BaseController {
    * @param studentId student ID to be associated with the legacy profile.
    * @param payload legacy profile to be associated.
    */
-  @Roles(Role.AESTStudentLinkLegacyProfile)
+  @Roles(Role.StudentLinkLegacyProfile)
   @Patch(":studentId/legacy-match")
   @ApiNotFoundResponse({ description: "Student not found." })
   @ApiUnprocessableEntityResponse({

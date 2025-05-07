@@ -422,7 +422,7 @@ export class StudentControllerService {
   /**
    * Validate the conditions to allow the student to be associated with a legacy profile.
    * @param studentId student ID to have a legacy profile associated with.
-   * @returns possible legacy profile that matches the student data.
+   * @returns possible legacy profiles that matches the student data.
    */
   async validateAndGetStudentLegacyMatches(
     studentId: number,
