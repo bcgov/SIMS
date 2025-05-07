@@ -183,6 +183,19 @@ export class StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
 }
 
+export class LegacyStudentProfileAPIOutDTO {
+  id: number;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  sin: string;
+  /**
+   * Indicates if the student on SIMS is associated
+   * with multiple profiles on the legacy system.
+   */
+  hasMultipleProfiles: boolean;
+}
+
 export class StudentProfileAPIOutDTO {
   firstName: string;
   lastName: string;
@@ -202,6 +215,7 @@ export class InstitutionStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO 
 export class AESTStudentProfileAPIOutDTO extends InstitutionStudentProfileAPIOutDTO {
   hasRestriction: boolean;
   identityProviderType: SpecificIdentityProviders;
+  legacyProfile?: LegacyStudentProfileAPIOutDTO;
 }
 
 export class AESTFileUploadToStudentAPIInDTO {

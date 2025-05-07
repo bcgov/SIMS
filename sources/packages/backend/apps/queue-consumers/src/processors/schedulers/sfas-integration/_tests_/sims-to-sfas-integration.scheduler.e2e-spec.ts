@@ -644,7 +644,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         { student },
         {
           applicationData: {
-            howWillYouBeAttendingTheProgram: OfferingIntensity.partTime,
             studystartDate: studyStartDate,
             studyendDate: studyEndDate,
           } as ApplicationData,

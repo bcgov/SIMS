@@ -1,7 +1,7 @@
 <template>
   <formio
     :formName="selectedForm"
-    :data="initialData"
+    :data="formData"
     :readOnly="isReadOnly"
     @loaded="formLoaded"
     @changed="formChanged"
@@ -53,8 +53,9 @@ import {
   WizardNavigationEvent,
   FormIOCustomEvent,
   FormIOForm,
+  StudentApplicationFormData,
 } from "@/types";
-import { ref, watch, defineComponent, computed } from "vue";
+import { ref, watch, defineComponent, computed, PropType } from "vue";
 import {
   useFormioComponentLoader,
   useFormioDropdownLoader,
@@ -73,7 +74,7 @@ export default defineComponent({
   ],
   props: {
     initialData: {
-      type: Object,
+      type: Object as PropType<StudentApplicationFormData>,
       required: true,
     },
     selectedForm: {
@@ -119,6 +120,8 @@ export default defineComponent({
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const showNav = ref(false);
+    const formData = ref({} as StudentApplicationFormData);
+    let offeringIntensity: OfferingIntensity;
 
     const isSaveDraftAllowed = computed(
       () => !props.notDraft && !isFirstPage.value && !props.processing,
@@ -129,50 +132,59 @@ export default defineComponent({
     };
 
     const loadFormDependencies = async () => {
-      if (!props.isReadOnly && !!formInstance) {
-        await formioDataLoader.loadLocations(
-          formInstance,
-          LOCATIONS_DROPDOWN_KEY,
+      if (formInstance && props.initialData) {
+        formData.value = props.initialData;
+        offeringIntensity = formData.value.applicationOfferingIntensityValue;
+        const applicationIntensityComponent = formInstance.getComponent(
+          OFFERING_INTENSITY_KEY,
         );
-        const selectedLocationId = getSelectedId(formInstance);
-
-        if (selectedLocationId) {
-          // when isReadOnly.value is true, then consider
-          // both active and inactive program year.
-          await formioDataLoader.loadProgramsForLocation(
-            formInstance,
-            +selectedLocationId,
-            PROGRAMS_DROPDOWN_KEY,
-            props.programYearId,
-            props.isReadOnly,
-          );
+        // Program year forms older than 2025-26 required offering intensity to be injected to the form.
+        // Check if the form has the offering intensity component and if so, inject the values.
+        if (applicationIntensityComponent) {
+          formData.value.howWillYouBeAttendingTheProgram = offeringIntensity;
         }
-        const selectedProgramId = formioUtils.getComponentValueByKey(
-          formInstance,
-          PROGRAMS_DROPDOWN_KEY,
-        );
-        const selectedIntensity: OfferingIntensity =
-          formioUtils.getComponentValueByKey(
+        // When the form is editable, load locations and programs.
+        if (!props.isReadOnly) {
+          await formioDataLoader.loadLocations(
             formInstance,
-            OFFERING_INTENSITY_KEY,
+            LOCATIONS_DROPDOWN_KEY,
           );
-        if (selectedProgramId && selectedIntensity) {
-          await formioComponentLoader.loadProgramDesc(
+          const selectedLocationId = getSelectedId(formInstance);
+
+          if (selectedLocationId) {
+            // when isReadOnly.value is true, then consider
+            // both active and inactive program year.
+            await formioDataLoader.loadProgramsForLocation(
+              formInstance,
+              +selectedLocationId,
+              PROGRAMS_DROPDOWN_KEY,
+              props.programYearId,
+              props.isReadOnly,
+            );
+          }
+          const selectedProgramId = formioUtils.getComponentValueByKey(
             formInstance,
-            selectedProgramId,
-            SELECTED_PROGRAM_DESC_KEY,
+            PROGRAMS_DROPDOWN_KEY,
           );
-          // when isReadOnly.value is true, then consider
-          // both active and inactive program year.
-          await formioDataLoader.loadOfferingsForLocation(
-            formInstance,
-            selectedProgramId,
-            selectedLocationId,
-            OFFERINGS_DROPDOWN_KEY,
-            props.programYearId,
-            selectedIntensity,
-            props.isReadOnly,
-          );
+
+          if (selectedProgramId) {
+            await formioComponentLoader.loadProgramDesc(
+              formInstance,
+              selectedProgramId,
+              SELECTED_PROGRAM_DESC_KEY,
+            );
+            // when isReadOnly.value is true, then consider
+            // both active and inactive program year.
+            await formioDataLoader.loadOfferingsForLocation(
+              formInstance,
+              selectedProgramId,
+              selectedLocationId,
+              OFFERINGS_DROPDOWN_KEY,
+              props.programYearId,
+              offeringIntensity,
+              props.isReadOnly,
+            );
+          }
         }
       }
     };
@@ -225,11 +237,9 @@ export default defineComponent({
     };
 
     const getOfferingDetails = async (form: FormIOForm, locationId: number) => {
-      const selectedIntensity: OfferingIntensity =
-        formioUtils.getComponentValueByKey(form, OFFERING_INTENSITY_KEY);
       const educationProgramIdFromForm: number =
         formioUtils.getComponentValueByKey(form, PROGRAMS_DROPDOWN_KEY);
-      if (educationProgramIdFromForm && selectedIntensity) {
+      if (educationProgramIdFromForm) {
         // when isReadOnly.value is true, then consider
         // both active and inactive program year.
         formioUtils.setComponentValue(form, OFFERINGS_DROPDOWN_KEY, "");
@@ -239,7 +249,7 @@ export default defineComponent({
           locationId,
           OFFERINGS_DROPDOWN_KEY,
           props.programYearId,
-          selectedIntensity,
+          offeringIntensity,
           props.isReadOnly,
         );
       }
@@ -366,6 +376,7 @@ export default defineComponent({
       customEvent,
       showNav,
       isSaveDraftAllowed,
+      formData,
     };
   },
 });

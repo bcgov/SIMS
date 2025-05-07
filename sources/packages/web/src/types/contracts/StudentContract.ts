@@ -2,6 +2,7 @@ import {
   AddressDetailsFormAPIDTO,
   AESTStudentProfileAPIOutDTO,
   InstitutionStudentProfileAPIOutDTO,
+  LegacyStudentProfileAPIOutDTO,
   SINValidationsAPIOutDTO,
   StudentProfileAPIOutDTO,
 } from "@/services/http/dto";
@@ -13,6 +14,7 @@ export type StudentProfile =
       | InstitutionStudentProfileAPIOutDTO
       | AESTStudentProfileAPIOutDTO
     ) & {
+      legacyProfile?: LegacyStudentProfileAPIOutDTO;
       birthDateFormatted: string;
     };
 
