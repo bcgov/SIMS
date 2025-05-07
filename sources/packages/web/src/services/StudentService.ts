@@ -16,6 +16,7 @@ import {
   UpdateStudentDetailsAPIInDTO,
   AESTStudentFileDetailsAPIOutDTO,
   LegacyStudentMatchesAPIOutDTO,
+  LegacyStudentMatchesAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 
@@ -256,5 +257,17 @@ export class StudentService {
     studentId: number,
   ): Promise<LegacyStudentMatchesAPIOutDTO> {
     return ApiClient.Students.getStudentLegacyMatches(studentId);
+  }
+
+  /**
+   * Associates a student with a legacy profile.
+   * @param studentId student ID to be associated with the legacy profile.
+   * @param payload legacy profile to be associated.
+   */
+  async associateLegacyStudent(
+    studentId: number,
+    payload: LegacyStudentMatchesAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Students.associateLegacyStudent(studentId, payload);
   }
 }

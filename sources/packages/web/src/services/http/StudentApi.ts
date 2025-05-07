@@ -18,6 +18,7 @@ import {
   UpdateStudentDetailsAPIInDTO,
   AESTStudentFileDetailsAPIOutDTO,
   LegacyStudentMatchesAPIOutDTO,
+  LegacyStudentMatchesAPIInDTO,
 } from "@/services/http/dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -238,6 +239,21 @@ export class StudentApi extends HttpBaseClient {
   ): Promise<LegacyStudentMatchesAPIOutDTO> {
     return this.getCall(
       this.addClientRoot(`student/${studentId}/legacy-match`),
+    );
+  }
+
+  /**
+   * Associates a student with a legacy profile.
+   * @param studentId student ID to be associated with the legacy profile.
+   * @param payload legacy profile to be associated.
+   */
+  async associateLegacyStudent(
+    studentId: number,
+    payload: LegacyStudentMatchesAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`student/${studentId}/legacy-match`),
+      payload,
     );
   }
 }

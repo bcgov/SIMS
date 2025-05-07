@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, Repository } from "typeorm";
-import { SFASIndividual } from "@sims/sims-db";
+import { Brackets, DataSource, IsNull, Repository } from "typeorm";
+import { NoteType, SFASIndividual, SFASRestriction } from "@sims/sims-db";
 import { SFASIndividualDataSummary } from "./sfas-individual.model";
 import { InjectRepository } from "@nestjs/typeorm";
+import { NoteSharedService } from "@sims/services";
 
 /**
  * Manages the data related to an individual/student in SFAS.
@@ -10,8 +11,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 @Injectable()
 export class SFASIndividualService {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(SFASIndividual)
     private readonly sfasIndividualRepo: Repository<SFASIndividual>,
+    private readonly noteSharedService: NoteSharedService,
   ) {}
 
   /**
@@ -126,6 +129,44 @@ export class SFASIndividualService {
         ),
       )
       .getMany();
+  }
+
+  /**
+   * Associate a student to a legacy profile and reset the restrictions
+   * to allow them to be reprocessed and associated with the new student.
+   * @param individualId legacy individual to have the student associated.
+   * @param studentId student to be associated to the legacy profile.
+   */
+  async associateStudentProfile(
+    individualId: number,
+    studentId: number,
+    noteDescription: string,
+    auditUserId: number,
+  ): Promise<void> {
+    await this.dataSource.transaction(async (entityManager) => {
+      const updateResult = await entityManager
+        .getRepository(SFASIndividual)
+        .update(
+          { id: individualId, student: IsNull() },
+          { student: { id: studentId } },
+        );
+      if (!updateResult.affected) {
+        throw new Error(
+          `Error while associating student ID ${studentId} to legacy individual ID ${individualId}. The individual was not found or a student ID is already associated with it.`,
+        );
+      }
+      const updateRestrictions = entityManager
+        .getRepository(SFASRestriction)
+        .update({ individualId, processed: true }, { processed: false });
+      const createNotePromise = this.noteSharedService.createStudentNote(
+        studentId,
+        NoteType.General,
+        noteDescription,
+        auditUserId,
+        entityManager,
+      );
+      await Promise.all([updateRestrictions, createNotePromise]);
+    });
   }
 
   /**

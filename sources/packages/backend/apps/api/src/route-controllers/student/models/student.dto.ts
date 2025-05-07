@@ -9,6 +9,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  IsPositive,
   Length,
   MaxLength,
   ValidateIf,
@@ -332,7 +333,7 @@ export class UpdateStudentDetailsAPIInDTO {
 }
 
 export class LegacyStudentMatchAPIOutDTO {
-  studentId: number;
+  individualId: number;
   firstName?: string;
   lastName: string;
   birthDate: string;
@@ -341,4 +342,12 @@ export class LegacyStudentMatchAPIOutDTO {
 
 export class LegacyStudentMatchesAPIOutDTO {
   matches: LegacyStudentMatchAPIOutDTO[];
+}
+
+export class LegacyStudentMatchesAPIInDTO {
+  @IsPositive()
+  individualId: number;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
 }
