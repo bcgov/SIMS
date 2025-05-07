@@ -228,3 +228,11 @@ export enum SuccessWaitingStatus {
   Success = "Success",
   Waiting = "Waiting",
 }
+
+/**
+ * Represents the data of student application form.
+ */
+export type StudentApplicationFormData = {
+  applicationOfferingIntensityValue: OfferingIntensity;
+} & ApplicationData &
+  Record<string, unknown>;

@@ -48,7 +48,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
-    assessmentConsolidatedData.partner1CRAReportedIncome = 32999;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 33999;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
@@ -63,7 +63,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
         .limitAwardBCAGIncomeCap,
     );
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      53000,
+      54000,
     );
     expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(
       Math.max(

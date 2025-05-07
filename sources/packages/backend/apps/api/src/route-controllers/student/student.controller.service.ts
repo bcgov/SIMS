@@ -41,6 +41,7 @@ import {
   InstitutionStudentProfileAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
   AESTStudentFileDetailsAPIOutDTO,
+  LegacyStudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { ApiProcessError } from "../../types";
@@ -242,7 +243,9 @@ export class StudentControllerService {
     | InstitutionStudentProfileAPIOutDTO
     | AESTStudentProfileAPIOutDTO
   > {
-    const student = await this.studentService.getStudentById(studentId);
+    const student = await this.studentService.getStudentById(studentId, {
+      includeLegacy: !!options?.withAdditionalSpecificData,
+    });
     if (!student) {
       throw new NotFoundException("Student not found.");
     }
@@ -261,6 +264,8 @@ export class StudentControllerService {
       disabilityStatus: student.disabilityStatus,
       validSin: student.sinValidation.isValidSIN,
     };
+    // Optionally load specific data for the Ministry.
+    let legacyProfile: LegacyStudentProfileAPIOutDTO;
     let specificData: Pick<
       AESTStudentProfileAPIOutDTO,
       "hasRestriction" | "identityProviderType"
@@ -278,6 +283,18 @@ export class StudentControllerService {
         identityProviderType: student.user
           .identityProviderType as SpecificIdentityProviders,
       };
+      if (student.sfasIndividuals.length) {
+        // Get the most recently updated profile.
+        const [profile] = student.sfasIndividuals;
+        legacyProfile = {
+          id: profile.id,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          dateOfBirth: profile.birthDate,
+          sin: profile.sin,
+          hasMultipleProfiles: student.sfasIndividuals.length > 1,
+        };
+      }
     }
     let sensitiveData: Pick<AESTStudentProfileAPIOutDTO, "sin">;
     if (options?.withSensitiveData) {
@@ -289,6 +306,7 @@ export class StudentControllerService {
       ...studentProfile,
       ...specificData,
       ...sensitiveData,
+      legacyProfile,
     };
   }
 

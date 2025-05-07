@@ -960,9 +960,8 @@ export class ApplicationControllerService {
     // For program years still relying on the form.io variable howWillYouBeAttendingTheProgram
     // to determine the offering intensity, we need to set the value in the payload
     // to the offering intensity value from the database.
-    if (payload.data.howWillYouBeAttendingTheProgram) {
-      payload.data.howWillYouBeAttendingTheProgram = offeringIntensity;
-    }
+    // TODO: Remove this once the program year 2024-2025 is no longer active.
+    payload.data.howWillYouBeAttendingTheProgram = offeringIntensity;
 
     // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;

@@ -1507,7 +1507,7 @@
               "tooltip": "A student is considered to be in part-time studies when taking between 20% and 59% of a full-time course load in a course or continuous period of study.",
               "customClass": "font-weight-bold",
               "disabled": true,
-              "calculateValue": "",
+              "calculateValue": "value = data.howWillYouBeAttendingTheProgram ? utils.custom.mapOfferingIntensity(data.howWillYouBeAttendingTheProgram) : '';",
               "lockKey": true
             },
             {

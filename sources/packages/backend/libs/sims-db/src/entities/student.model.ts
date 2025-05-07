@@ -19,6 +19,7 @@ import {
   CASSupplier,
   DisbursementOveraward,
   Application,
+  SFASIndividual,
 } from ".";
 import { SINValidation } from "./sin-validation.model";
 
@@ -150,4 +151,14 @@ export class Student extends RecordDataModel {
     cascade: false,
   })
   applications?: Application[];
+
+  /**
+   * Legacy student profile.
+   * The student can potentially be associated with multiple legacy profiles,
+   * but only one is currently supported.
+   */
+  @OneToMany(() => SFASIndividual, (sfasIndividual) => sfasIndividual.student, {
+    nullable: true,
+  })
+  sfasIndividuals?: SFASIndividual[];
 }
