@@ -8,9 +8,9 @@ import {
   DependentChildCareEligibility,
   DependentEligibility,
   createFakeStudentDependentBornAfterStudyEndDate,
-  createFakeStudentDependentCSGDEligible,
-  createFakeStudentDependentCSGDIneligible,
   createFakeStudentDependentEligible,
+  createFakeStudentDependentEligibleForChildcareCost,
+  createFakeStudentDependentNotEligibleForChildcareCost,
 } from "../../../test-utils/factories";
 import { YesNoOptions } from "@sims/test-utils";
 
@@ -24,9 +24,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
-        createFakeStudentDependentCSGDEligible(
+        createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
-          { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+          assessmentConsolidatedData.offeringStudyStartDate,
         ),
       ];
 
@@ -54,9 +54,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
-        createFakeStudentDependentCSGDEligible(
+        createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible12YearsAndOver,
-          { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+          assessmentConsolidatedData.offeringStudyStartDate,
         ),
       ];
 
@@ -81,9 +81,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentCSGDIneligible({
-        referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
-      }),
+      createFakeStudentDependentNotEligibleForChildcareCost(
+        assessmentConsolidatedData.offeringStudyStartDate,
+      ),
     ];
 
     // Act
