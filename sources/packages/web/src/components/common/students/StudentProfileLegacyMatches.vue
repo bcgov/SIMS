@@ -73,6 +73,9 @@
         <template #[`item.birthDate`]="{ item }">
           {{ dateOnlyLongString(item.birthDate) }}
         </template>
+        <template #[`item.sin`]="{ item }">
+          {{ sinDisplayFormat(item.sin) }}
+        </template>
         <template #[`item.actions`]="{ item }">
           <check-permission-role :role="Role.AESTStudentLinkLegacyProfile">
             <template #="{ notAllowed }">

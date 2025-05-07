@@ -136,6 +136,8 @@ export class SFASIndividualService {
    * to allow them to be reprocessed and associated with the new student.
    * @param individualId legacy individual to have the student associated.
    * @param studentId student to be associated to the legacy profile.
+   * @param noteDescription note description to be added to the student notes.
+   * @param auditUserId user crating the profile link.
    */
   async associateStudentProfile(
     individualId: number,
@@ -155,7 +157,7 @@ export class SFASIndividualService {
           `Error while associating student ID ${studentId} to legacy individual ID ${individualId}. The individual was not found or a student ID is already associated with it.`,
         );
       }
-      const updateRestrictions = entityManager
+      const updateRestrictionsPromise = entityManager
         .getRepository(SFASRestriction)
         .update({ individualId, processed: true }, { processed: false });
       const createNotePromise = this.noteSharedService.createStudentNote(
@@ -165,7 +167,7 @@ export class SFASIndividualService {
         auditUserId,
         entityManager,
       );
-      await Promise.all([updateRestrictions, createNotePromise]);
+      await Promise.all([updateRestrictionsPromise, createNotePromise]);
     });
   }
 
