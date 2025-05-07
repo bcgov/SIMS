@@ -642,9 +642,9 @@
           <text>programYear</text>
         </inputExpression>
       </input>
-      <input id="InputClause_0fkjedx" label="calculatedDataLivingCategory">
+      <input id="InputClause_0fkjedx" label="dmnFullTimeLivingCategory">
         <inputExpression id="LiteralExpression_10mpivq" typeRef="string">
-          <text>calculatedDataLivingCategory</text>
+          <text>dmnFullTimeLivingCategory</text>
         </inputExpression>
       </input>
       <input id="InputClause_182s6kc" label="lookupType">

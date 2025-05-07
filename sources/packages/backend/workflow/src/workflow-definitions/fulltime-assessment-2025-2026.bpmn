@@ -1315,7 +1315,7 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
     </bpmn:businessRuleTask>
     <bpmn:businessRuleTask id="Activity_048jfh0" name="Living Category">
       <bpmn:extensionElements>
-        <zeebe:calledDecision decisionId="dmnFullTimeLivingCategory" resultVariable="calculatedDataLivingCategory" />
+        <zeebe:calledDecision decisionId="dmnFullTimeLivingCategory" resultVariable="dmnFullTimeLivingCategory" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_09cjv05</bpmn:incoming>
       <bpmn:outgoing>Flow_1bk21md</bpmn:outgoing>
