@@ -516,7 +516,7 @@ export const PIRSummaryHeaders = [
 export const StudentProfileLegacyMatchHeaders = [
   { title: "Given Names", key: "firstName", sortable: false },
   { title: "Last Name", key: "lastName", sortable: false },
-  { title: "Date of Birth ", key: "birthDate", sortable: false },
+  { title: "Date of Birth", key: "birthDate", sortable: false },
   { title: "SIN", key: "sin", sortable: false },
   { title: "Actions", key: "actions", sortable: false },
 ];

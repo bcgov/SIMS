@@ -112,7 +112,7 @@
     <template v-if="showLegacyMatch">
       <h3 class="category-header-medium mt-4">Legacy match</h3>
       <content-group>
-        <StudentProfileLegacyMatches
+        <student-profile-legacy-matches
           :studentId="studentId"
           :legacyProfile="studentDetail.legacyProfile"
           @legacyProfileLinked="loadStudentProfile"

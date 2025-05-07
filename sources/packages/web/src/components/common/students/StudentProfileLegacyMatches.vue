@@ -65,7 +65,7 @@
           <v-skeleton-loader type="table-row@3"></v-skeleton-loader>
         </template>
         <template #[`item.firstName`]="{ item }">
-          {{ item.firstName }}
+          {{ emptyStringFiller(item.firstName) }}
         </template>
         <template #[`item.lastName`]="{ item }">
           {{ item.lastName }}

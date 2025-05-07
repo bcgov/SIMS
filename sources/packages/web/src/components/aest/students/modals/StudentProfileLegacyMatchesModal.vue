@@ -3,7 +3,7 @@
     <modal-dialog-base :showDialog="showDialog" title="Confirm profile link"
       ><template #content
         ><p>
-          Please provide some notes and confirm the legacy profile link<br />
+          Please provide some notes and confirm the legacy profile link.<br />
           <strong>Please note that this action cannot be undone.</strong>
         </p>
         <v-textarea
