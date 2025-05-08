@@ -42,17 +42,25 @@
       summary="The student is not currently associated with any legacy record. Please check the legacy match information to see if there are any potential matches."
     >
       <template #actions>
-        <v-btn color="primary" @click="loadStudentLegacyMatches()">
-          Check for legacy matches
-          <v-tooltip activator="parent" location="start"
-            >Click to check for potential legacy matches.</v-tooltip
-          >
-        </v-btn></template
+        <check-permission-role :role="Role.StudentLinkLegacyProfile">
+          <template #="{ notAllowed }">
+            <v-btn
+              color="primary"
+              @click="loadStudentLegacyMatches()"
+              :disabled="notAllowed"
+            >
+              Check for legacy matches
+              <v-tooltip activator="parent" location="start"
+                >Click to check for potential legacy matches.</v-tooltip
+              >
+            </v-btn>
+          </template>
+        </check-permission-role></template
       >
     </banner>
     <toggle-content
       v-if="showLegacyMatches"
-      :toggled="!legacyStudentMatches?.length && !studentLegacyMatchesLoading"
+      :toggled="!legacyStudentMatches.length && !studentLegacyMatchesLoading"
       message="No potential legacy matches found."
     >
       <v-data-table
@@ -77,22 +85,16 @@
           {{ sinDisplayFormat(item.sin) }}
         </template>
         <template #[`item.actions`]="{ item }">
-          <check-permission-role :role="Role.StudentLinkLegacyProfile">
-            <template #="{ notAllowed }">
-              <v-btn
-                color="primary"
-                :disabled="notAllowed"
-                @click="showLinkProfileModal(item.individualId)"
-              >
-                Link
-                <v-tooltip activator="parent" location="start"
-                  >Click to link student with this legacy profile.</v-tooltip
-                >
-              </v-btn>
-            </template>
-          </check-permission-role>
+          <v-btn
+            color="primary"
+            @click="showLinkProfileModal(item.individualId)"
+          >
+            Link
+            <v-tooltip activator="parent" location="start"
+              >Click to link student with this legacy profile.</v-tooltip
+            >
+          </v-btn>
         </template>
-        <template #bottom></template>
       </v-data-table>
     </toggle-content>
     <student-profile-legacy-matches-modal ref="legacyMatchesModal" />
@@ -100,7 +102,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, PropType } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
 import {
@@ -126,7 +128,7 @@ export default defineComponent({
       required: true,
     },
     legacyProfile: {
-      type: Object as () => LegacyStudentProfileAPIOutDTO,
+      type: Object as PropType<LegacyStudentProfileAPIOutDTO>,
       required: false,
     },
   },
@@ -134,7 +136,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const { sinDisplayFormat, emptyStringFiller, dateOnlyLongString } =
       useFormatters();
-    const legacyStudentMatches = ref<LegacyStudentMatchAPIOutDTO[]>();
+    const legacyStudentMatches = ref<LegacyStudentMatchAPIOutDTO[]>([]);
     const studentLegacyMatchesLoading = ref(false);
     const showLegacyMatches = ref(false);
     const legacyMatchesModal = ref(
@@ -167,9 +169,10 @@ export default defineComponent({
       payload: LegacyStudentMatchesAPIInDTO,
     ): Promise<boolean> => {
       try {
-        await StudentService.shared.associateLegacyStudent(props.studentId, {
-          ...payload,
-        });
+        await StudentService.shared.associateLegacyStudent(
+          props.studentId,
+          payload,
+        );
         snackBar.success("Legacy profile linked successfully.");
         emit("legacyProfileLinked");
         return true;

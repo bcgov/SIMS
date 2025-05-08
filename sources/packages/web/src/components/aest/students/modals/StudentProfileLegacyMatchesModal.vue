@@ -1,8 +1,9 @@
 <template>
   <v-form ref="linkProfileForm">
     <modal-dialog-base :showDialog="showDialog" title="Confirm profile link"
-      ><template #content
-        ><p>Add a note and confirm the legacy profile link.</p>
+      ><template #content>
+        <error-summary :errors="linkProfileForm.errors" />
+        <p>Add a note and confirm the legacy profile link.</p>
         <strong>This action cannot be undone.</strong>
         <v-textarea
           v-model="noteDescription"
