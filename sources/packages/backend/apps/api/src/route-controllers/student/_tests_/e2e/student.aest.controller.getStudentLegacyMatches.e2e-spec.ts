@@ -158,7 +158,7 @@ describe("StudentAESTController(e2e)-getStudentLegacyMatches", () => {
       });
   });
 
-  it("Should throw an NotFoundException when the student does not exists.", async () => {
+  it("Should throw a NotFoundException when the student does not exist.", async () => {
     // Arrange.
     // Ministry user token.
     const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);

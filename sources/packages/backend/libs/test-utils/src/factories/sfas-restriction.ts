@@ -5,7 +5,7 @@ import * as faker from "faker";
 /**
  * Create and save fake SFAS restriction.
  * @param options SFAS restriction options.
- * - `initialValues`initial values.
+ * - `initialValues` initial values.
  * @returns SFAS restriction to be persisted.
  */
 export function createFakeSFASRestriction(options?: {
