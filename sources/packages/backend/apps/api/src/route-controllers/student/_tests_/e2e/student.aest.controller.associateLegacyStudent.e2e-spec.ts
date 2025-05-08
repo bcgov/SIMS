@@ -20,13 +20,12 @@ import { getISODateOnlyString } from "@sims/utilities";
 import { NoteType } from "@sims/sims-db";
 
 /**
- * Creates a random SIN with the intention to be unique and not interfere
- * in other tests potentially conflicting with other tests.
+ * Creates a random SIN with the intention to be unique and not interfere in other tests
  */
 const UNIQUE_SIN = "#1234567#";
 /**
  * Creates a random SFAS individual ID with the intention to be unique
- * and not potentially interfere in other tests.
+ * and potentially not interfere in other tests.
  * SFAS IDs are not generated automatically.
  */
 const UNIQUE_SFAS_RESTRICTION_ID = 999955551;
@@ -206,7 +205,7 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
       });
   });
 
-  it("Should throw an NotFoundException when the student does not exist.", async () => {
+  it("Should throw a NotFoundException when the student does not exist.", async () => {
     // Arrange.
     const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/student/99999999/legacy-match`;
