@@ -24,7 +24,7 @@ import { NoteType } from "@sims/sims-db";
  */
 const UNIQUE_SIN = "#1234567#";
 /**
- * Creates a random SFAS individual ID with the intention to be unique
+ * Creates a random SFAS restriction ID with the intention to be unique
  * and potentially not interfere in other tests.
  * SFAS IDs are not generated automatically.
  */
