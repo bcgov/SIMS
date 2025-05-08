@@ -24,6 +24,7 @@ import {
   ApplicationStatus,
   EducationProgramOffering,
   OfferingIntensity,
+  ProgramYear,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { SaveApplicationAPIInDTO } from "../models/application.dto";
@@ -38,6 +39,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let appDataSource: DataSource;
   let db: E2EDataSources;
   let formService: FormService;
+  let recentActiveProgramYear: ProgramYear;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -52,6 +54,11 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       AppStudentsModule,
       FormService,
     );
+    recentActiveProgramYear = await db.programYear.findOne({
+      select: { id: true, startDate: true, endDate: true },
+      where: { active: true },
+      order: { startDate: "DESC" },
+    });
     // To check the study dates overlap error, the BYPASS_APPLICATION_SUBMIT_VALIDATIONS needs to be set false.
     process.env.BYPASS_APPLICATION_SUBMIT_VALIDATIONS = "false";
   });
@@ -592,6 +599,69 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         .expect({});
     },
   );
+
+  it("Should submit an application for a student when the program year is the most recent active program year and offering intensity is Part-time.", async () => {
+    // Arrange
+    // Create a student and a draft application.
+    const student = await saveFakeStudent(db.dataSource);
+    const draftApplication = await saveFakeApplication(
+      db.dataSource,
+      { student, programYear: recentActiveProgramYear },
+      {
+        applicationData: {} as ApplicationData,
+        applicationStatus: ApplicationStatus.Draft,
+        offeringIntensity: OfferingIntensity.partTime,
+      },
+    );
+    // Create an offering.
+    const selectedOffering = await db.educationProgramOffering.save(
+      createFakeEducationProgramOffering(
+        {
+          auditUser: student.user,
+          institutionLocation: draftApplication.location,
+        },
+        {
+          initialValues: {
+            studyStartDate: getISODateOnlyString(
+              addDays(1, recentActiveProgramYear.startDate),
+            ),
+            offeringIntensity: OfferingIntensity.partTime,
+          },
+        },
+      ),
+    );
+    const selectedProgram = selectedOffering.educationProgram;
+    const applicationData = {
+      selectedOfferingDate: selectedOffering.studyStartDate,
+      selectedOfferingEndDate: selectedOffering.studyEndDate,
+      selectedProgram: selectedProgram.id,
+      selectedOffering: selectedOffering.id,
+      selectedLocation: selectedOffering.institutionLocation.id,
+    };
+    const payload = {
+      associatedFiles: [],
+      data: applicationData,
+      programYearId: recentActiveProgramYear.id,
+    } as SaveApplicationAPIInDTO;
+    const endpoint = `/students/application/${draftApplication.id}/submit`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.Application,
+      data: { data: applicationData },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    await mockUserLoginInfo(appModule, student);
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({});
+  });
 
   afterAll(async () => {
     await app?.close();

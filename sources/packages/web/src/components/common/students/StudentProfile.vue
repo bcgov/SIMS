@@ -24,7 +24,7 @@
         <v-col
           ><title-value
             propertyTitle="Given names"
-            :propertyValue="studentDetail.firstName"
+            :propertyValue="emptyStringFiller(studentDetail.firstName)"
           />
         </v-col>
         <v-col
@@ -109,6 +109,16 @@
         /></v-col>
       </v-row>
     </content-group>
+    <template v-if="showLegacyMatch">
+      <h3 class="category-header-medium mt-4">Legacy match</h3>
+      <content-group>
+        <student-profile-legacy-matches
+          :student-id="studentId"
+          :legacy-profile="studentDetail.legacyProfile"
+          @legacy-profile-linked="loadStudentProfile"
+        />
+      </content-group>
+    </template>
     <edit-student-profile-modal
       ref="studentEditProfile"
     ></edit-student-profile-modal>
@@ -123,10 +133,11 @@ import {
   AddressAPIOutDTO,
   UpdateStudentDetailsAPIInDTO,
 } from "@/services/http/dto";
-import { IdentityProviders, Role, StudentProfile } from "@/types";
+import { IdentityProviders, Role, StudentProfile, BannerTypes } from "@/types";
 import DisabilityStatusUpdateTileValue from "@/components/aest/students/DisabilityStatusUpdateTileValue.vue";
 import EditStudentProfileModal from "@/components/aest/students/modals/EditStudentProfileModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import StudentProfileLegacyMatches from "@/components/common/students/StudentProfileLegacyMatches.vue";
 
 /**
  *  Used to combine institution and ministry DTOs and make SIN explicitly mandatory.
@@ -138,6 +149,7 @@ interface SharedStudentProfile extends Omit<StudentProfile, "sin"> {
 
 export default defineComponent({
   components: {
+    StudentProfileLegacyMatches,
     DisabilityStatusUpdateTileValue,
     EditStudentProfileModal,
     CheckPermissionRole,
@@ -152,6 +164,11 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    showLegacyMatch: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     const snackBar = useSnackBar();
@@ -160,8 +177,12 @@ export default defineComponent({
     );
     const studentDetail = ref({} as SharedStudentProfile);
     const address = ref({} as AddressAPIOutDTO);
-    const { genderDisplayFormat, sinDisplayFormat, emptyStringFiller } =
-      useFormatters();
+    const {
+      genderDisplayFormat,
+      sinDisplayFormat,
+      emptyStringFiller,
+      dateOnlyLongString,
+    } = useFormatters();
 
     const loadStudentProfile = async () => {
       studentDetail.value = (await StudentService.shared.getStudentProfile(
@@ -210,17 +231,20 @@ export default defineComponent({
     });
 
     onMounted(loadStudentProfile);
+
     return {
       studentDetail,
       address,
       sinDisplayFormat,
       genderDisplayFormat,
+      dateOnlyLongString,
       emptyStringFiller,
       loadStudentProfile,
       Role,
       editStudentProfile,
       canEditProfile,
       studentEditProfile,
+      BannerTypes,
     };
   },
 });

@@ -54,6 +54,7 @@ import { CustomNamedError } from "@sims/utilities";
 import { MaxJobsToActivate } from "../../types";
 import {
   AssessmentSequentialProcessingService,
+  ProgramYearOutputTotal,
   ProgramYearTotal,
   SystemUsersService,
   WorkflowClientService,
@@ -484,7 +485,7 @@ export class AssessmentController {
    * Create a new dynamic output variable for each award and offering intensity for both part-time and full-time.
    * Create a new dynamic output variable for each workflow output.
    * Each variable is prefixed with 'programYearTotal' and then concatenated
-   * with the offering intensity as 'FullTime'/'PartTime' and the award code.
+   * with the offering intensity as 'FullTime'/'PartTime' and the award code or workflow output type.
    * @example
    * programYearTotalFullTimeBCAG: 1250
    * programYearTotalPartTimeBCAG: 3450
@@ -495,20 +496,32 @@ export class AssessmentController {
     programYearTotal: ProgramYearTotal,
     output: VerifyAssessmentCalculationOrderJobOutDTO,
   ): void {
-    const PROGRAM_YEAR_TOTAL = "programYearTotal";
     // Create the dynamic variables to be outputted.
-    programYearTotal.awardTotals.forEach((award) => {
+    this.createDynamicVariables(programYearTotal.awardTotals, output);
+    this.createDynamicVariables(programYearTotal.workflowOutputTotals, output);
+  }
+
+  /**
+   * Create a new dynamic output variable for each award and offering intensity for both part-time and full-time.
+   * Create a new dynamic output variable for each workflow output.
+   * Each variable is prefixed with 'programYearTotal' and then concatenated
+   * with the offering intensity as 'FullTime'/'PartTime' and the award code.
+   * @example
+   * programYearTotalFullTimeBooksAndSuppliesCost: 150
+   * @param total awards/contributions to be added to the output.
+   * @param output output to receive the dynamic property.
+   */
+  private createDynamicVariables<T>(
+    total: ProgramYearOutputTotal<T>[],
+    output: VerifyAssessmentCalculationOrderJobOutDTO,
+  ): void {
+    const PROGRAM_YEAR_TOTAL = "programYearTotal";
+    total?.forEach((item) => {
       const intensity =
-        award.offeringIntensity === OfferingIntensity.fullTime
+        item.offeringIntensity === OfferingIntensity.fullTime
           ? "FullTime"
           : "PartTime";
-      const outputName = `${PROGRAM_YEAR_TOTAL}${intensity}${award.valueCode}`;
-      output[outputName] = output[outputName]
-        ? output[outputName] + award.total
-        : award.total;
-    });
-    programYearTotal.workflowOutputTotals?.forEach((item) => {
-      const outputName = `${PROGRAM_YEAR_TOTAL}${item.workflowOutput}`;
+      const outputName = `${PROGRAM_YEAR_TOTAL}${intensity}${item.output.toString()}`;
       output[outputName] = output[outputName]
         ? output[outputName] + item.total
         : item.total;

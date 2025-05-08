@@ -9,6 +9,7 @@ import {
   NotificationMessage,
   NotificationMessageType,
   OfferingIntensity,
+  RelationshipStatus,
   RestrictionActionType,
   RestrictionBypassBehaviors,
   Student,
@@ -381,8 +382,11 @@ describe(
           ],
         },
         {
+          applicationInitialValues: {
+            applicationStatus: ApplicationStatus.Completed,
+            relationshipStatus: RelationshipStatus.MarriedUnable,
+          },
           offeringIntensity: OfferingIntensity.partTime,
-          applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
             assessmentDate: new Date(),
@@ -433,6 +437,7 @@ describe(
       expect(recordParsed.hasUser(student.user)).toBe(true);
       expect(recordParsed.gender).toBe("X");
       expect(recordParsed.disbursementAmount).toBe("000123500");
+      expect(recordParsed.maritalStatus).toBe("MA");
       // TODO include other fields as needed.
 
       const [firstSchedule] =

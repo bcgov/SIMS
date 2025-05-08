@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { Response } from "express";
 import {
@@ -28,6 +29,7 @@ import {
 import {
   AddressInfo,
   Application,
+  SFASIndividual,
   SpecificIdentityProviders,
   Student,
   VirusScanStatus,
@@ -41,6 +43,7 @@ import {
   InstitutionStudentProfileAPIOutDTO,
   AESTStudentProfileAPIOutDTO,
   AESTStudentFileDetailsAPIOutDTO,
+  LegacyStudentProfileAPIOutDTO,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { ApiProcessError } from "../../types";
@@ -52,6 +55,7 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
+import { SFASIndividualService } from "@sims/services";
 
 @Injectable()
 export class StudentControllerService {
@@ -61,6 +65,7 @@ export class StudentControllerService {
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly applicationService: ApplicationService,
     private readonly objectStorageService: ObjectStorageService,
+    private readonly sfasIndividualService: SFASIndividualService,
   ) {}
 
   /**
@@ -242,7 +247,9 @@ export class StudentControllerService {
     | InstitutionStudentProfileAPIOutDTO
     | AESTStudentProfileAPIOutDTO
   > {
-    const student = await this.studentService.getStudentById(studentId);
+    const student = await this.studentService.getStudentById(studentId, {
+      includeLegacy: !!options?.withAdditionalSpecificData,
+    });
     if (!student) {
       throw new NotFoundException("Student not found.");
     }
@@ -261,6 +268,8 @@ export class StudentControllerService {
       disabilityStatus: student.disabilityStatus,
       validSin: student.sinValidation.isValidSIN,
     };
+    // Optionally load specific data for the Ministry.
+    let legacyProfile: LegacyStudentProfileAPIOutDTO;
     let specificData: Pick<
       AESTStudentProfileAPIOutDTO,
       "hasRestriction" | "identityProviderType"
@@ -278,6 +287,18 @@ export class StudentControllerService {
         identityProviderType: student.user
           .identityProviderType as SpecificIdentityProviders,
       };
+      if (student.sfasIndividuals.length) {
+        // Get the most recently updated profile.
+        const [profile] = student.sfasIndividuals;
+        legacyProfile = {
+          id: profile.id,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          dateOfBirth: profile.birthDate,
+          sin: profile.sin,
+          hasMultipleProfiles: student.sfasIndividuals.length > 1,
+        };
+      }
     }
     let sensitiveData: Pick<AESTStudentProfileAPIOutDTO, "sin">;
     if (options?.withSensitiveData) {
@@ -289,6 +310,7 @@ export class StudentControllerService {
       ...studentProfile,
       ...specificData,
       ...sensitiveData,
+      legacyProfile,
     };
   }
 
@@ -395,6 +417,32 @@ export class StudentControllerService {
       birthDate: getISODateOnlyString(eachStudent.birthDate),
       sin: eachStudent.sinValidation.sin,
     }));
+  }
+
+  /**
+   * Validate the conditions to allow the student to be associated with a legacy profile.
+   * @param studentId student ID to have a legacy profile associated with.
+   * @returns possible legacy profiles that matches the student data.
+   */
+  async validateAndGetStudentLegacyMatches(
+    studentId: number,
+  ): Promise<SFASIndividual[]> {
+    const student = await this.studentService.getStudentById(studentId, {
+      includeLegacy: true,
+    });
+    if (!student) {
+      throw new NotFoundException("Student not found.");
+    }
+    if (student.sfasIndividuals.length) {
+      throw new UnprocessableEntityException(
+        "Student already has a legacy profile associated.",
+      );
+    }
+    return this.sfasIndividualService.getIndividualStudentPartialMatchForAssociation(
+      student.user.lastName,
+      student.birthDate,
+      student.sinValidation.sin,
+    );
   }
 
   @InjectLogger()

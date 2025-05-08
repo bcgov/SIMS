@@ -3,6 +3,7 @@
     <student-profile
       :studentId="studentId"
       :allowDisabilityStatusUpdate="true"
+      :showLegacyMatch="true"
     />
   </tab-container>
 </template>

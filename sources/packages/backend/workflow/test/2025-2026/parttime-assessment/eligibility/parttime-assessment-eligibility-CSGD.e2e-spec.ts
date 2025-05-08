@@ -5,25 +5,28 @@ import {
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import {
+  DependentChildCareEligibility,
   DependentEligibility,
   createFakeStudentDependentBornAfterStudyEndDate,
   createFakeStudentDependentEligible,
+  createFakeStudentDependentEligibleForChildcareCost,
+  createFakeStudentDependentNotEligibleForChildcareCost,
 } from "../../../test-utils/factories";
 import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD.`, () => {
   it(
-    "Should determine CSGD as eligible when total assessed need is greater than or equal to 1 " +
-      ", total eligible dependants is at least 1 and total family income is less than the threshold.",
+    "Should determine CSGD as eligible when total assessed need is greater than or equal to 1," +
+      " total eligible dependants 11 years or under is at least 1 and total family income is less than the threshold.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
-        createFakeStudentDependentEligible(
-          DependentEligibility.Eligible0To18YearsOld,
-          { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+        createFakeStudentDependentEligibleForChildcareCost(
+          DependentChildCareEligibility.Eligible0To11YearsOld,
+          assessmentConsolidatedData.offeringStudyStartDate,
         ),
       ];
 
@@ -41,6 +44,57 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       ).toBeGreaterThan(0);
     },
   );
+
+  it(
+    "Should determine CSGD as eligible when total assessed need is greater than or equal to 1," +
+      " total eligible dependants 12 years and over declared on taxes is at least 1 and total family income is less than the threshold.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataDependants = [
+        createFakeStudentDependentEligibleForChildcareCost(
+          DependentChildCareEligibility.Eligible12YearsAndOver,
+          assessmentConsolidatedData.offeringStudyStartDate,
+        ),
+      ];
+
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+
+      // Assert
+      expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
+      expect(
+        calculatedAssessment.variables.finalFederalAwardNetCSGDAmount,
+      ).toBeGreaterThan(0);
+    },
+  );
+
+  it("Should determine CSGD as ineligible when there are no eligible dependants.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataDependants = [
+      createFakeStudentDependentNotEligibleForChildcareCost(
+        assessmentConsolidatedData.offeringStudyStartDate,
+      ),
+    ];
+
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+
+    // Assert
+    expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
+  });
 
   it("Should determine CSGD as not eligible when total family income is greater than threshold with dependant.", async () => {
     // Arrange
@@ -68,7 +122,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     );
   });
 
-  it("Should determine CSGD as not eligible when there is no total eligible dependant.", async () => {
+  it("Should determine CSGD as not eligible when there are no dependants.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);

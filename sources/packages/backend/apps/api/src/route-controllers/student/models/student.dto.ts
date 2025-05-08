@@ -9,6 +9,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  IsPositive,
   Length,
   MaxLength,
   ValidateIf,
@@ -183,6 +184,19 @@ export class StudentFileMetadataAPIOutDTO {
   applicationNumber?: string;
 }
 
+export class LegacyStudentProfileAPIOutDTO {
+  id: number;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  sin: string;
+  /**
+   * Indicates if the student on SIMS is associated
+   * with multiple profiles on the legacy system.
+   */
+  hasMultipleProfiles: boolean;
+}
+
 export class StudentProfileAPIOutDTO {
   firstName: string;
   lastName: string;
@@ -202,6 +216,7 @@ export class InstitutionStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO 
 export class AESTStudentProfileAPIOutDTO extends InstitutionStudentProfileAPIOutDTO {
   hasRestriction: boolean;
   identityProviderType: SpecificIdentityProviders;
+  legacyProfile?: LegacyStudentProfileAPIOutDTO;
 }
 
 export class AESTFileUploadToStudentAPIInDTO {
@@ -312,6 +327,26 @@ export class UpdateStudentDetailsAPIInDTO {
   @IsNotEmpty()
   @IsEmail()
   email: string;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
+}
+
+export class LegacyStudentMatchAPIOutDTO {
+  individualId: number;
+  firstName?: string;
+  lastName: string;
+  birthDate: string;
+  sin: string;
+}
+
+export class LegacyStudentMatchesAPIOutDTO {
+  matches: LegacyStudentMatchAPIOutDTO[];
+}
+
+export class LegacyStudentMatchesAPIInDTO {
+  @IsPositive()
+  individualId: number;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;

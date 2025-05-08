@@ -33,7 +33,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSLP
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 75479;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 80000;
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(

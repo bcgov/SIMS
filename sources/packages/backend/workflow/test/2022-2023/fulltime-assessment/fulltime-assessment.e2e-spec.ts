@@ -25,6 +25,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
     assessmentConsolidatedData.offeringIntensity = OfferingIntensity.fullTime;
     assessmentConsolidatedData.offeringStudyStartDate = "2023-02-01";
     assessmentConsolidatedData.offeringStudyEndDate = "2023-05-24";
+    assessmentConsolidatedData.programYearTotalFullTimeReturnTransportationCost = 150;
+    assessmentConsolidatedData.programYearTotalFullTimeBooksAndSuppliesCost = 250;
 
     const expectedAssessmentData: AssessmentModel = {
       weeks: assessmentConsolidatedData.offeringWeeks,
@@ -42,7 +44,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
       secondResidenceCost: 0,
       totalAssessmentNeed: 55049.19807692308,
       booksAndSuppliesCost: 1500,
-      booksAndSuppliesRemainingLimit: 2500,
+      booksAndSuppliesRemainingLimit: 2750,
       totalProvincialAward: 1760,
       alimonyOrChildSupport: 0,
       federalAssessmentNeed: 47996.70769230769,
