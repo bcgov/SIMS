@@ -51,6 +51,8 @@ import {
   UpdateDisabilityStatusAPIInDTO,
   UpdateStudentDetailsAPIInDTO,
   AESTStudentFileDetailsAPIOutDTO,
+  LegacyStudentMatchesAPIOutDTO,
+  LegacyStudentMatchesAPIInDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -77,6 +79,7 @@ import {
 } from "../../constants";
 import { Role } from "../../auth/roles.enum";
 import { EntityManager } from "typeorm";
+import { SFASIndividualService } from "@sims/services";
 
 /**
  * Student controller for AEST Client.
@@ -92,6 +95,7 @@ export class StudentAESTController extends BaseController {
     private readonly studentControllerService: StudentControllerService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly sinValidationService: SINValidationService,
+    private readonly sfasIndividualService: SFASIndividualService,
   ) {
     super();
   }
@@ -463,5 +467,72 @@ export class StudentAESTController extends BaseController {
         "No profile data updated because no changes were detected.",
       );
     }
+  }
+
+  /**
+   * Get possible matches for the student from the legacy system.
+   * @param studentId student ID to retrieve the data.
+   * @returns student legacy profile details.
+   */
+  @Roles(Role.StudentLinkLegacyProfile)
+  @Get(":studentId/legacy-match")
+  @ApiNotFoundResponse({ description: "Student not found." })
+  @ApiUnprocessableEntityResponse({
+    description: "Student already has a legacy profile associated.",
+  })
+  async getStudentLegacyMatches(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<LegacyStudentMatchesAPIOutDTO> {
+    const possibleIndividualsForAssociation =
+      await this.studentControllerService.validateAndGetStudentLegacyMatches(
+        studentId,
+      );
+    return {
+      matches: possibleIndividualsForAssociation.map((sfasIndividual) => ({
+        individualId: sfasIndividual.id,
+        firstName: sfasIndividual.firstName,
+        lastName: sfasIndividual.lastName,
+        birthDate: sfasIndividual.birthDate,
+        sin: sfasIndividual.sin,
+      })),
+    };
+  }
+
+  /**
+   * Associates a student with a legacy profile.
+   * @param studentId student ID to be associated with the legacy profile.
+   * @param payload legacy profile to be associated.
+   */
+  @Roles(Role.StudentLinkLegacyProfile)
+  @Patch(":studentId/legacy-match")
+  @ApiNotFoundResponse({ description: "Student not found." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Student already has a legacy profile associated " +
+      "or provided individual is not listed as a potential profile match.",
+  })
+  async associateLegacyStudent(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Body() payload: LegacyStudentMatchesAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    const possibleIndividualsForAssociation =
+      await this.studentControllerService.validateAndGetStudentLegacyMatches(
+        studentId,
+      );
+    const hasPotentialIndividualMatch = possibleIndividualsForAssociation.some(
+      (possibleIndividual) => possibleIndividual.id === payload.individualId,
+    );
+    if (!hasPotentialIndividualMatch) {
+      throw new UnprocessableEntityException(
+        "Provided individual is not listed as a potential profile match.",
+      );
+    }
+    await this.sfasIndividualService.associateStudentProfile(
+      payload.individualId,
+      studentId,
+      payload.noteDescription,
+      userToken.userId,
+    );
   }
 }

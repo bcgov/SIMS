@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, Repository } from "typeorm";
-import { SFASIndividual, Student } from "@sims/sims-db";
+import { Brackets, DataSource, IsNull, Repository } from "typeorm";
+import { NoteType, SFASIndividual, SFASRestriction } from "@sims/sims-db";
 import { SFASIndividualDataSummary } from "./sfas-individual.model";
 import { InjectRepository } from "@nestjs/typeorm";
+import { NoteSharedService } from "@sims/services";
 
 /**
  * Manages the data related to an individual/student in SFAS.
@@ -10,10 +11,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 @Injectable()
 export class SFASIndividualService {
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(SFASIndividual)
     private readonly sfasIndividualRepo: Repository<SFASIndividual>,
-    @InjectRepository(Student)
-    private readonly studentRepo: Repository<Student>,
+    private readonly noteSharedService: NoteSharedService,
   ) {}
 
   /**
@@ -90,6 +91,84 @@ export class SFASIndividualService {
         }),
       )
       .getOne();
+  }
+
+  /**
+   * Get students that could potentially be associated with the given student.
+   * @param lastName student last name, must be an exact match.
+   * @param birthDate student date of birth.
+   * @param sin student social insurance number.
+   * @returns SFAS students that could be potentially associated to a SIMS student.
+   */
+  async getIndividualStudentPartialMatchForAssociation(
+    lastName: string,
+    birthDate: string,
+    sin: string,
+  ): Promise<SFASIndividual[]> {
+    return this.sfasIndividualRepo
+      .createQueryBuilder("individual")
+      .select([
+        "individual.id",
+        "individual.firstName",
+        "individual.lastName",
+        "individual.sin",
+        "individual.birthDate",
+      ])
+      .where("individual.student.id IS NULL")
+      .andWhere(
+        new Brackets((qb) =>
+          qb.where("individual.sin = :sin", { sin }).orWhere(
+            new Brackets((qb) => {
+              qb.where("lower(individual.lastName) = :lastName", {
+                lastName: lastName.toLowerCase(),
+              }).andWhere("individual.birthDate = :birthDate", {
+                birthDate,
+              });
+            }),
+          ),
+        ),
+      )
+      .getMany();
+  }
+
+  /**
+   * Associate a student to a legacy profile and reset the restrictions
+   * to allow them to be reprocessed and associated with the new student.
+   * @param individualId legacy individual to have the student associated.
+   * @param studentId student to be associated to the legacy profile.
+   * @param noteDescription note description to be added to the student notes.
+   * @param auditUserId user creating the profile link.
+   */
+  async associateStudentProfile(
+    individualId: number,
+    studentId: number,
+    noteDescription: string,
+    auditUserId: number,
+  ): Promise<void> {
+    await this.dataSource.transaction(async (entityManager) => {
+      const updateResult = await entityManager
+        .getRepository(SFASIndividual)
+        .update(
+          { id: individualId, student: IsNull() },
+          { student: { id: studentId } },
+        );
+      if (!updateResult.affected) {
+        throw new Error(
+          `Error while associating student ID ${studentId} to legacy individual ID ${individualId}. The individual was not found or a student ID is already associated with it.`,
+        );
+      }
+      const updateRestrictionsPromise = entityManager
+        .getRepository(SFASRestriction)
+        .update({ individualId, processed: true }, { processed: false });
+      const createNotePromise = this.noteSharedService.createStudentNote(
+        studentId,
+        NoteType.General,
+        noteDescription,
+        auditUserId,
+        entityManager,
+      );
+      await Promise.all([updateRestrictionsPromise, createNotePromise]);
+    });
   }
 
   /**
