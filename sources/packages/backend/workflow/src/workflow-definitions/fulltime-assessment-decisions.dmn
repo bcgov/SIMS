@@ -2684,7 +2684,7 @@
         </inputExpression>
       </input>
       <output id="OutputClause_1wgs16b" label="limitAwardCSGPAmount" name="limitAwardCSGPAmount" typeRef="string" />
-      <output id="OutputClause_1n9ubqe" label="limitAwardCSGDAmount" name="limitAwardCSGDAmount" typeRef="string" biodi:width="218" />
+      <output id="OutputClause_1n9ubqe" label="limitAwardCSGDWeeklyRate" name="limitAwardCSGDWeeklyRate" typeRef="string" biodi:width="218" />
       <output id="OutputClause_1t1gc34" label="limitAwardCSGDMinAward" name="limitAwardCSGDMinAward" typeRef="string" />
       <output id="OutputClause_03jyuzn" label="limitAwardCSGFAmount" name="limitAwardCSGFAmount" typeRef="string" />
       <output id="OutputClause_0004ypj" label="limitAwardCSGFWeeklyRate" name="limitAwardCSGFWeeklyRate" typeRef="string" biodi:width="240" />
