@@ -5,6 +5,7 @@ import {
   createTestingAppModule,
   getAESTToken,
   AESTGroups,
+  getAESTUser,
 } from "../../../../testHelpers";
 import {
   saveFakeStudent,
@@ -18,7 +19,16 @@ import * as faker from "faker";
 import { getISODateOnlyString } from "@sims/utilities";
 import { NoteType } from "@sims/sims-db";
 
+/**
+ * Creates a random SIN with the intention to be unique and not interfere
+ * in other tests potentially conflicting with other tests.
+ */
 const UNIQUE_SIN = "#1234567#";
+/**
+ * Creates a random SFAS individual ID with the intention to be unique
+ * and not potentially interfere in other tests.
+ * SFAS IDs are not generated automatically.
+ */
 const UNIQUE_SFAS_RESTRICTION_ID = 999955551;
 
 describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
@@ -67,6 +77,10 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
       const aestUserToken = await getAESTToken(
         AESTGroups.BusinessAdministrators,
       );
+      const ministryUser = await getAESTUser(
+        db.dataSource,
+        AESTGroups.BusinessAdministrators,
+      );
       const payload = {
         individualId: legacyProfileMatch.id,
         noteDescription: faker.datatype.uuid(),
@@ -112,10 +126,13 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
             id: true,
             description: true,
             noteType: true,
+            creator: {
+              id: true,
+            },
           },
         },
         relations: {
-          notes: true,
+          notes: { creator: true },
         },
         where: {
           id: student.id,
@@ -129,17 +146,69 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
             id: expect.any(Number),
             description: payload.noteDescription,
             noteType: NoteType.General,
+            creator: {
+              id: ministryUser.id,
+            },
           },
         ],
       });
     },
   );
 
-  it("Should throw an NotFoundException when the student does not exists.", async () => {
+  it("Should throw an UnprocessableEntityException when the legacy profile to be associated with the student is not a valid potential match.", async () => {
     // Arrange.
-    // Ministry user token.
+    const student = await saveFakeStudent(db.dataSource);
+    const legacyProfileMatch = await saveFakeSFASIndividual(db.dataSource);
     const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
-    // Endpoint to test.
+    const payload = {
+      individualId: legacyProfileMatch.id,
+      noteDescription: faker.datatype.uuid(),
+    };
+    const endpoint = `/aest/student/${student.id}/legacy-match`;
+
+    // Act/Assert.
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(aestUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "Provided individual is not listed as a potential profile match.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it("Should throw an UnprocessableEntityException when the student already has a legacy profile associated.", async () => {
+    // Arrange.
+    const student = await saveFakeStudent(db.dataSource);
+    const legacyProfileMatch = await saveFakeSFASIndividual(db.dataSource, {
+      initialValues: { student },
+    });
+    const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload = {
+      individualId: legacyProfileMatch.id,
+      noteDescription: faker.datatype.uuid(),
+    };
+    const endpoint = `/aest/student/${student.id}/legacy-match`;
+
+    // Act/Assert.
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(aestUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "Student already has a legacy profile associated.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it("Should throw an NotFoundException when the student does not exist.", async () => {
+    // Arrange.
+    const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/student/99999999/legacy-match`;
 
     // Act/Assert.
