@@ -68,6 +68,7 @@
         :items="legacyStudentMatches"
         :loading="studentLegacyMatchesLoading"
         :items-per-page="-1"
+        hide-default-footer
       >
         <template v-slot:loading>
           <v-skeleton-loader type="table-row@3"></v-skeleton-loader>
