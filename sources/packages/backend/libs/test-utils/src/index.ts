@@ -45,3 +45,4 @@ export * from "./factories/cas-invoice-detail";
 export * from "./factories/sfas-application-dependant";
 export * from "./factories/sfas-application-disbursement";
 export * from "./factories/dynamic-form-configuration";
+export * from "./factories/sfas-restriction";
