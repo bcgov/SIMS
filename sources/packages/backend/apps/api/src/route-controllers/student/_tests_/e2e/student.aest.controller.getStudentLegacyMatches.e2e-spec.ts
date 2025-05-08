@@ -16,6 +16,9 @@ import {
 import * as faker from "faker";
 import { getISODateOnlyString } from "@sims/utilities";
 
+/**
+ * Creates a random SIN with the intention to be unique and not interfere in other tests
+ */
 const UNIQUE_SIN = "#1234567#";
 
 describe("StudentAESTController(e2e)-getStudentLegacyMatches", () => {
