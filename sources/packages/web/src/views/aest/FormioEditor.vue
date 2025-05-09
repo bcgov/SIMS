@@ -158,7 +158,7 @@ export default defineComponent({
       try {
         const list = await ApiClient.DynamicForms.getFormsList();
         formsListOptions.value = list.forms;
-      } catch (error) {
+      } catch {
         snackBar.error("Unexpected error loading forms list.");
       } finally {
         formsListOptionsLoading.value = false;
