@@ -3,6 +3,7 @@ import { ClassConstructor, plainToClass } from "class-transformer";
 import { Utils } from "@formio/js";
 
 const UTILS_COMMON_OBJECT_NAME = "custom";
+
 /**
  * Properties that are not required to be saved.
  */
@@ -16,6 +17,11 @@ const NON_REQUIRED_FORM_PROPERTIES = [
   "submissionAccess",
   "pdfComponents",
 ];
+
+/**
+ * Indentation spacing for JSON formats.
+ */
+const JSON_FORMAT_SPACES = 2;
 
 /**
  * Form.IO helper methods.
@@ -287,11 +293,16 @@ export function useFormioUtils() {
     return clonedForm;
   };
 
+  /**
+   * Get the formatted form.io definition.
+   * @param formDefinition form definition object to be formatted.
+   * @returns formatted JSON.
+   */
   const getFormattedFormDefinition = (formDefinition: unknown): string => {
     return JSON.stringify(
       getReadyToSaveFormDefinition(formDefinition),
       null,
-      2,
+      JSON_FORMAT_SPACES,
     );
   };
 
