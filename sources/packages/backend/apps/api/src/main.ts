@@ -17,6 +17,7 @@ async function bootstrap() {
   await KeycloakConfig.load();
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
+    bodyParser: false,
   });
 
   // Get the injected logger.

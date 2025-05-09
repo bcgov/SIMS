@@ -48,16 +48,42 @@ export function useFileUtils() {
    * @param response axios response object from http response.
    */
   const downloadFileAsBlob = (response: AxiosResponse<any>) => {
-    const linkURL = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement("a");
+    const blob = new Blob([response.data]);
     const fileName =
       response.headers["content-disposition"].split("filename=")[1];
-    link.href = linkURL;
-    link.setAttribute("download", decodeURIComponent(fileName));
+    downloadFile(blob, fileName);
+  };
+
+  /**
+   * Generates a JSON file from the provided content and triggers a download.
+   * @param content content to be included in the JSON file.
+   * @param fileName name of the file to be downloaded.
+   */
+  const generateJSONFileFromContent = (
+    content: string,
+    fileName: string,
+  ): void => {
+    const blob = new Blob([content], {
+      type: "application/json;charset=utf-8;",
+    });
+    downloadFile(blob, fileName);
+  };
+
+  /**
+   * Downloads a file using a Blob and a specified file name.
+   * @param blob object representing the file data.
+   * @param fileName name of the file to be downloaded.
+   */
+  const downloadFile = (blob: Blob, fileName: string): void => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", fileName);
     document.body.appendChild(link);
     link.click();
-    // After download, remove the element
+    document.body.removeChild(link);
     link.remove();
+    URL.revokeObjectURL(url);
   };
 
   /**
@@ -84,5 +110,6 @@ export function useFileUtils() {
     downloadReports,
     handleFileScanProcessError,
     downloadFileAsBlob,
+    generateJSONFileFromContent,
   };
 }

@@ -6,9 +6,19 @@ import { JwtService } from "@nestjs/jwt";
 import { TokenCacheService } from "..";
 import { TokenCacheResponse } from "../auth/token-cache.service.models";
 import { HttpService } from "@nestjs/axios";
+import { FormDefinition } from "./form.service.models";
 
 // Expected header name to send the authorization token to formio API.
 const FORMIO_TOKEN_NAME = "x-jwt-token";
+/**
+ * Form.io list method requires some pagination number,
+ * otherwise it returns only 10 records.
+ */
+const FORMIO_PAGE_LIMIT = 100;
+/**
+ * Form.io list method sorting field.
+ */
+const FORMIO_LIST_SORT_FIELD = "title";
 
 @Injectable()
 export class FormService {
@@ -43,13 +53,32 @@ export class FormService {
   }
 
   /**
-   * Lists form definitions that contains the tag 'common'.
+   * Lists form definitions that contains the tag 'common' ordered by title.
    */
-  async list() {
+  async list(): Promise<FormDefinition[]> {
+    const authHeader = await this.createAuthHeader();
     const content = await this.httpService.axiosRef.get(
-      `${this.config.formsUrl}/form?type=form&tags=common`,
+      `${this.config.formsUrl}/form?tags=common&limit=${FORMIO_PAGE_LIMIT}&sort=${FORMIO_LIST_SORT_FIELD}`,
+      authHeader,
     );
-    return content.data;
+    return content.data.map((form: FormDefinition) => ({
+      name: form.name,
+      title: form.title,
+    }));
+  }
+
+  /**
+   * Updates a form definition in Form.io server.
+   * @param formAlias alias of the form to be updated.
+   * @param formDefinition the new definition of the form.
+   */
+  async updateForm(formAlias: string, formDefinition: unknown) {
+    const authHeader = await this.createAuthHeader();
+    await this.httpService.axiosRef.put(
+      `${this.config.formsUrl}/${formAlias}`,
+      formDefinition,
+      authHeader,
+    );
   }
 
   /**

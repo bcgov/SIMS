@@ -1,11 +1,16 @@
 .p-datatable {
   .p-datatable-thead > tr > th {
-    padding: 1rem;
     text-align: left;
+    border: 1px solid #e4e4e4;
+    border-width: 0 0 1px 0;
+    padding: 1rem 1rem;
   }
 
   .p-datatable-tbody > tr > td {
-    padding: 1rem;
+    text-align: left;
+    border: 1px solid #e4e4e4;
+    border-width: 0 0 1px 0;
+    padding: 1rem 1rem;
   }
 }
 
@@ -68,7 +73,7 @@
 .p-paginator .p-dropdown {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-  height: 3rem;
+  height: 3rem !important;
   padding: 5px;
 }
 
@@ -114,6 +119,31 @@
   background: rgba(0, 0, 0, 0.04);
   border-color: transparent;
   color: rgba(0, 0, 0, 0.6);
+}
+
+.p-dropdown-items {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  margin: 0;
+  padding: 1rem 1rem;
+  border: 0 none;
+  color: rgba(0, 0, 0, 0.87);
+  background: transparent;
+  transition: none;
+  border-radius: 0 !important;
+}
+
+.p-dropdown-items .p-dropdown-item.p-highlight {
+  color: #3f51b5 !important;
+  background: rgba(63, 81, 181, 0.12) !important;
+}
+
+.p-dropdown-items .p-dropdown-item.p-focus {
+  background: rgba(63, 81, 181, 0.24) !important;
 }
 
 .p-picklist .p-picklist-buttons {

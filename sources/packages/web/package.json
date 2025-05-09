@@ -18,6 +18,8 @@
     "@mdi/js": "^7.4.47",
     "@vee-validate/rules": "^4.0.4",
     "axios": "^1.8.4",
+    "bootstrap": "^5.3.6",
+    "bootstrap-icons": "^1.12.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "dayjs": "^1.11.10",

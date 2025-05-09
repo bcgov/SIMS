@@ -31,3 +31,5 @@ export * from "@/services/http/dto/Audit.dto";
 export * from "@/services/http/dto/CASInvoiceBatch.dto";
 export * from "@/services/http/dto/CASInvoice.dto";
 export * from "@/services/http/dto/DynamicFormConfiguration.dto";
+export * from "@/services/http/dto/Announcement.dto";
+export * from "@/services/http/dto/Form.dto";
