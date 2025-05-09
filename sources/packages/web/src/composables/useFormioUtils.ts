@@ -3,6 +3,19 @@ import { ClassConstructor, plainToClass } from "class-transformer";
 import { Utils } from "@formio/js";
 
 const UTILS_COMMON_OBJECT_NAME = "custom";
+/**
+ * Properties that are not required to be saved.
+ */
+const NON_REQUIRED_FORM_PROPERTIES = [
+  "_id",
+  "access",
+  "owner",
+  "created",
+  "machineName",
+  "modified",
+  "submissionAccess",
+  "pdfComponents",
+];
 
 /**
  * Form.IO helper methods.
@@ -261,6 +274,27 @@ export function useFormioUtils() {
     customUtils[name] = method;
   };
 
+  /**
+   * Generate the dynamic form definition removing unwanted properties.
+   */
+  const getReadyToSaveFormDefinition = (formDefinition: unknown): unknown => {
+    // Clone the form definition to avoid modifying the original one.
+    const clonedForm = JSON.parse(JSON.stringify(formDefinition));
+    // Remove non-required properties from the form definition.
+    NON_REQUIRED_FORM_PROPERTIES.forEach((property) => {
+      delete clonedForm[property];
+    });
+    return clonedForm;
+  };
+
+  const getFormattedFormDefinition = (formDefinition: unknown): string => {
+    return JSON.stringify(
+      getReadyToSaveFormDefinition(formDefinition),
+      null,
+      2,
+    );
+  };
+
   return {
     getComponent,
     getFirstComponent,
@@ -278,5 +312,7 @@ export function useFormioUtils() {
     excludeExtraneousValues,
     searchByKey,
     registerUtilsMethod,
+    getReadyToSaveFormDefinition,
+    getFormattedFormDefinition,
   };
 }

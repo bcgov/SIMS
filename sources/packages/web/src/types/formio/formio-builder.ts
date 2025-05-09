@@ -6,7 +6,7 @@ export interface FormIOBuilder {
   schema: unknown;
   form: unknown;
   options: FormIOBuilderOptions;
-  on: (event: string, callback: unknown) => unknown;
+  on: (event: "change", callback: unknown) => unknown;
 }
 
 /**

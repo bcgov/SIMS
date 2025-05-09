@@ -119,7 +119,12 @@
 </template>
 
 <script lang="ts">
-import { ModalDialog, useFileUtils, useSnackBar } from "@/composables";
+import {
+  ModalDialog,
+  useFileUtils,
+  useFormioUtils,
+  useSnackBar,
+} from "@/composables";
 import { FORMIO_CUSTOM_COMPONENTS, FormIOBuilder, Role } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
@@ -133,6 +138,8 @@ export default defineComponent({
   },
   setup() {
     const snackBar = useSnackBar();
+    const { getReadyToSaveFormDefinition, getFormattedFormDefinition } =
+      useFormioUtils();
     const saveDynamicFormModal = ref({} as ModalDialog<boolean>);
     const applyDynamicFormDefinitionModal = ref({} as ModalDialog<boolean>);
     const formioBuilderRef = ref();
@@ -195,35 +202,7 @@ export default defineComponent({
      * Update the form definition inspector with the current form definition.
      */
     const updateFormDefinitionInspector = async (): Promise<void> => {
-      formDefinition.value = JSON.stringify(
-        getReadyToSaveFormDefinition(),
-        null,
-        2,
-      );
-    };
-
-    /**
-     * Save the dynamic form definition removing unwanted properties.
-     */
-    const getReadyToSaveFormDefinition = (): unknown => {
-      // Properties that are not required to be saved.
-      const nonRequiredProperties = [
-        "_id",
-        "access",
-        "owner",
-        "created",
-        "machineName",
-        "modified",
-        "submissionAccess",
-        "pdfComponents",
-      ];
-      // Clone the form definition to avoid modifying the original one.
-      const clonedForm = JSON.parse(JSON.stringify(builder.schema));
-      // Remove non-required properties from the form definition.
-      nonRequiredProperties.forEach((property) => {
-        delete clonedForm[property];
-      });
-      return clonedForm;
+      formDefinition.value = getFormattedFormDefinition(builder.schema);
     };
 
     /**
@@ -241,7 +220,7 @@ export default defineComponent({
       try {
         saveDynamicFormLoading.value = true;
         await ApiClient.DynamicForms.updateForm(selectedForm.value.name, {
-          formDefinition: getReadyToSaveFormDefinition(),
+          formDefinition: getReadyToSaveFormDefinition(builder.schema),
         });
       } catch {
         snackBar.error("Unexpected error saving form definition.");
@@ -255,11 +234,7 @@ export default defineComponent({
      */
     const copyToClipboard = async (): Promise<void> => {
       try {
-        const formDefinition = JSON.stringify(
-          getReadyToSaveFormDefinition(),
-          null,
-          2,
-        );
+        const formDefinition = getFormattedFormDefinition(builder.schema);
         await navigator.clipboard.writeText(formDefinition);
         snackBar.success("Form definition copied to clipboard.");
       } catch {
@@ -275,8 +250,10 @@ export default defineComponent({
         snackBar.warn("Please select a form.");
         return;
       }
-      const url = `https://github.dev/bcgov/SIMS/blob/main/sources/packages/forms/src/form-definitions/${selectedForm.value.name.toLowerCase()}.json`;
-      window.open(url, "_blank");
+      window.open(
+        `https://github.dev/bcgov/SIMS/blob/main/sources/packages/forms/src/form-definitions/${selectedForm.value.name.toLowerCase()}.json`,
+        "_blank",
+      );
     };
 
     /**
@@ -300,11 +277,7 @@ export default defineComponent({
       if (!selectedForm.value) {
         return;
       }
-      const fileContent = JSON.stringify(
-        getReadyToSaveFormDefinition(),
-        null,
-        2,
-      );
+      const fileContent = getFormattedFormDefinition(builder.schema);
       const fileName = `${selectedForm.value.name.toLowerCase()}.json`;
       generateJSONFileFromContent(fileContent, fileName);
     };
