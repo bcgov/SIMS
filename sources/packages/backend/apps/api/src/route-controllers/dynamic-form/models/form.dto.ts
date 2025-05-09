@@ -1,5 +1,5 @@
-import { JSON_200KB } from "apps/api/src/constants";
-import { JsonMaxSize } from "apps/api/src/utilities/class-validation";
+import { JSON_200KB } from "../../../constants";
+import { JsonMaxSize } from "../../../utilities/class-validation";
 import { IsObject, MaxLength } from "class-validator";
 
 export class FormNameParamAPIInDTO {

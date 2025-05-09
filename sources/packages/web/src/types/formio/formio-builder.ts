@@ -1,5 +1,5 @@
 /**
- * FormIO form. Methods available can be checked on
+ * Form.io methods available can be checked on
  * https://help.form.io/developers/form-development/form-builder#form-builder-sdk.
  */
 export interface FormIOBuilder {

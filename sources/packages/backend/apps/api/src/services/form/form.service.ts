@@ -10,6 +10,15 @@ import { FormDefinition } from "./form.service.models";
 
 // Expected header name to send the authorization token to formio API.
 const FORMIO_TOKEN_NAME = "x-jwt-token";
+/**
+ * Form.io list method requires some pagination number,
+ * otherwise it returns only 10 records.
+ */
+const FORMIO_PAGE_LIMIT = 100;
+/**
+ * Form.io list method sorting field.
+ */
+const FORMIO_LIST_SORT_FIELD = "title";
 
 @Injectable()
 export class FormService {
@@ -49,7 +58,7 @@ export class FormService {
   async list(): Promise<FormDefinition[]> {
     const authHeader = await this.createAuthHeader();
     const content = await this.httpService.axiosRef.get(
-      `${this.config.formsUrl}/form?tags=common&limit=100&sort=title`,
+      `${this.config.formsUrl}/form?tags=common&limit=${FORMIO_PAGE_LIMIT}&sort=${FORMIO_LIST_SORT_FIELD}`,
       authHeader,
     );
     return content.data.map((form: FormDefinition) => ({
@@ -59,7 +68,7 @@ export class FormService {
   }
 
   /**
-   * Updates a form definition in Form.io.
+   * Updates a form definition in Form.io server.
    * @param formAlias alias of the form to be updated.
    * @param formDefinition the new definition of the form.
    */

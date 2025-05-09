@@ -48,35 +48,10 @@ export function useFileUtils() {
    * @param response axios response object from http response.
    */
   const downloadFileAsBlob = (response: AxiosResponse<any>) => {
-    const linkURL = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement("a");
+    const blob = new Blob([response.data]);
     const fileName =
       response.headers["content-disposition"].split("filename=")[1];
-    link.href = linkURL;
-    link.setAttribute("download", decodeURIComponent(fileName));
-    document.body.appendChild(link);
-    link.click();
-    // After download, remove the element
-    link.remove();
-  };
-
-  /**
-   * Handles the file api process errors that may be thrown.
-   * A warn message is displayed to the user.
-   * @param error error to handled.
-   * @returns true in case error is an expected API process error.
-   */
-  const handleFileScanProcessError = (error: unknown): boolean => {
-    if (
-      error instanceof ApiProcessError &&
-      (error.errorType === FILE_HAS_NOT_BEEN_SCANNED_YET ||
-        error.errorType === VIRUS_DETECTED)
-    ) {
-      const snackBar = useSnackBar();
-      snackBar.warn(error.message);
-      return true;
-    }
-    return false;
+    downloadFile(blob, fileName);
   };
 
   /**
@@ -107,7 +82,27 @@ export function useFileUtils() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    link.remove();
     URL.revokeObjectURL(url);
+  };
+
+  /**
+   * Handles the file api process errors that may be thrown.
+   * A warn message is displayed to the user.
+   * @param error error to handled.
+   * @returns true in case error is an expected API process error.
+   */
+  const handleFileScanProcessError = (error: unknown): boolean => {
+    if (
+      error instanceof ApiProcessError &&
+      (error.errorType === FILE_HAS_NOT_BEEN_SCANNED_YET ||
+        error.errorType === VIRUS_DETECTED)
+    ) {
+      const snackBar = useSnackBar();
+      snackBar.warn(error.message);
+      return true;
+    }
+    return false;
   };
 
   return {
