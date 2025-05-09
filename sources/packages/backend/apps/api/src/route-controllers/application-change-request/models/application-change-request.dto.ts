@@ -9,4 +9,5 @@ export class ApplicationChangeRequestPendingSummaryAPIOutDTO {
   firstName?: string;
   lastName: string;
   applicationNumber: string;
+  programYearId?: number;
 }
