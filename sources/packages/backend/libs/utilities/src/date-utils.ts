@@ -379,3 +379,26 @@ export const isSameOrAfterDate = (
 ): boolean => {
   return dayjs(endDate).isSameOrAfter(startDate);
 };
+
+/**
+ * Get the current fiscal year for a given date.
+ * @param date the date to be checked.
+ * @returns current fiscal year.
+ */
+export function getFiscalYear(date: Date): number {
+  const referenceDate = dayjs(date);
+  const referenceYear = referenceDate.year();
+  // Fiscal year inclusive start date.
+  // The fiscal year starts on April 1st of the current year.
+  const startDate = new Date(referenceYear, 3, 1);
+  // Fiscal year inclusive end date.
+  // The fiscal year ends on March 31st of the next year.
+  const endDate = new Date(referenceYear + 1, 2, 31);
+  if (referenceDate.isBetween(startDate, endDate, "day", "[]")) {
+    return referenceYear;
+  }
+  if (referenceDate.isAfter(endDate)) {
+    return referenceYear + 1;
+  }
+  return referenceYear - 1;
+}
