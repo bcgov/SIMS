@@ -73,7 +73,7 @@ export class FormService {
    * @param formAlias alias of the form to be updated.
    * @param formDefinition the new definition of the form.
    */
-  async updateForm(formAlias: string, formDefinition: unknown) {
+  async updateForm(formAlias: string, formDefinition: unknown): Promise<void> {
     const authHeader = await this.createAuthHeader();
     await this.httpService.axiosRef.put(
       `${this.config.formsUrl}/${formAlias}`,
