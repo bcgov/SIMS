@@ -272,11 +272,8 @@ export default defineComponent({
      * Download the form definition as a JSON file.
      */
     const downloadFile = (): void => {
-      if (!selectedForm.value) {
-        return;
-      }
       const fileContent = getFormattedFormDefinition(builder.schema);
-      const fileName = `${selectedForm.value.path.toLowerCase()}.json`;
+      const fileName = `${selectedForm.value?.path.toLowerCase()}.json`;
       generateJSONFileFromContent(fileContent, fileName);
     };
 
