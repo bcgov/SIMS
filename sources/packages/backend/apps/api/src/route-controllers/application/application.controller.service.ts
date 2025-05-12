@@ -669,6 +669,7 @@ export class ApplicationControllerService {
       assessmentId: applicationDetail.currentAssessment?.id,
       data: applicationDetail.data,
       applicationStatus: applicationDetail.applicationStatus,
+      applicationEditStatus: applicationDetail.applicationEditStatus,
       applicationStatusUpdatedOn: applicationDetail.applicationStatusUpdatedOn,
       applicationNumber: applicationDetail.applicationNumber,
       applicationOfferingIntensity: applicationDetail.offeringIntensity,
