@@ -14,8 +14,8 @@ import { ClientTypeBaseRoute } from "../../types";
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Roles(Role.AESTFormEditor)
-@Controller("designation-agreement")
-@ApiTags(`${ClientTypeBaseRoute.AEST}-designation-agreement`)
+@Controller("dynamic-form")
+@ApiTags(`${ClientTypeBaseRoute.AEST}-dynamic-form`)
 export class DynamicFormAESTController extends BaseController {
   constructor(private readonly formService: FormService) {
     super();
