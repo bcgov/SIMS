@@ -4,6 +4,7 @@ describe("DateUtils-getFiscalYear", () => {
   [
     { date: "2024-01-01", fiscalYear: 2024 },
     { date: "2024-03-31", fiscalYear: 2024 },
+    { date: "2024-03-31 23:59:59:999", fiscalYear: 2024 },
     { date: "2024-04-01", fiscalYear: 2025 },
     { date: "2025-03-31", fiscalYear: 2025 },
     { date: "2025-04-01", fiscalYear: 2026 },

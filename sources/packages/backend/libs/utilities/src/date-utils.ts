@@ -394,11 +394,10 @@ export function getFiscalYear(date: Date): number {
   const referenceYear = referenceDate.year();
   // Fiscal year inclusive start date.
   // The fiscal year starts on April 1st of the current year.
-  const startDate = new Date(referenceYear, 3, 1); // April 1st.
-  // Fiscal year inclusive end date.
-  // The fiscal year ends on March 31st of the next year.
-  const endDate = new Date(referenceYear + 1, 2, 31); // March 31st of the next year.
-  if (referenceDate.isBetween(startDate, endDate, "day", "[]")) {
+  const startDate = new Date(referenceYear, 3, 1); // April 1st
+  if (referenceDate.isSameOrAfter(startDate, "day")) {
+    // Any date at or after April 1st of the current year is in
+    // the next year reference fiscal year convention.
     return referenceYear + 1;
   }
   return referenceYear;
