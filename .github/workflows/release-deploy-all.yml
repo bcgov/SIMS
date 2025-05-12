@@ -1,13 +1,9 @@
 name: Release - Deploy All
-run-name: Release - Deploy all from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+run-name: Release - Deploy all from ${{ github.ref_name }} to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
     inputs:
-      gitRef:
-        description: "Git Ref (e.g. v1.0.0 or v1.0.0-prerelease.1)"
-        required: true
-        default: ""
       environment:
         description: "Environment"
         required: true
@@ -68,7 +64,7 @@ on:
 
 env:
   NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-  BUILD_REF: ${{ inputs.gitRef }}
+  BUILD_REF: ${{ github.ref_name }}
   HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
   DOMAIN_PREFIX: ${{ vars.DOMAIN_PREFIX }}
   BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
@@ -137,13 +133,13 @@ jobs:
       - name: Print env
         run: |
           echo Deploy Environment: ${{ inputs.environment }}
-          echo GIT REF: ${{ inputs.gitRef }}
+          echo GIT REF: ${{ github.ref_name }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.gitRef }}
+          ref: ${{ github.ref }}
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
@@ -166,13 +162,13 @@ jobs:
       - name: Print env
         run: |
           echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ inputs.gitRef }}
+          echo GIT REF: ${{ github.ref_name }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.gitRef }}
+          ref: ${{ github.ref }}
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
@@ -197,12 +193,12 @@ jobs:
       - name: Print env
         run: |
           echo BUILD ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ inputs.gitRef }}
+          echo GIT REF: ${{ github.ref_name }}
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.gitRef }}
+          ref: ${{ github.ref }}
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
@@ -225,13 +221,13 @@ jobs:
       - name: Print env
         run: |
           echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ inputs.gitRef }}
+          echo GIT REF: ${{ github.ref_name }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.gitRef }}
+          ref: ${{ github.ref }}
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
@@ -254,13 +250,13 @@ jobs:
       - name: Print env
         run: |
           echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ inputs.gitRef }}
+          echo GIT REF: ${{ github.ref_name }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.gitRef }}
+          ref: ${{ github.ref }}
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
@@ -277,7 +273,7 @@ jobs:
     uses: ./.github/workflows/release-deploy-camunda-definitions.yml
     with:
       environment: ${{ inputs.environment }}
-      gitRef: ${{ inputs.gitRef }}
+      gitRef: ${{ github.ref_name }}
     secrets: inherit
 
   # Deploy Formio Definitions
@@ -288,5 +284,5 @@ jobs:
     uses: ./.github/workflows/release-deploy-formio-definitions.yml
     with:
       environment: ${{ inputs.environment }}
-      gitRef: ${{ inputs.gitRef }}
+      gitRef: ${{ github.ref_name }}
     secrets: inherit
