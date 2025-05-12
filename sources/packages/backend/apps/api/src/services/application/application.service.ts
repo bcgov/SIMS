@@ -847,6 +847,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         isArchived: true,
         data: !!options?.loadDynamicData as unknown,
         applicationStatus: true,
+        applicationEditStatus: true,
         offeringIntensity: true,
         pirStatus: true,
         applicationStatusUpdatedOn: true,
