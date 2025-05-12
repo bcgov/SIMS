@@ -11,8 +11,8 @@ export class ApplicationChangeRequestApi extends HttpBaseClient {
     applicationChangeRequestId: number,
     payload: ApplicationChangeRequestAPIInDTO,
   ): Promise<void> {
-    const url = `application-change-request/${applicationChangeRequestId}`;
     // TODO: Implement the patchCall method in HttpBaseClient
+    // const url = `application-change-request/${applicationChangeRequestId}`;
     // await this.patchCall(this.addClientRoot(url), payload);
   }
 }
