@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, defineComponent } from "vue";
+import { ref, onMounted, onBeforeUnmount, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, SupportingUserType } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -19,6 +19,10 @@ import {
   ApplicationSupportingUsersAPIOutDTO,
   ApplicationVersionAPIOutDTO,
 } from "@/services/http/dto";
+import {
+  applicationEventBus,
+  EVENTS,
+} from "@/views/aest/StudentApplicationView.vue";
 
 export default defineComponent({
   props: {
@@ -40,7 +44,8 @@ export default defineComponent({
     const { mapApplicationEditStatusForMinistry } = useApplication();
     const menuItems = ref<MenuItemModel[]>([]);
 
-    onMounted(async () => {
+    // Function to load application data and update menu items
+    const loadApplicationData = async () => {
       const overallDetails =
         await ApplicationService.shared.getApplicationOverallDetails(
           props.applicationId,
@@ -50,6 +55,18 @@ export default defineComponent({
         ...createChangeRequestMenuItems(overallDetails.inProgressChangeRequest),
         ...createVersionsMenuItems(overallDetails.previousVersions),
       ];
+    };
+
+    onMounted(async () => {
+      // Load application data initially.
+      await loadApplicationData();
+      // Listen for the refresh sidebar event.
+      applicationEventBus.on(EVENTS.REFRESH_SIDEBAR, loadApplicationData);
+    });
+
+    onBeforeUnmount(() => {
+      // Clean up the event listener when component is unmounted.
+      applicationEventBus.off(EVENTS.REFRESH_SIDEBAR, loadApplicationData);
     });
 
     /**

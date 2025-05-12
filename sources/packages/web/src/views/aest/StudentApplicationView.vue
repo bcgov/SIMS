@@ -38,12 +38,22 @@ import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { useFormioUtils } from "@/composables";
 import {
+  ApplicationEditStatus,
   ChangeTypes,
   FormIOComponent,
   FormIOForm,
   FromIOComponentTypes,
   StudentApplicationFormData,
 } from "@/types";
+import router from "@/router";
+import mitt from "mitt";
+
+// Event emitter for application sidebar refresh.
+export const applicationEventBus = mitt();
+
+export const EVENTS = {
+  REFRESH_SIDEBAR: "refresh-application-sidebar",
+};
 
 export default defineComponent({
   components: {
@@ -208,6 +218,38 @@ export default defineComponent({
       }
       document.getElementById(component.id)?.classList.add(cssClass);
     }
+
+    const assessApplicationChangeRequest = async (
+      applicationChangeRequestStatus: ApplicationEditStatus,
+    ) => {
+      const responseData =
+        await assessApplicationChangeRequestModal.value.showModal(
+          applicationChangeRequestStatus,
+        );
+      if (responseData) {
+        try {
+          assessApplicationChangeRequestModal.value.loading = true;
+          await ApplicationChangeRequestService.shared.assessApplicationChangeRequest(
+            props.versionApplicationId as number,
+            { ...responseData, studentId: props.studentId },
+          );
+          // Emit the event to refresh the sidebar after successful application change request.
+          applicationEventBus.emit(EVENTS.REFRESH_SIDEBAR);
+          router.push({
+            name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+          });
+          snackBar.success(
+            "Your decision was submitted. You can refer to the outcome below.",
+          );
+          assessApplicationChangeRequestModal.value.hideModal();
+        } catch {
+          snackBar.error(
+            "Unexpected error while updating the application change request.",
+          );
+          assessApplicationChangeRequestModal.value.loading = false;
+        }
+      }
+    };
 
     return {
       formRender,
