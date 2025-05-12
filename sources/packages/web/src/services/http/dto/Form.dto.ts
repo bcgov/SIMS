@@ -1,6 +1,6 @@
-export interface FormAPIOutDTO {
+export class FormAPIOutDTO {
   title: string;
-  name: string;
+  path: string;
 }
 
 export interface FormsAPIOutDTO {

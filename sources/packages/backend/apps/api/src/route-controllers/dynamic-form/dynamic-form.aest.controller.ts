@@ -30,20 +30,10 @@ export class DynamicFormAESTController extends BaseController {
     const allForms = await this.formService.list();
     return {
       forms: allForms.map((form) => ({
-        name: form.name,
         title: form.title,
+        path: form.path,
       })),
     };
-  }
-
-  /**
-   * Get a form definition from Form.io.
-   * @param formName name of the form to be retrieved.
-   * @returns form definition.
-   */
-  @Get(":formName")
-  async getForm(@Param() formNameParam: FormNameParamAPIInDTO): Promise<any> {
-    return this.formService.fetch(formNameParam.formName);
   }
 
   /**
@@ -51,13 +41,13 @@ export class DynamicFormAESTController extends BaseController {
    * @param formName Name of the form to be updated.
    * @param payload Form definition to be updated.
    */
-  @Put(":formName")
+  @Put(":formPath")
   async updateForm(
     @Param() formNameParam: FormNameParamAPIInDTO,
     @Body() payload: FormUpdateAPIInDTO,
   ): Promise<void> {
     return this.formService.updateForm(
-      formNameParam.formName,
+      formNameParam.formPath,
       payload.formDefinition,
     );
   }

@@ -40,13 +40,13 @@ export class FormService {
 
   /**
    * Get a form definition from formio.
-   * @param formName Name of the form to be retrieved.
+   * @param formPath path of the form to be retrieved.
    * @returns Form definition.
    */
-  async fetch(formName: string) {
+  async fetch(formPath: string) {
     const authHeader = await this.createAuthHeader();
     const content = await this.httpService.axiosRef.get(
-      `${this.config.formsUrl}/${formName}`,
+      `${this.config.formsUrl}/${formPath}`,
       authHeader,
     );
     return content.data;
@@ -63,20 +63,20 @@ export class FormService {
       authHeader,
     );
     return content.data.map((form: FormDefinition) => ({
-      name: form.name,
       title: form.title,
+      path: form.path,
     }));
   }
 
   /**
    * Updates a form definition in Form.io server.
-   * @param formAlias alias of the form to be updated.
+   * @param formPath form path of the form to be updated.
    * @param formDefinition the new definition of the form.
    */
-  async updateForm(formAlias: string, formDefinition: unknown): Promise<void> {
+  async updateForm(formPath: string, formDefinition: unknown): Promise<void> {
     const authHeader = await this.createAuthHeader();
     await this.httpService.axiosRef.put(
-      `${this.config.formsUrl}/${formAlias}`,
+      `${this.config.formsUrl}/${formPath}`,
       formDefinition,
       authHeader,
     );
@@ -89,7 +89,7 @@ export class FormService {
    * on the server side, this kind of validations will be applied during this
    * API call and the result will be the data after processed by formio.
    * Please note that the data will not be saved on formio database.
-   * @param formName Name of the form to be validated.
+   * @param formName path of the form to be validated.
    * @param data Data to be validated/processed.
    * @returns Status indicating if the data being submitted is valid or not
    * alongside with the data after formio processing.

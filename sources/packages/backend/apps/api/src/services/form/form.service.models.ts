@@ -1,4 +1,4 @@
 export interface FormDefinition {
-  name: string;
   title: string;
+  path: string;
 }

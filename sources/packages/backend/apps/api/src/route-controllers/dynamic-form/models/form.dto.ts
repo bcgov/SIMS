@@ -4,7 +4,7 @@ import { IsObject, MaxLength } from "class-validator";
 
 export class FormNameParamAPIInDTO {
   @MaxLength(200)
-  formName: string;
+  formPath: string;
 }
 
 export class FormUpdateAPIInDTO {
@@ -15,7 +15,7 @@ export class FormUpdateAPIInDTO {
 
 export class FormAPIOutDTO {
   title: string;
-  name: string;
+  path: string;
 }
 
 export class FormsAPIOutDTO {

@@ -25,11 +25,11 @@ export class DynamicFormController extends BaseController {
 
   /**
    * Get a form definition from Form.io.
-   * @param formName name of the form to be retrieved.
+   * @param formPath path of the form to be retrieved.
    * @returns form definition.
    */
-  @Get(":formName")
+  @Get(":formPath")
   async getForm(@Param() formNameParam: FormNameParamAPIInDTO): Promise<any> {
-    return this.formService.fetch(formNameParam.formName);
+    return this.formService.fetch(formNameParam.formPath);
   }
 }

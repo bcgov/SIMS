@@ -45,7 +45,7 @@
               :items="formsListOptions"
               label="Select a dynamic form"
               item-text="title"
-              item-value="name"
+              item-value="path"
               :clearable="true"
               :loading="formsListOptionsLoading"
               :disabled="formsListOptionsLoading"
@@ -170,13 +170,13 @@ export default defineComponent({
      * @param form form to be loaded.
      */
     const formSelected = async (form: FormAPIOutDTO): Promise<void> => {
-      if (!form?.name) {
+      if (!form?.path) {
         return;
       }
       formDefinitionLoading.value = true;
       try {
         const definition = await ApiClient.DynamicForms.getFormDefinition(
-          form.name,
+          form.path,
         );
         // Recreate the formio builder.
         builder = await Formio.builder(formioBuilderRef.value, definition, {
@@ -209,7 +209,7 @@ export default defineComponent({
      * Persists the change to the dynamic form definition database.
      */
     const saveDynamicForm = async (): Promise<void> => {
-      if (selectedForm.value?.name === undefined) {
+      if (selectedForm.value?.path === undefined) {
         snackBar.warn("Please select a form to save.");
         return;
       }
@@ -219,9 +219,10 @@ export default defineComponent({
       }
       try {
         saveDynamicFormLoading.value = true;
-        await ApiClient.DynamicForms.updateForm(selectedForm.value.name, {
+        await ApiClient.DynamicForms.updateForm(selectedForm.value.path, {
           formDefinition: getReadyToSaveFormDefinition(builder.schema),
         });
+        snackBar.success("Form definition saved.");
       } catch {
         snackBar.error("Unexpected error saving form definition.");
       } finally {
@@ -247,7 +248,7 @@ export default defineComponent({
      */
     const viewOnRepo = async (): Promise<void> => {
       window.open(
-        `https://github.dev/bcgov/SIMS/blob/main/sources/packages/forms/src/form-definitions/${selectedForm.value?.name.toLowerCase()}.json`,
+        `https://github.dev/bcgov/SIMS/blob/main/sources/packages/forms/src/form-definitions/${selectedForm.value?.path.toLowerCase()}.json`,
         "_blank",
         "noopener,noreferrer",
       );
@@ -275,7 +276,7 @@ export default defineComponent({
         return;
       }
       const fileContent = getFormattedFormDefinition(builder.schema);
-      const fileName = `${selectedForm.value.name.toLowerCase()}.json`;
+      const fileName = `${selectedForm.value.path.toLowerCase()}.json`;
       generateJSONFileFromContent(fileContent, fileName);
     };
 
