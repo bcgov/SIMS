@@ -42,7 +42,7 @@ describe(
     let systemUsersService: SystemUsersService;
     let casInvoiceBatchSequenceName: string;
     let casInvoiceSequenceName: string;
-    const defaultBatchName = "PSFS24001-1";
+    const defaultBatchName = "PSFS25001-1";
 
     beforeAll(async () => {
       const { nestApplication, dataSource } = await createTestingAppModule();
@@ -52,10 +52,10 @@ describe(
       // Processor under test.
       processor = app.get(CASInvoicesBatchesCreationScheduler);
       // Sets the date to ensure fiscal year is always the same.
-      // Expected fiscal year is 2024.
+      // Expected fiscal year is 2025.
       MockDate.set("2025-01-01");
-      casInvoiceBatchSequenceName = `${CAS_INVOICE_BATCH_SEQUENCE_NAME}_24`;
-      casInvoiceSequenceName = `${CAS_INVOICE_SEQUENCE_NAME}_24`;
+      casInvoiceBatchSequenceName = `${CAS_INVOICE_BATCH_SEQUENCE_NAME}_25`;
+      casInvoiceSequenceName = `${CAS_INVOICE_SEQUENCE_NAME}_25`;
     });
 
     beforeEach(async () => {
@@ -383,7 +383,7 @@ describe(
       // Assert
       expect(result).toStrictEqual([
         `Batch created: ${defaultBatchName}.`,
-        `Invoices created: 1.`,
+        "Invoices created: 1.",
       ]);
       expect(
         mockedJob.containLogMessages([

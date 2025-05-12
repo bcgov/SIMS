@@ -1,14 +1,13 @@
 import { getFiscalYear, getISODateOnlyString } from "../../date-utils";
 
-describe("DateUtils-getCurrentFiscalYear", () => {
+describe("DateUtils-getFiscalYear", () => {
   [
-    { date: "2024-02-01", fiscalYear: 2023 },
-    { date: "2024-04-01", fiscalYear: 2024 },
-    { date: "2025-03-31", fiscalYear: 2024 },
-    { date: "2025-04-01", fiscalYear: 2025 },
-    { date: "2025-12-31", fiscalYear: 2025 },
-    { date: "2026-01-01", fiscalYear: 2025 },
-    { date: "2026-04-30", fiscalYear: 2026 },
+    { date: "2024-01-01", fiscalYear: 2024 },
+    { date: "2024-03-31", fiscalYear: 2024 },
+    { date: "2024-04-01", fiscalYear: 2025 },
+    { date: "2025-03-31", fiscalYear: 2025 },
+    { date: "2025-04-01", fiscalYear: 2026 },
+    { date: "2025-12-31", fiscalYear: 2026 },
   ].forEach(({ date, fiscalYear }) => {
     it(`Should return fiscal year ${fiscalYear} when the date is ${getISODateOnlyString(
       date,

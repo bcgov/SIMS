@@ -381,11 +381,13 @@ export const isSameOrAfterDate = (
 };
 
 /**
- * Get the current fiscal year for a given date.
+ * Get the last year of the current fiscal year for a given date.
  * The fiscal year starts on April 1st of the current year
- * and it ends on March 31st of the next year.
+ * and it ends on March 31st of the next year, which means
+ * it can be referred as 2025-26. This method will return the last
+ * year of the current fiscal year, which is 2026 in this case.
  * @param date the date to be checked.
- * @returns current fiscal year.
+ * @returns fiscal year, for instance, 2026 for 2025-26 fiscal year.
  */
 export function getFiscalYear(date: Date): number {
   const referenceDate = dayjs(date);
@@ -397,7 +399,7 @@ export function getFiscalYear(date: Date): number {
   // The fiscal year ends on March 31st of the next year.
   const endDate = new Date(referenceYear + 1, 2, 31); // March 31st of the next year.
   if (referenceDate.isBetween(startDate, endDate, "day", "[]")) {
-    return referenceYear;
+    return referenceYear + 1;
   }
-  return referenceYear - 1;
+  return referenceYear;
 }
