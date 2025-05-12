@@ -54,6 +54,7 @@ export class FormService {
 
   /**
    * Lists form definitions that contains the tag 'common' ordered by title.
+   * @returns list of form definitions.
    */
   async list(): Promise<FormDefinition[]> {
     const authHeader = await this.createAuthHeader();
