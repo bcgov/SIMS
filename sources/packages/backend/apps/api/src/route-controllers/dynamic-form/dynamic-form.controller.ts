@@ -7,7 +7,7 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth";
 import { ApiTags } from "@nestjs/swagger";
-import { FormNameParamAPIInDTO } from "./models/form.dto";
+import { FormPathParamAPIInDTO } from "./models/form.dto";
 
 @AllowAuthorizedParty(
   AuthorizedParties.institution,
@@ -29,7 +29,7 @@ export class DynamicFormController extends BaseController {
    * @returns form definition.
    */
   @Get(":formPath")
-  async getForm(@Param() formNameParam: FormNameParamAPIInDTO): Promise<any> {
-    return this.formService.fetch(formNameParam.formPath);
+  async getForm(@Param() formPathParam: FormPathParamAPIInDTO): Promise<any> {
+    return this.formService.fetch(formPathParam.formPath);
   }
 }
