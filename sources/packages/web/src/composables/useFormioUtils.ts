@@ -282,6 +282,8 @@ export function useFormioUtils() {
 
   /**
    * Generate the dynamic form definition removing unwanted properties.
+   * @param formDefinition form definition object to be saved.
+   * @returns form definition object ready to be saved.
    */
   const getReadyToSaveFormDefinition = (formDefinition: unknown): unknown => {
     // Clone the form definition to avoid modifying the original one.

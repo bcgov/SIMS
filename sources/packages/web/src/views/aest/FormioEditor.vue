@@ -246,13 +246,10 @@ export default defineComponent({
      * Open the form definition in the GitHub repository.
      */
     const viewOnRepo = async (): Promise<void> => {
-      if (selectedForm.value === undefined) {
-        snackBar.warn("Please select a form.");
-        return;
-      }
       window.open(
-        `https://github.dev/bcgov/SIMS/blob/main/sources/packages/forms/src/form-definitions/${selectedForm.value.name.toLowerCase()}.json`,
+        `https://github.dev/bcgov/SIMS/blob/main/sources/packages/forms/src/form-definitions/${selectedForm.value?.name.toLowerCase()}.json`,
         "_blank",
+        "noopener,noreferrer",
       );
     };
 

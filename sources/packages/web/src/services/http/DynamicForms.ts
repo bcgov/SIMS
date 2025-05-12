@@ -16,7 +16,7 @@ export class DynamicFormsApi extends HttpBaseClient {
    * @returns list of form definitions.
    */
   async getFormsList(): Promise<FormsAPIOutDTO> {
-    return this.getCall(`dynamic-form`);
+    return this.getCall(this.addClientRoot("dynamic-form"));
   }
 
   /**
@@ -28,7 +28,7 @@ export class DynamicFormsApi extends HttpBaseClient {
     formName: string,
     payload: FormUpdateAPIInDTO,
   ): Promise<void> {
-    return this.putCall(`dynamic-form/${formName}`, {
+    return this.putCall(this.addClientRoot(`dynamic-form/${formName}`), {
       formDefinition: payload.formDefinition,
     });
   }
