@@ -234,5 +234,6 @@ export enum SuccessWaitingStatus {
  */
 export type StudentApplicationFormData = {
   applicationOfferingIntensityValue: OfferingIntensity;
+  isChangeRequestApplication: boolean;
 } & ApplicationData &
   Record<string, unknown>;

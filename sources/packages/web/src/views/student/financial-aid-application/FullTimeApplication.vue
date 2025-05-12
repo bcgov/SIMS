@@ -117,6 +117,7 @@ import {
   BannerTypes,
   FormIOForm,
   StudentApplicationFormData,
+  ApplicationEditStatus,
 } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -253,6 +254,12 @@ export default defineComponent({
         ...applicationData.data,
         applicationOfferingIntensityValue:
           applicationData.applicationOfferingIntensity,
+        isChangeRequestApplication:
+          props.changeRequest ||
+          [
+            ApplicationEditStatus.ChangeInProgress,
+            ApplicationEditStatus.ChangePendingApproval,
+          ].includes(applicationData.applicationEditStatus),
         ...studentFormData,
         ...programYear,
         isReadOnly: isReadOnly.value,

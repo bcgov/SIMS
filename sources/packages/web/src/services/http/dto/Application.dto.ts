@@ -89,6 +89,7 @@ export interface ApplicationBaseAPIOutDTO {
   assessmentId?: number;
   data: any;
   applicationStatus: ApplicationStatus;
+  applicationEditStatus: ApplicationEditStatus;
   applicationOfferingIntensity: OfferingIntensity;
   applicationFormName: string;
   applicationProgramYearID: number;
