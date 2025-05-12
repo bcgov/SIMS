@@ -26,7 +26,7 @@
                   )
                 "
                 :disabled="notAllowed"
-                >Decline change request</v-btn
+                >Decline</v-btn
               >
               <v-btn
                 class="ml-2"
@@ -37,7 +37,7 @@
                   )
                 "
                 :disabled="notAllowed"
-                >Approve change request</v-btn
+                >Approve</v-btn
               >
             </template>
           </check-permission-role>
@@ -269,13 +269,16 @@ export default defineComponent({
         try {
           assessApplicationChangeRequestModal.value.loading = true;
           await ApplicationChangeRequestService.shared.assessApplicationChangeRequest(
-            props.applicationId,
+            props.versionApplicationId as number,
             responseData,
           );
           router.push({
             name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
           });
-          snackBar.success("TODO: Implement the API to do the actual update.");
+          // TODO: Implement the API to do the actual update.
+          snackBar.success(
+            "Your decision was submitted. You can refer to the outcome below.",
+          );
           assessApplicationChangeRequestModal.value.hideModal();
         } catch {
           snackBar.error(

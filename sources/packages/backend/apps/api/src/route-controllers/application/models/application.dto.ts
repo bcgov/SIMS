@@ -123,7 +123,7 @@ export class ApplicationBaseAPIOutDTO {
   assessmentId?: number;
   data: ApplicationFormData;
   applicationStatus: ApplicationStatus;
-  applicationEditStatus?: ApplicationEditStatus;
+  applicationEditStatus: ApplicationEditStatus;
   applicationOfferingIntensity: OfferingIntensity;
   applicationFormName: string;
   applicationProgramYearID: number;

@@ -40,12 +40,7 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { ref, defineComponent, computed } from "vue";
 import { useModalDialog, useRules } from "@/composables";
 import { ApplicationChangeRequestAPIInDTO } from "@/services/http/dto";
-import {
-  VForm,
-  Role,
-  ApplicationOfferingChangeRequestStatus,
-  ApplicationEditStatus,
-} from "@/types";
+import { VForm, Role, ApplicationEditStatus } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default defineComponent({
@@ -54,7 +49,7 @@ export default defineComponent({
     CheckPermissionRole,
   },
   setup() {
-    const note = ref("");
+    const note = ref<string>();
     const {
       showDialog,
       showModal,
@@ -93,10 +88,10 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      assessApplicationChangeRequestModal.applicationChangeRequestStatus =
+      assessApplicationChangeRequestModal.applicationEditStatus =
         showParameter.value;
-      assessApplicationChangeRequestModal.note = note.value;
-      resolvePromise(assessApplicationChangeRequestModal, {
+      assessApplicationChangeRequestModal.note = note.value ?? "";
+      await resolvePromise(assessApplicationChangeRequestModal, {
         keepModalOpen: true,
       });
       assessApplicationChangeRequestForm.value.reset();
@@ -115,7 +110,6 @@ export default defineComponent({
       subject,
       primaryLabel,
       checkNotesLengthRule,
-      ApplicationOfferingChangeRequestStatus,
       assessApplicationChangeRequestForm,
     };
   },

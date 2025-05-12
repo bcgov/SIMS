@@ -2,5 +2,7 @@ import { ApplicationEditStatus } from "@/types";
 
 export interface ApplicationChangeRequestAPIInDTO {
   note: string;
-  applicationChangeRequestStatus: ApplicationEditStatus;
+  applicationEditStatus:
+    | ApplicationEditStatus.ChangedWithApproval
+    | ApplicationEditStatus.ChangeDeclined;
 }
