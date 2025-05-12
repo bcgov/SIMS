@@ -8,7 +8,40 @@
           params: { studentId },
         }"
         subTitle="Financial Aid Application"
-      >
+        ><template
+          #buttons
+          v-if="
+            applicationDetail.applicationEditStatus ===
+            ApplicationEditStatus.ChangePendingApproval
+          "
+        >
+          <check-permission-role :role="Role.StudentApproveDeclineAppeals">
+            <template #="{ notAllowed }">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                @click="
+                  assessApplicationChangeRequest(
+                    ApplicationEditStatus.ChangeDeclined,
+                  )
+                "
+                :disabled="notAllowed"
+                >Decline change request</v-btn
+              >
+              <v-btn
+                class="ml-2"
+                color="primary"
+                @click="
+                  assessApplicationChangeRequest(
+                    ApplicationEditStatus.ChangedWithApproval,
+                  )
+                "
+                :disabled="notAllowed"
+                >Approve change request</v-btn
+              >
+            </template>
+          </check-permission-role>
+        </template>
       </header-navigator>
     </template>
     <h2 class="color-blue pb-4">
@@ -22,6 +55,9 @@
       :programYearId="applicationDetail.applicationProgramYearID"
       :isReadOnly="true"
     />
+    <assess-application-change-request-modal
+      ref="assessApplicationChangeRequestModal"
+    />
   </full-page-container>
   <router-view />
 </template>
@@ -32,21 +68,27 @@ import {
   ApplicationBaseAPIOutDTO,
   ApplicationDataChangeAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
+  ApplicationChangeRequestAPIInDTO,
 } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
+import { ApplicationChangeRequestService } from "@/services/ApplicationChangeRequestService";
 import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
-import { useFormioUtils } from "@/composables";
+import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import {
   ApplicationEditStatus,
   ChangeTypes,
   FormIOComponent,
   FormIOForm,
   FromIOComponentTypes,
+  Role,
   StudentApplicationFormData,
 } from "@/types";
 import router from "@/router";
 import mitt from "mitt";
+import router from "@/router";
+import AssessApplicationChangeRequestModal from "@/components/aest/students/modals/AssessApplicationChangeRequestModal.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 // Event emitter for application sidebar refresh.
 export const applicationEventBus = mitt();
@@ -58,6 +100,8 @@ export const EVENTS = {
 export default defineComponent({
   components: {
     StudentApplication,
+    AssessApplicationChangeRequestModal,
+    CheckPermissionRole,
   },
   props: {
     studentId: {
@@ -80,6 +124,10 @@ export default defineComponent({
     const initialData = ref({} as StudentApplicationFormData);
     const selectedForm = ref();
     let applicationWizard: FormIOForm;
+    const assessApplicationChangeRequestModal = ref(
+      {} as ModalDialog<ApplicationChangeRequestAPIInDTO | false>,
+    );
+    const snackBar = useSnackBar();
 
     /**
      * Happens when all the form components are rendered, including lists.
@@ -258,6 +306,10 @@ export default defineComponent({
       selectedForm,
       AESTRoutesConst,
       emptyStringFiller,
+      ApplicationEditStatus,
+      Role,
+      assessApplicationChangeRequest,
+      assessApplicationChangeRequestModal,
     };
   },
 });
