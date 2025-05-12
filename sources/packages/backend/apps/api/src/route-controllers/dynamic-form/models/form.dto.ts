@@ -2,7 +2,7 @@ import { JSON_200KB } from "../../../constants";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { IsObject, MaxLength } from "class-validator";
 
-export class FormNameParamAPIInDTO {
+export class FormPathParamAPIInDTO {
   @MaxLength(200)
   formPath: string;
 }

@@ -21,14 +21,14 @@ export class DynamicFormsApi extends HttpBaseClient {
 
   /**
    * Update a form definition in Form.io.
-   * @param formName Name of the form to be updated.
+   * @param formPath path of the form to be updated.
    * @param payload Form definition to be updated.
    */
   async updateForm(
-    formName: string,
+    formPath: string,
     payload: FormUpdateAPIInDTO,
   ): Promise<void> {
-    return this.putCall(this.addClientRoot(`dynamic-form/${formName}`), {
+    return this.putCall(this.addClientRoot(`dynamic-form/${formPath}`), {
       formDefinition: payload.formDefinition,
     });
   }

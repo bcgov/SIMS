@@ -5,7 +5,7 @@ import { AllowAuthorizedParty, Groups, Roles } from "../../auth/decorators";
 import { AuthorizedParties, Role, UserGroups } from "../../auth";
 import { ApiTags } from "@nestjs/swagger";
 import {
-  FormNameParamAPIInDTO,
+  FormPathParamAPIInDTO,
   FormsAPIOutDTO,
   FormUpdateAPIInDTO,
 } from "./models/form.dto";
@@ -38,16 +38,16 @@ export class DynamicFormAESTController extends BaseController {
 
   /**
    * Update a form definition in Form.io.
-   * @param formName Name of the form to be updated.
+   * @param formPath path of the form to be updated.
    * @param payload Form definition to be updated.
    */
   @Put(":formPath")
   async updateForm(
-    @Param() formNameParam: FormNameParamAPIInDTO,
+    @Param() formPathParam: FormPathParamAPIInDTO,
     @Body() payload: FormUpdateAPIInDTO,
   ): Promise<void> {
     return this.formService.updateForm(
-      formNameParam.formPath,
+      formPathParam.formPath,
       payload.formDefinition,
     );
   }
