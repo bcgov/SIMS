@@ -30,7 +30,10 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationBaseAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
 import StudentApplication from "@/components/common/StudentApplication.vue";
-import { ApplicationEditStatus, StudentApplicationFormData } from "@/types";
+import {
+  APPLICATION_CHANGE_REQUEST_STATUS_VALUES,
+  StudentApplicationFormData,
+} from "@/types";
 
 export default defineComponent({
   components: {
@@ -64,10 +67,10 @@ export default defineComponent({
         ...applicationDetail.value.data,
         applicationOfferingIntensityValue:
           applicationDetail.value.applicationOfferingIntensity,
-        isChangeRequestApplication: [
-          ApplicationEditStatus.ChangeInProgress,
-          ApplicationEditStatus.ChangePendingApproval,
-        ].includes(applicationDetail.value.applicationEditStatus),
+        isChangeRequestApplication:
+          APPLICATION_CHANGE_REQUEST_STATUS_VALUES.includes(
+            applicationDetail.value.applicationEditStatus,
+          ),
         isReadOnly: true,
       };
     });

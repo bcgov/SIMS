@@ -63,3 +63,14 @@ export const APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES = [
   ApplicationEditStatus.ChangeInProgress,
   ApplicationEditStatus.ChangePendingApproval,
 ];
+
+/**
+ * Subset of the {@link ApplicationEditStatus} values that are related to change requests.
+ */
+export const APPLICATION_CHANGE_REQUEST_STATUS_VALUES = [
+  ApplicationEditStatus.ChangeInProgress,
+  ApplicationEditStatus.ChangePendingApproval,
+  ApplicationEditStatus.ChangeDeclined,
+  ApplicationEditStatus.ChangeCancelled,
+  ApplicationEditStatus.ChangedWithApproval,
+];

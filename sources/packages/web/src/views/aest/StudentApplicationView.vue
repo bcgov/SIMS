@@ -38,7 +38,7 @@ import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { useFormioUtils } from "@/composables";
 import {
-  ApplicationEditStatus,
+  APPLICATION_CHANGE_REQUEST_STATUS_VALUES,
   ChangeTypes,
   FormIOComponent,
   FormIOForm,
@@ -99,10 +99,10 @@ export default defineComponent({
         ...applicationDetail.value.data,
         applicationOfferingIntensityValue:
           applicationDetail.value.applicationOfferingIntensity,
-        isChangeRequestApplication: [
-          ApplicationEditStatus.ChangeInProgress,
-          ApplicationEditStatus.ChangePendingApproval,
-        ].includes(application.applicationEditStatus),
+        isChangeRequestApplication:
+          APPLICATION_CHANGE_REQUEST_STATUS_VALUES.includes(
+            application.applicationEditStatus,
+          ),
         isReadOnly: true,
       };
     });
