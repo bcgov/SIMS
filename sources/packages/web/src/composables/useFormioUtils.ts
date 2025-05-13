@@ -1,6 +1,7 @@
 import { FormIOComponent, FormIOForm } from "@/types";
 import { ClassConstructor, plainToClass } from "class-transformer";
 import { Utils } from "@formio/js";
+import { AppConfigService } from "@/services/AppConfigService";
 
 const UTILS_COMMON_OBJECT_NAME = "custom";
 
@@ -308,6 +309,16 @@ export function useFormioUtils() {
     );
   };
 
+  /**
+   * Create a cache identifier for the form path.
+   * @param formPath form path to be used as a cache identifier.
+   * @returns cache identifier string.
+   */
+  const createCacheIdentifier = async (formPath: string): Promise<string> => {
+    const { version } = await AppConfigService.shared.config();
+    return `${formPath}-${version}`.toLowerCase();
+  };
+
   return {
     getComponent,
     getFirstComponent,
@@ -327,5 +338,6 @@ export function useFormioUtils() {
     registerUtilsMethod,
     getReadyToSaveFormDefinition,
     getFormattedFormDefinition,
+    createCacheIdentifier,
   };
 }

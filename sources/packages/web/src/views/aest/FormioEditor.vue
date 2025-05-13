@@ -40,27 +40,37 @@
               :disabled="!selectedForm"
               >Repo</v-btn
             >
-            <v-autocomplete
-              v-model="selectedForm"
-              :items="formsListOptions"
-              label="Select a dynamic form"
-              item-text="title"
-              item-value="path"
-              :clearable="true"
-              :loading="formsListOptionsLoading"
-              :disabled="formsListOptionsLoading"
-              :return-object="true"
-              variant="outlined"
-              density="compact"
-              class="mr-2 float-right"
-              width="400"
-              hide-details="auto"
-              @update:modelValue="formSelected"
-            ></v-autocomplete>
           </template>
         </body-header>
       </template>
       <content-group>
+        <v-autocomplete
+          v-model="selectedForm"
+          :items="formsListOptions"
+          placeholder="Select a dynamic form"
+          item-text="title"
+          item-value="path"
+          :clearable="true"
+          :loading="formsListOptionsLoading"
+          :disabled="formsListOptionsLoading"
+          :return-object="true"
+          variant="outlined"
+          density="compact"
+          hide-details="auto"
+          class="mb-4"
+          @update:modelValue="formSelected"
+        >
+          <template v-slot:selection="{ item }">
+            <span>{{ item.title }} ({{ item.value }})</span>
+          </template>
+          <template v-slot:item="{ item, props }">
+            <v-list-item v-bind="props">
+              <v-list-item-content>
+                <v-list-item-subtitle v-text="item.value" />
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-autocomplete>
         <toggle-content
           :toggled="!selectedForm"
           message="Please select a dynamic form to be edited."
@@ -138,8 +148,11 @@ export default defineComponent({
   },
   setup() {
     const snackBar = useSnackBar();
-    const { getReadyToSaveFormDefinition, getFormattedFormDefinition } =
-      useFormioUtils();
+    const {
+      getReadyToSaveFormDefinition,
+      getFormattedFormDefinition,
+      createCacheIdentifier,
+    } = useFormioUtils();
     const saveDynamicFormModal = ref({} as ModalDialog<boolean>);
     const applyDynamicFormDefinitionModal = ref({} as ModalDialog<boolean>);
     const formioBuilderRef = ref();
@@ -222,6 +235,10 @@ export default defineComponent({
         await ApiClient.DynamicForms.updateForm(selectedForm.value.path, {
           formDefinition: getReadyToSaveFormDefinition(builder.schema),
         });
+        const cachedFormName = await createCacheIdentifier(
+          selectedForm.value.path,
+        );
+        sessionStorage.removeItem(cachedFormName);
         snackBar.success("Form definition saved.");
       } catch {
         snackBar.error("Unexpected error saving form definition.");
