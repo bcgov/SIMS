@@ -44,7 +44,7 @@ export default defineComponent({
     const { mapApplicationEditStatusForMinistry } = useApplication();
     const menuItems = ref<MenuItemModel[]>([]);
 
-    // Function to load application data and update menu items
+    // Function to load application data and update menu items.
     const loadApplicationData = async () => {
       const overallDetails =
         await ApplicationService.shared.getApplicationOverallDetails(
