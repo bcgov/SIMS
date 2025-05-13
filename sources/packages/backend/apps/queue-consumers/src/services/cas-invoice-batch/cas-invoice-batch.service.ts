@@ -26,7 +26,7 @@ import { CustomNamedError, getFiscalYear } from "@sims/utilities";
  */
 const INVOICES_CHUNK_SIZE_INSERTS = 150;
 /**
- * Maximum number of digits for the invoice batch name sequence.
+ * Number of digits for the invoice batch name sequence.
  */
 const BATCH_NAME_SEQUENCE_PAD = 3;
 /**

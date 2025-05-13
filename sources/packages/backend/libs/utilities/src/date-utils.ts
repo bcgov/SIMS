@@ -390,12 +390,8 @@ export const isSameOrAfterDate = (
  * @returns fiscal year, for instance, 2026 for 2025-26 fiscal year.
  */
 export function getFiscalYear(date: Date): number {
-  const referenceDate = dayjs(date);
-  const referenceYear = referenceDate.year();
-  // Fiscal year inclusive start date.
-  // The fiscal year starts on April 1st of the current year.
-  const startDate = new Date(referenceYear, 3, 1); // April 1st
-  if (referenceDate.isSameOrAfter(startDate, "day")) {
+  const referenceYear = date.getFullYear();
+  if (date.getMonth() >= 3) {
     // Any date at or after April 1st of the current year is in
     // the next year reference fiscal year convention.
     return referenceYear + 1;
