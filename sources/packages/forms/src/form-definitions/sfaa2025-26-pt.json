@@ -500,14 +500,13 @@
           "hideLabel": true,
           "tags": [],
           "conditional": {
-            "show": "true",
+            "show": "false",
             "when": "isChangeRequestApplication",
-            "eq": "false"
+            "eq": "true"
           },
           "properties": {},
           "lockKey": true,
-          "customClass": "panel-border-none panel-padding-none",
-          "isNew": false
+          "customClass": "panel-border-none panel-padding-none"
         },
         {
           "clearOnHide": false,
@@ -1073,8 +1072,8 @@
           },
           "properties": {},
           "lockKey": true,
-          "calculateServer": true,
-          "calculateValue": "// Default value set to false.\nvalue = !!data.isChangeRequestApplication;"
+          "calculateServer": false,
+          "calculateValue": ""
         }
       ],
       "input": false,
