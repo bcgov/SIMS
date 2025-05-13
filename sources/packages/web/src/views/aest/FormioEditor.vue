@@ -40,27 +40,37 @@
               :disabled="!selectedForm"
               >Repo</v-btn
             >
-            <v-autocomplete
-              v-model="selectedForm"
-              :items="formsListOptions"
-              label="Select a dynamic form"
-              item-text="title"
-              item-value="path"
-              :clearable="true"
-              :loading="formsListOptionsLoading"
-              :disabled="formsListOptionsLoading"
-              :return-object="true"
-              variant="outlined"
-              density="compact"
-              class="mr-2 float-right"
-              width="400"
-              hide-details="auto"
-              @update:modelValue="formSelected"
-            ></v-autocomplete>
           </template>
         </body-header>
       </template>
       <content-group>
+        <v-autocomplete
+          v-model="selectedForm"
+          :items="formsListOptions"
+          placeholder="Select a dynamic form"
+          item-text="title"
+          item-value="path"
+          :clearable="true"
+          :loading="formsListOptionsLoading"
+          :disabled="formsListOptionsLoading"
+          :return-object="true"
+          variant="outlined"
+          density="compact"
+          hide-details="auto"
+          class="mb-4"
+          @update:modelValue="formSelected"
+        >
+          <template v-slot:selection="{ item }">
+            <span>{{ item.title }} ({{ item.value }})</span>
+          </template>
+          <template v-slot:item="{ item, props }">
+            <v-list-item v-bind="props">
+              <v-list-item-content>
+                <v-list-item-subtitle v-text="item.value" />
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-autocomplete>
         <toggle-content
           :toggled="!selectedForm"
           message="Please select a dynamic form to be edited."

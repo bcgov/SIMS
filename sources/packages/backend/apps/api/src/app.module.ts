@@ -12,6 +12,7 @@ import {
   AuditController,
   ConfigController,
   DynamicFormController,
+  DynamicFormAESTController,
   HealthController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -99,7 +100,7 @@ export class AppModule implements NestModule {
     // Allow the configuration of the body parser for individual routes.
     consumer
       .apply(json({ limit: JSON_200KB }))
-      .forRoutes(DynamicFormController);
+      .forRoutes(DynamicFormAESTController);
     // Apply the body parser global configuration after the specific ones to allow the proper evaluation of the routes.
     consumer.apply(json()).forRoutes("*");
   }
