@@ -90,6 +90,15 @@
         "problemMatcher": []
       },
       {
+        "label": "Database - Reset for Queue-consumers E2E Tests",
+        "type": "shell",
+        "command": "npm run db:seed:test:clean && npm run test:e2e:queue-consumers:seed",
+        "options": {
+          "cwd": "${workspaceFolder:Backend}"
+        },
+        "problemMatcher": []
+      },
+      {
         "label": "View Outdated Web Packages",
         "type": "shell",
         "command": "npm outdated",
@@ -156,7 +165,10 @@
       "cslf",
       "CSLP",
       "CSPT",
+      "dependants",
       "ecert",
+      "enrolment",
+      "enrolments",
       "ESDC",
       "Formio",
       "golevelup",
@@ -166,15 +178,22 @@
       "LGCYAAAA",
       "LGCYBBBB",
       "LGCYCCCC",
+      "lmpt",
+      "lmpu",
       "MBAL",
       "MSFAA",
       "NOAAPI",
       "NSLSC",
       "Overaward",
       "overawards",
+      "PDAP",
+      "PDRJ",
+      "PDRQ",
       "PEDU",
       "personalisation",
       "postalcode",
+      "PPDA",
+      "PSFS",
       "SABC",
       "sbsd",
       "SFAS",
@@ -187,16 +206,7 @@
       "timestamptz",
       "typeorm",
       "unparse",
-      "Zeebe",
-      "lmpt",
-      "lmpu",
-      "dependants",
-      "enrolment",
-      "enrolments",
-      "PDRQ",
-      "PDAP",
-      "PPDA",
-      "PDRJ"
+      "Zeebe"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"
