@@ -138,8 +138,11 @@ export default defineComponent({
   },
   setup() {
     const snackBar = useSnackBar();
-    const { getReadyToSaveFormDefinition, getFormattedFormDefinition } =
-      useFormioUtils();
+    const {
+      getReadyToSaveFormDefinition,
+      getFormattedFormDefinition,
+      createCacheIdentifier,
+    } = useFormioUtils();
     const saveDynamicFormModal = ref({} as ModalDialog<boolean>);
     const applyDynamicFormDefinitionModal = ref({} as ModalDialog<boolean>);
     const formioBuilderRef = ref();
@@ -222,6 +225,10 @@ export default defineComponent({
         await ApiClient.DynamicForms.updateForm(selectedForm.value.path, {
           formDefinition: getReadyToSaveFormDefinition(builder.schema),
         });
+        const cachedFormName = await createCacheIdentifier(
+          selectedForm.value.path,
+        );
+        sessionStorage.removeItem(cachedFormName);
         snackBar.success("Form definition saved.");
       } catch {
         snackBar.error("Unexpected error saving form definition.");
