@@ -88,7 +88,6 @@ import {
 import router from "@/router";
 import AssessApplicationChangeRequestModal from "@/components/aest/students/modals/AssessApplicationChangeRequestModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { APPLICATION_CHANGE_CANCELLED_BY_STUDENT } from "@/constants";
 
 export default defineComponent({
   components: {
@@ -301,10 +300,7 @@ export default defineComponent({
           }
           assessApplicationChangeRequestModal.value.hideModal();
         } catch (error: unknown) {
-          if (
-            error instanceof ApiProcessError &&
-            error.errorType === APPLICATION_CHANGE_CANCELLED_BY_STUDENT
-          ) {
+          if (error instanceof ApiProcessError) {
             snackBar.warn(error.message);
           } else {
             snackBar.error(
