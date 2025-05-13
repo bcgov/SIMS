@@ -70,16 +70,13 @@ import {
   ApplicationSupplementalDataAPIOutDTO,
   ApplicationChangeRequestAPIInDTO,
 } from "@/services/http/dto";
-import {
-  ApiProcessError,
-  APPLICATION_CHANGE_CANCELLED_BY_STUDENT,
-} from "@/services/http/errors";
 import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationChangeRequestService } from "@/services/ApplicationChangeRequestService";
 import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import {
+  ApiProcessError,
   ApplicationEditStatus,
   ChangeTypes,
   FormIOComponent,
@@ -91,6 +88,7 @@ import {
 import router from "@/router";
 import AssessApplicationChangeRequestModal from "@/components/aest/students/modals/AssessApplicationChangeRequestModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { APPLICATION_CHANGE_CANCELLED_BY_STUDENT } from "@/constants";
 
 export default defineComponent({
   components: {
@@ -292,16 +290,17 @@ export default defineComponent({
         } catch (error: unknown) {
           if (
             error instanceof ApiProcessError &&
-            error.errorType === APPLICATION_CHANGE_CANCELLED_BY_STUDENT
+            (error as ApiProcessError).errorType ===
+              APPLICATION_CHANGE_CANCELLED_BY_STUDENT
           ) {
-            snackBar.error(error.message);
-          } else{
+            snackBar.warn((error as ApiProcessError).message);
+          } else {
             snackBar.error(
               "Unexpected error while updating the application change request.",
             );
-          }}
-          assessApplicationChangeRequestModal.value.loading = false;
+          }
         }
+        assessApplicationChangeRequestModal.value.loading = false;
       }
     };
 

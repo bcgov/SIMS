@@ -1,8 +1,15 @@
 <template>
   <v-form ref="assessApplicationChangeRequestForm">
-    <modal-dialog-base :showDialog="showDialog" :title="title">
+    <modal-dialog-base :showDialog="showDialog" :title="title" :maxWidth="850">
       <template #content
         ><error-summary :errors="assessApplicationChangeRequestForm.errors" />
+        <div class="mt-5">
+          <ul>
+            <li v-for="(pointer, index) in subjectPointers" :key="index">
+              {{ pointer.title }}
+            </li>
+          </ul>
+        </div>
         <p class="my-4">
           {{ subject }}
         </p>
@@ -65,10 +72,24 @@ export default defineComponent({
         ? "Decline change request"
         : "Approve change request",
     );
+    const subjectPointers = [
+      {
+        title:
+          "View the change request and any supporting documentation on the student application.",
+      },
+      {
+        title:
+          "Review all fields to ensure that information is consistent with the students current circumstances.",
+      },
+      {
+        title:
+          "When the review is complete, come back to this page to approve or deny the request.",
+      },
+    ];
     const subject = computed(() =>
       showParameter.value === ApplicationEditStatus.ChangeDeclined
-        ? "Outline the reasoning for declining this request. Please add the application number."
-        : "Outline the reasoning for approving this request. Please add the application number.",
+        ? "Outline the reasoning for declining this request."
+        : "Outline the reasoning for approving this request.",
     );
     const primaryLabel = computed(() =>
       showParameter.value === ApplicationEditStatus.ChangeDeclined
@@ -108,6 +129,7 @@ export default defineComponent({
       assessChange,
       note,
       title,
+      subjectPointers,
       subject,
       primaryLabel,
       checkNotesLengthRule,
