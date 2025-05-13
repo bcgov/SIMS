@@ -75,7 +75,6 @@ export default defineComponent({
     const DIVIDER_MENU_ITEM: MenuItemModel = {
       type: "divider",
       props: {
-        opacity: 0.75,
         class: "mx-2",
       },
     };

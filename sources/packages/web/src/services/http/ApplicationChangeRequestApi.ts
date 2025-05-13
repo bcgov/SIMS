@@ -1,17 +1,17 @@
+import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import { ApplicationChangeRequestAPIInDTO } from "@/services/http/dto/ApplicationChangeRequest.dto";
-import HttpBaseClient from "./common/HttpBaseClient";
 
 export class ApplicationChangeRequestApi extends HttpBaseClient {
   /**
    * Assesses an application change request.
    * @param applicationId application id.
-   * @param payload application data.
+   * @param payload information to update the application change request status.
    */
   async assessApplicationChangeRequest(
-    applicationChangeRequestId: number,
+    applicationId: number,
     payload: ApplicationChangeRequestAPIInDTO,
   ): Promise<void> {
-    const url = `application-change-request/${applicationChangeRequestId}`;
+    const url = `application-change-request/${applicationId}`;
     await this.patchCall(this.addClientRoot(url), payload);
   }
 }

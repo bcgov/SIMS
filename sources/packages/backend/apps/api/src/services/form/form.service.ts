@@ -6,9 +6,19 @@ import { JwtService } from "@nestjs/jwt";
 import { TokenCacheService } from "..";
 import { TokenCacheResponse } from "../auth/token-cache.service.models";
 import { HttpService } from "@nestjs/axios";
+import { FormDefinition } from "./form.service.models";
 
 // Expected header name to send the authorization token to formio API.
 const FORMIO_TOKEN_NAME = "x-jwt-token";
+/**
+ * Form.io list method requires some pagination number,
+ * otherwise it returns only 10 records.
+ */
+const FORMIO_PAGE_LIMIT = 100;
+/**
+ * Form.io list method sorting field.
+ */
+const FORMIO_LIST_SORT_FIELD = "title";
 
 @Injectable()
 export class FormService {
@@ -30,26 +40,46 @@ export class FormService {
 
   /**
    * Get a form definition from formio.
-   * @param formName Name of the form to be retrieved.
+   * @param formPath path of the form to be retrieved.
    * @returns Form definition.
    */
-  async fetch(formName: string) {
+  async fetch(formPath: string) {
     const authHeader = await this.createAuthHeader();
     const content = await this.httpService.axiosRef.get(
-      `${this.config.formsUrl}/${formName}`,
+      `${this.config.formsUrl}/${formPath}`,
       authHeader,
     );
     return content.data;
   }
 
   /**
-   * Lists form definitions that contains the tag 'common'.
+   * Lists form definitions that contains the tag 'common' ordered by title.
+   * @returns list of form definitions.
    */
-  async list() {
+  async list(): Promise<FormDefinition[]> {
+    const authHeader = await this.createAuthHeader();
     const content = await this.httpService.axiosRef.get(
-      `${this.config.formsUrl}/form?type=form&tags=common`,
+      `${this.config.formsUrl}/form?tags=common&limit=${FORMIO_PAGE_LIMIT}&sort=${FORMIO_LIST_SORT_FIELD}`,
+      authHeader,
     );
-    return content.data;
+    return content.data.map((form: FormDefinition) => ({
+      title: form.title,
+      path: form.path,
+    }));
+  }
+
+  /**
+   * Updates a form definition in Form.io server.
+   * @param formPath form path of the form to be updated.
+   * @param formDefinition the new definition of the form.
+   */
+  async updateForm(formPath: string, formDefinition: unknown): Promise<void> {
+    const authHeader = await this.createAuthHeader();
+    await this.httpService.axiosRef.put(
+      `${this.config.formsUrl}/${formPath}`,
+      formDefinition,
+      authHeader,
+    );
   }
 
   /**
@@ -59,7 +89,7 @@ export class FormService {
    * on the server side, this kind of validations will be applied during this
    * API call and the result will be the data after processed by formio.
    * Please note that the data will not be saved on formio database.
-   * @param formName Name of the form to be validated.
+   * @param formName path of the form to be validated.
    * @param data Data to be validated/processed.
    * @returns Status indicating if the data being submitted is valid or not
    * alongside with the data after formio processing.

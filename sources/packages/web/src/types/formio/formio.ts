@@ -1,5 +1,5 @@
 /**
- * FormIO form. Methods available can be checked on
+ * Form.io methods available can be checked on
  * https://help.form.io/developers/form-renderer.
  */
 export interface FormIOForm<T = unknown> extends FormIOComponent {

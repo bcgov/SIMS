@@ -26,7 +26,7 @@
                   )
                 "
                 :disabled="notAllowed"
-                >Decline change request</v-btn
+                >Decline</v-btn
               >
               <v-btn
                 class="ml-2"
@@ -37,7 +37,7 @@
                   )
                 "
                 :disabled="notAllowed"
-                >Approve change request</v-btn
+                >Approve</v-btn
               >
             </template>
           </check-permission-role>
@@ -76,6 +76,7 @@ import { useFormatters } from "@/composables/useFormatters";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { ModalDialog, useFormioUtils, useSnackBar } from "@/composables";
 import {
+  ApiProcessError,
   ApplicationEditStatus,
   ChangeTypes,
   FormIOComponent,
@@ -86,7 +87,6 @@ import {
 } from "@/types";
 import router from "@/router";
 import mitt from "mitt";
-import router from "@/router";
 import AssessApplicationChangeRequestModal from "@/components/aest/students/modals/AssessApplicationChangeRequestModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
@@ -268,7 +268,9 @@ export default defineComponent({
     }
 
     const assessApplicationChangeRequest = async (
-      applicationChangeRequestStatus: ApplicationEditStatus,
+      applicationChangeRequestStatus:
+        | ApplicationEditStatus.ChangedWithApproval
+        | ApplicationEditStatus.ChangeDeclined,
     ) => {
       const responseData =
         await assessApplicationChangeRequestModal.value.showModal(
@@ -281,19 +283,41 @@ export default defineComponent({
             props.versionApplicationId as number,
             { ...responseData, studentId: props.studentId },
           );
-          // Emit the event to refresh the sidebar after successful application change request.
+          // Emit the event to refresh the application sidebar after the application change request is assessed.
           applicationEventBus.emit(EVENTS.REFRESH_SIDEBAR);
+          // When the change request is approved, the version application becomes the current application.
+          // But when the change request is declined, the current application remains the same.
+          const currentApplicationId =
+            applicationChangeRequestStatus ===
+            ApplicationEditStatus.ChangedWithApproval
+              ? props.versionApplicationId
+              : props.applicationId;
           router.push({
-            name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+            name: AESTRoutesConst.APPLICATION_DETAILS,
+            params: {
+              applicationId: currentApplicationId,
+              studentId: props.studentId,
+            },
           });
-          snackBar.success(
-            "Your decision was submitted. You can refer to the outcome below.",
-          );
+          // TODO: Implement the API to do the actual update.
+          if (
+            applicationChangeRequestStatus ===
+            ApplicationEditStatus.ChangedWithApproval
+          ) {
+            snackBar.success("Change approved.");
+          } else {
+            snackBar.success("Change declined.");
+          }
           assessApplicationChangeRequestModal.value.hideModal();
-        } catch {
-          snackBar.error(
-            "Unexpected error while updating the application change request.",
-          );
+        } catch (error: unknown) {
+          if (error instanceof ApiProcessError) {
+            snackBar.warn(error.message);
+          } else {
+            snackBar.error(
+              "Unexpected error while updating the application change request.",
+            );
+          }
+        } finally {
           assessApplicationChangeRequestModal.value.loading = false;
         }
       }
