@@ -12,7 +12,7 @@ export class ApplicationChangeRequestService {
   /**
    * Assesses an application change request.
    * @param applicationId application id.
-   * @param payload information to update the application offering change request status.
+   * @param payload information to update the application change request status.
    */
   async assessApplicationChangeRequest(
     applicationId: number,
