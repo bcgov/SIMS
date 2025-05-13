@@ -32,6 +32,7 @@ import { ApplicationRestrictionBypassApi } from "@/services/http/ApplicationRest
 import { CASInvoiceBatchApi } from "@/services/http/CASInvoiceBatchApi";
 import { CASInvoiceApi } from "@/services/http/CASInvoiceApi";
 import { DynamicFormConfigurationApi } from "@/services/http/DynamicFormConfigurationApi";
+import { ApplicationChangeRequestApi } from "@/services/http/ApplicationChangeRequestApi";
 
 const ApiClient = {
   AuditApi: new AuditApi(),
@@ -69,6 +70,7 @@ const ApiClient = {
   CASInvoiceBatchApi: new CASInvoiceBatchApi(),
   CASInvoiceApi: new CASInvoiceApi(),
   DynamicFormConfigurationApi: new DynamicFormConfigurationApi(),
+  ApplicationChangeRequestApi: new ApplicationChangeRequestApi(),
 };
 
 export default ApiClient;

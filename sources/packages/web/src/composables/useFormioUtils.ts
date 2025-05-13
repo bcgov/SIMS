@@ -1,8 +1,28 @@
 import { FormIOComponent, FormIOForm } from "@/types";
 import { ClassConstructor, plainToClass } from "class-transformer";
 import { Utils } from "@formio/js";
+import { AppConfigService } from "@/services/AppConfigService";
 
 const UTILS_COMMON_OBJECT_NAME = "custom";
+
+/**
+ * Properties that are not required to be saved.
+ */
+const NON_REQUIRED_FORM_PROPERTIES = [
+  "_id",
+  "access",
+  "owner",
+  "created",
+  "machineName",
+  "modified",
+  "submissionAccess",
+  "pdfComponents",
+];
+
+/**
+ * Indentation spacing for JSON formats.
+ */
+const JSON_FORMAT_SPACES = 2;
 
 /**
  * Form.IO helper methods.
@@ -261,6 +281,44 @@ export function useFormioUtils() {
     customUtils[name] = method;
   };
 
+  /**
+   * Generate the dynamic form definition removing unwanted properties.
+   * @param formDefinition form definition object to be saved.
+   * @returns form definition object ready to be saved.
+   */
+  const getReadyToSaveFormDefinition = (formDefinition: unknown): unknown => {
+    // Clone the form definition to avoid modifying the original one.
+    const clonedForm = JSON.parse(JSON.stringify(formDefinition));
+    // Remove non-required properties from the form definition.
+    NON_REQUIRED_FORM_PROPERTIES.forEach((property) => {
+      delete clonedForm[property];
+    });
+    return clonedForm;
+  };
+
+  /**
+   * Get the formatted form.io definition.
+   * @param formDefinition form definition object to be formatted.
+   * @returns formatted JSON.
+   */
+  const getFormattedFormDefinition = (formDefinition: unknown): string => {
+    return JSON.stringify(
+      getReadyToSaveFormDefinition(formDefinition),
+      null,
+      JSON_FORMAT_SPACES,
+    );
+  };
+
+  /**
+   * Create a cache identifier for the form path.
+   * @param formPath form path to be used as a cache identifier.
+   * @returns cache identifier string.
+   */
+  const createCacheIdentifier = async (formPath: string): Promise<string> => {
+    const { version } = await AppConfigService.shared.config();
+    return `${formPath}-${version}`.toLowerCase();
+  };
+
   return {
     getComponent,
     getFirstComponent,
@@ -278,5 +336,8 @@ export function useFormioUtils() {
     excludeExtraneousValues,
     searchByKey,
     registerUtilsMethod,
+    getReadyToSaveFormDefinition,
+    getFormattedFormDefinition,
+    createCacheIdentifier,
   };
 }

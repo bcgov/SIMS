@@ -18,6 +18,7 @@ import {
   mockBullJob,
 } from "../../../../../test/helpers";
 import {
+  Application,
   CASInvoiceBatchApprovalStatus,
   CASInvoiceStatus,
   DisbursementValueType,
@@ -26,6 +27,8 @@ import {
 } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
 import { CASInvoicesBatchesCreationScheduler } from "../cas-invoices-batches-creation.scheduler";
+import { In } from "typeorm";
+import MockDate from "mockdate";
 
 const CAS_INVOICE_BATCH_SEQUENCE_NAME = "CAS_INVOICE_BATCH";
 const CAS_INVOICE_SEQUENCE_NAME = "CAS_INVOICE";
@@ -37,6 +40,9 @@ describe(
     let processor: CASSupplierIntegrationScheduler;
     let db: E2EDataSources;
     let systemUsersService: SystemUsersService;
+    let casInvoiceBatchSequenceName: string;
+    let casInvoiceSequenceName: string;
+    const defaultBatchName = "PSFS25001-1";
 
     beforeAll(async () => {
       const { nestApplication, dataSource } = await createTestingAppModule();
@@ -45,6 +51,11 @@ describe(
       db = createE2EDataSources(dataSource);
       // Processor under test.
       processor = app.get(CASInvoicesBatchesCreationScheduler);
+      // Sets the date to ensure fiscal year is always the same.
+      // Expected fiscal year is 2025.
+      MockDate.set("2025-01-01");
+      casInvoiceBatchSequenceName = `${CAS_INVOICE_BATCH_SEQUENCE_NAME}_25`;
+      casInvoiceSequenceName = `${CAS_INVOICE_SEQUENCE_NAME}_25`;
     });
 
     beforeEach(async () => {
@@ -62,10 +73,7 @@ describe(
       await db.casInvoiceBatch.delete({});
       // Reset sequence numbers.
       await db.sequenceControl.delete({
-        sequenceName: CAS_INVOICE_BATCH_SEQUENCE_NAME,
-      });
-      await db.sequenceControl.delete({
-        sequenceName: CAS_INVOICE_SEQUENCE_NAME,
+        sequenceName: In([casInvoiceBatchSequenceName, casInvoiceSequenceName]),
       });
     });
 
@@ -130,6 +138,7 @@ describe(
           db,
           firstDisbursementSchedule,
         );
+      const invoiceNumber = createInvoiceNameFromApplication(application);
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -139,7 +148,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "Batch created: SIMS-BATCH-1.",
+        `Batch created: ${defaultBatchName}.`,
         "Invoices created: 1.",
       ]);
       expect(
@@ -148,7 +157,7 @@ describe(
           "Checking for pending receipts.",
           "Found 1 pending receipts.",
           `Creating invoice for receipt ID ${provincialDisbursementReceipt.id}.`,
-          `Invoice SIMS-INVOICE-1-${casSupplier.supplierNumber} created for receipt ID ${provincialDisbursementReceipt.id}.`,
+          `Invoice ${invoiceNumber} created for receipt ID ${provincialDisbursementReceipt.id}.`,
           `Created invoice detail for award BCAG(CR).`,
           `Created invoice detail for award BCAG(DR).`,
           `Created invoice detail for award SBSD(CR).`,
@@ -203,7 +212,7 @@ describe(
       const [expectedBatch] = createdBatches;
       // Assert batch, invoices and its details.
       expect(expectedBatch).toEqual({
-        batchName: "SIMS-BATCH-1",
+        batchName: defaultBatchName,
         batchDate: expect.any(Date),
         approvalStatus: CASInvoiceBatchApprovalStatus.Pending,
         approvalStatusUpdatedOn: expect.any(Date),
@@ -213,7 +222,7 @@ describe(
         casInvoices: [
           {
             id: expect.any(Number),
-            invoiceNumber: `SIMS-INVOICE-1-${casSupplier.supplierNumber}`,
+            invoiceNumber,
             invoiceStatus: CASInvoiceStatus.Pending,
             invoiceStatusUpdatedOn: expect.any(Date),
             disbursementReceipt: {
@@ -278,7 +287,7 @@ describe(
           sequenceNumber: true,
         },
         where: {
-          sequenceName: CAS_INVOICE_SEQUENCE_NAME,
+          sequenceName: casInvoiceSequenceName,
         },
       });
       expect(currentInvoiceSequenceNumber.sequenceNumber).toEqual("2");
@@ -361,6 +370,9 @@ describe(
         provincialDisbursementReceipt: provincialDisbursementReceiptWithInvoice,
         casSupplier,
       });
+      const invoiceNumber = createInvoiceNameFromApplication(
+        applicationWithoutInvoice,
+      );
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -370,7 +382,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "Batch created: SIMS-BATCH-1.",
+        `Batch created: ${defaultBatchName}.`,
         "Invoices created: 1.",
       ]);
       expect(
@@ -379,7 +391,7 @@ describe(
           "Checking for pending receipts.",
           "Found 1 pending receipts.",
           `Creating invoice for receipt ID ${provincialDisbursementReceiptWithoutInvoice.id}.`,
-          `Invoice SIMS-INVOICE-1-${casSupplier.supplierNumber} created for receipt ID ${provincialDisbursementReceiptWithoutInvoice.id}.`,
+          `Invoice ${invoiceNumber} created for receipt ID ${provincialDisbursementReceiptWithoutInvoice.id}.`,
           `Created invoice detail for award BCAG(CR).`,
           `Created invoice detail for award BCAG(DR).`,
           `CAS invoices batches creation process executed.`,
@@ -463,5 +475,19 @@ describe(
       // Assert the sequence number was not created.
       expect(batchSequenceNumberExists).toBe(false);
     });
+
+    /**
+     * Generate the invoice name based on the application.
+     * @param application application with the information to generate the invoice name.
+     * @returns expected invoice name.
+     */
+    function createInvoiceNameFromApplication(
+      application: Application,
+    ): string {
+      const casSupplier = application.student.casSupplier;
+      const [firstDisbursementSchedule] =
+        application.currentAssessment.disbursementSchedules;
+      return `23S${application.currentAssessment.offering.institutionLocation.institutionCode}${casSupplier.supplierNumber}-${firstDisbursementSchedule.documentNumber}-1`;
+    }
   },
 );

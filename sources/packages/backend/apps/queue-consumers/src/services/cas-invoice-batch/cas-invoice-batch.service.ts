@@ -18,13 +18,23 @@ import {
 import { DataSource, EntityManager } from "typeorm";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, getFiscalYear } from "@sims/utilities";
 
 /**
  * Chunk size for inserting invoices. The invoices (and its details) will
  * be grouped in chunks to be inserted in the database.
  */
 const INVOICES_CHUNK_SIZE_INSERTS = 150;
+/**
+ * Number of digits for the invoice batch name sequence.
+ */
+const BATCH_NAME_SEQUENCE_PAD = 3;
+/**
+ * Number to be subtracted from the year to get the
+ * two digits format to be used in the invoice batch name
+ * and invoice number.
+ */
+const YEAR_ADJUSTMENT = 2000;
 
 @Injectable()
 export class CASInvoiceBatchService {
@@ -45,10 +55,14 @@ export class CASInvoiceBatchService {
     processSummary: ProcessSummary,
   ): Promise<CASInvoiceBatch | null> {
     return this.dataSource.transaction(async (entityManager) => {
+      const now = new Date();
+      // Gets the current fiscal year to be used (e.g. 2025) and adjust it to 2 digits only (e.g. 25).
+      const fiscalYear = getFiscalYear(now) - YEAR_ADJUSTMENT;
       let newBatchUniqueSequence: number;
       // Consumes the next sequence number and prevent concurrent access.
+      // The sequence resets every fiscal year.
       await this.sequenceControlService.consumeNextSequenceWithExistingEntityManager(
-        "CAS_INVOICE_BATCH",
+        `CAS_INVOICE_BATCH_${fiscalYear}`,
         entityManager,
         async (nextSequenceNumber: number) => {
           newBatchUniqueSequence = nextSequenceNumber;
@@ -67,10 +81,13 @@ export class CASInvoiceBatchService {
         );
       }
       processSummary.info(`Found ${pendingReceipts.length} pending receipts.`);
-      const now = new Date();
       // Create the new invoice batch.
       const invoiceBatch = new CASInvoiceBatch();
-      invoiceBatch.batchName = `SIMS-BATCH-${newBatchUniqueSequence}`;
+      // Create the batch name.
+      const batchCounter = newBatchUniqueSequence
+        .toString()
+        .padStart(BATCH_NAME_SEQUENCE_PAD, "0");
+      invoiceBatch.batchName = `PSFS${fiscalYear}${batchCounter}-${pendingReceipts.length}`;
       invoiceBatch.batchDate = now;
       invoiceBatch.approvalStatus = CASInvoiceBatchApprovalStatus.Pending;
       invoiceBatch.approvalStatusUpdatedOn = now;
@@ -88,7 +105,7 @@ export class CASInvoiceBatchService {
         entityManager,
       );
       await this.sequenceControlService.consumeNextSequenceWithExistingEntityManager(
-        "CAS_INVOICE",
+        `CAS_INVOICE_${fiscalYear}`,
         entityManager,
         async (nextSequenceNumber: number) => {
           casInvoices = this.createInvoices(
@@ -148,9 +165,11 @@ export class CASInvoiceBatchService {
       newInvoice.casInvoiceBatch = { id: invoiceBatchID } as CASInvoiceBatch;
       newInvoice.disbursementReceipt = receipt;
       newInvoice.casSupplier = student.casSupplier;
-      newInvoice.invoiceNumber = `SIMS-INVOICE-${newInvoiceSequence++}-${
-        student.casSupplier.supplierNumber
-      }`;
+      newInvoice.invoiceNumber = this.createInvoiceNumberIdentifier(
+        receipt,
+        newInvoiceSequence,
+      );
+      newInvoiceSequence++;
       newInvoice.invoiceStatus = CASInvoiceStatus.Pending;
       newInvoice.invoiceStatusUpdatedOn = referenceDate;
       newInvoice.creator = systemUser;
@@ -175,6 +194,29 @@ export class CASInvoiceBatchService {
       });
     }
     return casInvoices;
+  }
+
+  /**
+   * Create a unique invoice number identifier.
+   * @param receipt disbursement receipt to be used for creating the invoice number.
+   * @param invoiceSequence fiscal year sequence number to be used for creating the invoice number.
+   * @returns unique invoice number identifier.
+   */
+  private createInvoiceNumberIdentifier(
+    receipt: DisbursementReceipt,
+    invoiceSequence: number,
+  ): string {
+    // Shortened variables to improve readability.
+    const schedule = receipt.disbursementSchedule;
+    const application = schedule.studentAssessment.application;
+    const student = application.student;
+    const offering = schedule.studentAssessment.offering;
+    // Variables to create the invoice number.
+    const programYearEndDateYear =
+      new Date(application.programYear.endDate).getFullYear() - YEAR_ADJUSTMENT;
+    const institutionCode = offering.institutionLocation.institutionCode;
+    const documentNumber = schedule.documentNumber;
+    return `${programYearEndDateYear}S${institutionCode}${student.casSupplier.supplierNumber}-${documentNumber}-${invoiceSequence}`;
   }
 
   /**
@@ -261,6 +303,7 @@ export class CASInvoiceBatchService {
       .select([
         "disbursementReceipt.id",
         "disbursementSchedule.id",
+        "disbursementSchedule.documentNumber",
         "studentAssessment.id",
         "offering.id",
         "offering.offeringIntensity",
@@ -271,6 +314,10 @@ export class CASInvoiceBatchService {
         "disbursementValue.id",
         "disbursementValue.valueCode",
         "disbursementValue.effectiveAmount",
+        "programYear.id",
+        "programYear.endDate",
+        "institutionLocation.id",
+        "institutionLocation.institutionCode",
       ])
       .innerJoin(
         "disbursementReceipt.disbursementReceiptValues",
@@ -283,8 +330,10 @@ export class CASInvoiceBatchService {
       .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
       .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.offering", "offering")
+      .innerJoin("offering.institutionLocation", "institutionLocation")
       .innerJoin("studentAssessment.application", "application")
       .innerJoin("application.student", "student")
+      .innerJoin("application.programYear", "programYear")
       .innerJoin("student.casSupplier", "casSupplier")
       .where("disbursementReceipt.fundingType != :federalFundingType", {
         federalFundingType: RECEIPT_FUNDING_TYPE_FEDERAL,

@@ -24,7 +24,6 @@ import {
   FormIOForm,
 } from "@/types";
 import { v4 as uuid } from "uuid";
-import { AppConfigService } from "@/services/AppConfigService";
 import { useFormatters, useFormioUtils, useOffering } from "@/composables";
 
 export default defineComponent({
@@ -63,7 +62,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { registerUtilsMethod } = useFormioUtils();
+    const { registerUtilsMethod, createCacheIdentifier } = useFormioUtils();
     const { currencyFormatter } = useFormatters();
     const { mapOfferingIntensity } = useOffering();
     // Register global utils functions.
@@ -89,9 +88,7 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      const { version } = await AppConfigService.shared.config();
-      const cachedFormName = `${props.formName}-${version}`;
-
+      const cachedFormName = await createCacheIdentifier(props.formName);
       let cachedFormDefinition: string | null = null;
       // Avoid caching during development to allow that the changes
       // on form.io definitions have effect immediately.
