@@ -261,7 +261,9 @@ export default defineComponent({
     }
 
     const assessApplicationChangeRequest = async (
-      applicationChangeRequestStatus: ApplicationEditStatus,
+      applicationChangeRequestStatus:
+        | ApplicationEditStatus.ChangedWithApproval
+        | ApplicationEditStatus.ChangeDeclined,
     ) => {
       const responseData =
         await assessApplicationChangeRequestModal.value.showModal(
@@ -274,26 +276,20 @@ export default defineComponent({
             props.versionApplicationId as number,
             responseData,
           );
-          if (
+          // When the change request is approved, the version application becomes the current application.
+          // But when the change request is declined, the current application remains the same.
+          const currentApplicationId =
             applicationChangeRequestStatus ===
             ApplicationEditStatus.ChangedWithApproval
-          ) {
-            router.push({
-              name: AESTRoutesConst.APPLICATION_DETAILS,
-              params: {
-                applicationId: props.versionApplicationId,
-                studentId: props.studentId,
-              },
-            });
-          } else {
-            router.push({
-              name: AESTRoutesConst.APPLICATION_DETAILS,
-              params: {
-                applicationId: props.applicationId,
-                studentId: props.studentId,
-              },
-            });
-          }
+              ? props.versionApplicationId
+              : props.applicationId;
+          router.push({
+            name: AESTRoutesConst.APPLICATION_DETAILS,
+            params: {
+              applicationId: currentApplicationId,
+              studentId: props.studentId,
+            },
+          });
           // TODO: Implement the API to do the actual update.
           if (
             applicationChangeRequestStatus ===
@@ -307,17 +303,17 @@ export default defineComponent({
         } catch (error: unknown) {
           if (
             error instanceof ApiProcessError &&
-            (error as ApiProcessError).errorType ===
-              APPLICATION_CHANGE_CANCELLED_BY_STUDENT
+            error.errorType === APPLICATION_CHANGE_CANCELLED_BY_STUDENT
           ) {
-            snackBar.warn((error as ApiProcessError).message);
+            snackBar.warn(error.message);
           } else {
             snackBar.error(
               "Unexpected error while updating the application change request.",
             );
           }
+        } finally {
+          assessApplicationChangeRequestModal.value.loading = false;
         }
-        assessApplicationChangeRequestModal.value.loading = false;
       }
     };
 

@@ -5,7 +5,7 @@ export class ApplicationChangeRequestApi extends HttpBaseClient {
   /**
    * Assesses an application change request.
    * @param applicationId application id.
-   * @param payload application data.
+   * @param payload information to update the application change request status.
    */
   async assessApplicationChangeRequest(
     applicationId: number,
