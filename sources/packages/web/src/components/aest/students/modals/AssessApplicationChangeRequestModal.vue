@@ -58,8 +58,6 @@ export default defineComponent({
       hideModal,
       loading,
     } = useModalDialog<ApplicationChangeRequestAPIInDTO | false>();
-    const assessApplicationChangeRequestModal =
-      {} as ApplicationChangeRequestAPIInDTO;
     const assessApplicationChangeRequestForm = ref({} as VForm);
     const { checkNotesLengthRule } = useRules();
     const title = computed(() =>
@@ -88,12 +86,15 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      assessApplicationChangeRequestModal.applicationEditStatus =
-        showParameter.value;
-      assessApplicationChangeRequestModal.note = note.value ?? "";
-      await resolvePromise(assessApplicationChangeRequestModal, {
-        keepModalOpen: true,
-      });
+      resolvePromise(
+        {
+          note: note.value as string,
+          applicationEditStatus: showParameter.value,
+        },
+        {
+          keepModalOpen: true,
+        },
+      );
       assessApplicationChangeRequestForm.value.reset();
     };
     return {

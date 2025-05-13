@@ -1,16 +1,17 @@
-import { ApplicationChangeRequestAPIInDTO } from "@/services/http/dto/ApplicationChangeRequest.dto";
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
+import { ApplicationChangeRequestAPIInDTO } from "@/services/http/dto/ApplicationChangeRequest.dto";
 
 export class ApplicationChangeRequestApi extends HttpBaseClient {
   /**
    * Assesses an application change request.
-   * @param applicationChangeRequestId application change request id.
+   * @param applicationId application id.
    * @param payload application data.
    */
   async assessApplicationChangeRequest(
-    applicationChangeRequestId: number,
+    applicationId: number,
     payload: ApplicationChangeRequestAPIInDTO,
   ): Promise<void> {
-    // TODO: Implement the patchCall method in HttpBaseClient
+    const url = `application-change-request/${applicationId}`;
+    await this.patchCall(this.addClientRoot(url), payload);
   }
 }

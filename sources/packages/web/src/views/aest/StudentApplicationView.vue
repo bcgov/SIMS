@@ -70,6 +70,10 @@ import {
   ApplicationSupplementalDataAPIOutDTO,
   ApplicationChangeRequestAPIInDTO,
 } from "@/services/http/dto";
+import {
+  ApiProcessError,
+  APPLICATION_CHANGE_CANCELLED_BY_STUDENT,
+} from "@/services/http/errors";
 import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationChangeRequestService } from "@/services/ApplicationChangeRequestService";
 import { useFormatters } from "@/composables/useFormatters";
@@ -276,14 +280,26 @@ export default defineComponent({
             name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
           });
           // TODO: Implement the API to do the actual update.
-          snackBar.success(
-            "Your decision was submitted. You can refer to the outcome below.",
-          );
+          if (
+            applicationChangeRequestStatus ===
+            ApplicationEditStatus.ChangedWithApproval
+          ) {
+            snackBar.success("Change approved.");
+          } else {
+            snackBar.success("Change declined.");
+          }
           assessApplicationChangeRequestModal.value.hideModal();
-        } catch {
-          snackBar.error(
-            "Unexpected error while updating the application change request.",
-          );
+        } catch (error: unknown) {
+          if (
+            error instanceof ApiProcessError &&
+            error.errorType === APPLICATION_CHANGE_CANCELLED_BY_STUDENT
+          ) {
+            snackBar.error(error.message);
+          } else{
+            snackBar.error(
+              "Unexpected error while updating the application change request.",
+            );
+          }}
           assessApplicationChangeRequestModal.value.loading = false;
         }
       }
