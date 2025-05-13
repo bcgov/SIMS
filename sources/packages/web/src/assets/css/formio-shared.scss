@@ -608,6 +608,10 @@
   border: 0 !important;
 }
 
+.formio-component-panel.panel-padding-none .card-body {
+  padding: 0 !important;
+}
+
 // Style to add padding to the bullet item.
 .align-bullet-item li {
   padding-left: 20px;

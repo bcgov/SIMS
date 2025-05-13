@@ -16,7 +16,7 @@
     @secondaryClick="wizardGoPrevious"
     :showPrimaryButton="!isLastPage"
     :showSecondaryButton="!isFirstPage"
-    :primaryLabel="!isFirstPage ? 'Next section' : 'Start your application'"
+    :primaryLabel="wizardPrimaryLabel"
     secondaryLabel="Previous section"
     class="mx-0"
   >
@@ -122,6 +122,15 @@ export default defineComponent({
     const showNav = ref(false);
     const formData = ref({} as StudentApplicationFormData);
     let offeringIntensity: OfferingIntensity;
+
+    const wizardPrimaryLabel = computed(() => {
+      if (isFirstPage.value) {
+        return props.initialData.isChangeRequestApplication
+          ? "Start change request"
+          : "Start your application";
+      }
+      return "Next section";
+    });
 
     const isSaveDraftAllowed = computed(
       () => !props.notDraft && !isFirstPage.value && !props.processing,
@@ -377,6 +386,7 @@ export default defineComponent({
       showNav,
       isSaveDraftAllowed,
       formData,
+      wizardPrimaryLabel,
     };
   },
 });
