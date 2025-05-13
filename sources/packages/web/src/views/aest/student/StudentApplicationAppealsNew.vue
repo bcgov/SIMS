@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Student requests"
-        subTitle="Change requests (2024-2025)"
+        subTitle="Change requests (2025-2026)"
       />
     </template>
     <body-header
@@ -90,7 +90,6 @@ import {
   PAGINATION_LIST,
   DataTableSortOrder,
   DEFAULT_PAGE_NUMBER,
-  PageAndSortEvent,
   PaginatedResults,
 } from "@/types";
 import { useFormatters } from "@/composables";
@@ -137,13 +136,13 @@ export default defineComponent({
         });
     };
 
-    const pageEvent = async (event: PageAndSortEvent) => {
+    const pageEvent = async (event: any) => {
       page.value = event?.page;
       pageLimit.value = event?.rows;
       await getAppealList();
     };
 
-    const sortEvent = async (event: PageAndSortEvent) => {
+    const sortEvent = async (event: any) => {
       page.value = DEFAULT_PAGE_NUMBER;
       pageLimit.value = DEFAULT_PAGE_LIMIT;
       sortField.value = event.sortField;
