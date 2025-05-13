@@ -203,7 +203,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
   /**
    * Approve or decline the application offering change request status.
    * @param applicationOfferingChangeRequestId application offering change request id.
-   * @param payload information to update the application offering change request status and save the declaration.
+   * @param payload information to update the application change request status and save the declaration.
    */
   async assessApplicationOfferingChangeRequest(
     applicationOfferingChangeRequestId: number,

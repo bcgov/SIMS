@@ -5,8 +5,17 @@
         ><error-summary :errors="assessApplicationChangeRequestForm.errors" />
         <div class="mt-5">
           <ul class="ml-0 pl-4">
-            <li v-for="(pointer, index) in subjectPointers" :key="index">
-              {{ pointer.title }}
+            <li>
+              View the change request and any supporting documentation on the
+              student application.
+            </li>
+            <li>
+              Review all fields to ensure that information is consistent with
+              the students current circumstances.
+            </li>
+            <li>
+              When the review is complete, come back to this page to approve or
+              deny the request.
             </li>
           </ul>
         </div>
@@ -72,20 +81,6 @@ export default defineComponent({
         ? "Decline change request"
         : "Approve change request",
     );
-    const subjectPointers = [
-      {
-        title:
-          "View the change request and any supporting documentation on the student application.",
-      },
-      {
-        title:
-          "Review all fields to ensure that information is consistent with the students current circumstances.",
-      },
-      {
-        title:
-          "When the review is complete, come back to this page to approve or deny the request.",
-      },
-    ];
     const subject = computed(() =>
       showParameter.value === ApplicationEditStatus.ChangeDeclined
         ? "Outline the reasoning for declining this request."
@@ -129,7 +124,6 @@ export default defineComponent({
       assessChange,
       note,
       title,
-      subjectPointers,
       subject,
       primaryLabel,
       checkNotesLengthRule,
