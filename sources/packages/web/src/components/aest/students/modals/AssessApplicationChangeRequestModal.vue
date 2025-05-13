@@ -1,10 +1,10 @@
 <template>
   <v-form ref="assessApplicationChangeRequestForm">
-    <modal-dialog-base :showDialog="showDialog" :title="title" :maxWidth="850">
+    <modal-dialog-base :showDialog="showDialog" :title="title" :maxWidth="860">
       <template #content
         ><error-summary :errors="assessApplicationChangeRequestForm.errors" />
         <div class="mt-5">
-          <ul>
+          <ul class="ml-0 pl-4">
             <li v-for="(pointer, index) in subjectPointers" :key="index">
               {{ pointer.title }}
             </li>
