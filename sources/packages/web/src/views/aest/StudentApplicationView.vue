@@ -274,9 +274,26 @@ export default defineComponent({
             props.versionApplicationId as number,
             responseData,
           );
-          router.push({
-            name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-          });
+          if (
+            applicationChangeRequestStatus ===
+            ApplicationEditStatus.ChangedWithApproval
+          ) {
+            router.push({
+              name: AESTRoutesConst.APPLICATION_DETAILS,
+              params: {
+                applicationId: props.versionApplicationId,
+                studentId: props.studentId,
+              },
+            });
+          } else {
+            router.push({
+              name: AESTRoutesConst.APPLICATION_DETAILS,
+              params: {
+                applicationId: props.applicationId,
+                studentId: props.studentId,
+              },
+            });
+          }
           // TODO: Implement the API to do the actual update.
           if (
             applicationChangeRequestStatus ===
