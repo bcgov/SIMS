@@ -145,156 +145,156 @@ jobs:
       - name: Print env
         run: |
           echo Deploy Environment: ${{ inputs.environment }}
-          echo GIT REF: ${{ env.BUILD_REF }}
+          echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo OC CLI Version: $(oc version)
-      - name: Checkout Target Branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.env-setup.outputs.build-ref }}
-      - name: Log in to OpenShift
-        run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Run db-migrations
-        working-directory: "./devops/"
-        run: |
-          make oc-run-db-migrations
+  #     - name: Checkout Target Branch
+  #       uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ needs.env-setup.outputs.build-ref }}
+  #     - name: Log in to OpenShift
+  #       run: |
+  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+  #     - name: Run db-migrations
+  #       working-directory: "./devops/"
+  #       run: |
+  #         make oc-run-db-migrations
 
-  # Deploy SIMS API.
-  deploy-sims-api:
-    name: Deploy SIMS-API
-    environment: ${{ inputs.environment }}
-    runs-on: ubuntu-latest
-    needs: [env-setup, run-db-migrations]
-    steps:
-      - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
-        with:
-          oc: "4"
-      - name: Print env
-        run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ env.BUILD_REF }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo OC CLI Version: $(oc version)
-      - name: Checkout Target Branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.env-setup.outputs.build-ref }}
-      - name: Log in to OpenShift
-        run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Deploy SIMS-API
-        working-directory: "./devops/"
-        run: |
-          make oc-deploy-api
+  # # Deploy SIMS API.
+  # deploy-sims-api:
+  #   name: Deploy SIMS-API
+  #   environment: ${{ inputs.environment }}
+  #   runs-on: ubuntu-latest
+  #   needs: [env-setup, run-db-migrations]
+  #   steps:
+  #     - name: Install CLI tools from OpenShift Mirror
+  #       uses: redhat-actions/openshift-tools-installer@v1
+  #       with:
+  #         oc: "4"
+  #     - name: Print env
+  #       run: |
+  #         echo Deploy ENVIRONMENT: ${{ inputs.environment }}
+  #         echo GIT REF: ${{ env.BUILD_REF }}
+  #         echo BUILD NAMESPACE: $BUILD_NAMESPACE
+  #         echo OC CLI Version: $(oc version)
+  #     - name: Checkout Target Branch
+  #       uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ needs.env-setup.outputs.build-ref }}
+  #     - name: Log in to OpenShift
+  #       run: |
+  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+  #     - name: Deploy SIMS-API
+  #       working-directory: "./devops/"
+  #       run: |
+  #         make oc-deploy-api
 
-  # Deploy workers.
-  deploy-workers:
-    name: Deploy Workers
-    environment: ${{ inputs.environment }}
-    env:
-      DISABLE_ORM_CACHE: true
-    runs-on: ubuntu-latest
-    needs: [env-setup, run-db-migrations]
-    steps:
-      - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
-        with:
-          oc: "4"
-      - name: Print env
-        run: |
-          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ env.BUILD_REF }}
-          echo OC CLI Version: $(oc version)
-      - name: Checkout Target Branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.env-setup.outputs.build-ref }}
-      - name: Log in to OpenShift
-        run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Deploy Workers
-        working-directory: "./devops/"
-        run: |
-          make oc-deploy-workers
+  # # Deploy workers.
+  # deploy-workers:
+  #   name: Deploy Workers
+  #   environment: ${{ inputs.environment }}
+  #   env:
+  #     DISABLE_ORM_CACHE: true
+  #   runs-on: ubuntu-latest
+  #   needs: [env-setup, run-db-migrations]
+  #   steps:
+  #     - name: Install CLI tools from OpenShift Mirror
+  #       uses: redhat-actions/openshift-tools-installer@v1
+  #       with:
+  #         oc: "4"
+  #     - name: Print env
+  #       run: |
+  #         echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+  #         echo GIT REF: ${{ env.BUILD_REF }}
+  #         echo OC CLI Version: $(oc version)
+  #     - name: Checkout Target Branch
+  #       uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ needs.env-setup.outputs.build-ref }}
+  #     - name: Log in to OpenShift
+  #       run: |
+  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+  #     - name: Deploy Workers
+  #       working-directory: "./devops/"
+  #       run: |
+  #         make oc-deploy-workers
 
-  # Deploy queue consumers.
-  deploy-queue-consumers:
-    name: Deploy Queue Consumers
-    environment: ${{ inputs.environment }}
-    runs-on: ubuntu-latest
-    needs: [env-setup, run-db-migrations]
-    steps:
-      - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
-        with:
-          oc: "4"
-      - name: Print env
-        run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ env.BUILD_REF }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo OC CLI Version: $(oc version)
-      - name: Checkout Target Branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.env-setup.outputs.build-ref }}
-      - name: Log in to OpenShift
-        run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Deploy Queue Consumers
-        working-directory: "./devops/"
-        run: |
-          make oc-deploy-queue-consumers
+  # # Deploy queue consumers.
+  # deploy-queue-consumers:
+  #   name: Deploy Queue Consumers
+  #   environment: ${{ inputs.environment }}
+  #   runs-on: ubuntu-latest
+  #   needs: [env-setup, run-db-migrations]
+  #   steps:
+  #     - name: Install CLI tools from OpenShift Mirror
+  #       uses: redhat-actions/openshift-tools-installer@v1
+  #       with:
+  #         oc: "4"
+  #     - name: Print env
+  #       run: |
+  #         echo Deploy ENVIRONMENT: ${{ inputs.environment }}
+  #         echo GIT REF: ${{ env.BUILD_REF }}
+  #         echo BUILD NAMESPACE: $BUILD_NAMESPACE
+  #         echo OC CLI Version: $(oc version)
+  #     - name: Checkout Target Branch
+  #       uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ needs.env-setup.outputs.build-ref }}
+  #     - name: Log in to OpenShift
+  #       run: |
+  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+  #     - name: Deploy Queue Consumers
+  #       working-directory: "./devops/"
+  #       run: |
+  #         make oc-deploy-queue-consumers
 
-  # Deploy Web/Frontend.
-  deploy-web-frontend:
-    name: Deploy Web/Frontend
-    environment: ${{ inputs.environment }}
-    runs-on: ubuntu-latest
-    needs: [env-setup, run-db-migrations]
-    steps:
-      - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
-        with:
-          oc: "4"
-      - name: Print env
-        run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ env.BUILD_REF }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo OC CLI Version: $(oc version)
-      - name: Checkout Target Branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.env-setup.outputs.build-ref }}
-      - name: Log in to OpenShift
-        run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Deploy Web/Frontend
-        working-directory: "./devops/"
-        run: |
-          make oc-deploy-web
+  # # Deploy Web/Frontend.
+  # deploy-web-frontend:
+  #   name: Deploy Web/Frontend
+  #   environment: ${{ inputs.environment }}
+  #   runs-on: ubuntu-latest
+  #   needs: [env-setup, run-db-migrations]
+  #   steps:
+  #     - name: Install CLI tools from OpenShift Mirror
+  #       uses: redhat-actions/openshift-tools-installer@v1
+  #       with:
+  #         oc: "4"
+  #     - name: Print env
+  #       run: |
+  #         echo Deploy ENVIRONMENT: ${{ inputs.environment }}
+  #         echo GIT REF: ${{ env.BUILD_REF }}
+  #         echo BUILD NAMESPACE: $BUILD_NAMESPACE
+  #         echo OC CLI Version: $(oc version)
+  #     - name: Checkout Target Branch
+  #       uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ needs.env-setup.outputs.build-ref }}
+  #     - name: Log in to OpenShift
+  #       run: |
+  #         oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+  #     - name: Deploy Web/Frontend
+  #       working-directory: "./devops/"
+  #       run: |
+  #         make oc-deploy-web
 
-  # Deploy Camunda Definitions
-  deployCamundaDefinitions:
-    if: ${{ inputs.deployCamundaDefinitions }}
-    name: Deploy BPMNs and DMNs to Camunda
-    needs: [env-setup, deploy-sims-api]
-    uses: ./.github/workflows/release-deploy-camunda-definitions.yml
-    with:
-      environment: ${{ inputs.environment }}
-      gitRef: ${{ needs.env-setup.outputs.build-ref }}
-    secrets: inherit
+  # # Deploy Camunda Definitions
+  # deployCamundaDefinitions:
+  #   if: ${{ inputs.deployCamundaDefinitions }}
+  #   name: Deploy BPMNs and DMNs to Camunda
+  #   needs: [env-setup, deploy-sims-api]
+  #   uses: ./.github/workflows/release-deploy-camunda-definitions.yml
+  #   with:
+  #     environment: ${{ inputs.environment }}
+  #     gitRef: ${{ needs.env-setup.outputs.build-ref }}
+  #   secrets: inherit
 
-  # Deploy Formio Definitions
-  deployFormioDefinitions:
-    if: ${{ inputs.deployFormioDefinitions }}
-    name: Deploy Form.io definitions
-    needs: [env-setup, deploy-sims-api]
-    uses: ./.github/workflows/release-deploy-formio-definitions.yml
-    with:
-      environment: ${{ inputs.environment }}
-      gitRef: ${{ needs.env-setup.outputs.build-ref }}
-    secrets: inherit
+  # # Deploy Formio Definitions
+  # deployFormioDefinitions:
+  #   if: ${{ inputs.deployFormioDefinitions }}
+  #   name: Deploy Form.io definitions
+  #   needs: [env-setup, deploy-sims-api]
+  #   uses: ./.github/workflows/release-deploy-formio-definitions.yml
+  #   with:
+  #     environment: ${{ inputs.environment }}
+  #     gitRef: ${{ needs.env-setup.outputs.build-ref }}
+  #   secrets: inherit
