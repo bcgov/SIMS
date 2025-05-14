@@ -897,12 +897,15 @@ export class ApplicationControllerService {
    * @param applicationId application ID.
    * @param studentId student used for authorization.
    * @param payload payload to create the application.
+   * @param options application submission options.
+   * - `isChangeRequestSubmission` indicates if the submission is for a change request.
    * @returns validated application data.
    */
   async validateApplicationSubmission(
     applicationId: number,
     studentId: number,
     payload: SaveApplicationAPIInDTO,
+    options?: { isChangeRequestSubmission?: boolean },
   ): Promise<ApplicationData> {
     const application =
       await this.applicationService.getApplicationForSubmissionValidation(
@@ -919,6 +922,7 @@ export class ApplicationControllerService {
     await this.validateSubmitApplicationData(
       payload,
       application.offeringIntensity,
+      options,
     );
     const formName = this.getStudentApplicationFormName(
       application.programYear.id,
@@ -946,10 +950,13 @@ export class ApplicationControllerService {
    * This is required to the values in the payload to be the same as the values in the offering and to prevent the user from modifying them.
    * @param payload payload to create the application.
    * @param offeringIntensity offering intensity of the application.
+   * @param options application submission options.
+   * - `isChangeRequestSubmission` indicates if the submission is for a change request.
    */
   private async validateSubmitApplicationData(
     payload: SaveApplicationAPIInDTO,
     offeringIntensity: OfferingIntensity,
+    options?: { isChangeRequestSubmission?: boolean },
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     if (
@@ -1011,6 +1018,9 @@ export class ApplicationControllerService {
       payload.data.selectedOfferingDate = studyStartDate;
       payload.data.selectedOfferingEndDate = studyEndDate;
     }
+    // Inject the indicator for change request submission.
+    payload.data.isChangeRequestApplication =
+      options?.isChangeRequestSubmission ?? false;
   }
 
   /**
