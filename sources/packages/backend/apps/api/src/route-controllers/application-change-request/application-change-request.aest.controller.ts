@@ -15,13 +15,14 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { IUserToken } from "../../auth/userToken.interface";
 import { ApplicationEditStatus } from "@sims/sims-db";
 import { ApplicationChangeRequestService } from "../../services";
 import { ApplicationChangeRequestAPIInDTO } from "./models/application-change-request.dto";
 import BaseController from "../BaseController";
 import { Role } from "../../auth";
+import { APPLICATION_CHANGE_CANCELLED_BY_STUDENT } from "apps/api/src/constants";
 
 /**
  * Controller for application change request operations for the Ministry.
@@ -46,8 +47,7 @@ export class ApplicationChangeRequestAESTController extends BaseController {
   @Roles(Role.StudentApproveDeclineAppeals)
   @Patch(":applicationId")
   @ApiNotFoundResponse({
-    description:
-      "Application to assess change not found or not in valid status to be approved/declined.",
+    description: "Change cancelled by student.",
   })
   async assessApplicationChangeRequest(
     @Param("applicationId", ParseIntPipe) applicationId: number,
@@ -65,7 +65,10 @@ export class ApplicationChangeRequestAESTController extends BaseController {
       );
     if (!applicationChangeRequest) {
       throw new NotFoundException(
-        "Application to assess change not found or not in valid status to be approved/declined.",
+        new ApiProcessError(
+          "Change cancelled by student.",
+          APPLICATION_CHANGE_CANCELLED_BY_STUDENT,
+        ),
       );
     }
     await this.applicationChangeRequestService.updateApplicationChangeRequestStatus(
