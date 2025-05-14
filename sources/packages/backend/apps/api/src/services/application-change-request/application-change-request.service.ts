@@ -90,12 +90,25 @@ export class ApplicationChangeRequestService {
             updatedAt: currentDate,
           },
         );
-        // Update the assessment status to completed.
+        // Update the current assessment status to completed.
+        // Get the current assessment ID first.
+        const application = await transactionalEntityManager
+          .getRepository(Application)
+          .findOne({
+            select: {
+              id: true,
+              currentAssessment: { id: true },
+            },
+            where: { id: applicationId },
+            relations: {
+              currentAssessment: true,
+            },
+          });
         await transactionalEntityManager
           .getRepository(StudentAssessment)
           .update(
             {
-              application: { id: applicationId },
+              id: application.currentAssessment.id,
             },
             {
               studentAssessmentStatus: StudentAssessmentStatus.Completed,
@@ -157,6 +170,11 @@ export class ApplicationChangeRequestService {
           modifier: auditUser,
           updatedAt: currentDate,
         },
+      );
+      // Send a message to the workflow to proceed.
+      await this.workflowClientService.sendApplicationChangeRequestStatusMessage(
+        applicationId,
+        applicationEditStatus,
       );
     });
   }
