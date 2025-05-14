@@ -5,7 +5,7 @@
     </template>
     <body-header
       title="Pending change requests"
-      :recordsCount="applicationAppeals.count"
+      :recordsCount="changeRequests.count"
       subTitle="Change requests that require ministry review."
     >
       <template #actions>
@@ -14,7 +14,7 @@
           label="Search name or application #"
           variant="outlined"
           v-model="searchCriteria"
-          @keyup.enter="searchAppeals"
+          @keyup.enter="searchChangeRequests"
           prepend-inner-icon="mdi-magnify"
           hide-details="auto"
         >
@@ -22,15 +22,15 @@
       </template>
     </body-header>
     <content-group>
-      <toggle-content :toggled="!applicationAppeals.results?.length">
+      <toggle-content :toggled="!changeRequests.results?.length">
         <DataTable
-          :value="applicationAppeals.results"
+          :value="changeRequests.results"
           :lazy="true"
           class="p-m-4"
           :paginator="true"
           :rows="pageLimit"
           :rowsPerPageOptions="PAGINATION_LIST"
-          :totalRecords="applicationAppeals.count"
+          :totalRecords="changeRequests.count"
           @page="pageEvent"
           @sort="sortEvent"
         >
@@ -64,7 +64,7 @@
               <v-btn
                 color="primary"
                 @click="
-                  gotToAssessmentsSummary(
+                  goToStudentAssessment(
                     slotProps.data.applicationId,
                     slotProps.data.studentId,
                   )
@@ -80,6 +80,7 @@
 </template>
 
 <script lang="ts">
+// NOSONAR
 import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
@@ -106,11 +107,11 @@ export default defineComponent({
     const sortOrder = ref(DataTableSortOrder.ASC);
     const searchCriteria = ref();
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
-    const applicationAppeals = ref(
+    const changeRequests = ref(
       {} as PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>,
     );
 
-    const gotToAssessmentsSummary = (
+    const goToStudentAssessment = (
       applicationId: number,
       studentId: number,
     ) => {
@@ -123,8 +124,8 @@ export default defineComponent({
       });
     };
 
-    const getChangeRequests = async () => {
-      applicationAppeals.value =
+    const fetchChangeRequests = async () => {
+      changeRequests.value =
         await ChangeRequestService.shared.getChangeRequests({
           page: page.value,
           pageLimit: pageLimit.value,
@@ -137,7 +138,7 @@ export default defineComponent({
     const pageEvent = async (event: PageAndSortEvent) => {
       page.value = event?.page;
       pageLimit.value = event?.rows;
-      await getChangeRequests();
+      await fetchChangeRequests();
     };
 
     const sortEvent = async (event: PageAndSortEvent) => {
@@ -145,26 +146,26 @@ export default defineComponent({
       pageLimit.value = DEFAULT_PAGE_LIMIT;
       sortField.value = event.sortField;
       sortOrder.value = event.sortOrder;
-      await getChangeRequests();
+      await fetchChangeRequests();
     };
 
-    const searchAppeals = async () => {
+    const searchChangeRequests = async () => {
       page.value = DEFAULT_PAGE_NUMBER;
       pageLimit.value = DEFAULT_PAGE_LIMIT;
-      await getChangeRequests();
+      await fetchChangeRequests();
     };
 
     onMounted(async () => {
-      await getChangeRequests();
+      await fetchChangeRequests();
     });
 
     return {
-      gotToAssessmentsSummary,
-      applicationAppeals,
+      goToStudentAssessment,
+      changeRequests,
       dateOnlyLongString,
       pageEvent,
       sortEvent,
-      searchAppeals,
+      searchChangeRequests,
       pageLimit,
       searchCriteria,
       PAGINATION_LIST,
