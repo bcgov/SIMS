@@ -130,7 +130,7 @@ jobs:
         id: set-build-ref
         run: |
           # Set the build ref to be used in the workflow and reusable workflows calls.
-          echo "::set-output name=build-ref::${{ env.BUILD_REF }}"
+          echo "build-ref=${{ env.BUILD_REF }}" >> "$GITHUB_OUTPUT"
   # Run DB migrations.
   run-db-migrations:
     name: Run db-migrations
