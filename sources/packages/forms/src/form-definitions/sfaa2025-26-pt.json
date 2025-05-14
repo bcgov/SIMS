@@ -500,9 +500,9 @@
           "hideLabel": true,
           "tags": [],
           "conditional": {
-            "show": "false",
+            "show": "true",
             "when": "isChangeRequestApplication",
-            "eq": "true"
+            "eq": "false"
           },
           "properties": {},
           "lockKey": true,

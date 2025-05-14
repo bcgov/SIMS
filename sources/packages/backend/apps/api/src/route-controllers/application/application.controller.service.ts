@@ -897,7 +897,7 @@ export class ApplicationControllerService {
    * @param applicationId application ID.
    * @param studentId student used for authorization.
    * @param payload payload to create the application.
-   * @param options options.
+   * @param options application submission options.
    * - `isChangeRequestSubmission` indicates if the submission is for a change request.
    * @returns validated application data.
    */
@@ -923,10 +923,9 @@ export class ApplicationControllerService {
       payload,
       application.offeringIntensity,
     );
-    // Inject the input variables for change request submission.
-    if (options?.isChangeRequestSubmission) {
-      payload.data.isChangeRequestApplication = true;
-    }
+    // Inject the indicator for change request submission.
+    payload.data.isChangeRequestApplication =
+      options?.isChangeRequestSubmission ?? false;
     const formName = this.getStudentApplicationFormName(
       application.programYear.id,
       application.offeringIntensity,
