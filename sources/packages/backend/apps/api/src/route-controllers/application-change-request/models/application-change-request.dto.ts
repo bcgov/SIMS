@@ -28,7 +28,7 @@ export class ApplicationChangeRequestAPIInDTO {
     ApplicationEditStatus.ChangedWithApproval,
     ApplicationEditStatus.ChangeDeclined,
   ])
-  applicationChangeRequestStatus:
+  applicationEditStatus:
     | ApplicationEditStatus.ChangedWithApproval
     | ApplicationEditStatus.ChangeDeclined;
   @IsPositive()

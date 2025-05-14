@@ -31,7 +31,7 @@ export function createApplicationChangeRequestApprovalTaskMock(options: {
   const jobMessageMocks: PublishMessageRequest<unknown>[] = [];
   if (options?.applicationId) {
     jobMessageMocks.push({
-      name: "application-change-request-approval-provided",
+      name: "application-change-request-status-message",
       correlationKey: options.applicationId.toString(),
       variables: {
         applicationEditStatus: messageApplicationEditStatus,

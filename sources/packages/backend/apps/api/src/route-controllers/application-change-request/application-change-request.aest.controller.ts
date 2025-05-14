@@ -71,7 +71,7 @@ export class ApplicationChangeRequestAESTController extends BaseController {
     await this.applicationChangeRequestService.updateApplicationChangeRequestStatus(
       applicationId,
       payload.studentId,
-      payload.applicationChangeRequestStatus,
+      payload.applicationEditStatus,
       payload.note,
       userToken.userId,
     );

@@ -870,6 +870,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
             studyEndDate: true,
             offeringStatus: true,
           },
+          studentAppeal: {
+            id: true,
+          },
         },
         location: {
           id: true,
@@ -900,7 +903,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       relations: {
         applicationException: true,
-        currentAssessment: { offering: true },
+        currentAssessment: { offering: true, studentAppeal: true },
         location: { institution: true },
         pirDeniedReasonId: true,
         programYear: true,

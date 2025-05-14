@@ -3,11 +3,15 @@ import { InjectRepository } from "@nestjs/typeorm";
 import {
   Application,
   ApplicationEditStatus,
+  ApplicationStatus,
   NoteType,
+  StudentAssessment,
+  StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
-import { NoteSharedService } from "@sims/services";
+import { NoteSharedService, WorkflowClientService } from "@sims/services";
+import { ApplicationService } from "../application/application.service";
 
 /**
  * Service responsible for application change request operations.
@@ -18,7 +22,9 @@ export class ApplicationChangeRequestService {
     private readonly dataSource: DataSource,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
+    private readonly applicationService: ApplicationService,
     private readonly noteSharedService: NoteSharedService,
+    private readonly workflowClientService: WorkflowClientService,
   ) {}
 
   /**
@@ -72,13 +78,82 @@ export class ApplicationChangeRequestService {
         auditUserId,
         transactionalEntityManager,
       );
-      // Update the application edit status.
+      if (applicationEditStatus === ApplicationEditStatus.ChangeDeclined) {
+        // Update the application edit status.
+        await transactionalEntityManager.getRepository(Application).update(
+          {
+            id: applicationId,
+          },
+          {
+            applicationEditStatus,
+            modifier: auditUser,
+            updatedAt: currentDate,
+          },
+        );
+        // Update the assessment status to completed.
+        await transactionalEntityManager
+          .getRepository(StudentAssessment)
+          .update(
+            {
+              application: { id: applicationId },
+            },
+            {
+              studentAssessmentStatus: StudentAssessmentStatus.Completed,
+              modifier: auditUser,
+              updatedAt: currentDate,
+            },
+          );
+        // End the workflow.
+        await this.workflowClientService.sendApplicationChangeRequestStatusMessage(
+          applicationId,
+          applicationEditStatus,
+        );
+        return;
+      }
+      // Update the application edit status when the application change request is approved.
       await transactionalEntityManager.getRepository(Application).update(
         {
           id: applicationId,
         },
         {
           applicationEditStatus,
+          applicationStatus: ApplicationStatus.Completed,
+          modifier: auditUser,
+          updatedAt: currentDate,
+        },
+      );
+      const {
+        precedingApplication,
+        currentAssessment: approvedApplicationCurrentAssessment,
+      } = await this.applicationService.getApplicationById(applicationId);
+      // Update the application status for the preceding application.
+      await transactionalEntityManager.getRepository(Application).update(
+        {
+          id: precedingApplication.id,
+        },
+        {
+          applicationStatus: ApplicationStatus.Edited,
+          modifier: auditUser,
+          updatedAt: currentDate,
+        },
+      );
+      const { currentAssessment } =
+        await this.applicationService.getApplicationById(
+          precedingApplication.id,
+        );
+      // Copy the most recent offering id and the student appeal id
+      // from the preceding application to the newly approved current application.
+      const approvedApplicationModifiedCurrentAssessment = {
+        ...approvedApplicationCurrentAssessment,
+        offeringId: currentAssessment.offering.id,
+        studentAppealId: currentAssessment.studentAppeal.id,
+      };
+      await transactionalEntityManager.getRepository(Application).update(
+        {
+          id: applicationId,
+        },
+        {
+          currentAssessment: approvedApplicationModifiedCurrentAssessment,
           modifier: auditUser,
           updatedAt: currentDate,
         },

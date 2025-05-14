@@ -994,7 +994,7 @@ Note: the workflow process should continue its execution as a regular reassessme
   <bpmn:category id="Category_0e4jiqi">
     <bpmn:categoryValue id="CategoryValue_02lw2sm" value="Assessment sequence verification" />
   </bpmn:category>
-  <bpmn:message id="Message_3767lhe" name="application-change-request-approval-provided">
+  <bpmn:message id="Message_3767lhe" name="application-change-request-status-message">
     <bpmn:extensionElements>
       <zeebe:subscription correlationKey="=applicationId" />
     </bpmn:extensionElements>

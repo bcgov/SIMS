@@ -1,8 +1,13 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ApplicationExceptionStatus, ProgramInfoStatus } from "@sims/sims-db";
+import {
+  ApplicationEditStatus,
+  ApplicationExceptionStatus,
+  ProgramInfoStatus,
+} from "@sims/sims-db";
 import { ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE } from "../constants";
 import { ZeebeGRPCError } from "../zeebe/zeebe.models";
 import {
+  APPLICATION_EDIT_STATUS,
   APPLICATION_EXCEPTION_STATUS,
   PROGRAM_INFO_STATUS,
 } from "./variables/assessment-gateway";
@@ -192,6 +197,35 @@ export class WorkflowClientService {
     } catch (error: unknown) {
       this.logger.error(
         `Error while sending assessment calculation completed message for waiting assessment id ${assessmentId}`,
+      );
+      this.logger.error(error);
+      // The error is not thrown here, as we are failing silently.
+    }
+  }
+
+  /**
+   * When an application change request is approved or declined, this method sends a message to the
+   * waiting workflow process.
+   * @param applicationId application id that is used as correlation key for the message.
+   * @param applicationEditStatus application edit status to be sent to the workflow.
+   * @throws error if there is an error while sending the message.
+   */
+  async sendApplicationChangeRequestStatusMessage(
+    applicationId: number,
+    applicationEditStatus:
+      | ApplicationEditStatus.ChangedWithApproval
+      | ApplicationEditStatus.ChangeDeclined,
+  ): Promise<void> {
+    try {
+      await this.zeebeClient.publishMessage({
+        name: "application-change-request-status-message",
+        correlationKey: applicationId.toString(),
+        timeToLive: ZEEBE_PUBLISH_MESSAGE_DEFAULT_TIME_TO_LEAVE,
+        variables: { [APPLICATION_EDIT_STATUS]: applicationEditStatus },
+      });
+    } catch (error: unknown) {
+      this.logger.error(
+        `Error while sending application change request message for applicationId: ${applicationId}.`,
       );
       this.logger.error(error);
       // The error is not thrown here, as we are failing silently.
