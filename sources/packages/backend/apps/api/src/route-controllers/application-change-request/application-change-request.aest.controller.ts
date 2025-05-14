@@ -22,7 +22,7 @@ import { ApplicationChangeRequestService } from "../../services";
 import { ApplicationChangeRequestAPIInDTO } from "./models/application-change-request.dto";
 import BaseController from "../BaseController";
 import { Role } from "../../auth";
-import { APPLICATION_CHANGE_CANCELLED_BY_STUDENT } from "apps/api/src/constants";
+import { APPLICATION_CHANGE_CANCELLED_BY_STUDENT } from "../../constants";
 
 /**
  * Controller for application change request operations for the Ministry.
