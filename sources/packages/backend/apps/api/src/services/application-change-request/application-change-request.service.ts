@@ -12,7 +12,6 @@ import {
 } from "@sims/sims-db";
 import { DataSource, EntityManager, Repository } from "typeorm";
 import { NoteSharedService, WorkflowClientService } from "@sims/services";
-import { ApplicationService } from "../application/application.service";
 
 /**
  * Service responsible for application change request operations.
@@ -23,7 +22,6 @@ export class ApplicationChangeRequestService {
     private readonly dataSource: DataSource,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
-    private readonly applicationService: ApplicationService,
     private readonly noteSharedService: NoteSharedService,
     private readonly workflowClientService: WorkflowClientService,
   ) {}
@@ -180,7 +178,7 @@ export class ApplicationChangeRequestService {
     previousCompletedApplicationCurrentAssessment: StudentAssessment;
     newApplicationCurrentAssessment: StudentAssessment;
   }> {
-    // Get the application with its parent information first
+    // Get the application with its parent information.
     const {
       parentApplication,
       currentAssessment: newApplicationCurrentAssessment,
