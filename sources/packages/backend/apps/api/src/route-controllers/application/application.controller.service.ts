@@ -922,10 +922,8 @@ export class ApplicationControllerService {
     await this.validateSubmitApplicationData(
       payload,
       application.offeringIntensity,
+      options,
     );
-    // Inject the indicator for change request submission.
-    payload.data.isChangeRequestApplication =
-      options?.isChangeRequestSubmission ?? false;
     const formName = this.getStudentApplicationFormName(
       application.programYear.id,
       application.offeringIntensity,
@@ -952,10 +950,13 @@ export class ApplicationControllerService {
    * This is required to the values in the payload to be the same as the values in the offering and to prevent the user from modifying them.
    * @param payload payload to create the application.
    * @param offeringIntensity offering intensity of the application.
+   * @param options application submission options.
+   * - `isChangeRequestSubmission` indicates if the submission is for a change request.
    */
   private async validateSubmitApplicationData(
     payload: SaveApplicationAPIInDTO,
     offeringIntensity: OfferingIntensity,
+    options?: { isChangeRequestSubmission?: boolean },
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     if (
@@ -1017,6 +1018,9 @@ export class ApplicationControllerService {
       payload.data.selectedOfferingDate = studyStartDate;
       payload.data.selectedOfferingEndDate = studyEndDate;
     }
+    // Inject the indicator for change request submission.
+    payload.data.isChangeRequestApplication =
+      options?.isChangeRequestSubmission ?? false;
   }
 
   /**
