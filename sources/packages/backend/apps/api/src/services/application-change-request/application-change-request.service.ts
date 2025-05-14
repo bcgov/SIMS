@@ -191,7 +191,7 @@ export class ApplicationChangeRequestService {
         currentAssessment: true,
       },
       where: { id: applicationId },
-      relations: { parentApplication: true },
+      relations: { parentApplication: true, currentAssessment: true },
     });
     // Get the most recent application with the same parent that has a
     // Change with approval or Original application edit status.
