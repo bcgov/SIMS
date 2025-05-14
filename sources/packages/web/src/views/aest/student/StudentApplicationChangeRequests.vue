@@ -123,7 +123,7 @@ export default defineComponent({
       });
     };
 
-    const getAppealList = async () => {
+    const getChangeRequests = async () => {
       applicationAppeals.value =
         await ChangeRequestService.shared.getChangeRequests({
           page: page.value,
@@ -137,7 +137,7 @@ export default defineComponent({
     const pageEvent = async (event: PageAndSortEvent) => {
       page.value = event?.page;
       pageLimit.value = event?.rows;
-      await getAppealList();
+      await getChangeRequests();
     };
 
     const sortEvent = async (event: PageAndSortEvent) => {
@@ -145,17 +145,17 @@ export default defineComponent({
       pageLimit.value = DEFAULT_PAGE_LIMIT;
       sortField.value = event.sortField;
       sortOrder.value = event.sortOrder;
-      await getAppealList();
+      await getChangeRequests();
     };
 
     const searchAppeals = async () => {
       page.value = DEFAULT_PAGE_NUMBER;
       pageLimit.value = DEFAULT_PAGE_LIMIT;
-      await getAppealList();
+      await getChangeRequests();
     };
 
     onMounted(async () => {
-      await getAppealList();
+      await getChangeRequests();
     });
 
     return {
