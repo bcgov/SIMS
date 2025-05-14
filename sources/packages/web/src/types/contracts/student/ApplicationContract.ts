@@ -104,17 +104,6 @@ export enum ApplicationEditStatus {
 }
 
 /**
- * Subset of the {@link ApplicationEditStatus} values that are related to change requests.
- */
-export const APPLICATION_CHANGE_REQUEST_STATUS_VALUES = [
-  ApplicationEditStatus.ChangeInProgress,
-  ApplicationEditStatus.ChangePendingApproval,
-  ApplicationEditStatus.ChangeDeclined,
-  ApplicationEditStatus.ChangeCancelled,
-  ApplicationEditStatus.ChangedWithApproval,
-];
-
-/**
  * Possible status of application scholastic standing.
  */
 export enum ApplicationScholasticStandingStatus {

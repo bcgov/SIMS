@@ -84,7 +84,6 @@ import {
   FromIOComponentTypes,
   Role,
   StudentApplicationFormData,
-  APPLICATION_CHANGE_REQUEST_STATUS_VALUES,
 } from "@/types";
 import router from "@/router";
 import AssessApplicationChangeRequestModal from "@/components/aest/students/modals/AssessApplicationChangeRequestModal.vue";
@@ -149,10 +148,6 @@ export default defineComponent({
         ...applicationDetail.value.data,
         applicationOfferingIntensityValue:
           applicationDetail.value.applicationOfferingIntensity,
-        isChangeRequestApplication:
-          APPLICATION_CHANGE_REQUEST_STATUS_VALUES.includes(
-            application.applicationEditStatus,
-          ),
         isReadOnly: true,
       };
     });
