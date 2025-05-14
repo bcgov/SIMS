@@ -50,24 +50,15 @@ export class ApplicationChangeRequestService {
     if (searchCriteria) {
       query.andWhere(
         new Brackets((qb) => {
-          qb.where("user.firstName ILIKE :searchCriteria", {
-            searchCriteria: `%${searchCriteria}%`,
-          })
-            .orWhere("user.lastName ILIKE :searchCriteria", {
-              searchCriteria: `%${searchCriteria}%`,
-            })
-            .orWhere("application.applicationNumber ILIKE :searchCriteria", {
-              searchCriteria: `%${searchCriteria}%`,
-            });
+          qb.where("user.firstName ILIKE :searchQueryParam")
+            .orWhere("user.lastName ILIKE :searchQueryParam")
+            .orWhere("application.applicationNumber ILIKE :searchQueryParam");
         }),
       );
+      query.setParameter("searchQueryParam", `%${searchCriteria.trim()}%`);
     }
 
-    this.addApplicationChangeRequestSort(
-      query,
-      sortField,
-      sortOrder as FieldSortOrder,
-    );
+    this.addApplicationChangeRequestSort(query, sortField, sortOrder);
 
     query.offset(page * pageLimit);
     query.limit(pageLimit);
