@@ -1,73 +1,57 @@
-import { Injectable } from "@nestjs/common";
-import { ApplicationOfferingChangeRequestService } from "../../services";
-import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
+import { Injectable, Inject } from "@nestjs/common";
 import {
   PaginatedResultsAPIOutDTO,
   StudentChangeRequestPendingPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { ApplicationChangeRequestPendingSummaryAPIOutDTO } from "./models/application-change-request.dto";
+import { Application, ApplicationEditStatus } from "@sims/sims-db";
+import { ApplicationChangeRequestService as AppChangeRequestDBService } from "../../services/application-change-request/application-change-request.service";
 
 @Injectable()
 export class ApplicationChangeRequestControllerService {
   constructor(
-    private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+    @Inject(AppChangeRequestDBService)
+    private readonly appChangeRequestDBService: AppChangeRequestDBService,
   ) {}
 
   /**
-   * Gets all new application change requests for 2025-2026 program year and later.
+   * Gets all applications with edit status 'Change pending approval'.
    * @param pagination options to execute the pagination.
-   * @returns list of new application change requests for 2025-2026 and later.
+   * @returns list of applications matching the criteria.
    */
   async getNewApplicationChangeRequests(
     pagination: StudentChangeRequestPendingPaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
   > {
-    // 'submittedDate' in the API corresponds to 'createdAt' in the database
     const updatedPagination = {
       ...pagination,
-      sortField:
-        pagination.sortField === "submittedDate"
-          ? "createdAt"
-          : pagination.sortField,
     };
 
-    const applicationChangeRequests =
-      await this.applicationOfferingChangeRequestService.getSummaryByStatus(
-        [ApplicationOfferingChangeRequestStatus.InProgressWithSABC],
+    const targetApplicationEditStatus =
+      ApplicationEditStatus.ChangePendingApproval;
+
+    const applicationsPaginatedResult =
+      await this.appChangeRequestDBService.getApplicationsForChangeRequestList(
+        targetApplicationEditStatus,
         updatedPagination,
-        {
-          useApplicationSort: false, // Use false for sorting by createdAt/status
-        },
       );
 
-    // Filter for 2025-2026 and later program years (programYear.startYear >= 2025)
-    const filteredResults = applicationChangeRequests.results
-      .filter((eachRequest) => {
-        if (!eachRequest.application.programYear) {
-          return false;
-        }
-        const startDate = eachRequest.application.programYear.startDate;
-        if (!startDate) {
-          return false;
-        }
-        const startYear = parseInt(startDate.substring(0, 4), 10);
-        return startYear >= 2025;
-      })
-      .map((eachRequest) => ({
-        requestId: eachRequest.id,
-        applicationId: eachRequest.application.id,
-        studentId: eachRequest.application.student.id,
-        applicationNumber: eachRequest.application.applicationNumber,
-        submittedDate: eachRequest.createdAt,
-        firstName: eachRequest.application.student.user.firstName,
-        lastName: eachRequest.application.student.user.lastName,
-        programYearId: eachRequest.application.programYear?.id, // Include program year ID
-      }));
+    const mappedResults = applicationsPaginatedResult.results.map(
+      (app: Application) => ({
+        applicationId: app.id,
+        parentApplicationId: app.parentApplication.id,
+        studentId: app.student.id,
+        submittedDate: app.createdAt,
+        firstName: app.student.user.firstName,
+        lastName: app.student.user.lastName,
+        applicationNumber: app.applicationNumber,
+      }),
+    );
 
     return {
-      results: filteredResults,
-      count: filteredResults.length,
+      results: mappedResults,
+      count: applicationsPaginatedResult.count,
     };
   }
 }

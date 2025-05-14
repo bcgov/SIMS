@@ -37,6 +37,7 @@ import {
   CASInvoiceBatchService,
   CASInvoiceBatchReportService,
   CASInvoiceService,
+  ApplicationChangeRequestService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -212,6 +213,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     CASInvoiceService,
     CASInvoiceBatchReportService,
     ApplicationChangeRequestControllerService,
+    ApplicationChangeRequestService,
   ],
 })
 export class AppAESTModule {}

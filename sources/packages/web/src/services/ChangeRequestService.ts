@@ -1,12 +1,10 @@
 import ApiClient from "@/services/http/ApiClient";
 import { PaginationOptions } from "@/types";
-import {
-  PaginatedResultsAPIOutDTO,
-  StudentAppealPendingSummaryAPIOutDTO,
-} from "./http/dto";
+import { PaginatedResultsAPIOutDTO } from "./http/dto";
+import { ApplicationChangeRequestPendingSummaryAPIOutDTO } from "./http/dto/ApplicationChangeRequest.dto";
 
 /**
- * Client service layer for Change Request.
+ * Client service layer for Application Change Requests (pending edits).
  */
 export class ChangeRequestService {
   // Shared Instance
@@ -17,13 +15,15 @@ export class ChangeRequestService {
   }
 
   /**
-   * Gets all pending student application change requests.
+   * Gets all pending application change requests (applications in 'Change pending approval' status).
    * @param paginationOptions options to execute the pagination.
-   * @returns list of student application change requests.
+   * @returns list of application change requests.
    */
   async getChangeRequests(
     paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>> {
+  ): Promise<
+    PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
+  > {
     return ApiClient.ChangeRequestsApi.getChangeRequests(paginationOptions);
   }
 }
