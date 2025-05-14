@@ -136,7 +136,7 @@ export default defineComponent({
         props: {
           prependIcon: "mdi-folder-open-outline",
           to: {
-            name: AESTRoutesConst.APPLICATION_APPEALS_NEW_PENDING,
+            name: AESTRoutesConst.APPLICATION_CHANGE_REQUESTS_PENDING,
           },
         },
       },

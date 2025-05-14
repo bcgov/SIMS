@@ -175,9 +175,6 @@ export class ApplicationOfferingChangeRequestService {
    * - `locationId`: location for authorization.
    * - `useApplicationSort`: true in case of sorting by applicationNumber or fullName,
    *  false in case of sorting by status or dateSubmitted.
-   * - `programYearFilter`: optional filter based on program year.
-   *    - `startYear`: Filter for program years starting with or after this year
-   *    - `endYear`: Filter for program years ending with or before this year
    * @returns list of requested application offering changes.
    */
   async getSummaryByStatus(
@@ -186,10 +183,6 @@ export class ApplicationOfferingChangeRequestService {
     options?: {
       locationId?: number;
       useApplicationSort?: boolean;
-      programYearFilter?: {
-        startYear?: number;
-        endYear?: number;
-      };
     },
   ): Promise<PaginatedResults<ApplicationOfferingChangeRequest>> {
     const offeringChange = this.applicationOfferingChangeRequestRepo
@@ -202,8 +195,6 @@ export class ApplicationOfferingChangeRequestService {
         "applicationOfferingChangeRequest.createdAt",
         "application.id",
         "application.applicationNumber",
-        "programYear.id",
-        "programYear.name",
         "currentAssessment.id",
         "offering.studyStartDate",
         "offering.studyEndDate",
@@ -212,7 +203,6 @@ export class ApplicationOfferingChangeRequestService {
         "user.lastName",
       ])
       .innerJoin("applicationOfferingChangeRequest.application", "application")
-      .innerJoin("application.programYear", "programYear")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("application.student", "student")
@@ -228,27 +218,6 @@ export class ApplicationOfferingChangeRequestService {
         locationId: options?.locationId,
       });
     }
-
-    // Add program year filtering if provided
-    if (options?.programYearFilter?.startYear) {
-      // Filter for program years starting with or after the specified year
-      offeringChange.andWhere(
-        "CAST(substring(programYear.name, 1, 4) AS INTEGER) >= :startYear",
-        {
-          startYear: options.programYearFilter.startYear,
-        },
-      );
-    }
-    if (options?.programYearFilter?.endYear) {
-      // Filter for program years ending with or before the specified year
-      offeringChange.andWhere(
-        "CAST(substring(programYear.name, 1, 4) AS INTEGER) < :endYear",
-        {
-          endYear: options.programYearFilter.endYear,
-        },
-      );
-    }
-
     if (paginationOptions.searchCriteria?.trim()) {
       offeringChange
         .andWhere(

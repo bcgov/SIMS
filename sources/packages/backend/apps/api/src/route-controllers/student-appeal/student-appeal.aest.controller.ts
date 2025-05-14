@@ -6,6 +6,7 @@ import {
   Patch,
   Body,
   UnprocessableEntityException,
+  Query,
   ParseIntPipe,
 } from "@nestjs/common";
 import {
@@ -31,6 +32,7 @@ import {
   DetailedStudentAppealRequestAPIOutDTO,
   StudentAppealAPIOutDTO,
   StudentAppealApprovalAPIInDTO,
+  StudentAppealPendingSummaryAPIOutDTO,
 } from "./models/student-appeal.dto";
 import { CustomNamedError } from "@sims/utilities";
 import { IUserToken } from "../../auth/userToken.interface";
@@ -39,6 +41,10 @@ import {
   STUDENT_APPEAL_NOT_FOUND,
 } from "../../services/student-appeal/constants";
 import { StudentAppealStatus } from "@sims/sims-db";
+import {
+  PaginatedResultsAPIOutDTO,
+  StudentAppealPendingPaginationOptionsAPIInDTO,
+} from "../models/pagination.dto";
 import { Role } from "../../auth/roles.enum";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
 
@@ -118,5 +124,33 @@ export class StudentAppealAESTController extends BaseController {
       }
       throw error;
     }
+  }
+
+  /**
+   * Gets all pending student application appeals.
+   * @param pagination options to execute the pagination.
+   * @returns list of pending student application appeals.
+   */
+  @Get("pending")
+  async getAppeals(
+    @Query() pagination: StudentAppealPendingPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>> {
+    const studentAppeals = await this.studentAppealService.getAppealsByStatus(
+      pagination,
+      StudentAppealStatus.Pending,
+    );
+
+    return {
+      results: studentAppeals.results.map((eachAppeal) => ({
+        appealId: eachAppeal.id,
+        applicationId: eachAppeal.application.id,
+        studentId: eachAppeal.application.student.id,
+        applicationNumber: eachAppeal.application.applicationNumber,
+        submittedDate: eachAppeal.submittedDate,
+        firstName: eachAppeal.application.student.user.firstName,
+        lastName: eachAppeal.application.student.user.lastName,
+      })),
+      count: studentAppeals.count,
+    };
   }
 }

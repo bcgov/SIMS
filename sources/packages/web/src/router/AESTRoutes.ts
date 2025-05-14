@@ -55,7 +55,7 @@ import OfferingChangeRequests from "@/views/aest/institution/OfferingChangeReque
 import ViewOfferingChangeRequest from "@/views/aest/institution/ViewOfferingChangeRequest.vue";
 import ViewPendingOfferingChangeRequests from "@/views/aest/institution/ViewPendingOfferingChangeRequests.vue";
 import StudentApplicationAppeals from "@/views/aest/student/StudentApplicationAppeals.vue";
-import StudentApplicationAppealsNew from "@/views/aest/student/StudentApplicationAppealsNew.vue";
+import StudentApplicationChangeRequests from "@/views/aest/student/StudentApplicationChangeRequests.vue";
 import ApplicationOfferingChangeRequestForm from "@/views/aest/institution/ApplicationOfferingChangeRequestForm.vue";
 import StudentAccountApplications from "@/views/aest/student/StudentAccountApplications.vue";
 import StudentAccountApplicationsApproval from "@/views/aest/student/StudentAccountApplicationsApproval.vue";
@@ -582,10 +582,10 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.AppealsNew,
-        name: AESTRoutesConst.APPLICATION_APPEALS_NEW_PENDING,
+        path: AppRoutes.ChangeRequests,
+        name: AESTRoutesConst.APPLICATION_CHANGE_REQUESTS_PENDING,
         components: {
-          default: StudentApplicationAppealsNew,
+          default: StudentApplicationChangeRequests,
           sidebar: AESTHomeSideBar,
         },
         meta: {
