@@ -1,5 +1,5 @@
 name: Release - Deploy All
-run-name: Release - Deploy all from main-6573 to ${{ inputs.environment }}
+run-name: Release - Deploy all from ${{ github.ref_name }} to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
@@ -64,7 +64,7 @@ on:
 
 env:
   NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-  BUILD_REF: ${{ (github.event_name == 'workflow_call' && inputs.gitRef) || 'main-6573' }}
+  BUILD_REF: ${{ (github.event_name == 'workflow_call' && inputs.gitRef) || github.ref_name }}
   HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
   DOMAIN_PREFIX: ${{ vars.DOMAIN_PREFIX }}
   BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
