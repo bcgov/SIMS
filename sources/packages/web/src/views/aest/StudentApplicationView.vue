@@ -86,12 +86,12 @@ import {
   StudentApplicationFormData,
 } from "@/types";
 import router from "@/router";
-import mitt from "mitt";
 import AssessApplicationChangeRequestModal from "@/components/aest/students/modals/AssessApplicationChangeRequestModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import useEmitter from "@/composables/useEmitter";
 
 // Event emitter for application sidebar refresh.
-export const applicationEventBus = mitt();
+export const applicationEventBus = useEmitter();
 
 export const EVENTS = {
   REFRESH_SIDEBAR: "refresh-application-sidebar",
