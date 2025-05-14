@@ -1,18 +1,18 @@
 name: Release - Deploy All
-run-name: Release - Deploy all from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+run-name: Release - Deploy all from ${{ github.ref_name }} to ${{ inputs.environment }}
 
 on:
   workflow_dispatch:
     inputs:
-      gitRef:
-        description: "Git reference"
-        required: true
-        type: string
-        default: ${{ inputs.gitRef }}
       environment:
         description: "Environment"
         required: true
         type: environment
+      gitRef:
+        description: "Git reference"
+        required: true
+        type: string
+        default: ${{ github.ref_name }}
       deployCamundaDefinitions:
         description: "Deploy Camunda BPMN/DMN from main"
         type: boolean
