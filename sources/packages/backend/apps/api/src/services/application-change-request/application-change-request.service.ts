@@ -9,7 +9,7 @@ import {
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, EntityManager, In, Repository } from "typeorm";
 import { NoteSharedService, WorkflowClientService } from "@sims/services";
 import { ApplicationService } from "../application/application.service";
 
@@ -123,6 +123,28 @@ export class ApplicationChangeRequestService {
         );
         return;
       }
+      const {
+        relatedApplicationId,
+        relatedApplicationStatus,
+        currentAssessment: relatedPrecedingCurrentAssessment,
+      } = await this.getRelatedApplication(
+        applicationId,
+        transactionalEntityManager,
+      );
+      // Update the application status for the preceding application.
+      // Only if it is the original application, its status should be changed to edited.
+      if (relatedApplicationStatus === ApplicationStatus.Completed) {
+        await transactionalEntityManager.getRepository(Application).update(
+          {
+            id: relatedApplicationId,
+          },
+          {
+            applicationStatus: ApplicationStatus.Edited,
+            modifier: auditUser,
+            updatedAt: currentDate,
+          },
+        );
+      }
       // Update the application edit status when the application change request is approved.
       await transactionalEntityManager.getRepository(Application).update(
         {
@@ -135,31 +157,12 @@ export class ApplicationChangeRequestService {
           updatedAt: currentDate,
         },
       );
-      const {
-        precedingApplication,
-        currentAssessment: approvedApplicationCurrentAssessment,
-      } = await this.applicationService.getApplicationById(applicationId);
-      // Update the application status for the preceding application.
-      await transactionalEntityManager.getRepository(Application).update(
-        {
-          id: precedingApplication.id,
-        },
-        {
-          applicationStatus: ApplicationStatus.Edited,
-          modifier: auditUser,
-          updatedAt: currentDate,
-        },
-      );
-      const { currentAssessment } =
-        await this.applicationService.getApplicationById(
-          precedingApplication.id,
-        );
       // Copy the most recent offering id and the student appeal id
-      // from the preceding application to the newly approved current application.
+      // from the latest preceding application to the newly approved current application.
       const approvedApplicationModifiedCurrentAssessment = {
-        ...approvedApplicationCurrentAssessment,
-        offeringId: currentAssessment.offering.id,
-        studentAppealId: currentAssessment.studentAppeal.id,
+        ...relatedPrecedingCurrentAssessment,
+        offeringId: relatedPrecedingCurrentAssessment.offering?.id,
+        studentAppealId: relatedPrecedingCurrentAssessment.studentAppeal?.id,
       };
       await transactionalEntityManager.getRepository(Application).update(
         {
@@ -177,5 +180,75 @@ export class ApplicationChangeRequestService {
         applicationEditStatus,
       );
     });
+  }
+
+  /**
+   * Get the most recent application with the same parent that has a
+   * Change with approval or Original application edit status.
+   * @param applicationId application id.
+   * @param transactionalEntityManager transactional entity manager.
+   * @returns the most recent application details with the same parent
+   * that has a Change with approval or Original application edit status.
+   */
+  private async getRelatedApplication(
+    applicationId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<{
+    relatedApplicationId: number;
+    relatedApplicationStatus: ApplicationStatus;
+    currentAssessment: StudentAssessment;
+  }> {
+    // Get the application with its parent information first
+    const currentApplication = await transactionalEntityManager
+      .getRepository(Application)
+      .findOne({
+        select: { id: true, parentApplication: { id: true } },
+        where: { id: applicationId },
+        relations: { parentApplication: true },
+      });
+    // Get the most recent application with the same parent that has a
+    // Change with approval or Original application edit status.
+    const [latestRelatedApplication] = await transactionalEntityManager
+      .getRepository(Application)
+      .find({
+        select: {
+          id: true,
+          applicationStatus: true,
+          currentAssessment: {
+            id: true,
+            offering: { id: true },
+            studentAppeal: { id: true },
+          },
+          submittedDate: true,
+        },
+        where: {
+          parentApplication: { id: currentApplication.parentApplication.id },
+          applicationEditStatus: In([
+            ApplicationEditStatus.ChangedWithApproval,
+            ApplicationEditStatus.Original,
+          ]),
+        },
+        relations: {
+          currentAssessment: {
+            offering: true,
+            studentAppeal: true,
+          },
+        },
+        order: {
+          submittedDate: "DESC",
+        },
+        take: 1,
+      });
+    // Extract the needed information
+    const {
+      id: relatedApplicationId,
+      applicationStatus: relatedApplicationStatus,
+      currentAssessment,
+    } = latestRelatedApplication;
+    return {
+      relatedApplicationId,
+      relatedApplicationStatus,
+      currentAssessment,
+    };
   }
 }
