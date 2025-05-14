@@ -93,7 +93,7 @@ import {
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentAppealPendingSummaryAPIOutDTO } from "@/services/http/dto/StudentAppeal.dto";
-import { StudentAppealService } from "@/services/StudentAppealService";
+import { ChangeRequestService } from "@/services/ChangeRequestService";
 
 const DEFAULT_SORT_FIELD = "submittedDate";
 
@@ -125,7 +125,7 @@ export default defineComponent({
 
     const getAppealList = async () => {
       applicationAppeals.value =
-        await StudentAppealService.shared.getPendingAppeals({
+        await ChangeRequestService.shared.getChangeRequests({
           page: page.value,
           pageLimit: pageLimit.value,
           sortField: sortField.value,

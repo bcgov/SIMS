@@ -23,7 +23,7 @@ export class ApplicationChangeRequestAESTController extends BaseController {
     super();
   }
 
-  @Get("new/pending")
+  @Get("pending")
   async getNewApplicationChangeRequests(
     @Query() pagination: StudentAppealPendingPaginationOptionsAPIInDTO,
   ): Promise<
