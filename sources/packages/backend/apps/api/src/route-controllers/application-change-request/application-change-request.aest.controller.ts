@@ -23,28 +23,6 @@ export class ApplicationChangeRequestAESTController extends BaseController {
     super();
   }
 
-  /**
-   * Gets all pending application change requests (regardless of program year)
-   * Legacy endpoint for backward compatibility.
-   * @param pagination options to execute the pagination.
-   * @returns list of pending application change requests.
-   */
-  @Get("pending")
-  async getApplicationChangeRequests(
-    @Query() pagination: StudentAppealPendingPaginationOptionsAPIInDTO,
-  ): Promise<
-    PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
-  > {
-    return this.applicationChangeRequestControllerService.getPendingApplicationChangeRequests(
-      pagination,
-    );
-  }
-
-  /**
-   * Gets all new application change requests for 2025-2026 program year and later.
-   * @param pagination options to execute the pagination.
-   * @returns list of pending application change requests for 2025-2026 and later.
-   */
   @Get("new/pending")
   async getNewApplicationChangeRequests(
     @Query() pagination: StudentAppealPendingPaginationOptionsAPIInDTO,
@@ -52,22 +30,6 @@ export class ApplicationChangeRequestAESTController extends BaseController {
     PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
   > {
     return this.applicationChangeRequestControllerService.getNewApplicationChangeRequests(
-      pagination,
-    );
-  }
-
-  /**
-   * Gets all application change requests for program years before 2025-2026.
-   * @param pagination options to execute the pagination.
-   * @returns list of pending application change requests for program years before 2025-2026.
-   */
-  @Get("legacy/pending")
-  async getLegacyApplicationChangeRequests(
-    @Query() pagination: StudentAppealPendingPaginationOptionsAPIInDTO,
-  ): Promise<
-    PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
-  > {
-    return this.applicationChangeRequestControllerService.getLegacyApplicationChangeRequests(
       pagination,
     );
   }
