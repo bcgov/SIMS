@@ -28,7 +28,7 @@
           :items="changeRequests.results"
           :items-length="changeRequests.count"
           :loading="loading"
-          :page="page + 1"
+          :page="page"
           :items-per-page="pageLimit"
           :items-per-page-options="PAGINATION_LIST"
           @update:options="handleOptionsUpdate"
@@ -67,6 +67,8 @@ import {
   DataTableSortOrder,
   DEFAULT_PAGE_NUMBER,
   PaginatedResults,
+  DataTableOptions,
+  DataTableSortByOrder,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -80,18 +82,15 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const loading = ref(false);
-    const page = ref(DEFAULT_PAGE_NUMBER); // API uses 0-indexed pages
-    const pageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const sortField = ref(DEFAULT_SORT_FIELD);
-    const sortOrder = ref(DataTableSortOrder.ASC);
+    const currentPage = ref(DEFAULT_PAGE_NUMBER + 1);
+    const currentPageLimit = ref(DEFAULT_PAGE_LIMIT);
+    const currentSortField = ref(DEFAULT_SORT_FIELD);
+    const currentSortOrder = ref(DataTableSortOrder.ASC);
     const searchCriteria = ref<string | undefined>();
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
     const changeRequests = ref<
       PaginatedResults<ApplicationChangeRequestPendingSummaryAPIOutDTO>
-    >({
-      results: [],
-      count: 0,
-    } as PaginatedResults<ApplicationChangeRequestPendingSummaryAPIOutDTO>);
+    >({} as PaginatedResults<ApplicationChangeRequestPendingSummaryAPIOutDTO>);
 
     const goToStudentAssessment = (
       applicationId: number,
@@ -106,14 +105,19 @@ export default defineComponent({
       });
     };
 
-    const fetchChangeRequests = async () => {
+    const loadChangeRequests = async (
+      page: number,
+      pageLimit: number,
+      sortField: string,
+      sortOrder: DataTableSortOrder,
+    ) => {
       loading.value = true;
       try {
         const result = await ChangeRequestService.shared.getChangeRequests({
-          page: page.value, // Send 0-indexed page to API
-          pageLimit: pageLimit.value,
-          sortField: sortField.value,
-          sortOrder: sortOrder.value,
+          page,
+          pageLimit,
+          sortField,
+          sortOrder,
           searchCriteria: searchCriteria.value,
         });
         changeRequests.value = result;
@@ -128,43 +132,53 @@ export default defineComponent({
       }
     };
 
-    const handleOptionsUpdate = (options: {
-      page: number;
-      itemsPerPage: number;
-      sortBy: Readonly<{ key: string; order: "asc" | "desc" }[]>;
-    }) => {
-      page.value = options.page - 1;
-      pageLimit.value = options.itemsPerPage;
+    const handleOptionsUpdate = async (options: DataTableOptions) => {
+      currentPage.value = options.page;
+      currentPageLimit.value = options.itemsPerPage;
+
+      let newSortFieldAPI = DEFAULT_SORT_FIELD;
+      let newSortOrderAPI = DataTableSortOrder.ASC;
+
       if (options.sortBy && options.sortBy.length > 0) {
-        sortField.value = options.sortBy[0].key;
-        const order = options.sortBy[0].order;
-        if (order === "asc") {
-          sortOrder.value = DataTableSortOrder.ASC;
-        } else if (order === "desc") {
-          sortOrder.value = DataTableSortOrder.DESC;
-        } else {
-          sortOrder.value = DataTableSortOrder.ASC;
-        }
-      } else {
-        sortField.value = DEFAULT_SORT_FIELD;
-        sortOrder.value = DataTableSortOrder.ASC;
+        newSortFieldAPI = options.sortBy[0].key;
+        newSortOrderAPI =
+          options.sortBy[0].order === DataTableSortByOrder.DESC
+            ? DataTableSortOrder.DESC
+            : DataTableSortOrder.ASC;
       }
-      fetchChangeRequests();
+      currentSortField.value = newSortFieldAPI;
+      currentSortOrder.value = newSortOrderAPI;
+      await loadChangeRequests(
+        options.page - 1,
+        options.itemsPerPage,
+        newSortFieldAPI,
+        newSortOrderAPI,
+      );
     };
 
     const searchChangeRequests = async () => {
-      page.value = DEFAULT_PAGE_NUMBER;
-      await fetchChangeRequests();
+      currentPage.value = DEFAULT_PAGE_NUMBER + 1;
+      await loadChangeRequests(
+        DEFAULT_PAGE_NUMBER,
+        currentPageLimit.value,
+        currentSortField.value,
+        currentSortOrder.value,
+      );
     };
 
     onMounted(async () => {
-      await fetchChangeRequests();
+      await loadChangeRequests(
+        currentPage.value - 1,
+        currentPageLimit.value,
+        currentSortField.value,
+        currentSortOrder.value,
+      );
     });
 
     return {
       loading,
-      page,
-      pageLimit,
+      page: currentPage,
+      pageLimit: currentPageLimit,
       searchCriteria,
       changeRequests,
       tableHeaders: PendingApplicationEditsTableHeaders,
