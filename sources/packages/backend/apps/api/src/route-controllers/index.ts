@@ -1,6 +1,7 @@
 export * from "./program-year/program-year.students.controller";
 export * from "./config/config.controller";
 export * from "./dynamic-form/dynamic-form.controller";
+export * from "./dynamic-form/dynamic-form.aest.controller";
 export * from "./announcements/announcement.students.controller";
 export * from "./announcements/announcement.institutions.controller";
 export * from "./education-program/education-program.controller.service";

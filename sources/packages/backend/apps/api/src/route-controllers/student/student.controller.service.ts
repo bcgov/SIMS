@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { Response } from "express";
 import {
@@ -28,6 +29,7 @@ import {
 import {
   AddressInfo,
   Application,
+  SFASIndividual,
   SpecificIdentityProviders,
   Student,
   VirusScanStatus,
@@ -53,6 +55,7 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
+import { SFASIndividualService } from "@sims/services";
 
 @Injectable()
 export class StudentControllerService {
@@ -62,6 +65,7 @@ export class StudentControllerService {
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly applicationService: ApplicationService,
     private readonly objectStorageService: ObjectStorageService,
+    private readonly sfasIndividualService: SFASIndividualService,
   ) {}
 
   /**
@@ -413,6 +417,32 @@ export class StudentControllerService {
       birthDate: getISODateOnlyString(eachStudent.birthDate),
       sin: eachStudent.sinValidation.sin,
     }));
+  }
+
+  /**
+   * Validate the conditions to allow the student to be associated with a legacy profile.
+   * @param studentId student ID to have a legacy profile associated with.
+   * @returns possible legacy profiles that matches the student data.
+   */
+  async validateAndGetStudentLegacyMatches(
+    studentId: number,
+  ): Promise<SFASIndividual[]> {
+    const student = await this.studentService.getStudentById(studentId, {
+      includeLegacy: true,
+    });
+    if (!student) {
+      throw new NotFoundException("Student not found.");
+    }
+    if (student.sfasIndividuals.length) {
+      throw new UnprocessableEntityException(
+        "Student already has a legacy profile associated.",
+      );
+    }
+    return this.sfasIndividualService.getIndividualStudentPartialMatchForAssociation(
+      student.user.lastName,
+      student.birthDate,
+      student.sinValidation.sin,
+    );
   }
 
   @InjectLogger()

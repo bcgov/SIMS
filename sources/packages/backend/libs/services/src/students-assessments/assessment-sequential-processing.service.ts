@@ -17,11 +17,10 @@ import {
   User,
 } from "@sims/sims-db";
 import {
-  AwardTotal,
-  ProgramYearWorkflowOutputTotal,
   ProgramYearTotal,
   SequencedApplications,
   SequentialApplication,
+  ProgramYearOutputTotal,
 } from "..";
 import { InjectRepository } from "@nestjs/typeorm";
 import { getISODateOnlyString } from "@sims/utilities";
@@ -151,7 +150,6 @@ export class AssessmentSequentialProcessingService {
   ): Promise<ProgramYearTotal> {
     // Get the current assessment from the assessment id.
     const currentAssessment = await this.getCurrentAssessment(assessmentId);
-    const offeringIntensity = currentAssessment.offering.offeringIntensity;
     // The chronology of the applications is defined by the method {@link getSequencedApplications}.
     // Only the current assessment awards are considered since it must reflect the most updated
     // workflow calculated values.
@@ -167,7 +165,6 @@ export class AssessmentSequentialProcessingService {
     );
     // Only get the full-time workflow output totals if the offering intensity is full-time.
     const shouldGetProgramYearWorkflowOutputTotals =
-      OfferingIntensity.fullTime === offeringIntensity &&
       !!applicationNumbers?.length;
     const [awardTotals, workflowOutputTotals] = await Promise.all([
       // Get the program year awards totals for part-time and full-time.
@@ -205,7 +202,7 @@ export class AssessmentSequentialProcessingService {
     sequencedApplications: SequencedApplications,
     assessment: StudentAssessment,
     options?: { alternativeReferenceDate?: Date },
-  ): Promise<AwardTotal[]> {
+  ): Promise<ProgramYearOutputTotal<string>[]> {
     // Get the first assessment date ever calculated for the current application.
     // If there are multiple assessments for the current application, then set the
     // first assessment date to the assessment date of the first assessment.
@@ -296,7 +293,7 @@ export class AssessmentSequentialProcessingService {
     // The valueAmount from awards are mapped to string by Typeorm Postgres driver.
     const disbursementTotals = totals.map((total) => ({
       offeringIntensity: total.offeringIntensity,
-      valueCode: total.valueCode,
+      output: total.valueCode,
       total: +total.total,
     }));
     return [
@@ -313,7 +310,7 @@ export class AssessmentSequentialProcessingService {
    */
   private async getProgramYearWorkflowOutputTotals(
     applicationNumbers: string[],
-  ): Promise<ProgramYearWorkflowOutputTotal[]> {
+  ): Promise<ProgramYearOutputTotal<WorkflowOutputType>[]> {
     const totals = await this.applicationRepo
       .createQueryBuilder("application")
       .select(
@@ -333,14 +330,16 @@ export class AssessmentSequentialProcessingService {
         WorkflowOutputType.SpouseContributionWeeks,
       )
       .addSelect(
-        "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'totalBookCost')::NUMERIC)",
-        WorkflowOutputType.BookCost,
+        "SUM((currentAssessment.assessmentData ->> 'booksAndSuppliesCost')::NUMERIC)",
+        WorkflowOutputType.BooksAndSuppliesCost,
       )
       .addSelect(
         "SUM((currentAssessment.workflowData -> 'calculatedData' ->> 'returnTransportationCost')::NUMERIC)",
         WorkflowOutputType.ReturnTransportationCost,
       )
+      .addSelect("offering.offeringIntensity", "offeringIntensity")
       .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
       .where("application.applicationNumber IN (:...applicationNumbers)", {
         applicationNumbers,
       }) // Edited application can have awards associated with and they should not be considered.
@@ -354,19 +353,35 @@ export class AssessmentSequentialProcessingService {
           completedStudentAssessmentStatus: StudentAssessmentStatus.Completed,
         },
       )
-      .getRawOne<{
+      .groupBy("offering.offeringIntensity")
+      .getRawMany<{
         [WorkflowOutputType.FederalFSC]: string;
         [WorkflowOutputType.ProvincialFSC]: string;
         [WorkflowOutputType.ScholarshipsBursaries]: string;
         [WorkflowOutputType.SpouseContributionWeeks]: string;
-        [WorkflowOutputType.BookCost]: string;
+        [WorkflowOutputType.BooksAndSuppliesCost]: string;
         [WorkflowOutputType.ReturnTransportationCost]: string;
+        offeringIntensity: OfferingIntensity;
       }>();
 
-    return Object.keys(WorkflowOutputType).map((key) => ({
-      workflowOutput: key as WorkflowOutputType,
-      total: +totals[key] || 0,
-    }));
+    if (!totals?.length) {
+      return [];
+    }
+
+    const result: ProgramYearOutputTotal<WorkflowOutputType>[] = [];
+    totals.forEach((total) => {
+      Object.entries(WorkflowOutputType)
+        .filter(([key]) => total[key])
+        .forEach(([key]) => {
+          result.push({
+            output: key as WorkflowOutputType,
+            total: +total[key],
+            offeringIntensity: total.offeringIntensity,
+          });
+        });
+    });
+
+    return result;
   }
 
   /**
@@ -551,7 +566,7 @@ export class AssessmentSequentialProcessingService {
     studentId: number,
     programYearStartDate: string,
     referenceAssessmentDate: string,
-  ): Promise<AwardTotal[]> {
+  ): Promise<ProgramYearOutputTotal<string>[]> {
     const sfasApplicationAwards = this.sfasApplicationsRepo
       .createQueryBuilder("sfasApplication")
       .select("SUM(sfasApplication.csgpAward)", "CSGP")
@@ -570,12 +585,12 @@ export class AssessmentSequentialProcessingService {
     const awards = await sfasApplicationAwards.getRawOne<
       Record<"CSGP" | "SBSD" | "CSGD" | "BCAG", string>
     >();
-    const totals: AwardTotal[] = [];
+    const totals: ProgramYearOutputTotal<string>[] = [];
     Object.entries(awards).forEach(([key, value]) => {
       if (value && +value > 0) {
         totals.push({
           offeringIntensity: OfferingIntensity.fullTime,
-          valueCode: key,
+          output: key,
           total: +value,
         });
       }
@@ -594,7 +609,7 @@ export class AssessmentSequentialProcessingService {
     studentId: number,
     programYearStartDate: string,
     referenceAssessmentDate: string,
-  ): Promise<AwardTotal[]> {
+  ): Promise<ProgramYearOutputTotal<string>[]> {
     const sfasPartTimeApplicationAwards = this.sfasPartTimeApplicationsRepo
       .createQueryBuilder("sfasPTApplication")
       .select("SUM(sfasPTApplication.csgpAward)", "CSGP")
@@ -614,12 +629,12 @@ export class AssessmentSequentialProcessingService {
     const awards = await sfasPartTimeApplicationAwards.getRawOne<
       Record<"CSGP" | "SBSD" | "CSGD" | "BCAG" | "CSPT", string>
     >();
-    const totals: AwardTotal[] = [];
+    const totals: ProgramYearOutputTotal<string>[] = [];
     Object.entries(awards).forEach(([key, value]) => {
       if (value && +value > 0) {
         totals.push({
           offeringIntensity: OfferingIntensity.partTime,
-          valueCode: key,
+          output: key,
           total: +value,
         });
       }

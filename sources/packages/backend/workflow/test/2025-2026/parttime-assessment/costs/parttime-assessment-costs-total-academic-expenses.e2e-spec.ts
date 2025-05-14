@@ -20,6 +20,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-academic-e
       assessmentConsolidatedData.offeringActualTuitionCosts = 500;
       assessmentConsolidatedData.offeringProgramRelatedCosts = 200;
       assessmentConsolidatedData.offeringMandatoryFees = 200;
+      assessmentConsolidatedData.programYearTotalPartTimeBooksAndSuppliesCost = 250;
       // Act
       const calculatedAssessment =
         await executePartTimeAssessmentForProgramYear(

@@ -85,6 +85,7 @@ import {
   CASInvoiceAESTController,
   ApplicationChangeRequestAESTController,
   ApplicationChangeRequestControllerService,
+  DynamicFormAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -137,6 +138,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     CASInvoiceAESTController,
     ApplicationRestrictionBypassAESTController,
     ApplicationChangeRequestAESTController,
+    DynamicFormAESTController,
   ],
   providers: [
     ApplicationExceptionControllerService,

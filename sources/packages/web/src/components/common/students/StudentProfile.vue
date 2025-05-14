@@ -109,53 +109,16 @@
         /></v-col>
       </v-row>
     </content-group>
-    <h3 class="category-header-medium mt-4">Legacy Match</h3>
-    <content-group v-if="studentDetail.legacyProfile">
-      <v-row>
-        <v-col
-          ><title-value
-            propertyTitle="Given names"
-            :propertyValue="
-              emptyStringFiller(studentDetail.legacyProfile.firstName)
-            "
-          />
-        </v-col>
-        <v-col
-          ><title-value
-            propertyTitle="Last name"
-            :propertyValue="studentDetail.legacyProfile.lastName"
-          />
-        </v-col>
-        <v-col>
-          <title-value
-            propertyTitle="Date of birth"
-            :propertyValue="
-              dateOnlyLongString(studentDetail.legacyProfile.dateOfBirth)
-            "
-        /></v-col>
-      </v-row>
-      <v-row>
-        <v-col
-          ><title-value
-            propertyTitle="SIN"
-            :propertyValue="sinDisplayFormat(studentDetail.legacyProfile.sin)"
-          />
-        </v-col>
-      </v-row>
-      <v-row v-if="studentDetail.legacyProfile.hasMultipleProfiles">
-        <v-col
-          ><banner
-            :type="BannerTypes.Warning"
-            summary="The student is associated with multiple legacy profiles; the most recent update is shown."
-          ></banner>
-        </v-col>
-      </v-row>
-    </content-group>
-    <banner
-      v-else
-      :type="BannerTypes.Info"
-      summary="The student is not currently associated with any legacy record."
-    ></banner>
+    <template v-if="showLegacyMatch">
+      <h3 class="category-header-medium mt-4">Legacy match</h3>
+      <content-group>
+        <student-profile-legacy-matches
+          :student-id="studentId"
+          :legacy-profile="studentDetail.legacyProfile"
+          @legacy-profile-linked="loadStudentProfile"
+        />
+      </content-group>
+    </template>
     <edit-student-profile-modal
       ref="studentEditProfile"
     ></edit-student-profile-modal>
@@ -174,6 +137,7 @@ import { IdentityProviders, Role, StudentProfile, BannerTypes } from "@/types";
 import DisabilityStatusUpdateTileValue from "@/components/aest/students/DisabilityStatusUpdateTileValue.vue";
 import EditStudentProfileModal from "@/components/aest/students/modals/EditStudentProfileModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import StudentProfileLegacyMatches from "@/components/common/students/StudentProfileLegacyMatches.vue";
 
 /**
  *  Used to combine institution and ministry DTOs and make SIN explicitly mandatory.
@@ -185,6 +149,7 @@ interface SharedStudentProfile extends Omit<StudentProfile, "sin"> {
 
 export default defineComponent({
   components: {
+    StudentProfileLegacyMatches,
     DisabilityStatusUpdateTileValue,
     EditStudentProfileModal,
     CheckPermissionRole,
@@ -195,6 +160,11 @@ export default defineComponent({
       required: true,
     },
     allowDisabilityStatusUpdate: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    showLegacyMatch: {
       type: Boolean,
       required: false,
       default: false,
@@ -261,6 +231,7 @@ export default defineComponent({
     });
 
     onMounted(loadStudentProfile);
+
     return {
       studentDetail,
       address,
