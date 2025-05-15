@@ -451,11 +451,11 @@ export interface ApplicationData {
   /**
    * Program year start date.
    */
-  programYearStartDate: string;
+  programYearStartDate?: string;
   /**
-   * Program year start date.
+   * Program year end date.
    */
-  programYearEndDate: string;
+  programYearEndDate?: string;
   /**
    * While submitting a Student Application it is possible that the student
    * did not find the program in the list. In this situation the student will
