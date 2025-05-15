@@ -12,7 +12,8 @@
           #buttons
           v-if="
             applicationDetail.applicationEditStatus ===
-            ApplicationEditStatus.ChangePendingApproval
+              ApplicationEditStatus.ChangePendingApproval &&
+            showApplicationChangeAssessButtons
           "
         >
           <check-permission-role :role="Role.StudentApproveDeclineAppeals">
@@ -127,6 +128,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     // Event emitter for application sidebar refresh.
     const { refreshApplicationSidebar } = useEmitterEvents();
+    const showApplicationChangeAssessButtons = ref(true);
 
     /**
      * Happens when all the form components are rendered, including lists.
@@ -282,8 +284,6 @@ export default defineComponent({
             props.versionApplicationId as number,
             { ...responseData, studentId: props.studentId },
           );
-          // Emit the event to refresh the application sidebar after the application change request is assessed.
-          refreshApplicationSidebar();
           // When the change request is approved, the version application becomes the current application.
           // But when the change request is declined, the current application remains the same.
           const currentApplicationId =
@@ -291,23 +291,27 @@ export default defineComponent({
             ApplicationEditStatus.ChangedWithApproval
               ? props.versionApplicationId
               : props.applicationId;
-          router.push({
-            name: AESTRoutesConst.APPLICATION_DETAILS,
-            params: {
-              applicationId: currentApplicationId,
-              studentId: props.studentId,
-            },
-          });
-          // TODO: Implement the API to do the actual update.
           if (
             applicationChangeRequestStatus ===
             ApplicationEditStatus.ChangedWithApproval
           ) {
             snackBar.success("Change approved.");
+            // Redirect to the application details page with the current application ID only when the change is approved.
+            router.push({
+              name: AESTRoutesConst.APPLICATION_DETAILS,
+              params: {
+                applicationId: currentApplicationId,
+                studentId: props.studentId,
+              },
+            });
           } else {
             snackBar.success("Change declined.");
           }
           assessApplicationChangeRequestModal.value.hideModal();
+          // Hide the buttons after the change request is assessed.
+          showApplicationChangeAssessButtons.value = false;
+          // Emit the event to refresh the application sidebar after the application change request is assessed.
+          refreshApplicationSidebar();
         } catch (error: unknown) {
           if (error instanceof ApiProcessError) {
             snackBar.warn(error.message);
@@ -333,6 +337,7 @@ export default defineComponent({
       Role,
       assessApplicationChangeRequest,
       assessApplicationChangeRequestModal,
+      showApplicationChangeAssessButtons,
     };
   },
 });

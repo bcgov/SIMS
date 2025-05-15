@@ -42,7 +42,6 @@ export class ApplicationChangeRequestAESTController extends BaseController {
    * Approves or declines an application change request.
    * @param applicationId application id.
    * @param payload request payload.
-   * @param user current authenticated user.
    */
   @Roles(Role.StudentApproveDeclineAppeals)
   @Patch(":applicationId")

@@ -208,7 +208,6 @@ export class WorkflowClientService {
    * waiting workflow process.
    * @param applicationId application id that is used as correlation key for the message.
    * @param applicationEditStatus application edit status to be sent to the workflow.
-   * @throws error if there is an error while sending the message.
    */
   async sendApplicationChangeRequestStatusMessage(
     applicationId: number,

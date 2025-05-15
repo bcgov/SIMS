@@ -7,10 +7,9 @@ import {
   EducationProgramOffering,
   NoteType,
   StudentAppeal,
-  StudentAssessment,
   User,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { NoteSharedService, WorkflowClientService } from "@sims/services";
 
 /**
@@ -55,6 +54,7 @@ export class ApplicationChangeRequestService {
    * @param applicationId application id for which to update the status.
    * @param studentId student id for which to update the status.
    * @param applicationEditStatus the application edit status to be updated.
+   * @param note note to be saved.
    * @param auditUserId user that should be considered the one that is causing the changes.
    */
   async updateApplicationChangeRequestStatus(
@@ -105,14 +105,35 @@ export class ApplicationChangeRequestService {
         );
         return;
       }
-      const {
-        previousCompletedApplicationId,
-        previousCompletedApplicationCurrentAssessment,
-        newApplicationCurrentAssessment,
-      } = await this.getPreviousCompletedApplication(
-        applicationId,
-        transactionalEntityManager,
-      );
+      const changeRequestApplication = await this.applicationRepo.findOne({
+        select: {
+          id: true,
+          applicationEditStatus: true,
+          precedingApplication: {
+            id: true,
+            currentAssessment: { id: true },
+          },
+          currentAssessment: {
+            id: true,
+          },
+        },
+        relations: {
+          currentAssessment: true,
+          precedingApplication: {
+            currentAssessment: true,
+          },
+        },
+        where: {
+          id: applicationId,
+        },
+      });
+      const previousCompletedApplication =
+        changeRequestApplication.precedingApplication;
+      const previousCompletedApplicationId = previousCompletedApplication.id;
+      const previousCompletedApplicationCurrentAssessment =
+        previousCompletedApplication.currentAssessment;
+      const newApplicationCurrentAssessment =
+        changeRequestApplication.currentAssessment;
       // Copy the most recent offering id and the student appeal id
       // from the latest preceding application to the newly approved current application.
       newApplicationCurrentAssessment.offering = {
@@ -160,70 +181,5 @@ export class ApplicationChangeRequestService {
         applicationEditStatus,
       );
     });
-  }
-
-  /**
-   * Get the most recent application with the same parent that has a
-   * Change with approval or Original application edit status.
-   * @param applicationId application id.
-   * @param transactionalEntityManager transactional entity manager.
-   * @returns the most recent application details with the same parent
-   * that has a Change with approval or Original application edit status.
-   */
-  private async getPreviousCompletedApplication(
-    applicationId: number,
-    transactionalEntityManager: EntityManager,
-  ): Promise<{
-    previousCompletedApplicationId: number;
-    previousCompletedApplicationCurrentAssessment: StudentAssessment;
-    newApplicationCurrentAssessment: StudentAssessment;
-  }> {
-    // Get the application with its parent information.
-    const {
-      parentApplication,
-      currentAssessment: newApplicationCurrentAssessment,
-    } = await transactionalEntityManager.getRepository(Application).findOne({
-      select: {
-        id: true,
-        parentApplication: { id: true },
-        currentAssessment: true,
-      },
-      where: { id: applicationId },
-      relations: { parentApplication: true, currentAssessment: true },
-    });
-    // Get the most recent application with the same parent that has a
-    // Change with approval or Original application edit status.
-    const latestCompletedApplication = await transactionalEntityManager
-      .getRepository(Application)
-      .findOne({
-        select: {
-          id: true,
-          currentAssessment: {
-            id: true,
-            offering: { id: true },
-            studentAppeal: { id: true },
-          },
-        },
-        where: {
-          parentApplication: { id: parentApplication.id },
-          applicationStatus: ApplicationStatus.Completed,
-        },
-        relations: {
-          currentAssessment: {
-            offering: true,
-            studentAppeal: true,
-          },
-        },
-      });
-    // Extract the needed information
-    const {
-      id: previousCompletedApplicationId,
-      currentAssessment: previousCompletedApplicationCurrentAssessment,
-    } = latestCompletedApplication;
-    return {
-      previousCompletedApplicationId,
-      previousCompletedApplicationCurrentAssessment,
-      newApplicationCurrentAssessment,
-    };
   }
 }
