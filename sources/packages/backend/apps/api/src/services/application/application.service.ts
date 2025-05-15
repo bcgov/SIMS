@@ -2262,7 +2262,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.findOne({
       select: {
         id: true,
-        programYear: { id: true, active: true },
+        programYear: { id: true, active: true, startDate: true, endDate: true },
         offeringIntensity: true,
       },
       relations: {

@@ -449,6 +449,14 @@ export interface ApplicationData {
    */
   workflowName: string;
   /**
+   * Program year start date.
+   */
+  programYearStartDate: string;
+  /**
+   * Program year start date.
+   */
+  programYearEndDate: string;
+  /**
    * While submitting a Student Application it is possible that the student
    * did not find the program in the list. In this situation the student will
    * provide the name that he would be looking for and the API need this value
