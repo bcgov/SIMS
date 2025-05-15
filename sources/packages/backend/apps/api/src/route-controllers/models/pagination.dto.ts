@@ -90,6 +90,12 @@ export class StudentAppealPendingPaginationOptionsAPIInDTO extends PaginationOpt
   sortField?: string;
 }
 
+export class StudentChangeRequestPendingPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["submittedDate", "applicationNumber", "lastName"])
+  sortField?: string;
+}
+
 export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
   @IsIn([

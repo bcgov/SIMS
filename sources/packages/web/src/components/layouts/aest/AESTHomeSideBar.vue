@@ -123,11 +123,20 @@ export default defineComponent({
         },
       },
       {
-        title: "Change requests",
+        title: "Change requests (2024-2025)",
         props: {
           prependIcon: "mdi-folder-open-outline",
           to: {
             name: AESTRoutesConst.APPLICATION_APPEALS_PENDING,
+          },
+        },
+      },
+      {
+        title: "Change requests (2025-2026)",
+        props: {
+          prependIcon: "mdi-folder-open-outline",
+          to: {
+            name: AESTRoutesConst.APPLICATION_CHANGE_REQUESTS_PENDING,
           },
         },
       },

@@ -520,3 +520,36 @@ export const StudentProfileLegacyMatchHeaders = [
   { title: "SIN", key: "sin", sortable: false },
   { title: "Actions", key: "actions", sortable: false },
 ];
+
+export const PendingApplicationEditsTableHeaders = [
+  {
+    title: "Date submitted",
+    align: "start" as const,
+    sortable: true,
+    key: "submittedDate",
+  },
+  {
+    title: "Given names",
+    align: "start" as const,
+    sortable: false,
+    key: "firstName",
+  },
+  {
+    title: "Last name",
+    align: "start" as const,
+    sortable: true,
+    key: "lastName",
+  },
+  {
+    title: "Application #",
+    align: "start" as const,
+    sortable: true,
+    key: "applicationNumber",
+  },
+  {
+    title: "Action",
+    align: "center" as const,
+    sortable: false,
+    key: "action",
+  },
+];
