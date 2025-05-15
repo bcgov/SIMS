@@ -19,10 +19,7 @@ import {
   ApplicationSupportingUsersAPIOutDTO,
   ApplicationVersionAPIOutDTO,
 } from "@/services/http/dto";
-import {
-  applicationEventBus,
-  EVENTS,
-} from "@/views/aest/StudentApplicationView.vue";
+import useEmitterEvents from "@/composables/useEmitterEvents";
 
 export default defineComponent({
   props: {
@@ -43,6 +40,9 @@ export default defineComponent({
     const { getISODateHourMinuteString } = useFormatters();
     const { mapApplicationEditStatusForMinistry } = useApplication();
     const menuItems = ref<MenuItemModel[]>([]);
+    // Event emitter for application sidebar refresh.
+    const { refreshApplicationSidebarOn, refreshApplicationSidebarOff } =
+      useEmitterEvents();
 
     // Function to load application data and update menu items.
     const loadApplicationData = async () => {
@@ -61,12 +61,12 @@ export default defineComponent({
       // Load application data initially.
       await loadApplicationData();
       // Listen for the refresh sidebar event.
-      applicationEventBus.on(EVENTS.REFRESH_SIDEBAR, loadApplicationData);
+      refreshApplicationSidebarOn(loadApplicationData);
     });
 
     onBeforeUnmount(() => {
       // Clean up the event listener when component is unmounted.
-      applicationEventBus.off(EVENTS.REFRESH_SIDEBAR, loadApplicationData);
+      refreshApplicationSidebarOff(loadApplicationData);
     });
 
     /**

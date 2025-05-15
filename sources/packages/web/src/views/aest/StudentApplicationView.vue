@@ -88,10 +88,7 @@ import {
 import router from "@/router";
 import AssessApplicationChangeRequestModal from "@/components/aest/students/modals/AssessApplicationChangeRequestModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import useEmitter from "@/composables/useEmitter";
-
-// Event emitter for application sidebar refresh.
-export const applicationEventBus = useEmitter();
+import useEmitterEvents from "@/composables/useEmitterEvents";
 
 export const EVENTS = {
   REFRESH_SIDEBAR: "refresh-application-sidebar",
@@ -128,6 +125,8 @@ export default defineComponent({
       {} as ModalDialog<ApplicationChangeRequestAPIInDTO | false>,
     );
     const snackBar = useSnackBar();
+    // Event emitter for application sidebar refresh.
+    const { refreshApplicationSidebar } = useEmitterEvents();
 
     /**
      * Happens when all the form components are rendered, including lists.
@@ -284,7 +283,7 @@ export default defineComponent({
             { ...responseData, studentId: props.studentId },
           );
           // Emit the event to refresh the application sidebar after the application change request is assessed.
-          applicationEventBus.emit(EVENTS.REFRESH_SIDEBAR);
+          refreshApplicationSidebar();
           // When the change request is approved, the version application becomes the current application.
           // But when the change request is declined, the current application remains the same.
           const currentApplicationId =
