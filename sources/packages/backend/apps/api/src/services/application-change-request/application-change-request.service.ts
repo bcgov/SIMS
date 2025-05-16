@@ -44,29 +44,38 @@ export class ApplicationChangeRequestService {
     note: string,
     auditUserId: number,
   ): Promise<void> {
-    // Get the application by id.
-    const changeRequestApplication =
-      await this.applicationService.getApplicationById(applicationId, {
-        allowEdited: true,
-      });
-    if (!changeRequestApplication) {
-      throw new CustomNamedError(
-        `Application ${applicationId} to assess change not found.`,
-        APPLICATION_NOT_FOUND,
-      );
-    }
-    if (
-      changeRequestApplication.applicationEditStatus !==
-      ApplicationEditStatus.ChangePendingApproval
-    ) {
-      throw new CustomNamedError(
-        `Application ${applicationId} to assess change not in valid status to be updated.`,
-        INVALID_APPLICATION_EDIT_STATUS,
-      );
-    }
-    const auditUser = { id: auditUserId } as User;
-    const currentDate = new Date();
     await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const applicationRepo =
+        transactionalEntityManager.getRepository(Application);
+      // Prevents other changes in the application change request
+      // while this transaction is being processed.
+      await this.applicationService.getApplicationLock(
+        transactionalEntityManager,
+        applicationId,
+      );
+      // Get the application by id.
+      const changeRequestApplication =
+        await this.applicationService.getApplicationById(applicationId, {
+          allowEdited: true,
+          entityManager: transactionalEntityManager,
+        });
+      if (!changeRequestApplication) {
+        throw new CustomNamedError(
+          `Application ${applicationId} to assess change not found.`,
+          APPLICATION_NOT_FOUND,
+        );
+      }
+      if (
+        changeRequestApplication.applicationEditStatus !==
+        ApplicationEditStatus.ChangePendingApproval
+      ) {
+        throw new CustomNamedError(
+          `Application ${applicationId} to assess change not in valid status to be updated.`,
+          INVALID_APPLICATION_EDIT_STATUS,
+        );
+      }
+      const auditUser = { id: auditUserId } as User;
+      const currentDate = new Date();
       // Save the note.
       await this.noteSharedService.createStudentNote(
         changeRequestApplication.student.id,
@@ -75,81 +84,45 @@ export class ApplicationChangeRequestService {
         auditUserId,
         transactionalEntityManager,
       );
-      const applicationRepo =
-        transactionalEntityManager.getRepository(Application);
       if (applicationEditStatus === ApplicationEditStatus.ChangeDeclined) {
         // Update the application edit status.
-        const updateResult = await applicationRepo.update(
-          {
-            id: applicationId,
-            applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
-          },
-          {
-            applicationEditStatus: ApplicationEditStatus.ChangeDeclined,
-            modifier: auditUser,
-            updatedAt: currentDate,
-            applicationEditStatusUpdatedBy: auditUser,
-            applicationEditStatusUpdatedOn: currentDate,
-          },
-        );
-        if (!updateResult.affected) {
-          throw new CustomNamedError(
-            `Application ${applicationId} to assess change not in valid status to be updated.`,
-            INVALID_APPLICATION_EDIT_STATUS,
-          );
-        }
+        changeRequestApplication.applicationEditStatus =
+          ApplicationEditStatus.ChangeDeclined;
+        changeRequestApplication.modifier = auditUser;
+        changeRequestApplication.updatedAt = currentDate;
+        changeRequestApplication.applicationEditStatusUpdatedBy = auditUser;
+        changeRequestApplication.applicationEditStatusUpdatedOn = currentDate;
+        await applicationRepo.save(changeRequestApplication);
         return;
       }
-      const previousCompletedApplication =
+      // Application currently completed that will be replaced by the approved change request.
+      const completedApplication =
         changeRequestApplication.precedingApplication;
-      const newApplicationCurrentAssessment =
-        changeRequestApplication.currentAssessment;
-      // Copy the most recent offering id and the student appeal id
-      // from the latest preceding application to the newly approved current application.
-      newApplicationCurrentAssessment.offering = {
-        id: previousCompletedApplication.currentAssessment.offering.id,
+      completedApplication.applicationStatus = ApplicationStatus.Edited;
+      completedApplication.modifier = auditUser;
+      completedApplication.updatedAt = currentDate;
+      // Update the approved change request to become the new completed application.
+      changeRequestApplication.applicationEditStatus =
+        ApplicationEditStatus.ChangedWithApproval;
+      changeRequestApplication.modifier = auditUser;
+      changeRequestApplication.updatedAt = currentDate;
+      changeRequestApplication.applicationStatusUpdatedOn = currentDate;
+      changeRequestApplication.applicationEditStatusUpdatedBy = auditUser;
+      changeRequestApplication.applicationEditStatusUpdatedOn = currentDate;
+      changeRequestApplication.applicationStatus = ApplicationStatus.Completed;
+      // Update the current assessment of the preceding application
+      // with most recent offering ID and student appeal ID to update
+      // the current assessment of the new completed application.
+      const copyFromAssessment = completedApplication.currentAssessment;
+      changeRequestApplication.currentAssessment.offering = {
+        id: copyFromAssessment.offering.id,
       } as EducationProgramOffering;
-      newApplicationCurrentAssessment.studentAppeal = {
-        id: previousCompletedApplication.currentAssessment.studentAppeal?.id,
-      } as StudentAppeal;
-      // Update the previously completed application to be in Edited status.
-      const previousApplicationUpdatePromise = applicationRepo.update(
-        {
-          id: previousCompletedApplication.id,
-        },
-        {
-          applicationStatus: ApplicationStatus.Edited,
-          modifier: auditUser,
-          updatedAt: currentDate,
-        },
-      );
-      // Update the newly completed approved application to be in Edited status.
-      const currentApplicationUpdatePromise = applicationRepo.update(
-        {
-          id: applicationId,
-          applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
-        },
-        {
-          applicationEditStatus: ApplicationEditStatus.ChangedWithApproval,
-          applicationStatus: ApplicationStatus.Completed,
-          currentAssessment: newApplicationCurrentAssessment,
-          modifier: auditUser,
-          updatedAt: currentDate,
-          applicationStatusUpdatedOn: currentDate,
-          applicationEditStatusUpdatedBy: auditUser,
-          applicationEditStatusUpdatedOn: currentDate,
-        },
-      );
-      const [, currentApplicationUpdateResult] = await Promise.all([
-        previousApplicationUpdatePromise,
-        currentApplicationUpdatePromise,
-      ]);
-      if (!currentApplicationUpdateResult.affected) {
-        throw new CustomNamedError(
-          `Application ${applicationId} to assess change not in valid status to be updated.`,
-          INVALID_APPLICATION_EDIT_STATUS,
-        );
+      if (copyFromAssessment.studentAppeal) {
+        changeRequestApplication.currentAssessment.studentAppeal = {
+          id: copyFromAssessment.studentAppeal.id,
+        } as StudentAppeal;
       }
+      await applicationRepo.save(changeRequestApplication);
     });
     // Send a message to the workflow to proceed.
     await this.workflowClientService.sendApplicationChangeRequestStatusMessage(
