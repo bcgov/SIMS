@@ -9,11 +9,11 @@ on:
         required: true
         type: environment
       deployCamundaDefinitions:
-        description: "Deploy Camunda BPMN/DMN from main"
+        description: "Deploy Camunda BPMN/DMN"
         type: boolean
         default: true
       deployFormioDefinitions:
-        description: "Deploy Form.io forms from main"
+        description: "Deploy Form.io forms"
         type: boolean
         default: true
   workflow_call:
