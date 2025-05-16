@@ -479,42 +479,50 @@ export class ApplicationService extends RecordDataModelService<Application> {
     studentId: number,
     auditUserId: number,
   ): Promise<Application> {
-    const changeRequest = await this.repo.findOne({
-      select: {
-        id: true,
-        applicationEditStatus: true,
-        currentAssessment: { id: true },
-      },
-      relations: {
-        currentAssessment: true,
-      },
-      where: {
-        id: applicationId,
-        student: { id: studentId },
-        applicationEditStatus: In(APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES),
-      },
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const applicationRepo =
+        transactionalEntityManager.getRepository(Application);
+      // Prevents other changes in the application change request
+      // while this transaction is being processed.
+      await this.getApplicationLock(transactionalEntityManager, applicationId);
+      const changeRequest = await applicationRepo.findOne({
+        select: {
+          id: true,
+          applicationEditStatus: true,
+          currentAssessment: { id: true },
+        },
+        relations: {
+          currentAssessment: true,
+        },
+        where: {
+          id: applicationId,
+          student: { id: studentId },
+          applicationEditStatus: In(APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES),
+        },
+      });
+      if (!changeRequest) {
+        throw new CustomNamedError(
+          "Not able to find the in-progress change request.",
+          APPLICATION_NOT_FOUND,
+        );
+      }
+      const now = new Date();
+      const auditUser = { id: auditUserId } as User;
+      // Update in-progress change request.
+      changeRequest.applicationEditStatus =
+        ApplicationEditStatus.ChangeCancelled;
+      changeRequest.applicationEditStatusUpdatedOn = now;
+      changeRequest.applicationEditStatusUpdatedBy = auditUser;
+      changeRequest.modifier = auditUser;
+      changeRequest.updatedAt = now;
+      // Update the assessment to be cancelled.
+      changeRequest.currentAssessment.studentAssessmentStatus =
+        StudentAssessmentStatus.CancellationRequested;
+      changeRequest.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+      changeRequest.currentAssessment.modifier = auditUser;
+      changeRequest.currentAssessment.updatedAt = now;
+      return this.repo.save(changeRequest);
     });
-    if (!changeRequest) {
-      throw new CustomNamedError(
-        "Not able to find the in-progress change request.",
-        APPLICATION_NOT_FOUND,
-      );
-    }
-    const now = new Date();
-    const auditUser = { id: auditUserId } as User;
-    // Update in-progress change request.
-    changeRequest.applicationEditStatus = ApplicationEditStatus.ChangeCancelled;
-    changeRequest.applicationEditStatusUpdatedOn = now;
-    changeRequest.applicationEditStatusUpdatedBy = auditUser;
-    changeRequest.modifier = auditUser;
-    changeRequest.updatedAt = now;
-    // Update the assessment to be cancelled.
-    changeRequest.currentAssessment.studentAssessmentStatus =
-      StudentAssessmentStatus.CancellationRequested;
-    changeRequest.currentAssessment.studentAssessmentStatusUpdatedOn = now;
-    changeRequest.currentAssessment.modifier = auditUser;
-    changeRequest.currentAssessment.updatedAt = now;
-    return this.repo.save(changeRequest);
   }
 
   /**
@@ -827,6 +835,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * - `studentId` student id.
    * - `institutionId` institution id.
    * - `allowEdited` indicates if Edited application is allowed.
+   * - `entityManager` entity manager to be used for the query. Useful when
+   * it needs to be executed in a transaction.
    * @returns student application.
    */
   async getApplicationById(
@@ -836,12 +846,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
       studentId?: number;
       institutionId?: number;
       allowEdited?: boolean;
+      entityManager?: EntityManager;
     },
   ): Promise<Application> {
+    const applicationRepo =
+      options?.entityManager?.getRepository(Application) ?? this.repo;
     const applicationStatus = options?.allowEdited
       ? undefined
       : Not(ApplicationStatus.Edited);
-    return this.repo.findOne({
+    return applicationRepo.findOne({
       select: {
         id: true,
         isArchived: true,
@@ -2325,6 +2338,23 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
     });
     return application?.parentApplication?.versions ?? [];
+  }
+
+  /**
+   * Get a database lock on the application.
+   * Locks only the application record.
+   * @param entityManager entity manager to be used for the query.
+   * @param applicationId application ID for which to get the lock.
+   */
+  async getApplicationLock(
+    entityManager: EntityManager,
+    applicationId: number,
+  ): Promise<void> {
+    await entityManager.getRepository(Application).findOne({
+      select: { id: true },
+      where: { id: applicationId },
+      lock: { mode: "pessimistic_write" },
+    });
   }
 
   @InjectLogger()
