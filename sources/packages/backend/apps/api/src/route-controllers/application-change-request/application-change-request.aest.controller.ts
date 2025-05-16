@@ -25,6 +25,7 @@ import { ApplicationChangeRequestAPIInDTO } from "./models/application-change-re
 import BaseController from "../BaseController";
 import { Role } from "../../auth";
 import { INVALID_APPLICATION_EDIT_STATUS } from "@sims/services/constants";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Controller for application change request operations for the Ministry.
@@ -64,18 +65,18 @@ export class ApplicationChangeRequestAESTController extends BaseController {
         payload.note,
         userToken.userId,
       );
-    } catch (error) {
-      if (error.name === APPLICATION_NOT_FOUND) {
-        throw new NotFoundException(error);
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        if (error.name === APPLICATION_NOT_FOUND) {
+          throw new NotFoundException(error.message);
+        }
+        if (error.name === INVALID_APPLICATION_EDIT_STATUS) {
+          throw new NotFoundException(
+            new ApiProcessError(error.message, INVALID_APPLICATION_EDIT_STATUS),
+          );
+        }
       }
-      if (error.name === INVALID_APPLICATION_EDIT_STATUS) {
-        throw new NotFoundException(
-          new ApiProcessError(
-            `Application ${applicationId} to assess change not in valid status to be updated.`,
-            INVALID_APPLICATION_EDIT_STATUS,
-          ),
-        );
-      }
+      throw error;
     }
   }
 }
