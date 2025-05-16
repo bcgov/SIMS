@@ -919,11 +919,7 @@ export class ApplicationControllerService {
       throw new UnprocessableEntityException("Program year is not active.");
     }
     // Validate the values in the submitted application before submitting.
-    await this.validateSubmitApplicationData(
-      payload,
-      application.offeringIntensity,
-      options,
-    );
+    await this.validateSubmitApplicationData(payload, application, options);
     const formName = this.getStudentApplicationFormName(
       application.programYear.id,
       application.offeringIntensity,
@@ -949,15 +945,16 @@ export class ApplicationControllerService {
    * Validates and updates the payload values with the offering values (where the server is the source of truth) before submitting.
    * This is required to the values in the payload to be the same as the values in the offering and to prevent the user from modifying them.
    * @param payload payload to create the application.
-   * @param offeringIntensity offering intensity of the application.
+   * @param application application details for validation.
    * @param options application submission options.
    * - `isChangeRequestSubmission` indicates if the submission is for a change request.
    */
   private async validateSubmitApplicationData(
     payload: SaveApplicationAPIInDTO,
-    offeringIntensity: OfferingIntensity,
+    application: Application,
     options?: { isChangeRequestSubmission?: boolean },
   ): Promise<void> {
+    const offeringIntensity = application.offeringIntensity;
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     if (
       !isFulltimeAllowed &&
@@ -971,6 +968,9 @@ export class ApplicationControllerService {
     // to the offering intensity value from the database.
     // TODO: Remove this once the program year 2024-2025 is no longer active.
     payload.data.howWillYouBeAttendingTheProgram = offeringIntensity;
+    // Inject the program year start and end dates into the payload.
+    payload.data.programYearStartDate = application.programYear.startDate;
+    payload.data.programYearEndDate = application.programYear.endDate;
 
     // studyStartDate from payload is set as studyStartDate
     let studyStartDate = payload.data.studystartDate;
