@@ -45,10 +45,10 @@ export default defineComponent({
       useEmitterEvents();
 
     // Function to load application data and update menu items.
-    const loadApplicationData = async () => {
+    const loadApplicationData = async (applicationId: number) => {
       const overallDetails =
         await ApplicationService.shared.getApplicationOverallDetails(
-          props.applicationId,
+          applicationId,
         );
       menuItems.value = [
         ...createCurrentApplicationMenuItems(overallDetails.currentApplication),
@@ -57,16 +57,21 @@ export default defineComponent({
       ];
     };
 
+    const handleSideBarRefresh = () => {
+      // Refresh the sidebar.
+      loadApplicationData(props.versionApplicationId as number);
+    };
+
     onMounted(async () => {
       // Load application data initially.
-      await loadApplicationData();
+      await loadApplicationData(props.applicationId);
       // Listen for the refresh sidebar event.
-      refreshApplicationSidebarOn(loadApplicationData);
+      refreshApplicationSidebarOn(handleSideBarRefresh);
     });
 
     onBeforeUnmount(() => {
       // Clean up the event listener when component is unmounted.
-      refreshApplicationSidebarOff(loadApplicationData);
+      refreshApplicationSidebarOff(handleSideBarRefresh);
     });
 
     /**
