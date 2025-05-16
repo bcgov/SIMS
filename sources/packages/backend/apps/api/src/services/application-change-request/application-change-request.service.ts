@@ -122,7 +122,7 @@ export class ApplicationChangeRequestService {
         } as StudentAppeal;
       }
       // Update the previously completed application to be in Edited status.
-      await applicationRepo.update(
+      const previousApplicationUpdatePromise = applicationRepo.update(
         {
           id: previousCompletedApplication.id,
         },
@@ -132,7 +132,8 @@ export class ApplicationChangeRequestService {
           updatedAt: currentDate,
         },
       );
-      const updateResult = await applicationRepo.update(
+      // Update the newly completed approved application to be in Edited status.
+      const currentApplicationUpdatePromise = applicationRepo.update(
         {
           id: applicationId,
           applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
@@ -148,7 +149,11 @@ export class ApplicationChangeRequestService {
           applicationEditStatusUpdatedOn: currentDate,
         },
       );
-      if (!updateResult.affected) {
+      const [, currentApplicationUpdateResult] = await Promise.all([
+        previousApplicationUpdatePromise,
+        currentApplicationUpdatePromise,
+      ]);
+      if (!currentApplicationUpdateResult.affected) {
         throw new Error(
           `Application ${applicationId} to assess change not found or not in valid status to be updated.`,
         );
