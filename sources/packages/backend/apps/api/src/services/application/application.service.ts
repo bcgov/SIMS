@@ -854,7 +854,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationNumber: true,
         pirDeniedOtherDesc: true,
         submittedDate: true,
-        precedingApplication: { id: true, currentAssessment: { id: true } },
+        precedingApplication: {
+          id: true,
+          currentAssessment: {
+            id: true,
+            offering: { id: true },
+            studentAppeal: { id: true },
+          },
+        },
         applicationException: {
           id: true,
           exceptionStatus: true,
@@ -869,9 +876,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
             studyStartDate: true,
             studyEndDate: true,
             offeringStatus: true,
-          },
-          studentAppeal: {
-            id: true,
           },
         },
         location: {
@@ -903,12 +907,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       relations: {
         applicationException: true,
-        currentAssessment: { offering: true, studentAppeal: true },
+        currentAssessment: { offering: true },
         location: { institution: true },
         pirDeniedReasonId: true,
         programYear: true,
         student: { user: true },
-        precedingApplication: { currentAssessment: true },
+        precedingApplication: {
+          currentAssessment: { offering: true, studentAppeal: true },
+        },
       },
       where: {
         id: applicationId,

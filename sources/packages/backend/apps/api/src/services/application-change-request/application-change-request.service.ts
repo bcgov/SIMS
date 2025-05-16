@@ -114,7 +114,7 @@ export class ApplicationChangeRequestService {
       // Copy the most recent offering id and the student appeal id
       // from the latest preceding application to the newly approved current application.
       newApplicationCurrentAssessment.offering = {
-        id: previousCompletedApplication.currentAssessment.offering?.id,
+        id: previousCompletedApplication.currentAssessment.offering.id,
       } as EducationProgramOffering;
       if (previousCompletedApplication.currentAssessment.studentAppeal) {
         newApplicationCurrentAssessment.studentAppeal = {
