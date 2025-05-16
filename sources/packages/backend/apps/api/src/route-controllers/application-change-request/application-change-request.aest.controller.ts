@@ -68,12 +68,14 @@ export class ApplicationChangeRequestAESTController extends BaseController {
       if (error.name === APPLICATION_NOT_FOUND) {
         throw new NotFoundException(error);
       }
-      throw new NotFoundException(
-        new ApiProcessError(
-          `Application ${applicationId} to assess change not in valid status to be updated.`,
-          INVALID_APPLICATION_EDIT_STATUS,
-        ),
-      );
+      if (error.name === INVALID_APPLICATION_EDIT_STATUS) {
+        throw new NotFoundException(
+          new ApiProcessError(
+            `Application ${applicationId} to assess change not in valid status to be updated.`,
+            INVALID_APPLICATION_EDIT_STATUS,
+          ),
+        );
+      }
     }
   }
 }
