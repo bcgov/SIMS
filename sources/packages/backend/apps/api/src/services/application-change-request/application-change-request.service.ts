@@ -96,8 +96,9 @@ export class ApplicationChangeRequestService {
           },
         );
         if (!updateResult.affected) {
-          throw new Error(
-            `Application ${applicationId} to assess change not found or not in valid status to be updated.`,
+          throw new CustomNamedError(
+            `Application ${applicationId} to assess change not in valid status to be updated.`,
+            INVALID_APPLICATION_EDIT_STATUS,
           );
         }
         // End the workflow.
@@ -154,8 +155,9 @@ export class ApplicationChangeRequestService {
         currentApplicationUpdatePromise,
       ]);
       if (!currentApplicationUpdateResult.affected) {
-        throw new Error(
-          `Application ${applicationId} to assess change not found or not in valid status to be updated.`,
+        throw new CustomNamedError(
+          `Application ${applicationId} to assess change not in valid status to be updated.`,
+          INVALID_APPLICATION_EDIT_STATUS,
         );
       }
       // Send a message to the workflow to proceed.
