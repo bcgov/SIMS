@@ -50,6 +50,7 @@ export class ApplicationChangeRequestService {
     // Get the application by id.
     const application = await this.applicationService.getApplicationById(
       applicationId,
+      { allowEdited: true },
     );
     if (!application) {
       throw new CustomNamedError(
