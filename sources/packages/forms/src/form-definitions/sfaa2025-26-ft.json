@@ -336,6 +336,38 @@
     },
     {
       "title": "Program",
+      "collapsible": false,
+      "key": "page3",
+      "logic": [
+        {
+          "name": "Disable program edit",
+          "trigger": {
+            "type": "simple",
+            "simple": {
+              "show": true,
+              "when": "isProgramReadOnly",
+              "eq": "true"
+            }
+          },
+          "actions": [
+            {
+              "name": "Set panel to be disabled",
+              "type": "property",
+              "property": {
+                "label": "Disabled",
+                "value": "disabled",
+                "type": "boolean"
+              },
+              "state": true
+            }
+          ]
+        }
+      ],
+      "overlay": {
+        "width": "350px"
+      },
+      "type": "panel",
+      "label": "Program",
       "breadcrumbClickable": true,
       "buttonSettings": {
         "previous": false,
@@ -343,13 +375,6 @@
         "next": false
       },
       "scrollToTop": true,
-      "collapsible": false,
-      "key": "page3",
-      "overlay": {
-        "width": "350px"
-      },
-      "type": "panel",
-      "label": "Program",
       "components": [
         {
           "label": "HTML",
