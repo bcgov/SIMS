@@ -91,6 +91,8 @@ export class ApplicationChangeRequestService {
             applicationEditStatus: ApplicationEditStatus.ChangeDeclined,
             modifier: auditUser,
             updatedAt: currentDate,
+            applicationEditStatusUpdatedBy: auditUser,
+            applicationEditStatusUpdatedOn: currentDate,
           },
         );
         if (!updateResult.affected) {
@@ -107,25 +109,22 @@ export class ApplicationChangeRequestService {
       }
       const previousCompletedApplication =
         changeRequestApplication.precedingApplication;
-      const previousCompletedApplicationId = previousCompletedApplication.id;
-      const previousCompletedApplicationCurrentAssessment =
-        previousCompletedApplication.currentAssessment;
       const newApplicationCurrentAssessment =
         changeRequestApplication.currentAssessment;
       // Copy the most recent offering id and the student appeal id
       // from the latest preceding application to the newly approved current application.
       newApplicationCurrentAssessment.offering = {
-        id: previousCompletedApplicationCurrentAssessment.offering?.id,
+        id: previousCompletedApplication.currentAssessment.offering?.id,
       } as EducationProgramOffering;
-      if (previousCompletedApplicationCurrentAssessment.studentAppeal) {
+      if (previousCompletedApplication.currentAssessment.studentAppeal) {
         newApplicationCurrentAssessment.studentAppeal = {
-          id: previousCompletedApplicationCurrentAssessment.studentAppeal.id,
+          id: previousCompletedApplication.currentAssessment.studentAppeal.id,
         } as StudentAppeal;
       }
       // Update the previously completed application to be in Edited status.
       await applicationRepo.update(
         {
-          id: previousCompletedApplicationId,
+          id: previousCompletedApplication.id,
         },
         {
           applicationStatus: ApplicationStatus.Edited,
@@ -144,6 +143,9 @@ export class ApplicationChangeRequestService {
           currentAssessment: newApplicationCurrentAssessment,
           modifier: auditUser,
           updatedAt: currentDate,
+          applicationStatusUpdatedOn: currentDate,
+          applicationEditStatusUpdatedBy: auditUser,
+          applicationEditStatusUpdatedOn: currentDate,
         },
       );
       if (!updateResult.affected) {
