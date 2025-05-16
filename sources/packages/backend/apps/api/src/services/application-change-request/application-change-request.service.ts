@@ -77,22 +77,21 @@ export class ApplicationChangeRequestService {
         auditUserId,
         transactionalEntityManager,
       );
+      const applicationRepo =
+        transactionalEntityManager.getRepository(Application);
       if (applicationEditStatus === ApplicationEditStatus.ChangeDeclined) {
         // Update the application edit status.
-        const updateResult = await transactionalEntityManager
-          .getRepository(Application)
-          .update(
-            {
-              id: applicationId,
-              applicationEditStatus:
-                ApplicationEditStatus.ChangePendingApproval,
-            },
-            {
-              applicationEditStatus: ApplicationEditStatus.ChangeDeclined,
-              modifier: auditUser,
-              updatedAt: currentDate,
-            },
-          );
+        const updateResult = await applicationRepo.update(
+          {
+            id: applicationId,
+            applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
+          },
+          {
+            applicationEditStatus: ApplicationEditStatus.ChangeDeclined,
+            modifier: auditUser,
+            updatedAt: currentDate,
+          },
+        );
         if (!updateResult.affected) {
           throw new Error(
             `Application ${applicationId} to assess change not found or not in valid status to be updated.`,
@@ -145,7 +144,7 @@ export class ApplicationChangeRequestService {
         } as StudentAppeal;
       }
       // Update the previously completed application to be in Edited status.
-      await transactionalEntityManager.getRepository(Application).update(
+      await applicationRepo.update(
         {
           id: previousCompletedApplicationId,
         },
@@ -155,21 +154,19 @@ export class ApplicationChangeRequestService {
           updatedAt: currentDate,
         },
       );
-      const updateResult = await transactionalEntityManager
-        .getRepository(Application)
-        .update(
-          {
-            id: applicationId,
-            applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
-          },
-          {
-            applicationEditStatus: ApplicationEditStatus.ChangedWithApproval,
-            applicationStatus: ApplicationStatus.Completed,
-            currentAssessment: newApplicationCurrentAssessment,
-            modifier: auditUser,
-            updatedAt: currentDate,
-          },
-        );
+      const updateResult = await applicationRepo.update(
+        {
+          id: applicationId,
+          applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
+        },
+        {
+          applicationEditStatus: ApplicationEditStatus.ChangedWithApproval,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessment: newApplicationCurrentAssessment,
+          modifier: auditUser,
+          updatedAt: currentDate,
+        },
+      );
       if (!updateResult.affected) {
         throw new Error(
           `Application ${applicationId} to assess change not found or not in valid status to be updated.`,
