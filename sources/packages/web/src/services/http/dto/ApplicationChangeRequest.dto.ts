@@ -5,5 +5,4 @@ export interface ApplicationChangeRequestAPIInDTO {
   applicationEditStatus:
     | ApplicationEditStatus.ChangedWithApproval
     | ApplicationEditStatus.ChangeDeclined;
-  studentId: number;
 }

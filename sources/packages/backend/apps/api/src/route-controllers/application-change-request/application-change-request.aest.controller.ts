@@ -17,12 +17,14 @@ import { UserGroups } from "../../auth/user-groups.enum";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { IUserToken } from "../../auth/userToken.interface";
-import { ApplicationEditStatus } from "@sims/sims-db";
-import { ApplicationChangeRequestService } from "../../services";
+import {
+  APPLICATION_NOT_FOUND,
+  ApplicationChangeRequestService,
+} from "../../services";
 import { ApplicationChangeRequestAPIInDTO } from "./models/application-change-request.dto";
 import BaseController from "../BaseController";
 import { Role } from "../../auth";
-import { APPLICATION_CHANGE_CANCELLED_BY_STUDENT } from "../../constants";
+import { INVALID_APPLICATION_EDIT_STATUS } from "@sims/services/constants";
 
 /**
  * Controller for application change request operations for the Ministry.
@@ -46,36 +48,32 @@ export class ApplicationChangeRequestAESTController extends BaseController {
   @Roles(Role.StudentApproveDeclineAppeals)
   @Patch(":applicationId")
   @ApiNotFoundResponse({
-    description: "Change cancelled by student.",
+    description:
+      "Application to assess change not found or " +
+      "application to assess change not in valid status to be updated.",
   })
   async assessApplicationChangeRequest(
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Body() payload: ApplicationChangeRequestAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    const applicationChangeRequest =
-      await this.applicationChangeRequestService.applicationChangeRequestExists(
+    try {
+      await this.applicationChangeRequestService.updateApplicationChangeRequestStatus(
         applicationId,
-        {
-          studentId: payload.studentId,
-          applicationChangeRequestStatus:
-            ApplicationEditStatus.ChangePendingApproval,
-        },
+        payload.applicationEditStatus,
+        payload.note,
+        userToken.userId,
       );
-    if (!applicationChangeRequest) {
+    } catch (error) {
+      if (error.name === APPLICATION_NOT_FOUND) {
+        throw new NotFoundException(error);
+      }
       throw new NotFoundException(
         new ApiProcessError(
-          "Change cancelled by student.",
-          APPLICATION_CHANGE_CANCELLED_BY_STUDENT,
+          `Application ${applicationId} to assess change not in valid status to be updated.`,
+          INVALID_APPLICATION_EDIT_STATUS,
         ),
       );
     }
-    await this.applicationChangeRequestService.updateApplicationChangeRequestStatus(
-      applicationId,
-      payload.studentId,
-      payload.applicationEditStatus,
-      payload.note,
-      userToken.userId,
-    );
   }
 }

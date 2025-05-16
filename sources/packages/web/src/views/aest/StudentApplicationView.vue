@@ -282,7 +282,7 @@ export default defineComponent({
           assessApplicationChangeRequestModal.value.loading = true;
           await ApplicationChangeRequestService.shared.assessApplicationChangeRequest(
             props.versionApplicationId as number,
-            { ...responseData, studentId: props.studentId },
+            responseData,
           );
           // When the change request is approved, the version application becomes the current application.
           // But when the change request is declined, the current application remains the same.
@@ -314,7 +314,7 @@ export default defineComponent({
           refreshApplicationSidebar();
         } catch (error: unknown) {
           if (error instanceof ApiProcessError) {
-            snackBar.warn(error.message);
+            snackBar.warn("Change cancelled by student.");
           } else {
             snackBar.error(
               "Unexpected error while updating the application change request.",

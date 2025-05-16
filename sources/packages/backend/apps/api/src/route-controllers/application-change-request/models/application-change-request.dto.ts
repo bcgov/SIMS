@@ -2,7 +2,7 @@ import {
   ApplicationEditStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
 } from "@sims/sims-db";
-import { IsIn, IsNotEmpty, IsPositive, MaxLength } from "class-validator";
+import { IsIn, IsNotEmpty, MaxLength } from "class-validator";
 
 /**
  * DTO for pending application change request summary.
@@ -31,6 +31,4 @@ export class ApplicationChangeRequestAPIInDTO {
   applicationEditStatus:
     | ApplicationEditStatus.ChangedWithApproval
     | ApplicationEditStatus.ChangeDeclined;
-  @IsPositive()
-  studentId: number;
 }

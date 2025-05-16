@@ -11,6 +11,12 @@ import {
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 import { NoteSharedService, WorkflowClientService } from "@sims/services";
+import { ApplicationService } from "../application/application.service";
+import {
+  APPLICATION_NOT_FOUND,
+  INVALID_APPLICATION_EDIT_STATUS,
+} from "@sims/services/constants";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Service responsible for application change request operations.
@@ -23,55 +29,49 @@ export class ApplicationChangeRequestService {
     private readonly applicationRepo: Repository<Application>,
     private readonly noteSharedService: NoteSharedService,
     private readonly workflowClientService: WorkflowClientService,
+    private readonly applicationService: ApplicationService,
   ) {}
-
-  /**
-   * Validates the application change request for the given student and application change request status.
-   * @param applicationId application id.
-   * @param options method options:
-   * `studentId`: student id for authorization.
-   * `applicationChangeRequestStatus`: application change request status for authorization.
-   * @returns true if the student is authorized for the given application change request status.
-   */
-  async applicationChangeRequestExists(
-    applicationId: number,
-    options?: {
-      studentId?: number;
-      applicationChangeRequestStatus?: ApplicationEditStatus;
-    },
-  ): Promise<boolean> {
-    return this.applicationRepo.exists({
-      where: {
-        id: applicationId,
-        applicationEditStatus: options?.applicationChangeRequestStatus,
-        student: { id: options?.studentId },
-      },
-    });
-  }
 
   /**
    * Assess the application change request status for the given application change request for the ministry user.
    * @param applicationId application id for which to update the status.
-   * @param studentId student id for which to update the status.
    * @param applicationEditStatus the application edit status to be updated.
    * @param note note to be saved.
    * @param auditUserId user that should be considered the one that is causing the changes.
    */
   async updateApplicationChangeRequestStatus(
     applicationId: number,
-    studentId: number,
     applicationEditStatus:
       | ApplicationEditStatus.ChangedWithApproval
       | ApplicationEditStatus.ChangeDeclined,
     note: string,
     auditUserId: number,
   ): Promise<void> {
+    // Get the application by id.
+    const application = await this.applicationService.getApplicationById(
+      applicationId,
+    );
+    if (!application) {
+      throw new CustomNamedError(
+        `Application ${applicationId} to assess change not found.`,
+        APPLICATION_NOT_FOUND,
+      );
+    }
+    if (
+      application.applicationEditStatus !==
+      ApplicationEditStatus.ChangePendingApproval
+    ) {
+      throw new CustomNamedError(
+        `Application ${applicationId} to assess change not in valid status to be updated.`,
+        INVALID_APPLICATION_EDIT_STATUS,
+      );
+    }
     const auditUser = { id: auditUserId } as User;
     const currentDate = new Date();
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       // Save the note.
       await this.noteSharedService.createStudentNote(
-        studentId,
+        application.student.id,
         NoteType.Application,
         note,
         auditUserId,
