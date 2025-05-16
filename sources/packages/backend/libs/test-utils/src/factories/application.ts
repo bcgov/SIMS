@@ -51,7 +51,9 @@ export function createFakeApplication(
 ): Application {
   const now = new Date();
   const application = new Application();
-  application.data = options?.initialValue.data ?? ({} as ApplicationData);
+  application.data =
+    options?.initialValue.data ??
+    ({ programPersistentProperties: ["selectedLocation"] } as ApplicationData);
   application.programYear = relations?.programYear ?? createFakeProgramYear();
   // TODO get programYear from relations instead of setting the id here.
   application.programYear.id = relations?.programYear?.id ?? 2;
