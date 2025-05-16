@@ -90,6 +90,7 @@ import router from "@/router";
 import AssessApplicationChangeRequestModal from "@/components/aest/students/modals/AssessApplicationChangeRequestModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import useEmitterEvents from "@/composables/useEmitterEvents";
+import { INVALID_APPLICATION_EDIT_STATUS } from "@/constants";
 
 export const EVENTS = {
   REFRESH_SIDEBAR: "refresh-application-sidebar",
@@ -313,7 +314,10 @@ export default defineComponent({
           // Emit the event to refresh the application sidebar after the application change request is assessed.
           refreshApplicationSidebar();
         } catch (error: unknown) {
-          if (error instanceof ApiProcessError) {
+          if (
+            error instanceof ApiProcessError &&
+            error.errorType === INVALID_APPLICATION_EDIT_STATUS
+          ) {
             snackBar.warn("Change cancelled by student.");
           } else {
             snackBar.error(

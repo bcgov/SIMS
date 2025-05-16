@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import {
   Application,
   ApplicationEditStatus,
@@ -9,7 +8,7 @@ import {
   StudentAppeal,
   User,
 } from "@sims/sims-db";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import { NoteSharedService, WorkflowClientService } from "@sims/services";
 import { ApplicationService } from "../application/application.service";
 import {
@@ -25,8 +24,6 @@ import { CustomNamedError } from "@sims/utilities";
 export class ApplicationChangeRequestService {
   constructor(
     private readonly dataSource: DataSource,
-    @InjectRepository(Application)
-    private readonly applicationRepo: Repository<Application>,
     private readonly noteSharedService: NoteSharedService,
     private readonly workflowClientService: WorkflowClientService,
     private readonly applicationService: ApplicationService,
@@ -101,11 +98,6 @@ export class ApplicationChangeRequestService {
             INVALID_APPLICATION_EDIT_STATUS,
           );
         }
-        // End the workflow.
-        await this.workflowClientService.sendApplicationChangeRequestStatusMessage(
-          applicationId,
-          applicationEditStatus,
-        );
         return;
       }
       const previousCompletedApplication =
@@ -117,11 +109,9 @@ export class ApplicationChangeRequestService {
       newApplicationCurrentAssessment.offering = {
         id: previousCompletedApplication.currentAssessment.offering.id,
       } as EducationProgramOffering;
-      if (previousCompletedApplication.currentAssessment.studentAppeal) {
-        newApplicationCurrentAssessment.studentAppeal = {
-          id: previousCompletedApplication.currentAssessment.studentAppeal.id,
-        } as StudentAppeal;
-      }
+      newApplicationCurrentAssessment.studentAppeal = {
+        id: previousCompletedApplication.currentAssessment.studentAppeal?.id,
+      } as StudentAppeal;
       // Update the previously completed application to be in Edited status.
       const previousApplicationUpdatePromise = applicationRepo.update(
         {
@@ -160,11 +150,11 @@ export class ApplicationChangeRequestService {
           INVALID_APPLICATION_EDIT_STATUS,
         );
       }
-      // Send a message to the workflow to proceed.
-      await this.workflowClientService.sendApplicationChangeRequestStatusMessage(
-        applicationId,
-        applicationEditStatus,
-      );
     });
+    // Send a message to the workflow to proceed.
+    await this.workflowClientService.sendApplicationChangeRequestStatusMessage(
+      applicationId,
+      applicationEditStatus,
+    );
   }
 }
