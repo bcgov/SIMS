@@ -92,10 +92,6 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import useEmitterEvents from "@/composables/useEmitterEvents";
 import { INVALID_APPLICATION_EDIT_STATUS } from "@/constants";
 
-export const EVENTS = {
-  REFRESH_SIDEBAR: "refresh-application-sidebar",
-};
-
 export default defineComponent({
   components: {
     StudentApplication,
