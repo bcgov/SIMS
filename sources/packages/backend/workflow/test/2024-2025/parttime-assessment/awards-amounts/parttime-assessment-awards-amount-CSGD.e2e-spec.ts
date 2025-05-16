@@ -5,9 +5,9 @@ import {
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import {
-  DependentEligibility,
+  DependentChildCareEligibility,
   createFakeStudentDependentBornAfterStudyEndDate,
-  createFakeStudentDependentEligible,
+  createFakeStudentDependentEligibleForChildcareCost,
 } from "../../../test-utils/factories";
 import { YesNoOptions } from "@sims/test-utils";
 
@@ -22,17 +22,17 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.partner1CRAReportedIncome = 20000;
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible0To11YearsOld,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible12YearsAndOver,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible12YearsAndOver,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
     ];
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
@@ -64,17 +64,17 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.partner1CRAReportedIncome = 42000;
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible0To11YearsOld,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible0To11YearsOld,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible12YearsAndOver,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
     ];
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
@@ -142,13 +142,13 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.partner1CRAReportedIncome = 20000;
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible0To11YearsOld,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible12YearsAndOver,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
       // Dependent(s) born after study end date are not considered
       // as eligible for any calculation.
@@ -186,9 +186,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.partner1CRAReportedIncome = 35000;
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible0To11YearsOld,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
     ];
     // Act
@@ -255,9 +255,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.partner1CRAReportedIncome = 35000;
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible0To11YearsOld,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
     ];
     assessmentConsolidatedData.programYearTotalPartTimeCSGD = undefined;

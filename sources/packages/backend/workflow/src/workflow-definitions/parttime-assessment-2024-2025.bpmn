@@ -853,7 +853,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_1yndxhv" name="awardEligibilityCSGD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;    and (calculatedDataTotalEligibleDependants &#62;= 1)&#10;    and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDThresholdIncome)&#10;then true&#10;else false" target="awardEligibilityCSGD" />
+          <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;    and ((calculatedDataDependants11YearsOrUnder +&#10;calculatedDataDependants12YearsOverOnTaxes) &#62;= 1)&#10;    and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardCSGDThresholdIncome)&#10;then true&#10;else false" target="awardEligibilityCSGD" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0f51edb</bpmn:incoming>
@@ -1163,10 +1163,12 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:sequenceFlow id="Flow_1p7fyev" sourceRef="Gateway_03c2fh6" targetRef="Activity_0pvobml" />
     <bpmn:sequenceFlow id="Flow_04d0tld" sourceRef="Event_0jmbywn" targetRef="Gateway_04hunux" />
     <bpmn:sequenceFlow id="Flow_1lswqbt" name="Less than 3 dependants" sourceRef="Gateway_04hunux" targetRef="Event_1iix0z3">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataTotalEligibleDependants &lt;= 2</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=(calculatedDataDependants11YearsOrUnder +
+calculatedDataDependants12YearsOverOnTaxes) &lt;= 2</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0luqxk1" name="3 or more dependants" sourceRef="Gateway_04hunux" targetRef="Event_10par1m">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataTotalEligibleDependants &gt;= 3</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=(calculatedDataDependants11YearsOrUnder +
+calculatedDataDependants12YearsOverOnTaxes) &gt;= 3</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0foajxm" sourceRef="Event_1otxsj1" targetRef="Event_1xl9u43" />
     <bpmn:sequenceFlow id="Flow_1rnodvu" sourceRef="Event_13hierd" targetRef="Event_19hr2p7" />
