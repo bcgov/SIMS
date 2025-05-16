@@ -95,7 +95,7 @@ export class ApplicationChangeRequestService {
         await applicationRepo.save(changeRequestApplication);
         return;
       }
-      // Application currently completed that will be replaced by the approved change request.
+      // Previously completed application that will be replaced by the newly approved application change request.
       const completedApplication =
         changeRequestApplication.precedingApplication;
       completedApplication.applicationStatus = ApplicationStatus.Edited;
@@ -104,12 +104,12 @@ export class ApplicationChangeRequestService {
       // Update the approved change request to become the new completed application.
       changeRequestApplication.applicationEditStatus =
         ApplicationEditStatus.ChangedWithApproval;
+      changeRequestApplication.applicationEditStatusUpdatedOn = currentDate;
+      changeRequestApplication.applicationEditStatusUpdatedBy = auditUser;
+      changeRequestApplication.applicationStatus = ApplicationStatus.Completed;
+      changeRequestApplication.applicationStatusUpdatedOn = currentDate;
       changeRequestApplication.modifier = auditUser;
       changeRequestApplication.updatedAt = currentDate;
-      changeRequestApplication.applicationStatusUpdatedOn = currentDate;
-      changeRequestApplication.applicationEditStatusUpdatedBy = auditUser;
-      changeRequestApplication.applicationEditStatusUpdatedOn = currentDate;
-      changeRequestApplication.applicationStatus = ApplicationStatus.Completed;
       // Update the current assessment of the preceding application
       // with most recent offering ID and student appeal ID to update
       // the current assessment of the new completed application.
