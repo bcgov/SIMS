@@ -48,18 +48,18 @@ export class ApplicationChangeRequestService {
     auditUserId: number,
   ): Promise<void> {
     // Get the application by id.
-    const application = await this.applicationService.getApplicationById(
-      applicationId,
-      { allowEdited: true },
-    );
-    if (!application) {
+    const changeRequestApplication =
+      await this.applicationService.getApplicationById(applicationId, {
+        allowEdited: true,
+      });
+    if (!changeRequestApplication) {
       throw new CustomNamedError(
         `Application ${applicationId} to assess change not found.`,
         APPLICATION_NOT_FOUND,
       );
     }
     if (
-      application.applicationEditStatus !==
+      changeRequestApplication.applicationEditStatus !==
       ApplicationEditStatus.ChangePendingApproval
     ) {
       throw new CustomNamedError(
@@ -72,7 +72,7 @@ export class ApplicationChangeRequestService {
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       // Save the note.
       await this.noteSharedService.createStudentNote(
-        application.student.id,
+        changeRequestApplication.student.id,
         NoteType.Application,
         note,
         auditUserId,
@@ -105,28 +105,6 @@ export class ApplicationChangeRequestService {
         );
         return;
       }
-      const changeRequestApplication = await this.applicationRepo.findOne({
-        select: {
-          id: true,
-          applicationEditStatus: true,
-          precedingApplication: {
-            id: true,
-            currentAssessment: { id: true },
-          },
-          currentAssessment: {
-            id: true,
-          },
-        },
-        relations: {
-          currentAssessment: true,
-          precedingApplication: {
-            currentAssessment: true,
-          },
-        },
-        where: {
-          id: applicationId,
-        },
-      });
       const previousCompletedApplication =
         changeRequestApplication.precedingApplication;
       const previousCompletedApplicationId = previousCompletedApplication.id;

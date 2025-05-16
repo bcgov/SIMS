@@ -854,7 +854,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationNumber: true,
         pirDeniedOtherDesc: true,
         submittedDate: true,
-        precedingApplication: { id: true },
+        precedingApplication: { id: true, currentAssessment: { id: true } },
         applicationException: {
           id: true,
           exceptionStatus: true,
@@ -908,7 +908,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         pirDeniedReasonId: true,
         programYear: true,
         student: { user: true },
-        precedingApplication: true,
+        precedingApplication: { currentAssessment: true },
       },
       where: {
         id: applicationId,
