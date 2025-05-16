@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   AllowAuthorizedParty,
@@ -14,7 +15,11 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { IUserToken } from "../../auth/userToken.interface";
 import {
@@ -49,9 +54,11 @@ export class ApplicationChangeRequestAESTController extends BaseController {
   @Roles(Role.StudentApproveDeclineAppeals)
   @Patch(":applicationId")
   @ApiNotFoundResponse({
+    description: "Application to assess change not found.",
+  })
+  @ApiUnprocessableEntityResponse({
     description:
-      "Application to assess change not found or " +
-      "application to assess change not in valid status to be updated.",
+      "Application to assess change not in valid status to be updated.",
   })
   async assessApplicationChangeRequest(
     @Param("applicationId", ParseIntPipe) applicationId: number,
@@ -71,7 +78,7 @@ export class ApplicationChangeRequestAESTController extends BaseController {
           throw new NotFoundException(error.message);
         }
         if (error.name === INVALID_APPLICATION_EDIT_STATUS) {
-          throw new NotFoundException(
+          throw new UnprocessableEntityException(
             new ApiProcessError(error.message, INVALID_APPLICATION_EDIT_STATUS),
           );
         }
