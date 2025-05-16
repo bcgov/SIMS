@@ -547,6 +547,10 @@ export interface ApplicationData {
    * Indicates if the application is submitted for change request.
    */
   isChangeRequestApplication?: boolean;
+  /**
+   * Program properties that are required to be copied during the change request.
+   */
+  programPersistentProperties?: string[];
 }
 
 /**
