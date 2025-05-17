@@ -10,7 +10,13 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, onBeforeUnmount, defineComponent } from "vue";
+import {
+  ref,
+  onBeforeUnmount,
+  defineComponent,
+  onMounted,
+  watchEffect,
+} from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, SupportingUserType } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -45,10 +51,10 @@ export default defineComponent({
       useEmitterEvents();
 
     // Function to load application data and update menu items.
-    const loadApplicationData = async (applicationId: number) => {
+    const loadApplicationData = async () => {
       const overallDetails =
         await ApplicationService.shared.getApplicationOverallDetails(
-          applicationId,
+          props.applicationId,
         );
       menuItems.value = [
         ...createCurrentApplicationMenuItems(overallDetails.currentApplication),
@@ -57,20 +63,21 @@ export default defineComponent({
       ];
     };
 
+    // Re-register the handler when applicationId changes
+    watchEffect(async () => {
+      await loadApplicationData();
+    });
+
+    // Handler that references the current applicationId
     const handleSideBarRefresh = () => {
-      // Refresh the sidebar.
-      loadApplicationData(props.versionApplicationId as number);
+      return loadApplicationData();
     };
 
     onMounted(async () => {
-      // Load application data initially.
-      await loadApplicationData(props.applicationId);
-      // Listen for the refresh sidebar event.
       refreshApplicationSidebarOn(handleSideBarRefresh);
     });
 
     onBeforeUnmount(() => {
-      // Clean up the event listener when component is unmounted.
       refreshApplicationSidebarOff(handleSideBarRefresh);
     });
 
