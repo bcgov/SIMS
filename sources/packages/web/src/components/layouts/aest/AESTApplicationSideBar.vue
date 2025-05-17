@@ -10,7 +10,13 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, defineComponent } from "vue";
+import {
+  ref,
+  onBeforeUnmount,
+  defineComponent,
+  onMounted,
+  watchEffect,
+} from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, SupportingUserType } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
@@ -19,6 +25,7 @@ import {
   ApplicationSupportingUsersAPIOutDTO,
   ApplicationVersionAPIOutDTO,
 } from "@/services/http/dto";
+import useEmitterEvents from "@/composables/useEmitterEvents";
 
 export default defineComponent({
   props: {
@@ -39,8 +46,12 @@ export default defineComponent({
     const { getISODateHourMinuteString } = useFormatters();
     const { mapApplicationEditStatusForMinistry } = useApplication();
     const menuItems = ref<MenuItemModel[]>([]);
+    // Event emitter for application sidebar refresh.
+    const { refreshApplicationSidebarOn, refreshApplicationSidebarOff } =
+      useEmitterEvents();
 
-    onMounted(async () => {
+    // Function to load application data and update menu items.
+    const loadApplicationData = async () => {
       const overallDetails =
         await ApplicationService.shared.getApplicationOverallDetails(
           props.applicationId,
@@ -50,6 +61,24 @@ export default defineComponent({
         ...createChangeRequestMenuItems(overallDetails.inProgressChangeRequest),
         ...createVersionsMenuItems(overallDetails.previousVersions),
       ];
+    };
+
+    // Re-register the handler when applicationId changes
+    watchEffect(async () => {
+      await loadApplicationData();
+    });
+
+    // Handler that references the current applicationId
+    const handleSideBarRefresh = () => {
+      return loadApplicationData();
+    };
+
+    onMounted(async () => {
+      refreshApplicationSidebarOn(handleSideBarRefresh);
+    });
+
+    onBeforeUnmount(() => {
+      refreshApplicationSidebarOff(handleSideBarRefresh);
     });
 
     /**
