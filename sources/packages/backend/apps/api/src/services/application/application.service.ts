@@ -521,7 +521,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       changeRequest.currentAssessment.studentAssessmentStatusUpdatedOn = now;
       changeRequest.currentAssessment.modifier = auditUser;
       changeRequest.currentAssessment.updatedAt = now;
-      return this.repo.save(changeRequest);
+      return applicationRepo.save(changeRequest);
     });
   }
 
