@@ -4,6 +4,7 @@ import {
   ApplicationEditStatus,
   ApplicationStatus,
   EducationProgramOffering,
+  getUserFullNameLikeSearch,
   NoteType,
   StudentAppeal,
   User,
@@ -176,9 +177,9 @@ export class ApplicationChangeRequestService {
     if (searchCriteria) {
       query.andWhere(
         new Brackets((qb) => {
-          qb.where("user.firstName ILIKE :searchQueryParam")
-            .orWhere("user.lastName ILIKE :searchQueryParam")
-            .orWhere("application.applicationNumber ILIKE :searchQueryParam");
+          qb.where(
+            getUserFullNameLikeSearch("user", "searchQueryParam"),
+          ).orWhere("application.applicationNumber ILIKE :searchQueryParam");
         }),
       );
       query.setParameter("searchQueryParam", `%${searchCriteria.trim()}%`);
@@ -207,7 +208,7 @@ export class ApplicationChangeRequestService {
     let dbSortField: string;
     switch (sortField) {
       case "submittedDate":
-        dbSortField = "application.createdAt";
+        dbSortField = "application.submittedDate";
         break;
       case "lastName":
         dbSortField = "user.lastName";
@@ -216,14 +217,10 @@ export class ApplicationChangeRequestService {
         dbSortField = "application.applicationNumber";
         break;
       default:
-        // Default to submittedDate if an unexpected or no sortField is provided.
-        dbSortField = "application.createdAt";
+        dbSortField = "application.submittedDate";
         break;
     }
-    const order =
-      sortOrder?.toUpperCase() === FieldSortOrder.DESC
-        ? FieldSortOrder.DESC
-        : FieldSortOrder.ASC;
+    const order = sortOrder ?? FieldSortOrder.ASC;
     query.orderBy(dbSortField, order);
   }
 

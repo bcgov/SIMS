@@ -1,5 +1,11 @@
+import { getPaginationQueryString } from "@/helpers";
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { ApplicationChangeRequestAPIInDTO } from "@/services/http/dto/ApplicationChangeRequest.dto";
+import { PaginatedResultsAPIOutDTO } from "@/services/http/dto";
+import {
+  ApplicationChangeRequestAPIInDTO,
+  ApplicationChangeRequestPendingSummaryAPIOutDTO,
+} from "@/services/http/dto/ApplicationChangeRequest.dto";
+import { PaginationOptions } from "@/types";
 
 export class ApplicationChangeRequestApi extends HttpBaseClient {
   /**
@@ -13,5 +19,22 @@ export class ApplicationChangeRequestApi extends HttpBaseClient {
   ): Promise<void> {
     const url = `application-change-request/${applicationId}`;
     await this.patchCall(this.addClientRoot(url), payload);
+  }
+
+  /**
+   * Gets all pending application change requests (applications in 'Change pending approval' status).
+   * @param paginationOptions options to execute the pagination.
+   * @returns list of application change requests.
+   */
+  async getApplicationChangeRequests(
+    paginationOptions: PaginationOptions,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
+  > {
+    let url = "application-change-request/pending?";
+    url += getPaginationQueryString(paginationOptions);
+    return this.getCall<
+      PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
+    >(this.addClientRoot(url));
   }
 }
