@@ -99,6 +99,7 @@ export class ApplicationChangeRequestService {
       const completedApplication =
         changeRequestApplication.precedingApplication;
       completedApplication.applicationStatus = ApplicationStatus.Edited;
+      completedApplication.applicationStatusUpdatedOn = currentDate;
       completedApplication.modifier = auditUser;
       completedApplication.updatedAt = currentDate;
       // Update the approved change request to become the new completed application.
