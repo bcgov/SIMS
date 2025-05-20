@@ -56,4 +56,3 @@ export * from "./cas-invoice-batch/cas-invoice-batch-report.service";
 export * from "./cas-invoice/cas-invoice.service";
 export * from "./student/student-information.service";
 export * from "./dynamic-form-configuration/dynamic-form-configuration.service";
-export * from "./application-change-request/application-change-request.service";
