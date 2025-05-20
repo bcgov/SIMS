@@ -213,6 +213,11 @@ export interface ApplicationData {
    * Defines if the Student will take a full-time or part-time course.
    */
   howWillYouBeAttendingTheProgram?: OfferingIntensity;
+  /**
+   *
+   * Indicates if the application is submitted for change request.
+   */
+  isChangeRequestApplication?: boolean;
 }
 
 export interface ApplicationDetailHeader {

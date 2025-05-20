@@ -300,6 +300,7 @@ export class ApplicationStudentsController extends BaseController {
         applicationId,
         studentToken.studentId,
         payload,
+        { isChangeRequestSubmission: true },
       );
     try {
       const submissionResult =

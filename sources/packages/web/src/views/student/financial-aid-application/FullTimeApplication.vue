@@ -249,6 +249,10 @@ export default defineComponent({
         programYearStartDate: applicationData.programYearStartDate,
         programYearEndDate: applicationData.programYearEndDate,
       };
+      // The property to indicate the change request must be set during the edit.
+      // The change request start with the copy of the preceding application data
+      // and this property must be reset.
+      applicationData.data.isChangeRequestApplication = props.changeRequest;
       initialData.value = {
         ...applicationData.data,
         applicationOfferingIntensityValue:

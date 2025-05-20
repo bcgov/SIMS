@@ -534,6 +534,11 @@ export interface ApplicationData {
    * Dependant details.
    */
   dependants?: unknown[];
+  /**
+   *
+   * Indicates if the application is submitted for change request.
+   */
+  isChangeRequestApplication?: boolean;
 }
 
 /**

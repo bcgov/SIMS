@@ -55,7 +55,7 @@ export class SaveApplicationAPIInDTO {
    */
   @IsObject()
   @JsonMaxSize(JSON_20KB)
-  data: any;
+  data: ApplicationData;
   /**
    * Array of unique file names to be associated
    * with this application.
