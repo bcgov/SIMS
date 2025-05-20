@@ -95,4 +95,3 @@ export * from "./dynamic-form-configuration/models/dynamic-form-configuration.dt
 export * from "./dynamic-form-configuration/dynamic-form-configuration.controller";
 export * from "./application-change-request/models/application-change-request.dto";
 export * from "./application-change-request/application-change-request.aest.controller";
-export * from "./application-change-request/application-change-request.controller.service";
