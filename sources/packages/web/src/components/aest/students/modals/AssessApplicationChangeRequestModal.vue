@@ -101,15 +101,10 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      resolvePromise(
-        {
-          note: note.value as string,
-          applicationEditStatus: showParameter.value,
-        },
-        {
-          keepModalOpen: true,
-        },
-      );
+      resolvePromise({
+        note: note.value as string,
+        applicationEditStatus: showParameter.value,
+      });
       assessApplicationChangeRequestForm.value.reset();
     };
     return {
