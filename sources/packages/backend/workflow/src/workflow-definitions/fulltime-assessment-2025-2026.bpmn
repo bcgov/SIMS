@@ -1113,7 +1113,7 @@ There is also a per application limit based on the number of weeks in the offeri
 The remaining limit in the program year is calculated with a floor of 0.</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if programYearTotalBookCost = null&#10;then dmnFullTimeProgramYearMaximums.limitProgramYearBooks&#10;else max(0,dmnFullTimeProgramYearMaximums.limitProgramYearBooks-programYearTotalBookCost)" target="calculatedDataRemainingBookLimit" />
+          <zeebe:output source="=if programYearTotalFullTimeBooksAndSuppliesCost = null&#10;then dmnFullTimeProgramYearMaximums.limitProgramYearBooks&#10;else max(0,dmnFullTimeProgramYearMaximums.limitProgramYearBooks-programYearTotalFullTimeBooksAndSuppliesCost)" target="calculatedDataRemainingBookLimit" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_10egxdo</bpmn:incoming>
