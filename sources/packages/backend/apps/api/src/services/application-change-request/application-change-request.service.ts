@@ -20,10 +20,10 @@ import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
   ApplicationChangeRequestPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
-} from "apps/api/src/route-controllers/models/pagination.dto";
+} from "../../route-controllers/models/pagination.dto";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ApplicationChangeRequestPendingSummaryAPIOutDTO } from "apps/api/src/route-controllers/application-change-request/models/application-change-request.dto";
+import { ApplicationChangeRequestPendingSummaryAPIOutDTO } from "../../route-controllers/application-change-request/models/application-change-request.dto";
 
 /**
  * Service responsible for application change request operations.
