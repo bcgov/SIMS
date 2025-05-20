@@ -371,7 +371,11 @@ export class Application extends RecordDataModel {
   /**
    * The immediate previous application from which the current application was created.
    */
-  @ManyToOne(() => Application, { eager: false, nullable: true })
+  @ManyToOne(() => Application, {
+    eager: false,
+    nullable: true,
+    cascade: ["update"],
+  })
   @JoinColumn({
     name: "preceding_application_id",
     referencedColumnName: ColumnNames.ID,
