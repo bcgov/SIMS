@@ -39,7 +39,7 @@ import { CustomNamedError } from "@sims/utilities";
 import {
   ApplicationChangeRequestPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
-} from "apps/api/src/route-controllers/models/pagination.dto";
+} from "../models/pagination.dto";
 
 /**
  * Controller for application change request operations for the Ministry.
