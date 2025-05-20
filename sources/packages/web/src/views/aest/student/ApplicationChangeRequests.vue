@@ -14,41 +14,42 @@
           label="Search name or application #"
           variant="outlined"
           v-model="searchCriteria"
-          @keyup.enter="searchChangeRequests"
+          @keyup.enter="resetPageAndLoadApplications"
           prepend-inner-icon="mdi-magnify"
           hide-details="auto"
-        >
-        </v-text-field>
+        />
       </template>
     </body-header>
     <content-group>
-      <toggle-content :toggled="!changeRequests.results?.length">
+      <toggle-content :toggled="!changeRequests.count">
         <v-data-table-server
-          :headers="tableHeaders"
+          :headers="PendingApplicationEditsTableHeaders"
           :items="changeRequests.results"
           :items-length="changeRequests.count"
-          :loading="loading"
-          :page="page"
-          :items-per-page="pageLimit"
+          :loading="isLoading"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="PAGINATION_LIST"
-          @update:options="handleOptionsUpdate"
+          @update:options="paginationAndSortEvent"
         >
           <template #[`item.submittedDate`]="{ item }">
-            <span>
-              {{ dateOnlyLongString(item.submittedDate) }}
-            </span>
+            {{ dateOnlyLongString(item.submittedDate) }}
           </template>
           <template #[`item.firstName`]="{ item }">
-            <span>
-              {{ emptyStringFiller(item.firstName) }}
-            </span>
+            {{ emptyStringFiller(item.firstName) }}
           </template>
           <template #[`item.action`]="{ item }">
             <v-btn
               color="primary"
-              @click="goToStudentAssessment(item.applicationId, item.studentId)"
-              >View</v-btn
+              @click="
+                navigateToStudentAssessment(
+                  item.applicationId,
+                  item.studentId,
+                  item.precedingApplicationId,
+                )
+              "
             >
+              View
+            </v-btn>
           </template>
         </v-data-table-server>
       </toggle-content>
@@ -63,129 +64,106 @@ import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
   DataTableSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  PaginatedResults,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
   DataTableOptions,
   DataTableSortByOrder,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { ApplicationChangeRequestService } from "@/services/ApplicationChangeRequestService";
 import { ApplicationChangeRequestPendingSummaryAPIOutDTO } from "@/services/http/dto/ApplicationChangeRequest.dto";
-import { ChangeRequestService } from "@/services/ChangeRequestService";
 import { PendingApplicationEditsTableHeaders } from "@/types/contracts/DataTableContract";
-
-const DEFAULT_SORT_FIELD = "submittedDate";
+import { PaginatedResultsAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   setup() {
     const router = useRouter();
-    const loading = ref(false);
-    const currentPage = ref(DEFAULT_PAGE_NUMBER + 1);
-    const currentPageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const currentSortField = ref(DEFAULT_SORT_FIELD);
-    const currentSortOrder = ref(DataTableSortOrder.ASC);
-    const searchCriteria = ref<string | undefined>();
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
-    const changeRequests = ref<
-      PaginatedResults<ApplicationChangeRequestPendingSummaryAPIOutDTO>
-    >({} as PaginatedResults<ApplicationChangeRequestPendingSummaryAPIOutDTO>);
-
-    const goToStudentAssessment = (
-      applicationId: number,
-      studentId: number,
-    ) => {
-      router.push({
-        name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-        params: {
-          applicationId: applicationId,
-          studentId: studentId,
-        },
-      });
-    };
-
+    const isLoading = ref(false);
+    const searchCriteria = ref<string | undefined>();
+    const changeRequests = ref(
+      {} as PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>,
+    );
     const loadChangeRequests = async (
-      page: number,
-      pageLimit: number,
-      sortField: string,
-      sortOrder: DataTableSortOrder,
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
+      pageLimit = DEFAULT_PAGE_LIMIT,
+      sortField?: string,
+      sortOrder?: DataTableSortOrder,
     ) => {
-      loading.value = true;
+      isLoading.value = true;
+
       try {
-        const result = await ChangeRequestService.shared.getChangeRequests({
-          page,
-          pageLimit,
-          sortField,
-          sortOrder,
-          searchCriteria: searchCriteria.value,
-        });
+        const result =
+          await ApplicationChangeRequestService.shared.getChangeRequests({
+            page,
+            pageLimit,
+            sortField,
+            sortOrder,
+            searchCriteria: searchCriteria.value,
+          });
         changeRequests.value = result;
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Error fetching change requests:", error);
         changeRequests.value = {
           results: [],
           count: 0,
-        } as PaginatedResults<ApplicationChangeRequestPendingSummaryAPIOutDTO>;
+        };
       } finally {
-        loading.value = false;
+        isLoading.value = false;
       }
     };
 
-    const handleOptionsUpdate = async (options: DataTableOptions) => {
-      currentPage.value = options.page;
-      currentPageLimit.value = options.itemsPerPage;
-
-      let newSortFieldAPI = DEFAULT_SORT_FIELD;
-      let newSortOrderAPI = DataTableSortOrder.ASC;
-
-      if (options.sortBy && options.sortBy.length > 0) {
-        newSortFieldAPI = options.sortBy[0].key;
-        newSortOrderAPI =
-          options.sortBy[0].order === DataTableSortByOrder.DESC
-            ? DataTableSortOrder.DESC
-            : DataTableSortOrder.ASC;
+    const paginationAndSortEvent = async (event: DataTableOptions) => {
+      const [sortByOptions] = event.sortBy ?? [];
+      let sortOrder: DataTableSortOrder | undefined = undefined;
+      if (sortByOptions?.order === DataTableSortByOrder.DESC) {
+        sortOrder = DataTableSortOrder.DESC;
+      } else if (sortByOptions?.order === DataTableSortByOrder.ASC) {
+        sortOrder = DataTableSortOrder.ASC;
       }
-      currentSortField.value = newSortFieldAPI;
-      currentSortOrder.value = newSortOrderAPI;
       await loadChangeRequests(
-        options.page - 1,
-        options.itemsPerPage,
-        newSortFieldAPI,
-        newSortOrderAPI,
+        event.page,
+        event.itemsPerPage,
+        sortByOptions?.key,
+        sortOrder,
       );
     };
 
-    const searchChangeRequests = async () => {
-      currentPage.value = DEFAULT_PAGE_NUMBER + 1;
-      await loadChangeRequests(
-        DEFAULT_PAGE_NUMBER,
-        currentPageLimit.value,
-        currentSortField.value,
-        currentSortOrder.value,
-      );
+    const resetPageAndLoadApplications = async () => {
+      await loadChangeRequests();
+    };
+
+    const navigateToStudentAssessment = (
+      applicationId: number,
+      studentId: number,
+      precedingApplicationId: number,
+    ) => {
+      router.push({
+        name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
+        params: {
+          studentId,
+          applicationId,
+          versionApplicationId: precedingApplicationId,
+        },
+      });
     };
 
     onMounted(async () => {
-      await loadChangeRequests(
-        currentPage.value - 1,
-        currentPageLimit.value,
-        currentSortField.value,
-        currentSortOrder.value,
-      );
+      await loadChangeRequests();
     });
 
     return {
-      loading,
-      page: currentPage,
-      pageLimit: currentPageLimit,
+      isLoading,
+      PendingApplicationEditsTableHeaders,
       searchCriteria,
       changeRequests,
-      tableHeaders: PendingApplicationEditsTableHeaders,
+      paginationAndSortEvent,
+      resetPageAndLoadApplications,
+      navigateToStudentAssessment,
       dateOnlyLongString,
       emptyStringFiller,
-      goToStudentAssessment,
-      handleOptionsUpdate,
-      searchChangeRequests,
       PAGINATION_LIST,
+      DEFAULT_PAGE_LIMIT,
     };
   },
 });
