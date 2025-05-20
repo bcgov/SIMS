@@ -9,7 +9,7 @@ export interface ApplicationChangeRequestAPIInDTO {
 
 export interface ApplicationChangeRequestPendingSummaryAPIOutDTO {
   applicationId: number;
-  parentApplicationId: number;
+  precedingApplicationId: number;
   studentId: number;
   submittedDate: Date;
   firstName?: string;
