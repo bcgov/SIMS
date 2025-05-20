@@ -7,7 +7,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   PaginatedResultsAPIOutDTO,
-  StudentAppealPendingPaginationOptionsAPIInDTO,
+  ApplicationChangeRequestPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { ApplicationChangeRequestPendingSummaryAPIOutDTO } from "./models/application-change-request.dto";
 import { ApplicationChangeRequestControllerService } from "./application-change-request.controller.service";
@@ -23,13 +23,18 @@ export class ApplicationChangeRequestAESTController extends BaseController {
     super();
   }
 
+  /**
+   * Gets all pending application change requests (applications in 'Change pending approval' status).
+   * @param pagination options to execute the pagination.
+   * @returns list of application change requests.
+   */
   @Get("pending")
-  async getNewApplicationChangeRequests(
-    @Query() pagination: StudentAppealPendingPaginationOptionsAPIInDTO,
+  async getApplicationChangeRequests(
+    @Query() pagination: ApplicationChangeRequestPaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
   > {
-    return this.applicationChangeRequestControllerService.getNewApplicationChangeRequests(
+    return this.applicationChangeRequestControllerService.getApplicationChangeRequests(
       pagination,
     );
   }

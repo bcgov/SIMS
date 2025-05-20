@@ -1,17 +1,17 @@
 import { Injectable, Inject } from "@nestjs/common";
 import {
   PaginatedResultsAPIOutDTO,
-  StudentChangeRequestPendingPaginationOptionsAPIInDTO,
+  ApplicationChangeRequestPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { ApplicationChangeRequestPendingSummaryAPIOutDTO } from "./models/application-change-request.dto";
 import { Application, ApplicationEditStatus } from "@sims/sims-db";
-import { ApplicationChangeRequestService as AppChangeRequestDBService } from "../../services/application-change-request/application-change-request.service";
+import { ApplicationChangeRequestService } from "../../services/application-change-request/application-change-request.service";
 
 @Injectable()
 export class ApplicationChangeRequestControllerService {
   constructor(
-    @Inject(AppChangeRequestDBService)
-    private readonly appChangeRequestDBService: AppChangeRequestDBService,
+    @Inject(ApplicationChangeRequestService)
+    private readonly appChangeRequestDBService: ApplicationChangeRequestService,
   ) {}
 
   /**
@@ -19,30 +19,23 @@ export class ApplicationChangeRequestControllerService {
    * @param pagination options to execute the pagination.
    * @returns list of applications matching the criteria.
    */
-  async getNewApplicationChangeRequests(
-    pagination: StudentChangeRequestPendingPaginationOptionsAPIInDTO,
+  async getApplicationChangeRequests(
+    pagination: ApplicationChangeRequestPaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
   > {
-    const updatedPagination = {
-      ...pagination,
-    };
-
-    const targetApplicationEditStatus =
-      ApplicationEditStatus.ChangePendingApproval;
-
     const applicationsPaginatedResult =
-      await this.appChangeRequestDBService.getApplicationsForChangeRequestList(
-        targetApplicationEditStatus,
-        updatedPagination,
+      await this.appChangeRequestDBService.getApplicationsByEditStatus(
+        ApplicationEditStatus.ChangePendingApproval,
+        pagination,
       );
 
     const mappedResults = applicationsPaginatedResult.results.map(
       (app: Application) => ({
         applicationId: app.id,
-        parentApplicationId: app.parentApplication.id,
+        precedingApplicationId: app.precedingApplication.id,
         studentId: app.student.id,
-        submittedDate: app.createdAt,
+        submittedDate: app.submittedDate,
         firstName: app.student.user.firstName,
         lastName: app.student.user.lastName,
         applicationNumber: app.applicationNumber,

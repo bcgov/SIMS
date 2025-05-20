@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Application, ApplicationEditStatus } from "@sims/sims-db";
-import { DataSource, Repository, Brackets, SelectQueryBuilder } from "typeorm";
-import { StudentChangeRequestPendingPaginationOptionsAPIInDTO } from "../../route-controllers/models/pagination.dto";
+import { Application } from "@sims/sims-db";
+import { Repository, Brackets, SelectQueryBuilder } from "typeorm";
+import { ApplicationChangeRequestPaginationOptionsAPIInDTO } from "../../route-controllers/models/pagination.dto";
 import { PaginatedResults } from "../../utilities";
 import { FieldSortOrder } from "@sims/utilities";
 
@@ -12,20 +12,19 @@ import { FieldSortOrder } from "@sims/utilities";
 @Injectable()
 export class ApplicationChangeRequestService {
   constructor(
-    private readonly dataSource: DataSource,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
   ) {}
 
   /**
    * Gets applications based purely on their edit status.
-   * @param targetStatus The application_edit_status to filter by.
+   * @param targetStatus The application edit status to filter.
    * @param paginationOptions Pagination, sorting, and search options from the controller.
    * @returns Paginated list of applications.
    */
-  async getApplicationsForChangeRequestList(
-    targetStatus: ApplicationEditStatus,
-    paginationOptions: StudentChangeRequestPendingPaginationOptionsAPIInDTO,
+  async getApplicationsByEditStatus(
+    applicationEditStatus,
+    paginationOptions: ApplicationChangeRequestPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResults<Application>> {
     const { page, pageLimit, sortField, sortOrder, searchCriteria } =
       paginationOptions;
@@ -35,16 +34,17 @@ export class ApplicationChangeRequestService {
       .select([
         "application.id",
         "application.applicationNumber",
-        "application.createdAt",
-        "application.applicationEditStatus",
+        "application.submittedDate",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+        "precedingApplication.id",
       ])
       .innerJoin("application.student", "student")
-      .addSelect(["student.id"])
+      .innerJoin("application.precedingApplication", "precedingApplication")
       .innerJoin("student.user", "user")
-      .addSelect(["user.firstName", "user.lastName"])
-      .innerJoinAndSelect("application.parentApplication", "parentApp")
-      .where("application.applicationEditStatus = :targetStatus", {
-        targetStatus,
+      .where("application.applicationEditStatus = :applicationEditStatus", {
+        applicationEditStatus,
       });
 
     if (searchCriteria) {

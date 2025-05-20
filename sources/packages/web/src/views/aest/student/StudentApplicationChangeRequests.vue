@@ -32,7 +32,6 @@
           :items-per-page="pageLimit"
           :items-per-page-options="PAGINATION_LIST"
           @update:options="handleOptionsUpdate"
-          class="elevation-1"
         >
           <template #[`item.submittedDate`]="{ item }">
             <span>
@@ -58,7 +57,6 @@
 </template>
 
 <script lang="ts">
-// NOSONAR
 import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
