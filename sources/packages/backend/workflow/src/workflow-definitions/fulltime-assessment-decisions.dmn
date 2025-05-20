@@ -489,7 +489,7 @@
       <rule id="DecisionRule_1ah885h">
         <description>SINGLE PARENT (no dependent considered)</description>
         <inputEntry id="UnaryTests_1chf6od">
-          <text>"single","other", "married unable"</text>
+          <text>"single","other", "marriedUnable"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_11wucu3">
           <text>"independant"</text>
@@ -510,7 +510,7 @@
       <rule id="DecisionRule_150hgzj">
         <description>SINGLE INDEPENDANT STUDENT - AWAY FROM HOME</description>
         <inputEntry id="UnaryTests_0jkshtj">
-          <text>"single","other", "married unable"</text>
+          <text>"single","other", "marriedUnable"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_03yw3ba">
           <text>"independant"</text>
@@ -531,7 +531,7 @@
       <rule id="DecisionRule_1lvxks7">
         <description>SINGLE INDEPENDANT STUDENT - AT HOME PAYING RENT</description>
         <inputEntry id="UnaryTests_1sv0r1b">
-          <text>"single","other", "married unable"</text>
+          <text>"single","other", "marriedUnable"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1ibp4ew">
           <text>"independant"</text>
@@ -552,7 +552,7 @@
       <rule id="DecisionRule_130k9i8">
         <description>SINGLE INDEPENDANT STUDENT - LIVING AT HOME</description>
         <inputEntry id="UnaryTests_1hmls9z">
-          <text>"single","other", "married unable"</text>
+          <text>"single","other", "marriedUnable"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1e03kpz">
           <text>"independant"</text>
