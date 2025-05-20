@@ -21,7 +21,7 @@ import {
   ApplicationChangeRequestPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "apps/api/src/route-controllers/models/pagination.dto";
-import { PaginatedResults } from "apps/api/src/utilities";
+import { PaginatedResults, PaginationOptions } from "../../utilities";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ApplicationChangeRequestPendingSummaryAPIOutDTO } from "apps/api/src/route-controllers/application-change-request/models/application-change-request.dto";
 
@@ -151,7 +151,7 @@ export class ApplicationChangeRequestService {
    */
   async getApplicationsByEditStatus(
     applicationEditStatus,
-    paginationOptions: ApplicationChangeRequestPaginationOptionsAPIInDTO,
+    paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<Application>> {
     const { page, pageLimit, sortField, sortOrder, searchCriteria } =
       paginationOptions;

@@ -522,34 +522,9 @@ export const StudentProfileLegacyMatchHeaders = [
 ];
 
 export const PendingApplicationEditsTableHeaders = [
-  {
-    title: "Date submitted",
-    align: "start" as const,
-    sortable: true,
-    key: "submittedDate",
-  },
-  {
-    title: "Given names",
-    align: "start" as const,
-    sortable: false,
-    key: "firstName",
-  },
-  {
-    title: "Last name",
-    align: "start" as const,
-    sortable: true,
-    key: "lastName",
-  },
-  {
-    title: "Application #",
-    align: "start" as const,
-    sortable: true,
-    key: "applicationNumber",
-  },
-  {
-    title: "Action",
-    align: "center" as const,
-    sortable: false,
-    key: "action",
-  },
+  { title: "Date submitted", sortable: true, key: "submittedDate" },
+  { title: "Given names", sortable: false, key: "firstName" },
+  { title: "Last name", sortable: true, key: "lastName" },
+  { title: "Application", sortable: true, key: "applicationNumber" },
+  { title: "Action", sortable: false, key: "action" },
 ];
