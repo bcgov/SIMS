@@ -212,7 +212,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
     ]);
   });
 
-  it("Should approve a change request and copy the offering and no appeals when the application change request is waiting for approval and no appeals are present.", async () => {
+  it("Should approve a change request and copy the offering and no appeals when the application change request is waiting for approval, and no appeals are present.", async () => {
     // Arrange
     // Application to be replaced by the change request.
     const applicationToBeReplaced = await saveFakeApplication(
@@ -401,6 +401,27 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
     ]);
   });
 
+  it("Should throw a BadRequestException when the application change request approval has an invalid status.", async () => {
+    // Arrange
+    const payload = getPayload(ApplicationEditStatus.ChangeCancelled);
+    const endpoint = `/aest/application-change-request/9999999`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: [
+          "applicationEditStatus must be one of the following values: Changed with approval, Change declined",
+        ],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
   it("Should throw UnprocessableEntityException when the application change request was cancelled.", async () => {
     // Arrange
     const changeRequest = await saveFakeApplication(appDataSource, undefined, {
@@ -425,7 +446,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
       });
   });
 
-  it("Should throw NotFoundException when the application change request does not exists.", async () => {
+  it("Should throw NotFoundException when the application change request does not exist.", async () => {
     // Arrange
     const endpoint = "/aest/application-change-request/999999";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
