@@ -58,7 +58,6 @@ import { useModalDialog, useRules } from "@/composables";
 import { ApplicationChangeRequestAPIInDTO } from "@/services/http/dto";
 import { VForm, Role, ApplicationEditStatus } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-
 export default defineComponent({
   components: {
     ModalDialogBase,
