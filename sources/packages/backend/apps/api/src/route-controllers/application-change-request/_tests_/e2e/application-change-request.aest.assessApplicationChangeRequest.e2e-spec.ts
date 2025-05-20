@@ -18,6 +18,7 @@ import {
 } from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import MockDate from "mockdate";
+import { INVALID_APPLICATION_EDIT_STATUS } from "@sims/services/constants";
 
 describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeRequest", () => {
   let app: INestApplication;
@@ -253,7 +254,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
-    // Validate database changes.
+    // Validate database changes (focus on offering and appeal validation only).
     const applicationChangeRequest = await db.application.findOne({
       select: {
         id: true,
@@ -319,14 +320,12 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
 
   it("Should be able to decline a change request and create a student note when the application change request is waiting for approval.", async () => {
     // Arrange
-    // Change request to be approved replacing the "applicationToBeReplaced".
     const changeRequest = await saveFakeApplication(appDataSource, undefined, {
       initialValues: {
         applicationStatus: ApplicationStatus.Edited,
         applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
       },
     });
-    // Appeal to perform the asserts. Expected to be copied.
     const payload = getPayload(ApplicationEditStatus.ChangeDeclined);
     const endpoint = `/aest/application-change-request/${changeRequest.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -442,7 +441,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message: `Application ${changeRequest.id} to assess change not in valid status to be updated.`,
-        errorType: "INVALID_APPLICATION_EDIT_STATUS",
+        errorType: INVALID_APPLICATION_EDIT_STATUS,
       });
   });
 
@@ -465,6 +464,11 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
       });
   });
 
+  /**
+   * Get the payload for the request with a random and unique note description.
+   * @param applicationEditStatus edit status to be set.
+   * @returns payload for the request.
+   */
   function getPayload(applicationEditStatus: ApplicationEditStatus) {
     return {
       note: faker.datatype.uuid(),
