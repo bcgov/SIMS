@@ -102,10 +102,12 @@ export class ApplicationChangeRequestService {
       completedApplication.modifier = auditUser;
       completedApplication.updatedAt = currentDate;
       // Update the approved change request to become the new completed application.
+      // Application edit status related properties.
       changeRequestApplication.applicationEditStatus =
         ApplicationEditStatus.ChangedWithApproval;
       changeRequestApplication.applicationEditStatusUpdatedOn = currentDate;
       changeRequestApplication.applicationEditStatusUpdatedBy = auditUser;
+      // Application status related properties.
       changeRequestApplication.applicationStatus = ApplicationStatus.Completed;
       changeRequestApplication.applicationStatusUpdatedOn = currentDate;
       changeRequestApplication.modifier = auditUser;
