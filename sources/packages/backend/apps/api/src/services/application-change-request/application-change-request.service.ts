@@ -140,12 +140,12 @@ export class ApplicationChangeRequestService {
 
   /**
    * Gets applications based purely on their edit status.
-   * @param targetStatus The application edit status to filter.
+   * @param applicationEditStatus The application edit status to filter.
    * @param paginationOptions Pagination, sorting, and search options from the controller.
    * @returns Paginated list of applications.
    */
   async getApplicationsByEditStatus(
-    applicationEditStatus,
+    applicationEditStatus: ApplicationEditStatus,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<Application>> {
     const { page, pageLimit, sortField, sortOrder, searchCriteria } =
@@ -167,23 +167,23 @@ export class ApplicationChangeRequestService {
       .innerJoin("student.user", "user")
       .where("application.applicationEditStatus = :applicationEditStatus", {
         applicationEditStatus,
-      });
+      })
+      .offset(page * pageLimit)
+      .limit(pageLimit);
 
     if (searchCriteria) {
       query.andWhere(
         new Brackets((qb) => {
           qb.where(
             getUserFullNameLikeSearch("user", "searchQueryParam"),
-          ).orWhere("application.applicationNumber ILIKE :searchQueryParam");
+          ).orWhere("application.applicationNumber ILIKE :searchQueryParam", {
+            searchQueryParam: `%${searchCriteria.trim()}%`,
+          });
         }),
       );
-      query.setParameter("searchQueryParam", `%${searchCriteria.trim()}%`);
     }
 
     this.addApplicationChangeRequestSort(query, sortField, sortOrder);
-
-    query.offset(page * pageLimit);
-    query.limit(pageLimit);
 
     const [results, count] = await query.getManyAndCount();
     return { results, count };
