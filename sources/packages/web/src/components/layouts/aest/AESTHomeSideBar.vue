@@ -123,7 +123,7 @@ export default defineComponent({
         },
       },
       {
-        title: "Change request",
+        title: "Change requests",
         props: {
           subtitle: "Pre 2025-2026",
           prependIcon: "mdi-folder-open-outline",
@@ -133,7 +133,7 @@ export default defineComponent({
         },
       },
       {
-        title: "Change request",
+        title: "Change requests",
         props: {
           subtitle: "2025-2026 and later",
           prependIcon: "mdi-folder-open-outline",

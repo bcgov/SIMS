@@ -111,7 +111,7 @@ export default defineComponent({
           );
         changeRequests.value = result;
       } catch {
-        snackBar.error("Failed to load change requests");
+        snackBar.error("Failed to load change requests.");
         changeRequests.value = {
           results: [],
           count: 0,

@@ -1,10 +1,10 @@
 import { getPaginationQueryString } from "@/helpers";
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { PaginatedResultsAPIOutDTO } from "@/services/http/dto";
 import {
+  PaginatedResultsAPIOutDTO,
   ApplicationChangeRequestAPIInDTO,
   ApplicationChangeRequestPendingSummaryAPIOutDTO,
-} from "@/services/http/dto/ApplicationChangeRequest.dto";
+} from "@/services/http/dto";
 import { PaginationOptions } from "@/types";
 
 export class ApplicationChangeRequestApi extends HttpBaseClient {
