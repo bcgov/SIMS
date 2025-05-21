@@ -13,17 +13,7 @@
       "tableView": true,
       "key": "studyStartDate",
       "label": "Study Start Date",
-      "protected": false,
-      "unique": false,
-      "persistent": true,
       "type": "hidden",
-      "tags": [],
-      "conditional": {
-        "show": "",
-        "when": null,
-        "eq": ""
-      },
-      "properties": {},
       "lockKey": true,
       "isNew": false
     },
@@ -32,17 +22,7 @@
       "tableView": true,
       "key": "studyEndDate",
       "label": "Study End Date",
-      "protected": false,
-      "unique": false,
-      "persistent": true,
       "type": "hidden",
-      "tags": [],
-      "conditional": {
-        "show": "",
-        "when": null,
-        "eq": ""
-      },
-      "properties": {},
       "lockKey": true,
       "isNew": false
     },
@@ -53,16 +33,7 @@
       "input": true,
       "tableView": true,
       "lockKey": true,
-      "protected": false,
-      "unique": false,
       "persistent": false,
-      "tags": [],
-      "conditional": {
-        "show": "",
-        "when": null,
-        "eq": ""
-      },
-      "properties": {},
       "isNew": false
     },
     {
@@ -72,21 +43,11 @@
       "input": true,
       "tableView": true,
       "lockKey": true,
-      "protected": false,
-      "unique": false,
       "persistent": false,
-      "tags": [],
-      "conditional": {
-        "show": "",
-        "when": null,
-        "eq": ""
-      },
-      "properties": {},
       "isNew": false
     },
     {
       "label": "Student Name",
-      "tag": "div",
       "attrs": [
         {
           "attr": "",
@@ -99,8 +60,7 @@
       "type": "htmlelement",
       "input": false,
       "tableView": false,
-      "hideLabel": true,
-      "className": ""
+      "hideLabel": true
     },
     {
       "label": "Application Number | Location Name | Study Dates",
@@ -117,8 +77,7 @@
       "input": false,
       "tableView": false,
       "hideLabel": true,
-      "tag": "p",
-      "className": ""
+      "tag": "p"
     },
     {
       "label": "HTML",
@@ -135,9 +94,7 @@
       "type": "htmlelement",
       "input": false,
       "tableView": false,
-      "hideLabel": true,
-      "className": "",
-      "content": ""
+      "hideLabel": true
     },
     {
       "label": "HTML",
@@ -202,8 +159,7 @@
           "input": false,
           "tableView": false,
           "hideLabel": true,
-          "tag": "p",
-          "className": ""
+          "tag": "p"
         },
         {
           "label": "Columns",
@@ -226,8 +182,7 @@
                   "input": false,
                   "tableView": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Offering Intensity",
@@ -246,8 +201,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 }
               ],
               "width": 6,
@@ -275,8 +229,7 @@
                   "input": false,
                   "tableView": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Offering Intensity",
@@ -295,8 +248,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 }
               ],
               "width": 6,
@@ -311,12 +263,9 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "hideLabel": true,
-          "clearOnHide": false
+          "hideLabel": true
         }
-      ],
-      "clearOnHide": false,
-      "theme": "default"
+      ]
     },
     {
       "title": "Offering Details Panel",
@@ -369,8 +318,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Offering Intensity",
@@ -389,8 +337,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 }
               ],
               "width": 6,
@@ -414,8 +361,7 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "hideLabel": true,
-          "clearOnHide": false
+          "hideLabel": true
         },
         {
           "label": "Columns",
@@ -439,8 +385,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Offering Intensity",
@@ -459,8 +404,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 }
               ],
               "width": 6,
@@ -489,8 +433,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Offering Intensity",
@@ -509,8 +452,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 }
               ],
               "width": 6,
@@ -525,8 +467,7 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "hideLabel": true,
-          "clearOnHide": false
+          "hideLabel": true
         },
         {
           "label": "Columns",
@@ -550,8 +491,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Application Offering Start Date",
@@ -570,15 +510,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": "",
-                  "tags": [],
-                  "conditional": {
-                    "show": "",
-                    "when": null,
-                    "eq": ""
-                  },
-                  "properties": {}
+                  "tag": "p"
                 }
               ],
               "width": 6,
@@ -607,8 +539,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Data Grid",
@@ -648,15 +579,9 @@
                       "tableView": false,
                       "inDataGrid": true,
                       "hideLabel": true,
-                      "tag": "p",
-                      "className": ""
+                      "tag": "p"
                     }
-                  ],
-                  "autofocus": false,
-                  "tree": true,
-                  "protected": false,
-                  "hidden": false,
-                  "clearOnHide": true
+                  ]
                 }
               ],
               "width": 6,
@@ -671,8 +596,7 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "hideLabel": true,
-          "clearOnHide": false
+          "hideLabel": true
         },
         {
           "label": "HTML",
@@ -714,8 +638,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Offering Intensity",
@@ -734,8 +657,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 }
               ],
               "width": 6,
@@ -764,8 +686,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Offering Intensity",
@@ -784,8 +705,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 }
               ],
               "width": 6,
@@ -800,8 +720,7 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "hideLabel": true,
-          "clearOnHide": false
+          "hideLabel": true
         },
         {
           "label": "Columns",
@@ -825,8 +744,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Offering Intensity",
@@ -845,8 +763,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 }
               ],
               "width": 6,
@@ -875,8 +792,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Offering Intensity",
@@ -895,8 +811,7 @@
                   "tableView": false,
                   "hideOnChildrenHidden": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 }
               ],
               "width": 6,
@@ -911,12 +826,9 @@
           "type": "columns",
           "input": false,
           "tableView": false,
-          "hideLabel": true,
-          "clearOnHide": false
+          "hideLabel": true
         }
-      ],
-      "clearOnHide": false,
-      "theme": "default"
+      ]
     },
     {
       "label": "HTML",
@@ -932,9 +844,7 @@
       "type": "htmlelement",
       "input": false,
       "tableView": false,
-      "hideLabel": true,
-      "className": "",
-      "content": ""
+      "hideLabel": true
     },
     {
       "title": "",
@@ -987,8 +897,7 @@
           "input": false,
           "tableView": false,
           "hideLabel": true,
-          "tag": "p",
-          "className": ""
+          "tag": "p"
         },
         {
           "key": "panelPanel",
@@ -1009,10 +918,7 @@
           "collapsible": true,
           "collapsed": true,
           "customClass": "collapsible",
-          "label": "Panel",
-          "clearOnHide": false,
-          "theme": "default",
-          "hideLabel": false
+          "label": "Panel"
         },
         {
           "label": "Select a change in circumstance",
@@ -1070,23 +976,7 @@
           ],
           "type": "radio",
           "input": true,
-          "lockKey": true,
-          "autofocus": false,
-          "inputType": "radio",
-          "defaultValue": "",
-          "protected": false,
-          "fieldSet": false,
-          "persistent": true,
-          "hidden": false,
-          "clearOnHide": true,
-          "labelPosition": "top",
-          "tags": [],
-          "conditional": {
-            "show": "",
-            "when": null,
-            "eq": ""
-          },
-          "properties": {}
+          "lockKey": true
         },
         {
           "title": "Student is transferring to a different institution or campus - Panel",
@@ -1138,29 +1028,7 @@
                         "data-cy": "dateOfChange"
                       },
                       "type": "textfield",
-                      "input": true,
-                      "autofocus": false,
-                      "inputType": "text",
-                      "inputMask": "",
-                      "prefix": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": "",
-                      "protected": false,
-                      "unique": false,
-                      "persistent": true,
-                      "hidden": false,
-                      "clearOnHide": true,
-                      "spellcheck": true,
-                      "conditional": {
-                        "show": "",
-                        "when": null,
-                        "eq": ""
-                      },
-                      "labelPosition": "top",
-                      "inputFormat": "plain",
-                      "tags": [],
-                      "properties": {}
+                      "input": true
                     }
                   ],
                   "width": 6,
@@ -1184,24 +1052,11 @@
               "type": "columns",
               "input": false,
               "tableView": false,
-              "hideLabel": true,
-              "clearOnHide": false,
-              "tags": [],
-              "conditional": {
-                "show": "",
-                "when": null,
-                "eq": ""
-              },
-              "properties": {}
+              "hideLabel": true
             }
           ],
           "lockKey": true,
-          "hideLabel": true,
-          "clearOnHide": false,
-          "theme": "default",
-          "breadcrumb": "default",
-          "tags": [],
-          "properties": {}
+          "hideLabel": true
         },
         {
           "title": "Student completed funded study period offering early - Panel",
@@ -1253,29 +1108,7 @@
                         "data-cy": "dateOfCompletion"
                       },
                       "type": "textfield",
-                      "input": true,
-                      "autofocus": false,
-                      "inputType": "text",
-                      "inputMask": "",
-                      "prefix": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": "",
-                      "protected": false,
-                      "unique": false,
-                      "persistent": true,
-                      "hidden": false,
-                      "clearOnHide": true,
-                      "spellcheck": true,
-                      "conditional": {
-                        "show": "",
-                        "when": null,
-                        "eq": ""
-                      },
-                      "labelPosition": "top",
-                      "inputFormat": "plain",
-                      "tags": [],
-                      "properties": {}
+                      "input": true
                     }
                   ],
                   "width": 6,
@@ -1299,8 +1132,7 @@
               "type": "columns",
               "input": false,
               "tableView": false,
-              "hideLabel": true,
-              "clearOnHide": false
+              "hideLabel": true
             },
             {
               "label": "Were the students study period costs different than the originally reported costs?",
@@ -1325,15 +1157,7 @@
               },
               "key": "isCostDifferent",
               "type": "radio",
-              "input": true,
-              "autofocus": false,
-              "inputType": "radio",
-              "defaultValue": "",
-              "protected": false,
-              "fieldSet": false,
-              "persistent": true,
-              "hidden": false,
-              "clearOnHide": true
+              "input": true
             },
             {
               "title": "Please record the students final costs - Panel",
@@ -1366,8 +1190,7 @@
                   "input": false,
                   "tableView": false,
                   "hideLabel": true,
-                  "tag": "p",
-                  "className": ""
+                  "tag": "p"
                 },
                 {
                   "label": "Columns",
@@ -1393,24 +1216,7 @@
                           "delimiter": true,
                           "inputType": "text",
                           "decimalLimit": 2,
-                          "requireDecimal": true,
-                          "autofocus": false,
-                          "inputMask": "",
-                          "placeholder": "",
-                          "suffix": "",
-                          "defaultValue": "",
-                          "protected": false,
-                          "persistent": true,
-                          "hidden": false,
-                          "clearOnHide": true,
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": ""
-                          },
-                          "labelPosition": "top",
-                          "tags": [],
-                          "properties": {}
+                          "requireDecimal": true
                         }
                       ],
                       "width": 6,
@@ -1440,21 +1246,7 @@
                           "delimiter": true,
                           "inputType": "text",
                           "decimalLimit": 2,
-                          "requireDecimal": true,
-                          "autofocus": false,
-                          "inputMask": "",
-                          "placeholder": "",
-                          "suffix": "",
-                          "defaultValue": "",
-                          "protected": false,
-                          "persistent": true,
-                          "hidden": false,
-                          "clearOnHide": true,
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": ""
-                          }
+                          "requireDecimal": true
                         }
                       ],
                       "width": 6,
@@ -1469,15 +1261,7 @@
                   "type": "columns",
                   "input": false,
                   "tableView": false,
-                  "hideLabel": true,
-                  "clearOnHide": false,
-                  "tags": [],
-                  "conditional": {
-                    "show": "",
-                    "when": null,
-                    "eq": ""
-                  },
-                  "properties": {}
+                  "hideLabel": true
                 },
                 {
                   "label": "Columns",
@@ -1503,21 +1287,7 @@
                           "delimiter": true,
                           "inputType": "text",
                           "decimalLimit": 2,
-                          "requireDecimal": true,
-                          "autofocus": false,
-                          "inputMask": "",
-                          "placeholder": "",
-                          "suffix": "",
-                          "defaultValue": "",
-                          "protected": false,
-                          "persistent": true,
-                          "hidden": false,
-                          "clearOnHide": true,
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": ""
-                          }
+                          "requireDecimal": true
                         }
                       ],
                       "width": 6,
@@ -1548,21 +1318,7 @@
                           "delimiter": true,
                           "inputType": "text",
                           "decimalLimit": 2,
-                          "requireDecimal": true,
-                          "autofocus": false,
-                          "inputMask": "",
-                          "placeholder": "",
-                          "suffix": "",
-                          "defaultValue": "",
-                          "protected": false,
-                          "persistent": true,
-                          "hidden": false,
-                          "clearOnHide": true,
-                          "conditional": {
-                            "show": null,
-                            "when": null,
-                            "eq": ""
-                          }
+                          "requireDecimal": true
                         }
                       ],
                       "width": 6,
@@ -1577,17 +1333,12 @@
                   "type": "columns",
                   "input": false,
                   "tableView": false,
-                  "hideLabel": true,
-                  "clearOnHide": false
+                  "hideLabel": true
                 }
-              ],
-              "clearOnHide": false,
-              "theme": "default"
+              ]
             }
           ],
-          "hideLabel": true,
-          "clearOnHide": false,
-          "theme": "default"
+          "hideLabel": true
         },
         {
           "title": "Student did not complete program - Panel",
@@ -1626,23 +1377,6 @@
                       "type": "number",
                       "input": true,
                       "inputType": "number",
-                      "autofocus": false,
-                      "placeholder": "",
-                      "prefix": "",
-                      "suffix": "",
-                      "defaultValue": "",
-                      "protected": false,
-                      "persistent": true,
-                      "hidden": false,
-                      "clearOnHide": true,
-                      "labelPosition": "top",
-                      "tags": [],
-                      "conditional": {
-                        "show": "",
-                        "when": null,
-                        "eq": ""
-                      },
-                      "properties": {},
                       "isNew": false
                     }
                   ],
@@ -1667,8 +1401,7 @@
               "type": "columns",
               "input": false,
               "tableView": false,
-              "hideLabel": true,
-              "clearOnHide": false
+              "hideLabel": true
             },
             {
               "label": "Select the reason of incompletion",
@@ -1702,13 +1435,7 @@
               "key": "reasonOfIncompletion",
               "type": "selectboxes",
               "input": true,
-              "inputType": "checkbox",
-              "autofocus": false,
-              "inline": false,
-              "protected": false,
-              "persistent": true,
-              "hidden": false,
-              "clearOnHide": true
+              "inputType": "checkbox"
             },
             {
               "label": "Notes",
@@ -1723,31 +1450,10 @@
                 "eq": "other"
               },
               "type": "textarea",
-              "input": true,
-              "autofocus": false,
-              "prefix": "",
-              "suffix": "",
-              "rows": 3,
-              "multiple": false,
-              "defaultValue": "",
-              "protected": false,
-              "persistent": true,
-              "hidden": false,
-              "wysiwyg": false,
-              "clearOnHide": true,
-              "spellcheck": true,
-              "validate": {
-                "required": false,
-                "minLength": "",
-                "maxLength": "",
-                "pattern": "",
-                "custom": ""
-              }
+              "input": true
             }
           ],
-          "hideLabel": true,
-          "clearOnHide": false,
-          "theme": "default"
+          "hideLabel": true
         },
         {
           "title": "Student Withdrew from funded period - Panel",
@@ -1799,29 +1505,7 @@
                         "data-cy": "dateOfWithdrawal"
                       },
                       "type": "textfield",
-                      "input": true,
-                      "autofocus": false,
-                      "inputType": "text",
-                      "inputMask": "",
-                      "prefix": "",
-                      "suffix": "",
-                      "multiple": false,
-                      "defaultValue": "",
-                      "protected": false,
-                      "unique": false,
-                      "persistent": true,
-                      "hidden": false,
-                      "clearOnHide": true,
-                      "spellcheck": true,
-                      "conditional": {
-                        "show": "",
-                        "when": null,
-                        "eq": ""
-                      },
-                      "labelPosition": "top",
-                      "inputFormat": "plain",
-                      "tags": [],
-                      "properties": {}
+                      "input": true
                     }
                   ],
                   "width": 6,
@@ -1845,17 +1529,12 @@
               "type": "columns",
               "input": false,
               "tableView": false,
-              "hideLabel": true,
-              "clearOnHide": false
+              "hideLabel": true
             }
           ],
-          "hideLabel": true,
-          "clearOnHide": false,
-          "theme": "default"
+          "hideLabel": true
         }
-      ],
-      "clearOnHide": false,
-      "theme": "default"
+      ]
     }
   ]
 }
