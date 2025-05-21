@@ -172,15 +172,15 @@ export class ApplicationChangeRequestService {
       .limit(pageLimit);
 
     if (searchCriteria) {
+      const searchQueryParam = "searchQueryParam";
       query.andWhere(
         new Brackets((qb) => {
-          qb.where(
-            getUserFullNameLikeSearch("user", "searchQueryParam"),
-          ).orWhere("application.applicationNumber ILIKE :searchQueryParam", {
-            searchQueryParam: `%${searchCriteria.trim()}%`,
-          });
+          qb.where(getUserFullNameLikeSearch("user", searchQueryParam)).orWhere(
+            `application.applicationNumber ILIKE :${searchQueryParam}`,
+          );
         }),
       );
+      query.setParameter(searchQueryParam, `%${searchCriteria.trim()}%`);
     }
 
     this.addApplicationChangeRequestSort(query, sortField, sortOrder);
