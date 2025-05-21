@@ -1,10 +1,10 @@
-import { PaginatedResultsAPIOutDTO } from "@/services/http/dto";
-import { PaginationOptions } from "@/types";
-import ApiClient from "../services/http/ApiClient";
 import {
+  PaginatedResultsAPIOutDTO,
   ApplicationChangeRequestAPIInDTO,
   ApplicationChangeRequestPendingSummaryAPIOutDTO,
-} from "@/services/http/dto/ApplicationChangeRequest.dto";
+} from "@/services/http/dto";
+import { PaginationOptions } from "@/types";
+import ApiClient from "../services/http/ApiClient";
 
 export class ApplicationChangeRequestService {
   // Share Instance
@@ -34,7 +34,7 @@ export class ApplicationChangeRequestService {
    * @param paginationOptions options to execute the pagination.
    * @returns list of application change requests.
    */
-  async getChangeRequests(
+  async getApplicationChangeRequests(
     paginationOptions: PaginationOptions,
   ): Promise<
     PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>

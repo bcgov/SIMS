@@ -123,8 +123,9 @@ export default defineComponent({
         },
       },
       {
-        title: "Change request (Pre 2025-2026)",
+        title: "Change request",
         props: {
+          subtitle: "Pre 2025-2026",
           prependIcon: "mdi-folder-open-outline",
           to: {
             name: AESTRoutesConst.APPLICATION_APPEALS_PENDING,
@@ -132,8 +133,9 @@ export default defineComponent({
         },
       },
       {
-        title: "Change request (2025-2026 and later)",
+        title: "Change request",
         props: {
+          subtitle: "2025-2026 and later",
           prependIcon: "mdi-folder-open-outline",
           to: {
             name: AESTRoutesConst.APPLICATION_CHANGE_REQUESTS_PENDING,

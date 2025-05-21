@@ -521,7 +521,7 @@ export const StudentProfileLegacyMatchHeaders = [
   { title: "Actions", key: "actions", sortable: false },
 ];
 
-export const PendingApplicationEditsTableHeaders = [
+export const PendingChangeRequestsTableHeaders = [
   { title: "Date submitted", sortable: true, key: "submittedDate" },
   { title: "Given names", sortable: false, key: "firstName" },
   { title: "Last name", sortable: true, key: "lastName" },

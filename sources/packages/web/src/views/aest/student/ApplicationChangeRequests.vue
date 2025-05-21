@@ -24,9 +24,9 @@
       </template>
     </body-header>
     <content-group>
-      <toggle-content :toggled="!changeRequests.count">
+      <toggle-content :toggled="!changeRequests.count && !isLoading">
         <v-data-table-server
-          :headers="PendingApplicationEditsTableHeaders"
+          :headers="PendingChangeRequestsTableHeaders"
           :items="changeRequests.results"
           :items-length="changeRequests.count"
           :loading="isLoading"
@@ -34,6 +34,9 @@
           :items-per-page-options="PAGINATION_LIST"
           @update:options="paginationAndSortEvent"
         >
+          <template v-slot:loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
           <template #[`item.submittedDate`]="{ item }">
             {{ dateOnlyLongString(item.submittedDate) }}
           </template>
@@ -66,21 +69,21 @@ import { useRouter } from "vue-router";
 import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
-  DataTableSortOrder,
   DEFAULT_DATATABLE_PAGE_NUMBER,
   DataTableOptions,
   DataTableSortByOrder,
 } from "@/types";
-import { useFormatters } from "@/composables";
+import { useFormatters, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationChangeRequestService } from "@/services/ApplicationChangeRequestService";
 import { ApplicationChangeRequestPendingSummaryAPIOutDTO } from "@/services/http/dto/ApplicationChangeRequest.dto";
-import { PendingApplicationEditsTableHeaders } from "@/types/contracts/DataTableContract";
+import { PendingChangeRequestsTableHeaders } from "@/types/contracts/DataTableContract";
 import { PaginatedResultsAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   setup() {
     const router = useRouter();
+    const snackBar = useSnackBar();
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
     const isLoading = ref(false);
     const searchCriteria = ref<string | undefined>();
@@ -91,22 +94,24 @@ export default defineComponent({
       page = DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit = DEFAULT_PAGE_LIMIT,
       sortField?: string,
-      sortOrder?: DataTableSortOrder,
+      sortOrder?: DataTableSortByOrder,
     ) => {
       isLoading.value = true;
 
       try {
         const result =
-          await ApplicationChangeRequestService.shared.getChangeRequests({
-            page,
-            pageLimit,
-            sortField,
-            sortOrder,
-            searchCriteria: searchCriteria.value,
-          });
+          await ApplicationChangeRequestService.shared.getApplicationChangeRequests(
+            {
+              page,
+              pageLimit,
+              sortField,
+              sortOrder,
+              searchCriteria: searchCriteria.value,
+            },
+          );
         changeRequests.value = result;
-      } catch (error: unknown) {
-        console.error("Error fetching change requests:", error);
+      } catch {
+        snackBar.error("Failed to load change requests");
         changeRequests.value = {
           results: [],
           count: 0,
@@ -118,17 +123,11 @@ export default defineComponent({
 
     const paginationAndSortEvent = async (event: DataTableOptions) => {
       const [sortByOptions] = event.sortBy ?? [];
-      let sortOrder: DataTableSortOrder | undefined = undefined;
-      if (sortByOptions?.order === DataTableSortByOrder.DESC) {
-        sortOrder = DataTableSortOrder.DESC;
-      } else if (sortByOptions?.order === DataTableSortByOrder.ASC) {
-        sortOrder = DataTableSortOrder.ASC;
-      }
       await loadChangeRequests(
         event.page,
         event.itemsPerPage,
         sortByOptions?.key,
-        sortOrder,
+        sortByOptions?.order,
       );
     };
 
@@ -145,8 +144,8 @@ export default defineComponent({
         name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
         params: {
           studentId,
-          applicationId,
-          versionApplicationId: precedingApplicationId,
+          applicationId: precedingApplicationId,
+          versionApplicationId: applicationId,
         },
       });
     };
@@ -157,7 +156,7 @@ export default defineComponent({
 
     return {
       isLoading,
-      PendingApplicationEditsTableHeaders,
+      PendingChangeRequestsTableHeaders,
       searchCriteria,
       changeRequests,
       paginationAndSortEvent,
