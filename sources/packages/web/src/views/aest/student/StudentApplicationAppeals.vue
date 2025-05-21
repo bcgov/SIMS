@@ -1,7 +1,10 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Student requests" subTitle="Change requests" />
+      <header-navigator
+        title="Student requests"
+        subTitle="Change request (Pre 2025-2026)"
+      />
     </template>
     <body-header
       title="Pending change requests"
