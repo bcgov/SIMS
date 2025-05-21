@@ -146,7 +146,7 @@
                       "attr": ""
                     }
                   ],
-                  "content": "<center>\n  <h2 class=\"category-header-large primary-color\">Training</h2>\n  <span\n    >Access training materials, how-to-videos, and Q&A's for SIMS. Contact\n    <a href=\"mailto:mod@gov.bc.ca\" class=\"formio-href\">mod@gov.bc.ca </a>\n    for any issues.\n  </span>\n</center>",
+                  "content": "<center>\n  <h2 class=\"category-header-large primary-color\">Training</h2>\n  <span\n    >Access training materials, how-to-videos, and Q&A's for SIMS. Contact\n    <a href=\"mailto:SABCTechHelp@gov.bc.ca\" class=\"formio-href\">SABCTechHelp@gov.bc.ca </a>\n    for any issues.\n  </span>\n</center>",
                   "type": "htmlelement",
                   "hideLabel": true,
                   "tableView": false
