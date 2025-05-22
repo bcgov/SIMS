@@ -295,27 +295,24 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
       where: {
         id: changeRequest.id,
       },
-      loadEagerRelations: false,
     });
     // Focus on offering and appeal validation only.
-    expect(applicationChangeRequest).toEqual(
-      expect.objectContaining({
-        id: changeRequest.id,
+    expect(applicationChangeRequest).toEqual({
+      id: changeRequest.id,
+      currentAssessment: {
+        id: expect.any(Number),
+        offering: expectedOffering,
+        studentAppeal: null,
+      },
+      precedingApplication: {
+        id: applicationToBeReplaced.id,
         currentAssessment: {
-          id: expect.any(Number),
+          id: applicationToBeReplaced.currentAssessment.id,
           offering: expectedOffering,
           studentAppeal: null,
         },
-        precedingApplication: {
-          id: applicationToBeReplaced.id,
-          currentAssessment: {
-            id: applicationToBeReplaced.currentAssessment.id,
-            offering: expectedOffering,
-            studentAppeal: null,
-          },
-        },
-      }),
-    );
+      },
+    });
   });
 
   it("Should be able to decline a change request and create a student note when the application change request is waiting for approval.", async () => {

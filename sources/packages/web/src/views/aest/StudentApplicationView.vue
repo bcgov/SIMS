@@ -268,7 +268,7 @@ export default defineComponent({
     /**
      * Show the modal for Ministry user confirmation of the
      * change request assessment.
-     * @param applicationChangeRequestStatus
+     * @param applicationChangeRequestStatus change request status.
      */
     const assessApplicationChangeRequest = async (
       applicationChangeRequestStatus:
