@@ -12,6 +12,7 @@ export enum Workers {
   SaveDisbursementSchedules = "save-disbursement-schedules",
   AssociateMSFAA = "associate-msfaa",
   CreateSupportingUsers = "create-supporting-users",
+  CreateIdentifiableSupportingUsers = "create-identifiable-supporting-users",
   LoadSupportingUserData = "load-supporting-user-data",
   WorkflowWrapUp = "workflow-wrap-up",
   VerifyAssessmentCalculationOrder = "verify-assessment-calculation-order",
