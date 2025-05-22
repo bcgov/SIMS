@@ -108,6 +108,9 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
         id: true,
         applicationStatus: true,
         applicationStatusUpdatedOn: true,
+        applicationEditStatus: true,
+        applicationEditStatusUpdatedBy: { id: true },
+        applicationEditStatusUpdatedOn: true,
         currentAssessment: {
           id: true,
           offering: {
@@ -143,6 +146,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
         },
       },
       relations: {
+        applicationEditStatusUpdatedBy: true,
         currentAssessment: {
           offering: true,
           studentAppeal: true,
@@ -165,6 +169,9 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
       id: changeRequest.id,
       applicationStatus: ApplicationStatus.Completed,
       applicationStatusUpdatedOn: now,
+      applicationEditStatus: ApplicationEditStatus.ChangedWithApproval,
+      applicationEditStatusUpdatedBy: ministryUser,
+      applicationEditStatusUpdatedOn: now,
       currentAssessment: {
         id: expect.any(Number),
         offering: expectedOffering,
