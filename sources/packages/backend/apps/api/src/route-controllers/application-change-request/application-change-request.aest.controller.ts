@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Get,
   NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
+  Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
@@ -26,11 +28,19 @@ import {
   APPLICATION_NOT_FOUND,
   ApplicationChangeRequestService,
 } from "../../services";
-import { ApplicationChangeRequestAPIInDTO } from "./models/application-change-request.dto";
+import {
+  ApplicationChangeRequestAPIInDTO,
+  ApplicationChangeRequestPendingSummaryAPIOutDTO,
+} from "./models/application-change-request.dto";
 import BaseController from "../BaseController";
 import { Role } from "../../auth";
 import { INVALID_APPLICATION_EDIT_STATUS } from "@sims/services/constants";
 import { CustomNamedError } from "@sims/utilities";
+import {
+  ApplicationChangeRequestPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
+import { ApplicationEditStatus } from "@sims/sims-db";
 
 /**
  * Controller for application change request operations for the Ministry.
@@ -85,5 +95,38 @@ export class ApplicationChangeRequestAESTController extends BaseController {
       }
       throw error;
     }
+  }
+
+  /**
+   * Gets all pending application change requests (applications in 'Change pending approval' status).
+   * @param pagination options to execute the pagination.
+   * @returns list of application change requests.
+   */
+  @Get("pending")
+  async getApplicationChangeRequests(
+    @Query() pagination: ApplicationChangeRequestPaginationOptionsAPIInDTO,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
+  > {
+    const applicationsPaginatedResult =
+      await this.applicationChangeRequestService.getApplicationsByEditStatus(
+        ApplicationEditStatus.ChangePendingApproval,
+        pagination,
+      );
+
+    const mappedResults = applicationsPaginatedResult.results.map((app) => ({
+      applicationId: app.id,
+      precedingApplicationId: app.precedingApplication.id,
+      studentId: app.student.id,
+      submittedDate: app.submittedDate,
+      firstName: app.student.user.firstName,
+      lastName: app.student.user.lastName,
+      applicationNumber: app.applicationNumber,
+    }));
+
+    return {
+      results: mappedResults,
+      count: applicationsPaginatedResult.count,
+    };
   }
 }
