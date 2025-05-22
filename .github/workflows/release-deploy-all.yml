@@ -9,11 +9,11 @@ on:
         required: true
         type: environment
       deployCamundaDefinitions:
-        description: "Deploy Camunda BPMN/DMN from main"
+        description: "Deploy Camunda BPMN/DMN"
         type: boolean
         default: true
       deployFormioDefinitions:
-        description: "Deploy Form.io forms from main"
+        description: "Deploy Form.io forms"
         type: boolean
         default: true
   workflow_call:
@@ -64,7 +64,7 @@ on:
 
 env:
   NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
-  BUILD_REF: ${{ (github.event_name == 'workflow_call' && inputs.gitRef) || github.ref_name }}
+  BUILD_REF: ${{ inputs.gitRef || github.ref_name }}
   HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
   DOMAIN_PREFIX: ${{ vars.DOMAIN_PREFIX }}
   BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}

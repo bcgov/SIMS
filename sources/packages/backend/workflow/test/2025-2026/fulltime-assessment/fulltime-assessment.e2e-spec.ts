@@ -30,7 +30,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
       totalFederalAward: 4800,
       otherAllowableCost: 0,
       returnTripHomeCost: 1234,
-      returnTransportationCost: 900,
+      returnTransportationCost: 0,
       secondResidenceCost: 0,
       totalAssessmentNeed: 55049.19807692308,
       booksAndSuppliesCost: 1500,

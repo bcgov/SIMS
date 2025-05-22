@@ -253,3 +253,9 @@ export const CAS_INVOICE_BATCH_NOT_FOUND = "CAS_INVOICE_BATCH_NOT_FOUND";
  * CAS invoice batch not pending error code.
  */
 export const CAS_INVOICE_BATCH_NOT_PENDING = "CAS_INVOICE_BATCH_NOT_PENDING";
+
+/**
+ * Application change request cancelled by student.
+ */
+export const APPLICATION_CHANGE_CANCELLED_BY_STUDENT =
+  "APPLICATION_CHANGE_CANCELLED_BY_STUDENT";
