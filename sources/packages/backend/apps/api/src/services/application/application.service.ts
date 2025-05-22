@@ -2341,7 +2341,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param sourceApplicationData source application data to copy from.
    * @param targetApplicationData target application data to copy to.
    * @throws error if program persistent properties are not defined.
-   * @returns new application data with copied program data.
    */
   private copyProgramData(
     sourceApplicationData: ApplicationData,
@@ -2351,7 +2350,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       sourceApplicationData.programPersistentProperties;
     // Throw error if program persistent properties are not defined.
     // This will prevent the incomplete data from being saved.
-    if (!programPersistentProperties || !programPersistentProperties.length) {
+    if (!programPersistentProperties?.length) {
       throw new CustomNamedError(
         "Application data does not have program persistent properties.",
         APPLICATION_NOT_VALID,

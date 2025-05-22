@@ -96,13 +96,12 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       { student, programYear },
       {
         applicationStatus: ApplicationStatus.Completed,
+        // Ensure the application data has program persistent properties.
+        applicationData: {
+          programPersistentProperties: ["selectedLocation"],
+        } as ApplicationData,
       },
     );
-    // Ensure the application data has program persistent properties.
-    completedApplication.data = {
-      programPersistentProperties: ["selectedLocation"],
-    } as ApplicationData;
-    await db.application.save(completedApplication);
     const endpoint = `/students/application/${completedApplication.id}/change-request`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,

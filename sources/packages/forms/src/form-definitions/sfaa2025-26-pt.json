@@ -322,11 +322,11 @@
           "lockKey": true
         },
         {
-          "label": "Is program read only",
+          "label": "Is program section read only",
           "persistent": false,
           "calculateValue": "value = (!!data.isReadOnly || data.isChangeRequestApplication);",
           "calculateServer": true,
-          "key": "isProgramReadOnly",
+          "key": "isProgramSectionReadOnly",
           "type": "hidden",
           "input": true,
           "tableView": false
@@ -346,7 +346,7 @@
             "type": "simple",
             "simple": {
               "show": true,
-              "when": "isProgramReadOnly",
+              "when": "isProgramSectionReadOnly",
               "eq": "true"
             }
           },
@@ -472,7 +472,7 @@
               },
               "validateWhenHidden": false,
               "key": "selectedLocation",
-              "customConditional": "show = !data.isProgramReadOnly;",
+              "customConditional": "show = !data.isProgramSectionReadOnly;",
               "type": "select",
               "input": true,
               "lockKey": true,
@@ -486,7 +486,7 @@
               "persistent": false,
               "validateWhenHidden": false,
               "key": "selectedLocationName",
-              "customConditional": "show = data.isProgramReadOnly;",
+              "customConditional": "show = data.isProgramSectionReadOnly;",
               "type": "textfield",
               "input": true
             },
@@ -574,7 +574,7 @@
                   },
                   "validateWhenHidden": false,
                   "key": "selectedProgram",
-                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !data.isProgramReadOnly;\r\n  \r\n\r\n",
+                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !data.isProgramSectionReadOnly;\r\n  \r\n\r\n",
                   "type": "select",
                   "input": true,
                   "lockKey": true,
@@ -588,7 +588,7 @@
                   "persistent": false,
                   "validateWhenHidden": false,
                   "key": "selectedProgramName",
-                  "customConditional": "show = (data.isProgramReadOnly && !!data.selectedProgramName);",
+                  "customConditional": "show = (data.isProgramSectionReadOnly && !!data.selectedProgramName);",
                   "type": "textfield",
                   "input": true,
                   "lockKey": true
@@ -846,7 +846,7 @@
                       "refreshOnChange": false,
                       "customClass": "banner-warning",
                       "key": "customProgramAndOfferingStudyenddatewarning",
-                      "customConditional": "show = !data.isProgramReadOnly && !!data.studyEndDateBeforeSixWeeksFromToday;",
+                      "customConditional": "show = !data.isProgramSectionReadOnly && !!data.studyEndDateBeforeSixWeeksFromToday;",
                       "type": "htmlelement",
                       "input": false,
                       "hideLabel": true,
@@ -1055,7 +1055,7 @@
                   },
                   "validateWhenHidden": false,
                   "key": "selectedOffering",
-                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) &&\n  !data.isProgramReadOnly\n  );",
+                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) &&\n  !data.isProgramSectionReadOnly\n  );",
                   "type": "select",
                   "input": true,
                   "searchThreshold": 0.3
@@ -1068,7 +1068,7 @@
                   "persistent": false,
                   "validateWhenHidden": false,
                   "key": "selectedOfferingName",
-                  "customConditional": "show = (data.isProgramReadOnly && !!data.selectedOfferingName);",
+                  "customConditional": "show = (data.isProgramSectionReadOnly && !!data.selectedOfferingName);",
                   "type": "textfield",
                   "input": true,
                   "lockKey": true
@@ -1109,7 +1109,7 @@
                   "refreshOnChange": false,
                   "customClass": "banner-warning",
                   "key": "programStudyperiodwarning",
-                  "customConditional": "show = !data.isProgramReadOnly && !!data.selectedStudyEndDateBeforeSixWeeksFromToday;",
+                  "customConditional": "show = !data.isProgramSectionReadOnly && !!data.selectedStudyEndDateBeforeSixWeeksFromToday;",
                   "type": "htmlelement",
                   "input": false,
                   "hideLabel": true,
