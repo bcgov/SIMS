@@ -47,7 +47,7 @@
             <v-btn
               color="primary"
               @click="
-                navigateToStudentAssessment(
+                navigateToApplicationVersion(
                   item.applicationId,
                   item.studentId,
                   item.precedingApplicationId,
@@ -135,7 +135,7 @@ export default defineComponent({
       await loadChangeRequests();
     };
 
-    const navigateToStudentAssessment = (
+    const navigateToApplicationVersion = (
       applicationId: number,
       studentId: number,
       precedingApplicationId: number,
@@ -161,7 +161,7 @@ export default defineComponent({
       changeRequests,
       paginationAndSortEvent,
       resetPageAndLoadApplications,
-      navigateToStudentAssessment,
+      navigateToApplicationVersion,
       dateOnlyLongString,
       emptyStringFiller,
       PAGINATION_LIST,
