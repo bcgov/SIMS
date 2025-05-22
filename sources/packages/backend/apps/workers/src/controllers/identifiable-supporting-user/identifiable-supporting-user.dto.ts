@@ -8,7 +8,7 @@ export interface CreateIdentifiableSupportingUsersJobInDTO {
 }
 
 export interface CreateIdentifiableSupportingUsersJobOutDTO {
-  createdSupportingUsersIds: number[];
+  createdSupportingUserId: number;
 }
 
 export interface CheckSupportingUserResponseJobInDTO {

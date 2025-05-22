@@ -754,7 +754,8 @@ Note: the workflow process should continue its execution as a regular reassessme
           <zeebe:ioMapping>
             <zeebe:input source="=&#34;Parent&#34;" target="supportingUserType" />
             <zeebe:input source="=&#34;$.parents[&#34; + string(loopCounter - 1) + &#34;][&#39;parentFullName&#39;]&#34;" target="fullNamePropertyFilter" />
-            <zeebe:input source="=parent.parentIsAbleToReport" target="isAbleToReport" />
+            <zeebe:input source="=parent.parentIsAbleToReport = &#34;yes&#34;" target="isAbleToReport" />
+            <zeebe:output source="=createdSupportingUserId" target="createdSupportingUserId" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1g9cp6m</bpmn:incoming>
@@ -764,9 +765,9 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:extensionElements>
           <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
           <zeebe:ioMapping>
-            <zeebe:input source="=createdSupportingUsersIds[1]" target="supportingUserId" />
+            <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
             <zeebe:input source="=[&#34;retrieve-supporting-info-for-parent-1-subprocess&#34;]" target="parentSubprocesses" />
-            <zeebe:output source="=supportingUserId" target="parent1SupportingUserId" />
+            <zeebe:output source="=supportingUserId" target="parentSupportingUserId" />
             <zeebe:output source="=totalIncome" target="supportingUserParent1TotalIncome" />
             <zeebe:output source="=&#34;retrieve-supporting-info-for-parent-1-subprocess&#34;" target="retrieve_supporting_info_for_parent_1_subprocess_passthrough" />
           </zeebe:ioMapping>
