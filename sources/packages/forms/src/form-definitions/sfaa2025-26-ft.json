@@ -5286,106 +5286,109 @@
               "tableView": false
             },
             {
-              "label": "Parents Information",
-              "reorder": false,
-              "addAnother": "Add additional parent",
-              "addAnotherPosition": "bottom",
-              "layoutFixed": false,
-              "enableRowGroups": false,
-              "initEmpty": false,
-              "hideLabel": true,
+              "label": "Is your parent(s)/step-parent/sponsor/legal guardian eligible for a BC Services Card account?",
+              "optionsLabelPosition": "right",
+              "inline": false,
               "tableView": false,
-              "defaultValue": [
+              "values": [
                 {
-                  "parentFullName": "",
-                  "parentIsAbleToReport": "no"
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
                 }
               ],
               "validate": {
-                "minLength": "1",
-                "maxLength": "2"
+                "required": true,
+                "onlyAvailableItems": true
               },
-              "validateWhenHidden": false,
-              "key": "parents",
-              "type": "datagrid",
+              "key": "parentValidSinNumber",
+              "attributes": {
+                "data-cy": "doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber"
+              },
+              "type": "radio",
               "input": true,
-              "components": [
+              "lockKey": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-info fa fa-info-circle",
+              "attrs": [
                 {
-                  "key": "fieldSet",
-                  "type": "fieldset",
-                  "label": "",
-                  "input": false,
-                  "tableView": false,
-                  "components": [
-                    {
-                      "label": "Full name",
-                      "applyMaskOn": "change",
-                      "tableView": true,
-                      "validate": {
-                        "required": true
-                      },
-                      "validateWhenHidden": false,
-                      "key": "parentFullName",
-                      "type": "textfield",
-                      "input": true
-                    },
-                    {
-                      "label": "Is your parent(s)/step-parent/sponsor/legal guardian eligible for a BC Services Card account?",
-                      "optionsLabelPosition": "right",
-                      "inline": false,
-                      "tableView": false,
-                      "values": [
-                        {
-                          "label": "Yes",
-                          "value": "yes",
-                          "shortcut": ""
-                        },
-                        {
-                          "label": "No",
-                          "value": "no",
-                          "shortcut": ""
-                        }
-                      ],
-                      "validate": {
-                        "required": true,
-                        "onlyAvailableItems": true
-                      },
-                      "validateWhenHidden": false,
-                      "key": "parentIsAbleToReport",
-                      "attributes": {
-                        "data-cy": "doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber"
-                      },
-                      "type": "radio",
-                      "input": true,
-                      "lockKey": true
-                    },
-                    {
-                      "label": "HTML",
-                      "tag": "p",
-                      "className": "alert alert-info fa fa-info-circle",
-                      "attrs": [
-                        {
-                          "attr": "",
-                          "value": ""
-                        }
-                      ],
-                      "content": "<Strong> Please be advised your parent(s)/step-parent/sponsor/legal guardian will need to sign in to StudentAid BC and provide additional information</Strong>\n<br/> Parent(s)/step-parent/sponsor/legal guardian must provide their information to StudentAid BC by logging in with a B.C. Services Card. If they are ineligible for a B.C. Services Card, select \"No\" to this question and provide information on their behalf.",
-                      "refreshOnChange": false,
-                      "customClass": "banner-info",
-                      "key": "html11",
-                      "conditional": {
-                        "show": true,
-                        "when": "parents.parentIsAbleToReport",
-                        "eq": "yes"
-                      },
-                      "type": "htmlelement",
-                      "input": false,
-                      "tableView": false,
-                      "hideLabel": true
-                    }
-                  ]
+                  "attr": "",
+                  "value": ""
                 }
-              ]
+              ],
+              "content": "<Strong> Please be advised your parent(s)/step-parent/sponsor/legal guardian will need to sign in to StudentAid BC and provide additional information</Strong>\n<br/> Parent(s)/step-parent/sponsor/legal guardian must provide their information to StudentAid BC by logging in with a B.C. Services Card. If they are ineligible for a B.C. Services Card, select \"No\" to this question and provide information on their behalf.",
+              "refreshOnChange": false,
+              "customClass": "banner-info",
+              "key": "html11",
+              "conditional": {
+                "show": "true",
+                "when": "parentValidSinNumber",
+                "eq": "yes"
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "tag": "p",
+              "hideLabel": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> Please be advised this could delay your application </strong>\n<br>Since we’re unable to validate your partner’s information with Canada Revenue Agency (CRA), please estimate your parent(s) income.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "html2",
+              "conditional": {
+                "show": "true",
+                "when": "parentValidSinNumber",
+                "eq": "no"
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "tag": "p",
+              "hideLabel": true
+            },
+            {
+              "label": "How many parents do you live with?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "1",
+                  "value": "1",
+                  "shortcut": ""
+                },
+                {
+                  "label": "2",
+                  "value": "2",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "key": "numberOfParents",
+              "attributes": {
+                "data-cy": "numberOfParents"
+              },
+              "type": "radio",
+              "input": true
             },
             {
               "title": "Parental Info Request ",
