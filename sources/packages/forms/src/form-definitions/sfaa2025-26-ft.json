@@ -2007,7 +2007,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<ul>\n<li>A <a href=\"https://studentaidbc.ca/sites/all/files/Marital-Status-Attestation-Form.pdf\" target=\"_blank\" rel=\"noopener noreferrer\>written attestation</a> from the student outlining the nature of the circumstances; and</li>\n<li>A letter from a professional third party confirming the student’s circumstances. A professional ‘third party’ includes, but is not limited to: counselor, psychologist, religious advisor, doctor, teacher, police, and/or staff at a social service agency such as an organization supporting those experiencing abuse or violence.\n</li>\n</ul>",
+                      "content": "<ul>\n<li>A <a href=\"https://studentaidbc.ca/sites/all/files/Marital-Status-Attestation-Form.pdf\" target=\"_blank\" rel=\"noopener noreferrer>written attestation</a> from the student outlining the nature of the circumstances; and</li>\n<li>A letter from a professional third party confirming the student’s circumstances. A professional ‘third party’ includes, but is not limited to: counselor, psychologist, religious advisor, doctor, teacher, police, and/or staff at a social service agency such as an organization supporting those experiencing abuse or violence.\n</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html23",
