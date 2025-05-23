@@ -1,6 +1,9 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
-import { CRAIncomeVerificationService } from "../../services";
+import {
+  CRAIncomeVerificationService,
+  SupportingUserService,
+} from "../../services";
 import {
   CheckIncomeRequestJobInDTO,
   CheckIncomeRequestJobOutDTO,
@@ -27,6 +30,7 @@ import {
 export class CRAIntegrationController {
   constructor(
     private readonly incomeVerificationService: CRAIncomeVerificationService,
+    private readonly supportingUserService: SupportingUserService,
   ) {}
 
   /**
@@ -67,7 +71,20 @@ export class CRAIntegrationController {
         job.variables.reportedIncome,
       );
       jobLogger.log("CRA income verification created.");
-      return job.complete({ incomeVerificationId: identifier.id });
+      // Set as true by default, which will be used in case the income verification is for a student.
+      let canExecuteIncomeVerification = true;
+      if (job.variables.supportingUserId) {
+        // If the income verification is for a supporting user,
+        // check if the supporting user can execute the income verification.
+        canExecuteIncomeVerification =
+          await this.supportingUserService.canExecuteIncomeVerification(
+            job.variables.supportingUserId,
+          );
+      }
+      return job.complete({
+        incomeVerificationId: identifier.id,
+        canExecuteIncomeVerification,
+      });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,
