@@ -7887,7 +7887,7 @@
               ],
               "content": "Transportation",
               "refreshOnChange": false,
-              "customClass": "header-md",
+              "customClass": "category-header-medium primary-color",
               "key": "html101",
               "type": "htmlelement",
               "input": false,
