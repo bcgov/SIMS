@@ -4676,7 +4676,7 @@
                 {
                   "input": true,
                   "tableView": true,
-                  "label": "",
+                  "label": "Upload supporting documents",
                   "key": "decreaseInPartnerIncomeSupportingDocuments",
                   "multiple": true,
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
