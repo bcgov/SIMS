@@ -157,7 +157,6 @@ export class AssessmentController {
       const assessment = await this.studentAssessmentService.getById(
         job.variables.assessmentId,
       );
-
       if (!assessment) {
         const message = "Assessment not found.";
         jobLogger.error(message);
