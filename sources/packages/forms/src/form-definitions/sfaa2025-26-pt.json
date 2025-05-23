@@ -202,7 +202,7 @@
                                   "value": ""
                                 }
                               ],
-                              "content": "With this change request submission you will be able to request changes to your previously completed financial aid application. Your completed change request submission will be reviewed by StudentAid BC before being assessed for any changes to your loan or grant eligibility.\n<br><br>\n<strong>Before you begin, you may need to gather the following:</strong>\n<ul>\n  <li>Your tax return information</li>\n  <li>Your spouse/dependant information, if applicable</li>\n  <li>Your citizenship documentation, if applicable</li>\n</ul>",
+                              "content": "By submitting a change request, you can update your completed financial aid application. Your completed change request submission will be reviewed by StudentAid BC before being assessed for any changes to your loan or grant eligibility.\n<br><br>\n<strong>Before you begin, you may need to gather the following:</strong>\n<ul>\n  <li>Your tax return information</li>\n  <li>Your spouse/dependant information, if applicable</li>\n  <li>Your citizenship documentation, if applicable</li>\n</ul>",
                               "refreshOnChange": false,
                               "customClass": "align-bullets",
                               "key": "html118",
