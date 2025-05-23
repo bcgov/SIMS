@@ -7,7 +7,7 @@ import {
   SupportingUserType,
 } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
-import { IdentifiableSupportingUser } from "apps/workers/src/services/supporting-user/supporting-user.models";
+import { IdentifiableSupportingUser } from "./supporting-user.models";
 
 @Injectable()
 export class SupportingUserService extends RecordDataModelService<SupportingUser> {

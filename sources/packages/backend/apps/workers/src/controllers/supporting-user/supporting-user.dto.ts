@@ -26,10 +26,6 @@ export interface CreateIdentifiableSupportingUsersJobInDTO {
   [IS_ABLE_TO_REPORT]: boolean;
 }
 
-// "supportingUserType",
-//       "fullNamePropertyFilter",
-//       "isAbleToReport",
-
 export interface CreateIdentifiableSupportingUsersJobOutDTO {
   createdSupportingUserId: number;
 }
