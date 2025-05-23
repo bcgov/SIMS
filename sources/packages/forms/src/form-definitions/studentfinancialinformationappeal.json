@@ -425,7 +425,7 @@
             {
               "input": true,
               "tableView": false,
-              "label": "Upload supporting documents:",
+              "label": "Upload supporting documents",
               "key": "decreaseInIncomeSupportingDocuments",
               "multiple": true,
               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
