@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Student requests"
-        subTitle="Change request (2025-2026 and later)"
+        subTitle="Change Request (2025-2026 and later)"
       />
     </template>
     <body-header
