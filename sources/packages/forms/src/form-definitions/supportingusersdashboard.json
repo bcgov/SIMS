@@ -173,9 +173,25 @@
                               "value": ""
                             }
                           ],
-                          "content": "Spouse/common law partner information",
+                          "content": "Spouse/common-law partner information",
                           "refreshOnChange": false,
                           "key": "headerForParents",
+                          "type": "htmlelement",
+                          "input": false,
+                          "tableView": false
+                        },
+                        {
+                          "label": "HTML",
+                          "tag": "p",
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
+                          "content": "I am a spouse/common-law partner and need to complete supporting information for my partner.",
+                          "refreshOnChange": false,
+                          "key": "parentInformationRequestMessage1",
                           "type": "htmlelement",
                           "input": false,
                           "tableView": false
