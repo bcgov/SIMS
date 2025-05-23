@@ -101,7 +101,7 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      resolvePromise({
+      await resolvePromise({
         note: note.value as string,
         applicationEditStatus: showParameter.value,
       });
