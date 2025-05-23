@@ -20,6 +20,11 @@ export const REPORTED_INCOME = "reportedIncome";
  */
 export const INCOME_VERIFICATION_ID = "incomeVerificationId";
 /**
+ * While checking the income verification record to store the income information,
+ * check if it is possible to execute the income verification on CRA.
+ */
+export const CAN_EXECUTE_INCOME_VERIFICATION = "canExecuteIncomeVerification";
+/**
  * After an income verification is created this variable reports if the
  * response was already received from the ESDC.
  */

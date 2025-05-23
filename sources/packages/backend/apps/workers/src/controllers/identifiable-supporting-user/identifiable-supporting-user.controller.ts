@@ -74,14 +74,12 @@ export class IdentifiableSupportingUserController {
               {
                 applicationId: job.variables.applicationId,
                 supportingUserType: job.variables.supportingUserType,
-                fullName: job.variables.fullNamePropertyFilter,
+                fullName,
                 isAbleToReport: job.variables.isAbleToReport,
               },
               entityManager,
             );
-          return job.complete({
-            createdSupportingUserId: +createdSupportingUserId,
-          });
+          return job.complete({ createdSupportingUserId });
         },
       );
     } catch (error: unknown) {

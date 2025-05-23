@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, IsNull, Not } from "typeorm";
 import {
   RecordDataModelService,
   Application,
@@ -41,7 +41,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     supportingUserId: number,
   ): Promise<SupportingUser> {
     return this.repo.findOne({
-      select: { id: true, supportingData: true },
+      select: { id: true, supportingData: true, sin: true },
       where: { id: supportingUserId },
     });
   }
@@ -96,9 +96,9 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       )
       .execute();
     // If the user was created, return its ID.
-    const [createdSupportingUserId] = insertResult.identifiers;
-    if (createdSupportingUserId) {
-      return +createdSupportingUserId;
+    const [identifier] = insertResult.identifiers;
+    if (identifier) {
+      return +identifier.id;
     }
     // If the user was not created, it means that it already exists.
     // Return the ID of the existing user.
@@ -116,5 +116,13 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       );
     }
     return existingSupportingUser.id;
+  }
+
+  async canExecuteIncomeVerification(
+    supportingUserId: number,
+  ): Promise<boolean> {
+    return this.repo.exists({
+      where: { id: supportingUserId, sin: Not(IsNull()) },
+    });
   }
 }

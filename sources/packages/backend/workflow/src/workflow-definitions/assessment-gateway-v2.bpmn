@@ -780,7 +780,7 @@ Note: the workflow process should continue its execution as a regular reassessme
           <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
           <zeebe:ioMapping>
             <zeebe:input source="=supportingUserParent1TotalIncome" target="reportedIncome" />
-            <zeebe:input source="=parent1SupportingUserId" target="supportingUserId" />
+            <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
             <zeebe:input source="=[&#34;parent-1-income-verification-subprocess&#34;]" target="parentSubprocesses" />
             <zeebe:output source="=&#34;parent-1-income-verification-subprocess&#34;" target="parent_1_income_verification_subprocess_passthrough" />
           </zeebe:ioMapping>
