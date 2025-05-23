@@ -8,7 +8,6 @@ import {
   CRAIntegrationController,
   DisbursementController,
   HealthController,
-  IdentifiableSupportingUserController,
 } from "./controllers";
 import {
   StudentAssessmentService,
@@ -57,7 +56,6 @@ import { TerminusModule } from "@nestjs/terminus";
     ApplicationController,
     ProgramInfoRequestController,
     SupportingUserController,
-    IdentifiableSupportingUserController,
     CRAIntegrationController,
     DisbursementController,
     HealthController,

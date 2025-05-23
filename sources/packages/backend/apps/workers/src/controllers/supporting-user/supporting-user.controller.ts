@@ -3,6 +3,8 @@ import { ZeebeWorker } from "../../zeebe";
 import { ApplicationService, SupportingUserService } from "../../services";
 import {
   CheckSupportingUserResponseJobInDTO,
+  CreateIdentifiableSupportingUsersJobInDTO,
+  CreateIdentifiableSupportingUsersJobOutDTO,
   CreateSupportingUsersJobInDTO,
   CreateSupportingUsersJobOutDTO,
 } from "..";
@@ -13,11 +15,18 @@ import {
 import { SUPPORTING_USER_NOT_FOUND } from "../../constants";
 import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
+  FULL_NAME_PROPERTY_FILTER,
+  IS_ABLE_TO_REPORT,
   SUPPORTING_USERS_TYPES,
   SUPPORTING_USER_ID,
+  SUPPORTING_USER_TYPE,
 } from "@sims/services/workflow/variables/supporting-user-information-request";
 import { MaxJobsToActivate } from "../../types";
-import { Workers } from "@sims/services/constants";
+import {
+  APPLICATION_NOT_FOUND,
+  SUPPORTING_USER_FULL_NAME_NOT_RESOLVED,
+  Workers,
+} from "@sims/services/constants";
 import {
   ICustomHeaders,
   IOutputVariables,
@@ -30,6 +39,7 @@ import {
 } from "@sims/services";
 import { SupportingUserType } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
+import * as JSONPath from "jsonpath";
 
 @Controller()
 export class SupportingUserController {
@@ -95,6 +105,68 @@ export class SupportingUserController {
             "Supporting user notification has been created for the student.",
           );
           return job.complete({ createdSupportingUsersIds });
+        },
+      );
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
+  }
+
+  @ZeebeWorker(Workers.CreateIdentifiableSupportingUsers, {
+    fetchVariable: [
+      APPLICATION_ID,
+      SUPPORTING_USER_TYPE,
+      FULL_NAME_PROPERTY_FILTER,
+      IS_ABLE_TO_REPORT,
+    ],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
+  })
+  async createIdentifiableSupportingUsers(
+    job: Readonly<
+      ZeebeJob<
+        CreateIdentifiableSupportingUsersJobInDTO,
+        ICustomHeaders,
+        CreateIdentifiableSupportingUsersJobOutDTO
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
+    try {
+      const application = await this.applicationService.getApplicationById(
+        job.variables.applicationId,
+        { loadDynamicData: true },
+      );
+      if (!application) {
+        const message = "Application id not found.";
+        jobLogger.error(message);
+        return job.error(APPLICATION_NOT_FOUND, message);
+      }
+      const [fullName] = JSONPath.query(
+        application.data,
+        job.variables.fullNamePropertyFilter,
+      );
+      if (!fullName) {
+        const message = `Not able to extract the full name from the application dynamic data using filter '${job.variables.fullNamePropertyFilter}'.`;
+        jobLogger.error(message);
+        return job.error(SUPPORTING_USER_FULL_NAME_NOT_RESOLVED, message);
+      }
+      return this.dataSource.transaction(
+        // Transaction created with the expectation that a notification will also be created
+        // for the supporting user and it should be saved in the same transaction.
+        async (entityManager: EntityManager) => {
+          const createdSupportingUserId =
+            await this.supportingUserService.createIdentifiableSupportingUser(
+              {
+                applicationId: job.variables.applicationId,
+                supportingUserType: job.variables.supportingUserType,
+                fullName,
+                isAbleToReport: job.variables.isAbleToReport,
+              },
+              entityManager,
+            );
+          return job.complete({ createdSupportingUserId });
         },
       );
     } catch (error: unknown) {
