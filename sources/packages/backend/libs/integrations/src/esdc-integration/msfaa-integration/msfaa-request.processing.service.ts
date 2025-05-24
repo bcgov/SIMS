@@ -6,10 +6,11 @@ import {
   ProcessSummary,
 } from "@sims/utilities/logger";
 import { getISODateOnlyString } from "@sims/utilities";
-import { EntityManager } from "typeorm";
+import { DataSource } from "typeorm";
 import { SequenceControlService } from "@sims/services";
 import {
   MSFAARecord,
+  MSFAARequestFileLine,
   MSFAAUploadResult,
 } from "./models/msfaa-integration.model";
 import { MSFAAIntegrationService } from "./msfaa.integration.service";
@@ -17,10 +18,12 @@ import { ESDCFileHandler } from "../esdc-file-handler";
 import { ConfigService } from "@sims/utilities/config";
 import { MSFAANumberService } from "@sims/integrations/services";
 import { MSFAA_SEQUENCE_GAP } from "@sims/services/constants";
+import { CreateRequestFileNameResult } from "@sims/integrations/esdc-integration/models/esdc-integration.model";
 
 @Injectable()
 export class MSFAARequestProcessingService extends ESDCFileHandler {
   constructor(
+    private readonly dataSource: DataSource,
     configService: ConfigService,
     private readonly sequenceService: SequenceControlService,
     private readonly msfaaNumberService: MSFAANumberService,
@@ -78,55 +81,76 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
 
     //Create records and create the unique file sequence number
     let uploadResult: MSFAAUploadResult;
-    const processDate = new Date();
-    await this.sequenceService.consumeNextSequence(
-      `MSFAA_${offeringIntensity}_SENT_FILE_${getISODateOnlyString(
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      // MSFAA records process date.
+      const processDate = new Date();
+      // Sequence names for the MSFAA request file.
+      const lifeTimeSequenceName = `MSFAA_${offeringIntensity}_SENT_FILE`;
+      const dailyFileNameSequenceName = `${lifeTimeSequenceName}_${getISODateOnlyString(
         processDate,
-      )}`,
-      async (nextSequenceNumber: number, entityManager: EntityManager) => {
-        try {
-          processSummary.info(
-            `Applying MSFAA sequence gap to the sequence number. Current sequence gap ${MSFAA_SEQUENCE_GAP}.`,
-          );
-          nextSequenceNumber += MSFAA_SEQUENCE_GAP;
-          processSummary.info("Creating MSFAA request content.");
-          // Create the Request content for the MSFAA file by populating the
-          // header, footer and trailer content.
-          const fileContent = this.msfaaService.createMSFAARequestContent(
-            msfaaRecords,
-            nextSequenceNumber,
-            totalSINHash,
-            processDate,
-          );
-          // Create the request filename with the file path for the MSFAA Request
-          // sent File.
-          const fileInfo = this.createRequestFileName(
-            fileCode,
-            nextSequenceNumber,
-          );
-          processSummary.info("Uploading content.");
-          await this.msfaaService.uploadContent(fileContent, fileInfo.filePath);
-          processSummary.info("Content uploaded.");
-          uploadResult = {
-            generatedFile: fileInfo.filePath,
-            uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
-          };
-          // Creates the repository based on the entity manager that
-          // holds the transaction already created to manage the
-          // sequence number.
-          const msfaaNumberRepo = entityManager.getRepository(MSFAANumber);
-          await this.msfaaNumberService.updateRecordsInSentFile(
-            msfaaRecordIds,
-            processDate,
-            msfaaNumberRepo,
-          );
-        } catch (error: unknown) {
-          const errorMessage = `Error while uploading content for ${offeringIntensity} MSFAA request.`;
-          this.logger.error(errorMessage, error);
-          throw new Error(errorMessage, { cause: error });
-        }
-      },
-    );
+      )}`;
+      // File content and file name information.
+      let fileContent: MSFAARequestFileLine[] = [];
+      let fileInfo: CreateRequestFileNameResult;
+      try {
+        // Create MSFAA file with life time sequence.
+        await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
+          lifeTimeSequenceName,
+          transactionalEntityManager,
+          async (nextSequenceNumber: number) => {
+            if (offeringIntensity === OfferingIntensity.fullTime) {
+              // Applying MSFAA sequence gap only for Full-time MSFAA files to avoid conflict with legacy MSFAA files.
+              // This is not applicable for Part-time MSFAA files as there is no legacy MSFAA files for Part-time.
+              processSummary.info(
+                `Applying MSFAA sequence gap to the sequence number. Current sequence gap ${MSFAA_SEQUENCE_GAP}.`,
+              );
+              nextSequenceNumber += MSFAA_SEQUENCE_GAP;
+            }
+            processSummary.info("Creating MSFAA request content.");
+            // Create the Request content for the MSFAA file by populating the
+            // header, footer and trailer content.
+            fileContent = this.msfaaService.createMSFAARequestContent(
+              msfaaRecords,
+              nextSequenceNumber,
+              totalSINHash,
+              processDate,
+            );
+          },
+        );
+        // Create MSFSAA file name with daily file name sequence.
+        await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
+          dailyFileNameSequenceName,
+          transactionalEntityManager,
+          async (nextSequenceNumber: number) => {
+            // Create the request filename with the file path for the MSFAA Request
+            // sent File.
+            fileInfo = this.createRequestFileName(fileCode, nextSequenceNumber);
+            processSummary.info("Uploading content.");
+          },
+        );
+
+        await this.msfaaService.uploadContent(fileContent, fileInfo.filePath);
+        processSummary.info("Content uploaded.");
+        uploadResult = {
+          generatedFile: fileInfo.filePath,
+          uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
+        };
+        // Creates the repository based on the entity manager that
+        // holds the transaction already created to manage the
+        // sequence number.
+        const msfaaNumberRepo =
+          transactionalEntityManager.getRepository(MSFAANumber);
+        await this.msfaaNumberService.updateRecordsInSentFile(
+          msfaaRecordIds,
+          processDate,
+          msfaaNumberRepo,
+        );
+      } catch (error: unknown) {
+        const errorMessage = `Error while uploading content for ${offeringIntensity} MSFAA request.`;
+        this.logger.error(errorMessage, error);
+        throw new Error(errorMessage, { cause: error });
+      }
+    });
     return uploadResult;
   }
 
