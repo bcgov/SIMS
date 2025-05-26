@@ -1,6 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource } from "typeorm";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
@@ -15,15 +14,13 @@ import {
 } from "@sims/test-utils";
 import MockDate from "mockdate";
 
-describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRequest", () => {
+describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRequests", () => {
   let app: INestApplication;
-  let appDataSource: DataSource;
   let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
   });
 
@@ -31,30 +28,10 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
     MockDate.reset();
   });
 
-  it("Should successfully retrieve paginated list of pending application change requests for an AEST user", async () => {
-    // Arrange
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const endpoint =
-      "/aest/application-change-request/pending?page=0&pageLimit=10";
-
-    // Act
-    const response = await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-
-    // Assert
-    expect(response.body).toBeDefined();
-    expect(response.body).toHaveProperty("results");
-    expect(response.body).toHaveProperty("count");
-    expect(Array.isArray(response.body.results)).toBe(true);
-    expect(typeof response.body.count).toBe("number");
-  });
-
-  it("Should include a newly created pending application change request in the paginated results", async () => {
+  it(`Should not include applications when the application edit status is not ${ApplicationEditStatus.ChangePendingApproval}.`, async () => {
     // Arrange
     const originalApplication = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       undefined,
       {
         initialValues: {
@@ -66,7 +43,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
 
     // Create a change request application that is pending approval
     const pendingChangeRequest = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       { precedingApplication: originalApplication },
       {
         initialValues: {
@@ -117,7 +94,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
   it("Should not include applications that are not in ChangePendingApproval status", async () => {
     // Arrange
     const nonPendingApplication = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       undefined,
       {
         initialValues: {
@@ -129,7 +106,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
 
     // Create another application with ChangeDeclined status
     const declinedApplication = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       undefined,
       {
         initialValues: {
@@ -227,7 +204,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
   it("Should validate response DTO structure matches expected format", async () => {
     // Arrange
     const originalApplication = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       undefined,
       {
         initialValues: {
@@ -238,7 +215,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
     );
 
     const testChangeRequest = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       { precedingApplication: originalApplication },
       {
         initialValues: {
