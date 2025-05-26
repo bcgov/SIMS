@@ -202,7 +202,7 @@
                                   "value": ""
                                 }
                               ],
-                              "content": "With this change request submission you will be able to request changes to your previously completed financial aid application. Your completed change request submission will be reviewed by StudentAid BC before being assessed for any changes to your loan or grant eligibility.\n<br><br>\n<strong>Before you begin, you may need to gather the following:</strong>\n<ul>\n  <li>Your tax return information</li>\n  <li>Your spouse/dependant information, if applicable</li>\n  <li>Your citizenship documentation, if applicable</li>\n</ul>",
+                              "content": "By submitting a change request, you can update your completed financial aid application. Your completed change request submission will be reviewed by StudentAid BC before being assessed for any changes to your loan or grant eligibility.\n<br><br>\n<strong>Before you begin, you may need to gather the following:</strong>\n<ul>\n  <li>Your tax return information</li>\n  <li>Your spouse/dependant information, if applicable</li>\n  <li>Your citizenship documentation, if applicable</li>\n</ul>",
                               "refreshOnChange": false,
                               "customClass": "align-bullets",
                               "key": "html118",
@@ -320,6 +320,16 @@
           "label": "Is Change Request Application",
           "type": "hidden",
           "lockKey": true
+        },
+        {
+          "label": "Is program section read only",
+          "persistent": false,
+          "calculateValue": "value = (!!data.isReadOnly || data.isChangeRequestApplication);",
+          "calculateServer": true,
+          "key": "isProgramSectionReadOnly",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
         }
       ],
       "input": false,
@@ -327,6 +337,38 @@
     },
     {
       "title": "Program",
+      "collapsible": false,
+      "key": "page3",
+      "logic": [
+        {
+          "name": "Disable program edit",
+          "trigger": {
+            "type": "simple",
+            "simple": {
+              "show": true,
+              "when": "isProgramSectionReadOnly",
+              "eq": "true"
+            }
+          },
+          "actions": [
+            {
+              "name": "Set panel to be disabled",
+              "type": "property",
+              "property": {
+                "label": "Disabled",
+                "value": "disabled",
+                "type": "boolean"
+              },
+              "state": true
+            }
+          ]
+        }
+      ],
+      "overlay": {
+        "width": "350px"
+      },
+      "type": "panel",
+      "label": "Program",
       "breadcrumbClickable": true,
       "buttonSettings": {
         "previous": false,
@@ -334,14 +376,29 @@
         "next": false
       },
       "scrollToTop": true,
-      "collapsible": false,
-      "key": "page3",
-      "overlay": {
-        "width": "350px"
-      },
-      "type": "panel",
-      "label": "Program",
       "components": [
+        {
+          "label": "HTML",
+          "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "<span class=\"ml-2\">Please note that no changes can be made to the program or study period offering information in this form. If you would like to make changes to this information please contact your institution for assistance.</span>",
+          "refreshOnChange": false,
+          "customClass": "banner-warning",
+          "key": "html",
+          "conditional": {
+            "show": true,
+            "when": "isChangeRequestApplication",
+            "eq": "true"
+          },
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
         {
           "label": "HTML",
           "tag": "h2",
@@ -413,8 +470,9 @@
               "validate": {
                 "required": true
               },
+              "validateWhenHidden": false,
               "key": "selectedLocation",
-              "customConditional": "show = !!!data.isReadOnly",
+              "customConditional": "show = !data.isProgramSectionReadOnly;",
               "type": "select",
               "input": true,
               "lockKey": true,
@@ -422,11 +480,13 @@
             },
             {
               "label": "Select your institution:",
+              "applyMaskOn": "change",
               "disabled": true,
               "tableView": true,
               "persistent": false,
+              "validateWhenHidden": false,
               "key": "selectedLocationName",
-              "customConditional": "show = !!data.isReadOnly",
+              "customConditional": "show = data.isProgramSectionReadOnly;",
               "type": "textfield",
               "input": true
             },
@@ -512,8 +572,9 @@
                   "validate": {
                     "required": true
                   },
+                  "validateWhenHidden": false,
                   "key": "selectedProgram",
-                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !!!data.isReadOnly;\r\n  \r\n\r\n",
+                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !data.isProgramSectionReadOnly;\r\n  \r\n\r\n",
                   "type": "select",
                   "input": true,
                   "lockKey": true,
@@ -521,11 +582,13 @@
                 },
                 {
                   "label": "Select your program of study:",
+                  "applyMaskOn": "change",
                   "disabled": true,
                   "tableView": true,
                   "persistent": false,
+                  "validateWhenHidden": false,
                   "key": "selectedProgramName",
-                  "customConditional": "show = (!!data.isReadOnly && !!data.selectedProgramName);",
+                  "customConditional": "show = (data.isProgramSectionReadOnly && !!data.selectedProgramName);",
                   "type": "textfield",
                   "input": true,
                   "lockKey": true
@@ -536,7 +599,6 @@
                   "hideLabel": true,
                   "tableView": false,
                   "defaultValue": {
-                    "z": false,
                     "programnotListed": false
                   },
                   "values": [
@@ -771,22 +833,23 @@
                       "hideOnChildrenHidden": false
                     },
                     {
-                      "key": "customProgramAndOfferingStudyenddatewarning",
                       "label": "Study end date warning",
-                      "input": false,
                       "tag": "p",
+                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
                       "attrs": [
                         {
                           "value": "",
                           "attr": ""
                         }
                       ],
-                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
                       "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The dates you have entered are no longer eligible for funding. To receive funding for this study period, you will need to seek approval from StudentAid BC. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
-                      "type": "htmlelement",
-                      "hideLabel": true,
+                      "refreshOnChange": false,
                       "customClass": "banner-warning",
-                      "customConditional": "show = !!!data.isReadOnly && !!data.studyEndDateBeforeSixWeeksFromToday;",
+                      "key": "customProgramAndOfferingStudyenddatewarning",
+                      "customConditional": "show = !data.isProgramSectionReadOnly && !!data.studyEndDateBeforeSixWeeksFromToday;",
+                      "type": "htmlelement",
+                      "input": false,
+                      "hideLabel": true,
                       "tableView": false
                     }
                   ],
@@ -990,19 +1053,22 @@
                   "validate": {
                     "required": true
                   },
+                  "validateWhenHidden": false,
                   "key": "selectedOffering",
-                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) &&\n  !!!data.isReadOnly\n  );",
+                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) &&\n  !data.isProgramSectionReadOnly\n  );",
                   "type": "select",
                   "input": true,
                   "searchThreshold": 0.3
                 },
                 {
                   "label": "Select your study dates",
+                  "applyMaskOn": "change",
                   "disabled": true,
                   "tableView": true,
                   "persistent": false,
+                  "validateWhenHidden": false,
                   "key": "selectedOfferingName",
-                  "customConditional": "show = (!!data.isReadOnly && !!data.selectedOfferingName);",
+                  "customConditional": "show = (data.isProgramSectionReadOnly && !!data.selectedOfferingName);",
                   "type": "textfield",
                   "input": true,
                   "lockKey": true
@@ -1030,21 +1096,22 @@
                   "lockKey": true
                 },
                 {
-                  "key": "programStudyperiodwarning",
                   "label": "Study period end date warning",
-                  "input": false,
                   "tag": "p",
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
                   "attrs": [
                     {
                       "value": "",
                       "attr": ""
                     }
                   ],
-                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
                   "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The dates you have entered are no longer eligible for funding. To receive funding for this study period, you will need to seek approval from StudentAid BC. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
-                  "type": "htmlelement",
+                  "refreshOnChange": false,
                   "customClass": "banner-warning",
-                  "customConditional": "show = !!!data.isReadOnly && !!data.selectedStudyEndDateBeforeSixWeeksFromToday;",
+                  "key": "programStudyperiodwarning",
+                  "customConditional": "show = !data.isProgramSectionReadOnly && !!data.selectedStudyEndDateBeforeSixWeeksFromToday;",
+                  "type": "htmlelement",
+                  "input": false,
                   "hideLabel": true,
                   "tableView": false
                 },
@@ -1429,6 +1496,15 @@
           "type": "hidden",
           "lockKey": true,
           "calculateValue": "value = data.programYear ? data.programYear: \"\";"
+        },
+        {
+          "label": "Program persistent properties",
+          "calculateValue": "value = [\r\n  \"selectedLocation\",\r\n  \"mySchoolIsNotListed\",\r\n  \"selectedProgram\",\r\n  \"myProgramNotListed\",\r\n  \"programName\",\r\n  \"programDescription\",\r\n  \"studystartDate\",\r\n  \"studyendDate\",\r\n  \"selectedOffering\",\r\n  \"myStudyPeriodIsntListed\",\r\n  \"studyEndDateIsPastApplicationException\",\r\n  \"courseDetails\",\r\n  \"studentNumber\",\r\n];",
+          "calculateServer": true,
+          "key": "programPersistentProperties",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
         }
       ],
       "input": false,
@@ -2153,7 +2229,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<ul>\n<li>A written statement outlining, in detail, the nature of the circumstances;</li>\n<li>A letter from a professional third party confirming your statement and providing an independent assessment of the situation. A professional ‘third party’ includes, but is not limited to: counselor, psychologist, religious advisor, doctor, teacher, police, and/or staff at a social service agency, such as an organization supporting those experiencing abuse or violence.\n</li>\n</ul>",
+                      "content": "<ul>\n<li>A <a href=\"https://studentaidbc.ca/sites/all/files/Marital-Status-Attestation-Form.pdf\" target=\"_blank\" noopener noreferrer\">written attestation</a> from the student outlining the nature of the circumstances; and</li>\n<li>A letter from a professional third party confirming the student’s circumstances. A professional \"third party\" includes, but is not limited to: counselor, psychologist, religious advisor, doctor, teacher, police, and/or staff at a social service agency such as an organization supporting those experiencing abuse or violence.\n</li>\n</ul>",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html23",
@@ -4600,7 +4676,7 @@
                 {
                   "input": true,
                   "tableView": true,
-                  "label": "Upload supporting documents:",
+                  "label": "Upload supporting documents",
                   "key": "decreaseInPartnerIncomeSupportingDocuments",
                   "multiple": true,
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
@@ -5312,7 +5388,7 @@
                 {
                   "input": true,
                   "tableView": false,
-                  "label": "Upload supporting documents:",
+                  "label": "Upload supporting documents",
                   "key": "decreaseInIncomeSupportingDocuments",
                   "multiple": true,
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",

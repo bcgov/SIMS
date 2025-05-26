@@ -1,5 +1,10 @@
+import {
+  PaginatedResultsAPIOutDTO,
+  ApplicationChangeRequestAPIInDTO,
+  ApplicationChangeRequestPendingSummaryAPIOutDTO,
+} from "@/services/http/dto";
+import { PaginationOptions } from "@/types";
 import ApiClient from "../services/http/ApiClient";
-import { ApplicationChangeRequestAPIInDTO } from "@/services/http/dto/ApplicationChangeRequest.dto";
 
 export class ApplicationChangeRequestService {
   // Share Instance
@@ -21,6 +26,21 @@ export class ApplicationChangeRequestService {
     await ApiClient.ApplicationChangeRequestApi.assessApplicationChangeRequest(
       applicationId,
       payload,
+    );
+  }
+
+  /**
+   * Gets all pending application change requests (applications in 'Change pending approval' status).
+   * @param paginationOptions options to execute the pagination.
+   * @returns list of application change requests.
+   */
+  async getApplicationChangeRequests(
+    paginationOptions: PaginationOptions,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
+  > {
+    return ApiClient.ApplicationChangeRequestApi.getApplicationChangeRequests(
+      paginationOptions,
     );
   }
 }

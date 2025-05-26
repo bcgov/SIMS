@@ -19,6 +19,7 @@ import {
 } from "@sims/test-utils";
 import {
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
+  ApplicationData,
   ApplicationEditStatus,
   ApplicationStatus,
   ProgramYear,
@@ -95,6 +96,10 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       { student, programYear },
       {
         applicationStatus: ApplicationStatus.Completed,
+        // Ensure the application data has program persistent properties.
+        applicationData: {
+          programPersistentProperties: ["selectedLocation"],
+        } as ApplicationData,
       },
     );
     const endpoint = `/students/application/${completedApplication.id}/change-request`;

@@ -4234,7 +4234,7 @@
                 {
                   "input": true,
                   "tableView": true,
-                  "label": "Upload supporting documents:",
+                  "label": "Upload supporting documents",
                   "key": "decreaseInPartnerIncomeSupportingDocuments",
                   "multiple": true,
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
@@ -6483,7 +6483,7 @@
                 {
                   "input": true,
                   "tableView": false,
-                  "label": "Upload supporting documents:",
+                  "label": "Upload supporting documents",
                   "key": "decreaseInIncomeSupportingDocuments",
                   "multiple": true,
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
@@ -7967,7 +7967,7 @@
               ],
               "content": "Transportation",
               "refreshOnChange": false,
-              "customClass": "header-md",
+              "customClass": "category-header-medium primary-color",
               "key": "html101",
               "type": "htmlelement",
               "input": false,

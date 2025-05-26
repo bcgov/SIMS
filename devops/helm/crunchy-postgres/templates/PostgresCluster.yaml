@@ -6,6 +6,7 @@ metadata:
     {{ include "crunchy-postgres.labels" . | nindent 4 }}
     app.kubernetes.io/part-of: {{ template "crunchy-postgres.fullname" . }}
 spec:
+  openshift: true
   metadata:
     labels: 
       {{ include "crunchy-postgres.labels" . | nindent 6 }}

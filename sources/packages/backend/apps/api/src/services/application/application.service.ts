@@ -366,30 +366,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
       );
     }
-    // Validates selected location and selected offering as key values that
-    // should not be changed. Even if some other values are changed (tampered by the user),
-    // there will be no impact for application processing since the location and offering
-    // are copied from the current application retrieved from the database.
-    if (
-      applicationData.selectedLocation !== application.data.selectedLocation
-    ) {
-      throw new CustomNamedError(
-        "Change request has a different location from its original submission.",
-        APPLICATION_NOT_VALID,
-      );
-    }
-    if (
-      applicationData.selectedOffering !== application.data.selectedOffering
-    ) {
-      // Applications are expected to have the same offering value populated, even for PIRs.
-      // PIRs will not have the offering value populated and the assessment will be created
-      // based on the most recent offering associated with the current application version.
-      throw new CustomNamedError(
-        "Change request has a different offering from its original submission.",
-        APPLICATION_NOT_VALID,
-      );
-    }
-
+    // Copy program data from the current application to the new change request application.
+    // A change request does not allow any change to the program data, so it is copied from the current application.
+    this.copyProgramData(application.data, applicationData);
     // Create the new assessment.
     const now = new Date();
     const auditUser = { id: auditUserId } as User;
@@ -2284,7 +2263,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     return this.repo.findOne({
       select: {
         id: true,
-        programYear: { id: true, active: true },
+        programYear: { id: true, active: true, startDate: true, endDate: true },
         offeringIntensity: true,
       },
       relations: {
@@ -2355,6 +2334,34 @@ export class ApplicationService extends RecordDataModelService<Application> {
       where: { id: applicationId },
       lock: { mode: "pessimistic_write" },
     });
+  }
+
+  /**
+   * Copy program data from a source application to a target application.
+   * @param sourceApplicationData source application data to copy from.
+   * @param targetApplicationData target application data to copy to.
+   * @throws error if program persistent properties are not defined.
+   */
+  private copyProgramData(
+    sourceApplicationData: ApplicationData,
+    targetApplicationData: ApplicationData,
+  ): void {
+    const programPersistentProperties =
+      sourceApplicationData.programPersistentProperties;
+    // Throw error if program persistent properties are not defined.
+    // This will prevent the incomplete data from being saved.
+    if (!programPersistentProperties?.length) {
+      throw new CustomNamedError(
+        "Application data does not have program persistent properties.",
+        APPLICATION_NOT_VALID,
+      );
+    }
+    for (const propertyName of programPersistentProperties) {
+      if (sourceApplicationData.hasOwnProperty(propertyName)) {
+        targetApplicationData[propertyName] =
+          sourceApplicationData[propertyName];
+      }
+    }
   }
 
   @InjectLogger()

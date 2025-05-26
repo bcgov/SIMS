@@ -8,8 +8,8 @@ import { IsIn, IsNotEmpty, MaxLength } from "class-validator";
  * DTO for pending application change request summary.
  */
 export class ApplicationChangeRequestPendingSummaryAPIOutDTO {
-  requestId: number;
   applicationId: number;
+  precedingApplicationId: number;
   studentId: number;
   submittedDate: Date;
   firstName?: string;

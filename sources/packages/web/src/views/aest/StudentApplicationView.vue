@@ -120,7 +120,7 @@ export default defineComponent({
     const selectedForm = ref();
     let applicationWizard: FormIOForm;
     const assessApplicationChangeRequestModal = ref(
-      {} as ModalDialog<ApplicationChangeRequestAPIInDTO | false>,
+      {} as ModalDialog<ApplicationChangeRequestAPIInDTO>,
     );
     const snackBar = useSnackBar();
     // Event emitter for application sidebar refresh.
@@ -265,64 +265,70 @@ export default defineComponent({
       document.getElementById(component.id)?.classList.add(cssClass);
     }
 
+    /**
+     * Show the modal for Ministry user confirmation of the
+     * change request assessment.
+     * @param applicationChangeRequestStatus change request status.
+     */
     const assessApplicationChangeRequest = async (
       applicationChangeRequestStatus:
         | ApplicationEditStatus.ChangedWithApproval
         | ApplicationEditStatus.ChangeDeclined,
     ) => {
-      const responseData =
-        await assessApplicationChangeRequestModal.value.showModal(
-          applicationChangeRequestStatus,
+      await assessApplicationChangeRequestModal.value.showModal(
+        applicationChangeRequestStatus,
+        processAssessApplicationChangeRequest,
+      );
+    };
+
+    /**
+     * Process the Ministry change request assessment.
+     * @param payload payload with the Ministry assessment.
+     * @returns returns true if the operation was succeeded and
+     * the modal can be close, otherwise keeps the modal open.
+     */
+    const processAssessApplicationChangeRequest = async (
+      payload: ApplicationChangeRequestAPIInDTO,
+    ): Promise<boolean> => {
+      try {
+        await ApplicationChangeRequestService.shared.assessApplicationChangeRequest(
+          props.versionApplicationId as number,
+          payload,
         );
-      if (responseData) {
-        try {
-          assessApplicationChangeRequestModal.value.loading = true;
-          await ApplicationChangeRequestService.shared.assessApplicationChangeRequest(
-            props.versionApplicationId as number,
-            responseData,
-          );
-          // When the change request is approved, the version application becomes the current application.
-          // But when the change request is declined, the current application remains the same.
-          const currentApplicationId =
-            applicationChangeRequestStatus ===
-            ApplicationEditStatus.ChangedWithApproval
-              ? props.versionApplicationId
-              : props.applicationId;
-          if (
-            applicationChangeRequestStatus ===
-            ApplicationEditStatus.ChangedWithApproval
-          ) {
-            snackBar.success("Change approved.");
-            // Redirect to the application details page with the current application ID only when the change is approved.
-            router.push({
-              name: AESTRoutesConst.APPLICATION_DETAILS,
-              params: {
-                applicationId: currentApplicationId,
-                studentId: props.studentId,
-              },
-            });
-          } else {
-            snackBar.success("Change declined.");
-          }
-          assessApplicationChangeRequestModal.value.hideModal();
-          // Hide the buttons after the change request is assessed.
-          showApplicationChangeAssessButtons.value = false;
-          // Emit the event to refresh the application sidebar after the application change request is assessed.
-          refreshApplicationSidebar();
-        } catch (error: unknown) {
-          if (
-            error instanceof ApiProcessError &&
-            error.errorType === INVALID_APPLICATION_EDIT_STATUS
-          ) {
-            snackBar.warn("Change cancelled by student.");
-          } else {
-            snackBar.error(
-              "Unexpected error while updating the application change request.",
-            );
-          }
-        } finally {
-          assessApplicationChangeRequestModal.value.loading = false;
+        if (
+          payload.applicationEditStatus ===
+          ApplicationEditStatus.ChangedWithApproval
+        ) {
+          snackBar.success("Change approved.");
+          // Redirect to the application details page with the current application ID only when the change is approved.
+          router.push({
+            name: AESTRoutesConst.APPLICATION_DETAILS,
+            params: {
+              // When the change request is approved, the version application becomes the current application.
+              applicationId: props.versionApplicationId,
+              studentId: props.studentId,
+            },
+          });
+        } else {
+          snackBar.success("Change declined.");
         }
+        // Hide the buttons after the change request is assessed.
+        showApplicationChangeAssessButtons.value = false;
+        // Emit the event to refresh the application sidebar after the application change request is assessed.
+        refreshApplicationSidebar();
+        return true;
+      } catch (error: unknown) {
+        if (
+          error instanceof ApiProcessError &&
+          error.errorType === INVALID_APPLICATION_EDIT_STATUS
+        ) {
+          snackBar.warn("Change cancelled by student.");
+        } else {
+          snackBar.error(
+            "Unexpected error while updating the application change request.",
+          );
+        }
+        return false;
       }
     };
 

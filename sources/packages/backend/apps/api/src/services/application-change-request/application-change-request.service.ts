@@ -4,18 +4,21 @@ import {
   ApplicationEditStatus,
   ApplicationStatus,
   EducationProgramOffering,
+  getUserFullNameLikeSearch,
   NoteType,
   StudentAppeal,
   User,
 } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { Brackets, DataSource, Repository, SelectQueryBuilder } from "typeorm";
 import { NoteSharedService, WorkflowClientService } from "@sims/services";
 import { ApplicationService } from "../application/application.service";
 import {
   APPLICATION_NOT_FOUND,
   INVALID_APPLICATION_EDIT_STATUS,
 } from "@sims/services/constants";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
+import { PaginatedResults, PaginationOptions } from "../../utilities";
+import { InjectRepository } from "@nestjs/typeorm";
 
 /**
  * Service responsible for application change request operations.
@@ -27,6 +30,8 @@ export class ApplicationChangeRequestService {
     private readonly noteSharedService: NoteSharedService,
     private readonly workflowClientService: WorkflowClientService,
     private readonly applicationService: ApplicationService,
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
   ) {}
 
   /**
@@ -99,6 +104,7 @@ export class ApplicationChangeRequestService {
       const completedApplication =
         changeRequestApplication.precedingApplication;
       completedApplication.applicationStatus = ApplicationStatus.Edited;
+      completedApplication.applicationStatusUpdatedOn = currentDate;
       completedApplication.modifier = auditUser;
       completedApplication.updatedAt = currentDate;
       // Update the approved change request to become the new completed application.
@@ -131,5 +137,86 @@ export class ApplicationChangeRequestService {
       applicationId,
       applicationEditStatus,
     );
+  }
+
+  /**
+   * Gets applications based purely on their edit status.
+   * @param applicationEditStatus The application edit status to filter.
+   * @param paginationOptions Pagination, sorting, and search options from the controller.
+   * @returns Paginated list of applications.
+   */
+  async getApplicationsByEditStatus(
+    applicationEditStatus: ApplicationEditStatus,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<Application>> {
+    const { page, pageLimit, sortField, sortOrder, searchCriteria } =
+      paginationOptions;
+
+    const query = this.applicationRepo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "application.applicationNumber",
+        "application.submittedDate",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+        "precedingApplication.id",
+      ])
+      .innerJoin("application.student", "student")
+      .innerJoin("application.precedingApplication", "precedingApplication")
+      .innerJoin("student.user", "user")
+      .where("application.applicationEditStatus = :applicationEditStatus", {
+        applicationEditStatus,
+      })
+      .offset(page * pageLimit)
+      .limit(pageLimit);
+
+    if (searchCriteria) {
+      const searchQueryParam = "searchQueryParam";
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where(getUserFullNameLikeSearch("user", searchQueryParam)).orWhere(
+            `application.applicationNumber ILIKE :${searchQueryParam}`,
+          );
+        }),
+      );
+      query.setParameter(searchQueryParam, `%${searchCriteria.trim()}%`);
+    }
+
+    this.addApplicationChangeRequestSort(query, sortField, sortOrder);
+
+    const [results, count] = await query.getManyAndCount();
+    return { results, count };
+  }
+
+  /**
+   * Adds sorting to the application change request query.
+   * @param query Query builder.
+   * @param sortField Field to be sorted.
+   * @param sortOrder Sort order (ASC/DESC).
+   */
+  private addApplicationChangeRequestSort(
+    query: SelectQueryBuilder<Application>,
+    sortField?: string,
+    sortOrder?: FieldSortOrder,
+  ): void {
+    let dbSortField: string;
+    switch (sortField) {
+      case "submittedDate":
+        dbSortField = "application.submittedDate";
+        break;
+      case "lastName":
+        dbSortField = "user.lastName";
+        break;
+      case "applicationNumber":
+        dbSortField = "application.applicationNumber";
+        break;
+      default:
+        dbSortField = "application.submittedDate";
+        break;
+    }
+    const order = sortOrder ?? FieldSortOrder.ASC;
+    query.orderBy(dbSortField, order);
   }
 }
