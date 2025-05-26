@@ -65,19 +65,20 @@
               "tableView": false
             },
             {
-              "key": "columnsContent2",
               "label": "Content",
-              "input": false,
               "tag": "ul",
+              "className": "align-bullets",
               "attrs": [
                 {
                   "value": "",
                   "attr": ""
                 }
               ],
-              "className": "mb-4 ml-8",
               "content": "<li>Your spouse/common-law partner's application number</li>\n<li>Your spouse/common-law partner's last name</li>\n<li>Your spouse/common-law partner's date of birth</li>\n<li>Your previous year's tax return information</li>",
+              "refreshOnChange": false,
+              "key": "columnsContent2",
               "type": "htmlelement",
+              "input": false,
               "hideLabel": true,
               "tableView": false
             },
@@ -257,6 +258,22 @@
                           "content": "Spouse/common law partner information",
                           "refreshOnChange": false,
                           "key": "headerForParents3",
+                          "type": "htmlelement",
+                          "input": false,
+                          "tableView": false
+                        },
+                        {
+                          "label": "HTML",
+                          "tag": "p",
+                          "attrs": [
+                            {
+                              "attr": "",
+                              "value": ""
+                            }
+                          ],
+                          "content": "I am a spouse/common-law partner and need to complete supporting information for my partner.",
+                          "refreshOnChange": false,
+                          "key": "parentInformationRequestMessage2",
                           "type": "htmlelement",
                           "input": false,
                           "tableView": false
