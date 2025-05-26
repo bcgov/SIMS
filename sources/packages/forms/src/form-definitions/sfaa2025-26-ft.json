@@ -2329,6 +2329,53 @@
               "type": "radio",
               "input": true,
               "lockKey": true
+            },
+            {
+              "label": "How many months of full-time post-secondary studies have you taken to date in B.C., Canada and outside of Canada? Include co-op work terms.",
+              "applyMaskOn": "change",
+              "mask": false,
+              "tableView": false,
+              "delimiter": false,
+              "requireDecimal": false,
+              "inputFormat": "plain",
+              "truncateMultipleSpaces": false,
+              "validate": {
+                "required": true,
+                "min": 0,
+                "max": 999
+              },
+              "validateWhenHidden": false,
+              "key": "fulltimeMonthsOfStudy",
+              "type": "number",
+              "decimalLimit": 0,
+              "input": true
+            },
+            {
+              "label": "Between the date classes start and the date classes end, will you be on a co-op/paid work term?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "validateWhenHidden": false,
+              "key": "duringStudyCoopPaidWork",
+              "type": "radio",
+              "input": true,
+              "lockKey": true
             }
           ]
         },
