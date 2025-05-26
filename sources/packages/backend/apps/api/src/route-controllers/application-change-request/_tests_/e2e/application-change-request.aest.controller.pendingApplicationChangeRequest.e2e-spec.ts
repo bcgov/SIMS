@@ -163,6 +163,67 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
     expect(foundDeclined).toBeUndefined();
   });
 
+  it("Should handle pagination parameters correctly", async () => {
+    // Arrange
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint5 =
+      "/aest/application-change-request/pending?page=0&pageLimit=5&sortField=submittedDate&sortOrder=DESC";
+    const endpoint10 =
+      "/aest/application-change-request/pending?page=0&pageLimit=10&sortField=submittedDate&sortOrder=DESC";
+
+    // Act - Test with different page sizes
+    const responsePageSize5 = await request(app.getHttpServer())
+      .get(endpoint5)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    const responsePageSize10 = await request(app.getHttpServer())
+      .get(endpoint10)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // Assert
+    expect(responsePageSize5.body.results.length).toBeLessThanOrEqual(5);
+    expect(responsePageSize10.body.results.length).toBeLessThanOrEqual(10);
+
+    // Test pagination offset
+    if (responsePageSize10.body.count > 10) {
+      const endpointPage1 =
+        "/aest/application-change-request/pending?page=1&pageLimit=10&sortField=submittedDate&sortOrder=DESC";
+      const responsePage1 = await request(app.getHttpServer())
+        .get(endpointPage1)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+
+      expect(responsePage1.body.results).toBeDefined();
+      expect(Array.isArray(responsePage1.body.results)).toBe(true);
+    }
+  });
+
+  it("Should return empty results when no pending change requests exist", async () => {
+    // Arrange
+    await db.application.update(
+      { applicationEditStatus: ApplicationEditStatus.ChangePendingApproval },
+      { applicationEditStatus: ApplicationEditStatus.ChangeDeclined },
+    );
+
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint =
+      "/aest/application-change-request/pending?page=0&pageLimit=10&sortField=submittedDate&sortOrder=DESC";
+
+    // Act
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // Assert
+    expect(response.body.results).toBeDefined();
+    expect(Array.isArray(response.body.results)).toBe(true);
+    expect(response.body.count).toBe(0);
+    expect(response.body.results.length).toBe(0);
+  });
+
   it("Should validate response DTO structure matches expected format", async () => {
     // Arrange
     const originalApplication = await saveFakeApplication(
@@ -224,24 +285,18 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
     expect(new Date(foundChangeRequest.submittedDate)).toBeInstanceOf(Date);
   });
 
-  it("Should handle missing pagination parameters gracefully", async () => {
+  it("Should return 401 Unauthorized when no authentication token is provided", async () => {
     // Arrange
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = "/aest/application-change-request/pending";
 
-    // Act - Test without pagination parameters
-    const response = await request(app.getHttpServer())
+    // Act/Assert
+    await request(app.getHttpServer())
       .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE);
-
-    // Assert - Should either work with defaults or return bad request
-    expect([HttpStatus.OK, HttpStatus.BAD_REQUEST]).toContain(response.status);
-
-    if (response.status === HttpStatus.OK) {
-      expect(response.body).toHaveProperty("results");
-      expect(response.body).toHaveProperty("count");
-      expect(Array.isArray(response.body.results)).toBe(true);
-    }
+      .query({
+        page: 0,
+        pageLimit: 10,
+      })
+      .expect(HttpStatus.UNAUTHORIZED);
   });
 
   it("Should handle invalid pagination parameters", async () => {
