@@ -13,14 +13,18 @@ export const THROW_AWAY_MSFAA_NUMBER = "3000";
 /**
  * Creates the sequence group name by the offering intensity.
  * @param offeringIntensity offering intensity.
+ * @param isDailyFileSequence indicates if the sequence is for a daily file.
  * @returns the sequence group name by the offering intensity.
  */
 export function getMSFAASequenceGroupName(
   offeringIntensity: OfferingIntensity,
+  isDailyFileSequence = false,
 ): string {
-  return `MSFAA_${offeringIntensity}_SENT_FILE_${getISODateOnlyString(
-    new Date(),
-  )}`;
+  const sequenceName = `MSFAA_${offeringIntensity}_SENT_FILE`;
+  if (isDailyFileSequence) {
+    return `${sequenceName}_${getISODateOnlyString(new Date())}`;
+  }
+  return sequenceName;
 }
 
 /**

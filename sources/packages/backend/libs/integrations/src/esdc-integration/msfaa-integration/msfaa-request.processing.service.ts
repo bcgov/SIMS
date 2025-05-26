@@ -17,8 +17,8 @@ import { MSFAAIntegrationService } from "./msfaa.integration.service";
 import { ESDCFileHandler } from "../esdc-file-handler";
 import { ConfigService } from "@sims/utilities/config";
 import { MSFAANumberService } from "@sims/integrations/services";
-import { MSFAA_SEQUENCE_GAP } from "@sims/services/constants";
 import { CreateRequestFileNameResult } from "@sims/integrations/esdc-integration/models/esdc-integration.model";
+import { MSFAA_SEQUENCE_GAP } from "@sims/services/constants";
 
 @Injectable()
 export class MSFAARequestProcessingService extends ESDCFileHandler {
@@ -98,14 +98,6 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
           lifeTimeSequenceName,
           transactionalEntityManager,
           async (nextSequenceNumber: number) => {
-            if (offeringIntensity === OfferingIntensity.fullTime) {
-              // Applying MSFAA sequence gap only for Full-time MSFAA files to avoid conflict with legacy MSFAA files.
-              // This is not applicable for Part-time MSFAA files as there is no legacy MSFAA files for Part-time.
-              processSummary.info(
-                `Applying MSFAA sequence gap to the sequence number. Current sequence gap ${MSFAA_SEQUENCE_GAP}.`,
-              );
-              nextSequenceNumber += MSFAA_SEQUENCE_GAP;
-            }
             processSummary.info("Creating MSFAA request content.");
             // Create the Request content for the MSFAA file by populating the
             // header, footer and trailer content.
@@ -122,6 +114,14 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
           dailyFileNameSequenceName,
           transactionalEntityManager,
           async (nextSequenceNumber: number) => {
+            if (offeringIntensity === OfferingIntensity.fullTime) {
+              // Applying MSFAA sequence gap only for Full-time MSFAA files to avoid conflict with legacy MSFAA files.
+              // This is not applicable for Part-time MSFAA files as there is no legacy MSFAA files for Part-time.
+              processSummary.info(
+                `Applying MSFAA sequence gap to the sequence number. Current sequence gap ${MSFAA_SEQUENCE_GAP}.`,
+              );
+              nextSequenceNumber += MSFAA_SEQUENCE_GAP;
+            }
             // Create the request filename with the file path for the MSFAA Request
             // sent File.
             fileInfo = this.createRequestFileName(fileCode, nextSequenceNumber);

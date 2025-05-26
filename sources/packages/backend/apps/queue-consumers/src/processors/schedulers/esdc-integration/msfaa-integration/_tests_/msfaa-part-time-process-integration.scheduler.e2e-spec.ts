@@ -45,12 +45,22 @@ describe(
 
     beforeEach(async () => {
       jest.clearAllMocks();
-      // Expected sequence control group name.
-      const msfaaSequenceGroupName = getMSFAASequenceGroupName(
+      // Expected life time sequence control group name.
+      const msfaaLifeTimeSequenceGroupName = getMSFAASequenceGroupName(
         OfferingIntensity.partTime,
       );
+      // Expected daily file sequence control group name.
+      const msfaaDailyFileSequenceGroupName = getMSFAASequenceGroupName(
+        OfferingIntensity.partTime,
+        true,
+      );
       // Reset MSFAA part time number.
-      await db.sequenceControl.delete({ sequenceName: msfaaSequenceGroupName });
+      await db.sequenceControl.delete({
+        sequenceName: In([
+          msfaaLifeTimeSequenceGroupName,
+          msfaaDailyFileSequenceGroupName,
+        ]),
+      });
       // Cancel any pending MSFAA.
       await db.msfaaNumber.update(
         { cancelledDate: IsNull() },
@@ -84,7 +94,7 @@ describe(
         getProcessDateFromMSFAARequestContent(createMSFAARequestContentMock);
       const uploadedFile = getUploadedFile(sftpClientMock);
       expect(uploadedFile.remoteFilePath).toBe(
-        `MSFT-Request\\DPBC.EDU.MSFA.SENT.PT.${processDateFormatted}.010`,
+        `MSFT-Request\\DPBC.EDU.MSFA.SENT.PT.${processDateFormatted}.001`,
       );
       // Assert process result.
       expect(result).toStrictEqual([
@@ -102,7 +112,7 @@ describe(
       ] = uploadedFile.fileLines;
       // Validate header.
       expect(header).toBe(
-        `100BC  MSFAA SENT                              ${processDateFormatted}${processTimeFormatted}000010                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       `,
+        `100BC  MSFAA SENT                              ${processDateFormatted}${processTimeFormatted}000001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       `,
       );
       // Validate records.
       expect(msfaaPartTimeMarried).toBe(

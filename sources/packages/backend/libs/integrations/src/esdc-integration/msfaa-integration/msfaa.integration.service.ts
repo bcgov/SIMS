@@ -46,7 +46,7 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
    * Header, Detail and trailer records.
    * @param msfaaRecords - MSFAA, Student, User and application.
    * objects data.
-   * @param fileSequence unique file sequence.
+   * @param lifeTimeSequence life time sequence number.
    * @param totalSINHash sum hash total of the Student's SIN.
    * @param processDate process date to be added to the generated content.
    * @returns Complete MSFAAFileLines appending the header, footer
@@ -54,7 +54,7 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
    */
   createMSFAARequestContent(
     msfaaRecords: MSFAARecord[],
-    fileSequence: number,
+    lifeTimeSequence: number,
     totalSINHash: number,
     processDate: Date,
   ): MSFAARequestFileLine[] {
@@ -63,7 +63,7 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
     const msfaaHeader = new MSFAAFileHeader();
     msfaaHeader.transactionCode = RecordTypeCodes.MSFAAHeader;
     msfaaHeader.processDate = processDate;
-    msfaaHeader.sequence = fileSequence;
+    msfaaHeader.sequence = lifeTimeSequence;
     msfaaFileLines.push(msfaaHeader);
     // Detail records
     const fileRecords = msfaaRecords.map((msfaaRecord) => {
