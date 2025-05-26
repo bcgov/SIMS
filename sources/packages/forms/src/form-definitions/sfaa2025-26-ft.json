@@ -4089,15 +4089,17 @@
                     {
                       "label": "What are the daycare costs that you incur for your child(ren) age 11 years or under?",
                       "prefix": "$",
+                      "applyMaskOn": "change",
                       "mask": false,
-                      "spellcheck": true,
                       "tableView": false,
                       "currency": "CAD",
                       "inputFormat": "plain",
                       "truncateMultipleSpaces": false,
                       "validate": {
-                        "required": true
+                        "required": true,
+                        "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                       },
+                      "validateWhenHidden": false,
                       "key": "daycareCosts11YearsOrUnder",
                       "conditional": {
                         "show": true,
@@ -4105,6 +4107,7 @@
                         "eq": "yes"
                       },
                       "type": "currency",
+                      "spellcheck": true,
                       "input": true,
                       "delimiter": true,
                       "inputType": "text",
@@ -7258,6 +7261,7 @@
             {
               "title": "BC disability income assistance panel",
               "collapsible": false,
+              "hideLabel": true,
               "key": "bcDisabilityIncomeAssistancePanel",
               "conditional": {
                 "show": true,
@@ -7272,12 +7276,13 @@
                 {
                   "label": "Enter the estimated amount of B.C. income assistance that you will receive during your study period.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "USD",
+                  "currency": "CAD",
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
+                  "validateWhenHidden": false,
                   "key": "incomeAssistanceAmount",
                   "conditional": {
                     "show": true,
@@ -7285,6 +7290,7 @@
                     "eq": "yes"
                   },
                   "type": "currency",
+                  "spellcheck": true,
                   "input": true,
                   "delimiter": true,
                   "inputType": "text",
