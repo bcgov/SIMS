@@ -29,7 +29,7 @@ export interface MSFAATestInputData {
   offeringIntensity: OfferingIntensity;
 }
 
-export const MSFAA_PART_TIME_MARRIED: MSFAATestInputData = {
+const MSFAA_STUDENT_MARRIED: Omit<MSFAATestInputData, "offeringIntensity"> = {
   msfaaNumber: "1000",
   sin: "900000000",
   institutionCode: "ABCD",
@@ -46,10 +46,12 @@ export const MSFAA_PART_TIME_MARRIED: MSFAATestInputData = {
   country: "Canada",
   phone: "1111111111",
   email: "john.doe@somedomain.com",
-  offeringIntensity: OfferingIntensity.partTime,
 };
 
-export const MSFAA_PART_TIME_OTHER_COUNTRY: MSFAATestInputData = {
+const MSFAA_STUDENT_OTHER_COUNTRY: Omit<
+  MSFAATestInputData,
+  "offeringIntensity"
+> = {
   msfaaNumber: "1001",
   sin: "900000001",
   institutionCode: "EFDG",
@@ -66,10 +68,12 @@ export const MSFAA_PART_TIME_OTHER_COUNTRY: MSFAATestInputData = {
   country: "United States",
   phone: "####4*****^%$#@$^9",
   email: "jane.doe@somedomain.com",
-  offeringIntensity: OfferingIntensity.partTime,
 };
 
-export const MSFAA_PART_TIME_RELATIONSHIP_OTHER: MSFAATestInputData = {
+const MSFAA_STUDENT_RELATIONSHIP_OTHER: Omit<
+  MSFAATestInputData,
+  "offeringIntensity"
+> = {
   msfaaNumber: "1002",
   sin: "900000002",
   institutionCode: "IHKL",
@@ -86,5 +90,34 @@ export const MSFAA_PART_TIME_RELATIONSHIP_OTHER: MSFAATestInputData = {
   country: "Canada",
   phone: "99999999999999999999",
   email: "jane.doe@someotherdomain.com",
+};
+
+export const MSFAA_PART_TIME_MARRIED: MSFAATestInputData = {
+  ...MSFAA_STUDENT_MARRIED,
   offeringIntensity: OfferingIntensity.partTime,
+};
+
+export const MSFAA_FULL_TIME_MARRIED: MSFAATestInputData = {
+  ...MSFAA_STUDENT_MARRIED,
+  offeringIntensity: OfferingIntensity.fullTime,
+};
+
+export const MSFAA_PART_TIME_OTHER_COUNTRY: MSFAATestInputData = {
+  ...MSFAA_STUDENT_OTHER_COUNTRY,
+  offeringIntensity: OfferingIntensity.partTime,
+};
+
+export const MSFAA_FULL_TIME_OTHER_COUNTRY: MSFAATestInputData = {
+  ...MSFAA_STUDENT_OTHER_COUNTRY,
+  offeringIntensity: OfferingIntensity.fullTime,
+};
+
+export const MSFAA_PART_TIME_RELATIONSHIP_OTHER: MSFAATestInputData = {
+  ...MSFAA_STUDENT_RELATIONSHIP_OTHER,
+  offeringIntensity: OfferingIntensity.partTime,
+};
+
+export const MSFAA_FULL_TIME_RELATIONSHIP_OTHER: MSFAATestInputData = {
+  ...MSFAA_STUDENT_RELATIONSHIP_OTHER,
+  offeringIntensity: OfferingIntensity.fullTime,
 };
