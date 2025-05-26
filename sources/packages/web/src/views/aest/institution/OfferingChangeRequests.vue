@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Institution requests"
-        subTitle="Offering change requests"
+        subTitle="Offering Change Requests"
       />
     </template>
     <body-header
