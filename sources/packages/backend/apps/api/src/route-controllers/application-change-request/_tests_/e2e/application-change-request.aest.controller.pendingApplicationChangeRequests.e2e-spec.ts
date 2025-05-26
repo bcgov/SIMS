@@ -83,7 +83,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
       });
   });
 
-  it(`Should not include applications when the application edit status is not ${ApplicationEditStatus.ChangePendingApproval}`, async () => {
+  it(`Should not include applications when the application edit status is not ${ApplicationEditStatus.ChangePendingApproval}.`, async () => {
     // Arrange
     const notPendingChangeApplicationNumber = "NTPNDGCHNG";
     await saveFakeApplication(db.dataSource, undefined, {
@@ -112,7 +112,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
       .expect({ results: [], count: 0 });
   });
 
-  it("Should validate response DTO structure matches expected format", async () => {
+  it("Should validate response DTO structure matches expected format.", async () => {
     // Arrange
     const originalApplication = await saveFakeApplication(
       db.dataSource,
@@ -173,7 +173,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
     expect(new Date(foundChangeRequest.submittedDate)).toBeInstanceOf(Date);
   });
 
-  it("Should handle invalid pagination parameters", async () => {
+  it("Should handle invalid pagination parameters.", async () => {
     // Arrange
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = "/aest/application-change-request/pending";
