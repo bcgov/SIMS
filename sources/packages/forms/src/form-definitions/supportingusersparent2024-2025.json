@@ -488,19 +488,19 @@
                   "label": "How much will you and your spouse/common-law partner be giving the student to help meet their specific educational costs during this study period?",
                   "description": "Please include money, total cashed Registered Education Savings Plans (RESPs) and scholarship trust funds",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "defaultValue": [
-                    null
-                  ],
                   "currency": "CAD",
                   "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
                   "validate": {
                     "required": true
                   },
+                  "validateWhenHidden": false,
                   "key": "parentalContributions",
                   "type": "currency",
+                  "spellcheck": true,
                   "input": true,
                   "delimiter": true,
                   "hideOnChildrenHidden": false,
@@ -511,17 +511,20 @@
                 {
                   "label": "Enter your reported total income from line 15000 of your {{data.calculatedTaxYear}} income tax return. If you did not file a {{data.calculatedTaxYear}} income tax return, enter your total income from all sources both inside and outside of Canada",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
                   "currency": "CAD",
                   "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
                   "validate": {
                     "required": true,
                     "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "totalIncome",
                   "type": "currency",
+                  "spellcheck": true,
                   "input": true,
                   "delimiter": true,
                   "hideOnChildrenHidden": false,
@@ -532,16 +535,19 @@
                 {
                   "label": "Canada Pension Plan contributions (CPP) from line 30800 (contributions through employment). Enter ‘0’ if none.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
                   "currency": "CAD",
                   "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
                   "validate": {
                     "required": true
                   },
+                  "validateWhenHidden": false,
                   "key": "cppLine30800",
                   "type": "currency",
+                  "spellcheck": true,
                   "input": true,
                   "delimiter": true,
                   "hideOnChildrenHidden": false,
