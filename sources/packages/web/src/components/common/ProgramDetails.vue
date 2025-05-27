@@ -33,12 +33,7 @@
           >
             <template #="{ notAllowed }">
               <v-list-item
-                :disabled="
-                  !educationProgram.isActive ||
-                  educationProgram.isExpired ||
-                  isReadOnlyUser(locationId) ||
-                  notAllowed
-                "
+                :disabled="isProgramDeactivationDisabled || notAllowed"
                 base-color="danger"
                 @click="deactivate"
                 title="Deactivate"
@@ -117,7 +112,7 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, PropType, ref } from "vue";
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
@@ -154,7 +149,7 @@ export default defineComponent({
       required: true,
     },
     educationProgram: {
-      type: Object,
+      type: Object as PropType<EducationProgramAPIOutDTO>,
       required: true,
       default: {} as EducationProgramAPIOutDTO,
     },
@@ -165,6 +160,14 @@ export default defineComponent({
     const { isReadOnlyUser } = useInstitutionAuth();
     const deactivateEducationProgramModal = ref(
       {} as ModalDialog<DeactivateProgramAPIInDTO | boolean>,
+    );
+
+    const isProgramDeactivationDisabled = computed<boolean>(
+      () =>
+        !props.educationProgram.isActive ||
+        props.educationProgram.isExpired ||
+        (AuthService.shared.authClientType === ClientIdType.Institution &&
+          isReadOnlyUser(props.locationId)),
     );
 
     const programActionLabel = computed(() => {
@@ -229,7 +232,7 @@ export default defineComponent({
     };
 
     return {
-      isReadOnlyUser,
+      isProgramDeactivationDisabled,
       goToProgram,
       ProgramIntensity,
       programActionLabel,
