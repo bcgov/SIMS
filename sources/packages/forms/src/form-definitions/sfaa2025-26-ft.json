@@ -4089,27 +4089,27 @@
                     {
                       "label": "What are the daycare costs that you incur for your child(ren) age 11 years or under?",
                       "prefix": "$",
+                      "applyMaskOn": "change",
                       "mask": false,
-                      "spellcheck": true,
                       "tableView": false,
-                      "currency": "CAD",
+                      "delimiter": true,
+                      "requireDecimal": false,
                       "inputFormat": "plain",
                       "truncateMultipleSpaces": false,
                       "validate": {
-                        "required": true
+                        "required": true,
+                        "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                       },
+                      "validateWhenHidden": false,
                       "key": "daycareCosts11YearsOrUnder",
                       "conditional": {
                         "show": true,
                         "when": "haveDaycareCosts11YearsOrUnder",
                         "eq": "yes"
                       },
-                      "type": "currency",
-                      "input": true,
-                      "delimiter": true,
-                      "inputType": "text",
-                      "decimalLimit": 2,
-                      "requireDecimal": true
+                      "type": "number",
+                      "decimalLimit": 0,
+                      "input": true
                     }
                   ],
                   "allowPrevious": false,
@@ -7272,24 +7272,26 @@
                 {
                   "label": "Enter the estimated amount of B.C. income assistance that you will receive during your study period.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "USD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
+                  "validate": {
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                  },
+                  "validateWhenHidden": false,
                   "key": "incomeAssistanceAmount",
                   "conditional": {
                     "show": true,
                     "when": "bcIncomeassistanceforDisabilities",
                     "eq": "yes"
                   },
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 }
               ]
             }
