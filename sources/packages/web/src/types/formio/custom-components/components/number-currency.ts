@@ -1,5 +1,5 @@
 export const CURRENCY = {
-title: "Number - Currency",
+  title: "Number - Currency",
   icon: "money",
   schema: {
     [
@@ -17,7 +17,6 @@ title: "Number - Currency",
                         "required": true,
                         "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                       },
-
                       "type": "number",
                       "decimalLimit": 0,
                       "input": true
