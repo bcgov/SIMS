@@ -13,7 +13,7 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 
-describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRequests", () => {
+describe("ApplicationChangeRequestAESTController(e2e)-getApplicationChangeRequests", () => {
   let app: INestApplication;
   let db: E2EDataSources;
 
@@ -35,23 +35,23 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
         },
       },
     );
-    // Create a change request application that is pending approval
+    // Create a change request application that is pending approval.
     const pendingChangeRequest = await saveFakeApplication(
       db.dataSource,
       { precedingApplication: originalApplication },
       {
         initialValues: {
-          applicationNumber: "PNDCHNGE01",
+          applicationNumber: "PNDSHNGE01",
           applicationStatus: ApplicationStatus.Edited,
           applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
           submittedDate: new Date(),
         },
       },
     );
-    // Second pending change request with the same application number
+    // Second pending change request with the same application number.
     await saveFakeApplication(db.dataSource, undefined, {
       initialValues: {
-        applicationNumber: "PNDCHNGE02",
+        applicationNumber: "PNDSHNGE02",
         applicationStatus: ApplicationStatus.Edited,
         applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
         submittedDate: new Date(),
@@ -59,7 +59,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
     });
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint =
-      "/aest/application-change-request/pending?page=0&pageLimit=1&searchCriteria=PNDCHNGE";
+      "/aest/application-change-request/pending?page=0&pageLimit=1&searchCriteria=PNDSHNGE";
 
     // Act
     await request(app.getHttpServer())
@@ -93,7 +93,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
         applicationEditStatus: ApplicationEditStatus.Original,
       },
     });
-    // Create another application with ChangeDeclined status
+    // Create another application with ChangeDeclined status.
     await saveFakeApplication(db.dataSource, undefined, {
       initialValues: {
         applicationNumber: notPendingChangeApplicationNumber,
@@ -112,96 +112,26 @@ describe("ApplicationChangeRequestAESTController(e2e)-pendingApplicationChangeRe
       .expect({ results: [], count: 0 });
   });
 
-  it("Should validate response DTO structure matches expected format.", async () => {
-    // Arrange
-    const originalApplication = await saveFakeApplication(
-      db.dataSource,
-      undefined,
-      {
-        initialValues: {
-          applicationStatus: ApplicationStatus.Completed,
-          applicationEditStatus: ApplicationEditStatus.Original,
-        },
-      },
-    );
-
-    const testChangeRequest = await saveFakeApplication(
-      db.dataSource,
-      { precedingApplication: originalApplication },
-      {
-        initialValues: {
-          applicationStatus: ApplicationStatus.Edited,
-          applicationEditStatus: ApplicationEditStatus.ChangePendingApproval,
-        },
-      },
-    );
-
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const endpoint =
-      "/aest/application-change-request/pending?page=0&pageLimit=10";
-
-    // Act
-    const response = await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-
-    // Assert
-    expect(response.body).toHaveProperty("results");
-    expect(response.body).toHaveProperty("count");
-
-    // Use the created testChangeRequest for validation
-    const foundChangeRequest = response.body.results.find(
-      (item: any) => item.applicationId === testChangeRequest.id,
-    );
-    expect(foundChangeRequest).toBeDefined();
-    expect(foundChangeRequest.applicationId).toBe(testChangeRequest.id);
-    expect(foundChangeRequest.precedingApplicationId).toBe(
-      originalApplication.id,
-    );
-    expect(foundChangeRequest.studentId).toBe(testChangeRequest.student.id);
-    expect(foundChangeRequest.applicationNumber).toBe(
-      testChangeRequest.applicationNumber,
-    );
-    expect(foundChangeRequest.firstName).toBe(
-      testChangeRequest.student.user.firstName,
-    );
-    expect(foundChangeRequest.lastName).toBe(
-      testChangeRequest.student.user.lastName,
-    );
-    expect(foundChangeRequest.submittedDate).toBeDefined();
-    expect(new Date(foundChangeRequest.submittedDate)).toBeInstanceOf(Date);
-  });
-
-  it("Should handle invalid pagination parameters.", async () => {
+  it("Should throw bad request error when page is provided with invalid parameter value.", async () => {
     // Arrange
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = "/aest/application-change-request/pending";
 
-    // Act - Test with invalid page parameters
-    const responseNegativePage = await request(app.getHttpServer())
+    // Act/Assert
+    // Page parameter should be a positive integer.
+    await request(app.getHttpServer())
       .get(endpoint)
       .query({
         page: -1,
         pageLimit: 10,
       })
-      .auth(token, BEARER_AUTH_TYPE);
-
-    const responseZeroPageLimit = await request(app.getHttpServer())
-      .get(endpoint)
-      .query({
-        page: 0,
-        pageLimit: 0,
-      })
-      .auth(token, BEARER_AUTH_TYPE);
-
-    // Assert - Should handle invalid parameters appropriately
-    expect([HttpStatus.OK, HttpStatus.BAD_REQUEST]).toContain(
-      responseNegativePage.status,
-    );
-    expect([HttpStatus.OK, HttpStatus.BAD_REQUEST]).toContain(
-      responseZeroPageLimit.status,
-    );
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: ["page must not be less than 0"],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
   });
 
   afterAll(async () => {
