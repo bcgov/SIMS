@@ -109,7 +109,7 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
             );
           },
         );
-        // Create MSFSAA file name with daily file name sequence.
+        // Create MSFAA file name with daily file name sequence.
         await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
           dailyFileNameSequenceName,
           transactionalEntityManager,
