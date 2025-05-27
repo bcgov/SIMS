@@ -52,6 +52,30 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
     },
   );
 
+    it(
+    "Should get program related costs as the DMN limit for books and supplies " +
+      "minus the program year total part-time books and supplies cost that will be less than offering program related costs.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.offeringProgramRelatedCosts = 3000;
+      assessmentConsolidatedData.programYearTotalPartTimeBooksAndSuppliesCost = 500
+
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalAssessedNeed,
+      ).toBe(23732);
+    },
+  );
+
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
     await ZeebeMockedClient.getMockedZeebeInstance().close();
