@@ -61,7 +61,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.offeringWeeks = 30;
       assessmentConsolidatedData.offeringProgramRelatedCosts = 3000;
-      assessmentConsolidatedData.programYearTotalPartTimeBooksAndSuppliesCost = 500
+      assessmentConsolidatedData.programYearTotalPartTimeBooksAndSuppliesCost = 500;
 
       // Act
       const calculatedAssessment =
