@@ -4092,7 +4092,8 @@
                       "applyMaskOn": "change",
                       "mask": false,
                       "tableView": false,
-                      "currency": "CAD",
+                      "delimiter": false,
+                      "requireDecimal": false,
                       "inputFormat": "plain",
                       "truncateMultipleSpaces": false,
                       "validate": {
@@ -4106,13 +4107,9 @@
                         "when": "haveDaycareCosts11YearsOrUnder",
                         "eq": "yes"
                       },
-                      "type": "currency",
-                      "spellcheck": true,
-                      "input": true,
-                      "delimiter": true,
-                      "inputType": "text",
-                      "decimalLimit": 2,
-                      "requireDecimal": true
+                      "type": "number",
+                      "decimalLimit": 0,
+                      "input": true
                     }
                   ],
                   "allowPrevious": false,
@@ -6116,6 +6113,13 @@
       "label": "Financial Information",
       "components": [
         {
+          "input": true,
+          "key": "number1",
+          "tableView": false,
+          "label": "Number",
+          "type": "number"
+        },
+        {
           "label": "HTML",
           "tag": "h2",
           "className": "category-header-large primary-color",
@@ -7261,7 +7265,6 @@
             {
               "title": "BC disability income assistance panel",
               "collapsible": false,
-              "hideLabel": true,
               "key": "bcDisabilityIncomeAssistancePanel",
               "conditional": {
                 "show": true,
@@ -7279,9 +7282,13 @@
                   "applyMaskOn": "change",
                   "mask": false,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": false,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
+                  "validate": {
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                  },
                   "validateWhenHidden": false,
                   "key": "incomeAssistanceAmount",
                   "conditional": {
@@ -7289,13 +7296,9 @@
                     "when": "bcIncomeassistanceforDisabilities",
                     "eq": "yes"
                   },
-                  "type": "currency",
-                  "spellcheck": true,
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 }
               ]
             }
