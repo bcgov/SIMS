@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.33.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="b3bf876c-2be7-42a8-a6ea-299e16ab067a">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.35.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="b3bf876c-2be7-42a8-a6ea-299e16ab067a">
   <bpmn:process id="cra-integration-income-verification" isExecutable="true">
     <bpmn:startEvent id="cra-integration-income-verification-start-event">
       <bpmn:extensionElements>
@@ -107,6 +107,19 @@
   </bpmn:message>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="cra-integration-income-verification">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="cra-integration-income-verification-start-event">
+        <dc:Bounds x="172" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xmdatx_di" bpmnElement="calculate-tax-year-event">
+        <dc:Bounds x="262" y="150" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="235" y="193" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oxt941_di" bpmnElement="create-income-request-task">
+        <dc:Bounds x="340" y="128" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0mlcmgq_di" bpmnElement="Gateway_0sxwbl5">
         <dc:Bounds x="555" y="143" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -126,43 +139,32 @@
       <bpmndi:BPMNShape id="Gateway_0j46aqm_di" bpmnElement="Gateway_0j46aqm" isMarkerVisible="true">
         <dc:Bounds x="835" y="143" width="50" height="50" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09fzk6j_di" bpmnElement="Event_09fzk6j">
+        <dc:Bounds x="1022" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1rg1msk_di" bpmnElement="can-execute-income-verification-end-gateway" isMarkerVisible="true">
+        <dc:Bounds x="935" y="143" width="50" height="50" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_05z10ds_di" bpmnElement="can-execute-income-verification-start-gateway" isMarkerVisible="true">
         <dc:Bounds x="475" y="143" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="469" y="100" width="62" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0oxt941_di" bpmnElement="create-income-request-task">
-        <dc:Bounds x="340" y="128" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1xmdatx_di" bpmnElement="calculate-tax-year-event">
-        <dc:Bounds x="262" y="150" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="235" y="193" width="90" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="cra-integration-income-verification-start-event">
-        <dc:Bounds x="172" y="150" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1rg1msk_di" bpmnElement="can-execute-income-verification-end-gateway" isMarkerVisible="true">
-        <dc:Bounds x="935" y="143" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_09fzk6j_di" bpmnElement="Event_09fzk6j">
-        <dc:Bounds x="1022" y="150" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_0xhsjgf_di" bpmnElement="Flow_0xhsjgf">
-        <di:waypoint x="860" y="143" />
-        <di:waypoint x="860" y="80" />
-        <di:waypoint x="570" y="80" />
-        <di:waypoint x="570" y="153" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="691" y="62" width="49" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_0d8rkkl_di" bpmnElement="Flow_0d8rkkl">
+        <di:waypoint x="208" y="168" />
+        <di:waypoint x="262" y="168" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_16zji7z_di" bpmnElement="execute-income-verification-flow">
-        <di:waypoint x="525" y="168" />
-        <di:waypoint x="555" y="168" />
+      <bpmndi:BPMNEdge id="Flow_19jr8ct_di" bpmnElement="Flow_19jr8ct">
+        <di:waypoint x="298" y="168" />
+        <di:waypoint x="340" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0am193t_di" bpmnElement="Flow_0am193t">
+        <di:waypoint x="440" y="168" />
+        <di:waypoint x="475" y="168" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="659" y="100" width="41" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_14so2ev_di" bpmnElement="Flow_14so2ev">
         <di:waypoint x="580" y="143" />
@@ -190,12 +192,29 @@
         <di:waypoint x="810" y="168" />
         <di:waypoint x="835" y="168" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xhsjgf_di" bpmnElement="Flow_0xhsjgf">
+        <di:waypoint x="860" y="143" />
+        <di:waypoint x="860" y="80" />
+        <di:waypoint x="570" y="80" />
+        <di:waypoint x="570" y="153" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="691" y="62" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_06vobta_di" bpmnElement="Flow_06vobta">
         <di:waypoint x="885" y="168" />
         <di:waypoint x="935" y="168" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="890" y="152" width="33" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kmk8v8_di" bpmnElement="Flow_0kmk8v8">
+        <di:waypoint x="985" y="168" />
+        <di:waypoint x="1022" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16zji7z_di" bpmnElement="execute-income-verification-flow">
+        <di:waypoint x="525" y="168" />
+        <di:waypoint x="555" y="168" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_05nxf58_di" bpmnElement="skip-income-verification-flow">
         <di:waypoint x="500" y="193" />
@@ -205,25 +224,6 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="504" y="226" width="60" height="27" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0kmk8v8_di" bpmnElement="Flow_0kmk8v8">
-        <di:waypoint x="985" y="168" />
-        <di:waypoint x="1022" y="168" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0am193t_di" bpmnElement="Flow_0am193t">
-        <di:waypoint x="440" y="168" />
-        <di:waypoint x="475" y="168" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="659" y="100" width="41" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_19jr8ct_di" bpmnElement="Flow_19jr8ct">
-        <di:waypoint x="298" y="168" />
-        <di:waypoint x="340" y="168" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0d8rkkl_di" bpmnElement="Flow_0d8rkkl">
-        <di:waypoint x="208" y="168" />
-        <di:waypoint x="262" y="168" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

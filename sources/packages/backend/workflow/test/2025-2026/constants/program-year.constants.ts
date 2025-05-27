@@ -5,3 +5,7 @@ export const PROGRAM_YEAR = "2025-2026";
  * verifications ids and so on.
  */
 export const PROGRAM_YEAR_BASE_ID = 2000;
+/**
+ * assessment-gateway to be used as default for this program year.
+ */
+export const DEFAULT_ASSESSMENT_GATEWAY = "assessment-gateway-v2";
