@@ -48,7 +48,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-getApplicationChangeReques
         },
       },
     );
-    // Second pending change request with the same application number.
+    // Second pending change request.
     await saveFakeApplication(db.dataSource, undefined, {
       initialValues: {
         applicationNumber: "PNDSHNGE02",
@@ -61,7 +61,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-getApplicationChangeReques
     const endpoint =
       "/aest/application-change-request/pending?page=0&pageLimit=1&searchCriteria=PNDSHNGE";
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
