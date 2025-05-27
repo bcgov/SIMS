@@ -4092,7 +4092,7 @@
                       "applyMaskOn": "change",
                       "mask": false,
                       "tableView": false,
-                      "delimiter": false,
+                      "delimiter": true,
                       "requireDecimal": false,
                       "inputFormat": "plain",
                       "truncateMultipleSpaces": false,
@@ -6112,13 +6112,6 @@
       "type": "panel",
       "label": "Financial Information",
       "components": [
-        {
-          "input": true,
-          "key": "number1",
-          "tableView": false,
-          "label": "Number",
-          "type": "number"
-        },
         {
           "label": "HTML",
           "tag": "h2",
