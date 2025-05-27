@@ -288,6 +288,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataReturnTransportationCost: number;
   calculatedDataTotalSecondResidence: number;
   calculatedDataTotalAssessedNeed: number;
+  calculatedDataProgramRelatedCosts: number;
   calculatedDataTotalBookCost: number;
   awardNetProvincialTotalAward: number;
   calculatedDataTotalChildSpousalSupport: number;

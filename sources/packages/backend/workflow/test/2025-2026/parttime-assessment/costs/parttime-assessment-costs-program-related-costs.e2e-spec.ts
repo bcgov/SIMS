@@ -7,8 +7,8 @@ import {
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-costs.`, () => {
   it(
-    "Should get program related costs as offering program related costs when the DMN limit for books and supplies " +
-      "minus the program year total part-time books and supplies cost has the greater value.",
+    "Should get program related costs as offering program related costs" +
+      "when the offering program related costs are less than or equal to the DMN limit for books and supplies.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -24,14 +24,14 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
         );
       // Assert
       expect(
-        calculatedAssessment.variables.calculatedDataTotalAssessedNeed,
-      ).toBe(22962);
+        calculatedAssessment.variables.calculatedDataProgramRelatedCosts,
+      ).toBe(1730);
     },
   );
 
   it(
     "Should get program related costs as the DMN limit for books and supplies " +
-      "minus the program year total part-time books and supplies cost when offering program related costs has the greater value.",
+      "when the offering program related costs are greater than the DMN limit for books and supplies.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -47,14 +47,14 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
         );
       // Assert
       expect(
-        calculatedAssessment.variables.calculatedDataTotalAssessedNeed,
-      ).toBe(24232);
+        calculatedAssessment.variables.calculatedDataProgramRelatedCosts,
+      ).toBe(3000);
     },
   );
 
-    it(
-    "Should get program related costs as the DMN limit for books and supplies " +
-      "minus the program year total part-time books and supplies cost that will be less than offering program related costs.",
+  it(
+    "Should get program related costs as the offering program related costs minus program year total part-time books and supplies cost " +
+      "when there is a program year total part-time books and supplies cost less than the offering program related costs.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -71,8 +71,32 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
         );
       // Assert
       expect(
-        calculatedAssessment.variables.calculatedDataTotalAssessedNeed,
-      ).toBe(23732);
+        calculatedAssessment.variables.calculatedDataProgramRelatedCosts,
+      ).toBe(2500);
+    },
+  );
+
+  it(
+    "Should get program related costs as the offering program related costs minus program year total part-time books and supplies cost " +
+      "when there is a program year total part-time books and supplies cost greater than the offering program related costs.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.offeringWeeks = 30;
+      assessmentConsolidatedData.offeringProgramRelatedCosts = 1000;
+      assessmentConsolidatedData.programYearTotalPartTimeBooksAndSuppliesCost = 3000;
+
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(
+        calculatedAssessment.variables.calculatedDataProgramRelatedCosts,
+      ).toBe(0);
     },
   );
 
