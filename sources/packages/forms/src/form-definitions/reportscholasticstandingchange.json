@@ -1201,22 +1201,22 @@
                           "label": "Tuition",
                           "prefix": "$",
                           "customClass": "font-weight-bold w-50",
+                          "applyMaskOn": "change",
                           "mask": false,
-                          "spellcheck": true,
                           "tableView": false,
-                          "currency": "USD",
+                          "delimiter": true,
+                          "requireDecimal": false,
                           "inputFormat": "plain",
                           "truncateMultipleSpaces": false,
                           "validate": {
-                            "required": true
+                            "required": true,
+                            "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                           },
+                          "validateWhenHidden": false,
                           "key": "tuition",
-                          "type": "currency",
-                          "input": true,
-                          "delimiter": true,
-                          "inputType": "text",
-                          "decimalLimit": 2,
-                          "requireDecimal": true
+                          "type": "number",
+                          "decimalLimit": 0,
+                          "input": true
                         }
                       ],
                       "width": 6,
@@ -1231,22 +1231,23 @@
                         {
                           "label": "Mandatory fees",
                           "prefix": "$",
+                          "applyMaskOn": "change",
                           "customClass": "font-weight-bold w-50",
                           "mask": false,
-                          "spellcheck": true,
                           "tableView": false,
-                          "currency": "USD",
-                          "inputFormat": "plain",
-                          "validate": {
-                            "required": true
-                          },
-                          "key": "mandatoryFees",
-                          "type": "currency",
-                          "input": true,
                           "delimiter": true,
-                          "inputType": "text",
-                          "decimalLimit": 2,
-                          "requireDecimal": true
+                          "requireDecimal": false,
+                          "inputFormat": "plain",
+                          "truncateMultipleSpaces": false,
+                          "validate": {
+                            "required": true,
+                            "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                          },
+                          "validateWhenHidden": false,
+                          "key": "mandatoryFees",
+                          "type": "number",
+                          "decimalLimit": 0,
+                          "input": true
                         }
                       ],
                       "width": 6,
@@ -1271,23 +1272,23 @@
                         {
                           "label": "Books and supplies",
                           "prefix": "$",
+                          "applyMaskOn": "change",
                           "customClass": "font-weight-bold w-50",
                           "mask": false,
-                          "spellcheck": true,
                           "tableView": false,
-                          "currency": "USD",
+                          "delimiter": true,
+                          "requireDecimal": false,
                           "inputFormat": "plain",
                           "truncateMultipleSpaces": false,
                           "validate": {
-                            "required": true
+                            "required": true,
+                            "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                           },
+                          "validateWhenHidden": false,
                           "key": "booksAndSupplies",
-                          "type": "currency",
-                          "input": true,
-                          "delimiter": true,
-                          "inputType": "text",
-                          "decimalLimit": 2,
-                          "requireDecimal": true
+                          "type": "number",
+                          "decimalLimit": 0,
+                          "input": true
                         }
                       ],
                       "width": 6,
@@ -1302,23 +1303,23 @@
                         {
                           "label": "Exceptional costs",
                           "prefix": "$",
+                          "applyMaskOn": "change",
                           "customClass": "font-weight-bold w-50",
                           "mask": false,
-                          "spellcheck": true,
                           "tableView": false,
-                          "currency": "USD",
+                          "delimiter": true,
+                          "requireDecimal": false,
                           "inputFormat": "plain",
                           "truncateMultipleSpaces": false,
                           "validate": {
-                            "required": true
+                            "required": true,
+                            "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                           },
+                          "validateWhenHidden": false,
                           "key": "exceptionalCosts",
-                          "type": "currency",
-                          "input": true,
-                          "delimiter": true,
-                          "inputType": "text",
-                          "decimalLimit": 2,
-                          "requireDecimal": true
+                          "type": "number",
+                          "decimalLimit": 0,
+                          "input": true
                         }
                       ],
                       "width": 6,
