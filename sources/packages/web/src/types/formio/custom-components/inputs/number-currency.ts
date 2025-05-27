@@ -21,4 +21,3 @@ export const CURRENCY = {
     input: true,
   },
 };
-    
