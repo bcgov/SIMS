@@ -32,6 +32,7 @@ describe(
     let processor: PartTimeMSFAAProcessIntegrationScheduler;
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
+    let msfaaLifeTimeSequenceGroupName: string;
 
     beforeAll(async () => {
       const { nestApplication, dataSource, sshClientMock } =
@@ -45,12 +46,22 @@ describe(
 
     beforeEach(async () => {
       jest.clearAllMocks();
-      // Expected sequence control group name.
-      const msfaaSequenceGroupName = getMSFAASequenceGroupName(
+      // Expected life time sequence control group name.
+      msfaaLifeTimeSequenceGroupName = getMSFAASequenceGroupName(
         OfferingIntensity.partTime,
       );
-      // Reset MSFAA part time number.
-      await db.sequenceControl.delete({ sequenceName: msfaaSequenceGroupName });
+      // Expected daily file sequence control group name.
+      const msfaaDailyFileSequenceGroupName = getMSFAASequenceGroupName(
+        OfferingIntensity.partTime,
+        true,
+      );
+      // Reset MSFAA Part-time sequence number.
+      await db.sequenceControl.delete({
+        sequenceName: In([
+          msfaaLifeTimeSequenceGroupName,
+          msfaaDailyFileSequenceGroupName,
+        ]),
+      });
       // Cancel any pending MSFAA.
       await db.msfaaNumber.update(
         { cancelledDate: IsNull() },
@@ -58,8 +69,14 @@ describe(
       );
     });
 
-    it("Should generate an MSFAA part-time file and update the dateRequested when there are pending MSFAA records.", async () => {
+    it("Should generate an MSFAA Part-time file and update the dateRequested when there are pending MSFAA records.", async () => {
       // Arrange
+      // Set the life time sequence value to ensure it is different from the file name sequence value.
+      const lifeTimeSequenceValue = "100";
+      await db.sequenceControl.insert({
+        sequenceName: msfaaLifeTimeSequenceGroupName,
+        sequenceNumber: lifeTimeSequenceValue,
+      });
       const msfaaInputData = [
         MSFAA_PART_TIME_MARRIED,
         MSFAA_PART_TIME_OTHER_COUNTRY,
@@ -84,7 +101,7 @@ describe(
         getProcessDateFromMSFAARequestContent(createMSFAARequestContentMock);
       const uploadedFile = getUploadedFile(sftpClientMock);
       expect(uploadedFile.remoteFilePath).toBe(
-        `MSFT-Request\\DPBC.EDU.MSFA.SENT.PT.${processDateFormatted}.010`,
+        `MSFT-Request\\DPBC.EDU.MSFA.SENT.PT.${processDateFormatted}.001`,
       );
       // Assert process result.
       expect(result).toStrictEqual([
@@ -102,7 +119,7 @@ describe(
       ] = uploadedFile.fileLines;
       // Validate header.
       expect(header).toBe(
-        `100BC  MSFAA SENT                              ${processDateFormatted}${processTimeFormatted}000010                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       `,
+        `100BC  MSFAA SENT                              ${processDateFormatted}${processTimeFormatted}000101                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       `,
       );
       // Validate records.
       expect(msfaaPartTimeMarried).toBe(
