@@ -433,6 +433,7 @@ dmnX (comes from dmn)</bpmn:text>
           <zeebe:output source="=if studentDataDaycareCosts11YearsOrUnder = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts11YearsOrUnder" target="studentDataDaycareCosts11YearsOrUnder" />
           <zeebe:output source="=if studentDataDaycareCosts12YearsOrOver = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts12YearsOrOver" target="studentDataDaycareCosts12YearsOrOver" />
           <zeebe:output source="=if calculatedDataScholarshipsBursaries = null&#10;then 0&#10;else&#10;  calculatedDataScholarshipsBursaries" target="calculatedDataScholarshipsBursaries" />
+          <zeebe:output source="=if programYearTotalPartTimeBooksAndSuppliesCost = null&#10;then 0&#10;else&#10;programYearTotalPartTimeBooksAndSuppliesCost" target="programYearTotalPartTimeBooksAndSuppliesCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1tcyqyg</bpmn:incoming>
