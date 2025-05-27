@@ -180,25 +180,25 @@
         {
           "label": "Enter your spouse/common-law partner's reported total income from line 15000 of their {{data.calculatedTaxYear}} income tax return. If they did not file a {{data.calculatedTaxYear}} income tax return, enter their total income from all sources both inside and outside of Canada.",
           "prefix": "$",
-          "customClass": "font-weight-bold",
+          "applyMaskOn": "change",
           "mask": false,
-          "spellcheck": true,
           "tableView": false,
-          "currency": "CAD",
+          "delimiter": true,
+          "requireDecimal": false,
           "inputFormat": "plain",
+          "truncateMultipleSpaces": false,
           "validate": {
-            "required": true
+            "required": true,
+            "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
           },
+          "validateWhenHidden": false,
           "key": "partnerEstimatedIncome",
           "conditional": {
-            "show": "true"
+            "show": true
           },
-          "type": "currency",
-          "input": true,
-          "delimiter": true,
-          "inputType": "text",
+          "type": "number",
           "decimalLimit": 0,
-          "requireDecimal": false
+          "input": true
         }
       ],
       "allowPrevious": false,
@@ -332,29 +332,27 @@
             {
               "label": "My spouse/common-law partner's current year gross income is:",
               "prefix": "$",
-              "customClass": "font-weight-bold",
+              "applyMaskOn": "change",
               "mask": false,
-              "spellcheck": true,
               "tableView": false,
-              "currency": "CAD",
+              "delimiter": true,
+              "requireDecimal": false,
               "inputFormat": "plain",
+              "truncateMultipleSpaces": false,
               "validate": {
                 "required": true,
-                "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
+                "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
               },
+              "validateWhenHidden": false,
               "key": "currentYearPartnerIncome",
               "conditional": {
-                "show": "true",
+                "show": true,
                 "when": "hasCurrentYearPartnerIncome",
                 "eq": "yes"
               },
-              "type": "currency",
-              "input": true,
-              "delimiter": true,
-              "inputType": "text",
+              "type": "number",
               "decimalLimit": 0,
-              "requireDecimal": false,
-              "lockKey": true
+              "input": true
             },
             {
               "label": "Select the reason for your spouse/common-law partner's significant decrease in gross income:",
