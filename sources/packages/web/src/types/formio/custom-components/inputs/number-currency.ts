@@ -7,7 +7,7 @@ export const CURRENCY = {
     applyMaskOn: "change",
     mask: false,
     tableView: false,
-    delimiter: false,
+    delimiter: true,
     requireDecimal: false,
     inputFormat: "plain",
     truncateMultipleSpaces: false,
