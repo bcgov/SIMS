@@ -7,7 +7,7 @@ import {
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-costs.`, () => {
   it(
-    "Should get program related costs as offering program related costs" +
+    "Should get program related costs as offering program related costs " +
       "when the offering program related costs are less than or equal to the DMN limit for books and supplies.",
     async () => {
       // Arrange
@@ -53,8 +53,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
   );
 
   it(
-    "Should get program related costs as the offering program related costs minus program year total part-time books and supplies cost " +
-      "when there is a program year total part-time books and supplies cost less than the offering program related costs.",
+    "Should get the lower value of the DMN limit minus program year total part-time books and supplies cost or the offering program related costs " +
+      "when the DMN limit difference is less than the offering program related costs it will reduce the output.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -77,8 +77,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-program-related-
   );
 
   it(
-    "Should get program related costs as the offering program related costs minus program year total part-time books and supplies cost " +
-      "when there is a program year total part-time books and supplies cost greater than the offering program related costs.",
+    "Should get the lower value of the DMN limit minus program year total part-time books and supplies cost or the offering program related costs " +
+      "when the program year total books and supplies cost is equal to or greater than the DMN limit the output should be 0.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
