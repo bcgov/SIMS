@@ -21,7 +21,6 @@ import {
   APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
   APPLICATION_WITHDRAWAL_VALIDATION_ERROR,
 } from "../../constants";
-import { OfferingIntensity } from "@sims/sims-db";
 
 /**
  * Scholastic standing controller service.
@@ -66,62 +65,31 @@ export class ScholasticStandingControllerService {
   /**
    * Get Scholastic Standing summary details.
    * @param studentId student id to retrieve the scholastic standing summary.
-   * @param options options for the scholastic standing summary.
-   * - `getPartTimeLifetimeUnsuccessfulCompletionWeeks` flag to indicate if the
-   * part-time lifetime unsuccessful completion weeks should be included in the
-   * response.
    * @returns Scholastic Standing summary details.
    */
   async getScholasticStandingSummary(
     studentId: number,
-    options?: { getPartTimeLifetimeUnsuccessfulCompletionWeeks?: boolean },
   ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
     const studentExists = await this.studentService.studentExists(studentId);
     if (!studentExists) {
       throw new NotFoundException("Student does not exists.");
     }
-    const scholasticStandingSummaryPromise =
-      this.studentScholasticStandingsService.getScholasticStandingSummary(
+    const scholasticStandingSummary =
+      await this.studentScholasticStandingsService.getScholasticStandingSummary(
         studentId,
       );
-    const sfasUnsuccessfulCompletionWeeksPromise =
-      this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
+    const sfasUnsuccessfulCompletionWeeks =
+      await this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
         studentId,
       );
-    const [scholasticStandingSummary, sfasUnsuccessfulCompletionWeeks] =
-      await Promise.all([
-        scholasticStandingSummaryPromise,
-        sfasUnsuccessfulCompletionWeeksPromise,
-      ]);
-    const [partTimeUnsuccessfulCompletionWeeks] = scholasticStandingSummary
-      .filter(
-        (standing) =>
-          standing?.offeringIntensity === OfferingIntensity.partTime,
-      )
-      .map((standing) => standing.totalUnsuccessfulWeeks);
-    const [fullTimeUnsuccessfulCompletionWeeks] = scholasticStandingSummary
-      .filter(
-        (standing) =>
-          standing?.offeringIntensity === OfferingIntensity.fullTime,
-      )
-      .map((standing) => standing.totalUnsuccessfulWeeks);
-    const partTimeTotalUnsuccessfulCompletionWeeks =
-      (partTimeUnsuccessfulCompletionWeeks ?? 0) +
+    const partTimeLifetimeUnsuccessfulCompletionWeeks =
+      scholasticStandingSummary.partTimeUnsuccessfulCompletionWeeks ?? 0;
+    const fullTimeLifetimeUnsuccessfulCompletionWeeks =
+      (scholasticStandingSummary.fullTimeUnsuccessfulCompletionWeeks ?? 0) +
       (sfasUnsuccessfulCompletionWeeks ?? 0);
-    const fullTimeTotalUnsuccessfulCompletionWeeks =
-      (fullTimeUnsuccessfulCompletionWeeks ?? 0) +
-      (sfasUnsuccessfulCompletionWeeks ?? 0);
-    if (options?.getPartTimeLifetimeUnsuccessfulCompletionWeeks) {
-      return {
-        fullTimeLifetimeUnsuccessfulCompletionWeeks:
-          fullTimeTotalUnsuccessfulCompletionWeeks,
-        partTimeLifetimeUnsuccessfulCompletionWeeks:
-          partTimeTotalUnsuccessfulCompletionWeeks,
-      };
-    }
     return {
-      fullTimeLifetimeUnsuccessfulCompletionWeeks:
-        fullTimeTotalUnsuccessfulCompletionWeeks,
+      fullTimeLifetimeUnsuccessfulCompletionWeeks,
+      partTimeLifetimeUnsuccessfulCompletionWeeks,
     };
   }
 

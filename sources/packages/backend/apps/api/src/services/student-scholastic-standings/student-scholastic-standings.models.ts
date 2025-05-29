@@ -22,3 +22,8 @@ export interface ScholasticStandingSummary {
   totalUnsuccessfulWeeks: number;
   offeringIntensity: OfferingIntensity;
 }
+
+export interface ScholasticStandingSummaryDetails {
+  fullTimeUnsuccessfulCompletionWeeks: number;
+  partTimeUnsuccessfulCompletionWeeks: number;
+}

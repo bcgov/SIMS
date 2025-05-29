@@ -54,7 +54,10 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ lifetimeUnsuccessfulCompletionWeeks: 27 });
+      .expect({
+        fullTimeLifetimeUnsuccessfulCompletionWeeks: 27,
+        partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+      });
   });
 
   it("Should not retrieve the sfas system data as a part of the scholastic standing summary for the provided student when the combination of birth date, last name and sin provided does not exist in the SFAS relations.", async () => {
@@ -85,6 +88,9 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ lifetimeUnsuccessfulCompletionWeeks: 15 });
+      .expect({
+        fullTimeLifetimeUnsuccessfulCompletionWeeks: 15,
+        partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+      });
   });
 });

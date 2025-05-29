@@ -46,7 +46,7 @@ export class ScholasticStandingSubmittedDetailsAPIOutDTO extends IntersectionTyp
  */
 export class ScholasticStandingSummaryDetailsAPIOutDTO {
   fullTimeLifetimeUnsuccessfulCompletionWeeks: number;
-  partTimeLifetimeUnsuccessfulCompletionWeeks?: number;
+  partTimeLifetimeUnsuccessfulCompletionWeeks: number;
 }
 
 /**

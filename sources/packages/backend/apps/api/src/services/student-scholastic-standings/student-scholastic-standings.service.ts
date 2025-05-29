@@ -17,6 +17,7 @@ import {
 import {
   ScholasticStanding,
   ScholasticStandingSummary,
+  ScholasticStandingSummaryDetails,
 } from "./student-scholastic-standings.models";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import {
@@ -513,13 +514,13 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * Get scholastic standing summary details.
+   * Get scholastic standing unsuccessful completion weeks summary details.
    * @param studentId student id to retrieve the scholastic standing summary details.
-   * @return student scholastic standing summary details.
+   * @return student scholastic standing unsuccessful completion weeks summary details.
    */
   async getScholasticStandingSummary(
     studentId: number,
-  ): Promise<ScholasticStandingSummary[]> {
+  ): Promise<ScholasticStandingSummaryDetails> {
     const studentScholasticStandingSummary = this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select(
@@ -529,11 +530,29 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .addSelect("offering.offeringIntensity", "offeringIntensity")
       .innerJoin("studentScholasticStanding.application", "application")
       .innerJoin("application.student", "student")
-      .innerJoin("studentScholasticStanding.referenceOffering", "offering")
+      .innerJoin("application.currentAssessment", "assessment")
+      .innerJoin("assessment.offering", "offering")
       .where("student.id = :studentId", {
         studentId,
       })
       .groupBy("student.id, offering.offeringIntensity");
-    return studentScholasticStandingSummary.getRawMany<ScholasticStandingSummary>();
+    const scholasticStandingSummary =
+      await studentScholasticStandingSummary.getRawMany<ScholasticStandingSummary>();
+    const [partTimeUnsuccessfulCompletionWeeks] = scholasticStandingSummary
+      .filter(
+        (standing) =>
+          standing?.offeringIntensity === OfferingIntensity.partTime,
+      )
+      .map((standing) => standing.totalUnsuccessfulWeeks);
+    const [fullTimeUnsuccessfulCompletionWeeks] = scholasticStandingSummary
+      .filter(
+        (standing) =>
+          standing?.offeringIntensity === OfferingIntensity.fullTime,
+      )
+      .map((standing) => standing.totalUnsuccessfulWeeks);
+    return {
+      partTimeUnsuccessfulCompletionWeeks,
+      fullTimeUnsuccessfulCompletionWeeks,
+    };
   }
 }

@@ -182,7 +182,6 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
     return this.scholasticStandingControllerService.getScholasticStandingSummary(
       studentId,
-      { getPartTimeLifetimeUnsuccessfulCompletionWeeks: true },
     );
   }
 

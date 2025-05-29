@@ -63,6 +63,9 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ lifetimeUnsuccessfulCompletionWeeks: 17 });
+      .expect({
+        fullTimeLifetimeUnsuccessfulCompletionWeeks: 17,
+        partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+      });
   });
 });

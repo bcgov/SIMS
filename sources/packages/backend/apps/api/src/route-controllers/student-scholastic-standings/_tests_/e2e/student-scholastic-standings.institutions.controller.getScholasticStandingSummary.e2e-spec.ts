@@ -127,7 +127,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ lifetimeUnsuccessfulCompletionWeeks: 30 });
+      .expect({
+        fullTimeLifetimeUnsuccessfulCompletionWeeks: 30,
+        partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+      });
   });
 
   it("Should return zero lifetime unsuccessful completion weeks for the provided student as a part of the student scholastic summary when the student has no unsuccessful completion weeks in SIMS or in the SFAS system when a BC Public Institution requests it.", async () => {
@@ -146,6 +149,9 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ lifetimeUnsuccessfulCompletionWeeks: 0 });
+      .expect({
+        fullTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+        partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+      });
   });
 });
