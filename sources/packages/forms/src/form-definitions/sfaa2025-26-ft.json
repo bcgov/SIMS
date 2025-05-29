@@ -3132,11 +3132,6 @@
                   "collapsible": false,
                   "hideLabel": true,
                   "key": "uploadSupportingDocuments1",
-                  "conditional": {
-                    "show": true,
-                    "when": "parentbcResident",
-                    "eq": "no"
-                  },
                   "customConditional": "show = data['bcParentLivingSituation'];",
                   "type": "panel",
                   "input": false,
