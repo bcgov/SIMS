@@ -189,7 +189,7 @@
           "truncateMultipleSpaces": false,
           "validate": {
             "required": true,
-            "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+            "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
           },
           "validateWhenHidden": false,
           "key": "partnerEstimatedIncome",
@@ -341,7 +341,7 @@
               "truncateMultipleSpaces": false,
               "validate": {
                 "required": true,
-                "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
               },
               "validateWhenHidden": false,
               "key": "currentYearPartnerIncome",
