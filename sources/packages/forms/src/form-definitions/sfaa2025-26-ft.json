@@ -3034,7 +3034,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "Application Exception - Parent for B.C. residency",
+                  "label": "Application Exception - Parent B.C. residency",
                   "calculateValue": "value = \"studentApplicationException\";",
                   "calculateServer": true,
                   "key": "parentsResidencyApplicationException",
