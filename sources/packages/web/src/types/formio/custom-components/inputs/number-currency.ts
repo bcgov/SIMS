@@ -1,6 +1,6 @@
 export const CURRENCY = {
   title: "Number - Currency",
-  icon: "money",
+  icon: "currency-dollar",
   schema: {
     label: "Currency",
     prefix: "$",
