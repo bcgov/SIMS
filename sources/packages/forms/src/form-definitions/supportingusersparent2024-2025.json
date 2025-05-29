@@ -491,22 +491,19 @@
                   "applyMaskOn": "change",
                   "mask": false,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
                   "validateWhenHidden": false,
                   "key": "parentalContributions",
-                  "type": "currency",
-                  "spellcheck": true,
-                  "input": true,
-                  "delimiter": true,
-                  "hideOnChildrenHidden": false,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "Enter your reported total income from line 15000 of your {{data.calculatedTaxYear}} income tax return. If you did not file a {{data.calculatedTaxYear}} income tax return, enter your total income from all sources both inside and outside of Canada",
@@ -514,7 +511,8 @@
                   "applyMaskOn": "change",
                   "mask": false,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
@@ -523,14 +521,9 @@
                   },
                   "validateWhenHidden": false,
                   "key": "totalIncome",
-                  "type": "currency",
-                  "spellcheck": true,
-                  "input": true,
-                  "delimiter": true,
-                  "hideOnChildrenHidden": false,
-                  "inputType": "text",
+                  "type": "number",
                   "decimalLimit": 0,
-                  "requireDecimal": false
+                  "input": true
                 },
                 {
                   "label": "Canada Pension Plan contributions (CPP) from line 30800 (contributions through employment). Enter ‘0’ if none.",
@@ -538,102 +531,99 @@
                   "applyMaskOn": "change",
                   "mask": false,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
                   "validateWhenHidden": false,
                   "key": "cppLine30800",
-                  "type": "currency",
-                  "spellcheck": true,
-                  "input": true,
-                  "delimiter": true,
-                  "hideOnChildrenHidden": false,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "Enter the total net value of all Canadian and foreign assets (do not include RRSPs, principal residence or business). Enter ‘0’ if none.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
-                  "inputFormat": "plain",
-                  "validate": {
-                    "required": true
-                  },
-                  "key": "foreignAssets",
-                  "type": "currency",
-                  "input": true,
                   "delimiter": true,
-                  "hideOnChildrenHidden": false,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": false,
+                  "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
+                  "validate": {
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                  },
+                  "validateWhenHidden": false,
+                  "key": "foreignAssets",
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "Canada Pension Plan contributions (CPP) from line 31000 (contributions payable on self-employment and other earnings). Enter ‘0’ if none.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
-                  "inputFormat": "plain",
-                  "validate": {
-                    "required": true
-                  },
-                  "key": "cppLine31000",
-                  "type": "currency",
-                  "input": true,
                   "delimiter": true,
-                  "hideOnChildrenHidden": false,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": false,
+                  "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
+                  "validate": {
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                  },
+                  "validateWhenHidden": false,
+                  "key": "cppLine31000",
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
-                  "label": "Total income tax from line 43500. Enter ‘0’ if none",
+                  "label": "Total income tax from line 43500. Enter ‘0’ if none.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
-                  "inputFormat": "plain",
-                  "validate": {
-                    "required": true
-                  },
-                  "key": "totalIncomeTaxLine43500",
-                  "type": "currency",
-                  "input": true,
                   "delimiter": true,
-                  "hideOnChildrenHidden": false,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": false,
+                  "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
+                  "validate": {
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                  },
+                  "validateWhenHidden": false,
+                  "key": "totalIncomeTaxLine43500",
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "Employment insurance (EI) from line 31200. Enter ‘0’ if none.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
-                  "inputFormat": "plain",
-                  "validate": {
-                    "required": true
-                  },
-                  "key": "eiLine31200",
-                  "type": "currency",
-                  "input": true,
                   "delimiter": true,
-                  "hideOnChildrenHidden": false,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "requireDecimal": false,
+                  "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
+                  "validate": {
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                  },
+                  "validateWhenHidden": false,
+                  "key": "eiLine31200",
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "Do you have any dependant(s) other than the Student?",
