@@ -3123,9 +3123,6 @@
                   },
                   "validateWhenHidden": false,
                   "key": "bcParentLivingSituation",
-                  "attributes": {
-                    "data-cy": "bclivingSituationvv"
-                  },
                   "type": "radio",
                   "input": true
                 },
@@ -3215,7 +3212,7 @@
                       "hideLabel": true,
                       "tableView": false,
                       "storage": "url",
-                      "dir": "Not a BC Resident - Supporting Documents",
+                      "dir": "Parent not a BC resident - Supporting Documents",
                       "webcam": false,
                       "fileTypes": [
                         {
