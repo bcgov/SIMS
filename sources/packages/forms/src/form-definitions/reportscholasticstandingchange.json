@@ -27,6 +27,17 @@
       "isNew": false
     },
     {
+      "input": true,
+      "tableView": false,
+      "key": "maxMoneyValue",
+      "label": "Max Money Value",
+      "persistent": false,
+      "type": "hidden",
+      "lockKey": true,
+      "calculateValue": "value = 100000000;",
+      "calculateServer": true
+    },
+    {
       "label": "Offering Intensity (Part Time or Full Time) - Used to define custom labels",
       "key": "applicationOfferingIntensity",
       "type": "hidden",
