@@ -1,4 +1,7 @@
-import { StudentScholasticStandingChangeType } from "@sims/sims-db";
+import {
+  OfferingIntensity,
+  StudentScholasticStandingChangeType,
+} from "@sims/sims-db";
 
 export interface ScholasticStanding {
   dateOfChange?: string;
@@ -17,4 +20,5 @@ export interface ScholasticStanding {
  */
 export interface ScholasticStandingSummary {
   totalUnsuccessfulWeeks: number;
+  offeringIntensity: OfferingIntensity;
 }

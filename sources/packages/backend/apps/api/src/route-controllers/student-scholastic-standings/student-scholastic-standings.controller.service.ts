@@ -21,6 +21,7 @@ import {
   APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
   APPLICATION_WITHDRAWAL_VALIDATION_ERROR,
 } from "../../constants";
+import { OfferingIntensity } from "@sims/sims-db";
 
 /**
  * Scholastic standing controller service.
@@ -65,10 +66,15 @@ export class ScholasticStandingControllerService {
   /**
    * Get Scholastic Standing summary details.
    * @param studentId student id to retrieve the scholastic standing summary.
+   * @param options options for the scholastic standing summary.
+   * - `getPartTimeLifetimeUnsuccessfulCompletionWeeks` flag to indicate if the
+   * part-time lifetime unsuccessful completion weeks should be included in the
+   * response.
    * @returns Scholastic Standing summary details.
    */
   async getScholasticStandingSummary(
     studentId: number,
+    options?: { getPartTimeLifetimeUnsuccessfulCompletionWeeks?: boolean },
   ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
     const studentExists = await this.studentService.studentExists(studentId);
     if (!studentExists) {
@@ -87,11 +93,35 @@ export class ScholasticStandingControllerService {
         scholasticStandingSummaryPromise,
         sfasUnsuccessfulCompletionWeeksPromise,
       ]);
-    const totalUnsuccessfulCompletionWeeks =
-      (scholasticStandingSummary?.totalUnsuccessfulWeeks ?? 0) +
+    const [partTimeUnsuccessfulCompletionWeeks] = scholasticStandingSummary
+      .filter(
+        (standing) =>
+          standing?.offeringIntensity === OfferingIntensity.partTime,
+      )
+      .map((standing) => standing.totalUnsuccessfulWeeks);
+    const [fullTimeUnsuccessfulCompletionWeeks] = scholasticStandingSummary
+      .filter(
+        (standing) =>
+          standing?.offeringIntensity === OfferingIntensity.fullTime,
+      )
+      .map((standing) => standing.totalUnsuccessfulWeeks);
+    const partTimeTotalUnsuccessfulCompletionWeeks =
+      (partTimeUnsuccessfulCompletionWeeks ?? 0) +
       (sfasUnsuccessfulCompletionWeeks ?? 0);
+    const fullTimeTotalUnsuccessfulCompletionWeeks =
+      (fullTimeUnsuccessfulCompletionWeeks ?? 0) +
+      (sfasUnsuccessfulCompletionWeeks ?? 0);
+    if (options?.getPartTimeLifetimeUnsuccessfulCompletionWeeks) {
+      return {
+        fullTimeLifetimeUnsuccessfulCompletionWeeks:
+          fullTimeTotalUnsuccessfulCompletionWeeks,
+        partTimeLifetimeUnsuccessfulCompletionWeeks:
+          partTimeTotalUnsuccessfulCompletionWeeks,
+      };
+    }
     return {
-      lifetimeUnsuccessfulCompletionWeeks: totalUnsuccessfulCompletionWeeks,
+      fullTimeLifetimeUnsuccessfulCompletionWeeks:
+        fullTimeTotalUnsuccessfulCompletionWeeks,
     };
   }
 

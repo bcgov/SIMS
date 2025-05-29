@@ -519,19 +519,21 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    */
   async getScholasticStandingSummary(
     studentId: number,
-  ): Promise<ScholasticStandingSummary> {
+  ): Promise<ScholasticStandingSummary[]> {
     const studentScholasticStandingSummary = this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select(
         "SUM(studentScholasticStanding.unsuccessfulWeeks)::int",
         "totalUnsuccessfulWeeks",
       )
+      .addSelect("offering.offeringIntensity", "offeringIntensity")
       .innerJoin("studentScholasticStanding.application", "application")
       .innerJoin("application.student", "student")
+      .innerJoin("studentScholasticStanding.referenceOffering", "offering")
       .where("student.id = :studentId", {
         studentId,
       })
-      .groupBy("student.id");
-    return studentScholasticStandingSummary.getRawOne<ScholasticStandingSummary>();
+      .groupBy("student.id, offering.offeringIntensity");
+    return studentScholasticStandingSummary.getRawMany<ScholasticStandingSummary>();
   }
 }

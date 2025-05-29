@@ -45,7 +45,8 @@ export class ScholasticStandingSubmittedDetailsAPIOutDTO extends IntersectionTyp
  * Represents the scholastic standing unsuccessful completion weeks.
  */
 export class ScholasticStandingSummaryDetailsAPIOutDTO {
-  lifetimeUnsuccessfulCompletionWeeks: number;
+  fullTimeLifetimeUnsuccessfulCompletionWeeks: number;
+  partTimeLifetimeUnsuccessfulCompletionWeeks?: number;
 }
 
 /**
