@@ -68,7 +68,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
       assessmentConsolidatedData.offeringWeeks = 18;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.calculatedDataPartnerStudyWeeks = "3";
+      assessmentConsolidatedData.studentDataPartnerStudyWeeks = 3;
       // Creates 1 eligible dependent.
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
@@ -111,7 +111,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
       assessmentConsolidatedData.offeringWeeks = 18;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.calculatedDataPartnerStudyWeeks = "13";
+      assessmentConsolidatedData.studentDataPartnerStudyWeeks = 13;
       // Creates 1 eligible dependent.
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
