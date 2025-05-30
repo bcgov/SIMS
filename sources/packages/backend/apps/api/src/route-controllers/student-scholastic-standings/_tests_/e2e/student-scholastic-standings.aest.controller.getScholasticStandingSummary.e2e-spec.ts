@@ -29,26 +29,26 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
   it("Should get the scholastic standing summary for the provided student including the data retrieved from the sfas system when a ministry user requests it.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
-    const partTimeApplication = await saveFakeApplication(
-      db.dataSource,
-      {
-        student,
-      },
-      {
-        initialValues: {
-          offeringIntensity: OfferingIntensity.partTime,
-        },
-      },
-    );
+    const partTimeApplication = await saveFakeApplication(db.dataSource, {
+      student,
+    });
     const partTimeScholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application: partTimeApplication },
       {
         initialValues: { unsuccessfulWeeks: 15 },
       },
     );
-    const fullTimeApplication = await saveFakeApplication(db.dataSource, {
-      student,
-    });
+    const fullTimeApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student,
+      },
+      {
+        initialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
     const fullTimeScholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application: fullTimeApplication },
       {
@@ -84,9 +84,17 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
   it("Should not retrieve the sfas system data as a part of the scholastic standing summary for the provided student when the combination of birth date, last name and sin provided does not exist in the SFAS relations.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
-    const application = await saveFakeApplication(db.dataSource, {
-      student,
-    });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        student,
+      },
+      {
+        initialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
     const scholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application },
       {

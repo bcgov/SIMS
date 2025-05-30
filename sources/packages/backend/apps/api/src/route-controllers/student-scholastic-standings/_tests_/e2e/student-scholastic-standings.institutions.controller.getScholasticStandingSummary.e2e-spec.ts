@@ -17,7 +17,7 @@ import {
   getInstitutionToken,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import { InstitutionLocation } from "@sims/sims-db";
+import { InstitutionLocation, OfferingIntensity } from "@sims/sims-db";
 import { saveFakeSFASIndividual } from "@sims/test-utils/factories/sfas-individuals";
 
 describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticStandingSummary.", () => {
@@ -80,19 +80,35 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
   it("Should get the scholastic standing summary for the provided student including the data retrieved from the sfas system when a BC Public Institution requests it.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
-    const firstApplication = await saveFakeApplication(db.dataSource, {
-      institutionLocation: collegeFLocation,
-      student,
-    });
+    const firstApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+        student,
+      },
+      {
+        initialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
     const { institution } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
     );
     collegeCLocation = createFakeInstitutionLocation({ institution });
-    const secondApplication = await saveFakeApplication(db.dataSource, {
-      institutionLocation: collegeCLocation,
-      student,
-    });
+    const secondApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeCLocation,
+        student,
+      },
+      {
+        initialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
     const firstAppScholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application: firstApplication },
       {
