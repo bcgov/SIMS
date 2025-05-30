@@ -1,8 +1,10 @@
 <template>
   <tab-container :enableCardView="false"
     ><student-restrictions :studentId="studentId" />
-    <student-scholastic-standing-limited-history :studentId="studentId"
-  /></tab-container>
+    <student-scholastic-standing-limited-history
+      :studentId="studentId"
+    ></student-scholastic-standing-limited-history
+  ></tab-container>
 </template>
 
 <script lang="ts">

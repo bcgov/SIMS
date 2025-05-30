@@ -187,6 +187,6 @@ export class SFASIndividualService {
       )
       .where("sfasIndividual.student.id = :studentId", { studentId })
       .getRawOne<SFASIndividualDataSummary>();
-    return sfasIndividualData?.totalUnsuccessfulWeeks;
+    return sfasIndividualData?.totalUnsuccessfulWeeks ?? 0;
   }
 }

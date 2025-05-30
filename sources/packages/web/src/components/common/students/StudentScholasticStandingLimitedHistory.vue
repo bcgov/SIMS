@@ -4,7 +4,7 @@
       <body-header title="Scholastic Standing Limited History" />
     </template>
     <content-group
-      ><p v-if="studentId" class="label-bold-normal">
+      ><p v-if="showPartTimeSummary" class="label-bold-normal">
         Number of Lifetime Weeks of Unsuccessful Completion for Part-time
         studies:
         {{
@@ -31,6 +31,11 @@ export default defineComponent({
     studentId: {
       type: Number,
       required: false,
+    },
+    showPartTimeSummary: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   setup(props) {

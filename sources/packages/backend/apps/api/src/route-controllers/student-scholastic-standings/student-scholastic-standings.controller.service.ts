@@ -83,10 +83,10 @@ export class ScholasticStandingControllerService {
         studentId,
       );
     const partTimeLifetimeUnsuccessfulCompletionWeeks =
-      scholasticStandingSummary.partTimeUnsuccessfulCompletionWeeks ?? 0;
+      scholasticStandingSummary.partTimeUnsuccessfulCompletionWeeks;
     const fullTimeLifetimeUnsuccessfulCompletionWeeks =
-      (scholasticStandingSummary.fullTimeUnsuccessfulCompletionWeeks ?? 0) +
-      (sfasUnsuccessfulCompletionWeeks ?? 0);
+      scholasticStandingSummary.fullTimeUnsuccessfulCompletionWeeks +
+      sfasUnsuccessfulCompletionWeeks;
     return {
       fullTimeLifetimeUnsuccessfulCompletionWeeks,
       partTimeLifetimeUnsuccessfulCompletionWeeks,

@@ -521,38 +521,32 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   async getScholasticStandingSummary(
     studentId: number,
   ): Promise<ScholasticStandingSummaryDetails> {
-    const studentScholasticStandingSummary = this.repo
+    const scholasticStandingSummary = await this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select(
         "SUM(studentScholasticStanding.unsuccessfulWeeks)::int",
         "totalUnsuccessfulWeeks",
       )
-      .addSelect("offering.offeringIntensity", "offeringIntensity")
+      .addSelect("application.offeringIntensity", "offeringIntensity")
       .innerJoin("studentScholasticStanding.application", "application")
       .innerJoin("application.student", "student")
-      .innerJoin("application.currentAssessment", "assessment")
-      .innerJoin("assessment.offering", "offering")
       .where("student.id = :studentId", {
         studentId,
       })
-      .groupBy("student.id, offering.offeringIntensity");
-    const scholasticStandingSummary =
-      await studentScholasticStandingSummary.getRawMany<ScholasticStandingSummary>();
-    const [partTimeUnsuccessfulCompletionWeeks] = scholasticStandingSummary
-      .filter(
-        (standing) =>
-          standing?.offeringIntensity === OfferingIntensity.partTime,
-      )
-      .map((standing) => standing.totalUnsuccessfulWeeks);
-    const [fullTimeUnsuccessfulCompletionWeeks] = scholasticStandingSummary
-      .filter(
-        (standing) =>
-          standing?.offeringIntensity === OfferingIntensity.fullTime,
-      )
-      .map((standing) => standing.totalUnsuccessfulWeeks);
+      .groupBy("application.offeringIntensity")
+      .getRawMany<ScholasticStandingSummary>();
+
+    const scholasticStandingSummaryPartTime = scholasticStandingSummary.find(
+      (summary) => summary.offeringIntensity === OfferingIntensity.partTime,
+    );
+    const scholasticStandingSummaryFullTime = scholasticStandingSummary.find(
+      (summary) => summary.offeringIntensity === OfferingIntensity.fullTime,
+    );
     return {
-      partTimeUnsuccessfulCompletionWeeks,
-      fullTimeUnsuccessfulCompletionWeeks,
+      partTimeUnsuccessfulCompletionWeeks:
+        scholasticStandingSummaryPartTime?.totalUnsuccessfulWeeks ?? 0,
+      fullTimeUnsuccessfulCompletionWeeks:
+        scholasticStandingSummaryFullTime?.totalUnsuccessfulWeeks ?? 0,
     };
   }
 }
