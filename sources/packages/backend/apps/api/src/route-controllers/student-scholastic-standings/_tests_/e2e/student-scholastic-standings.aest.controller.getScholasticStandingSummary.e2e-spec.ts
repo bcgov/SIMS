@@ -46,17 +46,9 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
         initialValues: { unsuccessfulWeeks: 15 },
       },
     );
-    const fullTimeApplication = await saveFakeApplication(
-      db.dataSource,
-      {
-        student,
-      },
-      {
-        initialValues: {
-          offeringIntensity: OfferingIntensity.fullTime,
-        },
-      },
-    );
+    const fullTimeApplication = await saveFakeApplication(db.dataSource, {
+      student,
+    });
     const fullTimeScholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application: fullTimeApplication },
       {
