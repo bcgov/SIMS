@@ -81,22 +81,24 @@
       "tableView": false,
       "components": [
         {
-          "input": true,
-          "tableView": true,
-          "inputType": "text",
           "label": "My total income in {{data.calculatedTaxYear}} was",
-          "key": "taxReturnIncome",
           "prefix": "$",
+          "applyMaskOn": "change",
+          "mask": false,
+          "tableView": false,
           "delimiter": true,
-          "decimalLimit": 0,
           "requireDecimal": false,
+          "inputFormat": "plain",
+          "truncateMultipleSpaces": false,
           "validate": {
             "required": true,
             "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
           },
-          "type": "currency",
-          "redrawOn": "calculatedTaxYear",
-          "lockKey": true
+          "validateWhenHidden": false,
+          "key": "taxReturnIncome",
+          "type": "number",
+          "decimalLimit": 0,
+          "input": true
         }
       ],
       "type": "panel",
@@ -243,29 +245,27 @@
             {
               "label": "My total current year gross income is:",
               "prefix": "$",
-              "customClass": "font-weight-bold",
+              "applyMaskOn": "change",
               "mask": false,
-              "spellcheck": true,
               "tableView": false,
-              "currency": "CAD",
+              "delimiter": true,
+              "requireDecimal": false,
               "inputFormat": "plain",
+              "truncateMultipleSpaces": false,
               "validate": {
                 "required": true,
                 "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
               },
+              "validateWhenHidden": false,
               "key": "currentYearIncome",
               "conditional": {
-                "show": "true",
+                "show": true,
                 "when": "hasSignificantDegreeOfIncome",
                 "eq": "yes"
               },
-              "type": "currency",
-              "input": true,
-              "delimiter": true,
-              "inputType": "text",
+              "type": "number",
               "decimalLimit": 0,
-              "requireDecimal": false,
-              "lockKey": true
+              "input": true
             },
             {
               "label": "Select the reason for your significant decrease in gross income.",
@@ -547,21 +547,24 @@
           "tableView": false,
           "components": [
             {
-              "input": true,
-              "tableView": true,
-              "inputType": "text",
               "label": "What are the daycare costs that you incur for your child(ren) age 11 years or under?",
-              "key": "daycareCosts11YearsOrUnder",
               "prefix": "$",
+              "applyMaskOn": "change",
+              "mask": false,
+              "tableView": false,
               "delimiter": true,
-              "decimalLimit": 2,
-              "requireDecimal": true,
+              "requireDecimal": false,
+              "inputFormat": "plain",
+              "truncateMultipleSpaces": false,
               "validate": {
                 "required": true,
                 "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
               },
-              "type": "currency",
-              "lockKey": true
+              "validateWhenHidden": false,
+              "key": "daycareCosts11YearsOrUnder",
+              "type": "number",
+              "decimalLimit": 0,
+              "input": true
             }
           ],
           "type": "panel",
@@ -605,21 +608,24 @@
           "tableView": false,
           "components": [
             {
-              "input": true,
-              "tableView": true,
-              "inputType": "text",
               "label": "What are the total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirm dependants 12 years of age and older?",
-              "key": "daycareCosts12YearsOrOver",
               "prefix": "$",
+              "applyMaskOn": "change",
+              "mask": false,
+              "tableView": false,
               "delimiter": true,
-              "decimalLimit": 2,
-              "requireDecimal": true,
+              "requireDecimal": false,
+              "inputFormat": "plain",
+              "truncateMultipleSpaces": false,
               "validate": {
                 "required": true,
                 "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
               },
-              "type": "currency",
-              "lockKey": true
+              "validateWhenHidden": false,
+              "key": "daycareCosts12YearsOrOver",
+              "type": "number",
+              "decimalLimit": 0,
+              "input": true
             }
           ],
           "type": "panel",

@@ -4030,27 +4030,27 @@
                     {
                       "label": "What are the daycare costs that you incur for your child(ren) age 11 years or under?",
                       "prefix": "$",
+                      "applyMaskOn": "change",
                       "mask": false,
-                      "spellcheck": true,
                       "tableView": false,
-                      "currency": "CAD",
+                      "delimiter": true,
+                      "requireDecimal": false,
                       "inputFormat": "plain",
                       "truncateMultipleSpaces": false,
                       "validate": {
-                        "required": true
+                        "required": true,
+                        "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                       },
+                      "validateWhenHidden": false,
                       "key": "daycareCosts11YearsOrUnder",
                       "conditional": {
                         "show": true,
                         "when": "haveDaycareCosts11YearsOrUnder",
                         "eq": "yes"
                       },
-                      "type": "currency",
-                      "input": true,
-                      "delimiter": true,
-                      "inputType": "text",
-                      "decimalLimit": 2,
-                      "requireDecimal": true
+                      "type": "number",
+                      "decimalLimit": 0,
+                      "input": true
                     }
                   ],
                   "allowPrevious": false,
@@ -4113,27 +4113,27 @@
                     {
                       "label": "What are the total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirm dependants 12 years of age and older?",
                       "prefix": "$",
+                      "applyMaskOn": "change",
                       "mask": false,
-                      "spellcheck": true,
                       "tableView": false,
-                      "currency": "CAD",
+                      "delimiter": true,
+                      "requireDecimal": false,
                       "inputFormat": "plain",
                       "truncateMultipleSpaces": false,
                       "validate": {
-                        "required": true
+                        "required": true,
+                        "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                       },
+                      "validateWhenHidden": false,
                       "key": "daycareCosts12YearsOrOver",
                       "conditional": {
                         "show": true,
                         "when": "haveDaycareCosts12YearsOrOver",
                         "eq": "yes"
                       },
-                      "type": "currency",
-                      "input": true,
-                      "delimiter": true,
-                      "inputType": "text",
-                      "decimalLimit": 2,
-                      "requireDecimal": true
+                      "type": "number",
+                      "decimalLimit": 0,
+                      "input": true
                     }
                   ],
                   "allowPrevious": false,
@@ -4461,28 +4461,27 @@
             {
               "label": "Enter your spouse/common-law partner's reported total income from line 15000 of their {{data.calculatedTaxYear}} income tax return. If they did not file a {{data.calculatedTaxYear}} income tax return, enter their total income from all sources both inside and outside of Canada.",
               "prefix": "$",
-              "customClass": "font-weight-bold",
+              "applyMaskOn": "change",
               "mask": false,
-              "spellcheck": true,
               "tableView": false,
-              "currency": "CAD",
+              "delimiter": true,
+              "requireDecimal": false,
               "inputFormat": "plain",
+              "truncateMultipleSpaces": false,
               "validate": {
                 "required": true,
                 "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
               },
+              "validateWhenHidden": false,
               "key": "estimatedSpouseIncome",
               "conditional": {
-                "show": "true",
+                "show": true,
                 "when": "hasCurrentYearPartnerIncome",
                 "eq": "no"
               },
-              "type": "currency",
-              "input": true,
-              "delimiter": true,
-              "inputType": "text",
+              "type": "number",
               "decimalLimit": 0,
-              "requireDecimal": false
+              "input": true
             },
             {
               "key": "partnerIncomePanelPanel",
@@ -4507,21 +4506,24 @@
                   "tableView": false
                 },
                 {
-                  "input": true,
-                  "tableView": true,
-                  "inputType": "text",
                   "label": "My spouse/common-law partner's current year gross income is:",
-                  "key": "currentYearPartnerIncome",
                   "prefix": "$",
+                  "applyMaskOn": "change",
+                  "mask": false,
+                  "tableView": false,
                   "delimiter": true,
-                  "decimalLimit": 0,
                   "requireDecimal": false,
+                  "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
                   "validate": {
                     "required": true,
-                    "custom": "valid = (input >= 0 && input <= data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
-                  "type": "currency",
-                  "lockKey": true
+                  "validateWhenHidden": false,
+                  "key": "currentYearPartnerIncome",
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "input": true,
@@ -4880,23 +4882,22 @@
             {
               "label": "My total income in {{data.calculatedTaxYear}} was:",
               "prefix": "$",
-              "customClass": "font-weight-bold",
+              "applyMaskOn": "change",
               "mask": false,
-              "spellcheck": true,
               "tableView": false,
-              "currency": "CAD",
+              "delimiter": true,
+              "requireDecimal": false,
               "inputFormat": "plain",
+              "truncateMultipleSpaces": false,
               "validate": {
                 "required": true,
                 "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
               },
+              "validateWhenHidden": false,
               "key": "taxReturnIncome",
-              "type": "currency",
-              "input": true,
-              "delimiter": true,
-              "inputType": "text",
+              "type": "number",
               "decimalLimit": 0,
-              "requireDecimal": false
+              "input": true
             },
             {
               "title": "CRA consent panel",
@@ -5188,29 +5189,22 @@
                 {
                   "label": "My total current year gross income is:",
                   "prefix": "$",
-                  "customClass": "font-weight-bold",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
                   "validate": {
                     "required": true,
                     "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "currentYearIncome",
-                  "conditional": {
-                    "show": "true",
-                    "when": "hasSignificantDegreeOfIncome",
-                    "eq": "yes"
-                  },
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
+                  "type": "number",
                   "decimalLimit": 0,
-                  "requireDecimal": false,
-                  "lockKey": true
+                  "input": true
                 },
                 {
                   "label": "Select the reason for your significant decrease in gross income.",
