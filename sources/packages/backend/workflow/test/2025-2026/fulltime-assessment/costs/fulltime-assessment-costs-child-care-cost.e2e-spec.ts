@@ -97,7 +97,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       // married to a full-time student who is studying for 12 or more weeks during this study period
       expect(
         calculatedAssessment.variables.calculatedDataTotalChildCareCost
-      ).toBe(500);
+      ).toBe(1000);
     }
   );
 
