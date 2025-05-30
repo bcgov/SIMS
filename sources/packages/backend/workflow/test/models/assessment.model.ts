@@ -217,6 +217,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   programYearTotalFullTimeBooksAndSuppliesCost: number;
   programYearTotalPartTimeReturnTransportationCost: number;
   programYearTotalFullTimeReturnTransportationCost: number;
+  studentDataParents?: IdentifiableParentData[];
 }
 
 /**
@@ -237,6 +238,11 @@ export interface ConfigureDisbursementData extends JSONDoc {
   finalFederalAwardNetCSPTAmount: number;
   finalProvincialAwardNetBCAGAmount: number;
   finalProvincialAwardNetSBSDAmount: number;
+}
+
+export interface IdentifiableParentData extends JSONDoc {
+  parentFullName: string;
+  parentIsAbleToReport: YesNoOptions;
 }
 
 export interface AssessmentModel {

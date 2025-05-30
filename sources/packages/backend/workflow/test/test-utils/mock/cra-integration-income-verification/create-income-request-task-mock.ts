@@ -25,7 +25,7 @@ export function createIncomeRequestTaskMock(options: {
     serviceTaskId: WorkflowServiceTasks.CreateIncomeRequest,
     options: {
       jobCompleteMock: {
-        incomeVerificationCompleted: true,
+        canExecuteIncomeVerification: true,
         incomeVerificationId: options.incomeVerificationId,
       },
       jobMessageMocks: [

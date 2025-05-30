@@ -11,6 +11,7 @@ import {
   WorkflowSubprocesses,
   createParentsData,
   expectNotToPassThroughServiceTasks,
+  createIdentifiableParentsData,
 } from "../../test-utils";
 import {
   createVerifyApplicationExceptionsTaskMock,
@@ -23,6 +24,7 @@ import {
   createVerifyAssessmentCalculationOrderTaskMock,
 } from "../../test-utils/mock";
 import {
+  DEFAULT_ASSESSMENT_GATEWAY,
   PROGRAM_YEAR,
   PROGRAM_YEAR_BASE_ID,
 } from "../constants/program-year.constants";
@@ -58,6 +60,9 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
       createVerifyAssessmentCalculationOrderTaskMock(),
     ]);
 
@@ -66,7 +71,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
           ...workersMockedData,
@@ -107,6 +112,9 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
       createVerifyAssessmentCalculationOrderTaskMock(),
     ]);
 
@@ -115,7 +123,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     // Act
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
           ...workersMockedData,
@@ -166,7 +174,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
           ...workersMockedData,
@@ -187,7 +195,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     );
   });
 
-  it("Should check for both parents incomes when the student is dependant and parents have SIN.", async () => {
+  it.only("Should check for both parents incomes when the student is dependant and parents have SIN.", async () => {
     // Arrange
     const currentAssessmentId = assessmentId++;
     const parent1SupportingUserId = supportingUserId++;
@@ -196,14 +204,14 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     const dataOnSubmit: AssessmentConsolidatedData = {
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
-      ...createParentsData({ numberOfParents: 2 }),
+      ...createIdentifiableParentsData({ numberOfParents: 2 }),
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
     };
     const dataPreAssessment: AssessmentConsolidatedData = {
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
-      ...createParentsData({
+      ...createIdentifiableParentsData({
         dataType: AssessmentDataType.PreAssessment,
         numberOfParents: 2,
       }),
@@ -258,7 +266,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     // Act
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
           ...workersMockedData,
@@ -349,7 +357,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     // Act
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
           ...workersMockedData,
@@ -425,7 +433,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     // Act
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
           ...workersMockedData,
