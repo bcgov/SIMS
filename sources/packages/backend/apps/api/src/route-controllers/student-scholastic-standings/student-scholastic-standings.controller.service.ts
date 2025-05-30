@@ -74,14 +74,15 @@ export class ScholasticStandingControllerService {
     if (!studentExists) {
       throw new NotFoundException("Student does not exists.");
     }
-    const scholasticStandingSummary =
-      await this.studentScholasticStandingsService.getScholasticStandingSummary(
-        studentId,
-      );
-    const sfasUnsuccessfulCompletionWeeks =
-      await this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
-        studentId,
-      );
+    const [scholasticStandingSummary, sfasUnsuccessfulCompletionWeeks] =
+      await Promise.all([
+        this.studentScholasticStandingsService.getScholasticStandingSummary(
+          studentId,
+        ),
+        this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
+          studentId,
+        ),
+      ]);
     const partTimeLifetimeUnsuccessfulCompletionWeeks =
       scholasticStandingSummary.partTimeUnsuccessfulCompletionWeeks;
     const fullTimeLifetimeUnsuccessfulCompletionWeeks =
