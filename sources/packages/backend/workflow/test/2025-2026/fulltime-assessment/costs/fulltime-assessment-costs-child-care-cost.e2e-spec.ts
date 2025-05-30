@@ -24,7 +24,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
       assessmentConsolidatedData.offeringWeeks = 18;
       assessmentConsolidatedData.studentDataRelationshipStatus = "single";
-      // Creates 1 eligible dependent.
+      // Creates 1 eligible dependant.
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
