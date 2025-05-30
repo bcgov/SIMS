@@ -11,7 +11,9 @@
       />
     </template>
     <student-account-restrictions />
-    <student-scholastic-standing-limited-history :showPartTimeSummary="false" />
+    <student-scholastic-standing-limited-history
+      :show-part-time-summary="false"
+    />
     <formio-container formName="studentAccountActivity" />
   </student-page-container>
 </template>
