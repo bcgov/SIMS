@@ -17,7 +17,7 @@ import {
   getInstitutionToken,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import { InstitutionLocation } from "@sims/sims-db";
+import { InstitutionLocation, OfferingIntensity } from "@sims/sims-db";
 import { saveFakeSFASIndividual } from "@sims/test-utils/factories/sfas-individuals";
 
 describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticStandingSummary.", () => {
@@ -80,19 +80,35 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
   it("Should get the scholastic standing summary for the provided student including the data retrieved from the sfas system when a BC Public Institution requests it.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
-    const firstApplication = await saveFakeApplication(db.dataSource, {
-      institutionLocation: collegeFLocation,
-      student,
-    });
+    const firstApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+        student,
+      },
+      {
+        initialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
     const { institution } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
     );
     collegeCLocation = createFakeInstitutionLocation({ institution });
-    const secondApplication = await saveFakeApplication(db.dataSource, {
-      institutionLocation: collegeCLocation,
-      student,
-    });
+    const secondApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeCLocation,
+        student,
+      },
+      {
+        initialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
     const firstAppScholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application: firstApplication },
       {
@@ -127,7 +143,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ lifetimeUnsuccessfulCompletionWeeks: 30 });
+      .expect({
+        fullTimeLifetimeUnsuccessfulCompletionWeeks: 30,
+        partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+      });
   });
 
   it("Should return zero lifetime unsuccessful completion weeks for the provided student as a part of the student scholastic summary when the student has no unsuccessful completion weeks in SIMS or in the SFAS system when a BC Public Institution requests it.", async () => {
@@ -146,6 +165,9 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ lifetimeUnsuccessfulCompletionWeeks: 0 });
+      .expect({
+        fullTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+        partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+      });
   });
 });

@@ -35,7 +35,8 @@ export interface ScholasticStandingSubmittedDetailsAPIOutDTO
  * Represents the scholastic standing summary details.
  */
 export interface ScholasticStandingSummaryDetailsAPIOutDTO {
-  lifetimeUnsuccessfulCompletionWeeks: number;
+  fullTimeLifetimeUnsuccessfulCompletionWeeks: number;
+  partTimeLifetimeUnsuccessfulCompletionWeeks: number;
 }
 
 /**

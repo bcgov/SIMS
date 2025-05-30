@@ -4,9 +4,19 @@
       <body-header title="Scholastic Standing Limited History" />
     </template>
     <content-group
-      ><p class="label-bold-normal">
-        Number of Lifetime Weeks of Unsuccessful Completion:
-        {{ scholasticStandingSummary.lifetimeUnsuccessfulCompletionWeeks }}
+      ><p v-if="showPartTimeSummary" class="label-bold-normal">
+        Number of Lifetime Weeks of Unsuccessful Completion for Part-time
+        studies:
+        {{
+          scholasticStandingSummary.partTimeLifetimeUnsuccessfulCompletionWeeks
+        }}
+      </p>
+      <p class="label-bold-normal">
+        Number of Lifetime Weeks of Unsuccessful Completion for Full-time
+        studies:
+        {{
+          scholasticStandingSummary.fullTimeLifetimeUnsuccessfulCompletionWeeks
+        }}
       </p></content-group
     >
   </body-header-container>
@@ -21,6 +31,11 @@ export default defineComponent({
     studentId: {
       type: Number,
       required: false,
+    },
+    showPartTimeSummary: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   setup(props) {

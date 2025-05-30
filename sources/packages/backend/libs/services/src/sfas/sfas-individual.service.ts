@@ -178,7 +178,7 @@ export class SFASIndividualService {
    */
   async getSFASTotalUnsuccessfulCompletionWeeks(
     studentId: number,
-  ): Promise<number | null> {
+  ): Promise<number> {
     const sfasIndividualData = await this.sfasIndividualRepo
       .createQueryBuilder("sfasIndividual")
       .select(
@@ -187,6 +187,6 @@ export class SFASIndividualService {
       )
       .where("sfasIndividual.student.id = :studentId", { studentId })
       .getRawOne<SFASIndividualDataSummary>();
-    return sfasIndividualData?.totalUnsuccessfulWeeks;
+    return sfasIndividualData?.totalUnsuccessfulWeeks ?? 0;
   }
 }
