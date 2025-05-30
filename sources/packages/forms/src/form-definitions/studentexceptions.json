@@ -224,7 +224,7 @@
           ]
         },
         {
-          "label": "Parent's residency",
+          "label": "Parent residency",
           "key": "parentsResidencyApplicationException",
           "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
           "type": "well",
@@ -240,7 +240,7 @@
                   "value": ""
                 }
               ],
-              "content": "Parent's residency",
+              "content": "Parent residency",
               "refreshOnChange": false,
               "key": "html12",
               "type": "htmlelement",

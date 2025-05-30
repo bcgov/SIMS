@@ -2778,9 +2778,6 @@
                     "when": "bcResident",
                     "eq": "no"
                   },
-                  "attributes": {
-                    "data-cy": "bclivingSituationvv"
-                  },
                   "type": "radio",
                   "input": true
                 },
@@ -3017,6 +3014,232 @@
                 "eq": "dependant"
               },
               "lockKey": true
+            },
+            {
+              "label": "Parent Not a BC resident panel",
+              "title": "Parent Not a BC resident panel",
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "parentNotABcResidentPanel",
+              "conditional": {
+                "show": true,
+                "when": "parentbcResident",
+                "eq": "no"
+              },
+              "type": "panel",
+              "input": false,
+              "tableView": false,
+              "components": [
+                {
+                  "label": "Application Exception - Parent B.C. residency",
+                  "calculateValue": "value = \"studentApplicationException\";",
+                  "calculateServer": true,
+                  "key": "parentsResidencyApplicationException",
+                  "type": "hidden",
+                  "input": true,
+                  "tableView": false
+                },
+                {
+                  "label": "HTML",
+                  "tag": "p",
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": " <strong> You indicated your parent(s)/step-parent/sponsor/legal guardian are not a resident of B.C.</strong>\n <br /> \n If any of the following circumstances apply, you may still be eligible for StudentAid BC funding.",
+                  "refreshOnChange": false,
+                  "customClass": "banner-warning",
+                  "key": "html19",
+                  "type": "htmlelement",
+                  "input": false,
+                  "tableView": false
+                },
+                {
+                  "label": "HTML",
+                  "tag": "h3",
+                  "className": "category-header-medium primary-color",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "Please provide additional information",
+                  "refreshOnChange": false,
+                  "customClass": "header-md",
+                  "key": "html53",
+                  "type": "htmlelement",
+                  "input": false,
+                  "tableView": false
+                },
+                {
+                  "label": "Which of the following best describes your situation?",
+                  "optionsLabelPosition": "right",
+                  "inline": false,
+                  "tableView": false,
+                  "values": [
+                    {
+                      "label": "Your parent(s) reside in or maintain a family home in B.C., even if one parent works in another province.",
+                      "value": "parentsResideInBC",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "Your parent(s) live in B.C., but your sponsor lives in another province.",
+                      "value": "parentsInBCSponsorOutOfProvince",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "Your parent(s) are separated or divorced and the parent with whom you normally reside or from whom the principal financial support is received is a resident of B.C.",
+                      "value": "parentsSeparatedOrDivorcedInBC",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "Your parent(s) have been stationed abroad for a definite period of time (e.g. military service) and lived in B.C. for at least 12 months before leaving the country.",
+                      "value": "parentsStationedAbroadLivedInBC",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "Your parent(s) are not living in Canada and you are studying in B.C.",
+                      "value": "parentsOutOfCanadaStudyingInBC",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "Your parent(s) are permanent residents who have been resident in B.C. for less than 12 months prior to the commencement of study.",
+                      "value": "parentsPermanentResidentsLessThan12MonthsInBC",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "Both you and your parents originally resided in B.C., but parent(s) have resided in another province for 12 consecutive months, and you remained in B.C. to begin or continue post-secondary education.",
+                      "value": "originallyFromBCParentsMovedYouStayed",
+                      "shortcut": ""
+                    }
+                  ],
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": true
+                  },
+                  "validateWhenHidden": false,
+                  "key": "bcParentLivingSituation",
+                  "type": "radio",
+                  "input": true
+                },
+                {
+                  "label": "Upload supporting documents",
+                  "title": "Upload supporting documents",
+                  "collapsible": false,
+                  "hideLabel": true,
+                  "key": "uploadSupportingDocuments1",
+                  "customConditional": "show = data['bcParentLivingSituation'];",
+                  "type": "panel",
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "label": "HTML",
+                      "tag": "h3",
+                      "className": "category-header-medium primary-color",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": "Upload supporting documents",
+                      "refreshOnChange": false,
+                      "key": "html62",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false
+                    },
+                    {
+                      "label": "HTML",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": "Please provide the following:",
+                      "refreshOnChange": false,
+                      "key": "html22",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false
+                    },
+                    {
+                      "label": "HTML",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": "<h4 class=\"category-header-medium-small\">A letter explaining:</h4>\n<ul><li>Why you should be considered a resident for StudentAid BC purposes,</li>\n<li>Your and/or your parent's residence history (provinces, territories, countries) for the past 10 years,</li>\n<li>Your activities (work, study, etc.) during the past 10 years, and</li>\n<li>Why you cannot apply, or have not applied, to your previous province of residency</li>\n</ul>\n<h4 class=\"category-header-medium-small\">Please provide all supporting documentation such as:</h4>\n<ul><li>All official post-secondary transcripts if you have completed 4 years of full-time post-secondary studies in B.C.</li>\n<li>An appeal denial letter from your previous province of residency, if applicable.</li>\n<li>A letter from a professional third party, if applicable.</li>\n<li>A copy of your lease, rental, or tenancy agreement.</li>\n<li>Copies of your paid utility receipts.</li>\n</ul>",
+                      "refreshOnChange": false,
+                      "customClass": "align-bullets",
+                      "key": "html63",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false
+                    },
+                    {
+                      "label": "HTML",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": "<h4 class=\"category-header-medium-small\">Instructions:</h4>\n<ul>\n  <li>Upload a photo or scanned copy of your documentation</li>\n  <li>Rename your document to \"<strong>FirstnameLastname_BCResidency</strong>\"</li>\n  (e.g. JessLee_BCResidency)\n</ul>\n",
+                      "refreshOnChange": false,
+                      "customClass": "align-bullets",
+                      "key": "html64",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false
+                    },
+                    {
+                      "label": "Upload supporting documents",
+                      "customClass": "font-weight-bold",
+                      "hideLabel": true,
+                      "tableView": false,
+                      "storage": "url",
+                      "dir": "Parent not a BC resident - Supporting Documents",
+                      "webcam": false,
+                      "fileTypes": [
+                        {
+                          "label": "",
+                          "value": ""
+                        }
+                      ],
+                      "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+                      "fileMaxSize": "15MB",
+                      "multiple": true,
+                      "key": "otherLivingSituationDocs1",
+                      "type": "file",
+                      "url": "student/files",
+                      "input": true,
+                      "validate": {
+                        "required": true,
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
+                      }
+                    },
+                    {
+                      "label": "Content",
+                      "input": false,
+                      "className": "file-upload-info-container",
+                      "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
+                      "type": "htmlelement",
+                      "hideLabel": true,
+                      "tableView": false
+                    }
+                  ]
+                }
+              ]
             }
           ],
           "type": "panel",
