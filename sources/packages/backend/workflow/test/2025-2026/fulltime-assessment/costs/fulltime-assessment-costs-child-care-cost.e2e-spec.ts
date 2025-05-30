@@ -6,9 +6,7 @@ import {
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   DependentChildCareEligibility,
-  createFakeStudentDependentBornAfterStudyEndDate,
   createFakeStudentDependentEligibleForChildcareCost,
-  createFakeStudentDependentNotEligibleForChildcareCost,
 } from "../../../test-utils/factories";
 import { YesNoOptions } from "@sims/test-utils";
 
