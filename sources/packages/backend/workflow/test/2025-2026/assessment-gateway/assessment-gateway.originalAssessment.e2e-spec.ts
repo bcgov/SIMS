@@ -22,6 +22,7 @@ import {
   createWorkersMockedData,
   createLoadAssessmentDataTaskMock,
   createVerifyAssessmentCalculationOrderTaskMock,
+  createIdentifiableParentTaskMock,
 } from "../../test-utils/mock";
 import {
   DEFAULT_ASSESSMENT_GATEWAY,
@@ -30,6 +31,7 @@ import {
 } from "../constants/program-year.constants";
 import { AssessmentDataType, YesNoOptions } from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
+import { inspect } from "util";
 
 describe(`E2E Test Workflow assessment gateway on original assessment for ${PROGRAM_YEAR}`, () => {
   let zeebeClientProvider: ZeebeGrpcClient;
@@ -228,8 +230,13 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         subprocess: WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
       }),
       createVerifyApplicationExceptionsTaskMock(),
-      createCreateSupportingUsersParentsTaskMock({
-        supportingUserIds: [parent1SupportingUserId, parent2SupportingUserId],
+      createIdentifiableParentTaskMock({
+        createdSupportingUserId: parent1SupportingUserId,
+        parent: 1,
+      }),
+      createIdentifiableParentTaskMock({
+        createdSupportingUserId: parent2SupportingUserId,
+        parent: 2,
       }),
       createCheckSupportingUserResponseTaskMock({
         totalIncome: 1,
@@ -262,6 +269,8 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       }),
       createVerifyAssessmentCalculationOrderTaskMock(),
     ]);
+
+    console.log(inspect(workersMockedData, false, null));
 
     // Act
     const assessmentGatewayResponse =

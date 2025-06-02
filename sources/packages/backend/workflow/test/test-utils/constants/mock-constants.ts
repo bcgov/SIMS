@@ -26,3 +26,9 @@ export const PARENT_SUBPROCESSES_VARIABLE = "parentSubprocesses";
  * Suffix that indicates if a task or subprocess was invoked by the workflow.
  */
 export const JOB_PASSTHROUGH_SUFFIX = "passthrough";
+
+export const MULTI_INSTANCE_LOOP_COUNTER = "loopCounter";
+
+export const IS_MULTI_INSTANCE = "isMultiInstance";
+
+export const INSTANCES = "instances";

@@ -748,7 +748,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:startEvent id="start-supporting-user-creation">
         <bpmn:outgoing>Flow_1g9cp6m</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:serviceTask id="create-identifiable-supporting-user" name="Create identifiable supporting user">
+      <bpmn:serviceTask id="create-identifiable-parent-task" name="Create identifiable parent supporting user">
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="create-identifiable-supporting-users" />
           <zeebe:ioMapping>
@@ -763,13 +763,13 @@ Note: the workflow process should continue its execution as a regular reassessme
       </bpmn:serviceTask>
       <bpmn:callActivity id="retrieve-supporting-info-for-parent" name="Retrieve supporting info for parent">
         <bpmn:extensionElements>
-          <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
+          <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="true" />
           <zeebe:ioMapping>
             <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
-            <zeebe:input source="=[&#34;retrieve-supporting-info-for-parent-1-subprocess&#34;]" target="parentSubprocesses" />
+            <zeebe:input source="=[&#34;retrieve-supporting-info-for-parent-&#34; + string(loopCounter) + &#34;-subprocess&#34;]" target="parentSubprocesses" />
             <zeebe:output source="=supportingUserId" target="parentSupportingUserId" />
-            <zeebe:output source="=totalIncome" target="supportingUserParent1TotalIncome" />
-            <zeebe:output source="=&#34;retrieve-supporting-info-for-parent-1-subprocess&#34;" target="retrieve_supporting_info_for_parent_1_subprocess_passthrough" />
+            <zeebe:output source="=totalIncome" target="supportingUserParentTotalIncome" />
+            <zeebe:output source="=&#34;retrieve-supporting-info-for-parent-&#34; + string(loopCounter) + &#34;-subprocess&#34;" target="retrieve_supporting_info_for_parent_subprocess_passthrough" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0u3bioj</bpmn:incoming>
@@ -779,17 +779,17 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:extensionElements>
           <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
           <zeebe:ioMapping>
-            <zeebe:input source="=supportingUserParent1TotalIncome" target="reportedIncome" />
+            <zeebe:input source="=supportingUserParentTotalIncome" target="reportedIncome" />
             <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
             <zeebe:input source="=[&#34;parent-1-income-verification-subprocess&#34;]" target="parentSubprocesses" />
-            <zeebe:output source="=&#34;parent-1-income-verification-subprocess&#34;" target="parent_1_income_verification_subprocess_passthrough" />
+            <zeebe:output source="=&#34;parent-&#34; + string(loop) + &#34;-income-verification-subprocess&#34;" target="parent_income_verification_subprocess_passthrough" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1j7259r</bpmn:incoming>
         <bpmn:outgoing>Flow_0jh200l</bpmn:outgoing>
       </bpmn:callActivity>
-      <bpmn:sequenceFlow id="Flow_1g9cp6m" sourceRef="start-supporting-user-creation" targetRef="create-identifiable-supporting-user" />
-      <bpmn:sequenceFlow id="Flow_0u3bioj" sourceRef="create-identifiable-supporting-user" targetRef="retrieve-supporting-info-for-parent" />
+      <bpmn:sequenceFlow id="Flow_1g9cp6m" sourceRef="start-supporting-user-creation" targetRef="create-identifiable-parent-task" />
+      <bpmn:sequenceFlow id="Flow_0u3bioj" sourceRef="create-identifiable-parent-task" targetRef="retrieve-supporting-info-for-parent" />
       <bpmn:sequenceFlow id="Flow_1j7259r" sourceRef="retrieve-supporting-info-for-parent" targetRef="parent-income-verification" />
       <bpmn:endEvent id="end-supporting-user-creation">
         <bpmn:incoming>Flow_0jh200l</bpmn:incoming>
@@ -1197,7 +1197,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmndi:BPMNShape id="Event_18hxtfw_di" bpmnElement="start-supporting-user-creation">
         <dc:Bounds x="1752" y="1252" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0wlj7rd" bpmnElement="create-identifiable-supporting-user">
+      <bpmndi:BPMNShape id="BPMNShape_0wlj7rd" bpmnElement="create-identifiable-parent-task">
         <dc:Bounds x="1820" y="1230" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>

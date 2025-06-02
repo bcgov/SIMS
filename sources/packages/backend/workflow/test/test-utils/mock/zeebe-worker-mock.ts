@@ -1,7 +1,10 @@
 import { Workers } from "@sims/services/constants";
 import {
+  INSTANCES,
+  IS_MULTI_INSTANCE,
   JOB_COMPLETED_RESULT_SUFFIX,
   JOB_MESSAGE_RESULT_SUFFIX,
+  MULTI_INSTANCE_LOOP_COUNTER,
   PARENT_SUBPROCESSES_VARIABLE,
 } from "../constants/mock-constants";
 import { getNormalizedServiceTaskId, getPassthroughTaskId } from "./mock.utils";
@@ -26,10 +29,16 @@ async function mockTaskHandler(
 ) {
   const serviceTaskId = getNormalizedServiceTaskId(job.elementId);
   const serviceTaskMock = job.variables[serviceTaskId] ?? {};
+  let mockedData = serviceTaskMock;
+  if (serviceTaskMock[IS_MULTI_INSTANCE]) {
+    // If the service task is a multi-instance, we need to return the
+    // appropriate value for each instance.
+    const multiInstanceIndex = +job.variables[MULTI_INSTANCE_LOOP_COUNTER] - 1;
+    mockedData = serviceTaskMock[INSTANCES][multiInstanceIndex];
+  }
   // Check if the service task id is in a sub-process.
   const subprocesses: string[] =
     (job.variables[PARENT_SUBPROCESSES_VARIABLE] as string[]) ?? [];
-  let mockedData = serviceTaskMock;
   for (const subprocessMock of subprocesses) {
     const subprocessMockId = getNormalizedServiceTaskId(subprocessMock);
     if (mockedData[subprocessMockId]) {
@@ -38,7 +47,6 @@ async function mockTaskHandler(
       break;
     }
   }
-
   // Check if there is a message to be published.
   const messagePayloads = mockedData[JOB_MESSAGE_RESULT_SUFFIX];
   if (messagePayloads?.length) {

@@ -12,6 +12,7 @@ export enum WorkflowServiceTasks {
   ProgramInfoNotRequired = "program-info-not-required-task",
   CreateSupportingUserPartnerTask = "create-supporting-user-for-the-partner-task",
   CreateSupportingUsersParentsTask = "create-supporting-users-for-parents-task",
+  CreateIdentifiableParentTask = "create-identifiable-parent-task",
   UpdateApplicationStatusToAssessment = "update-application-status-to-assessment-task",
   UpdateNOAStatusToRequired = "update-noa-status-to-required-task",
   UpdateNOAStatusToNotRequired = "update-noa-status-to-not-required-task",

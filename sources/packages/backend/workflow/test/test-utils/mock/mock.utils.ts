@@ -1,5 +1,7 @@
 import { PublishMessageRequest } from "@camunda8/sdk/dist/zeebe/types";
 import {
+  INSTANCES,
+  IS_MULTI_INSTANCE,
   JOB_COMPLETED_RESULT_SUFFIX,
   JOB_MESSAGE_RESULT_SUFFIX,
   JOB_PASSTHROUGH_SUFFIX,
@@ -46,7 +48,7 @@ export function getPassthroughTaskId(serviceTaskId: string) {
  * @returns service task id, usually declared as 'service-task-id' to the expected
  * Camunda variable name like service_task_id.
  */
-export function getNormalizedServiceTaskId(serviceTaskId: string) {
+export function getNormalizedServiceTaskId(serviceTaskId: string): string {
   return serviceTaskId.replace(
     SERVICE_TASK_ID_SEPARATOR_REGEX,
     MOCKS_SEPARATOR,
@@ -80,10 +82,13 @@ export function getNormalizedServiceTaskId(serviceTaskId: string) {
  */
 export interface WorkerMockedData {
   serviceTaskId: WorkflowServiceTasks;
+  [IS_MULTI_INSTANCE]?: boolean;
+  [INSTANCES]?: unknown[]; // Used for multi-instance tasks.
   options: {
     jobCompleteMock?: unknown;
     jobMessageMocks?: PublishMessageRequest<unknown>[];
     subprocesses?: WorkflowSubprocesses[];
+    multiInstanceLoopCounter?: number;
   };
 }
 
@@ -159,13 +164,24 @@ export function createWorkersMockedData(
       mockedData = mockedData[subprocessId];
     });
     // Create result mocked object.
+    const isMultiInstance = !!mockedWorker.options.multiInstanceLoopCounter;
+    let mockedDataValue: unknown | unknown[] = mockedData;
+    if (isMultiInstance) {
+      mockedData[IS_MULTI_INSTANCE] = isMultiInstance;
+      if (!mockedData[INSTANCES]) {
+        mockedData[INSTANCES] = [];
+      }
+      const instanceIndex = mockedWorker.options.multiInstanceLoopCounter - 1;
+      mockedDataValue = {};
+      mockedData[INSTANCES][instanceIndex] = mockedDataValue;
+    }
     if (mockedWorker.options.jobCompleteMock) {
-      mockedData[JOB_COMPLETED_RESULT_SUFFIX] =
+      mockedDataValue[JOB_COMPLETED_RESULT_SUFFIX] =
         mockedWorker.options.jobCompleteMock;
     }
     // Create message result mocked object.
     if (mockedWorker.options.jobMessageMocks?.length) {
-      mockedData[JOB_MESSAGE_RESULT_SUFFIX] =
+      mockedDataValue[JOB_MESSAGE_RESULT_SUFFIX] =
         mockedWorker.options.jobMessageMocks;
     }
   }
