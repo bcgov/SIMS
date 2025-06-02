@@ -2435,7 +2435,7 @@
           "label": "Panel"
         },
         {
-          "key": "page2Panel",
+          "key": "parentInformationPanel",
           "input": false,
           "title": "Parent information panel",
           "tableView": false,
@@ -2535,14 +2535,11 @@
                 "onlyAvailableItems": true
               },
               "validateWhenHidden": false,
-              "key": "bclivingSituation1",
+              "key": "parentSituation",
               "conditional": {
                 "show": true,
                 "when": "estranged",
                 "eq": "yes"
-              },
-              "attributes": {
-                "data-cy": "bclivingSituationvv"
               },
               "type": "radio",
               "input": true
@@ -2551,8 +2548,8 @@
               "title": "Estranged details panel",
               "collapsible": false,
               "hideLabel": true,
-              "key": "estrangedDetailsPanel1",
-              "customConditional": "show = ['irreconcilableRift', 'unableToContact'].includes(data.bclivingSituation1);\r\n",
+              "key": "estrangedDetailsPanel",
+              "customConditional": "show = ['irreconcilableRift', 'unableToContact'].includes(data.parentSituation);\r\n",
               "type": "panel",
               "label": "Estranged details panel",
               "breadcrumbClickable": false,
@@ -2600,29 +2597,13 @@
                       "value": ""
                     }
                   ],
-                  "content": "You may be assessed as an independent student if there has been a severe family breakdown that goes beyond the normal disagreements between parents and children.",
-                  "refreshOnChange": false,
-                  "key": "html79",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false,
-                  "tag": "p"
-                },
-                {
-                  "label": "HTML",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
                   "content": "<h4 class=\"category-header-medium-small\">Please provide all of the documents listed below</h4>\r\n<ul>\r\n  <li>A statement from you describing the family rift, how long the rift has existed and why it continues.</li>\r\n  <li>A letter from a responsible third party testifying as to the truthfulness of your explanation and providing an independent assessment of the situation. The third party could be any of the following: counsellor, psychologist, religious advisor, doctor, teacher, and/or mature relative outside the immediate family or family friend. The status of the third party and their relationship to you must be identified in the letter.</li>\r\n  <li>A letter from your parent(s)/step-parent/sponsor/legal guardian describing the family rift, how long the rift has existed and why it continues. If a parental letter cannot be obtained, a second letter from another professional third party must be submitted.</li>\r\n</ul>",
                   "refreshOnChange": false,
                   "customClass": "align-bullets",
                   "key": "html54",
                   "conditional": {
                     "show": true,
-                    "when": "bclivingSituation1",
+                    "when": "parentSituation",
                     "eq": "irreconcilableRift"
                   },
                   "type": "htmlelement",
@@ -2643,25 +2624,9 @@
                   "key": "html116",
                   "conditional": {
                     "show": true,
-                    "when": "bclivingSituation1",
+                    "when": "parentSituation",
                     "eq": "unableToContact"
                   },
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false
-                },
-                {
-                  "label": "HTML",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "<h4 class=\"category-header-medium-small\">Instructions</h4>\r\n<ul>\r\n  <li>Please upload a photo or scanned copy of your documentation</li>\r\n  <li>Rename your document to \"<strong>FirstnameLastName_Parents</strong>\"</li>\r\n  (e.g. JessieLee_Parents)\r\n</ul>",
-                  "refreshOnChange": false,
-                  "customClass": "align-bullets",
-                  "key": "html96",
                   "type": "htmlelement",
                   "input": false,
                   "tableView": false
@@ -2688,7 +2653,7 @@
                     "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
                     "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                   },
-                  "key": "estrangedFileUpload1",
+                  "key": "estrangedFileUpload",
                   "type": "file",
                   "url": "student/files",
                   "input": true
@@ -3468,14 +3433,14 @@
                       }
                     },
                     {
+                      "key": "parentResidencyExceptionSupportingDocumentsPanelContent",
                       "label": "Content",
                       "input": false,
                       "className": "file-upload-info-container",
                       "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
                       "type": "htmlelement",
                       "hideLabel": true,
-                      "tableView": false,
-                      "key": ""
+                      "tableView": false
                     }
                   ]
                 }
@@ -4635,27 +4600,27 @@
                     {
                       "label": "What are the total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirm dependants 12 years of age and older?",
                       "prefix": "$",
+                      "applyMaskOn": "change",
                       "mask": false,
-                      "spellcheck": true,
                       "tableView": false,
-                      "currency": "CAD",
+                      "delimiter": true,
+                      "requireDecimal": false,
                       "inputFormat": "plain",
                       "truncateMultipleSpaces": false,
                       "validate": {
-                        "required": true
+                        "required": true,
+                        "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                       },
+                      "validateWhenHidden": false,
                       "key": "daycareCosts12YearsOrOver",
                       "conditional": {
                         "show": true,
                         "when": "haveDaycareCosts12YearsOrOver",
                         "eq": "yes"
                       },
-                      "type": "currency",
-                      "input": true,
-                      "delimiter": true,
-                      "inputType": "text",
-                      "decimalLimit": 2,
-                      "requireDecimal": true
+                      "type": "number",
+                      "decimalLimit": 0,
+                      "input": true
                     }
                   ],
                   "allowPrevious": false,
@@ -4983,28 +4948,27 @@
             {
               "label": "Enter your spouse/common-law partner's reported total income from line 15000 of their {{data.calculatedTaxYear}} income tax return. If they did not file a {{data.calculatedTaxYear}} income tax return, enter their total income from all sources both inside and outside of Canada.",
               "prefix": "$",
-              "customClass": "font-weight-bold",
+              "applyMaskOn": "change",
               "mask": false,
-              "spellcheck": true,
               "tableView": false,
-              "currency": "CAD",
+              "delimiter": true,
+              "requireDecimal": false,
               "inputFormat": "plain",
+              "truncateMultipleSpaces": false,
               "validate": {
                 "required": true,
                 "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
               },
+              "validateWhenHidden": false,
               "key": "estimatedSpouseIncome",
               "conditional": {
-                "show": "true",
+                "show": true,
                 "when": "hasCurrentYearPartnerIncome",
                 "eq": "no"
               },
-              "type": "currency",
-              "input": true,
-              "delimiter": true,
-              "inputType": "text",
+              "type": "number",
               "decimalLimit": 0,
-              "requireDecimal": false
+              "input": true
             },
             {
               "key": "partnerIncomePanelPanel",
@@ -5029,21 +4993,24 @@
                   "tableView": false
                 },
                 {
-                  "input": true,
-                  "tableView": true,
-                  "inputType": "text",
                   "label": "My spouse/common-law partner's current year gross income is:",
-                  "key": "currentYearPartnerIncome",
                   "prefix": "$",
+                  "applyMaskOn": "change",
+                  "mask": false,
+                  "tableView": false,
                   "delimiter": true,
-                  "decimalLimit": 0,
                   "requireDecimal": false,
+                  "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
                   "validate": {
                     "required": true,
-                    "custom": "valid = (input >= 0 && input <= data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
-                  "type": "currency",
-                  "lockKey": true
+                  "validateWhenHidden": false,
+                  "key": "currentYearPartnerIncome",
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "input": true,
@@ -5583,26 +5550,27 @@
                 {
                   "label": "Enter amount that your partner will pay during your study period.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "partnerstudentloanCosts",
                   "conditional": {
                     "show": true,
                     "when": "partnerstudentLoan",
                     "eq": "yes"
                   },
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 }
               ],
               "allowPrevious": false
@@ -5659,26 +5627,27 @@
                 {
                   "label": "Enter amount that your partner will pay during your study period.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "partnerchildsupportCosts",
                   "conditional": {
                     "show": true,
                     "when": "partnerchildSupport",
                     "eq": "yes"
                   },
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 }
               ],
               "allowPrevious": false
@@ -5953,150 +5922,142 @@
                 {
                   "label": "How much will your parent(s)/step-parent/sponsor/legal guardian be giving you to help meet your specific educational costs during this study period?",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true
-                  },
-                  "key": "studentParentsNetContribution",
-                  "type": "currency",
-                  "input": true,
                   "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true,
-                  "lockKey": true
-                },
-                {
-                  "label": "Enter the reported total income from line 15000 of your parent(s)/step-parent/sponsor/legal guardian {{data.calculatedTaxYear}} income tax return. If they did not file a {{data.calculatedTaxYear}} income tax return, enter the total income from all sources both inside and outside of Canada.",
-                  "prefix": "$",
-                  "mask": false,
-                  "spellcheck": true,
-                  "tableView": false,
-                  "currency": "CAD",
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
                     "required": true,
                     "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
-                  "key": "studentParentsTotalIncome",
-                  "type": "currency",
-                  "input": true,
+                  "validateWhenHidden": false,
+                  "key": "studentParentsNetContribution",
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
+                },
+                {
+                  "label": "Enter the reported total income from line 15000 of your parent(s)/step-parent/sponsor/legal guardian {{data.calculatedTaxYear}} income tax return. If they did not file a {{data.calculatedTaxYear}} income tax return, enter the total income from all sources both inside and outside of Canada.",
+                  "prefix": "$",
+                  "applyMaskOn": "change",
+                  "mask": false,
+                  "tableView": false,
                   "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
                   "requireDecimal": false,
-                  "lockKey": true
+                  "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
+                  "validate": {
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                  },
+                  "validateWhenHidden": false,
+                  "key": "studentParentsTotalIncome",
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "Enter the total net value of all Canadian and foreign assets (do not include RRSPs, principal residence or business). Enter ‘0’ if none.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "studentParentsNetAssests",
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true,
-                  "lockKey": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "Total income tax from line 43500. Enter ‘0’ if none.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "studentParentsTotalIncomeTaxLine43500",
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true,
-                  "lockKey": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "Canada Pension Plan contributions (CPP) from line 30800 (contributions through employment). Enter ‘0’ if none.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "studentParentsCppLine30800",
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true,
-                  "lockKey": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "Canada Pension Plan contributions (CPP) from line 31000 (contributions payable on self-employment and other earnings). Enter ‘0’ if none.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "studentParentsCppLine31000",
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true,
-                  "lockKey": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "Employment insurance (EI) from line 31200. Enter ‘0’ if none.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "studentParentsEiLine31200",
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true,
-                  "lockKey": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "HTML",
@@ -6441,23 +6402,22 @@
             {
               "label": "My total income in {{data.calculatedTaxYear}} was:",
               "prefix": "$",
-              "customClass": "font-weight-bold",
+              "applyMaskOn": "change",
               "mask": false,
-              "spellcheck": true,
               "tableView": false,
-              "currency": "CAD",
+              "delimiter": true,
+              "requireDecimal": false,
               "inputFormat": "plain",
+              "truncateMultipleSpaces": false,
               "validate": {
                 "required": true,
                 "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
               },
+              "validateWhenHidden": false,
               "key": "taxReturnIncome",
-              "type": "currency",
-              "input": true,
-              "delimiter": true,
-              "inputType": "text",
+              "type": "number",
               "decimalLimit": 0,
-              "requireDecimal": false
+              "input": true
             },
             {
               "title": "CRA consent panel",
@@ -6664,29 +6624,27 @@
                 {
                   "label": "My total current year gross income is:",
                   "prefix": "$",
-                  "customClass": "font-weight-bold",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
                   "validate": {
                     "required": true,
                     "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "currentYearIncome",
                   "conditional": {
-                    "show": "true",
+                    "show": true,
                     "when": "hasSignificantDegreeOfIncome",
                     "eq": "yes"
                   },
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
+                  "type": "number",
                   "decimalLimit": 0,
-                  "requireDecimal": false,
-                  "lockKey": true
+                  "input": true
                 },
                 {
                   "label": "Select the reason for your significant decrease in gross income.",
@@ -7116,23 +7074,24 @@
                   "lockKey": true
                 },
                 {
-                  "input": true,
-                  "tableView": false,
-                  "inputType": "text",
                   "label": "Please enter the combined exceptional expense amount rounded to the nearest dollar.",
-                  "key": "exceptionalExpenseAmount",
                   "prefix": "$",
+                  "applyMaskOn": "change",
+                  "mask": false,
+                  "tableView": false,
                   "delimiter": true,
-                  "decimalLimit": 0,
-                  "requireDecimal": true,
+                  "requireDecimal": false,
+                  "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
                   "validate": {
                     "required": true,
-                    "custom": "valid = (input >= 0 && input < 1000000) ? true : 'The number you have entered is outside the expected range.';"
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
-                  "type": "currency",
-                  "lockKey": true,
-                  "customClass": "font-weight-bold",
-                  "currency": "CAD"
+                  "validateWhenHidden": false,
+                  "key": "exceptionalExpenseAmount",
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 },
                 {
                   "label": "HTML",
@@ -7349,27 +7308,27 @@
                 {
                   "label": "Enter the amount that you will pay during your study period.",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "childsupportCosts",
                   "conditional": {
                     "show": true,
                     "when": "childSupport",
                     "eq": "yes"
                   },
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 }
               ],
               "allowPrevious": false
@@ -7444,28 +7403,27 @@
                 {
                   "label": "Enter the amount that you will receive from merit-based scholarships or need-based bursaries (including provincial government scholarships) during your study period.",
                   "prefix": "$",
-                  "customClass": "font-weight-bold",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "scholarshipsreceviedCosts",
                   "conditional": {
                     "show": true,
                     "when": "scholarshipsReceived",
                     "eq": "yes"
                   },
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 }
               ]
             },
@@ -7631,28 +7589,27 @@
                 {
                   "label": "Enter the amount of government funding that you will receive during your study period.",
                   "prefix": "$",
-                  "customClass": "font-weight-bold",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "governmentFundingCosts",
                   "conditional": {
                     "show": true,
                     "when": "governmentFunding",
                     "eq": "yes"
                   },
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 }
               ]
             },
@@ -7702,28 +7659,27 @@
                 {
                   "label": "Enter the amount of non-government (private sector) funding that you will receive during your study period.",
                   "prefix": "$",
-                  "customClass": "font-weight-bold",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "nonGovernmentFundingCosts",
                   "conditional": {
                     "show": true,
                     "when": "nonGovernmentFunding",
                     "eq": "yes"
                   },
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 }
               ]
             },
@@ -7772,28 +7728,27 @@
                 {
                   "label": "Enter the estimated amount that you will receive from your parent(s)/step-parent/sponsor/legal guardian.",
                   "prefix": "$",
-                  "customClass": "font-weight-bold",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "parentvoluntarycontributionsCosts",
                   "conditional": {
                     "show": true,
                     "when": "parentvoluntaryContributions",
                     "eq": "yes"
                   },
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 }
               ]
             }
@@ -8235,26 +8190,27 @@
                 {
                   "label": "If you must relocate to a different city to attend school and you will return home at least once during your study period, what is the cost of one return trip home?",
                   "prefix": "$",
+                  "applyMaskOn": "change",
                   "mask": false,
-                  "spellcheck": true,
                   "tableView": false,
-                  "currency": "CAD",
+                  "delimiter": true,
+                  "requireDecimal": false,
                   "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
+                  "validateWhenHidden": false,
                   "key": "returnTripHomeCost",
                   "conditional": {
-                    "show": "true",
+                    "show": true,
                     "when": "considerCostToRelocateToDifferentCity",
                     "eq": "yes"
                   },
-                  "type": "currency",
-                  "input": true,
-                  "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
                 }
               ],
               "allowPrevious": false
