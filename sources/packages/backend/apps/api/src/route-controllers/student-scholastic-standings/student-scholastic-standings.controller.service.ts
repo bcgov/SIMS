@@ -74,24 +74,23 @@ export class ScholasticStandingControllerService {
     if (!studentExists) {
       throw new NotFoundException("Student does not exists.");
     }
-    const scholasticStandingSummaryPromise =
-      this.studentScholasticStandingsService.getScholasticStandingSummary(
-        studentId,
-      );
-    const sfasUnsuccessfulCompletionWeeksPromise =
-      this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
-        studentId,
-      );
     const [scholasticStandingSummary, sfasUnsuccessfulCompletionWeeks] =
       await Promise.all([
-        scholasticStandingSummaryPromise,
-        sfasUnsuccessfulCompletionWeeksPromise,
+        this.studentScholasticStandingsService.getScholasticStandingSummary(
+          studentId,
+        ),
+        this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
+          studentId,
+        ),
       ]);
-    const totalUnsuccessfulCompletionWeeks =
-      (scholasticStandingSummary?.totalUnsuccessfulWeeks ?? 0) +
-      (sfasUnsuccessfulCompletionWeeks ?? 0);
+    const partTimeLifetimeUnsuccessfulCompletionWeeks =
+      scholasticStandingSummary.partTimeUnsuccessfulCompletionWeeks;
+    const fullTimeLifetimeUnsuccessfulCompletionWeeks =
+      scholasticStandingSummary.fullTimeUnsuccessfulCompletionWeeks +
+      sfasUnsuccessfulCompletionWeeks;
     return {
-      lifetimeUnsuccessfulCompletionWeeks: totalUnsuccessfulCompletionWeeks,
+      fullTimeLifetimeUnsuccessfulCompletionWeeks,
+      partTimeLifetimeUnsuccessfulCompletionWeeks,
     };
   }
 

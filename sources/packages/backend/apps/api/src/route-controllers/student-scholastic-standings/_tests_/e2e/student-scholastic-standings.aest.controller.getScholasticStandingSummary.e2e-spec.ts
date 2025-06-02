@@ -14,6 +14,7 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import * as request from "supertest";
+import { OfferingIntensity } from "@sims/sims-db";
 
 describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSummary.", () => {
   let app: INestApplication;
@@ -28,16 +29,36 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
   it("Should get the scholastic standing summary for the provided student including the data retrieved from the sfas system when a ministry user requests it.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
-    const application = await saveFakeApplication(db.dataSource, {
+    const partTimeApplication = await saveFakeApplication(db.dataSource, {
       student,
     });
-    const scholasticStanding = createFakeStudentScholasticStanding(
-      { submittedBy: student.user, application },
+    const partTimeScholasticStanding = createFakeStudentScholasticStanding(
+      { submittedBy: student.user, application: partTimeApplication },
       {
         initialValues: { unsuccessfulWeeks: 15 },
       },
     );
-    await db.studentScholasticStanding.save(scholasticStanding);
+    const fullTimeApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student,
+      },
+      {
+        initialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
+    const fullTimeScholasticStanding = createFakeStudentScholasticStanding(
+      { submittedBy: student.user, application: fullTimeApplication },
+      {
+        initialValues: { unsuccessfulWeeks: 6 },
+      },
+    );
+    await db.studentScholasticStanding.save([
+      partTimeScholasticStanding,
+      fullTimeScholasticStanding,
+    ]);
     await saveFakeSFASIndividual(db.dataSource, {
       initialValues: {
         lastName: student.user.lastName,
@@ -54,15 +75,26 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ lifetimeUnsuccessfulCompletionWeeks: 27 });
+      .expect({
+        fullTimeLifetimeUnsuccessfulCompletionWeeks: 18,
+        partTimeLifetimeUnsuccessfulCompletionWeeks: 15,
+      });
   });
 
   it("Should not retrieve the sfas system data as a part of the scholastic standing summary for the provided student when the combination of birth date, last name and sin provided does not exist in the SFAS relations.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
-    const application = await saveFakeApplication(db.dataSource, {
-      student,
-    });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        student,
+      },
+      {
+        initialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
     const scholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application },
       {
@@ -85,6 +117,9 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ lifetimeUnsuccessfulCompletionWeeks: 15 });
+      .expect({
+        fullTimeLifetimeUnsuccessfulCompletionWeeks: 15,
+        partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+      });
   });
 });

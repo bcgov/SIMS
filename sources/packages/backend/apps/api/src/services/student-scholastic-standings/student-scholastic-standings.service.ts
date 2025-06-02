@@ -17,6 +17,7 @@ import {
 import {
   ScholasticStanding,
   ScholasticStandingSummary,
+  ScholasticStandingSummaryDetails,
 } from "./student-scholastic-standings.models";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import {
@@ -513,25 +514,39 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * Get scholastic standing summary details.
+   * Get scholastic standing unsuccessful completion weeks summary details.
    * @param studentId student id to retrieve the scholastic standing summary details.
-   * @return student scholastic standing summary details.
+   * @return student scholastic standing unsuccessful completion weeks summary details.
    */
   async getScholasticStandingSummary(
     studentId: number,
-  ): Promise<ScholasticStandingSummary> {
-    const studentScholasticStandingSummary = this.repo
+  ): Promise<ScholasticStandingSummaryDetails> {
+    const scholasticStandingSummary = await this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select(
         "SUM(studentScholasticStanding.unsuccessfulWeeks)::int",
         "totalUnsuccessfulWeeks",
       )
+      .addSelect("application.offeringIntensity", "offeringIntensity")
       .innerJoin("studentScholasticStanding.application", "application")
       .innerJoin("application.student", "student")
       .where("student.id = :studentId", {
         studentId,
       })
-      .groupBy("student.id");
-    return studentScholasticStandingSummary.getRawOne<ScholasticStandingSummary>();
+      .groupBy("application.offeringIntensity")
+      .getRawMany<ScholasticStandingSummary>();
+
+    const scholasticStandingSummaryPartTime = scholasticStandingSummary.find(
+      (summary) => summary.offeringIntensity === OfferingIntensity.partTime,
+    );
+    const scholasticStandingSummaryFullTime = scholasticStandingSummary.find(
+      (summary) => summary.offeringIntensity === OfferingIntensity.fullTime,
+    );
+    return {
+      partTimeUnsuccessfulCompletionWeeks:
+        scholasticStandingSummaryPartTime?.totalUnsuccessfulWeeks ?? 0,
+      fullTimeUnsuccessfulCompletionWeeks:
+        scholasticStandingSummaryFullTime?.totalUnsuccessfulWeeks ?? 0,
+    };
   }
 }

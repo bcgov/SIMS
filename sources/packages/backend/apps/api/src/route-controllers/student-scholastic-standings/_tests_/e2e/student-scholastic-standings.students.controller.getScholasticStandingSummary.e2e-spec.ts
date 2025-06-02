@@ -16,6 +16,7 @@ import {
 import * as request from "supertest";
 import { saveFakeSFASIndividual } from "@sims/test-utils/factories/sfas-individuals";
 import { TestingModule } from "@nestjs/testing";
+import { OfferingIntensity } from "@sims/sims-db";
 
 describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandingSummary.", () => {
   let app: INestApplication;
@@ -35,9 +36,17 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
     const student = await saveFakeStudent(db.dataSource);
     // Mock user service to return the saved student.
     await mockUserLoginInfo(appModule, student);
-    const application = await saveFakeApplication(db.dataSource, {
-      student,
-    });
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        student,
+      },
+      {
+        initialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
     const scholasticStanding = createFakeStudentScholasticStanding(
       { submittedBy: student.user, application },
       {
@@ -63,6 +72,9 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ lifetimeUnsuccessfulCompletionWeeks: 17 });
+      .expect({
+        fullTimeLifetimeUnsuccessfulCompletionWeeks: 17,
+        partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+      });
   });
 });
