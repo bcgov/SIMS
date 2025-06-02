@@ -39,11 +39,7 @@ import {
   ApplicationService,
 } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import {
-  CustomNamedError,
-  dateDifference,
-  FILE_DEFAULT_ENCODING,
-} from "@sims/utilities";
+import { CustomNamedError, FILE_DEFAULT_ENCODING } from "@sims/utilities";
 import BaseController from "../BaseController";
 import { FormNames } from "../../services/form/constants";
 import {
@@ -135,10 +131,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     const acceptableNumberOfUnsuccessfulWeeks =
       payload.data.numberOfUnsuccessfulWeeks &&
       Math.ceil(
-        dateDifference(
-          application.currentAssessment.offering.studyEndDate,
-          application.currentAssessment.offering.studyStartDate,
-        ) / 7,
+        application.currentAssessment.offering.studyBreaks.totalDays / 7,
       ) -
         payload.data.numberOfUnsuccessfulWeeks >=
         0;

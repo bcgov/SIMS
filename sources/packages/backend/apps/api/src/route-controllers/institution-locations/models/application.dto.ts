@@ -3,7 +3,7 @@ import {
   deliveryMethod,
   getUserFullName,
 } from "../../../utilities";
-import { dateDifference, getISODateOnlyString } from "@sims/utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 import {
   Application,
   ApplicationStatus,
@@ -71,7 +71,7 @@ export const transformToActiveApplicationDataAPIOutDTO = (
     applicationStatus: application.applicationStatus,
     applicationNumber: application.applicationNumber,
     applicationOfferingTotalOfferingWeeks: Math.ceil(
-      dateDifference(offering.studyEndDate, offering.studyStartDate) / 7,
+      application.currentAssessment.offering.studyBreaks.totalDays / 7,
     ),
     applicationOfferingIntensity: offering.offeringIntensity,
     applicationOfferingStartDate: offering.studyStartDate,
