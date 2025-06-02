@@ -148,7 +148,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     ) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
-          "Number of unsuccessful weeks cannot exceed the number of offering weeks",
+          "Number of unsuccessful weeks cannot exceed the number of offering weeks.",
           UNACCEPTABLE_UNSUCCESSFUL_COMPLETION_WEEKS,
         ),
       );
