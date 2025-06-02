@@ -1511,7 +1511,7 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=// calculate the award amount to a minimum of the min award&#10;max(dmnFullTimeAwardAllowableLimits.limitAwardBGPDWeeklyRate * offeringWeeks,dmnFullTimeAwardAllowableLimits.limitAwardBGPDMinAward)" target="provincialAwardBGPDAmount" />
-          <zeebe:output source="=// if not eligible, no value&#10;// if eligible AND remaining py limit room is greater than or equal to the min award, then use the calculated map from above&#10;if (awardEligibilityBGPD = true) and (dmnFullTimeAwardAllowableLimits.limitAwardBGPDMaxAllowableAward - programYearTotalBGPD &#62;= dmnFullTimeAwardAllowableLimits.limitAwardBGPDMinAward)&#10;  then&#10;provincialAwardBGPDAmount&#10;else&#10;  0" target="provincialAwardNetBGPDAmount" />
+          <zeebe:output source="=// if not eligible, no value&#10;// if eligible AND remaining py limit room is greater than or equal to the min award, then use the calculated map from above&#10;if (awardEligibilityBGPD = true) and (dmnFullTimeAwardAllowableLimits.limitAwardBGPDMaxAllowableAward - programYearTotalFullTimeBGPD &#62;= dmnFullTimeAwardAllowableLimits.limitAwardBGPDMinAward)&#10;  then&#10;provincialAwardBGPDAmount&#10;else&#10;  0" target="provincialAwardNetBGPDAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0gje200</bpmn:incoming>
@@ -2165,8 +2165,8 @@ BCAG has a min award that it could be rounded up to so weeks are insufficient to
           <zeebe:output source="=if(programYearTotalPartTimeSBSD = null) then 0 else programYearTotalPartTimeSBSD" target="programYearTotalPartTimeSBSD" />
           <zeebe:output source="=programYearTotalFullTimeSBSD + programYearTotalPartTimeSBSD" target="programYearTotalSBSD" />
           <zeebe:output source="=programYearTotalFullTimeCSGP + programYearTotalPartTimeCSGP" target="programYearTotalCSGP" />
-          <zeebe:output source="=if(programYearTotalBGPD = null) then 0 else programYearTotalBGPD" target="programYearTotalBGPD" />
-          <zeebe:output source="=if(programYearTotalBCAG = null) then 0 else programYearTotalBCAG" target="programYearTotalBCAG" />
+          <zeebe:output source="=if(programYearTotalFullTimeBGPD = null) then 0 else programYearTotalFullTimeBGPD" target="programYearTotalFullTimeBGPD" />
+          <zeebe:output source="=if(programYearTotalFullTimeBCAG = null) then 0 else programYearTotalFullTimeBCAG" target="programYearTotalFullTimeBCAG" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1goqpi4</bpmn:incoming>
@@ -2186,15 +2186,11 @@ BCAG has a min award that it could be rounded up to so weeks are insufficient to
 FEDERAL: There is one limit for at or below the income threshold and another for those above.
 PROVINCIAL: One limit for students at or below income threshold
 
-Not all students will have Spouse or Parent contribution. In order to show if they are not eligible to have that considered, we declare null values for both and then when they meet conditions for contribution it will update to the total expected.
 This also brings in the total PY spouse contribution weeks value if it exists.</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=programYearTotalFullTimeFederalFSC" target="programYearTotalFederalFSC" />
           <zeebe:output source="=programYearTotalFullTimeProvincialFSC" target="programYearTotalProvincialFSC" />
-          <zeebe:output source="=null" target="calculatedDataTotalParentalContribution" />
-          <zeebe:output source="=null" target="calculatedDataTotalSpouseContribution" />
-          <zeebe:output source="=null" target="calculatedDataSpouseContributionWeeks" />
           <zeebe:output source="=if programYearTotalFullTimeSpouseContributionWeeks = null&#10;then 0&#10;else programYearTotalFullTimeSpouseContributionWeeks" target="programYearSpouseContributionWeeks" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
