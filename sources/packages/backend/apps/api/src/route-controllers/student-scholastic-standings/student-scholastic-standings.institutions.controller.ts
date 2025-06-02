@@ -99,7 +99,8 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "Application not found or invalid application or invalid" +
-      " application status or another assessment already in progress.",
+      " application status or another assessment already in progress or" +
+      " number of unsuccessful weeks cannot exceed the number of offering weeks.",
   })
   @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @Post("location/:locationId/application/:applicationId")
@@ -132,6 +133,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     }
 
     const acceptableNumberOfUnsuccessfulWeeks =
+      payload.data.numberOfUnsuccessfulWeeks &&
       Math.ceil(
         dateDifference(
           application.currentAssessment.offering.studyEndDate,
@@ -139,8 +141,11 @@ export class ScholasticStandingInstitutionsController extends BaseController {
         ) / 7,
       ) -
         payload.data.numberOfUnsuccessfulWeeks >=
-      0;
-    if (!acceptableNumberOfUnsuccessfulWeeks) {
+        0;
+    if (
+      payload.data.numberOfUnsuccessfulWeeks &&
+      !acceptableNumberOfUnsuccessfulWeeks
+    ) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "Number of unsuccessful weeks cannot exceed the number of offering weeks",
