@@ -2296,7 +2296,7 @@
                 "required": true,
                 "onlyAvailableItems": true
               },
-              "key": "outOfHighSchoolFor4Years1",
+              "key": "outOfHighSchoolFor4Years",
               "type": "radio",
               "input": true
             },
