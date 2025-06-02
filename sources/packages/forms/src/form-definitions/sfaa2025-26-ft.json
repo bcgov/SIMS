@@ -2572,7 +2572,7 @@
                   "label": "Application Exception - Estranged from parents",
                   "calculateValue": "value = \"studentApplicationException\";",
                   "calculateServer": true,
-                  "key": "modifiedIndependantApplicationException",
+                  "key": "estrangedFromParentsApplicationException",
                   "type": "hidden",
                   "input": true,
                   "tableView": false
