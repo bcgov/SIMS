@@ -3229,6 +3229,7 @@
                       }
                     },
                     {
+                      "key": "parentResidencyExceptionSupportingDocumentsPanelContent",
                       "label": "Content",
                       "input": false,
                       "className": "file-upload-info-container",
