@@ -2504,6 +2504,11 @@
               },
               "validateWhenHidden": false,
               "key": "estranged",
+              "conditional": {
+                "show": true,
+                "when": "parentsDeceased",
+                "eq": "no"
+              },
               "type": "radio",
               "input": true,
               "lockKey": true
