@@ -25,4 +25,9 @@ export enum DisbursementScheduleStatus {
    * application is canceled.
    */
   Cancelled = "Cancelled",
+  /**
+   * The status indicates that the disbursement has been rejected by ESDC
+   * after being sent.
+   */
+  Rejected = "Rejected",
 }
