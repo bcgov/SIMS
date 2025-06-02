@@ -5202,6 +5202,11 @@
                   },
                   "validateWhenHidden": false,
                   "key": "currentYearIncome",
+                  "conditional": {
+                    "show": "true",
+                    "when": "hasSignificantDegreeOfIncome",
+                    "eq": "yes"
+                  },
                   "type": "number",
                   "decimalLimit": 0,
                   "input": true
