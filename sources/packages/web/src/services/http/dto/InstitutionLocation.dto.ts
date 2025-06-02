@@ -119,6 +119,7 @@ export interface ActiveApplicationDataAPIOutDTO {
   applicationLocationName: string;
   applicationStatus: string;
   applicationOfferingStudyBreak: StudyBreak[];
+  applicationOfferingTotalOfferingWeeks: number;
 }
 
 export interface ActiveApplicationSummaryAPIOutDTO {

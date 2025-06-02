@@ -39,12 +39,17 @@ import {
   ApplicationService,
 } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { CustomNamedError, FILE_DEFAULT_ENCODING } from "@sims/utilities";
+import {
+  CustomNamedError,
+  dateDifference,
+  FILE_DEFAULT_ENCODING,
+} from "@sims/utilities";
 import BaseController from "../BaseController";
 import { FormNames } from "../../services/form/constants";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
+  UNACCEPTABLE_UNSUCCESSFUL_COMPLETION_WEEKS,
 } from "../../constants";
 import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
@@ -122,6 +127,24 @@ export class ScholasticStandingInstitutionsController extends BaseController {
         new ApiProcessError(
           "This application is no longer eligible to request changes.",
           APPLICATION_CHANGE_NOT_ELIGIBLE,
+        ),
+      );
+    }
+
+    const acceptableNumberOfUnsuccessfulWeeks =
+      Math.ceil(
+        dateDifference(
+          application.currentAssessment.offering.studyEndDate,
+          application.currentAssessment.offering.studyStartDate,
+        ) / 7,
+      ) -
+        payload.data.numberOfUnsuccessfulWeeks >=
+      0;
+    if (!acceptableNumberOfUnsuccessfulWeeks) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Number of unsuccessful weeks cannot exceed the number of offering weeks",
+          UNACCEPTABLE_UNSUCCESSFUL_COMPLETION_WEEKS,
         ),
       );
     }

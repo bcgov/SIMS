@@ -26,6 +26,7 @@ import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ScholasticStandingDataAPIInDTO,
+  UNACCEPTABLE_UNSUCCESSFUL_COMPLETION_WEEKS,
 } from "@/services/http/dto/ScholasticStanding.dto";
 import { useFormatters, useInstitutionAuth, useSnackBar } from "@/composables";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
@@ -69,6 +70,8 @@ export default defineComponent({
         applicationOfferingEndDate: dateOnlyLongString(
           applicationDetails.applicationOfferingEndDate,
         ),
+        applicationOfferingTotalOfferingWeeks:
+          applicationDetails.applicationOfferingTotalOfferingWeeks,
         studyStartDate: applicationDetails.applicationOfferingStartDate,
         studyEndDate: applicationDetails.applicationOfferingEndDate,
         applicationOfferingStudyBreak:
@@ -120,7 +123,12 @@ export default defineComponent({
             ].includes(error.errorType)
           ) {
             snackBar.warn(`Not able to submit. ${error.message}`);
-
+            return;
+          }
+          if (UNACCEPTABLE_UNSUCCESSFUL_COMPLETION_WEEKS === error.errorType) {
+            snackBar.error(
+              "Number of unsuccessful weeks cannot exceed the number of offering weeks",
+            );
             return;
           }
         }
