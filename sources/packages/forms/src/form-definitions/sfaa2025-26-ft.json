@@ -2250,6 +2250,32 @@
               "label": "Panel"
             },
             {
+              "label": "Have you ever declared bankruptcy that included student financial assistance?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "validateWhenHidden": false,
+              "key": "everDeclaredBankruptcy",
+              "type": "radio",
+              "input": true
+            },
+            {
               "label": "At the time of your course study start date, will you have been out of high school for 4 years?",
               "optionsLabelPosition": "right",
               "inline": false,
@@ -3797,6 +3823,16 @@
           "type": "hidden",
           "calculateServer": true,
           "calculateValue": "const isStudentIndependant =\r\n  data.hasDependents === \"yes\" ||\r\n  [\"married\", \"other\", \"marriedUnable\"].includes(data.relationshipStatus) ||\r\n  data.outOfHighSchoolFor4Years === \"yes\" ||\r\n  data.fulltimelabourForce === \"yes\" ||\r\n  data.parentsDeceased === \"yes\" ||\r\n  data.estranged === \"yes\" ||\r\n  data.custodyOfChildWelfare === \"yes\";\r\n// If the student is not independant, dependant status is calculated based on personal information answer inputs.\r\nif (!isStudentIndependant) {\r\n  const isPersonalInfoAnswered =\r\n    !!data.hasDependents &&\r\n    !!data.relationshipStatus &&\r\n    !!data.outOfHighSchoolFor4Years &&\r\n    !!data.fulltimelabourForce &&\r\n    !!data.parentsDeceased &&\r\n    !!data.estranged &&\r\n    !!data.youthInCare &&\r\n    (data.youthInCare === \"no\" || !!data.custodyOfChildWelfare);\r\n  // If the answers to required personal information inputs are not provided, set the dependant status to null.\r\n  // Otherwise, dependant status is calculated based on personal information answers.\r\n  const calculatedStatusFromPersonalInfo = isPersonalInfoAnswered\r\n    ? \"dependant\"\r\n    : null;\r\n  instance.setValue(calculatedStatusFromPersonalInfo);\r\n} else {\r\n  instance.setValue(\"independant\");\r\n}",
+          "lockKey": true
+        },
+        {
+          "label": "Student Restrictions",
+          "calculateValue": "value = data.everDeclaredBankruptcy === 'yes' ? [\"E2\"] : [];",
+          "calculateServer": true,
+          "key": "restrictions",
+          "type": "hidden",
+          "input": true,
+          "tableView": false,
           "lockKey": true
         }
       ],
