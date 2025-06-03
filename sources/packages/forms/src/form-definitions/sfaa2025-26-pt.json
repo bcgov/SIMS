@@ -2429,6 +2429,32 @@
               "input": false,
               "tableView": false,
               "hideLabel": true
+            },
+            {
+              "label": "Have you ever declared bankruptcy that included student financial assistance?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "validateWhenHidden": false,
+              "key": "everDeclaredBankruptcy",
+              "type": "radio",
+              "input": true
             }
           ]
         },
@@ -3305,6 +3331,16 @@
           "type": "hidden",
           "calculateServer": true,
           "calculateValue": "value = \"independant\";",
+          "lockKey": true
+        },
+        {
+          "label": "Student Restrictions",
+          "calculateValue": "value = data.everDeclaredBankruptcy === 'yes' ? [\"E2\"] : [];",
+          "calculateServer": true,
+          "key": "restrictions",
+          "type": "hidden",
+          "input": true,
+          "tableView": false,
           "lockKey": true
         }
       ],
