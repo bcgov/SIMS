@@ -1,17 +1,17 @@
-update
+UPDATE
     sims.disbursement_schedules
-set
+SET
     disbursement_schedule_status = 'Rejected',
     disbursement_schedule_status_updated_by = (
-        select
+        SELECT
             id
-        from
+        FROM
             sims.users
-        where
+        WHERE
             -- System user.
             user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
     ),
     disbursement_schedule_status_updated_on = now()
-where
+WHERE
     disbursement_schedule_status = 'Cancelled'
     AND date_sent IS NOT NULL;
