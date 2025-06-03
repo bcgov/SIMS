@@ -261,7 +261,7 @@ export const APPLICATION_CHANGE_CANCELLED_BY_STUDENT =
   "APPLICATION_CHANGE_CANCELLED_BY_STUDENT";
 
 /**
- * Unacceptable number of unsuccessful completion weeks.
+ * Invalid number of unsuccessful completion weeks.
  */
 export const INVALID_UNSUCCESSFUL_COMPLETION_WEEKS =
   "INVALID_UNSUCCESSFUL_COMPLETION_WEEKS";
