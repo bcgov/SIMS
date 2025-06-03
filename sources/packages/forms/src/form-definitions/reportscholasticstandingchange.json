@@ -1390,25 +1390,6 @@
                       "input": true,
                       "inputType": "number",
                       "isNew": false
-                    },
-                    {
-                      "label": "HTML",
-                      "tag": "p",
-                      "className": "alert alert-danger fa fa-ban w-100",
-                      "attrs": [
-                        {
-                          "attr": "",
-                          "value": ""
-                        }
-                      ],
-                      "content": "<strong>Number of unsuccessful weeks cannot exceed the number of offering weeks</strong>",
-                      "refreshOnChange": false,
-                      "customClass": "banner-alert",
-                      "key": "html8",
-                      "customConditional": "show = data.numberOfUnsuccessfulWeeks > data.applicationOfferingTotalOfferingWeeks;",
-                      "type": "htmlelement",
-                      "input": false,
-                      "tableView": false
                     }
                   ],
                   "width": 6,

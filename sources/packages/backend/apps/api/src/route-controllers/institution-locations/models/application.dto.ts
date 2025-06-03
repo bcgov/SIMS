@@ -34,7 +34,6 @@ export class ActiveApplicationDataAPIOutDTO {
   applicationOfferingProgramRelatedCosts: number;
   applicationOfferingMandatoryFess: number;
   applicationOfferingExceptionalExpenses: number;
-  applicationOfferingTotalOfferingWeeks: number;
 }
 
 export class ActiveApplicationSummaryAPIOutDTO {
@@ -70,9 +69,6 @@ export const transformToActiveApplicationDataAPIOutDTO = (
   return {
     applicationStatus: application.applicationStatus,
     applicationNumber: application.applicationNumber,
-    applicationOfferingTotalOfferingWeeks: Math.ceil(
-      application.currentAssessment.offering.studyBreaks.totalDays / 7,
-    ),
     applicationOfferingIntensity: offering.offeringIntensity,
     applicationOfferingStartDate: offering.studyStartDate,
     applicationOfferingEndDate: offering.studyEndDate,

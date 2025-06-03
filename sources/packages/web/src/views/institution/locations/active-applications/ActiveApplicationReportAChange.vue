@@ -70,8 +70,6 @@ export default defineComponent({
         applicationOfferingEndDate: dateOnlyLongString(
           applicationDetails.applicationOfferingEndDate,
         ),
-        applicationOfferingTotalOfferingWeeks:
-          applicationDetails.applicationOfferingTotalOfferingWeeks,
         studyStartDate: applicationDetails.applicationOfferingStartDate,
         studyEndDate: applicationDetails.applicationOfferingEndDate,
         applicationOfferingStudyBreak:
