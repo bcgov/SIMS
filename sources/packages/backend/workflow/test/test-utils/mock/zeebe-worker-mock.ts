@@ -30,7 +30,8 @@ async function mockTaskHandler(
   const serviceTaskId = getNormalizedServiceTaskId(job.elementId);
   const serviceTaskMock = job.variables[serviceTaskId] ?? {};
   let mockedData = serviceTaskMock;
-  if (serviceTaskMock[IS_MULTI_INSTANCE]) {
+  const isMultiInstance = !!serviceTaskMock[IS_MULTI_INSTANCE];
+  if (isMultiInstance) {
     // If the service task is a multi-instance, we need to return the
     // appropriate value for each instance.
     const multiInstanceIndex = +job.variables[MULTI_INSTANCE_LOOP_COUNTER] - 1;

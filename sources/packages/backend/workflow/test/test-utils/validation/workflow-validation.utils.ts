@@ -1,10 +1,14 @@
+import { WorkflowMultiInstanceProcess } from "..";
 import {
   WorkflowServiceTasks,
   WorkflowSubprocesses,
 } from "../constants/workflow-variables-constants";
 import { getPassthroughTaskId } from "../mock";
 
-export type WorkflowExpectedTask = WorkflowServiceTasks | WorkflowSubprocesses;
+export type WorkflowExpectedTask =
+  | WorkflowServiceTasks
+  | WorkflowSubprocesses
+  | WorkflowMultiInstanceProcess;
 
 /**
  * Expects a workflow based on the workflow result
@@ -14,9 +18,17 @@ export type WorkflowExpectedTask = WorkflowServiceTasks | WorkflowSubprocesses;
  */
 export function expectToPassThroughServiceTasks(
   workflowResultVariables: unknown,
-  ...expectedTasks: (WorkflowExpectedTask | string)[]
+  ...expectedTasks: WorkflowExpectedTask[]
 ) {
   expectedTasks.forEach((expectedTask) => {
+    // Multi-instance processes validation.
+    if (expectedTask instanceof WorkflowMultiInstanceProcess) {
+      expect(expectedTask.getPassthroughValue(workflowResultVariables)).toBe(
+        expectedTask.subprocess,
+      );
+      return;
+    }
+    // Non-multi-instance processes validation.
     expect(workflowResultVariables[getPassthroughTaskId(expectedTask)]).toBe(
       expectedTask,
     );
@@ -34,6 +46,14 @@ export function expectNotToPassThroughServiceTasks(
   ...expectedTasks: WorkflowExpectedTask[]
 ) {
   expectedTasks.forEach((expectedTask) => {
+    // Multi-instance processes or task validation.
+    if (expectedTask instanceof WorkflowMultiInstanceProcess) {
+      expect(
+        expectedTask.getPassthroughValue(workflowResultVariables),
+      ).toBeUndefined();
+      return;
+    }
+    // Non-multi-instance processes validation.
     expect(
       workflowResultVariables[getPassthroughTaskId(expectedTask)],
     ).toBeUndefined();
