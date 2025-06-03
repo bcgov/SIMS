@@ -10,7 +10,10 @@ import {
   expectToPassThroughServiceTasks,
   expectNotToPassThroughServiceTasks,
 } from "../../test-utils";
-import { PROGRAM_YEAR } from "../constants/program-year.constants";
+import {
+  DEFAULT_ASSESSMENT_GATEWAY,
+  PROGRAM_YEAR,
+} from "../constants/program-year.constants";
 import {
   createWorkersMockedData,
   createLoadAssessmentDataTaskMock,
@@ -42,7 +45,7 @@ describe(`E2E Test Workflow assessment gateway on student appeal for ${PROGRAM_Y
     // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: 1,
           ...workersMockedData,
