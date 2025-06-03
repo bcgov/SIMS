@@ -3335,7 +3335,7 @@
         },
         {
           "label": "Student Restrictions",
-          "calculateValue": "var restrictions = data.restrictions || [];\n\nif (data.everDeclaredBankruptcy === 'yes' && !restrictions.includes('E2')) {\n  restrictions.push('E2');\n} else if (data.everDeclaredBankruptcy === 'no') {\n    restrictions = restrictions.filter(item => item !== 'E2');\n}\n\ndata.restrictions = restrictions;\nvalue = data.restrictions;",
+          "calculateValue": "value = data.everDeclaredBankruptcy === 'yes' ? [\"E2\"] : [];",
           "calculateServer": true,
           "key": "restrictions",
           "type": "hidden",
