@@ -52,3 +52,20 @@ export enum WorkflowSubprocesses {
   Parent1IncomeVerification = "parent-1-income-verification-subprocess",
   Parent2IncomeVerification = "parent-2-income-verification-subprocess",
 }
+
+export enum WorkflowMultiInstanceProcesses {
+  IdentifiableParentsCreation = "identifiable_parents_creation_output",
+}
+
+export enum WorkflowMultiInstancePassthrough {
+  retrieve_parent_info_passthrough = "retrieve_parent_info_passthrough",
+  parent_income_verification_passthrough = "parent_income_verification_passthrough",
+}
+
+export function createMultiInstanceVerificationPassthrough(
+  multiInstanceProcess: WorkflowMultiInstanceProcesses,
+  loopCounter: number,
+  passthrough: WorkflowMultiInstancePassthrough,
+): string {
+  return `${multiInstanceProcess}-loop_counter_${loopCounter}-${passthrough}`;
+}

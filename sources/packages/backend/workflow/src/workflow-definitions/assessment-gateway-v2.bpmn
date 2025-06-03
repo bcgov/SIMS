@@ -72,7 +72,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:flowNodeRef>exceptions-workflow-wrap-up-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>pir-declined-end-event</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>pir-workflow-wrap-up-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>identifiable-supporting-user-creation</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>identifiable-parents-creation</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>parents-verification-has-dependant-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>parents-verification-has-dependant-end-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_139oo1r</bpmn:flowNodeRef>
@@ -629,7 +629,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus != "dependant"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_18xo3dr" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="parents-verification-has-dependant-gateway" />
-    <bpmn:sequenceFlow id="parents-verification-dependantstatus-dependant-flow" name="Dependant" sourceRef="parents-verification-has-dependant-gateway" targetRef="identifiable-supporting-user-creation">
+    <bpmn:sequenceFlow id="parents-verification-dependantstatus-dependant-flow" name="Dependant" sourceRef="parents-verification-has-dependant-gateway" targetRef="identifiable-parents-creation">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_10de3as" sourceRef="Gateway_1knnojd" targetRef="in-progress-main-parallel-info-gathering-gateway" />
@@ -736,13 +736,14 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>pir-pending-declined-flow</bpmn:incoming>
       <bpmn:outgoing>Flow_0jivtff</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="parents-verification-dependantstatus-dependant-end-flow" sourceRef="identifiable-supporting-user-creation" targetRef="parents-verification-has-dependant-end-gateway" />
-    <bpmn:subProcess id="identifiable-supporting-user-creation">
+    <bpmn:sequenceFlow id="parents-verification-dependantstatus-dependant-end-flow" sourceRef="identifiable-parents-creation" targetRef="parents-verification-has-dependant-end-gateway" />
+    <bpmn:subProcess id="identifiable-parents-creation">
+      <bpmn:extensionElements />
       <bpmn:incoming>parents-verification-dependantstatus-dependant-flow</bpmn:incoming>
       <bpmn:outgoing>parents-verification-dependantstatus-dependant-end-flow</bpmn:outgoing>
       <bpmn:multiInstanceLoopCharacteristics>
         <bpmn:extensionElements>
-          <zeebe:loopCharacteristics inputCollection="=studentDataParents" inputElement="parent" />
+          <zeebe:loopCharacteristics inputCollection="=studentDataParents" inputElement="parent" outputCollection="identifiable_parents_creation_output" outputElement="={&#10;  retrieveParentInfoPassthrough: retrieve_parent_info_passthrough,&#10;  parentIncomeVerificationPassthrough: parent_income_verification_passthrough&#10;}" />
         </bpmn:extensionElements>
       </bpmn:multiInstanceLoopCharacteristics>
       <bpmn:startEvent id="start-supporting-user-creation">
@@ -761,7 +762,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:incoming>Flow_1g9cp6m</bpmn:incoming>
         <bpmn:outgoing>Flow_0u3bioj</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:callActivity id="retrieve-supporting-info-for-parent" name="Retrieve supporting info for parent">
+      <bpmn:callActivity id="retrieve-parent-info" name="Retrieve parent information">
         <bpmn:extensionElements>
           <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="true" />
           <zeebe:ioMapping>
@@ -769,7 +770,7 @@ Note: the workflow process should continue its execution as a regular reassessme
             <zeebe:input source="=[&#34;retrieve-supporting-info-for-parent-&#34; + string(loopCounter) + &#34;-subprocess&#34;]" target="parentSubprocesses" />
             <zeebe:output source="=supportingUserId" target="parentSupportingUserId" />
             <zeebe:output source="=totalIncome" target="supportingUserParentTotalIncome" />
-            <zeebe:output source="=&#34;retrieve-supporting-info-for-parent-&#34; + string(loopCounter) + &#34;-subprocess&#34;" target="retrieve_supporting_info_for_parent_subprocess_passthrough" />
+            <zeebe:output source="=true" target="retrieve_parent_info_passthrough" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0u3bioj</bpmn:incoming>
@@ -782,15 +783,15 @@ Note: the workflow process should continue its execution as a regular reassessme
             <zeebe:input source="=supportingUserParentTotalIncome" target="reportedIncome" />
             <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
             <zeebe:input source="=[&#34;parent-1-income-verification-subprocess&#34;]" target="parentSubprocesses" />
-            <zeebe:output source="=&#34;parent-&#34; + string(loop) + &#34;-income-verification-subprocess&#34;" target="parent_income_verification_subprocess_passthrough" />
+            <zeebe:output source="=true" target="parent_income_verification_passthrough" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1j7259r</bpmn:incoming>
         <bpmn:outgoing>Flow_0jh200l</bpmn:outgoing>
       </bpmn:callActivity>
       <bpmn:sequenceFlow id="Flow_1g9cp6m" sourceRef="start-supporting-user-creation" targetRef="create-identifiable-parent-task" />
-      <bpmn:sequenceFlow id="Flow_0u3bioj" sourceRef="create-identifiable-parent-task" targetRef="retrieve-supporting-info-for-parent" />
-      <bpmn:sequenceFlow id="Flow_1j7259r" sourceRef="retrieve-supporting-info-for-parent" targetRef="parent-income-verification" />
+      <bpmn:sequenceFlow id="Flow_0u3bioj" sourceRef="create-identifiable-parent-task" targetRef="retrieve-parent-info" />
+      <bpmn:sequenceFlow id="Flow_1j7259r" sourceRef="retrieve-parent-info" targetRef="parent-income-verification" />
       <bpmn:endEvent id="end-supporting-user-creation">
         <bpmn:incoming>Flow_0jh200l</bpmn:incoming>
       </bpmn:endEvent>
@@ -1191,7 +1192,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="2284" y="166" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1r28emd_di" bpmnElement="identifiable-supporting-user-creation" isExpanded="true">
+      <bpmndi:BPMNShape id="Activity_1r28emd_di" bpmnElement="identifiable-parents-creation" isExpanded="true">
         <dc:Bounds x="1730" y="1170" width="565" height="200" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_18hxtfw_di" bpmnElement="start-supporting-user-creation">
@@ -1201,7 +1202,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="1820" y="1230" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1kqsmts" bpmnElement="retrieve-supporting-info-for-parent">
+      <bpmndi:BPMNShape id="BPMNShape_1kqsmts" bpmnElement="retrieve-parent-info">
         <dc:Bounds x="1950" y="1230" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>

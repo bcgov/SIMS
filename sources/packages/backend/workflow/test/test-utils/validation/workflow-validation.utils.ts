@@ -14,7 +14,7 @@ export type WorkflowExpectedTask = WorkflowServiceTasks | WorkflowSubprocesses;
  */
 export function expectToPassThroughServiceTasks(
   workflowResultVariables: unknown,
-  ...expectedTasks: WorkflowExpectedTask[]
+  ...expectedTasks: (WorkflowExpectedTask | string)[]
 ) {
   expectedTasks.forEach((expectedTask) => {
     expect(workflowResultVariables[getPassthroughTaskId(expectedTask)]).toBe(
