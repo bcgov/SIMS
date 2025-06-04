@@ -32,3 +32,4 @@ export * from "./schedulers/student-application-notifications/student-applicatio
 export * from "./schedulers/sfas-integration/sims-to-sfas-integration.scheduler";
 export * from "./schedulers/cas-integration/cas-invoices-batches-creation.scheduler";
 export * from "./schedulers/cas-integration/cas-send-invoices.scheduler";
+export * from "./schedulers/esdc-integration/ecert-integration/ecert-cancellation-response-integration.scheduler";
