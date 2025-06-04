@@ -198,8 +198,8 @@
           ]
         },
         {
-          "label": "Estranged from parents",
-          "key": "estrangedFromParentsApplicationException",
+          "label": "Modified Independent",
+          "key": "modifiedIndependentApplicationException",
           "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
           "type": "well",
           "input": false,
@@ -214,7 +214,7 @@
                   "value": ""
                 }
               ],
-              "content": "Estranged from parents",
+              "content": "Modified Independent",
               "refreshOnChange": false,
               "key": "html11",
               "type": "htmlelement",

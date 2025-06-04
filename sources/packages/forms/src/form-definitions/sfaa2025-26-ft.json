@@ -2599,7 +2599,7 @@
                   "label": "Application Exception - Estranged from parents",
                   "calculateValue": "value = \"studentApplicationException\";",
                   "calculateServer": true,
-                  "key": "estrangedFromParentsApplicationException",
+                  "key": "modifiedIndependentApplicationException",
                   "type": "hidden",
                   "input": true,
                   "tableView": false
@@ -2691,7 +2691,7 @@
                   "input": true
                 },
                 {
-                  "key": "estrangedStudentExceptionSupportingDocumentsPanelContent1",
+                  "key": "estrangedStudentExceptionSupportingDocumentsPanelContent",
                   "label": "Content",
                   "input": false,
                   "className": "file-upload-info-container",
