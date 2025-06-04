@@ -182,6 +182,7 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
    * @param restrictionCode restriction code.
    * @param auditUserId audit user id
    * @param applicationId application id.
+   * @param entityManager entity manager to execute in transaction.
    * @returns a new student restriction object.
    */
   async createRestrictionToSave(
@@ -189,9 +190,13 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
     restrictionCode: RestrictionCode,
     auditUserId: number,
     applicationId: number,
+    entityManager?: EntityManager,
   ): Promise<StudentRestriction> {
     const restriction =
-      await this.restrictionSharedService.getRestrictionByCode(restrictionCode);
+      await this.restrictionSharedService.getRestrictionByCode(
+        restrictionCode,
+        entityManager,
+      );
     if (!restriction) {
       throw new Error(
         `Requested restriction code ${restrictionCode} not found.`,
@@ -204,6 +209,9 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
     studentRestriction.student = { id: studentId } as Student;
     studentRestriction.application = { id: applicationId } as Application;
     studentRestriction.creator = { id: auditUserId } as User;
-    return studentRestriction;
+
+    const studentRestrictionRepo =
+      entityManager?.getRepository(StudentRestriction) ?? this.repo;
+    return studentRestrictionRepo.save(studentRestriction);
   }
 }
