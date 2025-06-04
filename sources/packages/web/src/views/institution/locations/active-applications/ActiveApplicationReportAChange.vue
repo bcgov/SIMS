@@ -25,6 +25,7 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+  INVALID_UNSUCCESSFUL_COMPLETION_WEEKS,
   ScholasticStandingDataAPIInDTO,
 } from "@/services/http/dto/ScholasticStanding.dto";
 import { useFormatters, useInstitutionAuth, useSnackBar } from "@/composables";
@@ -117,10 +118,10 @@ export default defineComponent({
               INVALID_OPERATION_IN_THE_CURRENT_STATUS,
               ASSESSMENT_ALREADY_IN_PROGRESS,
               APPLICATION_CHANGE_NOT_ELIGIBLE,
+              INVALID_UNSUCCESSFUL_COMPLETION_WEEKS,
             ].includes(error.errorType)
           ) {
             snackBar.warn(`Not able to submit. ${error.message}`);
-
             return;
           }
         }
