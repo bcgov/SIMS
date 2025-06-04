@@ -264,22 +264,25 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * Checks if the student has an active requested restriction.
    * @param studentId student id.
    * @param restrictionCode restriction code.
+   * @param entityManager manages the transaction where this operation must be executed.
    * @returns true, if the student has the requested active
    * restriction code else false.
    */
   async studentHasRestriction(
     studentId: number,
-    restrictionCode: string,
+    restrictionCodes: string[],
+    entityManager?: EntityManager,
   ): Promise<boolean> {
-    return !!(await this.repo
+    const repo = entityManager?.getRepository(StudentRestriction) ?? this.repo;
+    return !!(await repo
       .createQueryBuilder("studentRestrictions")
       .select("studentRestrictions.id")
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
       .where("student.id = :studentId", { studentId })
       .andWhere("studentRestrictions.isActive = true")
-      .andWhere("restriction.restrictionCode = :restrictionCode", {
-        restrictionCode,
+      .andWhere("restriction.restrictionCode IN (:...restrictionCodes)", {
+        restrictionCodes,
       })
       .limit(1)
       .getOne());
@@ -325,10 +328,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       return;
     }
 
-    const hasSINRestriction = await this.studentHasRestriction(
-      studentId,
+    const hasSINRestriction = await this.studentHasRestriction(studentId, [
       RestrictionCode.SINR,
-    );
+    ]);
     if (hasSINRestriction) {
       // The student already has an active SIN restriction, avoid adding it again.
       return;
