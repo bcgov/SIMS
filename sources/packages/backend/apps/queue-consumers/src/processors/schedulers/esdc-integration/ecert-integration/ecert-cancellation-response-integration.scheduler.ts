@@ -31,7 +31,7 @@ export class ECertCancellationResponseIntegrationScheduler extends BaseScheduler
     processSummary: ProcessSummary,
   ): Promise<string[]> {
     processSummary.info(
-      "E-Cert cancellation response integration Scheduler is not implemented.",
+      "E-Cert cancellation response integration scheduler is not implemented.",
     );
     return [];
   }
