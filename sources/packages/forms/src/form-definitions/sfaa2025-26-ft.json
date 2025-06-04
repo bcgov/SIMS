@@ -2596,7 +2596,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "Application Exception - Estranged from parents",
+                  "label": "Application Exception - Modified Independent",
                   "calculateValue": "value = \"studentApplicationException\";",
                   "calculateServer": true,
                   "key": "modifiedIndependentApplicationException",
