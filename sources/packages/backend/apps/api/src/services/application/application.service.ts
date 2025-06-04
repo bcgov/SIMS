@@ -299,7 +299,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       await applicationRepository.save(newApplication);
 
       // Check if the student submitted E2 restriction
-      if (newApplication.data.restrictions.includes("E2")) {
+      if (newApplication.data?.restrictions?.includes("E2")) {
         // Check if the student already has E2 or RB restriction
         const hasE2orRBRestriction =
           await this.studentRestrictionService.studentHasRestriction(
@@ -463,7 +463,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       await applicationRepository.save(newApplication);
 
       // Check if the student submitted E2 restriction
-      if (newApplication.data.restrictions.includes("E2")) {
+      if (newApplication.data?.restrictions?.includes("E2")) {
         // Check if the student already has E2 or RB restriction
         const hasE2orRBRestriction =
           await this.studentRestrictionService.studentHasRestriction(
