@@ -68,7 +68,11 @@ import {
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   EDUCATION_PROGRAM_IS_EXPIRED,
 } from "../../constants";
-import { SequenceControlService } from "@sims/services";
+import {
+  SequenceControlService,
+  StudentRestrictionSharedService,
+  RestrictionCode,
+} from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import {
   ApplicationEditedTooManyTimesNotification,
@@ -107,6 +111,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly notificationService: NotificationService,
     private readonly studentService: StudentService,
+    private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -292,6 +297,28 @@ export class ApplicationService extends RecordDataModelService<Application> {
       const applicationRepository =
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
+
+      // Check if the student submitted E2 restriction
+      if (newApplication.data.restrictions.includes("E2")) {
+        // Check if the student already has E2 or RB restriction
+        const hasE2orRBRestriction =
+          await this.studentRestrictionService.studentHasRestriction(
+            studentId,
+            ["E2", "RB"],
+            transactionalEntityManager,
+          );
+        // If the student does not have E2 or RB restriction, add the E2 restriction
+        if (!hasE2orRBRestriction) {
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            "E2" as RestrictionCode,
+            auditUserId,
+            newApplication.id,
+            transactionalEntityManager,
+          );
+        }
+      }
+
       newApplication.creator = auditUser;
       newApplication.studentAssessments = [originalAssessment];
       newApplication.currentAssessment = originalAssessment;
@@ -434,6 +461,28 @@ export class ApplicationService extends RecordDataModelService<Application> {
       const applicationRepository =
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
+
+      // Check if the student submitted E2 restriction
+      if (newApplication.data.restrictions.includes("E2")) {
+        // Check if the student already has E2 or RB restriction
+        const hasE2orRBRestriction =
+          await this.studentRestrictionService.studentHasRestriction(
+            studentId,
+            ["E2", "RB"],
+            transactionalEntityManager,
+          );
+        // If the student does not have E2 or RB restriction, add the E2 restriction
+        if (!hasE2orRBRestriction) {
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            "E2" as RestrictionCode,
+            auditUserId,
+            newApplication.id,
+            transactionalEntityManager,
+          );
+        }
+      }
+
       newApplication.modifier = auditUser;
       newApplication.updatedAt = now;
       newApplication.studentAssessments = [originalAssessment];
