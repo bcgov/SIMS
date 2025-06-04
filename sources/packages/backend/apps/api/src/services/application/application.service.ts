@@ -299,19 +299,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
       await applicationRepository.save(newApplication);
 
       // Check if the student submitted E2 restriction
-      if (newApplication.data?.restrictions?.includes("E2")) {
+      if (newApplication.data?.restrictions?.includes(RestrictionCode.E2)) {
         // Check if the student already has E2 or RB restriction
         const hasE2orRBRestriction =
           await this.studentRestrictionService.studentHasRestriction(
             studentId,
-            ["E2", "RB"],
+            [RestrictionCode.E2, RestrictionCode.RB],
             transactionalEntityManager,
           );
         // If the student does not have E2 or RB restriction, add the E2 restriction
         if (!hasE2orRBRestriction) {
           await this.studentRestrictionSharedService.createRestrictionToSave(
             studentId,
-            "E2" as RestrictionCode,
+            RestrictionCode.E2,
             auditUserId,
             newApplication.id,
             transactionalEntityManager,
@@ -463,19 +463,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
       await applicationRepository.save(newApplication);
 
       // Check if the student submitted E2 restriction
-      if (newApplication.data?.restrictions?.includes("E2")) {
+      if (newApplication.data?.restrictions?.includes(RestrictionCode.E2)) {
         // Check if the student already has E2 or RB restriction
         const hasE2orRBRestriction =
           await this.studentRestrictionService.studentHasRestriction(
             studentId,
-            ["E2", "RB"],
+            [RestrictionCode.E2, RestrictionCode.RB],
             transactionalEntityManager,
           );
         // If the student does not have E2 or RB restriction, add the E2 restriction
         if (!hasE2orRBRestriction) {
           await this.studentRestrictionSharedService.createRestrictionToSave(
             studentId,
-            "E2" as RestrictionCode,
+            RestrictionCode.E2,
             auditUserId,
             newApplication.id,
             transactionalEntityManager,
