@@ -2599,7 +2599,7 @@
                   "label": "Application Exception - Modified Independent",
                   "calculateValue": "value = \"studentApplicationException\";",
                   "calculateServer": true,
-                  "key": "modifiedIndependentApplicationException",
+                  "key": "estrangedFromParentsApplicationException",
                   "type": "hidden",
                   "input": true,
                   "tableView": false
