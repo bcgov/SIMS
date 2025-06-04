@@ -1,4 +1,4 @@
-DELETE from
+DELETE FROM
     sims.queue_configurations
-where
+WHERE
     queue_name = 'e-cert-cancellation-response-integration';

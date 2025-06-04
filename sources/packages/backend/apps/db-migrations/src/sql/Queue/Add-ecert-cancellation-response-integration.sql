@@ -10,10 +10,10 @@ VALUES
             "cleanUpPeriod": 2592000000,
             "retryInterval": 180000,
             "dashboardReadonly": false
-        }' :: json,
+        }' :: jsonb,
         '{ 
             "maxStalledCount": 0,
             "lockDuration": 60000,
             "lockRenewTime": 5000
-        }' :: json
+        }' :: jsonb
     );

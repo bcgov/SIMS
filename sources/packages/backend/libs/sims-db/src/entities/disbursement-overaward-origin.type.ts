@@ -22,7 +22,7 @@ export enum DisbursementOverawardOriginType {
   LegacyOveraward = "Legacy overaward",
   /**
    * Overaward paid by a disbursement award deduction was rejected
-   * due to the disbursement being rejected by EDSC.
+   * due to the disbursement being rejected by ESDC.
    */
-  AwardDeductedRejected = "Award deducted rejected",
+  AwardRejectedDeducted = "Award rejected deducted",
 }

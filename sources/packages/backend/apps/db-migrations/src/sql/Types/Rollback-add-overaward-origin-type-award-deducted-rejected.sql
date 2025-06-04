@@ -15,7 +15,7 @@ ALTER COLUMN
     origin_type TYPE sims.disbursement_overaward_origin_types_to_rollback USING (
         CASE
             origin_type :: text
-            WHEN 'Award deducted rejected' THEN 'Award deducted'
+            WHEN 'Award rejected deducted' THEN 'Award deducted'
             ELSE origin_type :: text
         END
     ) :: sims.disbursement_overaward_origin_types_to_rollback;

@@ -4,7 +4,7 @@ CREATE TYPE sims.disbursement_overaward_origin_types_to_be_updated AS ENUM (
     'Award deducted',
     'Manual record',
     'Legacy overaward',
-    'Award deducted rejected'
+    'Award rejected deducted'
 );
 
 -- Update the dependent column to start using the new enum with the expected values.
