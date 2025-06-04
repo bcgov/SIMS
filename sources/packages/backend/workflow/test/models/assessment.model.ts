@@ -266,7 +266,7 @@ export interface AssessmentModel {
 }
 
 export interface CalculatedAssessmentModel {
-  calculatedDataRemainingScholarshipsBursariesLimit: any;
+  calculatedDataRemainingScholarshipsBursariesLimit: number;
   calculatedDataRelationshipStatus: RelationshipStatusType;
   calculatedDataPartner1TotalIncome: number;
   calculatedDataAdditionalTransportRequested: YesNoOptions;
