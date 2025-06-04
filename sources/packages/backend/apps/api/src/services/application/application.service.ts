@@ -300,23 +300,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
       // Check if the student submitted E2 restriction
       if (newApplication.data?.restrictions?.includes(RestrictionCode.E2)) {
-        // Check if the student already has E2 or RB restriction
-        const hasE2orRBRestriction =
-          await this.studentRestrictionService.studentHasRestriction(
-            studentId,
-            [RestrictionCode.E2, RestrictionCode.RB],
-            transactionalEntityManager,
-          );
-        // If the student does not have E2 or RB restriction, add the E2 restriction
-        if (!hasE2orRBRestriction) {
-          await this.studentRestrictionSharedService.createRestrictionToSave(
-            studentId,
-            RestrictionCode.E2,
-            auditUserId,
-            newApplication.id,
-            transactionalEntityManager,
-          );
-        }
+        await this.assessE2Restriction(
+          studentId,
+          newApplication.id,
+          auditUserId,
+          transactionalEntityManager,
+        );
       }
 
       newApplication.creator = auditUser;
@@ -337,6 +326,38 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     });
     return { application, createdAssessment: originalAssessment };
+  }
+
+  /**
+   * Assess the E2 restriction for the student.
+   * @param studentId student ID.
+   * @param newApplicationId new application ID.
+   * @param auditUserId audit user ID.
+   * @param transactionalEntityManager transactional entity manager.
+   */
+  private async assessE2Restriction(
+    studentId: number,
+    newApplicationId: number,
+    auditUserId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<void> {
+    // Check if the student already has E2 or RB restriction
+    const hasE2orRBRestriction =
+      await this.studentRestrictionService.studentHasRestriction(
+        studentId,
+        [RestrictionCode.E2, RestrictionCode.RB],
+        transactionalEntityManager,
+      );
+    // If the student does not have E2 or RB restriction, add the E2 restriction
+    if (!hasE2orRBRestriction) {
+      await this.studentRestrictionSharedService.createRestrictionToSave(
+        studentId,
+        RestrictionCode.E2,
+        auditUserId,
+        newApplicationId,
+        transactionalEntityManager,
+      );
+    }
   }
 
   /**
@@ -464,23 +485,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
       // Check if the student submitted E2 restriction
       if (newApplication.data?.restrictions?.includes(RestrictionCode.E2)) {
-        // Check if the student already has E2 or RB restriction
-        const hasE2orRBRestriction =
-          await this.studentRestrictionService.studentHasRestriction(
-            studentId,
-            [RestrictionCode.E2, RestrictionCode.RB],
-            transactionalEntityManager,
-          );
-        // If the student does not have E2 or RB restriction, add the E2 restriction
-        if (!hasE2orRBRestriction) {
-          await this.studentRestrictionSharedService.createRestrictionToSave(
-            studentId,
-            RestrictionCode.E2,
-            auditUserId,
-            newApplication.id,
-            transactionalEntityManager,
-          );
-        }
+        await this.assessE2Restriction(
+          studentId,
+          newApplication.id,
+          auditUserId,
+          transactionalEntityManager,
+        );
       }
 
       newApplication.modifier = auditUser;
