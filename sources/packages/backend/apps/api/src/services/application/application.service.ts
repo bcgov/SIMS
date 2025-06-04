@@ -298,8 +298,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
 
-      // Check if the student submitted E2 restriction
-      if (newApplication.data?.restrictions?.includes(RestrictionCode.E2)) {
+      //Check if the application requires E2 restriction check.
+      if (newApplication.data.restrictions?.includes(RestrictionCode.E2)) {
         await this.assessE2Restriction(
           studentId,
           newApplication.id,
@@ -331,30 +331,30 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Assess the E2 restriction for the student.
    * @param studentId student ID.
-   * @param newApplicationId new application ID.
+   * @param applicationId application ID.
    * @param auditUserId audit user ID.
    * @param transactionalEntityManager transactional entity manager.
    */
   private async assessE2Restriction(
     studentId: number,
-    newApplicationId: number,
+    applicationId: number,
     auditUserId: number,
     transactionalEntityManager: EntityManager,
   ): Promise<void> {
-    // Check if the student already has E2 or RB restriction
+    // Check if the student already has E2 or RB restriction.
     const hasE2orRBRestriction =
       await this.studentRestrictionService.studentHasRestriction(
         studentId,
         [RestrictionCode.E2, RestrictionCode.RB],
         transactionalEntityManager,
       );
-    // If the student does not have E2 or RB restriction, add the E2 restriction
+    // If the student does not have E2 or RB restriction, add the E2 restriction.
     if (!hasE2orRBRestriction) {
       await this.studentRestrictionSharedService.createRestrictionToSave(
         studentId,
         RestrictionCode.E2,
         auditUserId,
-        newApplicationId,
+        applicationId,
         transactionalEntityManager,
       );
     }
@@ -483,8 +483,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
 
-      // Check if the student submitted E2 restriction
-      if (newApplication.data?.restrictions?.includes(RestrictionCode.E2)) {
+      //Check if the application requires E2 restriction check.
+      if (newApplication.data.restrictions?.includes(RestrictionCode.E2)) {
         await this.assessE2Restriction(
           studentId,
           newApplication.id,

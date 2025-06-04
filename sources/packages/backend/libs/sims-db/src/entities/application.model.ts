@@ -556,7 +556,7 @@ export interface ApplicationData {
    */
   programPersistentProperties?: string[];
   /**
-   * Student restrictions.
+   * Student restriction codes.
    */
   restrictions?: string[];
 }
