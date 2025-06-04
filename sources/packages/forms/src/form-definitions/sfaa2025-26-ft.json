@@ -2509,7 +2509,7 @@
               "lockKey": true
             },
             {
-              "label": "Is it impossible for you to provide your parents' financial information and you need to request consideration for modified independant status due to exceptional circumstances?",
+              "label": "Is it impossible for you to provide your parents' financial information and you need to request consideration for modified independent status due to exceptional circumstances?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -2541,7 +2541,7 @@
               "lockKey": true
             },
             {
-              "label": "Which of the following best describes your situation? (If none of these apply you are not eligible for modified independant status)",
+              "label": "Which of the following best describes your situation? (If none of these apply you are not eligible for modified independent status)",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
