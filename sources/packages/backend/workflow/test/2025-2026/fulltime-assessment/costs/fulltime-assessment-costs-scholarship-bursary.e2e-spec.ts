@@ -5,7 +5,7 @@ import {
 } from "../../../test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
-describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-scholarship-bursary.`, () => {
+describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-scholarship-bursary.`, () => {
   it(
     "Should calculate $0 for total scholarship and bursaries when " +
       "student declares that they did not receive any scholarship and bursaries.",
@@ -13,9 +13,6 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-scholarsh
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataScholarshipAmount = null;
-      assessmentConsolidatedData.offeringWeeks = 18;
-      assessmentConsolidatedData.studentDataRelationshipStatus = "single";
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(
@@ -38,10 +35,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-scholarsh
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.offeringWeeks = 18;
-      assessmentConsolidatedData.studentDataRelationshipStatus = "single";
       assessmentConsolidatedData.studentDataScholarshipAmount = 1700;
-      assessmentConsolidatedData.programYearTotalFullTimeScholarshipsBursaries = 0;
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(
@@ -78,10 +72,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-scholarsh
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.offeringWeeks = 18;
-      assessmentConsolidatedData.studentDataRelationshipStatus = "single";
       assessmentConsolidatedData.studentDataScholarshipAmount = 1900;
-      assessmentConsolidatedData.programYearTotalFullTimeScholarshipsBursaries = 0;
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(
@@ -118,8 +109,6 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-scholarsh
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.offeringWeeks = 18;
-      assessmentConsolidatedData.studentDataRelationshipStatus = "single";
       assessmentConsolidatedData.studentDataScholarshipAmount = 2000;
       assessmentConsolidatedData.programYearTotalFullTimeScholarshipsBursaries = 1000;
       // Act
@@ -158,8 +147,6 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-scholarsh
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.offeringWeeks = 18;
-      assessmentConsolidatedData.studentDataRelationshipStatus = "single";
       assessmentConsolidatedData.studentDataScholarshipAmount = 600;
       assessmentConsolidatedData.programYearTotalFullTimeScholarshipsBursaries = 1000;
       // Act

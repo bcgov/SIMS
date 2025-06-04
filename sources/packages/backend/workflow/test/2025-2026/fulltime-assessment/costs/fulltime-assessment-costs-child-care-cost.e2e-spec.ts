@@ -10,7 +10,7 @@ import {
 } from "../../../test-utils/factories";
 import { YesNoOptions } from "@sims/test-utils";
 
-describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-care-costs.`, () => {
+describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-care-costs.`, () => {
   it(
     "Should calculate total child care cost as sum of values in student application when " +
       "student has one dependent 11 years or under and " +
