@@ -125,7 +125,7 @@
           <zeebe:header key="studentDataPartnerHasEmploymentInsuranceBenefits" value="$.data.partnerHasEmploymentInsuranceBenefits" />
           <zeebe:header key="studentDataPartnerHasFedralProvincialPDReceipt" value="$.data.partnerHasFedralProvincialPDReceipt" />
           <zeebe:header key="studentDataPartnerHasTotalIncomeAssistance" value="$.data.partnerHasTotalIncomeAssistance" />
-          <zeebe:header key="studentDataPartnerBCEAIncomeAssistanceAmount" value="$.data.partnerBCEAIncomeAssistanceAmount" />
+          <zeebe:header key="studentDataPartnerBCEAIncomeAssistanceAmount" value="$.data.partnerBceaIncomeAssistanceAmount" />
           <zeebe:header key="partner1HasEmploymentInsuranceBenefits" value="$.supportingUsers.Partner1.supportingData.hasEmploymentInsuranceBenefits" />
           <zeebe:header key="partner1HasFedralProvincialPDReceipt" value="$.supportingUsers.Partner1.supportingData.hasFedralProvincialPDReceipt" />
           <zeebe:header key="partner1HasTotalIncomeAssistance" value="$.supportingUsers.Partner1.supportingData.hasTotalIncomeAssistance" />
