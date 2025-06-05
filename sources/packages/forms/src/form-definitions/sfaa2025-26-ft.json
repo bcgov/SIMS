@@ -5391,9 +5391,6 @@
               },
               "validateWhenHidden": false,
               "key": "partnerHasBceaIncomeAssistance",
-              "attributes": {
-                "data-cy": "partnercaringforeligibleDependent"
-              },
               "type": "radio",
               "input": true
             },
