@@ -14,6 +14,12 @@ COMMENT ON COLUMN sims.supporting_users.full_name IS 'Used to identify the suppo
 
 COMMENT ON CONSTRAINT supporting_users_application_id_full_name ON sims.supporting_users IS 'Ensures that the combination of application_id and full_name is unique within the supporting_users table.';
 
+-- Drop the default constraint to force the value to be set explicitly.
+ALTER TABLE
+    sims.supporting_users
+ALTER COLUMN
+    is_able_to_report DROP DEFAULT;
+
 -- Columns to history table be in sync with the original table.
 ALTER TABLE
     sims.supporting_users_history
