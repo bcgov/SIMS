@@ -230,9 +230,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
         //Check if the application requires E2 restriction check.
         await this.saveApplicationRestrictions(
-          newApplication.data,
+          application.data,
           studentId,
-          newApplication.id,
+          application.id,
           auditUserId,
           transactionalEntityManager,
         );
@@ -309,9 +309,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
       //Check if the application requires E2 restriction check.
       await this.saveApplicationRestrictions(
-        newApplication.data,
+        application.data,
         studentId,
-        newApplication.id,
+        application.id,
         auditUserId,
         transactionalEntityManager,
       );
@@ -501,9 +501,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
       //Check if the application requires E2 restriction check.
       await this.saveApplicationRestrictions(
-        newApplication.data,
+        application.data,
         studentId,
-        newApplication.id,
+        application.id,
         auditUserId,
         transactionalEntityManager,
       );
