@@ -68,7 +68,11 @@ import {
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   EDUCATION_PROGRAM_IS_EXPIRED,
 } from "../../constants";
-import { SequenceControlService } from "@sims/services";
+import {
+  SequenceControlService,
+  StudentRestrictionSharedService,
+  RestrictionCode,
+} from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import {
   ApplicationEditedTooManyTimesNotification,
@@ -107,6 +111,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly notificationService: NotificationService,
     private readonly studentService: StudentService,
+    private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -223,6 +228,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
           .getRepository(Application)
           .save(application);
 
+        // Check if the application requires E2 restriction check.
+        await this.saveApplicationRestrictions(
+          application.data,
+          studentId,
+          application.id,
+          auditUserId,
+          transactionalEntityManager,
+        );
+
         // If the offering will be set in the assessment check for possible SIN restrictions.
         if (originalAssessment.offering) {
           await this.studentRestrictionService.assessSINRestrictionForOfferingId(
@@ -292,6 +306,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
       const applicationRepository =
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
+
+      // Check if the application requires E2 restriction check.
+      await this.saveApplicationRestrictions(
+        newApplication.data,
+        studentId,
+        newApplication.id,
+        auditUserId,
+        transactionalEntityManager,
+      );
+
       newApplication.creator = auditUser;
       newApplication.studentAssessments = [originalAssessment];
       newApplication.currentAssessment = originalAssessment;
@@ -310,6 +334,49 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     });
     return { application, createdAssessment: originalAssessment };
+  }
+
+  /**
+   * Checks if the application data contains E2 restriction and if the student
+   * already has E2 or RB restriction. If the student does not have E2 or RB restriction,
+   * add the E2 restriction.
+   * @param applicationData application data.
+   * @param studentId student ID.
+   * @param applicationId application ID.
+   * @param auditUserId audit user ID.
+   * @param transactionalEntityManager transactional entity manager.
+   */
+  private async saveApplicationRestrictions(
+    applicationData: ApplicationData,
+    studentId: number,
+    applicationId: number,
+    auditUserId: number,
+    transactionalEntityManager: EntityManager,
+  ): Promise<void> {
+    // Check if the application data contains E2 restriction.
+    // Early return if E2 restriction is not present.
+    if (!applicationData.restrictions?.includes(RestrictionCode.E2)) {
+      return;
+    }
+    // Check if the student already has E2 or RB restriction.
+    const hasE2orRBRestriction =
+      await this.studentRestrictionService.hasAnyActiveRestriction(
+        studentId,
+        [RestrictionCode.E2, RestrictionCode.RB],
+        transactionalEntityManager,
+      );
+    // If the student does not have E2 or RB restriction, add the E2 restriction.
+    if (!hasE2orRBRestriction) {
+      const restriction =
+        await this.studentRestrictionSharedService.createRestrictionToSave(
+          studentId,
+          RestrictionCode.E2,
+          auditUserId,
+          applicationId,
+          transactionalEntityManager,
+        );
+      await transactionalEntityManager.save(restriction);
+    }
   }
 
   /**
@@ -434,6 +501,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
       const applicationRepository =
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
+
+      // Check if the application requires E2 restriction check.
+      await this.saveApplicationRestrictions(
+        newApplication.data,
+        studentId,
+        newApplication.id,
+        auditUserId,
+        transactionalEntityManager,
+      );
+
       newApplication.modifier = auditUser;
       newApplication.updatedAt = now;
       newApplication.studentAssessments = [originalAssessment];
