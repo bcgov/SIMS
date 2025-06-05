@@ -229,7 +229,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           .save(application);
 
         //Check if the application requires E2 restriction check.
-        await this.assessE2Restriction(
+        await this.saveApplicationRestrictions(
           newApplication.data,
           studentId,
           newApplication.id,
@@ -308,7 +308,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       await applicationRepository.save(newApplication);
 
       //Check if the application requires E2 restriction check.
-      await this.assessE2Restriction(
+      await this.saveApplicationRestrictions(
         newApplication.data,
         studentId,
         newApplication.id,
@@ -343,7 +343,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param auditUserId audit user ID.
    * @param transactionalEntityManager transactional entity manager.
    */
-  private async assessE2Restriction(
+  private async saveApplicationRestrictions(
     applicationData: ApplicationData,
     studentId: number,
     applicationId: number,
@@ -500,7 +500,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       await applicationRepository.save(newApplication);
 
       //Check if the application requires E2 restriction check.
-      await this.assessE2Restriction(
+      await this.saveApplicationRestrictions(
         newApplication.data,
         studentId,
         newApplication.id,
