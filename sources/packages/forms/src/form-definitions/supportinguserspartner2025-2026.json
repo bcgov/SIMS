@@ -623,9 +623,6 @@
                     "when": "offeringIntensity",
                     "eq": "Full Time"
                   },
-                  "attributes": {
-                    "data-cy": "partnercaringforeligibleDependent"
-                  },
                   "type": "radio",
                   "input": true
                 },
