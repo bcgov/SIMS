@@ -209,9 +209,6 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
     studentRestriction.student = { id: studentId } as Student;
     studentRestriction.application = { id: applicationId } as Application;
     studentRestriction.creator = { id: auditUserId } as User;
-
-    const studentRestrictionRepo =
-      entityManager?.getRepository(StudentRestriction) ?? this.repo;
-    return studentRestrictionRepo.save(studentRestriction);
+    return studentRestriction;
   }
 }

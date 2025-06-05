@@ -263,12 +263,12 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   /**
    * Checks if the student has an active requested restriction.
    * @param studentId student id.
-   * @param restrictionCode restriction code.
+   * @param restrictionCodes restriction codes.
    * @param entityManager manages the transaction where this operation must be executed.
    * @returns true, if the student has the requested active
    * restriction code else false.
    */
-  async studentHasRestriction(
+  async hasAnyActiveRestriction(
     studentId: number,
     restrictionCodes: string[],
     entityManager?: EntityManager,
@@ -328,7 +328,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       return;
     }
 
-    const hasSINRestriction = await this.studentHasRestriction(studentId, [
+    const hasSINRestriction = await this.hasAnyActiveRestriction(studentId, [
       RestrictionCode.SINR,
     ]);
     if (hasSINRestriction) {
