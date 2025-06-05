@@ -228,7 +228,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           .getRepository(Application)
           .save(application);
 
-        //Check if the application requires E2 restriction check.
+        // Check if the application requires E2 restriction check.
         await this.saveApplicationRestrictions(
           application.data,
           studentId,
@@ -307,11 +307,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
 
-      //Check if the application requires E2 restriction check.
+      // Check if the application requires E2 restriction check.
       await this.saveApplicationRestrictions(
-        application.data,
+        newApplication.data,
         studentId,
-        application.id,
+        newApplication.id,
         auditUserId,
         transactionalEntityManager,
       );
@@ -337,7 +337,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Assess the E2 restriction for the student.
+   * Checks if the application data contains E2 restriction and if the student
+   * already has E2 or RB restriction. If the student does not have E2 or RB restriction,
+   * add the E2 restriction.
+   * @param applicationData application data.
    * @param studentId student ID.
    * @param applicationId application ID.
    * @param auditUserId audit user ID.
@@ -499,11 +502,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
 
-      //Check if the application requires E2 restriction check.
+      // Check if the application requires E2 restriction check.
       await this.saveApplicationRestrictions(
-        application.data,
+        newApplication.data,
         studentId,
-        application.id,
+        newApplication.id,
         auditUserId,
         transactionalEntityManager,
       );
