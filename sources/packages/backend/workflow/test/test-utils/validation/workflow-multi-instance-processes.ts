@@ -5,13 +5,28 @@ import {
   WorkflowSubprocesses,
 } from "../constants/workflow-variables-constants";
 
+/**
+ * Represents the information required to assert if a flow passthrough a multi-instance process iteration.
+ * It should be used to validate a task or subprocess inside a multi-instance process.
+ */
 export class WorkflowMultiInstanceProcess {
+  /**
+   * Create a new instance of WorkflowMultiInstanceProcess.
+   * @param process multi-instance process.
+   * @param loopCounter current loop counter.
+   * @param subprocess subprocess or service task.
+   */
   constructor(
     public process: WorkflowMultiInstanceProcesses,
     public loopCounter: number,
     public subprocess: WorkflowSubprocesses | WorkflowServiceTasks,
   ) {}
 
+  /**
+   * Get the passthrough value for the current multi-instance process iteration output variables.
+   * @param workflowResultVariables workflow result variable.
+   * @returns passthrough value for the current multi-instance process iteration output variable.
+   */
   getPassthroughValue(workflowResultVariables: unknown): boolean | undefined {
     const passthrough = getPassthroughTaskId(this.subprocess);
     return workflowResultVariables[this.process]?.[this.loopCounter - 1]?.[
@@ -20,6 +35,9 @@ export class WorkflowMultiInstanceProcess {
   }
 }
 
+/**
+ * Available multi-instance processes in the workflow to be asserted.
+ */
 export class MultiInstanceProcesses {
   static readonly parent1CreateIdentifiableParent =
     new WorkflowMultiInstanceProcess(
