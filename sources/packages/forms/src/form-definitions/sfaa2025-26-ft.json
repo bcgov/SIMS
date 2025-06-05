@@ -5412,7 +5412,7 @@
                 "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
               },
               "validateWhenHidden": false,
-              "key": "partnerBCEAIncomeAssistanceAmount",
+              "key": "partnerBceaIncomeAssistanceAmount",
               "conditional": {
                 "show": true,
                 "when": "studentPartnerBceaIncomeAssistance",
