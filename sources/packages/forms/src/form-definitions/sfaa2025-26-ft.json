@@ -5395,7 +5395,7 @@
               "input": true
             },
             {
-              "label": "Enter the amount of assistance you will receive during the applicant's study period",
+              "label": "Enter the amount of assistance they will receive during the applicant's study period",
               "prefix": "$",
               "applyMaskOn": "change",
               "mask": false,
