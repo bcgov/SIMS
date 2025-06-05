@@ -24,5 +24,7 @@ export function createFakeSupportingUser(
     options?.initialValues?.supportingUserType ?? SupportingUserType.Parent;
   supportingUser.supportingData =
     options?.initialValues?.supportingData ?? null;
+  supportingUser.isAbleToReport =
+    options?.initialValues?.isAbleToReport ?? true;
   return supportingUser;
 }
