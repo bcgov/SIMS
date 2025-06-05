@@ -18,6 +18,7 @@ import {
   createFakeUser,
   saveFakeStudent,
   saveFakeSFASIndividual,
+  RestrictionCode,
 } from "@sims/test-utils";
 import {
   ApplicationData,
@@ -32,7 +33,6 @@ import { FormNames, FormService } from "../../../services";
 import { AppStudentsModule } from "../../../app.students.module";
 import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
-import { RestrictionCode } from "@sims/services/restriction/model/restriction.model";
 
 describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let app: INestApplication;
