@@ -5395,10 +5395,10 @@
               "input": true
             },
             {
-              "title": "Partner Receives BCEA Income Assistance Panel",
+              "title": "Student Partner Receives BCEA Income Assistance Panel",
               "collapsible": false,
               "hideLabel": true,
-              "key": "partnerReceivesBceaIncomeAssistance",
+              "key": "studentPartnerReceivesBceaIncomeAssistance",
               "conditional": {
                 "show": true,
                 "when": "partnerHasBceaIncomeAssistance",

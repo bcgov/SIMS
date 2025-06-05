@@ -627,29 +627,47 @@
                   "input": true
                 },
                 {
-                  "label": "Enter the amount of assistance you will receive during the applicant's study period",
-                  "prefix": "$",
-                  "applyMaskOn": "change",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": true,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true,
-                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "validateWhenHidden": false,
-                  "key": "bceaIncomeAssistanceAmount",
+                  "title": "Partner Receives BCEA Income Assistance Panel",
+                  "collapsible": false,
+                  "key": "partnerReceivesBceaIncomeAssistance",
                   "conditional": {
                     "show": true,
                     "when": "supportingData.hasBceaIncomeAssistance",
                     "eq": "yes"
                   },
-                  "type": "number",
-                  "decimalLimit": 0,
-                  "input": true
+                  "type": "panel",
+                  "label": "Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your Partner's study period?",
+                  "breadcrumbClickable": true,
+                  "buttonSettings": {
+                    "previous": true,
+                    "cancel": true,
+                    "next": true
+                  },
+                  "scrollToTop": false,
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "label": "Enter the amount of assistance you will receive during the applicant's study period",
+                      "prefix": "$",
+                      "applyMaskOn": "change",
+                      "mask": false,
+                      "tableView": false,
+                      "delimiter": true,
+                      "requireDecimal": false,
+                      "inputFormat": "plain",
+                      "truncateMultipleSpaces": false,
+                      "validate": {
+                        "required": true,
+                        "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                      },
+                      "validateWhenHidden": false,
+                      "key": "bceaIncomeAssistanceAmount",
+                      "type": "number",
+                      "decimalLimit": 0,
+                      "input": true
+                    }
+                  ]
                 },
                 {
                   "label": "Will you be at home caring for eligible dependant children on a full-time basis during your Partner's entire study period?",
