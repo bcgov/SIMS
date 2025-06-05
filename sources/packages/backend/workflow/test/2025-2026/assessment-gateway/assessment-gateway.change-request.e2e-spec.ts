@@ -24,8 +24,10 @@ import {
   createLoadAssessmentDataTaskMock,
   createVerifyAssessmentCalculationOrderTaskMock,
   createApplicationChangeRequestApprovalTaskMock,
+  createCheckIncomeRequestTaskMock,
 } from "../../test-utils/mock";
 import {
+  DEFAULT_ASSESSMENT_GATEWAY,
   PROGRAM_YEAR,
   PROGRAM_YEAR_BASE_ID,
 } from "../constants/program-year.constants";
@@ -74,6 +76,9 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
       createApplicationChangeRequestApprovalTaskMock({
         applicationId: currentApplicationId,
       }),
@@ -83,7 +88,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
     // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
           ...workersMockedData,
@@ -133,6 +138,9 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
       createApplicationChangeRequestApprovalTaskMock({
         applicationId: currentApplicationId,
         messageApplicationEditStatus: ApplicationEditStatus.ChangeDeclined,
@@ -142,7 +150,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
     // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
           ...workersMockedData,
@@ -192,6 +200,9 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
       createApplicationChangeRequestApprovalTaskMock({
         taskCompleteApplicationEditStatus: ApplicationEditStatus.ChangeDeclined,
       }),
@@ -200,7 +211,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
     // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
           ...workersMockedData,
@@ -250,6 +261,9 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
       createApplicationChangeRequestApprovalTaskMock({
         applicationId: currentApplicationId,
         messageApplicationEditStatus: ApplicationEditStatus.ChangeCancelled,
@@ -259,7 +273,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
     // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
           ...workersMockedData,
@@ -309,6 +323,9 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
       createApplicationChangeRequestApprovalTaskMock({
         applicationId: currentApplicationId,
         messageApplicationEditStatus: ApplicationEditStatus.ChangeCancelled,
@@ -318,7 +335,7 @@ describe(`E2E Test Workflow assessment gateway on change requests for ${PROGRAM_
     // Act/Assert
     const assessmentGatewayResponse =
       await zeebeClientProvider.createProcessInstanceWithResult({
-        bpmnProcessId: "assessment-gateway",
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
         variables: {
           [ASSESSMENT_ID]: currentAssessmentId,
           ...workersMockedData,

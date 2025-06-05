@@ -12,6 +12,7 @@ export enum WorkflowServiceTasks {
   ProgramInfoNotRequired = "program-info-not-required-task",
   CreateSupportingUserPartnerTask = "create-supporting-user-for-the-partner-task",
   CreateSupportingUsersParentsTask = "create-supporting-users-for-parents-task",
+  CreateIdentifiableParentTask = "create-identifiable-parent-task",
   UpdateApplicationStatusToAssessment = "update-application-status-to-assessment-task",
   UpdateNOAStatusToRequired = "update-noa-status-to-required-task",
   UpdateNOAStatusToNotRequired = "update-noa-status-to-not-required-task",
@@ -50,4 +51,15 @@ export enum WorkflowSubprocesses {
   PartnerIncomeVerification = "partner-income-verification-subprocess",
   Parent1IncomeVerification = "parent-1-income-verification-subprocess",
   Parent2IncomeVerification = "parent-2-income-verification-subprocess",
+  RetrieveIdentifiableParentInfo = "retrieve-identifiable-parent-info-subprocess",
+  ParentIncomeVerificationSubprocess = "parent-income-verification-subprocess",
+}
+
+/**
+ * Workflow multi-instance processes variable that contains the output of multi-instance tasks.
+ * Multi-instance tasks have their own scope and the workflows were adapted to have output variables
+ * to allow the E2E tests to correctly determine if the workflow execution passed through those tasks.
+ */
+export enum WorkflowMultiInstanceProcesses {
+  IdentifiableParentsCreation = "identifiable_parents_creation_output",
 }
