@@ -115,4 +115,12 @@ export enum RestrictionCode {
    * Notification type as error.
    */
   LGCYCCCC = "LGCY_CCCC",
+  /**
+   * Student has declared bankruptcy on their application.
+   */
+  E2 = "E2",
+  /**
+   * Bankruptcy has been filed and there is a hold on federal and BC funding.
+   */
+  RB = "RB",
 }
