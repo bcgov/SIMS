@@ -100,8 +100,6 @@ export interface WorkerMockedData {
      * Please note the Camunda multi-instance loop counter starts at 1.
      */
     multiInstanceLoopCounter?: number;
-    [IS_MULTI_INSTANCE]?: boolean;
-    [INSTANCES]?: unknown[];
   };
 }
 
