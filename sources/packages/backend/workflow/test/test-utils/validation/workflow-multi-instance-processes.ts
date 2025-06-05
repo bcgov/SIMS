@@ -21,32 +21,34 @@ export class WorkflowMultiInstanceProcess {
 }
 
 export class MultiInstanceProcesses {
-  static parent1CreateIdentifiableParent = new WorkflowMultiInstanceProcess(
-    WorkflowMultiInstanceProcesses.IdentifiableParentsCreation,
-    1,
-    WorkflowServiceTasks.CreateIdentifiableParentTask,
-  );
-  static parent2CreateIdentifiableParent = new WorkflowMultiInstanceProcess(
-    WorkflowMultiInstanceProcesses.IdentifiableParentsCreation,
-    2,
-    WorkflowServiceTasks.CreateIdentifiableParentTask,
-  );
-  static parent1RetrieveInformation = new WorkflowMultiInstanceProcess(
+  static readonly parent1CreateIdentifiableParent =
+    new WorkflowMultiInstanceProcess(
+      WorkflowMultiInstanceProcesses.IdentifiableParentsCreation,
+      1,
+      WorkflowServiceTasks.CreateIdentifiableParentTask,
+    );
+  static readonly parent2CreateIdentifiableParent =
+    new WorkflowMultiInstanceProcess(
+      WorkflowMultiInstanceProcesses.IdentifiableParentsCreation,
+      2,
+      WorkflowServiceTasks.CreateIdentifiableParentTask,
+    );
+  static readonly parent1RetrieveInformation = new WorkflowMultiInstanceProcess(
     WorkflowMultiInstanceProcesses.IdentifiableParentsCreation,
     1,
     WorkflowSubprocesses.RetrieveIdentifiableParentInfo,
   );
-  static parent2RetrieveInformation = new WorkflowMultiInstanceProcess(
+  static readonly parent2RetrieveInformation = new WorkflowMultiInstanceProcess(
     WorkflowMultiInstanceProcesses.IdentifiableParentsCreation,
     2,
     WorkflowSubprocesses.RetrieveIdentifiableParentInfo,
   );
-  static parent1IncomeVerification = new WorkflowMultiInstanceProcess(
+  static readonly parent1IncomeVerification = new WorkflowMultiInstanceProcess(
     WorkflowMultiInstanceProcesses.IdentifiableParentsCreation,
     1,
     WorkflowSubprocesses.ParentIncomeVerificationSubprocess,
   );
-  static parent2IncomeVerification = new WorkflowMultiInstanceProcess(
+  static readonly parent2IncomeVerification = new WorkflowMultiInstanceProcess(
     WorkflowMultiInstanceProcesses.IdentifiableParentsCreation,
     2,
     WorkflowSubprocesses.ParentIncomeVerificationSubprocess,

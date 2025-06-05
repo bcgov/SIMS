@@ -165,7 +165,7 @@ export function createWorkersMockedData(
     });
     // Create result mocked object.
     const isMultiInstance = !!mockedWorker.options.multiInstanceLoopCounter;
-    let mockedDataValue: unknown | unknown[] = mockedData;
+    let mockedDataValue: unknown = mockedData;
     if (isMultiInstance) {
       mockedData[IS_MULTI_INSTANCE] = isMultiInstance;
       if (!mockedData[INSTANCES]) {
