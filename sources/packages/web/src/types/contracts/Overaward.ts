@@ -20,4 +20,9 @@ export enum DisbursementOverawardOriginType {
    * data is imported to the system.
    */
   LegacyOveraward = "Legacy overaward",
+  /**
+   * Overaward paid by a disbursement award deduction was rejected
+   * due to the disbursement being rejected by ESDC.
+   */
+  AwardRejectedDeducted = "Award rejected deducted",
 }

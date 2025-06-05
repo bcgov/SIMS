@@ -38,4 +38,12 @@ export enum RestrictionCode {
    * reached. It is calculated during E-cert.
    */
   BCLM = "BCLM",
+  /**
+   * Student has declared bankruptcy on their application.
+   */
+  E2 = "E2",
+  /**
+   * Bankruptcy has been filed and there is a hold on federal and BC funding.
+   */
+  RB = "RB",
 }

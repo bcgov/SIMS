@@ -502,6 +502,8 @@ export class ConfirmationOfEnrollmentService {
             coeDeniedOtherDesc: declinedReason.otherReasonDesc,
             modifier: auditUser,
             updatedAt: now,
+            disbursementScheduleStatusUpdatedBy: auditUser,
+            disbursementScheduleStatusUpdatedOn: now,
           },
         );
 

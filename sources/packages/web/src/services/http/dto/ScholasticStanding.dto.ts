@@ -4,6 +4,8 @@ import { ActiveApplicationDataAPIOutDTO } from "./InstitutionLocation.dto";
 export const APPLICATION_NOT_FOUND = "APPLICATION_NOT_FOUND";
 export const INVALID_OPERATION_IN_THE_CURRENT_STATUS =
   "INVALID_OPERATION_IN_THE_CURRENT_STATUS";
+export const INVALID_UNSUCCESSFUL_COMPLETION_WEEKS =
+  "INVALID_UNSUCCESSFUL_COMPLETION_WEEKS";
 
 export interface ScholasticStandingDataAPIInDTO {
   scholasticStandingChangeType: string;

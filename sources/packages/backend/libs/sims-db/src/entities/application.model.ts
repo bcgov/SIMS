@@ -555,6 +555,10 @@ export interface ApplicationData {
    * Program properties that are required to be copied during the change request.
    */
   programPersistentProperties?: string[];
+  /**
+   * Student restriction codes.
+   */
+  restrictions?: string[];
 }
 
 /**

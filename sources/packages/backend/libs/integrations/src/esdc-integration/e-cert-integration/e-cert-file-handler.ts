@@ -168,6 +168,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     await eCertIntegrationService.uploadContent(fileContent, fileInfo.filePath);
     // Mark all disbursements as sent.
     const dateSent = new Date();
+    const auditUser = this.systemUserService.systemUser;
     const disbursementScheduleRepo =
       entityManager.getRepository(DisbursementSchedule);
     await processInParallel((disbursement) => {
@@ -177,7 +178,9 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
           dateSent,
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           updatedAt: dateSent,
-          modifier: this.systemUserService.systemUser,
+          modifier: auditUser,
+          disbursementScheduleStatusUpdatedBy: auditUser,
+          disbursementScheduleStatusUpdatedOn: dateSent,
         },
       );
     }, disbursements);

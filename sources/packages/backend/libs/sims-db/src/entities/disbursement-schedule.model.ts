@@ -79,7 +79,6 @@ export class DisbursementSchedule extends RecordDataModel {
     },
   )
   disbursementValues?: DisbursementValue[];
-
   /**
    * COE approval status of disbursement.
    */
@@ -90,7 +89,6 @@ export class DisbursementSchedule extends RecordDataModel {
     enumName: "COEStatus",
   })
   coeStatus: COEStatus;
-
   /**
    * User who approved/rejected COE.
    */
@@ -100,7 +98,6 @@ export class DisbursementSchedule extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   coeUpdatedBy?: User;
-
   /**
    * Date on which COE is approved/rejected.
    */
@@ -110,7 +107,6 @@ export class DisbursementSchedule extends RecordDataModel {
     nullable: true,
   })
   coeUpdatedAt?: Date;
-
   /**
    * COE denied reason for denied COEs.
    */
@@ -124,7 +120,6 @@ export class DisbursementSchedule extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   coeDeniedReason?: COEDeniedReason;
-
   /**
    * If the COE denied reason is other, the description of other reason.
    */
@@ -183,7 +178,6 @@ export class DisbursementSchedule extends RecordDataModel {
     transformer: numericTransformer,
   })
   tuitionRemittanceEffectiveAmount?: number;
-
   /**
    * MSFAA (Master Student Financial Aid Agreement)
    * number generated for a student.
@@ -198,7 +192,6 @@ export class DisbursementSchedule extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   msfaaNumber?: MSFAANumber;
-
   /**
    * Disbursement receipts for a disbursement schedule.
    ** Every disbursement schedule has disbursement receipt
@@ -214,7 +207,6 @@ export class DisbursementSchedule extends RecordDataModel {
     },
   )
   disbursementReceipts?: DisbursementReceipt[];
-
   /**
    * Disbursement feedback errors for a disbursement schedule.
    */
@@ -229,7 +221,6 @@ export class DisbursementSchedule extends RecordDataModel {
     },
   )
   disbursementFeedbackErrors?: DisbursementFeedbackErrors[];
-
   /**
    * Indication for whether the disbursement has estimated awards greater than $0.
    */
@@ -239,4 +230,22 @@ export class DisbursementSchedule extends RecordDataModel {
     nullable: false,
   })
   hasEstimatedAwards: boolean;
+  /**
+   * User who updated the disbursement schedule status.
+   */
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({
+    name: "disbursement_schedule_status_updated_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  disbursementScheduleStatusUpdatedBy?: User;
+  /**
+   * Date and time when the disbursement schedule status was updated.
+   */
+  @Column({
+    name: "disbursement_schedule_status_updated_on",
+    type: "timestamptz",
+    nullable: true,
+  })
+  disbursementScheduleStatusUpdatedOn?: Date;
 }

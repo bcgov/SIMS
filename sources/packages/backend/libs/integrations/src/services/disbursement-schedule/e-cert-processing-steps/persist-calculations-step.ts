@@ -34,6 +34,7 @@ export class PersistCalculationsStep implements ECertProcessStep {
     log.info("Saving all e-Cert calculations.");
     const now = new Date();
     const disbursement = eCertDisbursement.disbursement;
+    const auditUser = this.systemUsersService.systemUser;
     // Persists the changes to the disbursement.
     // Using update instead save for better performance.
     const disbursementScheduleRepo =
@@ -45,8 +46,10 @@ export class PersistCalculationsStep implements ECertProcessStep {
         readyToSendDate: now,
         tuitionRemittanceEffectiveAmount:
           disbursement.tuitionRemittanceEffectiveAmount,
-        modifier: this.systemUsersService.systemUser,
+        modifier: auditUser,
         updatedAt: now,
+        disbursementScheduleStatusUpdatedBy: auditUser,
+        disbursementScheduleStatusUpdatedOn: now,
       },
     );
     // Persist the changes to the disbursement values.

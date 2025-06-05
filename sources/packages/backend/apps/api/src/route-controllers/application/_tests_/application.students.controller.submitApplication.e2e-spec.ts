@@ -18,6 +18,7 @@ import {
   createFakeUser,
   saveFakeStudent,
   saveFakeSFASIndividual,
+  RestrictionCode,
 } from "@sims/test-utils";
 import {
   ApplicationData,
@@ -662,6 +663,254 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       .expect(HttpStatus.OK)
       .expect({});
   });
+
+  it(
+    "Should submit an application for a student and add an E2 restriction when the application data includes " +
+      "the E2 restriction code and the student does not have an active E2 or RB restriction.",
+    async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      // Create a draft application.
+      const draftApplication = await saveFakeApplication(
+        db.dataSource,
+        { student, programYear: recentActiveProgramYear },
+        {
+          applicationData: {} as ApplicationData,
+          applicationStatus: ApplicationStatus.Draft,
+          offeringIntensity: OfferingIntensity.partTime,
+        },
+      );
+      // Create an offering to be submitted.
+      const offering = await db.educationProgramOffering.save(
+        createFakeEducationProgramOffering(
+          {
+            auditUser: student.user,
+            institutionLocation: draftApplication.location,
+          },
+          {
+            initialValues: {
+              offeringIntensity: OfferingIntensity.partTime,
+            },
+          },
+        ),
+      );
+      // Create an application with the E2 restriction code.
+      const applicationData = {
+        selectedOfferingDate: offering.studyStartDate,
+        selectedOfferingEndDate: offering.studyEndDate,
+        selectedProgram: offering.educationProgram.id,
+        selectedOffering: offering.id,
+        selectedLocation: offering.institutionLocation.id,
+        // Include the E2 restriction code in the application data
+        restrictions: [RestrictionCode.E2],
+      };
+      const payload = {
+        associatedFiles: [],
+        data: applicationData,
+        programYearId: recentActiveProgramYear.id,
+      } as SaveApplicationAPIInDTO;
+      const endpoint = `/students/application/${draftApplication.id}/submit`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.Application,
+        data: { data: applicationData },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+      await mockUserLoginInfo(appModule, student);
+      // Act
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({});
+
+      // Assert
+      // Verify that the E2 restriction was added to the student
+      const studentRestriction = await db.studentRestriction.findOne({
+        select: {
+          id: true,
+          restriction: { restrictionCode: true },
+        },
+        relations: { restriction: true },
+        where: {
+          student: { id: student.id },
+          restriction: { restrictionCode: RestrictionCode.E2 },
+        },
+      });
+      expect(studentRestriction).toBeDefined();
+      expect(studentRestriction.restriction.restrictionCode).toBe(
+        RestrictionCode.E2,
+      );
+    },
+  );
+
+  it(
+    "Should edit a submitted application and do not add a new E2 restriction" +
+      " when the student already has an active RB restriction.",
+    async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+
+      // Add an RB restriction to the student before submitting the application
+      const rbRestriction = await db.restriction.findOne({
+        where: { restrictionCode: RestrictionCode.RB },
+      });
+      await db.studentRestriction.save({
+        student,
+        restriction: rbRestriction,
+        isActive: true,
+      });
+
+      // Create a submitted application to be edited.
+      const application = await saveFakeApplication(
+        db.dataSource,
+        { student, programYear: recentActiveProgramYear },
+        {
+          applicationData: {} as ApplicationData,
+          offeringIntensity: OfferingIntensity.partTime,
+        },
+      );
+      const offering = application.currentAssessment.offering;
+      const applicationData = {
+        selectedOfferingDate: offering.studyStartDate,
+        selectedOfferingEndDate: offering.studyEndDate,
+        selectedProgram: offering.educationProgram.id,
+        selectedOffering: offering.id,
+        selectedLocation: offering.institutionLocation.id,
+        restrictions: [RestrictionCode.E2],
+      };
+      const payload = {
+        associatedFiles: [],
+        data: applicationData,
+        programYearId: recentActiveProgramYear.id,
+      } as SaveApplicationAPIInDTO;
+      const endpoint = `/students/application/${application.id}/submit`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.Application,
+        data: { data: applicationData },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+      await mockUserLoginInfo(appModule, student);
+
+      // Act
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({});
+
+      // Assert
+      // Verify that no new E2 restriction was added. The student should still only have the RB restriction.
+      const studentRestrictions = await db.studentRestriction.find({
+        select: {
+          id: true,
+          restriction: { restrictionCode: true },
+        },
+        where: {
+          student: { id: student.id },
+        },
+        relations: { restriction: true },
+      });
+
+      expect(studentRestrictions.length).toBe(1);
+      expect(
+        studentRestrictions.some(
+          (sr) => sr.restriction.restrictionCode === RestrictionCode.RB,
+        ),
+      ).toBe(true);
+    },
+  );
+
+  it(
+    "Should edit a submitted application and do not add a new E2 restriction" +
+      " when the student already has an active E2 restriction.",
+    async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+
+      // Add an E2 restriction to the student before submitting the application.
+      const e2Restriction = await db.restriction.findOne({
+        where: { restrictionCode: RestrictionCode.E2 },
+      });
+      await db.studentRestriction.save({
+        student,
+        restriction: e2Restriction,
+        isActive: true,
+      });
+
+      // Create a submitted application to be edited.
+      const application = await saveFakeApplication(
+        db.dataSource,
+        { student, programYear: recentActiveProgramYear },
+        {
+          applicationData: {} as ApplicationData,
+          offeringIntensity: OfferingIntensity.partTime,
+        },
+      );
+      const offering = application.currentAssessment.offering;
+      const applicationData = {
+        selectedOfferingDate: offering.studyStartDate,
+        selectedOfferingEndDate: offering.studyEndDate,
+        selectedProgram: offering.educationProgram.id,
+        selectedOffering: offering.id,
+        selectedLocation: offering.institutionLocation.id,
+        restrictions: [RestrictionCode.E2],
+      };
+      const payload = {
+        associatedFiles: [],
+        data: applicationData,
+        programYearId: recentActiveProgramYear.id,
+      } as SaveApplicationAPIInDTO;
+      const endpoint = `/students/application/${application.id}/submit`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.Application,
+        data: { data: applicationData },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+      await mockUserLoginInfo(appModule, student);
+
+      // Act
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({});
+
+      // Assert
+      // Verify that no new E2 restriction was added. The student should still only have the E2 restriction.
+      const studentRestrictions = await db.studentRestriction.find({
+        select: {
+          id: true,
+          restriction: { restrictionCode: true },
+        },
+        where: {
+          student: { id: student.id },
+        },
+        relations: { restriction: true },
+      });
+
+      expect(studentRestrictions.length).toBe(1);
+      expect(
+        studentRestrictions.some(
+          (sr) => sr.restriction.restrictionCode === RestrictionCode.E2,
+        ),
+      ).toBe(true);
+    },
+  );
 
   afterAll(async () => {
     await app?.close();

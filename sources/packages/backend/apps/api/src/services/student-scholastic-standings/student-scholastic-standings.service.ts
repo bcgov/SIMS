@@ -342,9 +342,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       // Check if "WTHD" restriction is already present for the student,
       // if not add "WTHD" restriction else add "SSR" restriction.
       const isWTHDAlreadyExists =
-        await this.studentRestrictionService.studentHasRestriction(
+        await this.studentRestrictionService.hasAnyActiveRestriction(
           studentId,
-          RestrictionCode.WTHD,
+          [RestrictionCode.WTHD],
         );
 
       const restrictionCode = isWTHDAlreadyExists

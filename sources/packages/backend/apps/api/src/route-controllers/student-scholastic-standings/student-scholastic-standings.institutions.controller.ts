@@ -45,6 +45,7 @@ import { FormNames } from "../../services/form/constants";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_WITHDRAWAL_INVALID_TEXT_FILE_ERROR,
+  INVALID_UNSUCCESSFUL_COMPLETION_WEEKS,
 } from "../../constants";
 import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
@@ -64,6 +65,7 @@ import {
 } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { InstitutionUserTypes } from "../../auth";
+import { StudentScholasticStandingChangeType } from "@sims/sims-db";
 
 /**
  * Scholastic standing controller for institutions Client.
@@ -94,7 +96,8 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "Application not found or invalid application or invalid" +
-      " application status or another assessment already in progress.",
+      " application status or another assessment already in progress or" +
+      " number of unsuccessful weeks cannot exceed the number of offering weeks.",
   })
   @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @Post("location/:locationId/application/:applicationId")
@@ -139,6 +142,25 @@ export class ScholasticStandingInstitutionsController extends BaseController {
     if (!submissionResult.valid) {
       throw new BadRequestException("Invalid submission.");
     }
+
+    const totalOfferingWeeks = Math.ceil(
+      application.currentAssessment.offering.studyBreaks.totalDays / 7,
+    );
+    // Unsuccessful completion weeks is part of scholastic standing type "Student did not complete program" only.
+    // Validate that the number of unsuccessful weeks is not greater than the total offering weeks.
+    if (
+      submissionResult.data.data.scholasticStandingChangeType ===
+        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram &&
+      submissionResult.data.data.numberOfUnsuccessfulWeeks > totalOfferingWeeks
+    ) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Number of unsuccessful weeks cannot exceed the number of offering weeks.",
+          INVALID_UNSUCCESSFUL_COMPLETION_WEEKS,
+        ),
+      );
+    }
+
     const newStudentScholasticStanding =
       await this.studentScholasticStandingsService.saveScholasticStandingCreateReassessment(
         userToken.userId,

@@ -32,6 +32,7 @@ import {
   SIMSToSFASIntegrationScheduler,
   CASInvoicesBatchesCreationScheduler,
   CASSendInvoicesScheduler,
+  ECertCancellationResponseIntegrationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -180,6 +181,7 @@ import { QueuesMetricsModule } from "./queues-metrics.module.module";
     CASInvoiceService,
     CASInvoicesBatchesCreationScheduler,
     CASSendInvoicesScheduler,
+    ECertCancellationResponseIntegrationScheduler,
   ],
   controllers: [HealthController, MetricsController],
 })
