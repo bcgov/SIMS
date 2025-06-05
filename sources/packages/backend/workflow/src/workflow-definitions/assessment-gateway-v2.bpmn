@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.35.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="f874f098-96b6-491d-81ec-ecf7a0d8c67a">
   <bpmn:collaboration id="Collaboration_0z9wj8q">
-    <bpmn:participant id="application-in-progress" name="Assessment" processRef="assessment-gateway" />
+    <bpmn:participant id="application-in-progress" name="Assessment" processRef="assessment-gateway-v2" />
     <bpmn:group id="Group_1k2osho" categoryValueRef="CategoryValue_1yy7g02" />
     <bpmn:group id="Group_19tqt3y" categoryValueRef="CategoryValue_1l89ztr" />
     <bpmn:group id="Group_0uz5ydc" categoryValueRef="CategoryValue_0xs06g4" />
@@ -32,7 +32,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:association id="Association_110g427" associationDirection="None" sourceRef="TextAnnotation_1qwxwaf" targetRef="application-change-request-approval-task" />
     <bpmn:association id="Association_1wys3mp" associationDirection="None" sourceRef="TextAnnotation_17tw6q4" targetRef="minitry-approval-change-in-progress-still-pending-gateway" />
   </bpmn:collaboration>
-  <bpmn:process id="assessment-gateway" name="Assessment Gateway V2" isExecutable="true">
+  <bpmn:process id="assessment-gateway-v2" name="Assessment Gateway V2" isExecutable="true">
     <bpmn:laneSet id="LaneSet_07shl28">
       <bpmn:lane id="Lane_0lvs868" name="Applications In Progress">
         <bpmn:flowNodeRef>Gateway_0jc5bz6</bpmn:flowNodeRef>
@@ -146,7 +146,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     </bpmn:serviceTask>
     <bpmn:callActivity id="Activity_0t108ac" name="Assessment">
       <bpmn:extensionElements>
-        <zeebe:calledElement processId="=&#34;fulltime-assessment-v2-&#34; + programYear" propagateAllChildVariables="true" />
+        <zeebe:calledElement processId="=&#34;fulltime-assessment-&#34; + programYear + &#34;-v2&#34;" propagateAllChildVariables="true" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0hfjqs0</bpmn:incoming>
       <bpmn:outgoing>Flow_1j6gqvf</bpmn:outgoing>
