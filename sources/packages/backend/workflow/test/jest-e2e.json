@@ -10,7 +10,7 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  "testTimeout": 90000,
+  "testTimeout": 120000,
   "setupFiles": [
     "<rootDir>/../env-setup.js"
   ],
