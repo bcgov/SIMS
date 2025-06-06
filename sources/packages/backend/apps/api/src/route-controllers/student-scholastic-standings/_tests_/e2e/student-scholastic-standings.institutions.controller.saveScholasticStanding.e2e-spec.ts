@@ -707,91 +707,99 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should not create new scholastic standing 'Student did not complete program' for a part-time application when number of unsuccessful completion weeks is greater than the total number of offering weeks.", async () => {
-    // Arrange
-    mockFormioDryRun({
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-      numberOfUnsuccessfulWeeks: 50,
-    });
-    const application = await saveFakeApplication(
-      db.dataSource,
-      {
-        institutionLocation: collegeFLocation,
-      },
-      {
-        offeringIntensity: OfferingIntensity.partTime,
-        applicationStatus: ApplicationStatus.Completed,
-      },
-    );
-    // Institution token.
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send(payload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        message:
-          "Number of unsuccessful weeks cannot exceed the number of offering weeks.",
-        errorType: "INVALID_UNSUCCESSFUL_COMPLETION_WEEKS",
+  it(
+    "Should not create new scholastic standing 'Student did not complete program' for a part-time application " +
+      "when number of unsuccessful completion weeks is greater than the total number of offering weeks.",
+    async () => {
+      // Arrange
+      mockFormioDryRun({
+        studentScholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        numberOfUnsuccessfulWeeks: 50,
       });
-  });
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
-  it("Should create new scholastic standing 'Student did not complete program' for a part-time application when number of unsuccessful completion weeks is less than the total number of offering weeks.", async () => {
-    // Arrange
-    const application = await saveFakeApplication(
-      db.dataSource,
-      {
-        institutionLocation: collegeFLocation,
-      },
-      {
-        offeringIntensity: OfferingIntensity.partTime,
-        applicationStatus: ApplicationStatus.Completed,
-      },
-    );
-    // Institution token.
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          message:
+            "Number of unsuccessful weeks cannot exceed the number of offering weeks.",
+          errorType: "INVALID_UNSUCCESSFUL_COMPLETION_WEEKS",
+        });
+    },
+  );
 
-    // Mock with a valid number of unsuccessful weeks (smaller than total offering weeks).
-    mockFormioDryRun({
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-      numberOfUnsuccessfulWeeks: 5,
-    });
+  it(
+    "Should create new scholastic standing 'Student did not complete program' for a part-time application " +
+      "when number of unsuccessful completion weeks is less than the total number of offering weeks.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
 
-    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
-
-    // Act/Assert
-    let createdScholasticStandingId: number;
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send(payload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
-      .expect((response) => {
-        expect(response.body.id).toBeGreaterThan(0);
-        createdScholasticStandingId = response.body.id;
+      // Mock with a valid number of unsuccessful weeks (smaller than total offering weeks).
+      mockFormioDryRun({
+        studentScholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        numberOfUnsuccessfulWeeks: 5,
       });
-    const { unsuccessfulWeeks } = await db.studentScholasticStanding.findOne({
-      select: {
-        id: true,
-        unsuccessfulWeeks: true,
-      },
-      where: {
-        id: createdScholasticStandingId,
-        application: { id: application.id },
-      },
-    });
-    expect(unsuccessfulWeeks).toBe(5);
-  });
+
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+      // Act/Assert
+      let createdScholasticStandingId: number;
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .expect((response) => {
+          expect(response.body.id).toBeGreaterThan(0);
+          createdScholasticStandingId = response.body.id;
+        });
+      const { unsuccessfulWeeks } = await db.studentScholasticStanding.findOne({
+        select: {
+          id: true,
+          unsuccessfulWeeks: true,
+        },
+        where: {
+          id: createdScholasticStandingId,
+          application: { id: application.id },
+        },
+      });
+      expect(unsuccessfulWeeks).toBe(5);
+    },
+  );
 
   it("Should not create new scholastic standing 'Student withdrew from program' for a part-time application when date of withdrawal is greater than current date.", async () => {
     // Arrange
