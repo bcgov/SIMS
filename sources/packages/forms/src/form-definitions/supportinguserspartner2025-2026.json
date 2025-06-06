@@ -630,7 +630,7 @@
                   "title": "Partner Receives BCEA Income Assistance Panel",
                   "collapsible": false,
                   "hideLabel": true,
-                  "key": "partnerReceivesBCEAIncomeAssistance",
+                  "key": "receivesBCEAIncomeAssistance",
                   "conditional": {
                     "show": true,
                     "when": "supportingData.hasBCEAIncomeAssistance",
@@ -663,7 +663,7 @@
                         "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                       },
                       "validateWhenHidden": false,
-                      "key": "BCEAIncomeAssistanceAmount",
+                      "key": "bceaIncomeAssistanceAmount",
                       "type": "number",
                       "decimalLimit": 0,
                       "input": true
