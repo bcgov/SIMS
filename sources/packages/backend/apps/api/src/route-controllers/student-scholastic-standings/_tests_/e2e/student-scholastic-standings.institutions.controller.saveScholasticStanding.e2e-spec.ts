@@ -794,6 +794,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       },
       where: { id: application.id },
     });
+    expect(
+      queryApplication.currentAssessment.studentScholasticStanding
+        .unsuccessfulWeeks,
+    ).toBe(5);
     expect(queryApplication.currentAssessment.id).toBe(
       application.currentAssessment.id,
     );
