@@ -5369,6 +5369,76 @@
               "lockKey": true
             },
             {
+              "label": "Will your partner receive B.C. income assistance for persons with disabilities under the Employment and Assistance for Persons with Disabilities Act during your study period?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "validateWhenHidden": false,
+              "key": "partnerHasBCEAIncomeAssistance",
+              "type": "radio",
+              "input": true
+            },
+            {
+              "title": "Student Partner Receives BCEA Income Assistance Panel",
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "studentPartnerReceivesBCEAIncomeAssistance",
+              "conditional": {
+                "show": true,
+                "when": "partnerHasBCEAIncomeAssistance",
+                "eq": "yes"
+              },
+              "type": "panel",
+              "label": "Panel",
+              "breadcrumbClickable": false,
+              "allowPrevious": false,
+              "buttonSettings": {
+                "previous": false,
+                "cancel": false,
+                "next": false
+              },
+              "input": false,
+              "tableView": false,
+              "components": [
+                {
+                  "label": "Enter the amount of assistance they will receive during the applicant's study period",
+                  "prefix": "$",
+                  "applyMaskOn": "change",
+                  "mask": false,
+                  "tableView": false,
+                  "delimiter": true,
+                  "requireDecimal": false,
+                  "inputFormat": "plain",
+                  "truncateMultipleSpaces": false,
+                  "validate": {
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                  },
+                  "validateWhenHidden": false,
+                  "key": "partnerBCEAIncomeAssistanceAmount",
+                  "type": "number",
+                  "decimalLimit": 0,
+                  "input": true
+                }
+              ]
+            },
+            {
               "label": "Will your partner be at home caring for eligible dependent children on a full-time basis during your entire study period?",
               "optionsLabelPosition": "right",
               "inline": false,
