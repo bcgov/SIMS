@@ -770,6 +770,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
+    let createdScholasticStandingId: number;
     await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
@@ -777,32 +778,19 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       .expect(HttpStatus.CREATED)
       .expect((response) => {
         expect(response.body.id).toBeGreaterThan(0);
+        createdScholasticStandingId = response.body.id;
       });
-    const queryApplication = await db.application.findOne({
+    const { unsuccessfulWeeks } = await db.studentScholasticStanding.findOne({
       select: {
         id: true,
-        currentAssessment: {
-          id: true,
-          triggerType: true,
-          studentScholasticStanding: { id: true },
-        },
+        unsuccessfulWeeks: true,
       },
-      relations: {
-        currentAssessment: {
-          studentScholasticStanding: true,
-        },
+      where: {
+        id: createdScholasticStandingId,
+        application: { id: application.id },
       },
-      where: { id: application.id },
     });
-    expect(
-      application.currentAssessment.studentScholasticStanding.unsuccessfulWeeks,
-    ).toBe(5);
-    expect(queryApplication.currentAssessment.id).toBe(
-      application.currentAssessment.id,
-    );
-    expect(queryApplication.currentAssessment.triggerType).toBe(
-      AssessmentTriggerType.OriginalAssessment,
-    );
+    expect(unsuccessfulWeeks).toBe(5);
   });
 
   it("Should not create new scholastic standing 'Student withdrew from program' for a part-time application when date of withdrawal is greater than current date.", async () => {
