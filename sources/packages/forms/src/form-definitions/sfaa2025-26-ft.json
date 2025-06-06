@@ -5390,7 +5390,7 @@
                 "onlyAvailableItems": true
               },
               "validateWhenHidden": false,
-              "key": "partnerHasBceaIncomeAssistance",
+              "key": "partnerHasBCEAIncomeAssistance",
               "type": "radio",
               "input": true
             },
@@ -5398,10 +5398,10 @@
               "title": "Student Partner Receives BCEA Income Assistance Panel",
               "collapsible": false,
               "hideLabel": true,
-              "key": "studentPartnerReceivesBceaIncomeAssistance",
+              "key": "studentPartnerReceivesBCEAIncomeAssistance",
               "conditional": {
                 "show": true,
-                "when": "partnerHasBceaIncomeAssistance",
+                "when": "partnerHasBCEAIncomeAssistance",
                 "eq": "yes"
               },
               "type": "panel",
@@ -5431,7 +5431,7 @@
                     "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
                   "validateWhenHidden": false,
-                  "key": "partnerBceaIncomeAssistanceAmount",
+                  "key": "partnerBCEAIncomeAssistanceAmount",
                   "type": "number",
                   "decimalLimit": 0,
                   "input": true
