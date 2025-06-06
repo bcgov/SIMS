@@ -629,6 +629,7 @@
                 {
                   "title": "Partner Receives BCEA Income Assistance Panel",
                   "collapsible": false,
+                  "hideLabel": true,
                   "key": "partnerReceivesBceaIncomeAssistance",
                   "conditional": {
                     "show": true,
@@ -833,20 +834,21 @@
                 {
                   "title": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your Partner's study period?</strong>",
                   "collapsible": false,
+                  "hideLabel": true,
                   "key": "willYourPartnerBePayingACanadaStudentLoanAndOrAProvincialStudentLoanRegularScheduledPaymentsDuringTheYourStudyPeriodPanel",
                   "conditional": {
-                    "show": "true",
+                    "show": true,
                     "when": "partnerPayStudentLoan",
                     "eq": "yes"
                   },
                   "type": "panel",
                   "label": "Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your Partner's study period?",
+                  "breadcrumbClickable": true,
                   "buttonSettings": {
                     "previous": true,
                     "cancel": true,
                     "next": true
                   },
-                  "breadcrumbClickable": true,
                   "scrollToTop": false,
                   "input": false,
                   "tableView": false,
