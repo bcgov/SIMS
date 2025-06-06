@@ -7921,9 +7921,6 @@
                   },
                   "validateWhenHidden": false,
                   "key": "selfContainedSuite",
-                  "attributes": {
-                    "data-cy": "livingathomeRent"
-                  },
                   "type": "radio",
                   "input": true
                 },
