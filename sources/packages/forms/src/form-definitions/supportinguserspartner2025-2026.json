@@ -905,20 +905,21 @@
                 {
                   "title": "Will your partner be paying for child support and/or spousal support during your study period Panel",
                   "collapsible": false,
+                  "hideLabel": true,
                   "key": "willYourPartnerBePayingForChildSupportAndOrSpousalSupportDuringTheYourStudyPeriodPanel",
                   "conditional": {
-                    "show": "true",
+                    "show": true,
                     "when": "partnerPaySupport",
                     "eq": "yes"
                   },
                   "type": "panel",
                   "label": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
+                  "breadcrumbClickable": true,
                   "buttonSettings": {
                     "previous": true,
                     "cancel": true,
                     "next": true
                   },
-                  "breadcrumbClickable": true,
                   "scrollToTop": false,
                   "input": false,
                   "tableView": false,
