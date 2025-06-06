@@ -97,8 +97,11 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
     // Remove the SFAS data to not interfere with other tests.
     await db.sfasIndividual.delete({ sin: VALID_SIN });
     await db.sfasApplication.delete({ programYearId: currentProgramYear.id });
-    await db.sfasApplicationDisbursement.delete({});
-    await db.sfasApplicationDependant.delete({});
+    await db.sfasApplicationDisbursement
+      .createQueryBuilder()
+      .delete()
+      .execute();
+    await db.sfasApplicationDependant.createQueryBuilder().delete().execute();
   });
 
   it(
