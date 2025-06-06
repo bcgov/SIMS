@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class AddSupportUsersIdentifiableColumns1747944194480
+export class AddSupportingUsersIdentifiableColumns1747944194480
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {

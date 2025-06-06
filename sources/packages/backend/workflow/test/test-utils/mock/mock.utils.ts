@@ -179,9 +179,7 @@ export function createWorkersMockedData(
     let mockedDataValue: unknown = mockedData;
     if (isMultiInstance) {
       mockedData[IS_MULTI_INSTANCE] = isMultiInstance;
-      if (!mockedData[INSTANCES]) {
-        mockedData[INSTANCES] = [];
-      }
+      mockedData[INSTANCES] ??= [];
       const instanceIndex = mockedWorker.options.multiInstanceLoopCounter - 1;
       mockedDataValue = {};
       mockedData[INSTANCES][instanceIndex] = mockedDataValue;

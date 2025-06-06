@@ -10,7 +10,7 @@ ADD
 
 COMMENT ON COLUMN sims.supporting_users.is_able_to_report IS 'Indicates if the supporting user will report its own data, otherwise the data will be reported by the student.';
 
-COMMENT ON COLUMN sims.supporting_users.full_name IS 'Used to identify the supporting user when multiple are provided. Should be used for basic identification of the user only, the real name should be captured while supporting user data is provided.';
+COMMENT ON COLUMN sims.supporting_users.full_name IS 'Used to identify the supporting user when more than one is provided for same application. Should be used for basic identification of the user only, the real name should be captured while supporting user data is provided.';
 
 COMMENT ON CONSTRAINT supporting_users_application_id_full_name ON sims.supporting_users IS 'Ensures that the combination of application_id and full_name is unique within the supporting_users table.';
 

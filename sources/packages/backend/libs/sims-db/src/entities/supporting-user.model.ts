@@ -94,11 +94,10 @@ export class SupportingUser extends RecordDataModel {
    */
   @Column({
     name: "is_able_to_report",
-    nullable: false,
   })
   isAbleToReport: boolean;
   /**
-   * Used to identify the supporting user when multiple are provided.
+   * Used to identify the supporting user when more than one is provided for same application.
    * Should be used for basic identification of the user only, the
    * real name should be captured while supporting user data is provided.
    */
