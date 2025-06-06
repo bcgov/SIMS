@@ -407,9 +407,13 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       entityManager,
     );
     for (const pendingDisbursement of pendingDisbursements) {
+      const now = new Date();
       pendingDisbursement.modifier = auditUser;
       pendingDisbursement.disbursementScheduleStatus =
         DisbursementScheduleStatus.Cancelled;
+      pendingDisbursement.updatedAt = now;
+      pendingDisbursement.disbursementScheduleStatusUpdatedBy = auditUser;
+      pendingDisbursement.disbursementScheduleStatusUpdatedOn = now;
     }
     // Save all the pending awards that were changed to cancelled.
     await entityManager

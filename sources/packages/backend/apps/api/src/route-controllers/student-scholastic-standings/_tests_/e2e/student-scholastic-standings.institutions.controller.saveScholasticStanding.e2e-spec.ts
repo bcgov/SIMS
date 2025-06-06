@@ -707,6 +707,100 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
+  it(
+    "Should not create new scholastic standing 'Student did not complete program' for a part-time application " +
+      "when number of unsuccessful completion weeks is greater than the total number of offering weeks.",
+    async () => {
+      // Arrange
+      mockFormioDryRun({
+        studentScholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        numberOfUnsuccessfulWeeks: 50,
+      });
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          message:
+            "Number of unsuccessful weeks cannot exceed the number of offering weeks.",
+          errorType: "INVALID_UNSUCCESSFUL_COMPLETION_WEEKS",
+        });
+    },
+  );
+
+  it(
+    "Should create new scholastic standing 'Student did not complete program' for a part-time application " +
+      "when number of unsuccessful completion weeks is less than the total number of offering weeks.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+
+      // Mock with a valid number of unsuccessful weeks (smaller than total offering weeks).
+      mockFormioDryRun({
+        studentScholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        numberOfUnsuccessfulWeeks: 5,
+      });
+
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+      // Act/Assert
+      let createdScholasticStandingId: number;
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .expect((response) => {
+          expect(response.body.id).toBeGreaterThan(0);
+          createdScholasticStandingId = response.body.id;
+        });
+      const { unsuccessfulWeeks } = await db.studentScholasticStanding.findOne({
+        select: {
+          id: true,
+          unsuccessfulWeeks: true,
+        },
+        where: {
+          id: createdScholasticStandingId,
+          application: { id: application.id },
+        },
+      });
+      expect(unsuccessfulWeeks).toBe(5);
+    },
+  );
+
   it("Should not create new scholastic standing 'Student withdrew from program' for a part-time application when date of withdrawal is greater than current date.", async () => {
     // Arrange
     mockFormioDryRun({
@@ -789,6 +883,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
    * - `dateOfChange`: Date of change used during the School Transfer scholastic standing.
    * - `dateOfCompletion`: Date of change used during the Student completed program early scholastic standing.
    * - `dateOfWithdrawal`: Date of change used during the Student withdrew from program scholastic standing.
+   * - `numberOfUnsuccessfulWeeks`: Number of unsuccessful weeks used during the 'Student did not complete program' scholastic standing.
    */
   //TODO - When formio container is available, remove the mock.
   function mockFormioDryRun(options?: {
@@ -797,6 +892,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     dateOfChange?: string;
     dateOfCompletion?: string;
     dateOfWithdrawal?: string;
+    numberOfUnsuccessfulWeeks?: number;
   }): void {
     const validDryRun = options?.validDryRun ?? true;
     const scholasticStandingChangeType =
@@ -818,6 +914,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         break;
       case StudentScholasticStandingChangeType.SchoolTransfer:
         payload.data.dateOfChange = options?.dateOfChange ?? fallbackDate;
+        break;
+      case StudentScholasticStandingChangeType.StudentDidNotCompleteProgram:
+        payload.data.numberOfUnsuccessfulWeeks =
+          options?.numberOfUnsuccessfulWeeks ?? 1;
         break;
     }
 

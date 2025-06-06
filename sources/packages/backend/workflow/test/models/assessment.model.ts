@@ -271,6 +271,7 @@ export interface AssessmentModel {
 }
 
 export interface CalculatedAssessmentModel {
+  calculatedDataRemainingScholarshipsBursariesLimit: number;
   calculatedDataRelationshipStatus: RelationshipStatusType;
   calculatedDataPartner1TotalIncome: number;
   calculatedDataAdditionalTransportRequested: YesNoOptions;
@@ -305,6 +306,8 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalFederalFSC: number;
   calculatedDataTotalProvincialFSC: number;
   calculatedDataTotalEligibleDependants: number;
+  calculatedDataTotalScholarshipsBursaries: number;
+  calculatedDataExemptScholarshipsBursaries: number;
   calculatedDataDependants11YearsOrUnder: number;
   calculatedDataDependants12YearsOverOnTaxes: number;
   calculatedDataTotalEligibleDependentsForChildCare: number;

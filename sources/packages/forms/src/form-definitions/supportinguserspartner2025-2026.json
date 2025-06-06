@@ -596,6 +596,81 @@
                   "lockKey": true
                 },
                 {
+                  "label": "During the applicant's study period, will you receive B.C. income assistance for persons with disabilities under the Employment and Assistance for Persons with Disabilities Act?",
+                  "optionsLabelPosition": "right",
+                  "inline": false,
+                  "tableView": false,
+                  "values": [
+                    {
+                      "label": "Yes",
+                      "value": "yes",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "No",
+                      "value": "no",
+                      "shortcut": ""
+                    }
+                  ],
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": true
+                  },
+                  "validateWhenHidden": false,
+                  "key": "hasBCEAIncomeAssistance",
+                  "conditional": {
+                    "show": true,
+                    "when": "offeringIntensity",
+                    "eq": "Full Time"
+                  },
+                  "type": "radio",
+                  "input": true
+                },
+                {
+                  "title": "Partner Receives BCEA Income Assistance Panel",
+                  "collapsible": false,
+                  "hideLabel": true,
+                  "key": "receivesBCEAIncomeAssistance",
+                  "conditional": {
+                    "show": true,
+                    "when": "supportingData.hasBCEAIncomeAssistance",
+                    "eq": "yes"
+                  },
+                  "type": "panel",
+                  "label": "Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your Partner's study period?",
+                  "breadcrumbClickable": true,
+                  "buttonSettings": {
+                    "previous": true,
+                    "cancel": true,
+                    "next": true
+                  },
+                  "scrollToTop": false,
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "label": "Enter the amount of assistance you will receive during the applicant's study period",
+                      "prefix": "$",
+                      "applyMaskOn": "change",
+                      "mask": false,
+                      "tableView": false,
+                      "delimiter": true,
+                      "requireDecimal": false,
+                      "inputFormat": "plain",
+                      "truncateMultipleSpaces": false,
+                      "validate": {
+                        "required": true,
+                        "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
+                      },
+                      "validateWhenHidden": false,
+                      "key": "bceaIncomeAssistanceAmount",
+                      "type": "number",
+                      "decimalLimit": 0,
+                      "input": true
+                    }
+                  ]
+                },
+                {
                   "label": "Will you be at home caring for eligible dependant children on a full-time basis during your Partner's entire study period?",
                   "optionsLabelPosition": "right",
                   "inline": false,
@@ -759,20 +834,21 @@
                 {
                   "title": "<strong>Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your Partner's study period?</strong>",
                   "collapsible": false,
+                  "hideLabel": true,
                   "key": "willYourPartnerBePayingACanadaStudentLoanAndOrAProvincialStudentLoanRegularScheduledPaymentsDuringTheYourStudyPeriodPanel",
                   "conditional": {
-                    "show": "true",
+                    "show": true,
                     "when": "partnerPayStudentLoan",
                     "eq": "yes"
                   },
                   "type": "panel",
                   "label": "Will you be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during the your Partner's study period?",
+                  "breadcrumbClickable": true,
                   "buttonSettings": {
                     "previous": true,
                     "cancel": true,
                     "next": true
                   },
-                  "breadcrumbClickable": true,
                   "scrollToTop": false,
                   "input": false,
                   "tableView": false,
@@ -829,20 +905,21 @@
                 {
                   "title": "Will your partner be paying for child support and/or spousal support during your study period Panel",
                   "collapsible": false,
+                  "hideLabel": true,
                   "key": "willYourPartnerBePayingForChildSupportAndOrSpousalSupportDuringTheYourStudyPeriodPanel",
                   "conditional": {
-                    "show": "true",
+                    "show": true,
                     "when": "partnerPaySupport",
                     "eq": "yes"
                   },
                   "type": "panel",
                   "label": "Will your partner be paying for child support and/or spousal support during the your study period Panel",
+                  "breadcrumbClickable": true,
                   "buttonSettings": {
                     "previous": true,
                     "cancel": true,
                     "next": true
                   },
-                  "breadcrumbClickable": true,
                   "scrollToTop": false,
                   "input": false,
                   "tableView": false,
