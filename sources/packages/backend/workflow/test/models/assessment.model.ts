@@ -240,7 +240,6 @@ export interface ConfigureDisbursementData extends JSONDoc {
 }
 
 export interface IdentifiableParentData extends JSONDoc {
-  parentFullName: string;
   parentIsAbleToReport: YesNoOptions;
 }
 

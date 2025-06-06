@@ -308,15 +308,13 @@ export function createIdentifiableParentsData(options?: {
   if (options?.numberOfParents) {
     parentsData.studentDataParents = Array.from(
       { length: options.numberOfParents },
-      (_, i) => ({
-        parentFullName: `Parent ${i + 1}`,
+      () => ({
         parentIsAbleToReport: YesNoOptions.Yes,
       }),
     );
   } else {
     parentsData.studentDataParents = options?.parents ?? [
       {
-        parentFullName: "Parent 1",
         parentIsAbleToReport: YesNoOptions.Yes,
       },
     ];
