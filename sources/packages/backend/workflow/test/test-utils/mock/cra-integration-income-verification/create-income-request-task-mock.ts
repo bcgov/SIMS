@@ -26,6 +26,7 @@ export function createIncomeRequestTaskMock(options: {
     options: {
       jobCompleteMock: {
         incomeVerificationCompleted: true,
+        canExecuteIncomeVerification: true,
         incomeVerificationId: options.incomeVerificationId,
       },
       jobMessageMocks: [

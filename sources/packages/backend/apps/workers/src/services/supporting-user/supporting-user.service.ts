@@ -68,6 +68,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       const newSupportingUser = new SupportingUser();
       newSupportingUser.application = application;
       newSupportingUser.supportingUserType = supportingUserType;
+      newSupportingUser.isAbleToReport = true;
       newSupportingUser.creator = this.systemUserService.systemUser;
       return newSupportingUser;
     });

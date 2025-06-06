@@ -88,4 +88,22 @@ export class SupportingUser extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   application: Application;
+  /**
+   * Indicates if the supporting user will report its own data,
+   * otherwise the data will be reported by the student.
+   */
+  @Column({
+    name: "is_able_to_report",
+  })
+  isAbleToReport: boolean;
+  /**
+   * Used to identify the supporting user when more than one is provided for same application.
+   * Should be used for basic identification of the user only, the
+   * real name should be captured while supporting user data is provided.
+   */
+  @Column({
+    name: "full_name",
+    nullable: true,
+  })
+  fullName?: string;
 }

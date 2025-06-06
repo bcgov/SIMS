@@ -1,5 +1,7 @@
 import { PublishMessageRequest } from "@camunda8/sdk/dist/zeebe/types";
 import {
+  INSTANCES,
+  IS_MULTI_INSTANCE,
   JOB_COMPLETED_RESULT_SUFFIX,
   JOB_MESSAGE_RESULT_SUFFIX,
   JOB_PASSTHROUGH_SUFFIX,
@@ -46,7 +48,7 @@ export function getPassthroughTaskId(serviceTaskId: string) {
  * @returns service task id, usually declared as 'service-task-id' to the expected
  * Camunda variable name like service_task_id.
  */
-export function getNormalizedServiceTaskId(serviceTaskId: string) {
+export function getNormalizedServiceTaskId(serviceTaskId: string): string {
   return serviceTaskId.replace(
     SERVICE_TASK_ID_SEPARATOR_REGEX,
     MOCKS_SEPARATOR,
@@ -56,34 +58,48 @@ export function getNormalizedServiceTaskId(serviceTaskId: string) {
 /**
  * Information to create a mocked worker including the job completed object and/or the
  * messages to be published to unblock the workflow.
- * @param serviceTaskId workflow service task id.
- * @param options mock creation options.
- * - `jobCompleteMock` the object to be returned when the job is completed.
- * If not provided a job complete message will be returned either way.
- * - `jobMessageMocks` optional messages to be sent to the workflow 'message intermediate catch event'.
- * For instance, when the assessment-gateway detects that the partner information is required and it
- * needs to be informed when the partner provided the information.
- * - `subprocesses` one or more workflow subprocess that contains the service
- * task id being mocked. For instance, the 'create-income-request-task' can be execute
- * multiple times (student, partner, parents) but it will happen under different
- * subprocesses.
- * Multiple parameters here would indicate the hierarchy of the subprocesses
- * till the service task id is found (e.g. 'create-income-request-task'). For instance,
- * if the service task id is a child of the SubprocessB and SubprocessB is a child of
- * SubprocessA, this array needs to be populated as [SubprocessA, SubprocessB], which will
- * create the service task unique identifier as SubprocessA_SubprocessB_create_income_request_task.
- * The most common scenario will be one subprocess, for instance, for 'create-income-request-task' under
- * the assessment-gateway workflow:
- * - for student income verification it would be studentIncomeVerificationSubprocess_create_income_request_task
- * - for partner income verification it would be partnerIncomeVerificationSubprocess_create_income_request_task
- * @returns mocked object to be used by a worker.
  */
 export interface WorkerMockedData {
+  /**
+   * Workflow service task id.
+   */
   serviceTaskId: WorkflowServiceTasks;
+  /**
+   * Options to be used to create the mocked worker.
+   */
   options: {
+    /**
+     * The object to be returned when the job is completed.
+     * If not provided a job complete message will be returned either way.
+     */
     jobCompleteMock?: unknown;
+    /**
+     * Optional messages to be sent to the workflow 'message intermediate catch event'.
+     * For instance, when the assessment-gateway detects that the partner information is required and it
+     * needs to be informed when the partner provided the information.
+     */
     jobMessageMocks?: PublishMessageRequest<unknown>[];
+    /**
+     * one or more workflow subprocess that contains the service
+     * task id being mocked. For instance, the 'create-income-request-task' can be execute
+     * multiple times (student, partner, parents) but it will happen under different
+     * subprocesses.
+     * Multiple parameters here would indicate the hierarchy of the subprocesses
+     * till the service task id is found (e.g. 'create-income-request-task'). For instance,
+     * if the service task id is a child of the SubprocessB and SubprocessB is a child of
+     * SubprocessA, this array needs to be populated as [SubprocessA, SubprocessB], which will
+     * create the service task unique identifier as SubprocessA_SubprocessB_create_income_request_task.
+     * The most common scenario will be one subprocess, for instance, for 'create-income-request-task' under
+     * the assessment-gateway workflow:
+     * - for student income verification it would be studentIncomeVerificationSubprocess_create_income_request_task
+     * - for partner income verification it would be partnerIncomeVerificationSubprocess_create_income_request_task
+     */
     subprocesses?: WorkflowSubprocesses[];
+    /**
+     * If the service task is inside a multi-instance process, this indicates which iteration the mock is for.
+     * Please note the Camunda multi-instance loop counter starts at 1.
+     */
+    multiInstanceLoopCounter?: number;
   };
 }
 
@@ -159,13 +175,22 @@ export function createWorkersMockedData(
       mockedData = mockedData[subprocessId];
     });
     // Create result mocked object.
+    const isMultiInstance = !!mockedWorker.options.multiInstanceLoopCounter;
+    let mockedDataValue: unknown = mockedData;
+    if (isMultiInstance) {
+      mockedData[IS_MULTI_INSTANCE] = isMultiInstance;
+      mockedData[INSTANCES] ??= [];
+      const instanceIndex = mockedWorker.options.multiInstanceLoopCounter - 1;
+      mockedDataValue = {};
+      mockedData[INSTANCES][instanceIndex] = mockedDataValue;
+    }
     if (mockedWorker.options.jobCompleteMock) {
-      mockedData[JOB_COMPLETED_RESULT_SUFFIX] =
+      mockedDataValue[JOB_COMPLETED_RESULT_SUFFIX] =
         mockedWorker.options.jobCompleteMock;
     }
     // Create message result mocked object.
     if (mockedWorker.options.jobMessageMocks?.length) {
-      mockedData[JOB_MESSAGE_RESULT_SUFFIX] =
+      mockedDataValue[JOB_MESSAGE_RESULT_SUFFIX] =
         mockedWorker.options.jobMessageMocks;
     }
   }

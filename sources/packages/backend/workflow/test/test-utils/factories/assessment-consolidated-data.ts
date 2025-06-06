@@ -1,6 +1,7 @@
 import {
   AssessmentConsolidatedData,
   CredentialType,
+  IdentifiableParentData,
   InstitutionTypes,
   ProgramLengthOptions,
 } from "../../models/assessment.model";
@@ -271,6 +272,58 @@ export function createParentsData(options?: {
   }
   // Create specific parent data for 1 or 2 parents.
   for (let i = 1; i <= numberOfParents; i++) {
+    parentsData[`parent${i}NetAssests`] = 300000;
+    parentsData[`parent${i}TotalIncome`] = 75000;
+    parentsData[`parent${i}CRAReportedIncome`] = null;
+    parentsData[`parent${i}CppEmployment`] = 5000;
+    parentsData[`parent${i}Contributions`] = 10000;
+    parentsData[`parent${i}DependentTable`] = null;
+    parentsData[`parent${i}Ei`] = 0;
+    parentsData[`parent${i}Tax`] = 0;
+    parentsData[`parent${i}CppSelfemploymentOther`] = 200;
+  }
+  return parentsData;
+}
+
+/**
+ * Provides the necessary data to the assessment workflow, defining the student as dependant, and
+ * create the parents data to be used in the assessment, for instance, if they can report using
+ * the supporting users portal or if the student will report the parents' information on their behalf.
+ * @param options creation options.
+ * - `dataType` indicates which moment the assessment data should represents.
+ * - `parents` parents data to be used in the assessment. If not provided, a default parent will be created.
+ * - `numberOfParents` generate information for one or two parents. If provided, it will override the `parents` option.
+ * @returns parents data to be used.
+ */
+export function createIdentifiableParentsData(options?: {
+  dataType?: AssessmentDataType;
+  parents?: IdentifiableParentData[];
+  numberOfParents?: 1 | 2;
+}): Partial<AssessmentConsolidatedData> {
+  // Default values for options when not provided.
+  const dataType = options.dataType ?? AssessmentDataType.Submit;
+  // Make the student a dependant.
+  const parentsData = {} as Partial<AssessmentConsolidatedData>;
+  parentsData.studentDataDependantstatus = "dependant";
+  if (options?.numberOfParents) {
+    parentsData.studentDataParents = Array.from(
+      { length: options.numberOfParents },
+      () => ({
+        parentIsAbleToReport: YesNoOptions.Yes,
+      }),
+    );
+  } else {
+    parentsData.studentDataParents = options?.parents ?? [
+      {
+        parentIsAbleToReport: YesNoOptions.Yes,
+      },
+    ];
+  }
+  if (dataType === AssessmentDataType.Submit) {
+    return parentsData;
+  }
+  // Create specific parent data for 1 or 2 parents.
+  for (let i = 1; i <= parentsData.studentDataParents.length; i++) {
     parentsData[`parent${i}NetAssests`] = 300000;
     parentsData[`parent${i}TotalIncome`] = 75000;
     parentsData[`parent${i}CRAReportedIncome`] = null;
