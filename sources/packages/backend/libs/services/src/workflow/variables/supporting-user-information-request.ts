@@ -9,7 +9,7 @@ export const SUPPORTING_USER_ID = "supportingUserId";
  */
 export const SUPPORTING_USERS_TYPES = "supportingUsersTypes";
 /**
- * Passed as parameters to determined the types of supporting user to be created.
+ * Supporting user type (Parent or Partner).
  */
 export const SUPPORTING_USER_TYPE = "supportingUserType";
 /**
