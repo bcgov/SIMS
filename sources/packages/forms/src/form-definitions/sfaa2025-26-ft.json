@@ -7900,7 +7900,7 @@
                 {
                   "label": "Are you living independently in a self-contained suite?",
                   "optionsLabelPosition": "right",
-                  "tooltip": "The suite has a separate entrance, kitchen, bathroom and living area/bedroom; and\r\n\r\nYou are paying fair market rent and responsible for your share of the utilities (hydro, telephone, cable, etc. if not included in rent).",
+                  "tooltip": "The suite has a separate entrance, kitchen, bathroom and living area/bedroom; and\r\nYou are paying fair market rent and responsible for your share of the utilities (hydro, telephone, cable, etc. if not included in rent).",
                   "inline": false,
                   "tableView": false,
                   "values": [
