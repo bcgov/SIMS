@@ -36,8 +36,10 @@ export class ZeebeTransportStrategy
    * respective Zeebe workers to handle all the jobs.
    */
   async listen(callback: () => void) {
+    const initializationLogger = new Logger("Worker Initialization");
     const handlers = this.getHandlers();
     handlers.forEach((handler: MessageHandler, taskType: string) => {
+      initializationLogger.log(`Creating ${taskType}`);
       const { extras } = handler;
       const workerOptions = extras.options as ZBWorkerOptions;
       this.zeebeClient.createWorker({
