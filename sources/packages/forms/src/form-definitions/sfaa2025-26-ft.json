@@ -5837,537 +5837,112 @@
               "tableView": false
             },
             {
-              "label": "Is your parent(s)/step-parent/sponsor/legal guardian eligible for a BC Services Card account?",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "key": "parentValidSinNumber",
-              "attributes": {
-                "data-cy": "doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber"
-              },
-              "type": "radio",
-              "input": true,
-              "lockKey": true
-            },
-            {
-              "label": "HTML",
-              "className": "alert alert-info fa fa-info-circle",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "<Strong> Please be advised your parent(s)/step-parent/sponsor/legal guardian will need to sign in to StudentAid BC and provide additional information</Strong>\n<br/> Parent(s)/step-parent/sponsor/legal guardian must provide their information to StudentAid BC by logging in with a B.C. Services Card. If they are ineligible for a B.C. Services Card, select \"No\" to this question and provide information on their behalf.",
-              "refreshOnChange": false,
-              "customClass": "banner-info",
-              "key": "html11",
-              "conditional": {
-                "show": "true",
-                "when": "parentValidSinNumber",
-                "eq": "yes"
-              },
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "tag": "p",
-              "hideLabel": true
-            },
-            {
-              "label": "HTML",
-              "className": "alert alert-warning fa fa-exclamation-circle",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "<strong> Please be advised this could delay your application </strong>\n<br>Since we’re unable to validate your partner’s information with Canada Revenue Agency (CRA), please estimate your parent(s) income.",
-              "refreshOnChange": false,
-              "customClass": "banner-warning",
-              "key": "html2",
-              "conditional": {
-                "show": "true",
-                "when": "parentValidSinNumber",
-                "eq": "no"
-              },
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "tag": "p",
-              "hideLabel": true
-            },
-            {
-              "label": "How many parents do you live with?",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "1",
-                  "value": "1",
-                  "shortcut": ""
-                },
-                {
-                  "label": "2",
-                  "value": "2",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "key": "numberOfParents",
-              "attributes": {
-                "data-cy": "numberOfParents"
-              },
-              "type": "radio",
-              "input": true
-            },
-            {
-              "title": "Parental Info Request ",
-              "collapsible": false,
+              "label": "Parents Information",
+              "reorder": false,
+              "addAnother": "Add additional parent",
+              "addAnotherPosition": "bottom",
+              "layoutFixed": false,
+              "enableRowGroups": false,
+              "initEmpty": false,
               "hideLabel": true,
-              "key": "parentalInfoRequest",
-              "conditional": {
-                "show": true,
-                "when": "parentValidSinNumber",
-                "eq": "no"
-              },
-              "type": "panel",
-              "label": "Parental Info Request ",
-              "buttonSettings": {
-                "previous": false,
-                "cancel": false,
-                "next": false
-              },
-              "breadcrumbClickable": false,
-              "scrollToTop": false,
-              "input": false,
               "tableView": false,
+              "defaultValue": [
+                {
+                  "parentFullName": "",
+                  "parentIsAbleToReport": "no"
+                }
+              ],
+              "validate": {
+                "minLength": "1",
+                "maxLength": "2"
+              },
+              "validateWhenHidden": false,
+              "key": "parents",
+              "type": "datagrid",
+              "input": true,
               "components": [
                 {
-                  "label": "HTML",
-                  "tag": "h3",
-                  "className": "category-header-medium primary-color",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "Parent income",
-                  "refreshOnChange": false,
-                  "key": "html118",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false
-                },
-                {
-                  "label": "I have been authorized by my parent(s) to submit their financial information including their net income (previous tax year's return's Line 15000 information)",
-                  "tableView": false,
-                  "defaultValue": false,
-                  "validate": {
-                    "required": true
-                  },
-                  "key": "parentAuthorized",
-                  "type": "checkbox",
-                  "input": true
-                },
-                {
-                  "label": "How much will your parent(s)/step-parent/sponsor/legal guardian be giving you to help meet your specific educational costs during this study period?",
-                  "prefix": "$",
-                  "applyMaskOn": "change",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": true,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true,
-                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "validateWhenHidden": false,
-                  "key": "studentParentsNetContribution",
-                  "type": "number",
-                  "decimalLimit": 0,
-                  "input": true
-                },
-                {
-                  "label": "Enter the reported total income from line 15000 of your parent(s)/step-parent/sponsor/legal guardian {{data.calculatedTaxYear}} income tax return. If they did not file a {{data.calculatedTaxYear}} income tax return, enter the total income from all sources both inside and outside of Canada.",
-                  "prefix": "$",
-                  "applyMaskOn": "change",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": true,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true,
-                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "validateWhenHidden": false,
-                  "key": "studentParentsTotalIncome",
-                  "type": "number",
-                  "decimalLimit": 0,
-                  "input": true
-                },
-                {
-                  "label": "Enter the total net value of all Canadian and foreign assets (do not include RRSPs, principal residence or business). Enter ‘0’ if none.",
-                  "prefix": "$",
-                  "applyMaskOn": "change",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": true,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true,
-                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "validateWhenHidden": false,
-                  "key": "studentParentsNetAssests",
-                  "type": "number",
-                  "decimalLimit": 0,
-                  "input": true
-                },
-                {
-                  "label": "Total income tax from line 43500. Enter ‘0’ if none.",
-                  "prefix": "$",
-                  "applyMaskOn": "change",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": true,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true,
-                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "validateWhenHidden": false,
-                  "key": "studentParentsTotalIncomeTaxLine43500",
-                  "type": "number",
-                  "decimalLimit": 0,
-                  "input": true
-                },
-                {
-                  "label": "Canada Pension Plan contributions (CPP) from line 30800 (contributions through employment). Enter ‘0’ if none.",
-                  "prefix": "$",
-                  "applyMaskOn": "change",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": true,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true,
-                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "validateWhenHidden": false,
-                  "key": "studentParentsCppLine30800",
-                  "type": "number",
-                  "decimalLimit": 0,
-                  "input": true
-                },
-                {
-                  "label": "Canada Pension Plan contributions (CPP) from line 31000 (contributions payable on self-employment and other earnings). Enter ‘0’ if none.",
-                  "prefix": "$",
-                  "applyMaskOn": "change",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": true,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true,
-                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "validateWhenHidden": false,
-                  "key": "studentParentsCppLine31000",
-                  "type": "number",
-                  "decimalLimit": 0,
-                  "input": true
-                },
-                {
-                  "label": "Employment insurance (EI) from line 31200. Enter ‘0’ if none.",
-                  "prefix": "$",
-                  "applyMaskOn": "change",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": true,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true,
-                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "validateWhenHidden": false,
-                  "key": "studentParentsEiLine31200",
-                  "type": "number",
-                  "decimalLimit": 0,
-                  "input": true
-                },
-                {
-                  "label": "HTML",
-                  "tag": "hr",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "refreshOnChange": false,
-                  "key": "html120",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false
-                },
-                {
-                  "label": "HTML",
-                  "tag": "h3",
-                  "className": "category-header-medium primary-color",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "Your siblings and other parent dependents ",
-                  "refreshOnChange": false,
-                  "customClass": "header-md",
-                  "key": "html71",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false
-                },
-                {
-                  "label": "HTML",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "We use this information to ensure that we take into account your parent(s) responsibility to other dependants…",
-                  "refreshOnChange": false,
-                  "key": "html72",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false,
-                  "tag": "p"
-                },
-                {
-                  "label": "Do your parents have dependants other than yourself?",
-                  "optionsLabelPosition": "right",
-                  "customClass": "font-weight-bold",
-                  "inline": false,
-                  "tableView": false,
-                  "values": [
-                    {
-                      "label": "Yes",
-                      "value": "yes",
-                      "shortcut": ""
-                    },
-                    {
-                      "label": "No",
-                      "value": "no",
-                      "shortcut": ""
-                    }
-                  ],
-                  "validate": {
-                    "required": true,
-                    "onlyAvailableItems": true
-                  },
-                  "key": "doesStudentParentHaveOtherDependents",
-                  "type": "radio",
-                  "input": true,
-                  "lockKey": true
-                },
-                {
-                  "title": "Your siblings and other dependents panel",
-                  "breadcrumbClickable": false,
-                  "buttonSettings": {
-                    "previous": false,
-                    "cancel": false,
-                    "next": false
-                  },
-                  "scrollToTop": false,
-                  "collapsible": false,
-                  "hideLabel": true,
-                  "key": "yourSiblingsAndOtherDependentsPanel",
-                  "conditional": {
-                    "show": "true",
-                    "when": "doesStudentParentHaveOtherDependents",
-                    "eq": "yes"
-                  },
-                  "type": "panel",
-                  "label": "Your Siblings and other Dependents Panel",
+                  "key": "fieldSet",
+                  "type": "fieldset",
+                  "label": "",
                   "input": false,
                   "tableView": false,
                   "components": [
                     {
+                      "label": "Full name",
+                      "applyMaskOn": "change",
+                      "tableView": true,
+                      "truncateMultipleSpaces": true,
+                      "validate": {
+                        "required": true,
+                        "custom": "const inputValue = input.trim().toLowerCase();\nif(!inputValue === ''){\n  // Execute the custom validation only when some value is present.\n  return true;\n}\n// Check if the value entered for this input is present in any other input.\nconst sameParentNames =\n  data.parents.filter(\n    parent => parent.parentFullName.trim().toLowerCase() === inputValue);\n// Only one input is expect.    \nreturn sameParentNames.length === 1;\n\n",
+                        "maxLength": 250
+                      },
+                      "validateWhenHidden": false,
+                      "errors": {
+                        "custom": "Parent's full name should be unique."
+                      },
+                      "key": "parentFullName",
+                      "type": "textfield",
+                      "input": true
+                    },
+                    {
+                      "label": "Is your parent(s)/step-parent/sponsor/legal guardian eligible for a BC Services Card account?",
+                      "optionsLabelPosition": "right",
+                      "inline": false,
+                      "tableView": false,
+                      "values": [
+                        {
+                          "label": "Yes",
+                          "value": "yes",
+                          "shortcut": ""
+                        },
+                        {
+                          "label": "No",
+                          "value": "no",
+                          "shortcut": ""
+                        }
+                      ],
+                      "validate": {
+                        "required": true,
+                        "onlyAvailableItems": true
+                      },
+                      "validateWhenHidden": false,
+                      "key": "parentIsAbleToReport",
+                      "attributes": {
+                        "data-cy": "doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber"
+                      },
+                      "type": "radio",
+                      "input": true,
+                      "lockKey": true
+                    },
+                    {
                       "label": "HTML",
-                      "tag": "h3",
-                      "className": "category-header-medium primary-color",
+                      "tag": "p",
+                      "className": "alert alert-info fa fa-info-circle",
                       "attrs": [
                         {
                           "attr": "",
                           "value": ""
                         }
                       ],
-                      "content": "Your siblings and other dependents ",
+                      "content": "<Strong> Please be advised your parent(s)/step-parent/sponsor/legal guardian will need to sign in to StudentAid BC and provide additional information</Strong>\n<br/> Parent(s)/step-parent/sponsor/legal guardian must provide their information to StudentAid BC by logging in with a B.C. Services Card. If they are ineligible for a B.C. Services Card, select \"No\" to this question and provide information on their behalf.",
                       "refreshOnChange": false,
-                      "customClass": "header-md",
-                      "key": "html73",
-                      "type": "htmlelement",
-                      "input": false,
-                      "tableView": false
-                    },
-                    {
-                      "label": "HTML",
-                      "attrs": [
-                        {
-                          "attr": "",
-                          "value": ""
-                        }
-                      ],
-                      "content": "We use this information to ensure that we take into account your parent(s) responsibility to other dependents…",
-                      "refreshOnChange": false,
-                      "key": "html74",
-                      "type": "htmlelement",
-                      "input": false,
-                      "tableView": false,
-                      "tag": "p"
-                    },
-                    {
-                      "label": "<h4 class='category-header-medium-small'>Parent dependent table</h4>",
-                      "reorder": false,
-                      "addAnother": "Add another dependant",
-                      "addAnotherPosition": "bottom",
-                      "layoutFixed": false,
-                      "enableRowGroups": false,
-                      "initEmpty": false,
-                      "tableView": false,
-                      "defaultValue": [
-                        {
-                          "attendingPostSecondarySchool": "",
-                          "declaredOnTaxes": "",
-                          "ageAtStudyStartDate": ""
-                        }
-                      ],
-                      "key": "parentDependentTable",
+                      "customClass": "banner-info",
+                      "key": "html11",
                       "conditional": {
-                        "show": "true",
-                        "when": "doesStudentParentHaveOtherDependents",
+                        "show": true,
+                        "when": "parents.parentIsAbleToReport",
                         "eq": "yes"
                       },
-                      "type": "datagrid",
-                      "defaultOpen": false,
-                      "input": true,
-                      "components": [
-                        {
-                          "label": "Age at start of your study period",
-                          "mask": false,
-                          "spellcheck": true,
-                          "tableView": false,
-                          "delimiter": false,
-                          "requireDecimal": false,
-                          "inputFormat": "plain",
-                          "validate": {
-                            "required": true
-                          },
-                          "key": "ageAtStudyStartDate",
-                          "type": "number",
-                          "input": true,
-                          "inDataGrid": true,
-                          "inputType": "number",
-                          "lockKey": true
-                        },
-                        {
-                          "label": "Will this dependant be attending high school or full-time post-secondary school at the start of your study period?",
-                          "optionsLabelPosition": "right",
-                          "inline": false,
-                          "tableView": false,
-                          "values": [
-                            {
-                              "label": "yes",
-                              "value": "yes",
-                              "shortcut": ""
-                            },
-                            {
-                              "label": "no",
-                              "value": "no",
-                              "shortcut": ""
-                            }
-                          ],
-                          "validate": {
-                            "required": true,
-                            "onlyAvailableItems": true
-                          },
-                          "key": "attendingPostSecondarySchool",
-                          "type": "radio",
-                          "input": true,
-                          "inDataGrid": true,
-                          "lockKey": true
-                        },
-                        {
-                          "label": "Did you parent(s) claim this dependant on their 20xx Income Tax Return due to a disability?",
-                          "optionsLabelPosition": "right",
-                          "inline": false,
-                          "tableView": false,
-                          "values": [
-                            {
-                              "label": "yes",
-                              "value": "yes",
-                              "shortcut": ""
-                            },
-                            {
-                              "label": "no",
-                              "value": "no",
-                              "shortcut": ""
-                            }
-                          ],
-                          "validate": {
-                            "required": true,
-                            "onlyAvailableItems": true
-                          },
-                          "key": "declaredOnTaxes",
-                          "type": "radio",
-                          "input": true,
-                          "inDataGrid": true,
-                          "lockKey": true
-                        }
-                      ]
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false,
+                      "hideLabel": true
                     }
-                  ],
-                  "allowPrevious": false
+                  ]
                 }
-              ],
-              "allowPrevious": false
+              ]
             }
           ]
         }
