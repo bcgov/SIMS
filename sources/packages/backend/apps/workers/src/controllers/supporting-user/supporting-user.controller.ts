@@ -22,7 +22,11 @@ import {
   SUPPORTING_USER_TYPE,
 } from "@sims/services/workflow/variables/supporting-user-information-request";
 import { MaxJobsToActivate } from "../../types";
-import { Workers } from "@sims/services/constants";
+import {
+  APPLICATION_NOT_FOUND,
+  SUPPORTING_USER_FULL_NAME_NOT_RESOLVED,
+  Workers,
+} from "@sims/services/constants";
 import {
   ICustomHeaders,
   IOutputVariables,
@@ -35,6 +39,7 @@ import {
 } from "@sims/services";
 import { SupportingUserType } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
+import * as JSONPath from "jsonpath";
 
 @Controller()
 export class SupportingUserController {
@@ -45,6 +50,14 @@ export class SupportingUserController {
     private readonly dataSource: DataSource,
   ) {}
 
+  /**
+   * Create supporting users for an application.
+   * @deprecated for parents prior to 2025/26 program year but
+   * still used for partners across all program years.
+   * Parents will be created using the method {@link createIdentifiableSupportingUsers}.
+   * @param job input variables for creating supporting users.
+   * @returns acknowledgement of the job completion or failure.
+   */
   @ZeebeWorker(Workers.CreateSupportingUsers, {
     fetchVariable: [APPLICATION_ID, SUPPORTING_USERS_TYPES],
     maxJobsToActivate: MaxJobsToActivate.Normal,
@@ -110,8 +123,9 @@ export class SupportingUserController {
   }
 
   /**
-   * Place holder for the worker that will create identifiable supporting users.
-   * @param job The job containing the input variables for creating identifiable supporting users.
+   * Create identifiable supporting users for an application, where the data can be provided
+   * by the student or by the supporting user themselves.
+   * @param job input variables for creating identifiable supporting users.
    * @returns acknowledgement of the job completion or failure.
    */
   @ZeebeWorker(Workers.CreateIdentifiableSupportingUsers, {
@@ -132,7 +146,53 @@ export class SupportingUserController {
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
-    return job.fail("To be implemented.");
+    const jobLogger = new Logger(job.type);
+    try {
+      const application = await this.applicationService.getApplicationById(
+        job.variables.applicationId,
+        { loadDynamicData: true },
+      );
+      if (!application) {
+        const message = "Application ID not found.";
+        jobLogger.error(message);
+        return job.error(APPLICATION_NOT_FOUND, message);
+      }
+      // Resolve the full name from the application dynamic data using the optional provided filter.
+      let fullName: string;
+      if (job.variables.fullNamePropertyFilter) {
+        const [fullName] = JSONPath.query(
+          application.data,
+          job.variables.fullNamePropertyFilter,
+        );
+        if (!fullName) {
+          // If the full name property filter is provided, full name is mandatory to be present.
+          const message = `Not able to extract the full name from the application dynamic data using filter '${job.variables.fullNamePropertyFilter}'.`;
+          jobLogger.error(message);
+          return job.error(SUPPORTING_USER_FULL_NAME_NOT_RESOLVED, message);
+        }
+      }
+      return this.dataSource.transaction(
+        // Transaction created with the expectation that a notification will also be created
+        // for the supporting user and it should be saved in the same transaction.
+        async (entityManager: EntityManager) => {
+          const createdSupportingUserId =
+            await this.supportingUserService.createIdentifiableSupportingUser(
+              {
+                applicationId: job.variables.applicationId,
+                supportingUserType: job.variables.supportingUserType,
+                fullName,
+                isAbleToReport: job.variables.isAbleToReport,
+              },
+              entityManager,
+            );
+          return job.complete({ createdSupportingUserId });
+        },
+      );
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
   }
 
   @ZeebeWorker(Workers.LoadSupportingUserData, {
