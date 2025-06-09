@@ -69,6 +69,7 @@ export function createFakeEducationProgramOffering(
     getISODateOnlyString(faker.date.soon(30));
   offering.studyBreaks = {
     totalFundedWeeks: 16,
+    totalDays: 210, // 30 offering weeks * 7 days,
   } as StudyBreaksAndWeeks;
   offering.offeringStatus = OfferingStatus.Approved;
   offering.parentOffering = offering;

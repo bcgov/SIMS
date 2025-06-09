@@ -239,6 +239,10 @@ export interface ConfigureDisbursementData extends JSONDoc {
   finalProvincialAwardNetSBSDAmount: number;
 }
 
+export interface IdentifiableParentData extends JSONDoc {
+  parentIsAbleToReport: YesNoOptions;
+}
+
 export interface AssessmentModel {
   weeks: number;
   tuitionCost: number;

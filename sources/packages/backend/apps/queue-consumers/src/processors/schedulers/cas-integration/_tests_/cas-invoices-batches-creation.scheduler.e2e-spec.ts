@@ -68,9 +68,9 @@ describe(
         { grantAmount: 0 },
       );
       // Delete all existing invoices and related data.
-      await db.casInvoiceDetail.delete({});
-      await db.casInvoice.delete({});
-      await db.casInvoiceBatch.delete({});
+      await db.casInvoiceDetail.createQueryBuilder().delete().execute();
+      await db.casInvoice.createQueryBuilder().delete().execute();
+      await db.casInvoiceBatch.createQueryBuilder().delete().execute();
       // Reset sequence numbers.
       await db.sequenceControl.delete({
         sequenceName: In([casInvoiceBatchSequenceName, casInvoiceSequenceName]),
