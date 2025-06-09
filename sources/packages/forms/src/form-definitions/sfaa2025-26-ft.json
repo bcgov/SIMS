@@ -294,7 +294,7 @@
         },
         {
           "label": "Workflow Name",
-          "calculateValue": "value = \"assessment-gateway\"",
+          "calculateValue": "value = \"assessment-gateway-v2\"",
           "calculateServer": true,
           "key": "workflowName",
           "type": "hidden",
