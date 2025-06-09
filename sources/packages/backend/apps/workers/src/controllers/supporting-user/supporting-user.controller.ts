@@ -3,6 +3,8 @@ import { ZeebeWorker } from "../../zeebe";
 import { ApplicationService, SupportingUserService } from "../../services";
 import {
   CheckSupportingUserResponseJobInDTO,
+  CreateIdentifiableSupportingUsersJobInDTO,
+  CreateIdentifiableSupportingUsersJobOutDTO,
   CreateSupportingUsersJobInDTO,
   CreateSupportingUsersJobOutDTO,
 } from "..";
@@ -13,8 +15,11 @@ import {
 import { SUPPORTING_USER_NOT_FOUND } from "../../constants";
 import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
+  FULL_NAME_PROPERTY_FILTER,
+  IS_ABLE_TO_REPORT,
   SUPPORTING_USERS_TYPES,
   SUPPORTING_USER_ID,
+  SUPPORTING_USER_TYPE,
 } from "@sims/services/workflow/variables/supporting-user-information-request";
 import { MaxJobsToActivate } from "../../types";
 import { Workers } from "@sims/services/constants";
@@ -102,6 +107,32 @@ export class SupportingUserController {
         logger: jobLogger,
       });
     }
+  }
+
+  /**
+   * Place holder for the worker that will create identifiable supporting users.
+   * @param job The job containing the input variables for creating identifiable supporting users.
+   * @returns acknowledgement of the job completion or failure.
+   */
+  @ZeebeWorker(Workers.CreateIdentifiableSupportingUsers, {
+    fetchVariable: [
+      APPLICATION_ID,
+      SUPPORTING_USER_TYPE,
+      FULL_NAME_PROPERTY_FILTER,
+      IS_ABLE_TO_REPORT,
+    ],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
+  })
+  async createIdentifiableSupportingUsers(
+    job: Readonly<
+      ZeebeJob<
+        CreateIdentifiableSupportingUsersJobInDTO,
+        ICustomHeaders,
+        CreateIdentifiableSupportingUsersJobOutDTO
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    return job.fail("To be implemented.");
   }
 
   @ZeebeWorker(Workers.LoadSupportingUserData, {
