@@ -7831,7 +7831,11 @@
           "collapsible": false,
           "hideLabel": true,
           "key": "livingSituationPanel",
-          "customConditional": "show = data.relationshipStatus === 'married';",
+          "conditional": {
+            "show": false,
+            "when": "relationshipStatus",
+            "eq": "married"
+          },
           "type": "panel",
           "label": "Panel",
           "input": false,
