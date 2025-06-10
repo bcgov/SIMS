@@ -5880,14 +5880,14 @@
                       },
                       "validateWhenHidden": false,
                       "errors": {
-                        "custom": "Parent's full name should be unique."
+                        "custom": "Parent's full name should be unique"
                       },
                       "key": "parentFullName",
                       "type": "textfield",
                       "input": true
                     },
                     {
-                      "label": "Is your parent(s)/step-parent/sponsor/legal guardian eligible for a BC Services Card account?",
+                      "label": "Is your parent/step-parent/sponsor/legal guardian eligible for a BC Services Card account?",
                       "optionsLabelPosition": "right",
                       "inline": false,
                       "tableView": false,
