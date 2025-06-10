@@ -7831,7 +7831,7 @@
           "collapsible": false,
           "hideLabel": true,
           "key": "livingSituationPanel",
-          "customConditional": "show = ['single', 'other', 'marriedUnable'].includes(data.relationshipStatus);\r\n",
+          "customConditional": "show = data.relationshipStatus === 'married';",
           "type": "panel",
           "label": "Panel",
           "input": false,
