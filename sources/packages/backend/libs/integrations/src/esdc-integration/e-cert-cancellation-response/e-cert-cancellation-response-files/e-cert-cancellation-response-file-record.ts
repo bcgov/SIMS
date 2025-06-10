@@ -1,4 +1,4 @@
-import { ECertCancellationResponseRecordType } from "../models/e-cert-cancellation-integration.model";
+import { ECertCancellationResponseRecordType } from "../models/e-cert-cancellation-response.model";
 
 /**
  * Base class for e-cert cancellation response file record.

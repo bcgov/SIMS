@@ -1,7 +1,7 @@
 import {
   ECertCancellationDownloadResponse,
   ECertCancellationResponseResult,
-} from "./models/e-cert-cancellation-integration.model";
+} from "./models/e-cert-cancellation-response.model";
 import { ESDCIntegrationConfig, ConfigService } from "@sims/utilities/config";
 import { ECertCancellationResponseIntegrationService } from "./e-cert-cancellation-response.integration.service";
 import {

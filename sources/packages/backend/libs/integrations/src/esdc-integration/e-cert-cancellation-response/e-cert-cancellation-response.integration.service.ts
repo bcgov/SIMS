@@ -4,7 +4,7 @@ import { Injectable } from "@nestjs/common";
 import {
   ECertCancellationDownloadResponse,
   ECertCancellationResponseRecordType,
-} from "./models/e-cert-cancellation-integration.model";
+} from "./models/e-cert-cancellation-response.model";
 import { ECertCancellationResponseFileHeader } from "./e-cert-cancellation-response-files/e-cert-cancellation-response-file-header";
 import { ECertCancellationResponseFileFooter } from "./e-cert-cancellation-response-files/e-cert-cancellation-response-file-footer";
 import { ECertCancellationResponseFileDetail } from "./e-cert-cancellation-response-files/e-cert-cancellation-response-file-detail";
