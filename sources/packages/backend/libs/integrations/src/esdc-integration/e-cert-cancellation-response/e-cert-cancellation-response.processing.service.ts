@@ -10,11 +10,13 @@ import {
   ProcessSummary,
 } from "@sims/utilities/logger";
 import { processInParallel } from "@sims/utilities";
+import { Injectable } from "@nestjs/common";
 
 /**
  *  Processes the E-Cert cancellation response file(s).
  *  Both Full-time and Part-time E-Cert cancellation response files are processed.
  */
+@Injectable()
 export class ECertCancellationResponseProcessingService {
   private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(
@@ -57,6 +59,7 @@ export class ECertCancellationResponseProcessingService {
         this.processCancellationFile(remoteFilePath, processSummary),
       remoteFilePaths,
     );
+    return { processedCancellationFiles: remoteFilePaths.length };
   }
 
   private async processCancellationFile(
@@ -67,7 +70,7 @@ export class ECertCancellationResponseProcessingService {
     const childProcessSummary = new ProcessSummary();
     processSummary.children(childProcessSummary);
 
-    childProcessSummary.info(
+    childProcessSummary.warn(
       `Downloading e-cert cancellation response file ${remoteFilePath}.`,
     );
     let eCertCancellationDownloadResponse: ECertCancellationDownloadResponse;
