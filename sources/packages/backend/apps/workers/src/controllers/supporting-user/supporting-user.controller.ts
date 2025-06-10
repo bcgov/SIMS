@@ -15,6 +15,7 @@ import {
 import { SUPPORTING_USER_NOT_FOUND } from "../../constants";
 import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
+  CREATED_SUPPORTING_USER_ID,
   FULL_NAME_PROPERTY_FILTER,
   IS_ABLE_TO_REPORT,
   SUPPORTING_USERS_TYPES,
@@ -185,7 +186,9 @@ export class SupportingUserController {
               },
               entityManager,
             );
-          return job.complete({ createdSupportingUserId });
+          return job.complete({
+            [CREATED_SUPPORTING_USER_ID]: createdSupportingUserId,
+          });
         },
       );
     } catch (error: unknown) {

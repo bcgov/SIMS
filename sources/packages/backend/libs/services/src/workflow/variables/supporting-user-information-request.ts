@@ -23,3 +23,7 @@ export const FULL_NAME_PROPERTY_FILTER = "fullNamePropertyFilter";
  * is able to report their data to the Ministry.
  */
 export const IS_ABLE_TO_REPORT = "isAbleToReport";
+/**
+ * Returned by the job that creates identifiable supporting users.
+ */
+export const CREATED_SUPPORTING_USER_ID = "createdSupportingUserId";

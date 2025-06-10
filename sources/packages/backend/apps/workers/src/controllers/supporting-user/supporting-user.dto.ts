@@ -1,5 +1,6 @@
 import { APPLICATION_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
+  CREATED_SUPPORTING_USER_ID,
   FULL_NAME_PROPERTY_FILTER,
   IS_ABLE_TO_REPORT,
   SUPPORTING_USER_TYPE,
@@ -27,5 +28,5 @@ export interface CreateIdentifiableSupportingUsersJobInDTO {
 }
 
 export interface CreateIdentifiableSupportingUsersJobOutDTO {
-  createdSupportingUserId: number;
+  [CREATED_SUPPORTING_USER_ID]: number;
 }

@@ -28,10 +28,6 @@
     <bpmn:serviceTask id="create-income-request-task" name="Create Income request">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="create-income-request" />
-        <zeebe:ioMapping>
-          <zeebe:output source="=incomeVerificationId" target="incomeVerificationId" />
-          <zeebe:output source="=canExecuteIncomeVerification" target="canExecuteIncomeVerification" />
-        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_19jr8ct</bpmn:incoming>
       <bpmn:outgoing>Flow_0am193t</bpmn:outgoing>
