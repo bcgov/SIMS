@@ -1,4 +1,4 @@
-import { ECertCancellationResponseFileDetail } from "@sims/integrations/esdc-integration/e-cert-integration/e-cert-cancellation-response-files/e-cert-cancellation-response-file-detail";
+import { ECertCancellationResponseFileDetail } from "../e-cert-cancellation-response-files/e-cert-cancellation-response-file-detail";
 
 /**
  * E-Cert cancellation response record type.
@@ -14,4 +14,11 @@ export enum ECertCancellationResponseRecordType {
  */
 export interface ECertCancellationDownloadResponse {
   detailRecords: ECertCancellationResponseFileDetail[];
+}
+
+/**
+ * E-Cert cancellation response processing result.
+ */
+export interface ECertCancellationResponseResult {
+  processedCancellationFiles: number;
 }
