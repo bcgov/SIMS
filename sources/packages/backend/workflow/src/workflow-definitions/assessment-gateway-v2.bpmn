@@ -845,13 +845,13 @@ Note: the workflow process should continue its execution as a regular reassessme
       </bpmn:startEvent>
       <bpmn:callActivity id="retrieve-identifiable-parent-info-subprocess" name="Retrieve parent information">
         <bpmn:extensionElements>
-          <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="true" />
+          <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" propagateAllParentVariables="false" />
           <zeebe:ioMapping>
             <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
             <zeebe:input source="=[&#34;retrieve-supporting-info-for-parent-&#34; + string(loopCounter) + &#34;-subprocess&#34;]" target="parentSubprocesses" />
-            <zeebe:output source="=supportingUserId" target="parentSupportingUserId" />
             <zeebe:output source="=totalIncome" target="supportingUserParentTotalIncome" />
             <zeebe:output source="=&#34;retrieve-identifiable-parent-info-subprocess&#34;" target="retrieve_identifiable_parent_info_subprocess_passthrough" />
+            <zeebe:output source="=supportingUserId" target="parentSupportingUserId" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0u3bioj</bpmn:incoming>
@@ -859,12 +859,15 @@ Note: the workflow process should continue its execution as a regular reassessme
       </bpmn:callActivity>
       <bpmn:callActivity id="parent-income-verification-subprocess" name="Parent Income Verification">
         <bpmn:extensionElements>
-          <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
+          <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" propagateAllParentVariables="false" />
           <zeebe:ioMapping>
             <zeebe:input source="=supportingUserParentTotalIncome" target="reportedIncome" />
-            <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
+            <zeebe:input source="=parentSupportingUserId" target="supportingUserId" />
             <zeebe:input source="=[&#34;parent-1-income-verification-subprocess&#34;]" target="parentSubprocesses" />
+            <zeebe:input source="=applicationId" target="applicationId" />
+            <zeebe:input source="=programYearStartDate" target="programYearStartDate" />
             <zeebe:output source="=&#34;parent-income-verification-subprocess&#34;" target="parent_income_verification_subprocess_passthrough" />
+            <zeebe:output source="=supportingUserId" target="parentSupportingUserId" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1j7259r</bpmn:incoming>
