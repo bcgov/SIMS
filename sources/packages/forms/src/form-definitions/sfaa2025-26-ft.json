@@ -5909,9 +5909,6 @@
                       },
                       "validateWhenHidden": false,
                       "key": "parentIsAbleToReport",
-                      "attributes": {
-                        "data-cy": "doYourParentSStepParentSponsorLegalGuardianHaveAValidSinNumber"
-                      },
                       "type": "radio",
                       "input": true,
                       "lockKey": true
