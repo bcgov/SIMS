@@ -845,7 +845,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       </bpmn:startEvent>
       <bpmn:callActivity id="retrieve-identifiable-parent-info-subprocess" name="Retrieve parent information">
         <bpmn:extensionElements>
-          <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" propagateAllParentVariables="false" />
+          <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
           <zeebe:ioMapping>
             <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
             <zeebe:input source="=[&#34;retrieve-supporting-info-for-parent-&#34; + string(loopCounter) + &#34;-subprocess&#34;]" target="parentSubprocesses" />
@@ -859,7 +859,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       </bpmn:callActivity>
       <bpmn:callActivity id="parent-income-verification-subprocess" name="Parent Income Verification">
         <bpmn:extensionElements>
-          <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" propagateAllParentVariables="false" />
+          <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
           <zeebe:ioMapping>
             <zeebe:input source="=supportingUserParentTotalIncome" target="reportedIncome" />
             <zeebe:input source="=parentSupportingUserId" target="supportingUserId" />
