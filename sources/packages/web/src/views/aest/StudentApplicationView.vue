@@ -44,11 +44,9 @@
           </check-permission-role>
         </template>
       </header-navigator>
+      <application-header-title :application-id="applicationId" />
     </template>
-    <h2 class="color-blue pb-4">
-      Student Application Details
-      {{ emptyStringFiller(applicationDetail.applicationNumber) }}
-    </h2>
+    <h2 class="color-blue pb-4">Student Application Details</h2>
     <StudentApplication
       @render="formRender"
       :selectedForm="selectedForm"
@@ -91,12 +89,14 @@ import AssessApplicationChangeRequestModal from "@/components/aest/students/moda
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import useEmitterEvents from "@/composables/useEmitterEvents";
 import { INVALID_APPLICATION_EDIT_STATUS } from "@/constants";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
   components: {
     StudentApplication,
     AssessApplicationChangeRequestModal,
     CheckPermissionRole,
+    ApplicationHeaderTitle,
   },
   props: {
     studentId: {
