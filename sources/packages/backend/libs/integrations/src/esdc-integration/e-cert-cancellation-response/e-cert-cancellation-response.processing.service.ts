@@ -9,8 +9,9 @@ import {
   LoggerService,
   ProcessSummary,
 } from "@sims/utilities/logger";
-import { processInParallel } from "@sims/utilities";
+import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { Injectable } from "@nestjs/common";
+import { FILE_PARSING_ERROR } from "@sims/services/constants";
 
 /**
  *  Processes the E-Cert cancellation response file(s).
@@ -70,7 +71,7 @@ export class ECertCancellationResponseProcessingService {
     const childProcessSummary = new ProcessSummary();
     processSummary.children(childProcessSummary);
 
-    childProcessSummary.warn(
+    childProcessSummary.info(
       `Downloading e-cert cancellation response file ${remoteFilePath}.`,
     );
     let eCertCancellationDownloadResponse: ECertCancellationDownloadResponse;
@@ -82,12 +83,21 @@ export class ECertCancellationResponseProcessingService {
         `The downloaded file ${remoteFilePath} contains ${eCertCancellationDownloadResponse.detailRecords.length} detail records.`,
       );
     } catch (error: unknown) {
-      // Abort the process nicely not throwing an exception and
-      // allowing other response files to be processed.
-      processSummary.error(
-        `Error downloading and parsing the file ${remoteFilePath}.`,
-        error,
-      );
+      if (
+        error instanceof CustomNamedError &&
+        error.name === FILE_PARSING_ERROR
+      ) {
+        // Abort the process on file parsing error with a warning message.
+        // To avoid the job from being retried, it has been logged as a warning.
+        processSummary.warn(error.message);
+      } else {
+        // Abort the process nicely not throwing an exception and
+        // allowing other response files to be processed.
+        processSummary.error(
+          `Error downloading the file ${remoteFilePath}.`,
+          error,
+        );
+      }
       return;
     }
     // Check if the file has detail records to process.

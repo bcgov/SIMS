@@ -8,6 +8,8 @@ import {
 import { ECertCancellationResponseFileHeader } from "./e-cert-cancellation-response-files/e-cert-cancellation-response-file-header";
 import { ECertCancellationResponseFileFooter } from "./e-cert-cancellation-response-files/e-cert-cancellation-response-file-footer";
 import { ECertCancellationResponseFileDetail } from "./e-cert-cancellation-response-files/e-cert-cancellation-response-file-detail";
+import { CustomNamedError } from "@sims/utilities";
+import { FILE_PARSING_ERROR } from "@sims/services/constants";
 
 @Injectable()
 export class ECertCancellationResponseIntegrationService extends SFTPIntegrationBase<ECertCancellationDownloadResponse> {
@@ -28,22 +30,25 @@ export class ECertCancellationResponseIntegrationService extends SFTPIntegration
     const header = new ECertCancellationResponseFileHeader(fileLines.shift());
     // Validate the header record type.
     if (header.recordType !== ECertCancellationResponseRecordType.Header) {
-      const errorMessage = `The e-cert cancellation response file ${remoteFilePath} has an invalid record type on header ${header.recordType}.`;
-      this.logger.error(errorMessage);
-      throw new Error(errorMessage);
+      throw new CustomNamedError(
+        `The e-cert cancellation response file ${remoteFilePath} has an invalid record type on header ${header.recordType}.`,
+        FILE_PARSING_ERROR,
+      );
     }
     // Read the last line which is the footer. After reading it, it will be removed.
     const footer = new ECertCancellationResponseFileFooter(fileLines.pop());
     if (footer.recordType !== ECertCancellationResponseRecordType.Footer) {
-      const errorMessage = `The e-cert cancellation response file ${remoteFilePath} has an invalid record type on footer ${footer.recordType}.`;
-      this.logger.error(errorMessage);
-      throw new Error(errorMessage);
+      throw new CustomNamedError(
+        `The e-cert cancellation response file ${remoteFilePath} has an invalid record type on footer ${footer.recordType}.`,
+        FILE_PARSING_ERROR,
+      );
     }
     // Validate if the number of detail records in the footer matches the total count of detail records in the file.
     if (footer.totalDetailRecords !== fileLines.length) {
-      const errorMessage = `The total number of detail records ${footer.totalDetailRecords} in the footer does not match the total count of detail records ${fileLines.length} in the file.`;
-      this.logger.error(errorMessage);
-      throw new Error(errorMessage);
+      throw new CustomNamedError(
+        `The total number of detail records ${footer.totalDetailRecords} in the footer does not match the total count of detail records ${fileLines.length} in the file.`,
+        FILE_PARSING_ERROR,
+      );
     }
     // Parse the detail records from the remaining lines in the file.
     // The first line is the header, so we start from index 2.
