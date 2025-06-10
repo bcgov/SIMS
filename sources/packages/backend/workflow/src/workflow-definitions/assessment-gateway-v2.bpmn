@@ -863,7 +863,7 @@ Note: the workflow process should continue its execution as a regular reassessme
           <zeebe:ioMapping>
             <zeebe:input source="=supportingUserParentTotalIncome" target="reportedIncome" />
             <zeebe:input source="=parentSupportingUserId" target="supportingUserId" />
-            <zeebe:input source="=[&#34;parent-1-income-verification-subprocess&#34;]" target="parentSubprocesses" />
+            <zeebe:input source="=[&#34;parent-&#34; + string(loopCounter) + &#34;-income-verification-subprocess&#34;]" target="parentSubprocesses" />
             <zeebe:input source="=applicationId" target="applicationId" />
             <zeebe:input source="=programYearStartDate" target="programYearStartDate" />
             <zeebe:output source="=&#34;parent-income-verification-subprocess&#34;" target="parent_income_verification_subprocess_passthrough" />
