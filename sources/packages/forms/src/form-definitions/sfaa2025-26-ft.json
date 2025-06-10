@@ -5634,7 +5634,7 @@
                     "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                   },
                   "validateWhenHidden": false,
-                  "key": "partnerstudentloanCosts",
+                  "key": "partnerStudentLoanCosts",
                   "conditional": {
                     "show": true,
                     "when": "partnerstudentLoan",
@@ -7406,7 +7406,11 @@
           "collapsible": false,
           "hideLabel": true,
           "key": "livingSituationPanel",
-          "customConditional": "show = ['single', 'other'].includes(data.relationshipStatus);\r\n",
+          "conditional": {
+            "show": false,
+            "when": "relationshipStatus",
+            "eq": "married"
+          },
           "type": "panel",
           "label": "Panel",
           "input": false,
