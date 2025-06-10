@@ -6,6 +6,7 @@
         subTitle="View request(s)"
         :routeLocation="assessmentsSummaryRoute"
       />
+      <application-header-title :application-id="applicationId" />
     </template>
     <student-appeal-requests-approval
       :appealId="appealId"
@@ -25,10 +26,12 @@ import { useSnackBar } from "@/composables";
 import { StudentAppealApproval, ApiProcessError } from "@/types";
 import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
 import StudentAppealRequestsApproval from "@/components/common/students/applicationDetails/StudentAppealRequestsApproval.vue";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
   components: {
     StudentAppealRequestsApproval,
+    ApplicationHeaderTitle,
   },
   props: {
     studentId: {

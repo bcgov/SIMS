@@ -6,6 +6,7 @@
         subTitle="View request(s)"
         :routeLocation="backRouteLocation"
       />
+      <application-header-title :application-id="applicationId" />
     </template>
     <template #sub-header>
       <header-title-value title="Submitted date" :value="submittedDate"
@@ -45,6 +46,7 @@ import {
 import { useAssessment, useFormatters } from "@/composables";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 /**
  * Model to be used to populate the form.io.
@@ -88,7 +90,7 @@ export default defineComponent({
       return !!form;
     },
   },
-  components: { HeaderTitleValue, CheckPermissionRole },
+  components: { HeaderTitleValue, CheckPermissionRole, ApplicationHeaderTitle },
   props: {
     studentId: {
       type: Number,
@@ -119,7 +121,7 @@ export default defineComponent({
     },
     applicationId: {
       type: Number,
-      required: false,
+      required: true,
     },
   },
   setup(props) {

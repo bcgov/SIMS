@@ -1,6 +1,7 @@
 <template>
   <application-exceptions-approval
     :exceptionId="exceptionId"
+    :applicationId="applicationId"
     :backRouteLocation="assessmentsSummaryRoute"
     :processing="processing"
     :showStaffApproval="true"
