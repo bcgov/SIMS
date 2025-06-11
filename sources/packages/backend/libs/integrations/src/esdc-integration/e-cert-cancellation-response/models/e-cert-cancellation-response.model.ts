@@ -20,5 +20,5 @@ export interface ECertCancellationDownloadResponse {
  * E-Cert cancellation response processing result.
  */
 export interface ECertCancellationResponseResult {
-  processedCancellationFiles: number;
+  receivedCancellationFiles: number;
 }

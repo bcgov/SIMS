@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, In, IsNull } from "typeorm";
+import { DataSource, EntityManager, In, IsNull, UpdateResult } from "typeorm";
 import {
   RecordDataModelService,
   DisbursementSchedule,
@@ -11,6 +11,7 @@ import {
   DisbursementOverawardOriginType,
   Student,
   configureIdleTransactionSessionTimeout,
+  User,
 } from "@sims/sims-db";
 import { DisbursementSaveModel } from "./disbursement-schedule.models";
 import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
@@ -695,5 +696,83 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       })
       .getRawOne<{ sum?: number }>();
     return +(total?.sum ?? 0);
+  }
+
+  /**
+   * Update the disbursement schedule status.
+   * @param disbursementScheduleId disbursement schedule id to be updated.
+   * @param status disbursement schedule status to be updated.
+   * @param auditUserId audit user id.
+   * @param options update options.
+   * - `entityManager` entity manager to execute in transaction.
+   * @returns update result.
+   */
+  async updateDisbursementScheduleStatus(
+    disbursementScheduleId: number,
+    status: DisbursementScheduleStatus,
+    auditUserId: number,
+    options?: { entityManager?: EntityManager },
+  ): Promise<UpdateResult> {
+    const now = new Date();
+    const auditUser = { id: auditUserId } as User;
+    const disbursementScheduleRepo =
+      options?.entityManager?.getRepository(DisbursementSchedule) ?? this.repo;
+    return disbursementScheduleRepo.update(
+      { id: disbursementScheduleId },
+      {
+        disbursementScheduleStatus: status,
+        modifier: auditUser,
+        updatedAt: now,
+        disbursementScheduleStatusUpdatedBy: auditUser,
+        disbursementScheduleStatusUpdatedOn: now,
+      },
+    );
+  }
+
+  /**
+   * Add reversal overawards for a disbursement schedule when one or more overawards
+   * were deducted from the awards during the e-Cert generation but the e-Cert was rejected later.
+   * @param disbursementScheduleId disbursement schedule id to reverse the deducted overawards.
+   * @param auditUserId audit user id.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async reverseDisbursementDeductedOverawards(
+    disbursementScheduleId: number,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const overawardsRepo = entityManager.getRepository(DisbursementOveraward);
+    const deductedOverawards = await overawardsRepo.find({
+      select: {
+        id: true,
+        student: { id: true },
+        studentAssessment: { id: true },
+        disbursementValueCode: true,
+        overawardValue: true,
+      },
+      relations: { student: true, studentAssessment: true },
+      where: {
+        disbursementSchedule: { id: disbursementScheduleId },
+        originType: DisbursementOverawardOriginType.AwardDeducted,
+      },
+    });
+    if (!deductedOverawards.length) {
+      return;
+    }
+    // Reverse the deducted overawards if present.
+    const auditUser = { id: auditUserId } as User;
+    const reversalOverawards = deductedOverawards.map<DisbursementOveraward>(
+      (deductedOveraward) =>
+        ({
+          student: deductedOveraward.student,
+          studentAssessment: deductedOveraward.studentAssessment,
+          disbursementValueCode: deductedOveraward.disbursementValueCode,
+          overawardValue: -deductedOveraward.overawardValue,
+          originType: DisbursementOverawardOriginType.AwardRejectedDeducted,
+          creator: auditUser,
+          addedBy: auditUser,
+        } as DisbursementOveraward),
+    );
+    await overawardsRepo.insert(reversalOverawards);
   }
 }

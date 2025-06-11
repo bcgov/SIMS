@@ -39,7 +39,7 @@ export class ECertCancellationResponseIntegrationScheduler extends BaseScheduler
 
     return [
       "Process finalized with success.",
-      `Processed cancellation files: ${processingResponse.processedCancellationFiles}.`,
+      `Received cancellation files: ${processingResponse.receivedCancellationFiles}.`,
     ];
   }
 

@@ -75,7 +75,7 @@ describe(
       // Assert
       expect(result).toStrictEqual([
         "Process finalized with success.",
-        "Processed cancellation files: 1.",
+        "Received cancellation files: 1.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 6",
       ]);

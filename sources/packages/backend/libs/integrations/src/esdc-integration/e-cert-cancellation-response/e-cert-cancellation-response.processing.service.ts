@@ -49,7 +49,7 @@ export class ECertCancellationResponseProcessingService {
       processSummary.info(
         "There are no e-cert cancellation response files found.",
       );
-      return { processedCancellationFiles: 0 };
+      return { receivedCancellationFiles: 0 };
     }
     processSummary.info(
       `Found ${remoteFilePaths.length} e-cert cancellation response file(s) to process.`,
@@ -60,7 +60,7 @@ export class ECertCancellationResponseProcessingService {
         this.processCancellationFile(remoteFilePath, processSummary),
       remoteFilePaths,
     );
-    return { processedCancellationFiles: remoteFilePaths.length };
+    return { receivedCancellationFiles: remoteFilePaths.length };
   }
 
   private async processCancellationFile(
