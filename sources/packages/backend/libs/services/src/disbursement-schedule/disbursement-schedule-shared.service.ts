@@ -698,6 +698,25 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     return +(total?.sum ?? 0);
   }
 
+  async rejectDisbursement(
+    documentNumber: number,
+    auditUserId: number,
+  ): Promise<void> {
+    const disbursementSchedule = await this.repo.findOne({
+      select: {
+        id: true,
+        studentAssessment: {
+          id: true,
+          offering: { id: true, offeringIntensity: true },
+        },
+      },
+      where: {
+        documentNumber,
+        disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+      },
+    });
+  }
+
   /**
    * Update the disbursement schedule status.
    * @param disbursementScheduleId disbursement schedule id to be updated.
@@ -711,14 +730,18 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     disbursementScheduleId: number,
     status: DisbursementScheduleStatus,
     auditUserId: number,
-    options?: { entityManager?: EntityManager },
+    options?: {
+      entityManager?: EntityManager;
+    },
   ): Promise<UpdateResult> {
     const now = new Date();
     const auditUser = { id: auditUserId } as User;
     const disbursementScheduleRepo =
       options?.entityManager?.getRepository(DisbursementSchedule) ?? this.repo;
     return disbursementScheduleRepo.update(
-      { id: disbursementScheduleId },
+      {
+        id: disbursementScheduleId,
+      },
       {
         disbursementScheduleStatus: status,
         modifier: auditUser,
