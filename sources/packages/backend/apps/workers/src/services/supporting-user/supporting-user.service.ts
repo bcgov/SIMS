@@ -118,12 +118,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         fullName: supportingUser.fullName,
       },
     });
-    if (!existingSupportingUser) {
-      // If the user was not created and not found, throw an unexpected error.
-      throw new Error(
-        `Unable to find the supporting user for applicationId: ${supportingUser.applicationId}.`,
-      );
-    }
     return existingSupportingUser.id;
   }
 

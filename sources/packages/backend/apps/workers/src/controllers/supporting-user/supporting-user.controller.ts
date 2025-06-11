@@ -161,7 +161,7 @@ export class SupportingUserController {
       // Resolve the full name from the application dynamic data using the optional provided filter.
       let fullName: string;
       if (job.variables.fullNamePropertyFilter) {
-        [fullName] = JSONPath.query(
+        fullName = JSONPath.value(
           application.data,
           job.variables.fullNamePropertyFilter,
         );
