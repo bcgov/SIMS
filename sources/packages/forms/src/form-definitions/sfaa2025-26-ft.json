@@ -5875,7 +5875,7 @@
                       "truncateMultipleSpaces": true,
                       "validate": {
                         "required": true,
-                        "custom": "const inputValue = input.trim().toLowerCase();\nif(!inputValue === ''){\n  // Execute the custom validation only when some value is present.\n  return true;\n}\n// Check if the value entered for this input is present in any other input.\nconst sameParentNames =\n  data.parents.filter(\n    parent => parent.parentFullName.trim().toLowerCase() === inputValue);\n// Only one input is expect.    \nreturn sameParentNames.length === 1;\n\n",
+                        "custom": "const inputValue = input.trim().toLowerCase();\nif(inputValue === ''){\n  // Execute the custom validation only when some value is present.\n  return true;\n}\n// Check if the value entered for this input is present in any other input.\nconst sameParentNames =\n  data.parents.filter(\n    parent => parent.parentFullName.trim().toLowerCase() === inputValue);\n// Only one input is expect.    \nreturn sameParentNames.length === 1;\n\n",
                         "maxLength": 250
                       },
                       "validateWhenHidden": false,
