@@ -146,7 +146,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     </bpmn:serviceTask>
     <bpmn:callActivity id="Activity_0t108ac" name="Assessment">
       <bpmn:extensionElements>
-        <zeebe:calledElement processId="=&#34;fulltime-assessment-&#34; + programYear + &#34;-v2&#34;" propagateAllChildVariables="true" />
+        <zeebe:calledElement processId="=&#34;fulltime-assessment-&#34; + programYear" propagateAllChildVariables="true" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0hfjqs0</bpmn:incoming>
       <bpmn:outgoing>Flow_1j6gqvf</bpmn:outgoing>
