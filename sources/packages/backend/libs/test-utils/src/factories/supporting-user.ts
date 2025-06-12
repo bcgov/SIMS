@@ -1,9 +1,15 @@
-import { Application, SupportingUser, SupportingUserType } from "@sims/sims-db";
+import {
+  Application,
+  SupportingUser,
+  SupportingUserType,
+  User,
+} from "@sims/sims-db";
 
 /**
  * Creates a fake supporting user.
  * @param relations dependencies:
  * - `application`: application that the supporting user is associated with.
+ * - `user`: user that the supporting user is associated with.
  * @param options student options.
  * - `initialValues` supporting user values.
  * @returns a fake supporting user.
@@ -11,6 +17,7 @@ import { Application, SupportingUser, SupportingUserType } from "@sims/sims-db";
 export function createFakeSupportingUser(
   relations: {
     application: Application;
+    user?: User;
   },
   options?: {
     initialValues: Partial<SupportingUser>;
@@ -18,6 +25,8 @@ export function createFakeSupportingUser(
 ): SupportingUser {
   const supportingUser = new SupportingUser();
   supportingUser.application = relations.application;
+  supportingUser.sin = options?.initialValues?.sin;
+  supportingUser.birthDate = options?.initialValues?.birthDate;
   supportingUser.createdAt = new Date();
   supportingUser.updatedAt = new Date();
   supportingUser.supportingUserType =
@@ -26,5 +35,6 @@ export function createFakeSupportingUser(
     options?.initialValues?.supportingData ?? null;
   supportingUser.isAbleToReport =
     options?.initialValues?.isAbleToReport ?? true;
+  supportingUser.user = relations?.user ?? null;
   return supportingUser;
 }
