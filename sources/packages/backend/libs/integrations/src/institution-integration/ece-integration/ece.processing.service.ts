@@ -133,8 +133,8 @@ export class ECEProcessingService {
     filePath: string;
   } {
     const timestamp = getFileNameAsExtendedCurrentTimestamp();
-    const fileName = `ECE-${timestamp}.txt`;
-    const filePath = `${this.institutionIntegrationConfig.ftpRequestFolder}\\${institutionCode}\\${fileName}`;
+    const fileName = `ECE-${timestamp}-${institutionCode}.txt`;
+    const filePath = `${this.institutionIntegrationConfig.ftpRequestFolder}\\${fileName}`;
     return {
       fileName,
       filePath,
