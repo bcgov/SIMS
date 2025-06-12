@@ -53,29 +53,31 @@ export class CRARequestRecordParser {
    * Check if the record matches the provided data.
    * @param craIncomeVerificationId CRA income verification ID.
    * This is used to identify the record in the CRA response.
-   * @param firstName individual's first name.
-   * @param lastName individual's last name.
-   * @param sin individual's Social Insurance Number (SIN).
-   * @param birthDate individual's birth date.
-   * @param taxYear individual's tax year for the income verification.
+   * @param incomeData object containing the individual's income data.
+   * - `id` CRA income verification ID.
+   * - `firstName` individual's first name.
+   * - `lastName` individual's last name.
+   * - `sin` individual's Social Insurance Number (SIN).
+   * - `birthDate` individual's birth date.
+   * - `taxYear` individual's tax year for the income verification.
    * @returns true if the record matches the provided data, false otherwise.
    */
-  matchIncomeData(
-    craIncomeVerificationId: number,
-    firstName: string,
-    lastName: string,
-    sin: string,
-    birthDate: string,
-    taxYear?: number,
-  ): boolean {
-    const formattedBirthDate = dayjs(birthDate).format(DATE_FORMAT);
-    const freeProjectArea = `VERIFICATION_ID:${craIncomeVerificationId}`.padEnd(
+  matchIncome(incomeData: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    sin: string;
+    birthDate: string;
+    taxYear?: number;
+  }): boolean {
+    const formattedBirthDate = dayjs(incomeData.birthDate).format(DATE_FORMAT);
+    const freeProjectArea = `VERIFICATION_ID:${incomeData.id}`.padEnd(
       30,
       SPACE_FILLER,
     );
-    const formattedLastName = this.getNameWithFiller(lastName);
-    const formattedFirstName = this.getNameWithFiller(firstName);
-    const expectedRecord = `7101${sin}    0020${formattedLastName}${formattedFirstName}${formattedBirthDate}${taxYear}                ${CRA_PROGRAM_AREA_CODE}${freeProjectArea}   0`;
+    const formattedLastName = this.getNameWithFiller(incomeData.lastName);
+    const formattedFirstName = this.getNameWithFiller(incomeData.firstName);
+    const expectedRecord = `7101${incomeData.sin}    0020${formattedLastName}${formattedFirstName}${formattedBirthDate}${incomeData.taxYear}                ${CRA_PROGRAM_AREA_CODE}${freeProjectArea}   0`;
     return expectedRecord === this.record;
   }
 
@@ -83,12 +85,11 @@ export class CRARequestRecordParser {
    * Recreates the header data from the provided {@link headerData} object
    * and compares it with the record.
    * @param headerData object containing the header data to be matched.
+   * - `fileDate` date of the file.
+   * - `sequenceNumber` sequence number of the file.
    * @returns true if the header data matches the record, false otherwise.
    */
-  matchHeaderData(headerData: {
-    fileDate: Date;
-    sequenceNumber: number;
-  }): boolean {
+  matchHeader(headerData: { fileDate: Date; sequenceNumber: number }): boolean {
     const date = dayjs(headerData.fileDate).format(DATE_FORMAT);
     const sequence = headerData.sequenceNumber.toString().padStart(5, "0");
     const expectedString = `7100                        ${date} ${CRA_PROGRAM_AREA_CODE}A${sequence}                                                                                                   0`;
@@ -99,9 +100,12 @@ export class CRARequestRecordParser {
    * Recreates the footer data from the provided {@link footerData} object
    * and compares it with the record.
    * @param footerData object containing the footer data to be matched.
+   * - `fileDate` date of the file.
+   * - `sequenceNumber` sequence number of the file.
+   * - `totalRecords` total number of records in the file.
    * @returns true if the footer data matches the record, false otherwise.
    */
-  matchFooterData(footerData: {
+  matchFooter(footerData: {
     fileDate: Date;
     sequenceNumber: number;
     totalRecords: number;
@@ -117,7 +121,7 @@ export class CRARequestRecordParser {
    * Pads the provided name with spaces to ensure it meets the maximum length requirement
    * in the same way it is expected to be presented in the CRA request record.
    * @param name first or last name to be padded.
-   * @returns name is the expected format for CRA request record.
+   * @returns name in the expected format for CRA request record.
    */
   private getNameWithFiller(name?: string): string {
     return (name ?? "")

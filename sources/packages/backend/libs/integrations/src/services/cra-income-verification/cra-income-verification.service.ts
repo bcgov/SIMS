@@ -19,7 +19,8 @@ export class CRAIncomeVerificationsService extends RecordDataModelService<CRAInc
   }
 
   /**
-   * Gets income verifications that were never sent to CRA (dateSent is null).
+   * Gets income verifications that were never sent to CRA (dateSent is null),
+   * and there is an associated SIN (either student or supporting user).
    * Once sent, there is no mechanism in place for a retry logic.
    * @returns pending income verifications.
    */

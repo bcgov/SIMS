@@ -93,7 +93,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     // Validate header.
     const headerParsed = new CRARequestRecordParser(header);
     expect(
-      headerParsed.matchHeaderData({
+      headerParsed.matchHeader({
         fileDate: now,
         sequenceNumber: 1,
       }),
@@ -101,31 +101,31 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     // Validate student record.
     const studentRecordParsed = new CRARequestRecordParser(studentRecord);
     expect(
-      studentRecordParsed.matchIncomeData(
-        studentCRAIncomeVerification.id,
-        student.user.firstName,
-        student.user.lastName,
-        student.sinValidation.sin,
-        student.birthDate,
-        studentCRAIncomeVerification.taxYear,
-      ),
+      studentRecordParsed.matchIncome({
+        id: studentCRAIncomeVerification.id,
+        firstName: student.user.firstName,
+        lastName: student.user.lastName,
+        sin: student.sinValidation.sin,
+        birthDate: student.birthDate,
+        taxYear: studentCRAIncomeVerification.taxYear,
+      }),
     ).toBe(true);
     // Validate parent record.
     const parentRecordParsed = new CRARequestRecordParser(parentRecord);
     expect(
-      parentRecordParsed.matchIncomeData(
-        parentCRAIncomeVerification.id,
-        parent.user.firstName,
-        parent.user.lastName,
-        parent.sin,
-        parent.birthDate,
-        parentCRAIncomeVerification.taxYear,
-      ),
+      parentRecordParsed.matchIncome({
+        id: parentCRAIncomeVerification.id,
+        firstName: parent.user.firstName,
+        lastName: parent.user.lastName,
+        sin: parent.sin,
+        birthDate: parent.birthDate,
+        taxYear: parentCRAIncomeVerification.taxYear,
+      }),
     ).toBe(true);
     // Validate footer.
     const footerParsed = new CRARequestRecordParser(footer);
     expect(
-      footerParsed.matchFooterData({
+      footerParsed.matchFooter({
         fileDate: now,
         sequenceNumber: 1,
         totalRecords: 4,
@@ -154,7 +154,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     // Validate header.
     const headerParsed = new CRARequestRecordParser(header);
     expect(
-      headerParsed.matchHeaderData({
+      headerParsed.matchHeader({
         fileDate: now,
         sequenceNumber: 1,
       }),
@@ -170,7 +170,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     // Validate footer.
     const footerParsed = new CRARequestRecordParser(footer);
     expect(
-      footerParsed.matchFooterData({
+      footerParsed.matchFooter({
         fileDate: now,
         sequenceNumber: 1,
         totalRecords: 3,

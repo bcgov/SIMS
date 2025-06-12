@@ -9,6 +9,7 @@ import {
  * Creates a fake supporting user.
  * @param relations dependencies:
  * - `application`: application that the supporting user is associated with.
+ * - `user`: user that the supporting user is associated with.
  * @param options student options.
  * - `initialValues` supporting user values.
  * @returns a fake supporting user.
