@@ -49,6 +49,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
   let sharedStudent: Student;
 
   beforeAll(async () => {
+    process.env.INSTITUTION_REQUEST_FOLDER = "OUT";
     const { nestApplication, dataSource, sshClientMock } =
       await createTestingAppModule();
     app = nestApplication;
@@ -132,6 +133,9 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
 
       const uploadedFile = getUploadedFile(sftpClientMock);
       const fileDate = dayjs().format("YYYYMMDD");
+      expect(uploadedFile.remoteFilePath).toBe(
+        `OUT\\CON-008-${locationCode}.txt`,
+      );
       expect(result).toStrictEqual([
         `Uploaded file ${uploadedFile.remoteFilePath}, with 1 record(s).`,
       ]);
