@@ -25,6 +25,7 @@ export function createFakeSupportingUser(
   const supportingUser = new SupportingUser();
   supportingUser.application = relations.application;
   supportingUser.sin = options?.initialValues?.sin;
+  supportingUser.birthDate = options?.initialValues?.birthDate;
   supportingUser.createdAt = new Date();
   supportingUser.updatedAt = new Date();
   supportingUser.supportingUserType =

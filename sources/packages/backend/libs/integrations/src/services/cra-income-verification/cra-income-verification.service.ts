@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, IsNull, Repository, UpdateResult } from "typeorm";
+import {
+  Brackets,
+  DataSource,
+  In,
+  IsNull,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import { RecordDataModelService, CRAIncomeVerification } from "@sims/sims-db";
 
 /**
@@ -38,12 +45,17 @@ export class CRAIncomeVerificationsService extends RecordDataModelService<CRAInc
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("student.user", "studentUser")
       .leftJoin("incomeVerification.supportingUser", "supportingUser")
-      .leftJoin(
-        "supportingUser.user",
-        "supportingUserUser",
-        "supportingUser.sin IS NOT NULL",
-      )
+      .leftJoin("supportingUser.user", "supportingUserUser")
       .where("incomeVerification.dateSent IS NULL")
+      .andWhere(
+        new Brackets((qb) => {
+          // Supporting user is not associated, which means it is a student,
+          // or the supporting user is associated and has a SIN.
+          qb.where("supportingUser.id IS NULL").orWhere(
+            "supportingUser.sin IS NOT NULL",
+          );
+        }),
+      )
       .orderBy("incomeVerification.id", "ASC")
       .getMany();
   }
