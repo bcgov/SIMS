@@ -62,7 +62,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
   });
 
   it("Should create one CRA file request with two income verification records when there are pending requests for a student and a parent and both have a SIN.", async () => {
-    // Arrange.
+    // Arrange
     const {
       student,
       parent,
@@ -134,7 +134,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
   });
 
   it("Should create one CRA file request with one income verification when there are pending requests for a student and a parent and only the student has a SIN.", async () => {
-    // Arrange.
+    // Arrange
     const { student } = await createApplicationWithParent();
     const now = new Date();
     MockDate.set(now);
