@@ -12,11 +12,13 @@ import {
   Student,
   configureIdleTransactionSessionTimeout,
   User,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import { DisbursementSaveModel } from "./disbursement-schedule.models";
 import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
 import {
   ASSESSMENT_NOT_FOUND,
+  DISBURSEMENT_SCHEDULE_NOT_FOUND,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
   GRANTS_TYPES,
   LOAN_TYPES,
@@ -698,7 +700,12 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     return +(total?.sum ?? 0);
   }
 
-  async rejectDisbursement(
+  /**
+   * Reject a disbursement schedule by document number.
+   * @param documentNumber document number.
+   * @param auditUserId audit user id.
+   */
+  async rejectDisbursementByDocumentNumber(
     documentNumber: number,
     auditUserId: number,
   ): Promise<void> {
@@ -710,11 +717,42 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
           offering: { id: true, offeringIntensity: true },
         },
       },
+      relations: { studentAssessment: { offering: true } },
       where: {
         documentNumber,
         disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
       },
     });
+    if (!disbursementSchedule) {
+      throw new CustomNamedError(
+        `Disbursement schedule with document number ${documentNumber} not found or not in status ${DisbursementScheduleStatus.Sent}.`,
+        DISBURSEMENT_SCHEDULE_NOT_FOUND,
+      );
+    }
+    const offeringIntensity =
+      disbursementSchedule.studentAssessment.offering.offeringIntensity;
+    if (offeringIntensity === OfferingIntensity.fullTime) {
+      return this.dataSource.transaction(async (transactionalEntityManager) => {
+        // Reverse the deducted overawards if present only for Full-time.
+        await this.reverseDisbursementDeductedOverawards(
+          disbursementSchedule.id,
+          auditUserId,
+          transactionalEntityManager,
+        );
+        await this.updateDisbursementScheduleStatus(
+          disbursementSchedule.id,
+          DisbursementScheduleStatus.Rejected,
+          auditUserId,
+          { entityManager: transactionalEntityManager },
+        );
+      });
+    }
+    // For Part-time, just update the disbursement schedule status.
+    await this.updateDisbursementScheduleStatus(
+      disbursementSchedule.id,
+      DisbursementScheduleStatus.Rejected,
+      auditUserId,
+    );
   }
 
   /**
@@ -726,7 +764,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * - `entityManager` entity manager to execute in transaction.
    * @returns update result.
    */
-  async updateDisbursementScheduleStatus(
+  private async updateDisbursementScheduleStatus(
     disbursementScheduleId: number,
     status: DisbursementScheduleStatus,
     auditUserId: number,
@@ -759,7 +797,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param auditUserId audit user id.
    * @param entityManager entity manager to execute in transaction.
    */
-  async reverseDisbursementDeductedOverawards(
+  private async reverseDisbursementDeductedOverawards(
     disbursementScheduleId: number,
     auditUserId: number,
     entityManager: EntityManager,

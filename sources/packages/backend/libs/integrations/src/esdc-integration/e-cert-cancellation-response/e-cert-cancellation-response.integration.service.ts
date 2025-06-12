@@ -46,7 +46,7 @@ export class ECertCancellationResponseIntegrationService extends SFTPIntegration
     // Validate if the number of detail records in the footer matches the total count of detail records in the file.
     if (footer.totalDetailRecords !== fileLines.length) {
       throw new CustomNamedError(
-        `The total number of detail records ${footer.totalDetailRecords} in the footer does not match the total count of detail records ${fileLines.length} in the file.`,
+        `The total number of detail records ${footer.totalDetailRecords} in the footer does not match the total count of detail records ${fileLines.length} in the e-cert cancellation response file ${remoteFilePath}.`,
         FILE_PARSING_ERROR,
       );
     }

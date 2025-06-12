@@ -69,16 +69,10 @@ describe(
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
-
-      // Assert
-      expect(result).toStrictEqual([
-        "Process finalized with success.",
-        "Received cancellation files: 1.",
-        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 6",
-      ]);
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
       const downloadedFile = path.join(
         process.env.ESDC_RESPONSE_FOLDER,
         PART_TIME_CANCELLATION_RESPONSE_FILE,
@@ -93,5 +87,77 @@ describe(
       // The file is not expected to be archived on SFTP.
       expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
+
+    it("Should log warning and abort the process when the record type of footer is invalid.", async () => {
+      // Arrange
+      mockDownloadFiles(
+        sftpClientMock,
+        [PART_TIME_CANCELLATION_RESPONSE_FILE],
+        (fileContent: string) => {
+          const file = getStructuredRecords(fileContent);
+          // Set the record type in header to be wrong.
+          file.footer = file.footer.replace("999", "399");
+          return createFileFromStructuredRecords(file);
+        },
+      );
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act/Assert
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
+      const downloadedFile = path.join(
+        process.env.ESDC_RESPONSE_FOLDER,
+        PART_TIME_CANCELLATION_RESPONSE_FILE,
+      );
+      // Check for the log messages.
+      expect(
+        mockedJob.containLogMessages([
+          "Found 1 e-cert cancellation response file(s) to process.",
+          `The e-cert cancellation response file ${downloadedFile} has an invalid record type on footer 399.`,
+        ]),
+      ).toBe(true);
+      // The file is not expected to be archived on SFTP.
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
+    });
+
+    it(
+      "Should log warning and abort the process when the total record count in footer does not match" +
+        " the total detail record count of the file.",
+      async () => {
+        // Arrange
+        mockDownloadFiles(
+          sftpClientMock,
+          [PART_TIME_CANCELLATION_RESPONSE_FILE],
+          (fileContent: string) => {
+            const file = getStructuredRecords(fileContent);
+            // Set the record type in header to be wrong.
+            file.footer = file.footer.replace("000000002", "000000008");
+            return createFileFromStructuredRecords(file);
+          },
+        );
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act/Assert
+        await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+          "One or more errors were reported during the process, please see logs for details.",
+        );
+        const downloadedFile = path.join(
+          process.env.ESDC_RESPONSE_FOLDER,
+          PART_TIME_CANCELLATION_RESPONSE_FILE,
+        );
+        // Check for the log messages.
+        expect(
+          mockedJob.containLogMessages([
+            "Found 1 e-cert cancellation response file(s) to process.",
+            `The total number of detail records 8 in the footer does not match the total count of detail records 2 in the e-cert cancellation response file ${downloadedFile}.`,
+          ]),
+        ).toBe(true);
+        // The file is not expected to be archived on SFTP.
+        expect(sftpClientMock.rename).not.toHaveBeenCalled();
+      },
+    );
   },
 );

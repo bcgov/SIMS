@@ -5,7 +5,7 @@ import { ECertCancellationResponseFileDetail } from "../e-cert-cancellation-resp
  */
 export enum ECertCancellationResponseRecordType {
   Header = "100",
-  Record = "200",
+  Detail = "200",
   Footer = "999",
 }
 
