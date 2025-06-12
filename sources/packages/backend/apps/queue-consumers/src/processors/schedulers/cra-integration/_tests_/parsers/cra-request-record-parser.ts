@@ -22,13 +22,6 @@ export class CRARequestRecordParser {
   constructor(private readonly record: string) {}
 
   /**
-   * Record type.
-   */
-  get recordType(): string {
-    return this.record.substring(0, 3);
-  }
-
-  /**
    * Student's first name.
    */
   get firstName(): string {

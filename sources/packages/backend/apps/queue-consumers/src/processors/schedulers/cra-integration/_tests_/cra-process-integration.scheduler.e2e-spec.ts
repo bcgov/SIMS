@@ -40,6 +40,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
 
   beforeAll(async () => {
     process.env.CRA_PROGRAM_AREA_CODE = CRA_PROGRAM_AREA_CODE;
+    process.env.CRA_REQUEST_FOLDER = "OUT";
     const { nestApplication, dataSource, sshClientMock } =
       await createTestingAppModule();
     app = nestApplication;
@@ -177,8 +178,9 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
   });
 
   /**
-   * Creates a student and a parent with the option to specify the parent's SIN.
-   * @param options - Options for creating the application.
+   * Creates a Student Application with an associated parent and CRA income verification records.
+   * @param options options for creating the application.
+   * - `parentSin`: if provided, the parent will be created with this SIN.
    * @returns created student, parent, and their CRA income verifications.
    */
   async function createApplicationWithParent(options?: {
@@ -191,7 +193,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
   }> {
     // Create the student with a valid SIN.
     const student = await saveFakeStudent(db.dataSource);
-    // Crate an application with a student that will always have a SIN.
+    // Create an application with a student that will always have a SIN.
     const application = await saveFakeApplication(
       db.dataSource,
       { student },
@@ -209,9 +211,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
         },
       },
     );
-    // Create an application a parent with the ability to have an income check executed since it has a SIN.
     await db.supportingUser.save(parent);
-    // Create CRA income verifications for student.
     const studentCRAIncomeVerification = createFakeCRAIncomeVerification({
       application,
     });
