@@ -41,6 +41,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
   beforeAll(async () => {
     process.env.CRA_PROGRAM_AREA_CODE = CRA_PROGRAM_AREA_CODE;
     process.env.CRA_REQUEST_FOLDER = "OUT";
+    process.env.CRA_ENVIRONMENT_CODE = "A";
     const { nestApplication, dataSource, sshClientMock } =
       await createTestingAppModule();
     app = nestApplication;
