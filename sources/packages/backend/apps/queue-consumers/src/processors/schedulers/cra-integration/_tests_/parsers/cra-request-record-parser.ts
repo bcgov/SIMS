@@ -51,8 +51,6 @@ export class CRARequestRecordParser {
 
   /**
    * Check if the record matches the provided data.
-   * @param craIncomeVerificationId CRA income verification ID.
-   * This is used to identify the record in the CRA response.
    * @param incomeData object containing the individual's income data.
    * - `id` CRA income verification ID.
    * - `firstName` individual's first name.
@@ -68,7 +66,7 @@ export class CRARequestRecordParser {
     lastName: string;
     sin: string;
     birthDate: string;
-    taxYear?: number;
+    taxYear: number;
   }): boolean {
     const formattedBirthDate = dayjs(incomeData.birthDate).format(DATE_FORMAT);
     const freeProjectArea = `VERIFICATION_ID:${incomeData.id}`.padEnd(
