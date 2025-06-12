@@ -38,8 +38,13 @@ export class CRAIncomeVerificationsService extends RecordDataModelService<CRAInc
       .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("student.user", "studentUser")
       .leftJoin("incomeVerification.supportingUser", "supportingUser")
-      .leftJoin("supportingUser.user", "supportingUserUser")
-      .where("incomeVerification.dateSent is null")
+      .leftJoin(
+        "supportingUser.user",
+        "supportingUserUser",
+        "supportingUser.sin IS NOT NULL",
+      )
+      .where("incomeVerification.dateSent IS NULL")
+      .orderBy("incomeVerification.id", "ASC")
       .getMany();
   }
 
