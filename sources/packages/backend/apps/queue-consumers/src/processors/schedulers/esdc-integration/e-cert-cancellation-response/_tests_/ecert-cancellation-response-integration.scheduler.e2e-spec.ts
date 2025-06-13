@@ -30,8 +30,10 @@ import {
 } from "@sims/sims-db";
 import { SystemUsersService } from "@sims/services";
 
-const PART_TIME_CANCELLATION_RESPONSE_FILE = "EDU.PBC.CAN.ECRT.20250516.001";
-const SHARED_DOCUMENT_NUMBERS = [11000004, 11000003];
+const FULL_TIME_CANCELLATION_RESPONSE_FILE = "EDU.PBC.CAN.ECRT.20250516.001";
+const PART_TIME_CANCELLATION_RESPONSE_FILE = "EDU.PBC.CAN.PTECRT.20250417.001";
+// Document numbers used in the tests for Full-time and Part-time E-Cert cancellation response files respectively.
+const SHARED_DOCUMENT_NUMBERS = [11000003, 11000004, 200003, 200004];
 
 describe(
   describeQueueProcessorRootTest(
@@ -69,7 +71,7 @@ describe(
       );
     });
 
-    it("Should log error and abort the process when the record type of header is invalid.", async () => {
+    it("Should log error and abort the process when the record type of header is invalid for a Part-time cancellation response file.", async () => {
       // Arrange
       mockDownloadFiles(
         sftpClientMock,
@@ -103,7 +105,7 @@ describe(
       expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
 
-    it("Should log error and abort the process when the record type of footer is invalid.", async () => {
+    it("Should log error and abort the process when the record type of footer is invalid for a Part-time cancellation response file.", async () => {
       // Arrange
       mockDownloadFiles(
         sftpClientMock,
@@ -139,7 +141,7 @@ describe(
 
     it(
       "Should log error and abort the process when the total record count in footer does not match" +
-        " the total detail record count of the file.",
+        " the total detail record count of the file for a Part-time cancellation response file.",
       async () => {
         // Arrange
         mockDownloadFiles(
@@ -181,7 +183,7 @@ describe(
       async () => {
         // Arrange
         // Create fake applications with disbursements to be cancelled.
-        const [firstDocumentNumber, secondDocumentNumber] =
+        const [, , firstDocumentNumber, secondDocumentNumber] =
           SHARED_DOCUMENT_NUMBERS;
         const firstApplicationPromise = saveFakeApplicationDisbursements(
           db.dataSource,
@@ -256,7 +258,7 @@ describe(
           where: {
             documentNumber: In([firstDocumentNumber, secondDocumentNumber]),
           },
-          order: { documentNumber: "DESC" },
+          order: { documentNumber: "ASC" },
         });
         expect(rejectedDisbursements).toEqual([
           {
@@ -335,7 +337,7 @@ describe(
           DisbursementOverawardOriginType.AwardDeducted;
         await db.disbursementOveraward.save(deductedOveraward);
         mockDownloadFiles(sftpClientMock, [
-          PART_TIME_CANCELLATION_RESPONSE_FILE,
+          FULL_TIME_CANCELLATION_RESPONSE_FILE,
         ]);
         // Queued job.
         const mockedJob = mockBullJob<void>();
@@ -350,7 +352,7 @@ describe(
         ]);
         const downloadedFile = path.join(
           process.env.ESDC_RESPONSE_FOLDER,
-          PART_TIME_CANCELLATION_RESPONSE_FILE,
+          FULL_TIME_CANCELLATION_RESPONSE_FILE,
         );
         // Check for the log messages.
         expect(
@@ -373,7 +375,7 @@ describe(
           where: {
             documentNumber: In([firstDocumentNumber, secondDocumentNumber]),
           },
-          order: { documentNumber: "DESC" },
+          order: { documentNumber: "ASC" },
         });
         expect(rejectedDisbursements).toEqual([
           {
