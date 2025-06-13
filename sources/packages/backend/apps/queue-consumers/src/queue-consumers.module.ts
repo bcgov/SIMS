@@ -61,6 +61,7 @@ import {
   MSFAAIntegrationModule,
   SINValidationModule,
   StudentLoanBalancesIntegrationModule,
+  ECertCancellationResponseIntegrationModule,
 } from "@sims/integrations/esdc-integration";
 import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
 import {
@@ -115,6 +116,7 @@ import { QueuesMetricsModule } from "./queues-metrics.module.module";
     StudentLoanBalancesIntegrationModule,
     TerminusModule,
     ApplicationChangesReportIntegrationModule,
+    ECertCancellationResponseIntegrationModule,
   ],
   providers: [
     VirusScanProcessor,

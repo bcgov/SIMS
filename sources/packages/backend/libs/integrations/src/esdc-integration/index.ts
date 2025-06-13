@@ -58,3 +58,6 @@ export * from "./application-changes-report/models/application-changes-report-in
 export * from "./application-changes-report/application-changes-report.integration.service";
 export * from "./application-changes-report/application-changes-report.processing.service";
 export * from "./application-changes-report/application-changes-report-integration.module";
+export * from "./e-cert-cancellation-response/e-cert-cancellation-response.integration.service";
+export * from "./e-cert-cancellation-response/e-cert-cancellation-response.processing.service";
+export * from "./e-cert-cancellation-response/e-cert-cancellation-response-integration.module";

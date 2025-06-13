@@ -8,6 +8,7 @@ import {
   ProcessSummary,
 } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
+import { ECertCancellationResponseProcessingService } from "@sims/integrations/esdc-integration";
 
 @Processor(QueueNames.ECertCancellationResponseIntegration)
 export class ECertCancellationResponseIntegrationScheduler extends BaseScheduler<void> {
@@ -15,6 +16,7 @@ export class ECertCancellationResponseIntegrationScheduler extends BaseScheduler
     @InjectQueue(QueueNames.ECertCancellationResponseIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
+    private readonly eCertCancellationResponseProcessingService: ECertCancellationResponseProcessingService,
   ) {
     super(schedulerQueue, queueService);
   }
@@ -30,10 +32,15 @@ export class ECertCancellationResponseIntegrationScheduler extends BaseScheduler
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[]> {
-    processSummary.info(
-      "E-Cert cancellation response integration scheduler is not implemented.",
-    );
-    return [];
+    const processingResponse =
+      await this.eCertCancellationResponseProcessingService.process(
+        processSummary,
+      );
+
+    return [
+      "Process finalized with success.",
+      `Received cancellation files: ${processingResponse.receivedCancellationFiles}.`,
+    ];
   }
 
   /**
