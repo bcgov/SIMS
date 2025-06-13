@@ -13,7 +13,7 @@ import {
 } from "@sims/services/workflow/variables/supporting-user-information-request";
 
 /**
- * Creates a fake identifiable supporting users creation payload.
+ * Creates a fake identifiable supporting user creation payload.
  * @param options input variables for creating identifiable supporting user.
  * - `applicationId`: ID of the application to which the supporting user belongs.
  * - `supportingUserType`: type of the supporting user (Parent or Partner).

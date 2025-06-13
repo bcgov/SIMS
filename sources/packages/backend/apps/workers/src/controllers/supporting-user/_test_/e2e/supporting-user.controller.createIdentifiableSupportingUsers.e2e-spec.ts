@@ -7,7 +7,6 @@ import {
 } from "@sims/test-utils";
 import {
   createFakeWorkerJob,
-  FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
 import { createTestingAppModule } from "../../../../../test/helpers";
@@ -34,7 +33,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     supportingUserController = nestApplication.get(SupportingUserController);
   });
 
-  it("Should create one parent supporting user and save the associated full name when one information was added to the student application.", async () => {
+  it("Should create one parent supporting user and save the associated full name when one parent's information is added to the student application.", async () => {
     // Arrange
     const parentFullName = faker.datatype.uuid();
     const savedApplication = await saveFakeApplication(
@@ -69,11 +68,6 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       );
 
     // Asserts
-    expect(result).toHaveProperty(
-      FAKE_WORKER_JOB_RESULT_PROPERTY,
-      MockedZeebeJobResult.Complete,
-    );
-
     // Validate DB creation.
     const updatedApplication = await db.application.findOne({
       select: {
@@ -98,9 +92,16 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       isAbleToReport: true,
       fullName: parentFullName,
     });
+    // Validate job result.
+    expect(result).toEqual({
+      resultType: MockedZeebeJobResult.Complete,
+      outputVariables: {
+        createdSupportingUserId: parent.id,
+      },
+    });
   });
 
-  it("Should create the second parent supporting user and save the associated full name when two parent information was added to the student application.", async () => {
+  it("Should create the second parent supporting user and save the associated full name when the two parent's information is added to the student application.", async () => {
     // Arrange
     const parentFullName1 = faker.datatype.uuid();
     const parentFullName2 = faker.datatype.uuid();
@@ -139,11 +140,6 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       );
 
     // Asserts
-    expect(result).toHaveProperty(
-      FAKE_WORKER_JOB_RESULT_PROPERTY,
-      MockedZeebeJobResult.Complete,
-    );
-
     // Validate DB creation.
     const updatedApplication = await db.application.findOne({
       select: {
@@ -167,6 +163,13 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       supportingUserType: SupportingUserType.Parent,
       isAbleToReport: false,
       fullName: parentFullName2,
+    });
+    // Validate job result.
+    expect(result).toEqual({
+      resultType: MockedZeebeJobResult.Complete,
+      outputVariables: {
+        createdSupportingUserId: parent.id,
+      },
     });
   });
 
@@ -218,10 +221,6 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       );
 
     // Asserts
-    expect(result).toHaveProperty(
-      FAKE_WORKER_JOB_RESULT_PROPERTY,
-      MockedZeebeJobResult.Complete,
-    );
     // Validate DB creation.
     const updatedApplication = await db.application.findOne({
       select: {
@@ -240,6 +239,13 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     const [parent] = updatedApplication.supportingUsers;
     // Ensures the parent supporting user is the same as the one created before.
     expect(parent.id).toBe(parentSupportingUser.id);
+    // Validate job result.
+    expect(result).toEqual({
+      resultType: MockedZeebeJobResult.Complete,
+      outputVariables: {
+        createdSupportingUserId: parentSupportingUser.id,
+      },
+    });
   });
 
   it("Should throw an error when the full name is expected but it is not present in the application dynamic data.", async () => {
