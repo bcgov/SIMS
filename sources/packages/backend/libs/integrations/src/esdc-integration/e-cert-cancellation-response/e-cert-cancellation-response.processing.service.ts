@@ -220,7 +220,7 @@ export class ECertCancellationResponseProcessingService {
 
   /**
    * Get the disbursement schedule by document number.
-   * @param documentNumber  document number.
+   * @param documentNumber document number.
    * @returns disbursement schedule.
    */
   private async getDisbursementScheduleByDocumentNumber(
