@@ -131,30 +131,22 @@ export class ECertCancellationResponseProcessingService {
   /**
    * Sanitize the cancellation record.
    * @param cancellationRecord cancellation record.
-   * @param processSummary process summary to log any warnings or errors.
    * @returns true if the record is valid, false otherwise.
    */
   private sanitizeCancellationRecord(
     cancellationRecord: ECertCancellationResponseFileDetail,
-    processSummary: ProcessSummary,
-  ): boolean {
-    let isValid = true;
+  ): string | null {
+    const errorMessage: string[] = [];
     if (
       cancellationRecord.recordType !==
       ECertCancellationResponseRecordType.Detail
     ) {
-      processSummary.error(
-        `E-Cert cancellation response file has invalid record type ${cancellationRecord.recordType} at line ${cancellationRecord.lineNumber} for detail record.`,
-      );
-      isValid = false;
+      errorMessage.push(`invalid record type ${cancellationRecord.recordType}`);
     }
     if (!cancellationRecord.documentNumber) {
-      processSummary.error(
-        `E-Cert cancellation response file has invalid document number at line ${cancellationRecord.lineNumber}.`,
-      );
-      isValid = false;
+      errorMessage.push("invalid document number");
     }
-    return isValid;
+    return errorMessage.length ? errorMessage.join(", ") : null;
   }
 
   /**
@@ -166,12 +158,13 @@ export class ECertCancellationResponseProcessingService {
     cancellationRecord: ECertCancellationResponseFileDetail,
     processSummary: ProcessSummary,
   ): Promise<void> {
-    const isValidRecord = this.sanitizeCancellationRecord(
-      cancellationRecord,
-      processSummary,
-    );
-    // If the record is not valid, log a warning and skip processing this record.
-    if (!isValidRecord) {
+    const validationErrorMessage =
+      this.sanitizeCancellationRecord(cancellationRecord);
+    // If the record is not valid, log an error and skip processing this record.
+    if (validationErrorMessage) {
+      processSummary.error(
+        `Invalid detail record at line ${cancellationRecord.lineNumber}: ${validationErrorMessage}.`,
+      );
       return;
     }
     const auditUser = this.systemUsersService.systemUser;
