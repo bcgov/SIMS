@@ -3,7 +3,6 @@ import {
   DisbursementScheduleSharedService,
   SystemUsersService,
 } from "@sims/services";
-import { DISBURSEMENT_SCHEDULE_NOT_FOUND } from "@sims/services/constants";
 import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ProcessSummary } from "@sims/utilities/logger";
@@ -14,6 +13,13 @@ import {
   ECertCancellationResponseRecordType,
   ECertCancellationResponseResult,
 } from "./models/e-cert-cancellation-response.model";
+import {
+  DisbursementSchedule,
+  DisbursementScheduleStatus,
+  OfferingIntensity,
+} from "@sims/sims-db";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 /**
  *  Processes the E-Cert cancellation response file(s).
@@ -27,6 +33,8 @@ export class ECertCancellationResponseProcessingService {
     private readonly integrationService: ECertCancellationResponseIntegrationService,
     private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
     private readonly systemUsersService: SystemUsersService,
+    @InjectRepository(DisbursementSchedule)
+    private readonly disbursementScheduleRepo: Repository<DisbursementSchedule>,
   ) {
     this.esdcConfig = configService.esdcIntegration;
   }
@@ -167,31 +175,65 @@ export class ECertCancellationResponseProcessingService {
       );
       return;
     }
-    const auditUser = this.systemUsersService.systemUser;
     const documentNumber = cancellationRecord.documentNumber;
-    try {
-      await this.disbursementScheduleSharedService.rejectDisbursementByDocumentNumber(
-        documentNumber,
-        auditUser.id,
+    const disbursementSchedule =
+      await this.getDisbursementScheduleByDocumentNumber(documentNumber);
+    if (!disbursementSchedule) {
+      processSummary.info(
+        `No disbursement schedule found for document number ${documentNumber}. Skipping cancellation.`,
       );
+      return;
+    }
+    if (
+      disbursementSchedule.disbursementScheduleStatus ===
+      DisbursementScheduleStatus.Rejected
+    ) {
+      processSummary.info(
+        `Disbursement schedule for document number ${documentNumber} is already rejected. Skipping cancellation.`,
+      );
+    }
+    const auditUser = this.systemUsersService.systemUser;
+    try {
+      const overawardIds =
+        await this.disbursementScheduleSharedService.rejectDisbursement(
+          disbursementSchedule.id,
+          auditUser.id,
+          disbursementSchedule.studentAssessment.offering.offeringIntensity ===
+            OfferingIntensity.fullTime,
+        );
       processSummary.info(
         `E-Cert with document number ${documentNumber} has been cancelled.`,
       );
-    } catch (error: unknown) {
-      // If the document number is not found, log information as this is expected.
-      if (
-        error instanceof CustomNamedError &&
-        error.name === DISBURSEMENT_SCHEDULE_NOT_FOUND
-      ) {
-        processSummary.info(error.message);
-      } else {
-        // If any other error occurs, log error without aborting the process, allowing other records to be processed.
-        processSummary.error(
-          `Unexpected error cancelling E-Cert for document number ${documentNumber}.`,
-          error,
+      if (overawardIds && overawardIds.length) {
+        processSummary.info(
+          `Reversal overaward(s) created: ${overawardIds.join(", ")}.`,
         );
       }
+    } catch (error: unknown) {
+      // If any other error occurs, log error without aborting the process, allowing other records to be processed.
+      processSummary.error(
+        `Unexpected error cancelling E-Cert for document number ${documentNumber}.`,
+        error,
+      );
     }
+  }
+
+  /**
+   * Get the disbursement schedule by document number.
+   * @param documentNumber  document number.
+   * @returns disbursement schedule.
+   */
+  private async getDisbursementScheduleByDocumentNumber(
+    documentNumber: number,
+  ): Promise<DisbursementSchedule> {
+    return this.disbursementScheduleRepo.findOne({
+      select: {
+        id: true,
+        studentAssessment: { id: true, offering: { offeringIntensity: true } },
+      },
+      relations: { studentAssessment: { offering: true } },
+      where: { documentNumber },
+    });
   }
 
   /**

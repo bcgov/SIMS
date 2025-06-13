@@ -354,15 +354,6 @@ describe(
           process.env.ESDC_RESPONSE_FOLDER,
           FULL_TIME_CANCELLATION_RESPONSE_FILE,
         );
-        // Check for the log messages.
-        expect(
-          mockedJob.containLogMessages([
-            "Received 1 e-cert cancellation response file(s) to process.",
-            `The downloaded file ${downloadedFile} contains 2 detail records.`,
-            `E-Cert with document number ${firstDocumentNumber} has been cancelled.`,
-            `E-Cert with document number ${secondDocumentNumber} has been cancelled.`,
-          ]),
-        ).toBe(true);
         // Validate the updated disbursement schedules.
         const rejectedDisbursements = await db.disbursementSchedule.find({
           select: {
@@ -417,6 +408,18 @@ describe(
             addedBy: { id: systemUsersService.systemUser.id },
           },
         ]);
+        // Check for the log messages.
+        expect(
+          mockedJob.containLogMessages([
+            "Received 1 e-cert cancellation response file(s) to process.",
+            `The downloaded file ${downloadedFile} contains 2 detail records.`,
+            `E-Cert with document number ${firstDocumentNumber} has been cancelled.`,
+            `E-Cert with document number ${secondDocumentNumber} has been cancelled.`,
+            `Reversal overaward(s) created: ${reversedOverawards
+              .map((overaward) => overaward.id)
+              .join(", ")}.`,
+          ]),
+        ).toBe(true);
         // The file is not expected to be archived on SFTP.
         expect(sftpClientMock.rename).toHaveBeenCalled();
       },

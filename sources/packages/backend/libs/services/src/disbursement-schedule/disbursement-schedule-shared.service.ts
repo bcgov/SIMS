@@ -12,13 +12,12 @@ import {
   Student,
   configureIdleTransactionSessionTimeout,
   User,
-  OfferingIntensity,
 } from "@sims/sims-db";
 import { DisbursementSaveModel } from "./disbursement-schedule.models";
 import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
 import {
   ASSESSMENT_NOT_FOUND,
-  DISBURSEMENT_SCHEDULE_NOT_FOUND,
+  DISBURSEMENT_SCHEDULE_NOT_UPDATED,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
   GRANTS_TYPES,
   LOAN_TYPES,
@@ -701,57 +700,50 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   }
 
   /**
-   * Reject a disbursement schedule by document number.
-   * @param documentNumber document number.
+   * Reject a disbursement schedule which is sent to ESDC.
+   * @param disbursementScheduleId disbursement schedule id.
    * @param auditUserId audit user id.
+   * @param reverseOverawards flag to reverse overawards.
+   * @returns array of created reversal overaward ids or void if no overawards were reversed.
    */
-  async rejectDisbursementByDocumentNumber(
-    documentNumber: number,
+  async rejectDisbursement(
+    disbursementScheduleId: number,
     auditUserId: number,
-  ): Promise<void> {
-    const disbursementSchedule = await this.repo.findOne({
-      select: {
-        id: true,
-        studentAssessment: {
-          id: true,
-          offering: { id: true, offeringIntensity: true },
-        },
-      },
-      relations: { studentAssessment: { offering: true } },
-      where: {
-        documentNumber,
-        disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-      },
-    });
-    if (!disbursementSchedule) {
-      throw new CustomNamedError(
-        `Disbursement schedule with document number ${documentNumber} not found or not in status ${DisbursementScheduleStatus.Sent}.`,
-        DISBURSEMENT_SCHEDULE_NOT_FOUND,
-      );
-    }
-    const offeringIntensity =
-      disbursementSchedule.studentAssessment.offering.offeringIntensity;
-    if (offeringIntensity === OfferingIntensity.fullTime) {
+    reverseOverawards: boolean,
+  ): Promise<number[] | void> {
+    if (reverseOverawards) {
       return this.dataSource.transaction(async (transactionalEntityManager) => {
         // Reverse the deducted overawards if present only for Full-time.
-        await this.reverseDisbursementDeductedOverawards(
-          disbursementSchedule.id,
+        const overawardIds = await this.reverseDisbursementDeductedOverawards(
+          disbursementScheduleId,
           auditUserId,
           transactionalEntityManager,
         );
-        await this.updateDisbursementScheduleStatus(
-          disbursementSchedule.id,
+        const result = await this.updateDisbursementScheduleStatus(
+          disbursementScheduleId,
           DisbursementScheduleStatus.Rejected,
           auditUserId,
-          { entityManager: transactionalEntityManager },
+          {
+            entityManager: transactionalEntityManager,
+            fromStatus: DisbursementScheduleStatus.Sent,
+          },
         );
+
+        if (result.affected !== 1) {
+          throw new CustomNamedError(
+            `Failed to update disbursement schedule ${disbursementScheduleId} status to ${DisbursementScheduleStatus.Rejected}.`,
+            DISBURSEMENT_SCHEDULE_NOT_UPDATED,
+          );
+        }
+        return overawardIds;
       });
     }
     // For Part-time, just update the disbursement schedule status.
     await this.updateDisbursementScheduleStatus(
-      disbursementSchedule.id,
+      disbursementScheduleId,
       DisbursementScheduleStatus.Rejected,
       auditUserId,
+      { fromStatus: DisbursementScheduleStatus.Sent },
     );
   }
 
@@ -762,6 +754,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param auditUserId audit user id.
    * @param options update options.
    * - `entityManager` entity manager to execute in transaction.
+   * - `fromStatus` disbursement schedule status before updating.
    * @returns update result.
    */
   private async updateDisbursementScheduleStatus(
@@ -770,6 +763,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     auditUserId: number,
     options?: {
       entityManager?: EntityManager;
+      fromStatus?: DisbursementScheduleStatus;
     },
   ): Promise<UpdateResult> {
     const now = new Date();
@@ -779,6 +773,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     return disbursementScheduleRepo.update(
       {
         id: disbursementScheduleId,
+        disbursementScheduleStatus: options?.fromStatus,
       },
       {
         disbursementScheduleStatus: status,
@@ -796,12 +791,13 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param disbursementScheduleId disbursement schedule id to reverse the deducted overawards.
    * @param auditUserId audit user id.
    * @param entityManager entity manager to execute in transaction.
+   * @returns array of created reversal overaward ids or void if no overawards were reversed.
    */
   private async reverseDisbursementDeductedOverawards(
     disbursementScheduleId: number,
     auditUserId: number,
     entityManager: EntityManager,
-  ): Promise<void> {
+  ): Promise<number[] | void> {
     const overawardsRepo = entityManager.getRepository(DisbursementOveraward);
     const deductedOverawards = await overawardsRepo.find({
       select: {
@@ -837,6 +833,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
           addedBy: auditUser,
         } as DisbursementOveraward),
     );
-    await overawardsRepo.insert(reversalOverawards);
+    const result = await overawardsRepo.insert(reversalOverawards);
+    return result.identifiers.map((identifier) => identifier.id as number);
   }
 }
