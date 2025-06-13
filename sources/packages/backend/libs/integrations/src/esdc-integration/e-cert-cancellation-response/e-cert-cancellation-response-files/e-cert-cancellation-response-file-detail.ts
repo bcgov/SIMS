@@ -17,8 +17,10 @@ export class ECertCancellationResponseFileDetail extends ECertCancellationRespon
 
   /**
    * Disbursement document number(Integrated e-cert number).
+   * The last character of a document number is always a space, so we trim it.
+   * The first 8 contains numbers with leading zeros.
    */
   get documentNumber(): number {
-    return parseInt(this.line.substring(4, 13));
+    return parseInt(this.line.substring(3, 12).trim());
   }
 }

@@ -827,6 +827,9 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
         ({
           student: deductedOveraward.student,
           studentAssessment: deductedOveraward.studentAssessment,
+          disbursementSchedule: {
+            id: disbursementScheduleId,
+          } as DisbursementSchedule,
           disbursementValueCode: deductedOveraward.disbursementValueCode,
           overawardValue: -deductedOveraward.overawardValue,
           originType: DisbursementOverawardOriginType.AwardRejectedDeducted,

@@ -181,6 +181,9 @@ export class ECertCancellationResponseProcessingService {
         documentNumber,
         auditUser.id,
       );
+      processSummary.info(
+        `E-Cert with document number ${documentNumber} has been cancelled.`,
+      );
     } catch (error: unknown) {
       // If the document number is not found, log information as this is expected.
       if (
