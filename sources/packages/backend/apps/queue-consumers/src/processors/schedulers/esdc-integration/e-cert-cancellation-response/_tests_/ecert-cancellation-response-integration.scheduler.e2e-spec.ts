@@ -243,7 +243,7 @@ describe(
             "Received 1 e-cert cancellation response file(s) to process.",
             `The downloaded file ${downloadedFile} contains 2 detail records.`,
             `E-Cert with document number ${firstDocumentNumber} has been cancelled.`,
-            `E-Cert with document number ${firstDocumentNumber} has been cancelled.`,
+            `E-Cert with document number ${secondDocumentNumber} has been cancelled.`,
           ]),
         ).toBe(true);
         // Validate the updated disbursement schedules.
@@ -360,7 +360,7 @@ describe(
             "Received 1 e-cert cancellation response file(s) to process.",
             `The downloaded file ${downloadedFile} contains 2 detail records.`,
             `E-Cert with document number ${firstDocumentNumber} has been cancelled.`,
-            `E-Cert with document number ${firstDocumentNumber} has been cancelled.`,
+            `E-Cert with document number ${secondDocumentNumber} has been cancelled.`,
           ]),
         ).toBe(true);
         // Validate the updated disbursement schedules.
