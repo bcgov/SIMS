@@ -33,7 +33,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     supportingUserController = nestApplication.get(SupportingUserController);
   });
 
-  it("Should create one parent supporting user and save the associated full name when one parent's information is added to the student application.", async () => {
+  it("Should create supporting user for the first provided parent and save the associated full name when one parent's information is added to the student application.", async () => {
     // Arrange
     const parentFullName = faker.datatype.uuid();
     const savedApplication = await saveFakeApplication(
@@ -101,7 +101,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     });
   });
 
-  it("Should create the second parent supporting user and save the associated full name when the two parent's information is added to the student application.", async () => {
+  it("Should create supporting user for the second provided parent and save the associated full name when the two parent's information is added to the student application.", async () => {
     // Arrange
     const parentFullName1 = faker.datatype.uuid();
     const parentFullName2 = faker.datatype.uuid();
