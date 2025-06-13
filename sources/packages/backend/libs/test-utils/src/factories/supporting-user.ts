@@ -33,6 +33,7 @@ export function createFakeSupportingUser(
     options?.initialValues?.supportingUserType ?? SupportingUserType.Parent;
   supportingUser.supportingData =
     options?.initialValues?.supportingData ?? null;
+  supportingUser.fullName = options?.initialValues?.fullName;
   supportingUser.isAbleToReport =
     options?.initialValues?.isAbleToReport ?? true;
   supportingUser.user = relations?.user ?? null;
