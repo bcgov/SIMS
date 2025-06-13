@@ -7,7 +7,6 @@ import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   DependentChildCareEligibility,
   createFakeStudentDependentEligibleForChildcareCost,
-  createFakeStudentDependentNotEligibleForChildcareCost,
 } from "../../../test-utils/factories";
 import { YesNoOptions } from "@sims/test-utils";
 
@@ -29,7 +28,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
-          assessmentConsolidatedData.offeringStudyStartDate
+          assessmentConsolidatedData.offeringStudyStartDate,
         ),
       ];
 
@@ -50,7 +49,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
       expect(
         calculatedAssessment.variables.calculatedDataTotalChildCareCost,
       ).toBe(1000);
-    }
+    },
   );
 
   it(
@@ -142,7 +141,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
       expect(
         calculatedAssessment.variables.calculatedDataTotalChildCareCost,
       ).toBe(500);
-    }
+    },
   );
 
   it(
