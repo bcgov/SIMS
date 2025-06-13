@@ -23,7 +23,7 @@ export interface CheckSupportingUserResponseJobInDTO {
 export interface CreateIdentifiableSupportingUsersJobInDTO {
   [APPLICATION_ID]: number;
   [SUPPORTING_USER_TYPE]: SupportingUserType;
-  [FULL_NAME_PROPERTY_FILTER]: string;
+  [FULL_NAME_PROPERTY_FILTER]?: string;
   [IS_ABLE_TO_REPORT]: boolean;
 }
 
