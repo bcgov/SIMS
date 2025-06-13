@@ -31,9 +31,9 @@ export class ECertCancellationResponseProcessingService {
     this.esdcConfig = configService.esdcIntegration;
   }
   /**
-   * Processes the E-Cert cancellation response file.
-   * @param fileContent The content of the E-Cert cancellation response file.
-   * @returns Processed data from the E-Cert cancellation response file.
+   * Processes the E-Cert cancellation response file(s).
+   * Both Full-time and Part-time E-Cert cancellation response files are processed.
+   * @param processSummary process summary.
    */
   async process(
     processSummary: ProcessSummary,
@@ -51,12 +51,12 @@ export class ECertCancellationResponseProcessingService {
 
     if (!remoteFilePaths.length) {
       processSummary.info(
-        "There are no e-cert cancellation response files found.",
+        "There are no e-cert cancellation response files received.",
       );
       return { receivedCancellationFiles: 0 };
     }
     processSummary.info(
-      `Found ${remoteFilePaths.length} e-cert cancellation response file(s) to process.`,
+      `Received ${remoteFilePaths.length} e-cert cancellation response file(s) to process.`,
     );
     // Process all the files in parallel.
     await processInParallel<void, string>(
@@ -150,7 +150,7 @@ export class ECertCancellationResponseProcessingService {
   }
 
   /**
-   * Sanitize and cancel an e-cert record if the document number is valid for cancellation.
+   * Validate and cancel an e-cert record if the document number is valid for cancellation.
    * @param documentNumber document number.
    * @param processSummary process summary.
    */

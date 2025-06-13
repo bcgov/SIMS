@@ -97,7 +97,7 @@ describe(
       // Check for the log messages.
       expect(
         mockedJob.containLogMessages([
-          "Found 1 e-cert cancellation response file(s) to process.",
+          "Received 1 e-cert cancellation response file(s) to process.",
           `The e-cert cancellation response file ${downloadedFile} has an invalid record type on header 200.`,
         ]),
       ).toBe(true);
@@ -131,7 +131,7 @@ describe(
       // Check for the log messages.
       expect(
         mockedJob.containLogMessages([
-          "Found 1 e-cert cancellation response file(s) to process.",
+          "Received 1 e-cert cancellation response file(s) to process.",
           `The e-cert cancellation response file ${downloadedFile} has an invalid record type on footer 399.`,
         ]),
       ).toBe(true);
@@ -168,7 +168,7 @@ describe(
         // Check for the log messages.
         expect(
           mockedJob.containLogMessages([
-            "Found 1 e-cert cancellation response file(s) to process.",
+            "Received 1 e-cert cancellation response file(s) to process.",
             `The total number of detail records 8 in the footer does not match the total count of detail records 2 in the e-cert cancellation response file ${downloadedFile}.`,
           ]),
         ).toBe(true);
@@ -240,7 +240,7 @@ describe(
         // Check for the log messages.
         expect(
           mockedJob.containLogMessages([
-            "Found 1 e-cert cancellation response file(s) to process.",
+            "Received 1 e-cert cancellation response file(s) to process.",
             `The downloaded file ${downloadedFile} contains 2 detail records.`,
             `E-Cert with document number ${firstDocumentNumber} has been cancelled.`,
             `E-Cert with document number ${firstDocumentNumber} has been cancelled.`,
@@ -357,7 +357,7 @@ describe(
         // Check for the log messages.
         expect(
           mockedJob.containLogMessages([
-            "Found 1 e-cert cancellation response file(s) to process.",
+            "Received 1 e-cert cancellation response file(s) to process.",
             `The downloaded file ${downloadedFile} contains 2 detail records.`,
             `E-Cert with document number ${firstDocumentNumber} has been cancelled.`,
             `E-Cert with document number ${firstDocumentNumber} has been cancelled.`,
