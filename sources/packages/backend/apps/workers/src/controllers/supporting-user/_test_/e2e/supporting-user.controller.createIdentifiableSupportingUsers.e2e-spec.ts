@@ -67,7 +67,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
         >(fakePayload),
       );
 
-    // Asserts
+    // Assert
     // Validate DB creation.
     const updatedApplication = await db.application.findOne({
       select: {
@@ -139,7 +139,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
         >(fakePayload),
       );
 
-    // Asserts
+    // Assert
     // Validate DB creation.
     const updatedApplication = await db.application.findOne({
       select: {
@@ -220,7 +220,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
         >(fakePayload),
       );
 
-    // Asserts
+    // Assert
     // Validate DB creation.
     const updatedApplication = await db.application.findOne({
       select: {
@@ -268,7 +268,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
         >(fakePayload),
       );
 
-    // Asserts
+    // Assert
     expect(result).toEqual({
       errorCode: SUPPORTING_USER_FULL_NAME_NOT_RESOLVED,
       errorMessage:
@@ -296,7 +296,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
         >(fakePayload),
       );
 
-    // Asserts
+    // Assert
     expect(result).toEqual({
       errorCode: APPLICATION_NOT_FOUND,
       errorMessage: "Application ID not found.",
