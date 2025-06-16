@@ -7,10 +7,7 @@ import {
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
 import { ProcessSummaryResult } from "@sims/integrations/models";
-import {
-  ECE_RESPONSE_COE_DECLINED_REASON,
-  ECE_RESPONSE_FILE_NAME,
-} from "@sims/integrations/constants";
+import { ECE_RESPONSE_COE_DECLINED_REASON } from "@sims/integrations/constants";
 import { InstitutionLocationService } from "@sims/integrations/services";
 import {
   COE_DENIED_REASON_OTHER_ID,
@@ -19,6 +16,7 @@ import {
   StringBuilder,
   parseJSONError,
   processInParallel,
+  getFileNameAsExtendedCurrentTimestamp,
 } from "@sims/utilities";
 import { ECEResponseFileDetail } from "./ece-files/ece-response-file-detail";
 import {
@@ -45,9 +43,10 @@ import {
   UNEXPECTED_ERROR_DOWNLOADING_FILE,
 } from "@sims/services/constants";
 
+const ECE_RESPONSE_FILE_REGEX = /^CONR-008-([A-Z]{4})-\d{8}-\d{6}\.TXT$/i;
+
 interface InstitutionFileDetail {
   path: string;
-  institutionCode: string;
 }
 
 /**
@@ -74,18 +73,19 @@ export class ECEResponseProcessingService {
    * @returns Process summary result.
    */
   async process(): Promise<ProcessSummaryResult[]> {
-    // Get all the institution codes who are enabled for integration.
-    const integrationEnabledInstitutions =
-      await this.institutionLocationService.getAllIntegrationEnabledInstitutionCodes();
-    const filePathDetails: InstitutionFileDetail[] =
-      integrationEnabledInstitutions.map((institutionCode) => ({
-        path: path.join(
-          this.institutionIntegrationConfig.ftpResponseFolder,
-          institutionCode,
-          ECE_RESPONSE_FILE_NAME,
-        ),
-        institutionCode,
-      }));
+    const filePaths = await this.integrationService.getResponseFilesFullPath(
+      this.institutionIntegrationConfig.ftpResponseFolder,
+      ECE_RESPONSE_FILE_REGEX,
+    );
+
+    if (!filePaths.length) {
+      this.logger.log("No ECE response files found to be processed.");
+      return [];
+    }
+
+    const filePathDetails: InstitutionFileDetail[] = filePaths.map((path) => ({
+      path,
+    }));
     // Process all the files in parallel.
     const result = await processInParallel<
       ProcessSummaryResult,
@@ -106,9 +106,23 @@ export class ECEResponseProcessingService {
   private async processDisbursementsInECEResponseFile(
     institutionFileDetail: InstitutionFileDetail,
   ): Promise<ProcessSummaryResult> {
-    const institutionCode = institutionFileDetail.institutionCode;
     const remoteFilePath = institutionFileDetail.path;
+    const fileName = path.basename(remoteFilePath);
     const processSummary = new ProcessSummaryResult();
+    const regexResult = ECE_RESPONSE_FILE_REGEX.exec(fileName);
+    // The file name is expected to match the regex pattern.
+    // regexResult[0] is the full match.
+    // regexResult[1] is the first capturing group (institution code).
+    if (!regexResult) {
+      processSummary.summary.push(
+        `File ${fileName} does not match the expected pattern and will be skipped.`,
+      );
+      this.logger.warn(
+        `File ${fileName} does not match the expected pattern and will be skipped.`,
+      );
+      return processSummary;
+    }
+    const institutionCode = regexResult[1];
     // Setting the default value to true because, in the event of error
     // thrown from downloadResponseFile due to any data validation in the file
     // the value of isECEResponseFileExist will remain false which will be inaccurate as the file exist
@@ -508,8 +522,19 @@ export class ECEResponseProcessingService {
     processSummary: ProcessSummaryResult,
   ): Promise<void> {
     try {
+      const fileInfo = path.parse(remoteFilePath);
+      const timestamp = getFileNameAsExtendedCurrentTimestamp();
+      const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
+      const archiveDirectory = path.join(
+        this.institutionIntegrationConfig.ftpResponseFolder,
+        "archive",
+      );
+      const newRemoteFilePath = path.join(archiveDirectory, fileBaseName);
       // Archiving the file once it has been processed.
-      await this.integrationService.archiveFile(remoteFilePath);
+      await this.integrationService.renameFile(
+        remoteFilePath,
+        newRemoteFilePath,
+      );
       processSummary.summary.push(
         `The file ${remoteFilePath} has been archived after processing.`,
       );
