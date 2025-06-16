@@ -32,6 +32,14 @@ upgrade: helm-dep
 		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED}; \
 	fi
 
+.PHONY: pg-upgrade
+pg-upgrade:
+	@echo "Initiating PostgreSQL upgrade from 15 to 17..."
+	@oc apply -f templates/PGUpgrade-15-to-17.yaml -n ${NAMESPACE}
+	@echo "Upgrade submitted. Monitor the upgrade progress with:"
+	@echo "kubectl get pgupgrade -n ${NAMESPACE}"
+	@echo "kubectl describe pgupgrade simsdb-pgupgrade-15-to-17 -n ${NAMESPACE}"
+
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.
 #.PHONY: uninstall
 #uninstall: helm-dep
