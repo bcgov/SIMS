@@ -192,6 +192,7 @@ export class ECertCancellationResponseProcessingService {
       processSummary.info(
         `Disbursement schedule for document number ${documentNumber} is already rejected. Skipping cancellation.`,
       );
+      return;
     }
     const auditUser = this.systemUsersService.systemUser;
     try {
@@ -230,6 +231,7 @@ export class ECertCancellationResponseProcessingService {
     return this.disbursementScheduleRepo.findOne({
       select: {
         id: true,
+        disbursementScheduleStatus: true,
         studentAssessment: { id: true, offering: { offeringIntensity: true } },
       },
       relations: { studentAssessment: { offering: true } },
