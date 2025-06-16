@@ -5,7 +5,7 @@ VALUES
     (
         'e-cert-cancellation-response-integration',
         '{
-            "cron": "0 17 * * *",
+            "cron": "0 4 * * 7",
             "retry": 3,
             "cleanUpPeriod": 2592000000,
             "retryInterval": 180000,
