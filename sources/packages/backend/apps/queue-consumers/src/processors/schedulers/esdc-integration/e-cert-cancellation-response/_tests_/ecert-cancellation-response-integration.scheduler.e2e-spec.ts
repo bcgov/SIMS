@@ -183,7 +183,7 @@ describe(
       async () => {
         // Arrange
         // Create fake applications with disbursements to be cancelled.
-        // No data created for the first document number. So the document number will not be found.
+        // No data created for the first document number.
         const [, , firstDocumentNumber, secondDocumentNumber] =
           SHARED_DOCUMENT_NUMBERS;
 
@@ -272,7 +272,7 @@ describe(
       async () => {
         // Arrange
         // Create fake applications with disbursements to be cancelled.
-        // No data created for the first document number. So the document number will not be found.
+        // No data created for the first document number.
         const [, , firstDocumentNumber, secondDocumentNumber] =
           SHARED_DOCUMENT_NUMBERS;
 
@@ -297,7 +297,7 @@ describe(
           [PART_TIME_CANCELLATION_RESPONSE_FILE],
           (fileContent: string) => {
             const file = getStructuredRecords(fileContent);
-            // Replacing the record type 200 to 400 to simulate a wrong record type.
+            // Replacing the document number to be invalid.
             file.records[0] = file.records[0].replace(
               `${firstDocumentNumber}`,
               "       ",
