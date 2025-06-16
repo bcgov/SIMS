@@ -41,7 +41,5 @@ export function getSuccessSummaryMessages(
 ): string {
   return `Uploaded file ${process.env.INSTITUTION_REQUEST_FOLDER}\\${
     options.institutionCode
-  }\\${options.institutionCode}-IER12-${timestamp}.txt, with ${
-    options.expectedRecords ?? 1
-  } record(s).`;
+  }-IER12-${timestamp}.txt, with ${options.expectedRecords ?? 1} record(s).`;
 }

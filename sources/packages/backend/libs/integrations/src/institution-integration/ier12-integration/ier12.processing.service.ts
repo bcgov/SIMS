@@ -156,7 +156,7 @@ export class IER12ProcessingService {
   } {
     const timestamp = getFileNameAsExtendedCurrentTimestamp();
     const fileName = `${institutionCode}-IER12-${timestamp}.txt`;
-    const filePath = `${this.institutionIntegrationConfig.ftpRequestFolder}\\${institutionCode}\\${fileName}`;
+    const filePath = `${this.institutionIntegrationConfig.ftpRequestFolder}\\${fileName}`;
     return {
       fileName,
       filePath,
