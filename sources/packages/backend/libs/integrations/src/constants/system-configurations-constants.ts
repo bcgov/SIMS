@@ -27,9 +27,9 @@ export const LINE_BREAK_SPLIT_REGEX = /\r\n|\n\r|\n|\r/;
 export const APPLICATION_CHANGES_REPORT_PREFIX = "PBC.EDU.APPCHANGES";
 
 /**
- * Directory name used to archive files.
+ * Directory name used to archive files on SFTP.
  */
-export const ARCHIVE_DIRECTORY = "Archive";
+export const SFTP_ARCHIVE_DIRECTORY = "Archive";
 
 /**
  * Initial date for the SIMS to SFAS bridge first ever execution.

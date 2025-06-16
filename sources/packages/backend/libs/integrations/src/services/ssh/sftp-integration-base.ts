@@ -13,7 +13,7 @@ import {
 } from "@sims/utilities";
 import {
   LINE_BREAK_SPLIT_REGEX,
-  ARCHIVE_DIRECTORY,
+  SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/integrations/constants";
 
 /**
@@ -232,11 +232,11 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * Archives a file on SFTP .
    * @param remoteFilePath full remote file path with file name.
    * @param archiveDirectory directory name to archive the file.
-   * A default value of {@link ARCHIVE_DIRECTORY} will be used if not specified.
+   * A default value of {@link SFTP_ARCHIVE_DIRECTORY} will be used if not specified.
    */
   async archiveFile(
     remoteFilePath: string,
-    archiveDirectory = ARCHIVE_DIRECTORY,
+    archiveDirectory = SFTP_ARCHIVE_DIRECTORY,
   ): Promise<void> {
     const fileInfo = path.parse(remoteFilePath);
     const timestamp = getFileNameAsExtendedCurrentTimestamp();

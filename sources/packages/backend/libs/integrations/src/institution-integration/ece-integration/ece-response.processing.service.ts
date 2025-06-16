@@ -7,10 +7,7 @@ import {
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
 import { ProcessSummaryResult } from "@sims/integrations/models";
-import {
-  ARCHIVE_DIRECTORY,
-  ECE_RESPONSE_COE_DECLINED_REASON,
-} from "@sims/integrations/constants";
+import { ECE_RESPONSE_COE_DECLINED_REASON } from "@sims/integrations/constants";
 import { InstitutionLocationService } from "@sims/integrations/services";
 import {
   COE_DENIED_REASON_OTHER_ID,
@@ -524,18 +521,8 @@ export class ECEResponseProcessingService {
     processSummary: ProcessSummaryResult,
   ): Promise<void> {
     try {
-      const fileInfo = path.parse(remoteFilePath);
-      const fileBaseName = fileInfo.base;
-      const archiveDirectory = path.join(
-        this.institutionIntegrationConfig.ftpResponseFolder,
-        ARCHIVE_DIRECTORY,
-      );
-      const newRemoteFilePath = path.join(archiveDirectory, fileBaseName);
       // Archiving the file once it has been processed.
-      await this.integrationService.renameFile(
-        remoteFilePath,
-        newRemoteFilePath,
-      );
+      await this.integrationService.archiveFile(remoteFilePath);
       processSummary.summary.push(
         `The file ${remoteFilePath} has been archived after processing.`,
       );
