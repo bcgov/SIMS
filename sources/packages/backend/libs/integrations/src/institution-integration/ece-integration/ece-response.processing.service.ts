@@ -7,7 +7,10 @@ import {
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
 import { ProcessSummaryResult } from "@sims/integrations/models";
-import { ECE_RESPONSE_COE_DECLINED_REASON } from "@sims/integrations/constants";
+import {
+  ARCHIVE_DIRECTORY,
+  ECE_RESPONSE_COE_DECLINED_REASON,
+} from "@sims/integrations/constants";
 import { InstitutionLocationService } from "@sims/integrations/services";
 import {
   COE_DENIED_REASON_OTHER_ID,
@@ -16,7 +19,6 @@ import {
   StringBuilder,
   parseJSONError,
   processInParallel,
-  getFileNameAsExtendedCurrentTimestamp,
 } from "@sims/utilities";
 import { ECEResponseFileDetail } from "./ece-files/ece-response-file-detail";
 import {
@@ -523,11 +525,10 @@ export class ECEResponseProcessingService {
   ): Promise<void> {
     try {
       const fileInfo = path.parse(remoteFilePath);
-      const timestamp = getFileNameAsExtendedCurrentTimestamp();
-      const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
+      const fileBaseName = fileInfo.base;
       const archiveDirectory = path.join(
         this.institutionIntegrationConfig.ftpResponseFolder,
-        "archive",
+        ARCHIVE_DIRECTORY,
       );
       const newRemoteFilePath = path.join(archiveDirectory, fileBaseName);
       // Archiving the file once it has been processed.
