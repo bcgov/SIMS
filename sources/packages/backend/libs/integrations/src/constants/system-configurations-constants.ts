@@ -6,6 +6,11 @@
 export const DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS = 5;
 
 /**
+ * File name of the ECE response file sent by institutions.
+ */
+export const ECE_RESPONSE_FILE_NAME = "CONR_008.TXT";
+
+/**
  * Reason to be saved while declining an enrolment through ECE file integration.
  */
 export const ECE_RESPONSE_COE_DECLINED_REASON =
@@ -27,7 +32,7 @@ export const LINE_BREAK_SPLIT_REGEX = /\r\n|\n\r|\n|\r/;
 export const APPLICATION_CHANGES_REPORT_PREFIX = "PBC.EDU.APPCHANGES";
 
 /**
- * Directory name used to archive files on SFTP.
+ * SFTP directory name used to archive files.
  */
 export const SFTP_ARCHIVE_DIRECTORY = "Archive";
 
