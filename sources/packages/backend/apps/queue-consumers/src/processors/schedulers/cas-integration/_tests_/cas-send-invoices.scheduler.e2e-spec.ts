@@ -52,9 +52,9 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     jest.clearAllMocks();
     resetCASServiceMock(casServiceMock);
     // Delete all existing invoices and related data.
-    await db.casInvoiceDetail.delete({});
-    await db.casInvoice.delete({});
-    await db.casInvoiceBatch.delete({});
+    await db.casInvoiceDetail.createQueryBuilder().delete().execute();
+    await db.casInvoice.createQueryBuilder().delete().execute();
+    await db.casInvoiceBatch.createQueryBuilder().delete().execute();
     // Reset sequence numbers.
     await db.sequenceControl.delete({
       sequenceName: CAS_INVOICE_BATCH_SEQUENCE_NAME,

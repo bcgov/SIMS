@@ -74,7 +74,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     // Clear all mocks.
     jest.clearAllMocks();
     // Reset all SFAS bridge logs.
-    await db.sfasBridgeLog.delete({});
+    await db.sfasBridgeLog.createQueryBuilder().delete().execute();
     // Set the start date and end date of the bridge file to be after 10 years
     // to ensure that data produced by other tests will not affect the results of this test.
     latestBridgeFileDate = addYears(10);

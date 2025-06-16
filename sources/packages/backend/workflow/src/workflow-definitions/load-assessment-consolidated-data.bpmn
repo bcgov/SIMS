@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.33.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.35.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
   <bpmn:process id="load-assessment-consolidated-data" name="Load Assessment Consolidated Data" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:extensionElements />
@@ -26,10 +26,11 @@
           <zeebe:header key="studentDataCurrentYearPartnerIncome" value="$.data.currentYearPartnerIncome" />
           <zeebe:header key="studentDataStudentParentsTotalIncome" value="$.data.studentParentsTotalIncome" />
           <zeebe:header key="studentDataWhenDidYouGraduateOrLeaveHighSchool" value="$.data.whenDidYouGraduateOrLeaveHighSchool" />
-          <zeebe:header key="studentDataLivingathomeRent" value="$.data.livingathomeRent" />
+          <zeebe:header key="studentDataLivingAtHome" value="$.data.livingAtHome" />
+          <zeebe:header key="studentDataSelfContainedSuite" value="$.data.selfContainedSuite" />
+          <zeebe:header key="studentDataLivingAtHomeRent" value="$.data.livingAtHomeRent" />
           <zeebe:header key="studentDataIndigenousStatus" value="$.data.indigenousStatus" />
           <zeebe:header key="studentDataHasDependents" value="$.data.hasDependents" />
-          <zeebe:header key="studentDataLivingWithParents" value="$.data.livingWithParents" />
           <zeebe:header key="studentDataDaycareCosts12YearsOrOver" value="$.data.daycareCosts12YearsOrOver" />
           <zeebe:header key="studentDataDaycareCosts11YearsOrUnder" value="$.data.daycareCosts11YearsOrUnder" />
           <zeebe:header key="studentDataChildSupportAndOrSpousalSupport" value="$.data.childsupportCosts" />
@@ -109,6 +110,7 @@
           <zeebe:header key="studentDataStudentParentsCppLine31000" value="$.data.studentParentsCppLine31000" />
           <zeebe:header key="studentDataStudentParentsEiLine31200" value="$.data.studentParentsEiLine31200" />
           <zeebe:header key="studentDataPartnerTotalIncomeAssistance" value="$.data.partnertotalincomeAssistance" />
+          <zeebe:header key="studentDataPartnerTotalStudentLoan" value="$.data.partnerStudentLoanCosts" />
           <zeebe:header key="studentDataPartTimeAwardTypesToBeConsidered" value="$.data.partTimeAwardTypesToBeConsidered" />
           <zeebe:header key="studentDataAdditionalTransportRequested" value="$.data.additionalTransportRequested" />
           <zeebe:header key="studentDataAdditionalTransportListedDriver" value="$.data.additionalTransportListedDriver" />
@@ -125,10 +127,13 @@
           <zeebe:header key="studentDataPartnerHasEmploymentInsuranceBenefits" value="$.data.partnerHasEmploymentInsuranceBenefits" />
           <zeebe:header key="studentDataPartnerHasFedralProvincialPDReceipt" value="$.data.partnerHasFedralProvincialPDReceipt" />
           <zeebe:header key="studentDataPartnerHasTotalIncomeAssistance" value="$.data.partnerHasTotalIncomeAssistance" />
+          <zeebe:header key="studentDataPartnerBCEAIncomeAssistanceAmount" value="$.data.partnerBCEAIncomeAssistanceAmount" />
           <zeebe:header key="partner1HasEmploymentInsuranceBenefits" value="$.supportingUsers.Partner1.supportingData.hasEmploymentInsuranceBenefits" />
           <zeebe:header key="partner1HasFedralProvincialPDReceipt" value="$.supportingUsers.Partner1.supportingData.hasFedralProvincialPDReceipt" />
           <zeebe:header key="partner1HasTotalIncomeAssistance" value="$.supportingUsers.Partner1.supportingData.hasTotalIncomeAssistance" />
+          <zeebe:header key="partner1BCEAIncomeAssistanceAmount" value="$.supportingUsers.Partner1.supportingData.bceaIncomeAssistanceAmount" />
           <zeebe:header key="studentDataExceptionalExpenseAmount" value="$.data.exceptionalExpenseAmount" />
+          <zeebe:header key="studentDataParents" value="$.data.parents[*][&#39;parentIsAbleToReport&#39;]" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>

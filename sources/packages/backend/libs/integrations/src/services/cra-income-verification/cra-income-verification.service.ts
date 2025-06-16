@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, In, IsNull, Repository, UpdateResult } from "typeorm";
+import {
+  Brackets,
+  DataSource,
+  In,
+  IsNull,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import { RecordDataModelService, CRAIncomeVerification } from "@sims/sims-db";
 
 /**
@@ -12,7 +19,8 @@ export class CRAIncomeVerificationsService extends RecordDataModelService<CRAInc
   }
 
   /**
-   * Gets income verifications that were never sent to CRA (dateSent is null).
+   * Gets income verifications that were never sent to CRA (dateSent is null),
+   * and there is an associated SIN (either student or supporting user).
    * Once sent, there is no mechanism in place for a retry logic.
    * @returns pending income verifications.
    */
@@ -39,7 +47,17 @@ export class CRAIncomeVerificationsService extends RecordDataModelService<CRAInc
       .innerJoin("student.user", "studentUser")
       .leftJoin("incomeVerification.supportingUser", "supportingUser")
       .leftJoin("supportingUser.user", "supportingUserUser")
-      .where("incomeVerification.dateSent is null")
+      .where("incomeVerification.dateSent IS NULL")
+      .andWhere(
+        new Brackets((qb) => {
+          // Supporting user is not associated, which means it is a student,
+          // or the supporting user is associated and has a SIN.
+          qb.where("supportingUser.id IS NULL").orWhere(
+            "supportingUser.sin IS NOT NULL",
+          );
+        }),
+      )
+      .orderBy("incomeVerification.id", "ASC")
       .getMany();
   }
 
