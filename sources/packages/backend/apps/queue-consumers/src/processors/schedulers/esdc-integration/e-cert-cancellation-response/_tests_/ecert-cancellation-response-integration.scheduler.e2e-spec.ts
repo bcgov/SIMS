@@ -178,7 +178,185 @@ describe(
     );
 
     it(
-      "Should skip the detail record and continue to process other detail records when the Part-time e-cert cancellation response file" +
+      "Should log error for the detail record and continue to process other detail record when the Part-time e-cert cancellation response file" +
+        " has 2 detail records where one of the detail record has invalid record type.",
+      async () => {
+        // Arrange
+        // Create fake applications with disbursements to be cancelled.
+        // No data created for the first document number. So the document number will not be found.
+        const [, , firstDocumentNumber, secondDocumentNumber] =
+          SHARED_DOCUMENT_NUMBERS;
+
+        const secondApplication = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          undefined,
+          {
+            offeringIntensity: OfferingIntensity.partTime,
+            applicationStatus: ApplicationStatus.Completed,
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+              documentNumber: secondDocumentNumber,
+            },
+          },
+        );
+        const [secondDisbursement] =
+          secondApplication.currentAssessment.disbursementSchedules;
+
+        mockDownloadFiles(
+          sftpClientMock,
+          [PART_TIME_CANCELLATION_RESPONSE_FILE],
+          (fileContent: string) => {
+            const file = getStructuredRecords(fileContent);
+            // Replacing the record type 200 to 400 to simulate a wrong record type.
+            file.records[0] = file.records[0].replace(
+              `2000${firstDocumentNumber}`,
+              `4000200003${firstDocumentNumber}`,
+            );
+            return createFileFromStructuredRecords(file);
+          },
+        );
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act/Assert
+        await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+          "One or more errors were reported during the process, please see logs for details.",
+        );
+        const downloadedFile = path.join(
+          process.env.ESDC_RESPONSE_FOLDER,
+          PART_TIME_CANCELLATION_RESPONSE_FILE,
+        );
+        // Check for the log messages.
+        expect(
+          mockedJob.containLogMessages([
+            "Received 1 e-cert cancellation response file(s) to process.",
+            `The downloaded file ${downloadedFile} contains 2 detail records.`,
+            "Invalid detail record at line 2: invalid record type 400.",
+            `E-Cert with document number ${secondDocumentNumber} has been cancelled.`,
+          ]),
+        ).toBe(true);
+        // Validate the updated disbursement schedules.
+        const rejectedDisbursements = await db.disbursementSchedule.find({
+          select: {
+            id: true,
+            disbursementScheduleStatus: true,
+            disbursementScheduleStatusUpdatedBy: { id: true },
+            disbursementScheduleStatusUpdatedOn: true,
+          },
+          relations: { disbursementScheduleStatusUpdatedBy: true },
+          where: {
+            documentNumber: In([firstDocumentNumber, secondDocumentNumber]),
+          },
+          order: { documentNumber: "ASC" },
+        });
+        // Only one disbursement is expected to be updated/rejected.
+        expect(rejectedDisbursements).toEqual([
+          {
+            id: secondDisbursement.id,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Rejected,
+            disbursementScheduleStatusUpdatedBy: {
+              id: systemUsersService.systemUser.id,
+            },
+            disbursementScheduleStatusUpdatedOn: expect.any(Date),
+          },
+        ]);
+        // The file is not expected to be archived on SFTP.
+        expect(sftpClientMock.rename).not.toHaveBeenCalled();
+      },
+    );
+
+    it(
+      "Should log error for the detail record and continue to process other detail record when the Part-time e-cert cancellation response file" +
+        " has 2 detail records where one of the detail record has invalid document number.",
+      async () => {
+        // Arrange
+        // Create fake applications with disbursements to be cancelled.
+        // No data created for the first document number. So the document number will not be found.
+        const [, , firstDocumentNumber, secondDocumentNumber] =
+          SHARED_DOCUMENT_NUMBERS;
+
+        const secondApplication = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          undefined,
+          {
+            offeringIntensity: OfferingIntensity.partTime,
+            applicationStatus: ApplicationStatus.Completed,
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+              documentNumber: secondDocumentNumber,
+            },
+          },
+        );
+        const [secondDisbursement] =
+          secondApplication.currentAssessment.disbursementSchedules;
+
+        mockDownloadFiles(
+          sftpClientMock,
+          [PART_TIME_CANCELLATION_RESPONSE_FILE],
+          (fileContent: string) => {
+            const file = getStructuredRecords(fileContent);
+            // Replacing the record type 200 to 400 to simulate a wrong record type.
+            file.records[0] = file.records[0].replace(
+              `${firstDocumentNumber}`,
+              "       ",
+            );
+            return createFileFromStructuredRecords(file);
+          },
+        );
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act/Assert
+        await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+          "One or more errors were reported during the process, please see logs for details.",
+        );
+        const downloadedFile = path.join(
+          process.env.ESDC_RESPONSE_FOLDER,
+          PART_TIME_CANCELLATION_RESPONSE_FILE,
+        );
+        // Check for the log messages.
+        expect(
+          mockedJob.containLogMessages([
+            "Received 1 e-cert cancellation response file(s) to process.",
+            `The downloaded file ${downloadedFile} contains 2 detail records.`,
+            "Invalid detail record at line 2: invalid document number.",
+            `E-Cert with document number ${secondDocumentNumber} has been cancelled.`,
+          ]),
+        ).toBe(true);
+        // Validate the updated disbursement schedules.
+        const rejectedDisbursements = await db.disbursementSchedule.find({
+          select: {
+            id: true,
+            disbursementScheduleStatus: true,
+            disbursementScheduleStatusUpdatedBy: { id: true },
+            disbursementScheduleStatusUpdatedOn: true,
+          },
+          relations: { disbursementScheduleStatusUpdatedBy: true },
+          where: {
+            documentNumber: In([firstDocumentNumber, secondDocumentNumber]),
+          },
+          order: { documentNumber: "ASC" },
+        });
+        // Only one disbursement is expected to be updated/rejected.
+        expect(rejectedDisbursements).toEqual([
+          {
+            id: secondDisbursement.id,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Rejected,
+            disbursementScheduleStatusUpdatedBy: {
+              id: systemUsersService.systemUser.id,
+            },
+            disbursementScheduleStatusUpdatedOn: expect.any(Date),
+          },
+        ]);
+        // The file is not expected to be archived on SFTP.
+        expect(sftpClientMock.rename).not.toHaveBeenCalled();
+      },
+    );
+
+    it(
+      "Should skip the detail record and continue to process other detail record when the Part-time e-cert cancellation response file" +
         " has 2 detail records where one of the detail record has a document number that is not found.",
       async () => {
         // Arrange
@@ -255,7 +433,7 @@ describe(
             disbursementScheduleStatusUpdatedOn: expect.any(Date),
           },
         ]);
-        // The file is not expected to be archived on SFTP.
+        // The file is expected to be archived on SFTP.
         expect(sftpClientMock.rename).toHaveBeenCalled();
       },
     );
@@ -361,13 +539,13 @@ describe(
             disbursementScheduleStatusUpdatedOn: expect.any(Date),
           },
         ]);
-        // The file is not expected to be archived on SFTP.
+        // The file is expected to be archived on SFTP.
         expect(sftpClientMock.rename).toHaveBeenCalled();
       },
     );
 
     it(
-      "Should skip the detail record without any update or reversal of overawards and continue to process other detail records when the Full-time e-cert cancellation response file" +
+      "Should skip the detail record without any update or reversal of overawards and continue to process other detail record when the Full-time e-cert cancellation response file" +
         " has 2 detail records where one of the detail record has a document number that is already rejected.",
       async () => {
         // Arrange
@@ -509,7 +687,7 @@ describe(
             addedBy: null,
           },
         ]);
-        // The file is not expected to be archived on SFTP.
+        // The file is expected to be archived on SFTP.
         expect(sftpClientMock.rename).toHaveBeenCalled();
       },
     );
@@ -651,7 +829,7 @@ describe(
               .join(", ")}.`,
           ]),
         ).toBe(true);
-        // The file is not expected to be archived on SFTP.
+        // The file is expected to be archived on SFTP.
         expect(sftpClientMock.rename).toHaveBeenCalled();
       },
     );
