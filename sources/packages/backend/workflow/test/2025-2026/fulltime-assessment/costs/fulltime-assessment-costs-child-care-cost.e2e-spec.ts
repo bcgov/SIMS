@@ -23,7 +23,6 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
       assessmentConsolidatedData.offeringWeeks = 18;
-      assessmentConsolidatedData.studentDataRelationshipStatus = "single";
       // Creates 1 eligible dependant.
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
@@ -147,7 +146,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
 
   it(
     "Should calculate total child care cost as sum of values in student application when " +
-      "student has three dependents 11 years or under and " +
+      "student has three eligible dependents and " +
       "child care costs entered does not reach maximum allowable limit for the " +
       "given number of dependents and offering weeks " +
       "and student is single.",
@@ -155,10 +154,10 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 14000;
+      assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 7000;
+      assessmentConsolidatedData.studentDataDaycareCosts12YearsOrOver = 7000;
       assessmentConsolidatedData.offeringWeeks = 18;
-      assessmentConsolidatedData.studentDataRelationshipStatus = "single";
-      // Creates 1 eligible dependent.
+      // Creates 3 eligible dependent.
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
@@ -207,7 +206,6 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 45000;
       assessmentConsolidatedData.offeringWeeks = 18;
-      assessmentConsolidatedData.studentDataRelationshipStatus = "single";
       // Creates 1 eligible dependent.
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [

@@ -101,7 +101,7 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmn:text>Financial need min $1 AND calculatedDataPDPPDStatus is true, then bgpdEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_072y7a3">
-      <bpmn:text>Assessment need is greater than or equal to 1 and programlength is greater than 2 years and programCredentialType is NOT Master, PHD or unclassified, then then BOTH bcagEligibility and bcag2YearsEligibility is YES</bpmn:text>
+      <bpmn:text>Assessment need is greater than or equal to 1 and programLength is greater than 2 years and programCredentialType is NOT Master, PHD or unclassified, then then BOTH bcagEligibility and bcag2YearsEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_0o4m9ru">
       <bpmn:text>Assessment need is greater than or equal to 1 programCredentialType programLength are eligible and  income is less than threshold</bpmn:text>
@@ -113,7 +113,7 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmn:text>Financial need min $1 AND calculatedDataPDPPDStatus is true, then csgpEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_0m6q3ry">
-      <bpmn:text>Assessment need is greater than or equal to 1 and programlength is less than 2 years and programCredentialType is certificate or diploma , then bcagEligibility is YES</bpmn:text>
+      <bpmn:text>Assessment need is greater than or equal to 1 and programLength is less than 2 years and programCredentialType is certificate or diploma , then bcagEligibility is YES</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_0mz1bk7">
       <bpmn:text>IN
@@ -195,7 +195,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
         <bpmn:flowNodeRef>Event_1twbn0c</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0rpww4j</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_0mu5a81</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1qvwy4q</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0ejpwa7" name="Primary Assessed Need and Award Configuration">
         <bpmn:flowNodeRef>Event_0agnvys</bpmn:flowNodeRef>
@@ -581,7 +581,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_0vnqjo5" name="Calculate Total Child Care Cost">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=min(dmnFullTimeProgramYearMaximums.limitWeeklyChildCare * offeringWeeks * calculatedDataTotalChildcareDependants,&#10;  studentDataDaycareCosts11YearsOrUnder)" target="calculatedDataChildCareCost" />
+          <zeebe:output source="=min(dmnFullTimeProgramYearMaximums.limitWeeklyChildCare * offeringWeeks * calculatedDataTotalChildcareDependants,&#10;  studentDataDaycareCosts11YearsOrUnder + studentDataDaycareCosts12YearsOrOver)" target="calculatedDataChildCareCost" />
           <zeebe:output source="=if &#10;  studentDataRelationshipStatus = &#34;married&#34; &#10;  and&#10;  calculatedDataPartnerStudyWeeks &#62;=12 &#10;then&#10;  calculatedDataChildCareCost / 2 &#10;else&#10;  calculatedDataChildCareCost" target="calculatedDataTotalChildCareCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1741,7 +1741,7 @@ There is also a per application limit based on the number of weeks in the offeri
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= (studentDataRelationshipStatus = "single" or studentDataRelationshipStatus = "other" or studentDataRelationshipStatus = "marriedUnable") and studentDataDependantstatus = "independant"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1z0iqb0" sourceRef="Activity_05w97d8" targetRef="Gateway_0um3yvb" />
-    <bpmn:sequenceFlow id="Flow_1rr875k" name="dependent" sourceRef="Gateway_0um3yvb" targetRef="Event_0mu5a81">
+    <bpmn:sequenceFlow id="Flow_1rr875k" name="dependent" sourceRef="Gateway_0um3yvb" targetRef="Event_1qvwy4q">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= studentDataRelationshipStatus = "single" and studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1ekiozl" name="married / common-law" sourceRef="Gateway_0um3yvb" targetRef="Event_0um94bq">
@@ -1846,7 +1846,7 @@ InfantQuantity: under 0 - 18 months old (i.e until they are 19 months old) and n
 DeclaredOnTaxesQuantity: Declared on taxes, any age.
 PostSecondaryQuantity: 19-22 years (i.e until they are 23 years old) in PS and not declared on taxes due to disability
 TotalEligibleDependants: Family-Size eligible dependants
-TotalChildcareDependants: 11yo and younger</bpmn:documentation>
+TotalChildcareDependants: 11yo and younger and 12+ on taxes</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if studentDataDependants = null then 0 else&#10;count(&#10; studentDataDependants[&#10; // Dependent children aged 12- 18 years (i.e until they are 19 years old) and not declared on taxes&#10; // due to disability.&#10; date(item.dateOfBirth) &#60;= (date(offeringStudyStartDate) - duration(&#34;P12Y&#34;))&#10; and date(item.dateOfBirth) &#62; (date(offeringStudyStartDate) - duration(&#34;P19Y&#34;))&#10; and item.declaredOnTaxes = &#34;no&#34;]&#10;)" target="calculatedDataDependantChildQuantity" />
@@ -1855,7 +1855,7 @@ TotalChildcareDependants: 11yo and younger</bpmn:documentation>
           <zeebe:output source="=if studentDataDependants = null then 0 else&#10;count(&#10; studentDataDependants[&#10; // Dependants who are declared on taxes due to disability.&#10;  item.declaredOnTaxes = &#34;yes&#34;&#10;  ]&#10;)" target="calculatedDataDependantDeclaredOnTaxesQuantity" />
           <zeebe:output source="=if studentDataDependants = null then 0 else&#10;count(&#10; studentDataDependants[&#10; // Dependants who are aged between 19-22 years (i.e until they are 23 years old) and not declared on taxes due to disability&#10; date(item.dateOfBirth) &#60;= (date(offeringStudyStartDate) - duration(&#34;P19Y&#34;))&#10; and date(item.dateOfBirth) &#62; (date(offeringStudyStartDate) - duration(&#34;P23Y&#34;))&#10; and item.attendingPostSecondarySchool = &#34;yes&#34;&#10; and item.declaredOnTaxes = &#34;no&#34; ]&#10;)" target="calculatedDataDependantPostSecondaryQuantity" />
           <zeebe:output source="=if studentDataDependants = null then 0 else&#10;  count(&#10;studentDataDependants[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)])" target="calculatedDataTotalEligibleDependants" />
-          <zeebe:output source="=if studentDataDependants = null then 0 else&#10;count(studentDataDependants[&#10;      // Dependant who is between 0 and 11 years on study start date.&#10;      // i.e. until the day(study start date) before their 12th birthday the dependant &#10;      // is considered to be in this category.&#10;      date(item.dateOfBirth) &#62; (date(offeringStudyStartDate) - duration(&#34;P12Y&#34;))&#10;      and date(item.dateOfBirth) &#60;= date(offeringStudyEndDate)]&#10;  )" target="calculatedDataTotalChildcareDependants" />
+          <zeebe:output source="=if studentDataDependants = null then 0 else&#10;count(studentDataDependants[&#10;      // Dependant who is between 0 and 11 years on study start date.&#10;      // i.e. until the day(study start date) before their 12th birthday the dependant &#10;      // is considered to be in this category.&#10;      (&#10;            date(item.dateOfBirth) &#62; (date(offeringStudyStartDate) - duration(&#34;P12Y&#34;))&#10;            and date(item.dateOfBirth) &#60;= date(offeringStudyEndDate)&#10;      )&#10;      // Dependants who are declared on taxes due to disability and are 12 or over.&#10;      or&#10;      (&#10;            date(item.dateOfBirth) &#60;= (date(offeringStudyStartDate) - duration(&#34;P12Y&#34;))&#10;            and item.declaredOnTaxes = &#34;yes&#34;&#10;      )    &#10;])" target="calculatedDataTotalChildcareDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_045kdko</bpmn:incoming>
@@ -2017,7 +2017,7 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
       <bpmn:outgoing>Flow_0ovh763</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:exclusiveGateway id="Gateway_1hun062" name="studentDataNumberOfParents">
-      <bpmn:incoming>Flow_05sabcx</bpmn:incoming>
+      <bpmn:incoming>Flow_04nzmk7</bpmn:incoming>
       <bpmn:outgoing>Flow_0s3qj3d</bpmn:outgoing>
       <bpmn:outgoing>Flow_164wwvw</bpmn:outgoing>
     </bpmn:exclusiveGateway>
@@ -2173,16 +2173,16 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmn:extensionElements />
       <bpmn:outgoing>Flow_1tcyqyg</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_05sabcx" sourceRef="Event_0mu5a81" targetRef="Gateway_1hun062" />
-    <bpmn:intermediateThrowEvent id="Event_0mu5a81" name="Define number of parents">
+    <bpmn:intermediateThrowEvent id="Event_1qvwy4q" name="Define number of parents">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=count(studentDataParents)" target="studentDataNumberOfParents" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1rr875k</bpmn:incoming>
-      <bpmn:outgoing>Flow_05sabcx</bpmn:outgoing>
+      <bpmn:outgoing>Flow_04nzmk7</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_04nzmk7" sourceRef="Event_1qvwy4q" targetRef="Gateway_1hun062" />
     <bpmn:association id="Association_1o4g869" associationDirection="None" sourceRef="TextAnnotation_10pqvkj" targetRef="Activity_05w97d8" />
     <bpmn:association id="Association_0yc2t6b" sourceRef="Event_0hxxmu9" targetRef="TextAnnotation_1myp6tg" />
     <bpmn:association id="Association_0q448eh" sourceRef="Activity_1wciqrl" targetRef="TextAnnotation_0k0cdo7" />
@@ -3140,10 +3140,10 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
           <dc:Bounds x="349" y="609" width="23" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0mu5a81_di" bpmnElement="Event_0mu5a81">
-        <dc:Bounds x="1272" y="373" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_1qvwy4q_di" bpmnElement="Event_1qvwy4q">
+        <dc:Bounds x="1252" y="373" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1249" y="416" width="86" height="27" />
+          <dc:Bounds x="1227" y="416" width="86" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1ynr3u7_di" bpmnElement="Flow_1ynr3u7">
@@ -3972,9 +3972,9 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmndi:BPMNEdge id="Flow_1rr875k_di" bpmnElement="Flow_1rr875k">
         <di:waypoint x="1150" y="556" />
         <di:waypoint x="1150" y="391" />
-        <di:waypoint x="1270" y="391" />
+        <di:waypoint x="1252" y="391" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1189" y="374" width="53" height="14" />
+          <dc:Bounds x="1163.0000000000002" y="373" width="53" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ekiozl_di" bpmnElement="Flow_1ekiozl">
@@ -4135,8 +4135,8 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
         <di:waypoint x="3061" y="1138" />
         <di:waypoint x="3063" y="1113" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_05sabcx_di" bpmnElement="Flow_05sabcx">
-        <di:waypoint x="1308" y="391" />
+      <bpmndi:BPMNEdge id="Flow_04nzmk7_di" bpmnElement="Flow_04nzmk7">
+        <di:waypoint x="1288" y="391" />
         <di:waypoint x="1375" y="391" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
@@ -4164,19 +4164,19 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_12x2dic_di" bpmnElement="Group_12x2dic">
-        <dc:Bounds x="1790" y="255" width="100" height="235" />
+        <dc:Bounds x="1790" y="255" width="100" height="203" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1823" y="228" width="33" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_1y42l97_di" bpmnElement="Group_1y42l97">
-        <dc:Bounds x="1600" y="255" width="175" height="235" />
+        <dc:Bounds x="1600" y="255" width="175" height="203" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1658" y="228" width="60" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_0zszaer_di" bpmnElement="Group_0zszaer">
-        <dc:Bounds x="1490" y="255" width="100" height="235" />
+        <dc:Bounds x="1490" y="255" width="100" height="203" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1521" y="228" width="37" height="14" />
         </bpmndi:BPMNLabel>
