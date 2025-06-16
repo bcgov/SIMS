@@ -39,9 +39,7 @@ export function getSuccessSummaryMessages(
     expectedRecords?: number;
   },
 ): string {
-  return `Uploaded file ${
-    process.env.INSTITUTION_REQUEST_FOLDER
-  }\\${`${options.institutionCode}-IER12-${timestamp}.txt`}, with ${
-    options.expectedRecords ?? 1
-  } record(s).`;
+  return `Uploaded file ${process.env.INSTITUTION_REQUEST_FOLDER}\\${
+    options.institutionCode
+  }-IER12-${timestamp}.txt, with ${options.expectedRecords ?? 1} record(s).`;
 }
