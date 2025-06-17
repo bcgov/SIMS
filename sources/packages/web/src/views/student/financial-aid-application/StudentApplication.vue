@@ -76,7 +76,13 @@
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
-import { useSnackBar, useRules, ModalDialog, useOffering } from "@/composables";
+import {
+  useSnackBar,
+  useRules,
+  ModalDialog,
+  useOffering,
+  useStudentStore,
+} from "@/composables";
 import { useRouter } from "vue-router";
 import {
   VForm,
@@ -94,7 +100,6 @@ import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProc
 import { PrimaryIdentifierAPIOutDTO } from "@/services/http/dto";
 import { AppConfigService } from "@/services/AppConfigService";
 import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigurationService";
-import { useStudentStore } from "@/composables";
 
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },

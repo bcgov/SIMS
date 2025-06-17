@@ -957,20 +957,11 @@ export class ApplicationControllerService {
     options?: { isChangeRequestSubmission?: boolean },
   ): Promise<void> {
     const offeringIntensity = application.offeringIntensity;
-    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      if (!isFulltimeAllowed) {
-        throw new UnprocessableEntityException("Invalid offering intensity.");
-      }
-      const isBetaUser = await this.userService.isBetaUserAuthorized(
+      await this.validateFullTimeSubmission(
         application.student.user.firstName,
         application.student.user.lastName,
       );
-      if (!isBetaUser) {
-        throw new ForbiddenException(
-          "User is not allowed to submit a full-time application.",
-        );
-      }
     }
     // For program years still relying on the form.io variable howWillYouBeAttendingTheProgram
     // to determine the offering intensity, we need to set the value in the payload
@@ -993,12 +984,6 @@ export class ApplicationControllerService {
         throw new UnprocessableEntityException(
           "Selected offering id is invalid.",
         );
-      }
-      if (
-        !isFulltimeAllowed &&
-        offering.offeringIntensity === OfferingIntensity.fullTime
-      ) {
-        throw new UnprocessableEntityException("Invalid offering intensity.");
       }
       if (!offering.educationProgram.isActive) {
         throw new UnprocessableEntityException(
@@ -1030,6 +1015,32 @@ export class ApplicationControllerService {
     // Inject the indicator for change request submission.
     payload.data.isChangeRequestApplication =
       options?.isChangeRequestSubmission ?? false;
+  }
+
+  /**
+   * Execute the temporary validation for full-time submission.
+   * @param firstName students' first name.
+   * @param lastName students' last name.
+   * @throws {UnprocessableEntityException} if full-time submission is not allowed.
+   * @throws {ForbiddenException} if the user is not authorized to submit a full-time application.
+   */
+  private async validateFullTimeSubmission(
+    firstName?: string,
+    lastName?: string,
+  ): Promise<void | never> {
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
+    if (!isFulltimeAllowed) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
+    const isBetaUser = await this.userService.isBetaUserAuthorized(
+      firstName,
+      lastName,
+    );
+    if (!isBetaUser) {
+      throw new ForbiddenException(
+        "User is not allowed to submit a full-time application.",
+      );
+    }
   }
 
   /**

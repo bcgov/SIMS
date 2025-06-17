@@ -42,7 +42,7 @@ export function useOffering() {
    */
   const mapOfferingIntensities = (
     allowFullTime = true,
-    isBetaUser = false,
+    isBetaUser = true,
   ): Partial<Record<OfferingIntensity, string>> => {
     if (allowFullTime && isBetaUser) {
       return {

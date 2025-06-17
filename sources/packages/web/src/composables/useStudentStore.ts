@@ -12,7 +12,7 @@ export function useStudentStore(rootStore?: Store<any>) {
     () => store.state.student.hasStudentAccount,
   );
 
-  const isBetaUser = computed<boolean>(() => !!store.state.student.isBetaUser);
+  const isBetaUser = computed<boolean>(() => store.state.student.isBetaUser);
 
   const sinValidStatus = computed<SINValidStatus>(
     () => store.state.student.sinValidStatus,
