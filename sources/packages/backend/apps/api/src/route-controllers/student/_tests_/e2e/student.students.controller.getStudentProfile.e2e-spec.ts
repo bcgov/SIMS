@@ -160,7 +160,6 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
 
   it("Should get the student profile with hasFulltimeAccess as true when the student was not added to the beta users table but allowBetaUsersOnly is false.", async () => {
     // Arrange
-    allowBetaUsersOnly(false);
     const student = await saveFakeStudent(db.dataSource);
 
     // Mock user service to return the saved student.

@@ -208,7 +208,7 @@ export class StudentProfileAPIOutDTO {
   validSin: boolean;
   disabilityStatus: DisabilityStatus;
   /**
-   * Temporary property to indicate if the user is a beta user.
+   * Temporary property to indicate if the user can access full-time.
    * Created as optional to avoid further changes for institution
    * and Ministry DTOs that share this base class.
    */
