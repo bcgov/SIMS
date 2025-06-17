@@ -34,17 +34,25 @@ upgrade: helm-dep
 
 .PHONY: pg-upgrade
 pg-upgrade:
-	@echo "Initiating PostgreSQL upgrade from 15 to 17..."
-	@oc apply -f templates/PGUpgrade-15-to-17.yaml -n ${NAMESPACE}
+	@if [ -z "${FROM_VERSION}" ] || [ -z "${TO_VERSION}" ]; then \
+			echo "Error: FROM_VERSION and TO_VERSION must be set. Example: make pg-upgrade FROM_VERSION=15 TO_VERSION=17"; \
+			exit 1; \
+	fi
+	@echo "Initiating PostgreSQL upgrade from ${FROM_VERSION} to ${TO_VERSION}..."
+	@helm upgrade --install $(call arguments) \
+			--set pgUpgrade.fromPostgresVersion="${FROM_VERSION}" \
+			--set pgUpgrade.toPostgresVersion="${TO_VERSION}" \
+			--set pgUpgrade.enabled=true \
+      --set restore.enabled=false
 	@echo "Upgrade submitted. Monitor the upgrade progress with:"
-	@echo "kubectl get pgupgrade -n ${NAMESPACE}"
-	@echo "kubectl describe pgupgrade simsdb-pgupgrade-15-to-17 -n ${NAMESPACE}"
+	@echo "oc get pgupgrade -n ${NAMESPACE}"
+	@echo "oc describe pgupgrade ${NAME}-pgupgrade-${FROM_VERSION}-to-${TO_VERSION} -n ${NAMESPACE}"
 
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.
-#.PHONY: uninstall
-#uninstall: helm-dep
-#uninstall:
-#	@helm uninstall ${NAME} . -n ${NAMESPACE}
+# .PHONY: uninstall
+# uninstall: helm-dep
+# uninstall:
+# 	@helm uninstall ${NAME} -n ${NAMESPACE}
 
 .PHONY: template
 template: helm-dep

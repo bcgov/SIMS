@@ -1,4 +1,5 @@
 fullnameOverride: simsdb
+clusterName: simsdb
 appuser: app-database-user
 nonsuperuser: non-super-user
 
@@ -7,6 +8,16 @@ crunchyImage: # it's not necessary to specify an image as the images specified i
 postgresVersion: 15
 #postGISVersion: '3.3' # use this version of POSTGIS. both crunchyImage and this property needs to have valid values for POSTGIS to be enabled.
 imagePullPolicy: IfNotPresent
+
+pgUpgrade:
+  name: "" # Optional: If not specified, will be generated as "{clusterName}-pgupgrade-{fromVersion}-to-{toVersion}"
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
 
 # enable to bootstrap a standby cluster from backup. Then disable to promote this standby to primary
 standby:
