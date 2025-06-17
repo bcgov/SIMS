@@ -7,21 +7,12 @@ import {
   PEM_BEGIN_HEADER,
   PEM_END_HEADER,
 } from "@sims/auth/utilities/certificate-utils";
-import {
-  createE2EDataSources,
-  E2EDataSources,
-  getProviderInstanceForModule,
-} from "@sims/test-utils";
-import {
-  ConfigModule,
-  ConfigService,
-  UserPasswordCredential,
-} from "@sims/utilities/config";
+import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
+import { UserPasswordCredential } from "@sims/utilities/config";
 import { createZeebeModuleMock } from "@sims/test-utils/mocks";
 import { AppModule } from "../../../app.module";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { DataSource } from "typeorm";
-import { JwtService } from "@nestjs/jwt";
 import { MISSING_USER_ACCOUNT } from "../../../constants";
 import {
   BEARER_AUTH_TYPE,
@@ -47,9 +38,7 @@ describe("Authentication (e2e)", () => {
   // the authentication endpoints.
   // This token is retrieved from KeyCloak.
   let aestAccessToken: string;
-  let configService: ConfigService;
   let db: E2EDataSources;
-  let studentDecodedToken: any;
   let moduleFixture: TestingModule;
   let collegEInstitutionReadOnlyUserAccessToken: string;
 
@@ -63,9 +52,6 @@ describe("Authentication (e2e)", () => {
       userPasswordCredential: userPasswordCredentialStudent,
     });
     studentAccessToken = studentToken.access_token;
-    const jwtService = new JwtService();
-    studentDecodedToken = jwtService.decode(studentAccessToken);
-
     const aestToken = await KeycloakService.shared.getToken("aest", {
       userPasswordCredential: userPasswordCredentialStudent,
     });
@@ -90,12 +76,6 @@ describe("Authentication (e2e)", () => {
     await app.init();
     const dataSource = moduleFixture.get(DataSource);
     db = createE2EDataSources(dataSource);
-
-    configService = await getProviderInstanceForModule(
-      moduleFixture,
-      ConfigModule,
-      ConfigService,
-    );
   });
 
   beforeEach(async () => {
