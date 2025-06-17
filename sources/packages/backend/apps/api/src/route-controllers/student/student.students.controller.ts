@@ -405,8 +405,8 @@ export class StudentStudentsController extends BaseController {
       );
     // Set the temporary property to indicate if the user is a beta user.
     studentProfile.isBetaUser = await this.userService.isBetaUserAuthorized(
-      studentUserToken.givenNames,
-      studentUserToken.lastName,
+      studentProfile.firstName,
+      studentProfile.lastName,
     );
     return studentProfile;
   }

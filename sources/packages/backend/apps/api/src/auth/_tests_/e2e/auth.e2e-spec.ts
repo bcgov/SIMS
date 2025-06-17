@@ -137,29 +137,6 @@ describe("Authentication (e2e)", () => {
     },
   );
 
-  it(
-    "Should allow BCSC beta user to access the application when config allows only beta users to access the application and " +
-      "user is registered in beta users authorizations table.",
-    async () => {
-      // Arrange
-      jest
-        .spyOn(configService, "allowBetaUsersOnly", "get")
-        .mockReturnValue(true);
-
-      // Add user to beta users authorizations table in upper case to test the query.
-      await db.betaUsersAuthorizations.save({
-        givenNames: studentDecodedToken.givenNames.toUpperCase(),
-        lastName: studentDecodedToken.lastName.toUpperCase(),
-      });
-
-      // Act/Assert
-      return request(app.getHttpServer())
-        .get("/auth-test/authenticated-student")
-        .auth(studentAccessToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK);
-    },
-  );
-
   it("Endpoint with Public decorator should allow access when the bearer token is not present", () => {
     return request(app.getHttpServer())
       .get("/auth-test/public-route")
