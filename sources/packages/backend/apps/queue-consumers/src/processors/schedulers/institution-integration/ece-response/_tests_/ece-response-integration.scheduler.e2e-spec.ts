@@ -109,7 +109,7 @@ describe(
       );
     });
 
-    it.only("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application is valid.", async () => {
+    it("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application is valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
