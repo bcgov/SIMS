@@ -1032,11 +1032,9 @@ export class ApplicationControllerService {
     if (!isFulltimeAllowed) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
-    const isBetaUser = await this.userService.isBetaUserAuthorized(
-      firstName,
-      lastName,
-    );
-    if (!isBetaUser) {
+    const hasFulltimeAccess =
+      await this.userService.isUserAuthorizedForFulltime(firstName, lastName);
+    if (!hasFulltimeAccess) {
       throw new ForbiddenException(
         "User is not allowed to submit a full-time application.",
       );

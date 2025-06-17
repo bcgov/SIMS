@@ -12,7 +12,9 @@ export function useStudentStore(rootStore?: Store<any>) {
     () => store.state.student.hasStudentAccount,
   );
 
-  const isBetaUser = computed<boolean>(() => store.state.student.isBetaUser);
+  const hasFulltimeAccess = computed<boolean>(
+    () => store.state.student.hasFulltimeAccess,
+  );
 
   const sinValidStatus = computed<SINValidStatus>(
     () => store.state.student.sinValidStatus,
@@ -56,6 +58,6 @@ export function useStudentStore(rootStore?: Store<any>) {
     hasRestrictionWarning,
     activeRestrictions,
     studentDetails,
-    isBetaUser,
+    hasFulltimeAccess,
   };
 }

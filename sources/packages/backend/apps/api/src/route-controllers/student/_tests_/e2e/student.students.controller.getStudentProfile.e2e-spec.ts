@@ -68,11 +68,11 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
         },
         disabilityStatus: student.disabilityStatus,
         validSin: student.sinValidation.isValidSIN,
-        isBetaUser: false,
+        hasFulltimeAccess: false,
       });
   });
 
-  it("Should get the student profile with the isBetaUser as true user when the student was added to the beta users table.", async () => {
+  it("Should get the student profile with the hasFulltimeAccess as true user when the student was added to the beta users table.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     // Register the student as a beta user for full-time.
@@ -95,10 +95,10 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect((response) => expect(response.body.isBetaUser).toBe(true));
+      .expect((response) => expect(response.body.hasFulltimeAccess).toBe(true));
   });
 
-  it("Should get the student profile with isBetaUser as false when the student was added to the beta users table with a future date.", async () => {
+  it("Should get the student profile with hasFulltimeAccess as false when the student was added to the beta users table with a future date.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     // Register the student as a beta user for full-time.
@@ -121,7 +121,9 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect((response) => expect(response.body.isBetaUser).toBe(false));
+      .expect((response) =>
+        expect(response.body.hasFulltimeAccess).toBe(false),
+      );
   });
 
   afterAll(async () => {

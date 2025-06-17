@@ -99,10 +99,6 @@ describe("Authentication (e2e)", () => {
   });
 
   beforeEach(async () => {
-    // By default all users will be allowed to access the system.
-    jest
-      .spyOn(configService, "allowBetaUsersOnly", "get")
-      .mockReturnValue(false);
     // Reset mock user login info.
     await resetMockUserLoginInfo(moduleFixture);
   });

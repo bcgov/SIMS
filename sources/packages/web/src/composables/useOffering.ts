@@ -37,14 +37,14 @@ export function useOffering() {
   /**
    * Maps the offering intensities to an user friendly string representation.
    * @param allowFullTime flag to allow full time offering intensity.
-   * @param isBetaUser flag to indicate if the user is a beta user.
+   * @param hasFulltimeAccess flag to indicate if the user has full-time access.
    * @returns user friendly string representations of the offering intensities.
    */
   const mapOfferingIntensities = (
     allowFullTime = true,
-    isBetaUser = true,
+    hasFulltimeAccess = true,
   ): Partial<Record<OfferingIntensity, string>> => {
-    if (allowFullTime && isBetaUser) {
+    if (allowFullTime && hasFulltimeAccess) {
       return {
         [OfferingIntensity.fullTime]: mapOfferingIntensity(
           OfferingIntensity.fullTime,

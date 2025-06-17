@@ -76,7 +76,7 @@ export interface StudentProfileAPIOutDTO {
    * Created as optional to avoid further changes for institution
    * and Ministry DTOs that share this base class.
    */
-  isBetaUser?: boolean;
+  hasFulltimeAccess?: boolean;
 }
 
 export interface InstitutionStudentProfileAPIOutDTO

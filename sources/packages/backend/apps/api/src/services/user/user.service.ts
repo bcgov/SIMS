@@ -16,6 +16,7 @@ import {
 import { UserLoginInfo } from "./user.model";
 import { BetaUsersAuthorizations } from "@sims/sims-db/entities";
 import { InjectRepository } from "@nestjs/typeorm";
+import { ConfigService } from "@sims/utilities/config";
 
 @Injectable()
 export class UserService extends DataModelService<User> {
@@ -23,6 +24,7 @@ export class UserService extends DataModelService<User> {
     dataSource: DataSource,
     @InjectRepository(BetaUsersAuthorizations)
     private readonly betaUsersAuthorizationsRepo: Repository<BetaUsersAuthorizations>,
+    private readonly configService: ConfigService,
   ) {
     super(dataSource.getRepository(User));
   }
@@ -155,15 +157,20 @@ export class UserService extends DataModelService<User> {
   }
 
   /**
-   * Checks if there is a beta user authorization valid for given and last names provided.
-   * @param givenNames beta user given names.
-   * @param lastName beta user last name.
-   * @returns true in case there is a beta user authorization valid for given and last names provided.
+   * Checks if there is a full-time beta user authorization valid for given and last names provided.
+   * @param givenNames full-time beta user given names.
+   * @param lastName full-time beta user last name.
+   * @returns true in case there is a full-time beta user authorization valid for given and last names provided.
    */
-  async isBetaUserAuthorized(
+  async isUserAuthorizedForFulltime(
     givenNames: string,
     lastName: string,
   ): Promise<boolean> {
+    if (!this.configService.allowBetaUsersOnly) {
+      // If the configuration indicates that there is no beta restrictions,
+      // then all users are allowed to access full-time applications.
+      return true;
+    }
     const now = new Date();
     const where = {
       givenNames: Raw((alias) => `LOWER(${alias}) = LOWER(:givenNames)`, {

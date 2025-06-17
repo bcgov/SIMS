@@ -104,7 +104,7 @@ import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigura
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
   setup() {
-    const { isBetaUser } = useStudentStore();
+    const { hasFulltimeAccess } = useStudentStore();
     const initialData = ref({});
     const router = useRouter();
     const snackBar = useSnackBar();
@@ -121,7 +121,7 @@ export default defineComponent({
       const { isFulltimeAllowed } = await AppConfigService.shared.config();
       const intensities = mapOfferingIntensities(
         isFulltimeAllowed,
-        isBetaUser.value,
+        hasFulltimeAccess.value,
       );
       offeringIntensityOptions.value = Object.keys(intensities).map((key) => ({
         title: intensities[key],

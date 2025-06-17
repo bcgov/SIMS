@@ -403,11 +403,12 @@ export class StudentStudentsController extends BaseController {
       await this.studentControllerService.getStudentProfile(
         studentUserToken.studentId,
       );
-    // Set the temporary property to indicate if the user is a beta user.
-    studentProfile.isBetaUser = await this.userService.isBetaUserAuthorized(
-      studentProfile.firstName,
-      studentProfile.lastName,
-    );
+    // Set the temporary property to indicate if the user can access full-time applications.
+    studentProfile.hasFulltimeAccess =
+      await this.userService.isUserAuthorizedForFulltime(
+        studentProfile.firstName,
+        studentProfile.lastName,
+      );
     return studentProfile;
   }
 }
