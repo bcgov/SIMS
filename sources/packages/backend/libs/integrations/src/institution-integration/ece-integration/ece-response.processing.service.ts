@@ -70,6 +70,7 @@ export class ECEResponseProcessingService {
    * @returns Process summary result.
    */
   async process(): Promise<ProcessSummaryResult[]> {
+    // Get all the ECE response files from the SFTP location.
     const filePaths = await this.integrationService.getResponseFilesFullPath(
       this.institutionIntegrationConfig.ftpResponseFolder,
       /^CONR-008-([A-Z]{4})-\d{8}-\d{6}\.TXT$/i,
@@ -79,6 +80,9 @@ export class ECEResponseProcessingService {
       this.logger.log("No ECE response files found to be processed.");
       return [];
     }
+    this.logger.log(
+      `Received ${filePaths.length} ece response file(s) to process.`,
+    );
 
     const filePathDetails: InstitutionFileDetail[] = filePaths.map((path) => ({
       path,
