@@ -42,8 +42,6 @@ import {
   UNEXPECTED_ERROR_DOWNLOADING_FILE,
 } from "@sims/services/constants";
 
-const ECE_RESPONSE_FILE_REGEX = /^CONR-008-([A-Z]{4})-\d{8}-\d{6}\.TXT$/i;
-
 interface InstitutionFileDetail {
   path: string;
 }
@@ -74,7 +72,7 @@ export class ECEResponseProcessingService {
   async process(): Promise<ProcessSummaryResult[]> {
     const filePaths = await this.integrationService.getResponseFilesFullPath(
       this.institutionIntegrationConfig.ftpResponseFolder,
-      ECE_RESPONSE_FILE_REGEX,
+      /^CONR-008-([A-Z]{4})-\d{8}-\d{6}\.TXT$/i,
     );
 
     if (!filePaths.length) {
@@ -108,20 +106,9 @@ export class ECEResponseProcessingService {
     const remoteFilePath = institutionFileDetail.path;
     const fileName = path.basename(remoteFilePath);
     const processSummary = new ProcessSummaryResult();
-    const regexResult = ECE_RESPONSE_FILE_REGEX.exec(fileName);
-    // The file name is expected to match the regex pattern.
-    // regexResult[0] is the full match.
-    // regexResult[1] is the first capturing group (institution code).
-    if (!regexResult) {
-      processSummary.summary.push(
-        `File ${fileName} does not match the expected pattern and will be skipped.`,
-      );
-      this.logger.warn(
-        `File ${fileName} does not match the expected pattern and will be skipped.`,
-      );
-      return processSummary;
-    }
-    const institutionCode = regexResult[1];
+    // The file name is expected to match the pattern 'CONR-008-XXXX-....'.
+    // The institution code is the 4 alpha characters after 'CONR-008-'.
+    const institutionCode = fileName.substring(9, 13);
     // Setting the default value to true because, in the event of error
     // thrown from downloadResponseFile due to any data validation in the file
     // the value of isECEResponseFileExist will remain false which will be inaccurate as the file exist
