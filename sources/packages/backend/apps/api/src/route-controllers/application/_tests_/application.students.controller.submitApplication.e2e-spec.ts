@@ -21,11 +21,13 @@ import {
   RestrictionCode,
 } from "@sims/test-utils";
 import {
+  Application,
   ApplicationData,
   ApplicationStatus,
   EducationProgramOffering,
   OfferingIntensity,
   ProgramYear,
+  Student,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { SaveApplicationAPIInDTO } from "../models/application.dto";
@@ -911,6 +913,110 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       ).toBe(true);
     },
   );
+
+  it("Should submit a full-time application when the student is configured as a beta user.", async () => {
+    // Arrange
+    const { student, draftApplication, payload } =
+      await saveApplicationDraftReadyForSubmission();
+    // Register the student as a beta user for full-time.
+    await db.betaUsersAuthorizations.save({
+      givenNames: student.user.firstName,
+      lastName: student.user.lastName,
+      enabledFrom: new Date(),
+    });
+    const endpoint = `/students/application/${draftApplication.id}/submit`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.Application,
+      data: { data: payload.data },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    await mockUserLoginInfo(appModule, student);
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+  });
+
+  it("Should throw a forbidden error when a full-time application is submitted and the user is not a beta user.", async () => {
+    // Arrange
+    const { student, draftApplication, payload } =
+      await saveApplicationDraftReadyForSubmission();
+    const endpoint = `/students/application/${draftApplication.id}/submit`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.Application,
+      data: { data: payload.data },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    await mockUserLoginInfo(appModule, student);
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message: "User is not allowed to submit a full-time application.",
+        error: "Forbidden",
+        statusCode: HttpStatus.FORBIDDEN,
+      });
+  });
+
+  /**
+   * Save a draft application ready for submission.
+   * @returns the student, draft application, and payload.
+   */
+  async function saveApplicationDraftReadyForSubmission(): Promise<{
+    student: Student;
+    draftApplication: Application;
+    payload: SaveApplicationAPIInDTO;
+  }> {
+    // Create a student and a draft application.
+    const student = await saveFakeStudent(db.dataSource);
+    const draftApplication = await saveFakeApplication(
+      db.dataSource,
+      { student, programYear: recentActiveProgramYear },
+      {
+        applicationData: {} as ApplicationData,
+        applicationStatus: ApplicationStatus.Draft,
+        offeringIntensity: OfferingIntensity.fullTime,
+      },
+    );
+    // Create an offering.
+    const selectedOffering = await db.educationProgramOffering.save(
+      createFakeEducationProgramOffering({
+        auditUser: student.user,
+        institutionLocation: draftApplication.location,
+      }),
+    );
+    const selectedProgram = selectedOffering.educationProgram;
+    const applicationData = {
+      selectedOfferingDate: selectedOffering.studyStartDate,
+      selectedOfferingEndDate: selectedOffering.studyEndDate,
+      selectedProgram: selectedProgram.id,
+      selectedOffering: selectedOffering.id,
+      selectedLocation: selectedOffering.institutionLocation.id,
+    };
+    const payload = {
+      associatedFiles: [],
+      data: applicationData,
+      programYearId: recentActiveProgramYear.id,
+    } as SaveApplicationAPIInDTO;
+    return {
+      student,
+      draftApplication,
+      payload,
+    };
+  }
 
   afterAll(async () => {
     await app?.close();
