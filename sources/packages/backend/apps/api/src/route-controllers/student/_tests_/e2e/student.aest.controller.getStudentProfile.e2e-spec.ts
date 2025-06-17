@@ -65,7 +65,6 @@ describe("StudentAESTController(e2e)-getStudentProfile", () => {
         hasRestriction: false,
         identityProviderType: IdentityProviders.BCSC,
         sin: student.sinValidation.sin,
-        isBetaUser: false,
       });
   });
 
@@ -117,7 +116,6 @@ describe("StudentAESTController(e2e)-getStudentProfile", () => {
           sin: legacyProfile.sin,
           hasMultipleProfiles: false,
         },
-        isBetaUser: false,
       });
   });
 
@@ -175,7 +173,6 @@ describe("StudentAESTController(e2e)-getStudentProfile", () => {
           sin: recentLegacyProfile.sin,
           hasMultipleProfiles: true,
         },
-        isBetaUser: false,
       });
   });
 

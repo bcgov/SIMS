@@ -311,7 +311,6 @@ export class StudentControllerService {
       ...specificData,
       ...sensitiveData,
       legacyProfile,
-      isBetaUser: false,
     };
   }
 

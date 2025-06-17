@@ -1027,7 +1027,7 @@ export class ApplicationControllerService {
   private async validateFullTimeSubmission(
     firstName?: string,
     lastName?: string,
-  ): Promise<void | never> {
+  ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     if (!isFulltimeAllowed) {
       throw new UnprocessableEntityException("Invalid offering intensity.");

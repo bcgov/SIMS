@@ -64,6 +64,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
         },
         disabilityStatus: student.disabilityStatus,
         validSin: student.sinValidation.isValidSIN,
+        isBetaUser: false,
       });
   });
 
