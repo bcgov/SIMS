@@ -139,7 +139,7 @@ export default defineComponent({
     const { executeLogout } = useAuth();
     const router = useRouter();
     const { isAuthenticated } = useAuth();
-    const { hasStudentAccount } = useStudentStore();
+    const { hasStudentAccount, isBetaUser } = useStudentStore();
     const drawer = ref(false);
     const allowFulltime = ref(false);
     const { smAndDown: smallScreen } = useDisplay();
@@ -219,7 +219,7 @@ export default defineComponent({
             },
           },
         );
-        if (allowFulltime.value) {
+        if (allowFulltime.value && isBetaUser.value) {
           items.push({
             title: "Overawards Balance",
             props: {

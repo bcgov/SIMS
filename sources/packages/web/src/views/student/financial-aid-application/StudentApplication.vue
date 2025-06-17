@@ -94,10 +94,12 @@ import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProc
 import { PrimaryIdentifierAPIOutDTO } from "@/services/http/dto";
 import { AppConfigService } from "@/services/AppConfigService";
 import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigurationService";
+import { useStudentStore } from "@/composables";
 
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
   setup() {
+    const { isBetaUser } = useStudentStore();
     const initialData = ref({});
     const router = useRouter();
     const snackBar = useSnackBar();
@@ -112,7 +114,10 @@ export default defineComponent({
 
     onMounted(async () => {
       const { isFulltimeAllowed } = await AppConfigService.shared.config();
-      const intensities = mapOfferingIntensities(isFulltimeAllowed);
+      const intensities = mapOfferingIntensities(
+        isFulltimeAllowed,
+        isBetaUser.value,
+      );
       offeringIntensityOptions.value = Object.keys(intensities).map((key) => ({
         title: intensities[key],
         value: key,

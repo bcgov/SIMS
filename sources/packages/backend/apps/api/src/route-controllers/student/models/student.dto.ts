@@ -207,6 +207,12 @@ export class StudentProfileAPIOutDTO {
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
   disabilityStatus: DisabilityStatus;
+  /**
+   * Temporary property to indicate if the user is a beta user.
+   * Created as optional to avoid further changes for institution
+   * and Ministry DTOs that share this base class.
+   */
+  isBetaUser?: boolean;
 }
 
 export class InstitutionStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {

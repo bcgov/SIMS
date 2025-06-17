@@ -71,6 +71,12 @@ export interface StudentProfileAPIOutDTO {
   validSin: boolean;
   disabilityStatus: DisabilityStatus;
   sinConsent: boolean;
+  /**
+   * Temporary property to indicate if the user is a beta user.
+   * Created as optional to avoid further changes for institution
+   * and Ministry DTOs that share this base class.
+   */
+  isBetaUser?: boolean;
 }
 
 export interface InstitutionStudentProfileAPIOutDTO

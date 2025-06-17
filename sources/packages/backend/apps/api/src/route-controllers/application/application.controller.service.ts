@@ -17,6 +17,7 @@ import {
   SupportingUserService,
   FormService,
   DynamicFormConfigurationService,
+  UserService,
 } from "../../services";
 import {
   ApplicationFormData,
@@ -94,6 +95,7 @@ export class ApplicationControllerService {
     private readonly formService: FormService,
     private readonly configService: ConfigService,
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -956,13 +958,20 @@ export class ApplicationControllerService {
   ): Promise<void> {
     const offeringIntensity = application.offeringIntensity;
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
-    if (
-      !isFulltimeAllowed &&
-      offeringIntensity === OfferingIntensity.fullTime
-    ) {
-      throw new UnprocessableEntityException("Invalid offering intensity.");
+    if (offeringIntensity === OfferingIntensity.fullTime) {
+      if (!isFulltimeAllowed) {
+        throw new UnprocessableEntityException("Invalid offering intensity.");
+      }
+      const isBetaUser = await this.userService.isBetaUserAuthorized(
+        application.student.user.firstName,
+        application.student.user.lastName,
+      );
+      if (!isBetaUser) {
+        throw new ForbiddenException(
+          "User is not allowed to submit a full-time application.",
+        );
+      }
     }
-
     // For program years still relying on the form.io variable howWillYouBeAttendingTheProgram
     // to determine the offering intensity, we need to set the value in the payload
     // to the offering intensity value from the database.
