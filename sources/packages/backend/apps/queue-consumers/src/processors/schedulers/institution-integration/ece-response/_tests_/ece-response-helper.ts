@@ -12,6 +12,13 @@ import {
 import * as faker from "faker";
 import { IsNull } from "typeorm";
 
+export const CONR_008_CONF_FILE = "CONR-008-CONF.TXT";
+export const CONR_008_DECL_FILE = "CONR-008-DECL.TXT";
+export const CONR_008_SKIP_FILE = "CONR-008-SKIP.TXT";
+export const CONR_008_FAIL_FILE = "CONR-008-FAIL.TXT";
+export const CONR_008_MULT_FILE = "CONR-008-MULT.TXT";
+export const CONR_008_VALD_FILE = "CONR-008-VALD.TXT";
+
 /**
  * Create institution locations to be used for testing.
  * @param e2eDataSources e2e data sources.

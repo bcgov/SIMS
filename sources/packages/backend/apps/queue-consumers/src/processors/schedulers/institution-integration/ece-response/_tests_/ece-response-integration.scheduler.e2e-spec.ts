@@ -37,16 +37,15 @@ import {
   createInstitutionLocations,
   enableIntegration,
   getUnsentECEResponseNotifications,
+  CONR_008_CONF_FILE,
+  CONR_008_DECL_FILE,
+  CONR_008_SKIP_FILE,
+  CONR_008_FAIL_FILE,
+  CONR_008_MULT_FILE,
+  CONR_008_VALD_FILE,
 } from "./ece-response-helper";
 import { FILE_PARSING_ERROR } from "@sims/services/constants";
 import { IsNull } from "typeorm";
-
-const CONR_008_CONF_FILE = "CONR-008-CONF.TXT";
-const CONR_008_DECL_FILE = "CONR-008-DECL.TXT";
-const CONR_008_SKIP_FILE = "CONR-008-SKIP.TXT";
-const CONR_008_FAIL_FILE = "CONR-008-FAIL.TXT";
-const CONR_008_MULT_FILE = "CONR-008-MULT.TXT";
-const CONR_008_VALD_FILE = "CONR-008-VALD.TXT";
 
 describe(
   describeProcessorRootTest(QueueNames.ECEProcessResponseIntegration),
