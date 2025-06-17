@@ -818,6 +818,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     }
     // Reverse the deducted overawards if present.
     const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     const reversalOverawards = deductedOverawards.map<DisbursementOveraward>(
       (deductedOveraward) =>
         ({
@@ -830,7 +831,9 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
           overawardValue: -deductedOveraward.overawardValue,
           originType: DisbursementOverawardOriginType.AwardRejectedDeducted,
           creator: auditUser,
+          createdAt: now,
           addedBy: auditUser,
+          addedDate: now,
         } as DisbursementOveraward),
     );
     const result = await overawardsRepo.insert(reversalOverawards);
