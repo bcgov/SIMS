@@ -1,0 +1,45 @@
+name: Crunchy DB - Postgres Major Version Upgrade
+run-name: Crunchy DB - ${{ inputs.environment }} Crunchy DB in ${{ inputs.environment }} using ${{ github.ref_name }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment"
+        required: true
+        type: environment
+      from_version:
+        description: "Source PostgreSQL version for upgrade (e.g. 15)"
+        required: true
+        type: string
+        default: ""
+      to_version:
+        description: "Target PostgreSQL version for upgrade (e.g. 17)"
+        required: true
+        type: string
+        default: ""
+
+jobs:
+  manageCrunchyDB:
+    name: ${{ inputs.environment }} Crunchy DB in ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+    steps:
+      - name: Checkout Target Branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "4"
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      - name: Upgrade Crunchy Postgres Version
+        working-directory: "./devops/helm/crunchy-postgres/"
+        run: |
+          echo "Warning: Only the helm is updated. The upgrade will not run until the oc commands are run as per the postgres upgrade major version wiki documentation."
+          make pg-upgrade NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} FROM_VERSION="${{ inputs.from_version }}" TO_VERSION="${{ inputs.to_version }}"

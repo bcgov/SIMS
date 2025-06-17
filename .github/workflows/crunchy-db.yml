@@ -15,7 +15,6 @@ on:
         options:
           - install
           - upgrade
-          - postgres-upgrade
       restore_enabled:
         description: "Enable restore"
         required: false
@@ -23,16 +22,6 @@ on:
         default: false
       restore_target:
         description: "Restore target date and time in 'YYYY-MM-DD HH:MM:SS' format "
-        required: false
-        type: string
-        default: ""
-      from_version:
-        description: "Source PostgreSQL version for upgrade (e.g. 15)"
-        required: false
-        type: string
-        default: ""
-      to_version:
-        description: "Target PostgreSQL version for upgrade (e.g. 17)"
         required: false
         type: string
         default: ""
@@ -76,6 +65,4 @@ jobs:
             make install NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
           elif [ "${{ inputs.action }}" == "upgrade" ]; then
             make upgrade NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} RESTORE_ENABLED=${{ inputs.restore_enabled }} RESTORE_TARGET="${{ inputs.restore_target }}"
-          elif [ "${{ inputs.action }}" == "postgres-upgrade" ]; then
-            make pg-upgrade NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} FROM_VERSION="${{ inputs.from_version }}" TO_VERSION="${{ inputs.to_version }}"
           fi
