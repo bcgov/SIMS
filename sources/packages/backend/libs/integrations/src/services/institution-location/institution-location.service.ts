@@ -14,38 +14,22 @@ export class InstitutionLocationService {
   ) {}
 
   /**
-   * Get all the institution codes of the institutions who
-   * are enabled for integration.
-   * @returns institution codes.
-   */
-  async getAllIntegrationEnabledInstitutionCodes(): Promise<string[]> {
-    const locations = await this.institutionLocationRepo.find({
-      select: {
-        institutionCode: true,
-      },
-      where: {
-        hasIntegration: true,
-      },
-    });
-    return locations.map((location) => location.institutionCode);
-  }
-
-  /**
-   * Get integration contacts for given institution.
+   * Get integration location where institution is enabled for integration.
    * @param institutionCode institution code.
-   * @returns integration contacts.
+   * @returns integration location.
    */
-  async getIntegrationContactsByInstitutionCode(
+  async getIntegrationLocation(
     institutionCode: string,
-  ): Promise<string[]> {
-    const location = await this.institutionLocationRepo.findOne({
+  ): Promise<InstitutionLocation> {
+    return this.institutionLocationRepo.findOne({
       select: {
+        id: true,
         integrationContacts: true,
       },
       where: {
+        hasIntegration: true,
         institutionCode,
       },
     });
-    return location.integrationContacts;
   }
 }

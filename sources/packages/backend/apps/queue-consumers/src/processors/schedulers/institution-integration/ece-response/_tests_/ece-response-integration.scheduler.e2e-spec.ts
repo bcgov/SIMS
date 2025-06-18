@@ -26,7 +26,6 @@ import {
 } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
-import { ECE_RESPONSE_FILE_NAME } from "@sims/integrations/constants";
 import {
   ApplicationStatus,
   COEStatus,
@@ -38,6 +37,12 @@ import {
   createInstitutionLocations,
   enableIntegration,
   getUnsentECEResponseNotifications,
+  CONR_008_CONF_FILE,
+  CONR_008_DECL_FILE,
+  CONR_008_SKIP_FILE,
+  CONR_008_FAIL_FILE,
+  CONR_008_MULT_FILE,
+  CONR_008_VALD_FILE,
 } from "./ece-response-helper";
 import { FILE_PARSING_ERROR } from "@sims/services/constants";
 import { IsNull } from "typeorm";
@@ -111,8 +116,7 @@ describe(
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationCONF.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_CONF_FILE,
       );
 
       // Create disbursement to confirm enrolment.
@@ -134,7 +138,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_CONF_FILE],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
@@ -148,7 +152,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 15",
       ]);
@@ -192,8 +196,7 @@ describe(
       await enableIntegration(locationMULT, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationMULT.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_MULT_FILE,
       );
 
       // Create disbursement to confirm enrolment.
@@ -228,7 +231,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_MULT_FILE],
         (fileContent: string) => {
           return (
             fileContent
@@ -253,7 +256,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 15",
       ]);
@@ -302,8 +305,7 @@ describe(
       await enableIntegration(locationVALD, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationVALD.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_VALD_FILE,
       );
 
       // Create disbursement to confirm enrolment.
@@ -361,7 +363,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_VALD_FILE],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
           // Force the error code to be wrong in the first record.
@@ -381,7 +383,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 14",
       ]);
@@ -416,8 +418,7 @@ describe(
       await enableIntegration(locationDECL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationDECL.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_DECL_FILE,
       );
 
       // Create disbursement to confirm enrolment.
@@ -439,7 +440,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_DECL_FILE],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
@@ -452,7 +453,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 15",
       ]);
@@ -494,8 +495,7 @@ describe(
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationSKIP.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_SKIP_FILE,
       );
 
       // Create disbursement to confirm enrolment.
@@ -517,7 +517,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_SKIP_FILE],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
@@ -531,7 +531,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 14",
       ]);
@@ -566,8 +566,7 @@ describe(
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationSKIP.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_SKIP_FILE,
       );
 
       const fakeDisbursementId = "1111111111";
@@ -579,7 +578,7 @@ describe(
       // Modify the data in mock file to have fake disbursement id.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_SKIP_FILE],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", fakeDisbursementId)
@@ -592,7 +591,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 14",
       ]);
@@ -627,8 +626,7 @@ describe(
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationSKIP.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_SKIP_FILE,
       );
 
       // Create disbursement to confirm enrolment.
@@ -652,7 +650,7 @@ describe(
       // and fake application number.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_SKIP_FILE],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
@@ -663,7 +661,7 @@ describe(
       // Act
       const result = await processor.processQueue(mockedJob.job);
       expect(result).toStrictEqual([
-        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 14",
       ]);
@@ -698,8 +696,7 @@ describe(
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationFAIL.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_FAIL_FILE,
       );
 
       // Queued job.
@@ -708,7 +705,7 @@ describe(
       // Modify the data in mock file to have invalid header.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_FAIL_FILE],
         (fileContent: string) => {
           return fileContent.replace("1AJAA", "2AJAA");
         },
@@ -748,8 +745,7 @@ describe(
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationFAIL.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_FAIL_FILE,
       );
 
       // Queued job.
@@ -758,7 +754,7 @@ describe(
       // Modify the data in mock file to have invalid detail.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_FAIL_FILE],
         (fileContent: string) => {
           return fileContent.replace("2AJBH", "3AJBH");
         },
@@ -801,8 +797,7 @@ describe(
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationFAIL.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_FAIL_FILE,
       );
 
       // Queued job.
@@ -811,7 +806,7 @@ describe(
       // Modify the data in mock file to have invalid footer.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_FAIL_FILE],
         (fileContent: string) => {
           return fileContent.replace("3000001", "4000001");
         },
@@ -853,8 +848,7 @@ describe(
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationFAIL.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_FAIL_FILE,
       );
 
       // Queued job.
@@ -863,7 +857,7 @@ describe(
       // Modify the data in mock file to have invalid footer.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_FAIL_FILE],
         (fileContent: string) => {
           return fileContent.replace("3000001", "3000002");
         },
@@ -905,8 +899,7 @@ describe(
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationSKIP.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_SKIP_FILE,
       );
 
       // Queued job.
@@ -917,7 +910,7 @@ describe(
       // due to the placeholder DISBNUMBER.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_SKIP_FILE],
         (fileContent: string) => {
           return fileContent.replace("APPLNUMBER", "          ");
         },
@@ -963,8 +956,7 @@ describe(
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationCONF.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_CONF_FILE,
       );
 
       // Create disbursement to confirm enrolment.
@@ -986,7 +978,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_CONF_FILE],
         (fileContent: string) => {
           return (
             fileContent
@@ -1007,7 +999,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 15",
       ]);
@@ -1046,8 +1038,7 @@ describe(
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationCONF.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_CONF_FILE,
       );
 
       // Create disbursement to confirm enrolment.
@@ -1069,7 +1060,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_CONF_FILE],
         (fileContent: string) => {
           return (
             fileContent
@@ -1090,7 +1081,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 15",
       ]);
@@ -1126,8 +1117,7 @@ describe(
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationCONF.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_CONF_FILE,
       );
 
       // Create disbursement to confirm enrolment.
@@ -1151,7 +1141,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_CONF_FILE],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
@@ -1171,7 +1161,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 2, Info: 14",
       ]);
@@ -1207,8 +1197,7 @@ describe(
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        locationCONF.institutionCode,
-        ECE_RESPONSE_FILE_NAME,
+        CONR_008_CONF_FILE,
       );
 
       // Create disbursement to confirm enrolment.
@@ -1233,7 +1222,7 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [ECE_RESPONSE_FILE_NAME],
+        [CONR_008_CONF_FILE],
         (fileContent: string) => {
           return fileContent
             .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
@@ -1251,7 +1240,7 @@ describe(
       // Assert
       // Assert
       expect(result).toStrictEqual([
-        "ECE responses for 1 institution locations were verified, check logs for details.",
+        "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 2, Info: 14",
       ]);

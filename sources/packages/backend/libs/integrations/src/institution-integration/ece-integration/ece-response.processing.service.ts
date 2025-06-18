@@ -7,10 +7,7 @@ import {
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
 import { ProcessSummaryResult } from "@sims/integrations/models";
-import {
-  ECE_RESPONSE_COE_DECLINED_REASON,
-  ECE_RESPONSE_FILE_NAME,
-} from "@sims/integrations/constants";
+import { ECE_RESPONSE_COE_DECLINED_REASON } from "@sims/integrations/constants";
 import { InstitutionLocationService } from "@sims/integrations/services";
 import {
   COE_DENIED_REASON_OTHER_ID,
@@ -44,11 +41,7 @@ import {
   INVALID_TUITION_REMITTANCE_AMOUNT,
   UNEXPECTED_ERROR_DOWNLOADING_FILE,
 } from "@sims/services/constants";
-
-interface InstitutionFileDetail {
-  path: string;
-  institutionCode: string;
-}
+import { InstitutionLocation } from "@sims/sims-db";
 
 /**
  * Read and process the ECE response files which are
@@ -74,48 +67,55 @@ export class ECEResponseProcessingService {
    * @returns Process summary result.
    */
   async process(): Promise<ProcessSummaryResult[]> {
-    // Get all the institution codes who are enabled for integration.
-    const integrationEnabledInstitutions =
-      await this.institutionLocationService.getAllIntegrationEnabledInstitutionCodes();
-    const filePathDetails: InstitutionFileDetail[] =
-      integrationEnabledInstitutions.map((institutionCode) => ({
-        path: path.join(
-          this.institutionIntegrationConfig.ftpResponseFolder,
-          institutionCode,
-          ECE_RESPONSE_FILE_NAME,
-        ),
-        institutionCode,
-      }));
+    // Get all the ECE response files from the SFTP location.
+    const filePaths = await this.integrationService.getResponseFilesFullPath(
+      this.institutionIntegrationConfig.ftpResponseFolder,
+      /^CONR-008-[A-Z]{4}-\d{8}-\d{6}\.TXT$/i,
+    );
+
+    if (!filePaths.length) {
+      this.logger.log("No ECE response files found to be processed.");
+      return [];
+    }
+    this.logger.log(
+      `Received ${filePaths.length} ece response file(s) to process.`,
+    );
+
     // Process all the files in parallel.
-    const result = await processInParallel<
-      ProcessSummaryResult,
-      InstitutionFileDetail
-    >(
-      (remoteFileDetail: InstitutionFileDetail) =>
-        this.processDisbursementsInECEResponseFile(remoteFileDetail),
-      filePathDetails,
+    const result = await processInParallel<ProcessSummaryResult, string>(
+      (remoteFilePath: string) =>
+        this.processDisbursementsInECEResponseFile(remoteFilePath),
+      filePaths,
     );
     return result;
   }
 
   /**
    * Process individual ECE response file sent by institution.
-   * @param institutionFileDetail file details.
+   * @param remoteFilePath remote file path.
    * @returns process summary result.
    */
   private async processDisbursementsInECEResponseFile(
-    institutionFileDetail: InstitutionFileDetail,
+    remoteFilePath: string,
   ): Promise<ProcessSummaryResult> {
-    const institutionCode = institutionFileDetail.institutionCode;
-    const remoteFilePath = institutionFileDetail.path;
+    const fileName = path.basename(remoteFilePath);
     const processSummary = new ProcessSummaryResult();
-    // Setting the default value to true because, in the event of error
-    // thrown from downloadResponseFile due to any data validation in the file
-    // the value of isECEResponseFileExist will remain false which will be inaccurate as the file exist
-    // and file archiving will not happen.
-    // In the event of runtime error during downloading the file, it is handled with custom error
-    // and taken care that isECEResponseFileExist is set to false when this error happens.
-    let isECEResponseFileExist = true;
+    // The file name is expected to match the pattern 'CONR-008-XXXX-....'.
+    // The institution code is the 4 alpha characters after 'CONR-008-'.
+    const institutionCode = fileName.substring(9, 13);
+    const integrationLocation =
+      await this.institutionLocationService.getIntegrationLocation(
+        institutionCode,
+      );
+
+    //If the file does not have integration location hasIntegration flag set to true, skip the file.
+    if (!integrationLocation) {
+      processSummary.warnings.push(
+        `Integration location not found for institution code: ${institutionCode}.`,
+      );
+      return processSummary;
+    }
+    // Start processing the file.
     processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     // Disbursement processing count.
@@ -123,15 +123,6 @@ export class ECEResponseProcessingService {
     try {
       const eceFileDetailRecords =
         await this.integrationService.downloadResponseFile(remoteFilePath);
-      isECEResponseFileExist = !!eceFileDetailRecords.length;
-      // Check if the file exist in remote server and summary info
-      // if the file is not found.
-      if (!isECEResponseFileExist) {
-        const warningMessage = `File ${remoteFilePath} not found.`;
-        processSummary.summary.push(warningMessage);
-        this.logger.log(warningMessage);
-        return processSummary;
-      }
       // Set the total records count.
       disbursementProcessingDetails.totalRecords = eceFileDetailRecords.length;
       // Sanitize all the ece response detail records.
@@ -153,20 +144,14 @@ export class ECEResponseProcessingService {
 
       this.logger.log(`Completed processing the file ${remoteFilePath}.`);
     } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          // In the event of runtime error during downloading the file, it is handled with custom error
-          // and taken care that isECEResponseFileExist is set to false when this error happens.
-          case UNEXPECTED_ERROR_DOWNLOADING_FILE:
-            isECEResponseFileExist = false;
-            // Increment the file parsing error.
-            ++disbursementProcessingDetails.fileParsingErrors;
-            break;
-          case FILE_PARSING_ERROR:
-            // Increment the file parsing error.
-            ++disbursementProcessingDetails.fileParsingErrors;
-            break;
-        }
+      if (
+        error instanceof CustomNamedError &&
+        [UNEXPECTED_ERROR_DOWNLOADING_FILE, FILE_PARSING_ERROR].includes(
+          error.name,
+        )
+      ) {
+        // In the event of runtime error during downloading the file or parsing the file.
+        ++disbursementProcessingDetails.fileParsingErrors;
       }
       this.logger.error(error);
       processSummary.errors.push(
@@ -175,18 +160,16 @@ export class ECEResponseProcessingService {
       processSummary.errors.push("File processing aborted.");
     } finally {
       // Archive the ECE response file, if the file exist in remote server.
-      if (isECEResponseFileExist) {
-        await this.archiveProcessedFile(remoteFilePath, processSummary);
+      await this.archiveProcessedFile(remoteFilePath, processSummary);
 
-        // Create notification email which gets sent to
-        // the integration contacts of the institution
-        // when a ECE file exists for an institution.
-        await this.createECEResponseProcessingNotification(
-          institutionCode,
-          disbursementProcessingDetails,
-          processSummary,
-        );
-      }
+      // Create notification email which gets sent to
+      // the integration contacts of the institution
+      // when a ECE file exists for an institution.
+      await this.createECEResponseProcessingNotification(
+        integrationLocation,
+        disbursementProcessingDetails,
+        processSummary,
+      );
     }
 
     // Populate the process summary count.
@@ -425,21 +408,16 @@ export class ECEResponseProcessingService {
    * @param processSummaryResult process summary details.
    */
   private async createECEResponseProcessingNotification(
-    institutionCode: string,
+    integrationLocation: InstitutionLocation,
     disbursementProcessingDetails: DisbursementProcessingDetails,
     processSummaryResult: ProcessSummaryResult,
   ): Promise<void> {
     try {
-      const integrationContacts =
-        await this.institutionLocationService.getIntegrationContactsByInstitutionCode(
-          institutionCode,
-        );
-
       // Create email notifications only if integration contacts are available.
-      if (integrationContacts.length) {
+      if (integrationLocation.integrationContacts?.length) {
         const notification: ECEResponseFileProcessingNotification = {
-          institutionCode,
-          integrationContacts,
+          institutionCode: integrationLocation.institutionCode,
+          integrationContacts: integrationLocation.integrationContacts,
           fileParsingErrors: disbursementProcessingDetails.fileParsingErrors,
           totalRecords: disbursementProcessingDetails.totalRecords,
           totalDisbursements: disbursementProcessingDetails.totalDisbursements,
