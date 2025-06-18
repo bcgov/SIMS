@@ -42,8 +42,8 @@ pg-upgrade:
 		--set restore.enabled=false
 	@oc -n ${NAMESPACE} annotate postgrescluster simsdb postgres-operator.crunchydata.com/allow-upgrade="postgres-version-upgrade"
 	@echo "Upgrade submitted. Monitor the upgrade progress with:"
-	@echo "oc get pgupgrade -n ${NAMESPACE}"
-	@echo "oc describe pgupgrade postgres-version-upgrade -n ${NAMESPACE}"
+	@echo "@oc get pgupgrade -n ${NAMESPACE}"
+	@echo "@oc describe pgupgrade postgres-version-upgrade -n ${NAMESPACE}"
 	@echo "Waiting for PGClusterNotShutdown status..."
 	@oc -n ${NAMESPACE} wait pgupgrade/postgres-version-upgrade --for=condition=Progressing=false -n ${NAMESPACE} --timeout=300s
 	@echo "Shutting down PostgreSQL cluster for upgrade..."
