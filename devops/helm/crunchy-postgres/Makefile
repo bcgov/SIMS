@@ -59,6 +59,10 @@ pg-upgrade:
 	@echo "Starting the PostgreSQL cluster..."
 	@oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p "{\"spec\":{\"postgresVersion\":${TO_VERSION}, \"shutdown\":false}}"
 	@echo "PostgreSQL cluster upgrade complete and restart initiated."
+	@echo "Disabling pgUpgrade to prevent future upgrades during helm upgrades..."
+	@helm upgrade --install $(call arguments) \
+			--set pgUpgrade.enabled=false
+	@echo "pgUpgrade.enabled has been set to false."
 
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.
 # .PHONY: uninstall
