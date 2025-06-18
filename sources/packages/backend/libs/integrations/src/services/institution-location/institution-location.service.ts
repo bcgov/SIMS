@@ -14,7 +14,7 @@ export class InstitutionLocationService {
   ) {}
 
   /**
-   * Get integration location where @hasIntegration is true.
+   * Get integration location where institution is enabled for integration.
    * @param institutionCode institution code.
    * @returns integration location.
    */
@@ -31,24 +31,5 @@ export class InstitutionLocationService {
         institutionCode,
       },
     });
-  }
-
-  /**
-   * Get integration contacts for given institution.
-   * @param institutionCode institution code.
-   * @returns integration contacts.
-   */
-  async getIntegrationContactsByInstitutionCode(
-    institutionCode: string,
-  ): Promise<string[]> {
-    const location = await this.institutionLocationRepo.findOne({
-      select: {
-        integrationContacts: true,
-      },
-      where: {
-        institutionCode,
-      },
-    });
-    return location.integrationContacts;
   }
 }
