@@ -40,7 +40,7 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
       result.warnings.forEach((error) => locationResultSummary.warn(error));
       result.errors.forEach((error) => locationResultSummary.error(error));
     });
-    return `ECE responses for ${processingResult.length} institution locations were verified, check logs for details.`;
+    return `ECE response files received: ${processingResult.length}. Check logs for details.`;
   }
 
   /**

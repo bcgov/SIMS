@@ -41,10 +41,7 @@ import {
   INVALID_TUITION_REMITTANCE_AMOUNT,
   UNEXPECTED_ERROR_DOWNLOADING_FILE,
 } from "@sims/services/constants";
-
-interface InstitutionFileDetail {
-  path: string;
-}
+import { InstitutionLocation } from "@sims/sims-db";
 
 /**
  * Read and process the ECE response files which are
@@ -73,7 +70,7 @@ export class ECEResponseProcessingService {
     // Get all the ECE response files from the SFTP location.
     const filePaths = await this.integrationService.getResponseFilesFullPath(
       this.institutionIntegrationConfig.ftpResponseFolder,
-      /^CONR-008-([A-Z]{4})-\d{8}-\d{6}\.TXT$/i,
+      /^CONR-008-[A-Z]{4}-\d{8}-\d{6}\.TXT$/i,
     );
 
     if (!filePaths.length) {
@@ -84,35 +81,40 @@ export class ECEResponseProcessingService {
       `Received ${filePaths.length} ece response file(s) to process.`,
     );
 
-    const filePathDetails: InstitutionFileDetail[] = filePaths.map((path) => ({
-      path,
-    }));
     // Process all the files in parallel.
-    const result = await processInParallel<
-      ProcessSummaryResult,
-      InstitutionFileDetail
-    >(
-      (remoteFileDetail: InstitutionFileDetail) =>
-        this.processDisbursementsInECEResponseFile(remoteFileDetail),
-      filePathDetails,
+    const result = await processInParallel<ProcessSummaryResult, string>(
+      (remoteFilePath: string) =>
+        this.processDisbursementsInECEResponseFile(remoteFilePath),
+      filePaths,
     );
     return result;
   }
 
   /**
    * Process individual ECE response file sent by institution.
-   * @param institutionFileDetail file details.
+   * @param remoteFilePath remote file path.
    * @returns process summary result.
    */
   private async processDisbursementsInECEResponseFile(
-    institutionFileDetail: InstitutionFileDetail,
+    remoteFilePath: string,
   ): Promise<ProcessSummaryResult> {
-    const remoteFilePath = institutionFileDetail.path;
     const fileName = path.basename(remoteFilePath);
     const processSummary = new ProcessSummaryResult();
     // The file name is expected to match the pattern 'CONR-008-XXXX-....'.
     // The institution code is the 4 alpha characters after 'CONR-008-'.
     const institutionCode = fileName.substring(9, 13);
+    const integrationLocation =
+      await this.institutionLocationService.getIntegrationLocation(
+        institutionCode,
+      );
+
+    if (!integrationLocation) {
+      processSummary.summary.push(
+        `Integration location not found for institution code: ${institutionCode}.`,
+      );
+      return processSummary;
+    }
+
     // Setting the default value to true because, in the event of error
     // thrown from downloadResponseFile due to any data validation in the file
     // the value of isECEResponseFileExist will remain false which will be inaccurate as the file exist
@@ -186,7 +188,7 @@ export class ECEResponseProcessingService {
         // the integration contacts of the institution
         // when a ECE file exists for an institution.
         await this.createECEResponseProcessingNotification(
-          institutionCode,
+          integrationLocation,
           disbursementProcessingDetails,
           processSummary,
         );
@@ -429,21 +431,16 @@ export class ECEResponseProcessingService {
    * @param processSummaryResult process summary details.
    */
   private async createECEResponseProcessingNotification(
-    institutionCode: string,
+    integrationLocation: InstitutionLocation,
     disbursementProcessingDetails: DisbursementProcessingDetails,
     processSummaryResult: ProcessSummaryResult,
   ): Promise<void> {
     try {
-      const integrationContacts =
-        await this.institutionLocationService.getIntegrationContactsByInstitutionCode(
-          institutionCode,
-        );
-
       // Create email notifications only if integration contacts are available.
-      if (integrationContacts.length) {
+      if (integrationLocation.integrationContacts.length) {
         const notification: ECEResponseFileProcessingNotification = {
-          institutionCode,
-          integrationContacts,
+          institutionCode: integrationLocation.institutionCode,
+          integrationContacts: integrationLocation.integrationContacts,
           fileParsingErrors: disbursementProcessingDetails.fileParsingErrors,
           totalRecords: disbursementProcessingDetails.totalRecords,
           totalDisbursements: disbursementProcessingDetails.totalDisbursements,

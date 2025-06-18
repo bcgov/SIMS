@@ -30,9 +30,7 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
   ): Promise<ECEResponseFileDetail[]> {
     let fileLines: false | string[];
     try {
-      fileLines = await this.downloadResponseFileLines(remoteFilePath, {
-        checkIfFileExist: true,
-      });
+      fileLines = await this.downloadResponseFileLines(remoteFilePath);
     } catch (error: unknown) {
       this.logger.error(error);
       throw new CustomNamedError(

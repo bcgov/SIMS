@@ -14,6 +14,25 @@ export class InstitutionLocationService {
   ) {}
 
   /**
+   * Get integration location.
+   * @param institutionCode institution code.
+   * @returns integration location.
+   */
+  async getIntegrationLocation(
+    institutionCode: string,
+  ): Promise<InstitutionLocation> {
+    return this.institutionLocationRepo.findOne({
+      select: {
+        id: true,
+        integrationContacts: true,
+      },
+      where: {
+        institutionCode,
+      },
+    });
+  }
+
+  /**
    * Get integration contacts for given institution.
    * @param institutionCode institution code.
    * @returns integration contacts.
