@@ -40,24 +40,24 @@ pg-upgrade:
 		--set pgUpgrade.toPostgresVersion="${TO_VERSION}" \
 		--set pgUpgrade.enabled=true \
 		--set restore.enabled=false
-	oc -n ${NAMESPACE} annotate postgrescluster simsdb postgres-operator.crunchydata.com/allow-upgrade="postgres-version-upgrade"
+	@oc -n ${NAMESPACE} annotate postgrescluster simsdb postgres-operator.crunchydata.com/allow-upgrade="postgres-version-upgrade"
 	@echo "Upgrade submitted. Monitor the upgrade progress with:"
 	@echo "oc get pgupgrade -n ${NAMESPACE}"
 	@echo "oc describe pgupgrade postgres-version-upgrade -n ${NAMESPACE}"
 	@echo "Waiting for PGClusterNotShutdown status..."
-	oc -n ${NAMESPACE} wait pgupgrade/postgres-version-upgrade --for=condition=Progressing=false -n ${NAMESPACE} --timeout=300s
+	@oc -n ${NAMESPACE} wait pgupgrade/postgres-version-upgrade --for=condition=Progressing=false -n ${NAMESPACE} --timeout=300s
 	@echo "Shutting down PostgreSQL cluster for upgrade..."
-	oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p '{"spec":{"shutdown":true}}'
+	@oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p '{"spec":{"shutdown":true}}'
 	@echo "Waiting for upgrade to progress..."
-	oc -n ${NAMESPACE} wait pgupgrade/postgres-version-upgrade --for=condition=Progressing=true -n ${NAMESPACE} --timeout=1800s
+	@oc -n ${NAMESPACE} wait pgupgrade/postgres-version-upgrade --for=condition=Progressing=true -n ${NAMESPACE} --timeout=1800s
 	@echo "PostgreSQL upgrade is now in progress..."
 	@echo "Waiting for PostgreSQL upgrade to complete..."
-	oc -n ${NAMESPACE} wait pgupgrade/postgres-version-upgrade --for=condition=Succeeded=true -n ${NAMESPACE} --timeout=1800s
+	@oc -n ${NAMESPACE} wait pgupgrade/postgres-version-upgrade --for=condition=Succeeded=true -n ${NAMESPACE} --timeout=1800s
 	@echo "PostgreSQL upgrade from ${FROM_VERSION} to ${TO_VERSION} completed successfully!"
 	@echo "Removing the upgrade annotation from the PostgreSQL cluster..."
-	oc -n ${NAMESPACE} annotate postgrescluster simsdb postgres-operator.crunchydata.com/allow-upgrade- --overwrite
+	@oc -n ${NAMESPACE} annotate postgrescluster simsdb postgres-operator.crunchydata.com/allow-upgrade- --overwrite
 	@echo "Starting the PostgreSQL cluster..."
-	oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p "{\"spec\":{\"postgresVersion\":${TO_VERSION}, \"shutdown\":false}}"
+	@oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p "{\"spec\":{\"postgresVersion\":${TO_VERSION}, \"shutdown\":false}}"
 	@echo "PostgreSQL cluster upgrade complete and restart initiated."
 
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.
