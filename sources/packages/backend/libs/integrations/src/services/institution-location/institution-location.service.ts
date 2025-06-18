@@ -14,7 +14,7 @@ export class InstitutionLocationService {
   ) {}
 
   /**
-   * Get integration location.
+   * Get integration location where @hasIntegration is true.
    * @param institutionCode institution code.
    * @returns integration location.
    */
@@ -27,6 +27,7 @@ export class InstitutionLocationService {
         integrationContacts: true,
       },
       where: {
+        hasIntegration: true,
         institutionCode,
       },
     });
