@@ -10,7 +10,12 @@ export class UpdateLegacyRestrictionsImpacts1750271915888
     );
   }
 
-  public async down(): Promise<void> {
-    // No rollback needed.
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-update-legacy-restrictions-impacts.sql",
+        "Restrictions",
+      ),
+    );
   }
 }
