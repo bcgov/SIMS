@@ -41,4 +41,4 @@ jobs:
       - name: Upgrade Crunchy Postgres Version
         working-directory: "./devops/helm/crunchy-postgres/"
         run: |
-          make pg-upgrade NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} FROM_VERSION="${{ inputs.from_version }}" TO_VERSION="${{ inputs.to_version }}"
+          make pg-upgrade NAMESPACE=${NAMESPACE} FROM_VERSION="${{ inputs.from_version }}" TO_VERSION="${{ inputs.to_version }}"
