@@ -4,14 +4,7 @@ kind: PGUpgrade
 metadata:
   name: {{ .Values.pgUpgrade.name | default (printf "%s-pgupgrade-%v-to-%v" .Values.clusterName .Values.pgUpgrade.fromPostgresVersion .Values.pgUpgrade.toPostgresVersion) }}
 spec:
-  postgresClusterName: {{ .Values.clusterName }}
+  postgresClusterName: {{ .Values.fullnameOverride }}
   fromPostgresVersion: {{ .Values.pgUpgrade.fromPostgresVersion }}
   toPostgresVersion: {{ .Values.pgUpgrade.toPostgresVersion }}
-  resources:
-    limits:
-      cpu: {{ .Values.pgUpgrade.resources.limits.cpu | default "1" }}
-      memory: {{ .Values.pgUpgrade.resources.limits.memory | default "1Gi" }}
-    requests:
-      cpu: {{ .Values.pgUpgrade.resources.requests.cpu | default "500m" }}
-      memory: {{ .Values.pgUpgrade.resources.requests.memory | default "512Mi" }}
 {{- end }}

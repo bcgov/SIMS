@@ -1,5 +1,4 @@
 fullnameOverride: simsdb
-clusterName: simsdb
 appuser: app-database-user
 nonsuperuser: non-super-user
 
@@ -10,14 +9,7 @@ postgresVersion: 15
 imagePullPolicy: IfNotPresent
 
 pgUpgrade:
-  name: "" # Optional: If not specified, will be generated as "{clusterName}-pgupgrade-{fromVersion}-to-{toVersion}"
-  resources:
-    limits:
-      cpu: 1
-      memory: 1Gi
-    requests:
-      cpu: 500m
-      memory: 512Mi
+  name: "postgres-version-upgrade"
 
 # enable to bootstrap a standby cluster from backup. Then disable to promote this standby to primary
 standby:

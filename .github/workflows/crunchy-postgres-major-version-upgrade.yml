@@ -1,5 +1,7 @@
-name: Crunchy DB - Postgres Major Version Upgrade
-run-name: Crunchy DB - ${{ inputs.environment }} Crunchy DB in ${{ inputs.environment }} using ${{ github.ref_name }}
+name: Crunchy DB - Postgres Version Upgrade
+run-name: Crunchy DB - Postgres version upgrade in ${{ inputs.environment }} using ${{ github.ref_name }}
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:
@@ -12,16 +14,14 @@ on:
         description: "Source PostgreSQL version for upgrade (e.g. 15)"
         required: true
         type: string
-        default: ""
       to_version:
         description: "Target PostgreSQL version for upgrade (e.g. 17)"
         required: true
         type: string
-        default: ""
 
 jobs:
-  manageCrunchyDB:
-    name: ${{ inputs.environment }} Crunchy DB in ${{ inputs.environment }}
+  upgradePostgresVersion:
+    name: Postgres version upgrade in ${{ inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
