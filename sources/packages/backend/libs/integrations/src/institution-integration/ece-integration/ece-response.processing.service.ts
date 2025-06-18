@@ -108,7 +108,7 @@ export class ECEResponseProcessingService {
         institutionCode,
       );
 
-    // If the file does not have integration location @hasIntegration true, skip the file.
+    //If the file does not have integration location hasIntegration flag set to true, skip the file.
     if (!integrationLocation) {
       processSummary.warnings.push(
         `Integration location not found for institution code: ${institutionCode}.`,
@@ -144,15 +144,14 @@ export class ECEResponseProcessingService {
 
       this.logger.log(`Completed processing the file ${remoteFilePath}.`);
     } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          // In the event of runtime error during downloading the file or parsing the file.
-          case UNEXPECTED_ERROR_DOWNLOADING_FILE:
-          case FILE_PARSING_ERROR:
-            // Increment the file parsing error.
-            ++disbursementProcessingDetails.fileParsingErrors;
-            break;
-        }
+      if (
+        error instanceof CustomNamedError &&
+        [UNEXPECTED_ERROR_DOWNLOADING_FILE, FILE_PARSING_ERROR].includes(
+          error.name,
+        )
+      ) {
+        // In the event of runtime error during downloading the file or parsing the file.
+        ++disbursementProcessingDetails.fileParsingErrors;
       }
       this.logger.error(error);
       processSummary.errors.push(
