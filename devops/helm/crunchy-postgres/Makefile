@@ -61,13 +61,14 @@ pg-upgrade:
 	@echo "PostgreSQL cluster upgrade complete and restart initiated."
 	@echo "Disabling pgUpgrade to prevent future upgrades during helm upgrades..."
 	@helm upgrade --install $(call arguments) \
-			--set pgUpgrade.enabled=false
+		--set pgUpgrade.enabled=false \
+		--set restore.enabled=false
 	@echo "pgUpgrade.enabled has been set to false."
 
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.
-# .PHONY: uninstall
-# uninstall: helm-dep
-# 	@helm uninstall ${NAME} -n ${NAMESPACE}
+.PHONY: uninstall
+uninstall: helm-dep
+	@helm uninstall ${NAME} -n ${NAMESPACE}
 
 .PHONY: template
 template: helm-dep
