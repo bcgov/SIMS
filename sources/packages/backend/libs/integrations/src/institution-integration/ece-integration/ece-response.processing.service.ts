@@ -108,20 +108,14 @@ export class ECEResponseProcessingService {
         institutionCode,
       );
 
+    // If the file does not have integration location @hasIntegration true, skip the file.
     if (!integrationLocation) {
-      processSummary.summary.push(
+      processSummary.warnings.push(
         `Integration location not found for institution code: ${institutionCode}.`,
       );
       return processSummary;
     }
-
-    // Setting the default value to true because, in the event of error
-    // thrown from downloadResponseFile due to any data validation in the file
-    // the value of isECEResponseFileExist will remain false which will be inaccurate as the file exist
-    // and file archiving will not happen.
-    // In the event of runtime error during downloading the file, it is handled with custom error
-    // and taken care that isECEResponseFileExist is set to false when this error happens.
-    let isECEResponseFileExist = true;
+    // Start processing the file.
     processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     // Disbursement processing count.
@@ -129,15 +123,6 @@ export class ECEResponseProcessingService {
     try {
       const eceFileDetailRecords =
         await this.integrationService.downloadResponseFile(remoteFilePath);
-      isECEResponseFileExist = !!eceFileDetailRecords.length;
-      // Check if the file exist in remote server and summary info
-      // if the file is not found.
-      if (!isECEResponseFileExist) {
-        const warningMessage = `File ${remoteFilePath} not found.`;
-        processSummary.summary.push(warningMessage);
-        this.logger.log(warningMessage);
-        return processSummary;
-      }
       // Set the total records count.
       disbursementProcessingDetails.totalRecords = eceFileDetailRecords.length;
       // Sanitize all the ece response detail records.
@@ -161,13 +146,8 @@ export class ECEResponseProcessingService {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
-          // In the event of runtime error during downloading the file, it is handled with custom error
-          // and taken care that isECEResponseFileExist is set to false when this error happens.
+          // In the event of runtime error during downloading the file or parsing the file.
           case UNEXPECTED_ERROR_DOWNLOADING_FILE:
-            isECEResponseFileExist = false;
-            // Increment the file parsing error.
-            ++disbursementProcessingDetails.fileParsingErrors;
-            break;
           case FILE_PARSING_ERROR:
             // Increment the file parsing error.
             ++disbursementProcessingDetails.fileParsingErrors;
@@ -181,18 +161,16 @@ export class ECEResponseProcessingService {
       processSummary.errors.push("File processing aborted.");
     } finally {
       // Archive the ECE response file, if the file exist in remote server.
-      if (isECEResponseFileExist) {
-        await this.archiveProcessedFile(remoteFilePath, processSummary);
+      await this.archiveProcessedFile(remoteFilePath, processSummary);
 
-        // Create notification email which gets sent to
-        // the integration contacts of the institution
-        // when a ECE file exists for an institution.
-        await this.createECEResponseProcessingNotification(
-          integrationLocation,
-          disbursementProcessingDetails,
-          processSummary,
-        );
-      }
+      // Create notification email which gets sent to
+      // the integration contacts of the institution
+      // when a ECE file exists for an institution.
+      await this.createECEResponseProcessingNotification(
+        integrationLocation,
+        disbursementProcessingDetails,
+        processSummary,
+      );
     }
 
     // Populate the process summary count.
@@ -437,7 +415,7 @@ export class ECEResponseProcessingService {
   ): Promise<void> {
     try {
       // Create email notifications only if integration contacts are available.
-      if (integrationLocation.integrationContacts.length) {
+      if (integrationLocation.integrationContacts?.length) {
         const notification: ECEResponseFileProcessingNotification = {
           institutionCode: integrationLocation.institutionCode,
           integrationContacts: integrationLocation.integrationContacts,

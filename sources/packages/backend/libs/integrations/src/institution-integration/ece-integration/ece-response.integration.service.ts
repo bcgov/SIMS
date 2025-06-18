@@ -28,7 +28,7 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
   async downloadResponseFile(
     remoteFilePath: string,
   ): Promise<ECEResponseFileDetail[]> {
-    let fileLines: false | string[];
+    let fileLines: string[];
     try {
       fileLines = await this.downloadResponseFileLines(remoteFilePath);
     } catch (error: unknown) {
@@ -39,10 +39,6 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
       );
     }
 
-    // Check if the file exist in the remote server.
-    if (!fileLines) {
-      return [];
-    }
     try {
       // The file is not expected to be empty without content.
       if (!fileLines.length) {
