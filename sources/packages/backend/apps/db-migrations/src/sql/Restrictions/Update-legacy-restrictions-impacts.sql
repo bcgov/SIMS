@@ -1,12 +1,12 @@
 -- Remove the SSRN legacy map since it will become a direct map to the SIMS restriction.
 DELETE FROM
-    sims.sfas_restriction_maps sfas_restriction_map
+    sims.sfas_restriction_maps
 WHERE
-    sfas_restriction_map.code = 'LGCY_SSRN';
+    code = 'LGCY_SSRN';
 
 -- Rename the existing legacy SSRN converting it to a non-legacy restriction.
 UPDATE
-    sims.restrictions restrictions
+    sims.restrictions
 SET
     restriction_code = 'SSRN',
     description = 'Poor Scholastic Standing.',
@@ -38,13 +38,13 @@ WHERE
 INSERT INTO
     sims.sfas_restriction_maps (legacy_code, code, is_legacy_only)
 VALUES
-    ('SSR', 'LGCY_SSD', TRUE);
+    ('SSD', 'SSR', FALSE);
 
 -- Delete legacy Z1 map.
 DELETE FROM
     sims.sfas_restriction_maps
 WHERE
-    legacy_code = 'Z1';
+    code = 'LGCY_Z1';
 
 -- Delete Z1 federal restriction.
 DELETE FROM
