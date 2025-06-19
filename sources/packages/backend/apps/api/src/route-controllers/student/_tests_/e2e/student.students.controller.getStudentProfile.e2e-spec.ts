@@ -43,7 +43,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
 
-    // Mock the user name received in the token.
+    // Mock the user received in the token.
     await mockJWTUserName(appModule, student.user);
 
     // Get any student user token.
@@ -92,7 +92,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       enabledFrom: new Date(),
     });
 
-    // Mock the user name received in the token.
+    // Mock the user received in the token.
     await mockJWTUserName(appModule, student.user);
 
     // Get any student user token.
@@ -119,7 +119,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       enabledFrom: addDays(1),
     });
 
-    // Mock the user name received in the token.
+    // Mock the user received in the token.
     await mockJWTUserName(appModule, student.user);
 
     // Get any student user token.
@@ -142,7 +142,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     allowBetaUsersOnly(true);
     const student = await saveFakeStudent(db.dataSource);
 
-    // Mock the user name received in the token.
+    // Mock the user received in the token.
     await mockJWTUserName(appModule, student.user);
 
     // Get any student user token.

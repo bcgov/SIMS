@@ -66,7 +66,7 @@ describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
 
-    // Mock the user name received in the token.
+    // Mock the user received in the token.
     await mockJWTUserName(appModule, student.user);
 
     // Act/Assert
@@ -93,7 +93,7 @@ describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
 
-    // Mock the user name received in the token.
+    // Mock the user received in the token.
     await mockJWTUserName(appModule, student.user);
 
     // Act/Assert
