@@ -56,19 +56,20 @@ pg-upgrade:
 	@echo "PostgreSQL upgrade from ${FROM_VERSION} to ${TO_VERSION} completed successfully!"
 	@echo "Removing the upgrade annotation from the PostgreSQL cluster..."
 	@oc -n ${NAMESPACE} annotate postgrescluster simsdb postgres-operator.crunchydata.com/allow-upgrade- --overwrite
-	@echo "Starting the PostgreSQL cluster..."
-	@oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p "{\"spec\":{\"postgresVersion\":${TO_VERSION}, \"shutdown\":false}}"
-	@echo "PostgreSQL cluster upgrade complete and restart initiated."
 	@echo "Disabling pgUpgrade to prevent future upgrades during helm upgrades..."
 	@helm upgrade --install $(call arguments) \
 		--set pgUpgrade.enabled=false \
-		--set restore.enabled=false
+		--set restore.enabled=false \
+		--set postgresVersion="${TO_VERSION}"
 	@echo "pgUpgrade.enabled has been set to false."
+	@echo "Starting the PostgreSQL cluster..."
+	@oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p "{\"spec\":{\"postgresVersion\":${TO_VERSION}, \"shutdown\":false}}"
+	@echo "PostgreSQL cluster upgrade complete and restart initiated."
 
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.
-.PHONY: uninstall
-uninstall: helm-dep
-	@helm uninstall ${NAME} -n ${NAMESPACE}
+# .PHONY: uninstall
+# uninstall: helm-dep
+# 	@helm uninstall ${NAME} -n ${NAMESPACE}
 
 .PHONY: template
 template: helm-dep
