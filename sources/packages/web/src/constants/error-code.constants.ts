@@ -117,11 +117,6 @@ export const FILE_HAS_NOT_BEEN_SCANNED_YET = "FILE_HAS_NOT_BEEN_SCANNED_YET";
 export const VIRUS_DETECTED = "VIRUS_DETECTED";
 
 /**
- * Invalid beta user.
- */
-export const INVALID_BETA_USER = "INVALID_BETA_USER";
-
-/**
  * Bypass for student restriction already exists.
  */
 export const ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS =

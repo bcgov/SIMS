@@ -9,6 +9,7 @@ export const mutations: MutationTree<StudentState> = {
     state.sinValidStatus = formatters.parseSINValidStatus(student.validSin);
     state.firstName = student.firstName;
     state.fullName = student.fullName;
+    state.hasFulltimeAccess = student.hasFulltimeAccess ?? false;
   },
 
   setHasStudentAccount(state: StudentState, hasStudentAccount: boolean) {

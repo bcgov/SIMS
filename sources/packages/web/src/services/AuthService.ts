@@ -20,7 +20,7 @@ import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
 import { useStudentStore, useInstitutionState, useAuth } from "@/composables";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
-import { INVALID_BETA_USER, MISSING_STUDENT_ACCOUNT } from "@/constants";
+import { MISSING_STUDENT_ACCOUNT } from "@/constants";
 import { StudentAccountApplicationService } from "./StudentAccountApplicationService";
 import ApiClient from "@/services/http/ApiClient";
 import { AuditEvent } from "@/types/contracts/AuditEnum";
@@ -169,36 +169,29 @@ export class AuthService {
       await studentStore.setHasStudentAccount(true);
       await studentStore.updateProfileData();
     } catch (error: unknown) {
-      if (error instanceof ApiProcessError) {
-        switch (error.errorType) {
-          case INVALID_BETA_USER:
-            await this.logout(ClientIdType.Student, {
-              invalidBetaUser: true,
-            });
-            return;
-          case MISSING_STUDENT_ACCOUNT:
-            if (
-              this.userToken?.identityProvider === IdentityProviders.BCeIDBoth
-            ) {
-              const hasPendingAccountApplication =
-                await StudentAccountApplicationService.shared.hasPendingAccountApplication();
-              if (hasPendingAccountApplication) {
-                // The BCeID student account application is in progress.
-                // The student must be redirected to the below page and
-                // have access only to the below page.
-                this.priorityRedirect = {
-                  name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
-                };
-                return;
-              }
-            }
-            // If the student is not present, redirect to
-            // student profile for account creation.
+      if (
+        error instanceof ApiProcessError &&
+        error.errorType === MISSING_STUDENT_ACCOUNT
+      ) {
+        if (this.userToken?.identityProvider === IdentityProviders.BCeIDBoth) {
+          const hasPendingAccountApplication =
+            await StudentAccountApplicationService.shared.hasPendingAccountApplication();
+          if (hasPendingAccountApplication) {
+            // The BCeID student account application is in progress.
+            // The student must be redirected to the below page and
+            // have access only to the below page.
             this.priorityRedirect = {
-              name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
+              name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
             };
             return;
+          }
         }
+        // If the student is not present, redirect to
+        // student profile for account creation.
+        this.priorityRedirect = {
+          name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
+        };
+        return;
       }
       throw error;
     }
@@ -276,7 +269,6 @@ export class AuthService {
       isUserDisabled?: boolean;
       isUnknownUser?: boolean;
       notAllowedUser?: boolean;
-      invalidBetaUser?: boolean;
     },
   ): Promise<void> {
     // Remove event listener to not log on redirecting to the login page.
@@ -317,15 +309,6 @@ export class AuthService {
         break;
       }
       case ClientIdType.Student: {
-        if (options?.invalidBetaUser) {
-          // Send the user to login page with invalid beta user message instead of dashboard.
-          this.priorityRedirect = {
-            name: StudentRoutesConst.INVALID_BETA_USER,
-          };
-          // Allow the application detect it is not an authenticated user and redirect user to login page.
-          this.keycloak.authenticated = false;
-          redirectUri += "/login/invalid-beta-user";
-        }
         // BCeIDBoth user.
         if (this.userToken?.identityProvider === IdentityProviders.BCeIDBoth) {
           await this.executeSiteminderLogoff(redirectUri);

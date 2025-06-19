@@ -76,7 +76,13 @@
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
-import { useSnackBar, useRules, ModalDialog, useOffering } from "@/composables";
+import {
+  useSnackBar,
+  useRules,
+  ModalDialog,
+  useOffering,
+  useStudentStore,
+} from "@/composables";
 import { useRouter } from "vue-router";
 import {
   VForm,
@@ -98,6 +104,7 @@ import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigura
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
   setup() {
+    const { hasFulltimeAccess } = useStudentStore();
     const initialData = ref({});
     const router = useRouter();
     const snackBar = useSnackBar();
@@ -112,7 +119,10 @@ export default defineComponent({
 
     onMounted(async () => {
       const { isFulltimeAllowed } = await AppConfigService.shared.config();
-      const intensities = mapOfferingIntensities(isFulltimeAllowed);
+      const intensities = mapOfferingIntensities(
+        isFulltimeAllowed,
+        hasFulltimeAccess.value,
+      );
       offeringIntensityOptions.value = Object.keys(intensities).map((key) => ({
         title: intensities[key],
         value: key,

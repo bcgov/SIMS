@@ -384,7 +384,6 @@ export class ApplicationStudentsController extends BaseController {
     @Body() payload: CreateApplicationAPIInDTO,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     const programYear = await this.programYearService.getActiveProgramYear(
       payload.programYearId,
     );
@@ -395,11 +394,13 @@ export class ApplicationStudentsController extends BaseController {
     }
     // The check to validate the value of offeringIntensity can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
     // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
-    if (
-      !isFulltimeAllowed &&
-      payload.offeringIntensity === OfferingIntensity.fullTime
-    ) {
-      throw new UnprocessableEntityException("Invalid offering intensity.");
+    if (payload.offeringIntensity === OfferingIntensity.fullTime) {
+      // Checking executed based on the token information since only BCSC users are expected to have
+      // beta full-time access and the token information and DB will be in sync.
+      await this.applicationControllerService.validateFullTimeAccess(
+        studentToken.lastName,
+        studentToken.givenNames,
+      );
     }
     try {
       const draftApplication =

@@ -200,11 +200,6 @@ export const VIRUS_DETECTED = "VIRUS_DETECTED";
 export const FILE_SAVE_ERROR = "FILE_SAVE_ERROR";
 
 /**
- * Beta user is invalid.
- */
-export const INVALID_BETA_USER = "INVALID_BETA_USER";
-
-/**
  * Bypass for student restriction already exists.
  */
 export const ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS =

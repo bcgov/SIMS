@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { PassportStrategy } from "@nestjs/passport";
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   IInstitutionUserToken,
   StudentUserToken,
@@ -11,8 +11,6 @@ import { InstitutionUserAuthService, UserService } from "../services";
 import { AuthorizedParties } from "./authorized-parties.enum";
 import { KeycloakConfig } from "@sims/auth/config";
 import { ConfigService } from "@sims/utilities/config";
-import { INVALID_BETA_USER } from "../constants";
-import { ApiProcessError } from "../types";
 import { Audiences } from "./audiences.enum";
 
 /**
@@ -73,27 +71,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         );
       }
     }
-
     // If the token represents a student, associate the student specific data
     // and return the student token specific object.
     if (userToken.azp === AuthorizedParties.student) {
-      //Beta user check.
-      if (this.configService.allowBetaUsersOnly) {
-        const isBetaUserAuthorized =
-          await this.userService.isBetaUserAuthorized(
-            userToken.givenNames,
-            userToken.lastName,
-          );
-        if (!isBetaUserAuthorized) {
-          throw new UnauthorizedException(
-            new ApiProcessError(
-              "The student is not registered as a beta user.",
-              INVALID_BETA_USER,
-            ),
-          );
-        }
-      }
-
       const studentUserToken = userToken as StudentUserToken;
       studentUserToken.studentId = dbUser?.studentId;
       return studentUserToken;

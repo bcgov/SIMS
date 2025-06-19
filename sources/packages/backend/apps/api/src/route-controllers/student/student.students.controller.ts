@@ -36,6 +36,7 @@ import {
   FormService,
   StudentFileService,
   StudentService,
+  UserService,
 } from "../../services";
 import { NotificationActionsService } from "@sims/services/notifications";
 import BaseController from "../BaseController";
@@ -90,6 +91,7 @@ export class StudentStudentsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly studentService: StudentService,
     private readonly formService: FormService,
+    private readonly userService: UserService,
   ) {
     super();
   }
@@ -397,8 +399,16 @@ export class StudentStudentsController extends BaseController {
   async getStudentProfile(
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<StudentProfileAPIOutDTO> {
-    return this.studentControllerService.getStudentProfile(
-      studentUserToken.studentId,
-    );
+    const studentProfile =
+      await this.studentControllerService.getStudentProfile(
+        studentUserToken.studentId,
+      );
+    // Set the temporary property to indicate if the user can access full-time applications.
+    studentProfile.hasFulltimeAccess =
+      await this.userService.isUserAuthorizedForFulltime(
+        studentProfile.lastName,
+        studentProfile.firstName,
+      );
+    return studentProfile;
   }
 }

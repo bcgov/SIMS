@@ -7,7 +7,8 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  mockUserLoginInfo,
+  mockJWTUserInfo,
+  resetMockJWTUserInfo,
 } from "../../../testHelpers";
 import {
   createE2EDataSources,
@@ -21,11 +22,13 @@ import {
   RestrictionCode,
 } from "@sims/test-utils";
 import {
+  Application,
   ApplicationData,
   ApplicationStatus,
   EducationProgramOffering,
   OfferingIntensity,
   ProgramYear,
+  Student,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { SaveApplicationAPIInDTO } from "../models/application.dto";
@@ -33,6 +36,7 @@ import { FormNames, FormService } from "../../../services";
 import { AppStudentsModule } from "../../../app.students.module";
 import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
+import { ConfigService } from "@sims/utilities/config";
 
 describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let app: INestApplication;
@@ -41,6 +45,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let db: E2EDataSources;
   let formService: FormService;
   let recentActiveProgramYear: ProgramYear;
+  let configService: ConfigService;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -49,6 +54,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     appModule = module;
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
+    configService = appModule.get(ConfigService);
     // Program Year for the following tests.
     formService = await getProviderInstanceForModule(
       appModule,
@@ -62,6 +68,11 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     });
     // To check the study dates overlap error, the BYPASS_APPLICATION_SUBMIT_VALIDATIONS needs to be set false.
     process.env.BYPASS_APPLICATION_SUBMIT_VALIDATIONS = "false";
+  });
+
+  beforeEach(() => {
+    resetMockJWTUserInfo(appModule);
+    allowBetaUsersOnly(false);
   });
 
   it("Should throw study dates overlap error when an application submitted for a student via the SIMS system has overlapping study start or study end dates with another application.", async () => {
@@ -142,7 +153,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -234,7 +247,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -318,7 +333,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -409,7 +426,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -499,7 +518,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         data: { data: applicationData },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
-      await mockUserLoginInfo(appModule, student);
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, student.user);
+
       // Act/Assert
       await request(app.getHttpServer())
         .patch(endpoint)
@@ -590,7 +611,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         data: { data: applicationData },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
-      await mockUserLoginInfo(appModule, student);
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, student.user);
+
       // Act/Assert
       await request(app.getHttpServer())
         .patch(endpoint)
@@ -654,7 +677,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -719,7 +744,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         data: { data: applicationData },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
-      await mockUserLoginInfo(appModule, student);
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, student.user);
+
       // Act
       await request(app.getHttpServer())
         .patch(endpoint)
@@ -798,7 +825,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         data: { data: applicationData },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
-      await mockUserLoginInfo(appModule, student);
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, student.user);
 
       // Act
       await request(app.getHttpServer())
@@ -880,7 +908,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         data: { data: applicationData },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
-      await mockUserLoginInfo(appModule, student);
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, student.user);
 
       // Act
       await request(app.getHttpServer())
@@ -911,6 +940,127 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       ).toBe(true);
     },
   );
+
+  it("Should submit a full-time application when the student is configured as a beta user.", async () => {
+    // Arrange
+    allowBetaUsersOnly(true);
+    const { student, draftApplication, payload } =
+      await saveApplicationDraftReadyForSubmission();
+    // Register the student as a beta user for full-time.
+    await db.betaUsersAuthorizations.save({
+      givenNames: student.user.firstName,
+      lastName: student.user.lastName,
+      enabledFrom: new Date(),
+    });
+    const endpoint = `/students/application/${draftApplication.id}/submit`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.Application,
+      data: { data: payload.data },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+  });
+
+  it("Should throw a forbidden error when a full-time application is submitted and the user is not a beta user.", async () => {
+    // Arrange
+    allowBetaUsersOnly(true);
+    const { student, draftApplication, payload } =
+      await saveApplicationDraftReadyForSubmission();
+    const endpoint = `/students/application/${draftApplication.id}/submit`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.Application,
+      data: { data: payload.data },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message: "User is not allowed to submit a full-time application.",
+        error: "Forbidden",
+        statusCode: HttpStatus.FORBIDDEN,
+      });
+  });
+
+  /**
+   * Save a draft application ready for submission.
+   * @returns the student, draft application, and payload.
+   */
+  async function saveApplicationDraftReadyForSubmission(): Promise<{
+    student: Student;
+    draftApplication: Application;
+    payload: SaveApplicationAPIInDTO;
+  }> {
+    // Create a student and a draft application.
+    const student = await saveFakeStudent(db.dataSource);
+    const draftApplication = await saveFakeApplication(
+      db.dataSource,
+      { student, programYear: recentActiveProgramYear },
+      {
+        applicationData: {} as ApplicationData,
+        applicationStatus: ApplicationStatus.Draft,
+        offeringIntensity: OfferingIntensity.fullTime,
+      },
+    );
+    // Create an offering.
+    const selectedOffering = await db.educationProgramOffering.save(
+      createFakeEducationProgramOffering({
+        auditUser: student.user,
+        institutionLocation: draftApplication.location,
+      }),
+    );
+    const selectedProgram = selectedOffering.educationProgram;
+    const applicationData = {
+      selectedOfferingDate: selectedOffering.studyStartDate,
+      selectedOfferingEndDate: selectedOffering.studyEndDate,
+      selectedProgram: selectedProgram.id,
+      selectedOffering: selectedOffering.id,
+      selectedLocation: selectedOffering.institutionLocation.id,
+    };
+    const payload = {
+      associatedFiles: [],
+      data: applicationData,
+      programYearId: recentActiveProgramYear.id,
+    } as SaveApplicationAPIInDTO;
+    return {
+      student,
+      draftApplication,
+      payload,
+    };
+  }
+
+  /**
+   * Mock the allowBetaUsersOnly config value to allow changing the behavior
+   * of the beta users authorization between tests.
+   * @param allow true to allow beta users only, false to allow all users.
+   */
+  function allowBetaUsersOnly(allow: boolean): void {
+    jest
+      .spyOn(configService, "allowBetaUsersOnly", "get")
+      .mockReturnValue(allow);
+  }
 
   afterAll(async () => {
     await app?.close();

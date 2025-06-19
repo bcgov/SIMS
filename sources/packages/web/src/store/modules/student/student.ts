@@ -17,6 +17,7 @@ export class StudentState {
   restrictions: StudentRestriction[] = [];
   firstName = "";
   fullName = "";
+  hasFulltimeAccess: boolean;
 }
 
 const state: StudentState = {
@@ -25,6 +26,7 @@ const state: StudentState = {
   restrictions: [],
   firstName: "",
   fullName: "",
+  hasFulltimeAccess: false,
 };
 
 const namespaced = true;

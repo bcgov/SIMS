@@ -17,6 +17,7 @@ import {
   SupportingUserService,
   FormService,
   DynamicFormConfigurationService,
+  UserService,
 } from "../../services";
 import {
   ApplicationFormData,
@@ -94,6 +95,7 @@ export class ApplicationControllerService {
     private readonly formService: FormService,
     private readonly configService: ConfigService,
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -955,14 +957,12 @@ export class ApplicationControllerService {
     options?: { isChangeRequestSubmission?: boolean },
   ): Promise<void> {
     const offeringIntensity = application.offeringIntensity;
-    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
-    if (
-      !isFulltimeAllowed &&
-      offeringIntensity === OfferingIntensity.fullTime
-    ) {
-      throw new UnprocessableEntityException("Invalid offering intensity.");
+    if (offeringIntensity === OfferingIntensity.fullTime) {
+      await this.validateFullTimeAccess(
+        application.student.user.lastName,
+        application.student.user.firstName,
+      );
     }
-
     // For program years still relying on the form.io variable howWillYouBeAttendingTheProgram
     // to determine the offering intensity, we need to set the value in the payload
     // to the offering intensity value from the database.
@@ -984,12 +984,6 @@ export class ApplicationControllerService {
         throw new UnprocessableEntityException(
           "Selected offering id is invalid.",
         );
-      }
-      if (
-        !isFulltimeAllowed &&
-        offering.offeringIntensity === OfferingIntensity.fullTime
-      ) {
-        throw new UnprocessableEntityException("Invalid offering intensity.");
       }
       if (!offering.educationProgram.isActive) {
         throw new UnprocessableEntityException(
@@ -1021,6 +1015,30 @@ export class ApplicationControllerService {
     // Inject the indicator for change request submission.
     payload.data.isChangeRequestApplication =
       options?.isChangeRequestSubmission ?? false;
+  }
+
+  /**
+   * Execute the temporary validation for full-time draft or application to be saved.
+   * @param lastName students' last name.
+   * @param firstName students' first name.
+   * @throws {UnprocessableEntityException} if full-time submission is not allowed.
+   * @throws {ForbiddenException} if the user is not authorized to submit a full-time application.
+   */
+  async validateFullTimeAccess(
+    lastName: string,
+    firstName?: string,
+  ): Promise<void> {
+    const isFulltimeAllowed = this.configService.isFulltimeAllowed;
+    if (!isFulltimeAllowed) {
+      throw new UnprocessableEntityException("Invalid offering intensity.");
+    }
+    const hasFulltimeAccess =
+      await this.userService.isUserAuthorizedForFulltime(lastName, firstName);
+    if (!hasFulltimeAccess) {
+      throw new ForbiddenException(
+        "User is not allowed to submit a full-time application.",
+      );
+    }
   }
 
   /**
