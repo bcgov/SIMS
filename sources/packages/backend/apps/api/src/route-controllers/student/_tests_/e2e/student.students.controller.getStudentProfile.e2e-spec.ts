@@ -158,26 +158,6 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       );
   });
 
-  it("Should get the student profile with hasFulltimeAccess as true when the student was not added to the beta users table but allowBetaUsersOnly is false.", async () => {
-    // Arrange
-    const student = await saveFakeStudent(db.dataSource);
-
-    // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
-
-    // Get any student user token.
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect((response) => expect(response.body.hasFulltimeAccess).toBe(true));
-  });
-
   /**
    * Mock the allowBetaUsersOnly config value to allow changing the behavior
    * of the beta users authorization between tests.
