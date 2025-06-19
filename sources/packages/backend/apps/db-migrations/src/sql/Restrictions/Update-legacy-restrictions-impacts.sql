@@ -9,7 +9,7 @@ UPDATE
     sims.restrictions restrictions
 SET
     restriction_code = 'SSRN',
-    description = 'Poor Scholastic Standing',
+    description = 'Poor Scholastic Standing.',
     is_legacy = false,
     action_type = ARRAY ['Stop full time disbursement', 'Stop full time apply'] :: sims.restriction_action_types []
 WHERE
