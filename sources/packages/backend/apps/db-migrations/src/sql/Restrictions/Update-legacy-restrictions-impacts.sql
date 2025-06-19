@@ -9,6 +9,7 @@ UPDATE
     sims.restrictions restrictions
 SET
     restriction_code = 'SSRN',
+    description = 'Poor Scholastic Standing',
     is_legacy = false,
     action_type = ARRAY ['Stop full time disbursement', 'Stop full time apply'] :: sims.restriction_action_types []
 WHERE
@@ -31,7 +32,7 @@ VALUES
 DELETE FROM
     sims.sfas_restriction_maps
 WHERE
-    code = 'Z1';
+    legacy_code = 'Z1';
 
 -- Delete Z1 federal restriction.
 DELETE FROM
@@ -46,6 +47,7 @@ UPDATE
 SET
     restriction_code = 'Z1',
     is_legacy = false,
+    description = 'Grant overaward. Not eligible for BCSL. Eligible for CSL.',
     action_type = ARRAY ['Stop full time BC funding'] :: sims.restriction_action_types []
 WHERE
     restriction_code = 'LGCY_Z1'
