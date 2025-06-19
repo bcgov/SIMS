@@ -5,7 +5,8 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  mockUserLoginInfo,
+  mockJWTUserName,
+  resetMockJWTUserName,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -34,6 +35,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
   });
 
   beforeEach(() => {
+    resetMockJWTUserName(appModule);
     allowBetaUsersOnly(false);
   });
 
@@ -41,8 +43,8 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
 
-    // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user name received in the token.
+    await mockJWTUserName(appModule, student.user);
 
     // Get any student user token.
     const studentToken = await getStudentToken(
@@ -90,8 +92,8 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       enabledFrom: new Date(),
     });
 
-    // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user name received in the token.
+    await mockJWTUserName(appModule, student.user);
 
     // Get any student user token.
     const studentToken = await getStudentToken(
@@ -117,8 +119,8 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       enabledFrom: addDays(1),
     });
 
-    // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user name received in the token.
+    await mockJWTUserName(appModule, student.user);
 
     // Get any student user token.
     const studentToken = await getStudentToken(
@@ -140,8 +142,8 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     allowBetaUsersOnly(true);
     const student = await saveFakeStudent(db.dataSource);
 
-    // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user name received in the token.
+    await mockJWTUserName(appModule, student.user);
 
     // Get any student user token.
     const studentToken = await getStudentToken(

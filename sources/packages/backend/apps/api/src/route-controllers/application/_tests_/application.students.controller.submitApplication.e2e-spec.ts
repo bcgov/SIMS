@@ -7,7 +7,8 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  mockUserLoginInfo,
+  mockJWTUserName,
+  resetMockJWTUserName,
 } from "../../../testHelpers";
 import {
   createE2EDataSources,
@@ -70,6 +71,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   });
 
   beforeEach(() => {
+    resetMockJWTUserName(appModule);
     allowBetaUsersOnly(false);
   });
 
@@ -151,7 +153,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user name received in the token.
+    await mockJWTUserName(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -243,7 +247,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user name received in the token.
+    await mockJWTUserName(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -327,7 +333,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user name received in the token.
+    await mockJWTUserName(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -418,7 +426,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user name received in the token.
+    await mockJWTUserName(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -508,7 +518,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         data: { data: applicationData },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
-      await mockUserLoginInfo(appModule, student);
+      // Mock the user name received in the token.
+      await mockJWTUserName(appModule, student.user);
+
       // Act/Assert
       await request(app.getHttpServer())
         .patch(endpoint)
@@ -599,7 +611,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         data: { data: applicationData },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
-      await mockUserLoginInfo(appModule, student);
+      // Mock the user name received in the token.
+      await mockJWTUserName(appModule, student.user);
+
       // Act/Assert
       await request(app.getHttpServer())
         .patch(endpoint)
@@ -663,7 +677,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: applicationData },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user name received in the token.
+    await mockJWTUserName(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -728,7 +744,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         data: { data: applicationData },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
-      await mockUserLoginInfo(appModule, student);
+      // Mock the user name received in the token.
+      await mockJWTUserName(appModule, student.user);
+
       // Act
       await request(app.getHttpServer())
         .patch(endpoint)
@@ -807,7 +825,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         data: { data: applicationData },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
-      await mockUserLoginInfo(appModule, student);
+      // Mock the user name received in the token.
+      await mockJWTUserName(appModule, student.user);
 
       // Act
       await request(app.getHttpServer())
@@ -889,7 +908,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         data: { data: applicationData },
       });
       formService.dryRunSubmission = dryRunSubmissionMock;
-      await mockUserLoginInfo(appModule, student);
+      // Mock the user name received in the token.
+      await mockJWTUserName(appModule, student.user);
 
       // Act
       await request(app.getHttpServer())
@@ -942,7 +962,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: payload.data },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user name received in the token.
+    await mockJWTUserName(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
@@ -966,7 +988,9 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       data: { data: payload.data },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user name received in the token.
+    await mockJWTUserName(appModule, student.user);
+
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)

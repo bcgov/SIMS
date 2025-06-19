@@ -958,7 +958,7 @@ export class ApplicationControllerService {
   ): Promise<void> {
     const offeringIntensity = application.offeringIntensity;
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      await this.validateFullTimeSubmission(
+      await this.validateFullTimeAccess(
         application.student.user.lastName,
         application.student.user.firstName,
       );
@@ -1018,13 +1018,13 @@ export class ApplicationControllerService {
   }
 
   /**
-   * Execute the temporary validation for full-time submission.
+   * Execute the temporary validation for full-time draft or application to be saved.
    * @param lastName students' last name.
    * @param firstName students' first name.
    * @throws {UnprocessableEntityException} if full-time submission is not allowed.
    * @throws {ForbiddenException} if the user is not authorized to submit a full-time application.
    */
-  private async validateFullTimeSubmission(
+  async validateFullTimeAccess(
     lastName: string,
     firstName?: string,
   ): Promise<void> {
@@ -1033,7 +1033,7 @@ export class ApplicationControllerService {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
     const hasFulltimeAccess =
-      await this.userService.isUserAuthorizedForFulltime(firstName, lastName);
+      await this.userService.isUserAuthorizedForFulltime(lastName, firstName);
     if (!hasFulltimeAccess) {
       throw new ForbiddenException(
         "User is not allowed to submit a full-time application.",

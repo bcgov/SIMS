@@ -1,13 +1,18 @@
 import { TestingModule } from "@nestjs/testing";
-import { IdentityProviders, Student } from "@sims/sims-db";
+import { IdentityProviders, Student, User } from "@sims/sims-db";
 import { getProviderInstanceForModule } from "@sims/test-utils";
 import { AuthModule } from "../../auth/auth.module";
 import { UserService } from "../../services";
+import { JwtStrategy } from "../../auth/jwt.strategy";
+import { IUserToken } from "../../auth";
 
 /**
  * Mocks user log info from student service to return the passed student.
  * @param testingModule nest testing module.
  * @param student a persisted student object.
+ * @deprecated use the method {@link mockUserLoginInfo} instead, which mocks only
+ * the userName in the JWT token to allow the user to be retrieved from the DB
+ * during the validation of the JWT token.
  */
 export async function mockUserLoginInfo(
   testingModule: TestingModule,
@@ -29,6 +34,33 @@ export async function mockUserLoginInfo(
 }
 
 /**
+ * Mocks the user login info, replacing the user name by a mocked one, to allow
+ * it to be retrieved from the DB during the validation of the JWT token.
+ * @param testingModule nest testing module.
+ * @param user mocked user.
+ */
+export async function mockJWTUserName(
+  testingModule: TestingModule,
+  user: User,
+): Promise<jest.SpyInstance> {
+  const jwtStrategy = await getProviderInstanceForModule(
+    testingModule,
+    AuthModule,
+    JwtStrategy,
+  );
+  // Keep the original validate method to call it after modifying the payload.
+  const originalValidate = jwtStrategy.validate.bind(jwtStrategy);
+  return jest
+    .spyOn(jwtStrategy, "validate")
+    .mockImplementation((payload: IUserToken) => {
+      payload.userName = user.userName;
+      payload.lastName = user.lastName;
+      payload.givenNames = user.firstName;
+      return originalValidate(payload);
+    });
+}
+
+/**
  * Resets the user login info mock.
  * This could used to reset the mock after each test.
  * @param testingModule testing module.
@@ -40,4 +72,18 @@ export async function resetMockUserLoginInfo(testingModule: TestingModule) {
     UserService,
   );
   jest.spyOn(userService, "getUserLoginInfo").mockRestore();
+}
+
+/**
+ * Resets the JWT user name mock.
+ * This could used to reset the mock after each test.
+ * @param testingModule testing module.
+ */
+export async function resetMockJWTUserName(testingModule: TestingModule) {
+  const jwtStrategy = await getProviderInstanceForModule(
+    testingModule,
+    AuthModule,
+    JwtStrategy,
+  );
+  jest.spyOn(jwtStrategy, "validate").mockRestore();
 }
