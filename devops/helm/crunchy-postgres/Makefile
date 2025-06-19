@@ -32,11 +32,44 @@ upgrade: helm-dep
 		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED}; \
 	fi
 
+.PHONY: pg-upgrade
+pg-upgrade:
+	@echo "Initiating PostgreSQL upgrade from ${FROM_VERSION} to ${TO_VERSION}..."
+	@helm upgrade --install $(call arguments) \
+		--set pgUpgrade.fromPostgresVersion="${FROM_VERSION}" \
+		--set pgUpgrade.toPostgresVersion="${TO_VERSION}" \
+		--set pgUpgrade.enabled=true \
+		--set restore.enabled=false
+	@oc -n ${NAMESPACE} annotate postgrescluster simsdb postgres-operator.crunchydata.com/allow-upgrade="postgres-version-upgrade"
+	@echo "Upgrade submitted. Monitor the upgrade progress with:"
+	@echo "@oc get pgupgrade -n ${NAMESPACE}"
+	@echo "@oc describe pgupgrade postgres-version-upgrade -n ${NAMESPACE}"
+	@echo "Waiting for PGClusterNotShutdown status..."
+	@oc -n ${NAMESPACE} wait pgupgrade/postgres-version-upgrade --for=condition=Progressing=false -n ${NAMESPACE} --timeout=300s
+	@echo "Shutting down PostgreSQL cluster for upgrade..."
+	@oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p '{"spec":{"shutdown":true}}'
+	@echo "Waiting for upgrade to progress..."
+	@oc -n ${NAMESPACE} wait pgupgrade/postgres-version-upgrade --for=condition=Progressing=true -n ${NAMESPACE} --timeout=1800s
+	@echo "PostgreSQL upgrade is now in progress..."
+	@echo "Waiting for PostgreSQL upgrade to complete..."
+	@oc -n ${NAMESPACE} wait pgupgrade/postgres-version-upgrade --for=condition=Succeeded=true -n ${NAMESPACE} --timeout=1800s
+	@echo "PostgreSQL upgrade from ${FROM_VERSION} to ${TO_VERSION} completed successfully!"
+	@echo "Removing the upgrade annotation from the PostgreSQL cluster..."
+	@oc -n ${NAMESPACE} annotate postgrescluster simsdb postgres-operator.crunchydata.com/allow-upgrade- --overwrite
+	@echo "Disabling pgUpgrade to prevent future upgrades during helm upgrades..."
+	@helm upgrade --install $(call arguments) \
+		--set pgUpgrade.enabled=false \
+		--set restore.enabled=false \
+		--set postgresVersion="${TO_VERSION}"
+	@echo "pgUpgrade.enabled has been set to false."
+	@echo "Starting the PostgreSQL cluster..."
+	@oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p "{\"spec\":{\"postgresVersion\":${TO_VERSION}, \"shutdown\":false}}"
+	@echo "PostgreSQL cluster upgrade complete and restart initiated."
+
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.
-#.PHONY: uninstall
-#uninstall: helm-dep
-#uninstall:
-#	@helm uninstall ${NAME} . -n ${NAMESPACE}
+# .PHONY: uninstall
+# uninstall: helm-dep
+# 	@helm uninstall ${NAME} -n ${NAMESPACE}
 
 .PHONY: template
 template: helm-dep

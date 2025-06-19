@@ -8,6 +8,9 @@ postgresVersion: 15
 #postGISVersion: '3.3' # use this version of POSTGIS. both crunchyImage and this property needs to have valid values for POSTGIS to be enabled.
 imagePullPolicy: IfNotPresent
 
+pgUpgrade:
+  name: "postgres-version-upgrade"
+
 # enable to bootstrap a standby cluster from backup. Then disable to promote this standby to primary
 standby:
   enabled: false

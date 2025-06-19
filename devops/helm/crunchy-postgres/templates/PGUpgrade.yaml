@@ -1,0 +1,10 @@
+{{- if .Values.pgUpgrade.enabled }}
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PGUpgrade
+metadata:
+  name: {{ .Values.pgUpgrade.name | default (printf "%s-pgupgrade-%v-to-%v" .Values.clusterName .Values.pgUpgrade.fromPostgresVersion .Values.pgUpgrade.toPostgresVersion) }}
+spec:
+  postgresClusterName: {{ .Values.fullnameOverride }}
+  fromPostgresVersion: {{ .Values.pgUpgrade.fromPostgresVersion }}
+  toPostgresVersion: {{ .Values.pgUpgrade.toPostgresVersion }}
+{{- end }}
