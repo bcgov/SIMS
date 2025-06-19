@@ -1,7 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
-import { DataSource } from "typeorm";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -13,21 +12,16 @@ import {
 import {
   createE2EDataSources,
   E2EDataSources,
-  getProviderInstanceForModule,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { OfferingIntensity, ProgramYear } from "@sims/sims-db";
-import { FormService } from "../../../services";
-import { AppStudentsModule } from "../../../app.students.module";
 import { ConfigService } from "@sims/utilities/config";
-import { CreateApplicationAPIInDTO } from "apps/api/src/route-controllers/application/models/application.dto";
+import { CreateApplicationAPIInDTO } from "../../../route-controllers/application/models/application.dto";
 
 describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
   let app: INestApplication;
   let appModule: TestingModule;
-  let appDataSource: DataSource;
   let db: E2EDataSources;
-  let formService: FormService;
   let recentActiveProgramYear: ProgramYear;
   let configService: ConfigService;
 
@@ -36,15 +30,9 @@ describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
       await createTestingAppModule();
     app = nestApplication;
     appModule = module;
-    appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
     configService = appModule.get(ConfigService);
     // Program Year for the following tests.
-    formService = await getProviderInstanceForModule(
-      appModule,
-      AppStudentsModule,
-      FormService,
-    );
     recentActiveProgramYear = await db.programYear.findOne({
       select: { id: true, startDate: true, endDate: true },
       where: { active: true },
