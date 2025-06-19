@@ -135,7 +135,6 @@
 import { defineComponent } from "vue";
 import { useAuth } from "@/composables";
 import { IdentityProviders, ClientIdType } from "@/types";
-import { BannerTypes } from "@/types/contracts/Banner";
 import { AuditService } from "@/services/AuditService";
 
 export default defineComponent({
@@ -145,7 +144,7 @@ export default defineComponent({
       AuditService.userLoginTriggered();
       await executeLogin(ClientIdType.Student, idp);
     };
-    return { IdentityProviders, login, BannerTypes };
+    return { IdentityProviders, login };
   },
 });
 </script>
