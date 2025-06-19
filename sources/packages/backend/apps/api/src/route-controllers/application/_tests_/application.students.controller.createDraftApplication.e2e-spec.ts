@@ -6,8 +6,8 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  mockJWTUserName,
-  resetMockJWTUserName,
+  mockJWTUserInfo,
+  resetMockJWTUserInfo,
 } from "../../../testHelpers";
 import {
   createE2EDataSources,
@@ -41,7 +41,7 @@ describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
   });
 
   beforeEach(() => {
-    resetMockJWTUserName(appModule);
+    resetMockJWTUserInfo(appModule);
     allowBetaUsersOnly(false);
   });
 
@@ -67,7 +67,7 @@ describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
     );
 
     // Mock the user received in the token.
-    await mockJWTUserName(appModule, student.user);
+    await mockJWTUserInfo(appModule, student.user);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -94,7 +94,7 @@ describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
     );
 
     // Mock the user received in the token.
-    await mockJWTUserName(appModule, student.user);
+    await mockJWTUserInfo(appModule, student.user);
 
     // Act/Assert
     await request(app.getHttpServer())

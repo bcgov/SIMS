@@ -8,11 +8,11 @@ import { IUserToken } from "../../auth";
 
 /**
  * Mocks user log info from student service to return the passed student.
+ * Please use the method {@link mockUserLoginInfo} instead, which mocks only
+ * the user info in the JWT token to allow the user to be retrieved from the DB
+ * during the validation of the JWT token.
  * @param testingModule nest testing module.
  * @param student a persisted student object.
- * @deprecated use the method {@link mockUserLoginInfo} instead, which mocks only
- * the userName in the JWT token to allow the user to be retrieved from the DB
- * during the validation of the JWT token.
  */
 export async function mockUserLoginInfo(
   testingModule: TestingModule,
@@ -34,12 +34,12 @@ export async function mockUserLoginInfo(
 }
 
 /**
- * Mocks the user login info, replacing the user name by a mocked one, to allow
+ * Mocks the user login info, replacing the user info by the mocked one, to allow
  * it to be retrieved from the DB during the validation of the JWT token.
  * @param testingModule nest testing module.
  * @param user mocked user.
  */
-export async function mockJWTUserName(
+export async function mockJWTUserInfo(
   testingModule: TestingModule,
   user: User,
 ): Promise<jest.SpyInstance> {
@@ -79,7 +79,7 @@ export async function resetMockUserLoginInfo(testingModule: TestingModule) {
  * This could used to reset the mock after each test.
  * @param testingModule testing module.
  */
-export async function resetMockJWTUserName(testingModule: TestingModule) {
+export async function resetMockJWTUserInfo(testingModule: TestingModule) {
   const jwtStrategy = await getProviderInstanceForModule(
     testingModule,
     AuthModule,

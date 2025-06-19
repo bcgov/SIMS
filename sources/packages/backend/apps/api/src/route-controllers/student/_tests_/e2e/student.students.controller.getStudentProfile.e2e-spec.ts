@@ -5,8 +5,8 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  mockJWTUserName,
-  resetMockJWTUserName,
+  mockJWTUserInfo,
+  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -35,7 +35,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
   });
 
   beforeEach(() => {
-    resetMockJWTUserName(appModule);
+    resetMockJWTUserInfo(appModule);
     allowBetaUsersOnly(false);
   });
 
@@ -44,7 +44,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     const student = await saveFakeStudent(db.dataSource);
 
     // Mock the user received in the token.
-    await mockJWTUserName(appModule, student.user);
+    await mockJWTUserInfo(appModule, student.user);
 
     // Get any student user token.
     const studentToken = await getStudentToken(
@@ -93,7 +93,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     });
 
     // Mock the user received in the token.
-    await mockJWTUserName(appModule, student.user);
+    await mockJWTUserInfo(appModule, student.user);
 
     // Get any student user token.
     const studentToken = await getStudentToken(
@@ -120,7 +120,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     });
 
     // Mock the user received in the token.
-    await mockJWTUserName(appModule, student.user);
+    await mockJWTUserInfo(appModule, student.user);
 
     // Get any student user token.
     const studentToken = await getStudentToken(
@@ -143,7 +143,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     const student = await saveFakeStudent(db.dataSource);
 
     // Mock the user received in the token.
-    await mockJWTUserName(appModule, student.user);
+    await mockJWTUserInfo(appModule, student.user);
 
     // Get any student user token.
     const studentToken = await getStudentToken(
