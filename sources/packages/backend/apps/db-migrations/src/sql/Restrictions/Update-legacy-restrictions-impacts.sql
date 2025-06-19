@@ -10,8 +10,20 @@ UPDATE
 SET
     restriction_code = 'SSRN',
     description = 'Poor Scholastic Standing.',
+    restriction_category = 'Academic',
+    notification_type = 'Error',
     is_legacy = false,
-    action_type = ARRAY ['Stop full time disbursement', 'Stop full time apply'] :: sims.restriction_action_types []
+    action_type = ARRAY ['Stop full time disbursement', 'Stop full time apply'] :: sims.restriction_action_types [],
+    updated_at = NOW(),
+    modifier = (
+        SELECT
+            id
+        FROM
+            sims.users
+        WHERE
+            -- System user.
+            user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
+    )
 WHERE
     restriction_code = 'LGCY_SSRN';
 
@@ -48,6 +60,18 @@ SET
     restriction_code = 'Z1',
     is_legacy = false,
     description = 'Grant overaward. Not eligible for BCSL. Eligible for CSL.',
-    action_type = ARRAY ['Stop full time BC funding'] :: sims.restriction_action_types []
+    restriction_category = 'BCSL Delinquency',
+    notification_type = 'Error',
+    action_type = ARRAY ['Stop full time BC funding'] :: sims.restriction_action_types [],
+    updated_at = NOW(),
+    modifier = (
+        SELECT
+            id
+        FROM
+            sims.users
+        WHERE
+            -- System user.
+            user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
+    )
 WHERE
     restriction_code = 'LGCY_Z1'
