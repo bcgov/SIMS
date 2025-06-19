@@ -158,13 +158,13 @@ export class UserService extends DataModelService<User> {
 
   /**
    * Checks if there is a full-time beta user authorization valid for given and last names provided.
-   * @param givenNames full-time beta user given names.
    * @param lastName full-time beta user last name.
+   * @param givenNames full-time beta user given names.
    * @returns true in case there is a full-time beta user authorization valid for given and last names provided.
    */
   async isUserAuthorizedForFulltime(
-    givenNames: string,
     lastName: string,
+    givenNames?: string,
   ): Promise<boolean> {
     if (!this.configService.allowBetaUsersOnly) {
       // If the configuration indicates that there is no beta restrictions,

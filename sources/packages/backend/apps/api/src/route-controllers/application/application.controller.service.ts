@@ -959,8 +959,8 @@ export class ApplicationControllerService {
     const offeringIntensity = application.offeringIntensity;
     if (offeringIntensity === OfferingIntensity.fullTime) {
       await this.validateFullTimeSubmission(
-        application.student.user.firstName,
         application.student.user.lastName,
+        application.student.user.firstName,
       );
     }
     // For program years still relying on the form.io variable howWillYouBeAttendingTheProgram
@@ -1019,14 +1019,14 @@ export class ApplicationControllerService {
 
   /**
    * Execute the temporary validation for full-time submission.
-   * @param firstName students' first name.
    * @param lastName students' last name.
+   * @param firstName students' first name.
    * @throws {UnprocessableEntityException} if full-time submission is not allowed.
    * @throws {ForbiddenException} if the user is not authorized to submit a full-time application.
    */
   private async validateFullTimeSubmission(
+    lastName: string,
     firstName?: string,
-    lastName?: string,
   ): Promise<void> {
     const isFulltimeAllowed = this.configService.isFulltimeAllowed;
     if (!isFulltimeAllowed) {

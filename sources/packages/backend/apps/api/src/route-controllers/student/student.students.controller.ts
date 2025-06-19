@@ -406,8 +406,8 @@ export class StudentStudentsController extends BaseController {
     // Set the temporary property to indicate if the user can access full-time applications.
     studentProfile.hasFulltimeAccess =
       await this.userService.isUserAuthorizedForFulltime(
-        studentProfile.firstName,
         studentProfile.lastName,
+        studentProfile.firstName,
       );
     return studentProfile;
   }
