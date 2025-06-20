@@ -11,7 +11,7 @@ import {
   RestrictionActionType,
 } from "@sims/sims-db";
 import { RestrictionNotificationType } from "@sims/sims-db/entities";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, In } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   NoteSharedService,
@@ -264,28 +264,54 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * Checks if the student has an active requested restriction.
    * @param studentId student id.
    * @param restrictionCodes restriction codes.
+   * @param options optional parameters.
+   * - `isActive` flag to check if the restriction is active or not.
+   * - `entityManager` an optional EntityManager to manage the transaction.
    * @param entityManager manages the transaction where this operation must be executed.
    * @returns true, if the student has the requested active
    * restriction code else false.
    */
-  async hasAnyActiveRestriction(
+  async hasAnyRestriction(
     studentId: number,
     restrictionCodes: string[],
-    entityManager?: EntityManager,
+    options?: {
+      isActive?: boolean;
+      entityManager?: EntityManager;
+    },
   ): Promise<boolean> {
-    const repo = entityManager?.getRepository(StudentRestriction) ?? this.repo;
-    return !!(await repo
+    const repo =
+      options?.entityManager?.getRepository(StudentRestriction) ?? this.repo;
+    const query = repo
       .createQueryBuilder("studentRestrictions")
       .select("studentRestrictions.id")
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
       .where("student.id = :studentId", { studentId })
-      .andWhere("studentRestrictions.isActive = true")
       .andWhere("restriction.restrictionCode IN (:...restrictionCodes)", {
         restrictionCodes,
       })
-      .limit(1)
-      .getOne());
+      .limit(1);
+    if (options?.isActive !== undefined) {
+      query.andWhere("studentRestrictions.isActive = :isActive", {
+        isActive: options.isActive,
+      });
+    }
+    const hasRestriction = await query.getOne();
+    return !!hasRestriction;
+  }
+
+  async getRestrictionByCodes(studentId: number, restrictionCodes: string[]) {
+    return this.repo.find({
+      select: {
+        id: true,
+        isActive: true,
+        restriction: { id: true, restrictionCode: true },
+      },
+      where: {
+        student: { id: studentId },
+        restriction: { restrictionCode: In(restrictionCodes) },
+      },
+    });
   }
 
   /**
@@ -328,9 +354,11 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       return;
     }
 
-    const hasSINRestriction = await this.hasAnyActiveRestriction(studentId, [
-      RestrictionCode.SINR,
-    ]);
+    const hasSINRestriction = await this.hasAnyRestriction(
+      studentId,
+      [RestrictionCode.SINR],
+      { isActive: true, entityManager },
+    );
     if (hasSINRestriction) {
       // The student already has an active SIN restriction, avoid adding it again.
       return;

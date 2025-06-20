@@ -312,6 +312,45 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     applicationId: number,
   ): Promise<StudentRestriction | undefined> {
     if (
+      [
+        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      ].includes(scholasticStandingData.scholasticStandingChangeType)
+    ) {
+      // If the scholastic standing change type is not related to withdrawal
+      // or unsuccessful completion then no restrictions are required.
+      return undefined;
+    }
+    const existingRestrictions =
+      await this.studentRestrictionService.getRestrictionByCodes(studentId, [
+        RestrictionCode.SSR,
+        RestrictionCode.SSRN,
+        RestrictionCode.WTHD,
+      ]);
+    const hasSSR = existingRestrictions.some(
+      (studentRestriction) =>
+        studentRestriction.restriction.restrictionCode === RestrictionCode.SSR,
+    );
+    const hasSSRN = existingRestrictions.some(
+      (studentRestriction) =>
+        studentRestriction.restriction.restrictionCode === RestrictionCode.SSRN,
+    );
+    const hasActiveSSRN = existingRestrictions.some(
+      (studentRestriction) =>
+        studentRestriction.restriction.restrictionCode ===
+          RestrictionCode.SSRN && studentRestriction.isActive,
+    );
+    // Check for SSR and SSRN pre-existing restrictions.
+    if ((hasSSR || hasSSRN) && !hasActiveSSRN) {
+      // If the student ever had an SSR or SSRN in his account, then create a new SSRN, if SSRN is not active.
+      return this.studentRestrictionSharedService.createRestrictionToSave(
+        studentId,
+        RestrictionCode.SSRN,
+        auditUserId,
+        applicationId,
+      );
+    }
+    if (
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
     ) {
@@ -320,7 +359,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       }
       const totalExistingUnsuccessfulWeeks =
         await this.getTotalFullTimeUnsuccessfulWeeks(studentId);
-
       // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
       if (
         totalExistingUnsuccessfulWeeks +
@@ -339,18 +377,16 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentWithdrewFromProgram
     ) {
+      const hasActiveWTHD = existingRestrictions.some(
+        (studentRestriction) =>
+          studentRestriction.restriction.restrictionCode ===
+            RestrictionCode.WTHD && studentRestriction.isActive,
+      );
       // Check if "WTHD" restriction is already present for the student,
       // if not add "WTHD" restriction else add "SSR" restriction.
-      const isWTHDAlreadyExists =
-        await this.studentRestrictionService.hasAnyActiveRestriction(
-          studentId,
-          [RestrictionCode.WTHD],
-        );
-
-      const restrictionCode = isWTHDAlreadyExists
+      const restrictionCode = hasActiveWTHD
         ? RestrictionCode.SSR
         : RestrictionCode.WTHD;
-
       return this.studentRestrictionSharedService.createRestrictionToSave(
         studentId,
         restrictionCode,

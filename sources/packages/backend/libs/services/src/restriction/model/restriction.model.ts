@@ -18,6 +18,12 @@ export enum RestrictionCode {
    */
   SSR = "SSR",
   /**
+   * When an institution report withdrawal for a FT course
+   * and the student already had or has a "SSR" restriction,
+   * an SSRN restriction is added to the student account.
+   */
+  SSRN = "SSRN",
+  /**
    * when an institution report withdrawal or unsuccessful weeks
    * for a PT course application, "PTSSR" restriction is added to the student account.
    */

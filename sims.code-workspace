@@ -208,6 +208,7 @@
       "timestamptz",
       "typeorm",
       "unparse",
+      "WTHD",
       "Zeebe"
     ],
     "[json]": {
