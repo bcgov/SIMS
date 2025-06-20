@@ -7,8 +7,8 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  mockUserLoginInfo,
-  resetMockUserLoginInfo,
+  mockJWTUserInfo,
+  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -50,7 +50,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
   });
 
   beforeEach(() => {
-    resetMockUserLoginInfo(appModule);
+    resetMockJWTUserInfo(appModule);
   });
 
   it("Should throw not found error when the supporting user is not associated to the student submitted application.", async () => {
@@ -60,7 +60,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
       programYear: recentPYParentForm.programYear,
     });
     // Create fake supporting user parent.
-    const parentFullName = faker.datatype.uuid();
+    const parentFullName = faker.random.alpha({ count: 50 });
     const parent = createFakeSupportingUser(
       { application },
       {
@@ -98,7 +98,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
       programYear: recentPYParentForm.programYear,
     });
     const student = application.student;
-    // Create fake supporting user parent.
+    // Create fake supporting user partner.
     const parent = createFakeSupportingUser(
       { application },
       {
@@ -110,7 +110,48 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
     );
     await db.supportingUser.save(parent);
     // Mock student user token.
-    await mockUserLoginInfo(appModule, student);
+    await mockJWTUserInfo(appModule, student.user);
+    const endpoint = `/students/supporting-user/${parent.id}`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message:
+          "Supporting user not found or not eligible to be accessed by the student.",
+        error: "Not Found",
+      });
+  });
+
+  it("Should throw not found error when the supporting is able to report by themselves.", async () => {
+    // Arrange
+    // Create fake application.
+    const application = await saveFakeApplication(db.dataSource, {
+      programYear: recentPYParentForm.programYear,
+    });
+    const student = application.student;
+    // Create fake supporting user parent.
+    const parentFullName = faker.random.alpha({ count: 50 });
+    const parent = createFakeSupportingUser(
+      { application },
+      {
+        initialValues: {
+          // Supporting user is able to report by themselves.
+          isAbleToReport: true,
+          supportingUserType: SupportingUserType.Parent,
+          fullName: parentFullName,
+        },
+      },
+    );
+    await db.supportingUser.save(parent);
+    // Mock student user token.
+    await mockJWTUserInfo(appModule, student.user);
     const endpoint = `/students/supporting-user/${parent.id}`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -161,7 +202,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
       });
       const student = application.student;
       // Create fake supporting user parent.
-      const parentFullName = faker.datatype.uuid();
+      const parentFullName = faker.random.alpha({ count: 50 });
       const parent = createFakeSupportingUser(
         { application },
         {
@@ -174,7 +215,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
       );
       await db.supportingUser.save(parent);
       // Mock student user token.
-      await mockUserLoginInfo(appModule, student);
+      await mockJWTUserInfo(appModule, student.user);
       const endpoint = `/students/supporting-user/${parent.id}`;
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,

@@ -18,7 +18,7 @@ import {
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { StudentSupportingUserAPIOutDTO } from "./models/supporting-user.dto";
-import { StudentUserToken } from "apps/api/src/auth";
+import { StudentUserToken } from "../../auth";
 import { DynamicFormType } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
