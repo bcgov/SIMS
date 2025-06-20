@@ -44,7 +44,7 @@ export class SupportingUserStudentsController {
     description:
       "Supporting user not found or not eligible to be accessed by the student.",
   })
-  async getIdentifiableSupportingUserDetails(
+  async getIdentifiableSupportingUser(
     @Param("supportingUserId", ParseIntPipe) supportingUserId: number,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<StudentSupportingUserAPIOutDTO> {
@@ -55,7 +55,7 @@ export class SupportingUserStudentsController {
       );
     if (!supportingUser) {
       throw new NotFoundException(
-        `Supporting user not found or not eligible to be accessed by the student.`,
+        "Supporting user not found or not eligible to be accessed by the student.",
       );
     }
     const formName = this.dynamicFormConfigurationService.getDynamicFormName(
