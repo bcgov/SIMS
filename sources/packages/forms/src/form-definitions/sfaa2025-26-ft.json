@@ -2541,40 +2541,71 @@
               "lockKey": true
             },
             {
-              "label": "Which of the following best describes your situation? (If none of these apply you are not eligible for modified independent status)",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": " There is an irreconcilable rift between me and my parent(s), and I can provide satisfactory evidence of a severe and permanent breakdown in the relationship between you and your parent(s) that has existed for at least one year unless a sudden and serious situation has occurred.",
-                  "value": "irreconcilableRift",
-                  "shortcut": ""
-                },
-                {
-                  "label": " You would normally be classified as a dependant student by StudentAid BC, but you are unable to contact or locate your parents, step-parent, sponsor, or legal guardian due to conflict or emergency (such as war, famine or natural disaster) in the country where they live.",
-                  "value": "unableToContact",
-                  "shortcut": ""
-                },
-                {
-                  "label": " None of the above.",
-                  "value": "noneOfTheAbove",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "validateWhenHidden": false,
-              "key": "parentSituation",
+              "title": "Modified Independent Status Panel",
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "modifiedIndependentPanel",
               "conditional": {
                 "show": true,
                 "when": "estranged",
                 "eq": "yes"
               },
-              "type": "radio",
-              "input": true
+              "type": "panel",
+              "label": "Panel",
+              "input": false,
+              "tableView": false,
+              "components": [
+                {
+                  "label": "Content",
+                  "tag": "h3",
+                  "className": "category-header-medium primary-color",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "content": "Please provide additional information",
+                  "refreshOnChange": false,
+                  "key": "modifiedIndependentInformationPanelContent",
+                  "type": "htmlelement",
+                  "input": false,
+                  "hideLabel": true,
+                  "tableView": false
+                },
+                {
+                  "label": "Which of the following best describes your situation? (If none of these apply you are not eligible for modified independent status)",
+                  "optionsLabelPosition": "right",
+                  "inline": false,
+                  "tableView": false,
+                  "values": [
+                    {
+                      "label": " There is an irreconcilable rift between me and my parent(s), and I can provide satisfactory evidence of a severe and permanent breakdown in the relationship between you and your parent(s) that has existed for at least one year unless a sudden and serious situation has occurred.",
+                      "value": "irreconcilableRift",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": " You would normally be classified as a dependant student by StudentAid BC, but you are unable to contact or locate your parents, step-parent, sponsor, or legal guardian due to conflict or emergency (such as war, famine or natural disaster) in the country where they live.",
+                      "value": "unableToContact",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": " None of the above.",
+                      "value": "noneOfTheAbove",
+                      "shortcut": ""
+                    }
+                  ],
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": true
+                  },
+                  "validateWhenHidden": false,
+                  "key": "parentSituation",
+                  "type": "radio",
+                  "input": true
+                }
+              ],
+              "lockKey": true
             },
             {
               "title": "Estranged details panel",
@@ -2614,7 +2645,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "Please provide supporting information ",
+                  "content": "Upload supporting documents",
                   "refreshOnChange": false,
                   "key": "html78",
                   "type": "htmlelement",
