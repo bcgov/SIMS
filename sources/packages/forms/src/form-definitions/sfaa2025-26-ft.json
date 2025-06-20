@@ -2542,6 +2542,7 @@
             },
             {
               "title": "Modified Independent Status Panel",
+              "customClass": "formio-panel-unset",
               "collapsible": false,
               "hideLabel": true,
               "key": "modifiedIndependentPanel",
