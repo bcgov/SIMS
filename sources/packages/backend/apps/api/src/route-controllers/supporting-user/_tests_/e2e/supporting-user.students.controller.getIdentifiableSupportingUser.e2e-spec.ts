@@ -99,7 +99,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
     });
     const student = application.student;
     // Create fake supporting user partner.
-    const parent = createFakeSupportingUser(
+    const partner = createFakeSupportingUser(
       { application },
       {
         initialValues: {
@@ -108,10 +108,10 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
         },
       },
     );
-    await db.supportingUser.save(parent);
+    await db.supportingUser.save(partner);
     // Mock student user token.
     await mockJWTUserInfo(appModule, student.user);
-    const endpoint = `/students/supporting-user/${parent.id}`;
+    const endpoint = `/students/supporting-user/${partner.id}`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
