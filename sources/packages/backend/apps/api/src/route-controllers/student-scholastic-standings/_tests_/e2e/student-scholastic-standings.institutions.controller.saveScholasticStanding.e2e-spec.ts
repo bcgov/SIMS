@@ -5,6 +5,7 @@ import {
   createE2EDataSources,
   createFakeInstitutionLocation,
   createFakeStudentAppeal,
+  createFakeStudentRestriction,
   getProviderInstanceForModule,
   saveFakeApplication,
 } from "@sims/test-utils";
@@ -24,7 +25,9 @@ import {
   InstitutionLocation,
   NotificationMessageType,
   OfferingIntensity,
+  Restriction,
   StudentScholasticStandingChangeType,
+  StudyBreaksAndWeeks,
 } from "@sims/sims-db";
 import {
   APPLICATION_NOT_FOUND,
@@ -37,6 +40,8 @@ import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { TestingModule } from "@nestjs/testing";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../../../constants";
 import { InstitutionUserTypes } from "../../../../auth";
+import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../../../utilities";
+import { In } from "typeorm";
 
 describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticStanding.", () => {
   let app: INestApplication;
@@ -45,6 +50,9 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
   let collegeFLocation: InstitutionLocation;
   let formService: FormService;
   let payload: ScholasticStandingAPIInDTO;
+  let ssrRestriction: Restriction;
+  let ssrnRestriction: Restriction;
+  let wthdRestriction: Restriction;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -70,6 +78,29 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       appModule,
       AppInstitutionsModule,
       FormService,
+    );
+    // Find restriction used for validations.
+    const restrictions = await db.restriction.find({
+      select: {
+        id: true,
+        restrictionCode: true,
+      },
+      where: {
+        restrictionCode: In([
+          RestrictionCode.SSR,
+          RestrictionCode.SSRN,
+          RestrictionCode.WTHD,
+        ]),
+      },
+    });
+    ssrRestriction = restrictions.find(
+      (restriction) => restriction.restrictionCode === RestrictionCode.SSR,
+    );
+    ssrnRestriction = restrictions.find(
+      (restriction) => restriction.restrictionCode === RestrictionCode.SSRN,
+    );
+    wthdRestriction = restrictions.find(
+      (restriction) => restriction.restrictionCode === RestrictionCode.WTHD,
     );
   });
 
@@ -873,6 +904,412 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         message: "Invalid submission.",
         error: "Bad Request",
       });
+  });
+
+  // Full-time related student restrictions.
+  describe(`Full-time restrictions for '${StudentScholasticStandingChangeType.StudentDidNotCompleteProgram}'.`, () => {
+    it(`Should create an ${RestrictionCode.SSR} restriction when the student exceeds the maximum number of unsuccessful weeks application.`, async () => {
+      // Arrange
+      const unsuccessfulWeeks =
+        SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS + 1;
+      mockFormioDryRun({
+        validDryRun: true,
+        studentScholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        numberOfUnsuccessfulWeeks: unsuccessfulWeeks,
+      });
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          offeringInitialValues: {
+            studyBreaks: {
+              totalDays: unsuccessfulWeeks * 7,
+            } as StudyBreaksAndWeeks,
+          },
+        },
+      );
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED);
+      const studentRestrictions = await db.studentRestriction.find({
+        select: {
+          id: true,
+          restriction: {
+            id: true,
+            restrictionCode: true,
+          },
+        },
+        relations: {
+          restriction: true,
+        },
+        where: { student: { id: application.student.id } },
+      });
+      expect(studentRestrictions).toEqual([
+        {
+          id: expect.any(Number),
+          restriction: {
+            id: ssrRestriction.id,
+            restrictionCode: RestrictionCode.SSR,
+          },
+        },
+      ]);
+    });
+
+    it(`Should create an ${RestrictionCode.SSRN} restriction when the student already had an ${RestrictionCode.SSR}.`, async () => {
+      // Arrange
+      const unsuccessfulWeeks =
+        SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS + 1;
+      mockFormioDryRun({
+        validDryRun: true,
+        studentScholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        numberOfUnsuccessfulWeeks: unsuccessfulWeeks,
+      });
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          offeringInitialValues: {
+            studyBreaks: {
+              totalDays: unsuccessfulWeeks * 7,
+            } as StudyBreaksAndWeeks,
+          },
+        },
+      );
+      const ssrStudentRestriction = createFakeStudentRestriction(
+        {
+          student: application.student,
+          restriction: ssrRestriction,
+        },
+        { isActive: false },
+      );
+      await db.studentRestriction.save(ssrStudentRestriction);
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED);
+      const studentRestrictions = await db.studentRestriction.find({
+        select: {
+          id: true,
+          restriction: {
+            id: true,
+            restrictionCode: true,
+          },
+        },
+        relations: {
+          restriction: true,
+        },
+        where: { student: { id: application.student.id } },
+        order: { restriction: { restrictionCode: "ASC" } },
+      });
+      expect(studentRestrictions).toEqual([
+        {
+          id: ssrStudentRestriction.id,
+          restriction: {
+            id: ssrRestriction.id,
+            restrictionCode: RestrictionCode.SSR,
+          },
+        },
+        {
+          id: expect.any(Number),
+          restriction: {
+            id: ssrnRestriction.id,
+            restrictionCode: RestrictionCode.SSRN,
+          },
+        },
+      ]);
+    });
+
+    it(`Should create an ${RestrictionCode.SSRN} restriction when the student already has an ${RestrictionCode.SSRN} but it is inactive.`, async () => {
+      // Arrange
+      const unsuccessfulWeeks =
+        SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS + 1;
+      mockFormioDryRun({
+        validDryRun: true,
+        studentScholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        numberOfUnsuccessfulWeeks: unsuccessfulWeeks,
+      });
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          offeringInitialValues: {
+            studyBreaks: {
+              totalDays: unsuccessfulWeeks * 7,
+            } as StudyBreaksAndWeeks,
+          },
+        },
+      );
+      const ssrnStudentRestriction = createFakeStudentRestriction(
+        {
+          student: application.student,
+          restriction: ssrnRestriction,
+        },
+        { isActive: false },
+      );
+      await db.studentRestriction.save(ssrnStudentRestriction);
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED);
+      const studentRestrictions = await db.studentRestriction.find({
+        select: {
+          id: true,
+          isActive: true,
+          restriction: {
+            id: true,
+            restrictionCode: true,
+          },
+        },
+        relations: {
+          restriction: true,
+        },
+        where: { isActive: true, student: { id: application.student.id } },
+        order: { id: "ASC" },
+      });
+      expect(studentRestrictions).toEqual([
+        {
+          id: expect.any(Number),
+          isActive: true,
+          restriction: {
+            id: ssrnRestriction.id,
+            restrictionCode: RestrictionCode.SSRN,
+          },
+        },
+      ]);
+    });
+  });
+
+  describe(`Full-time restrictions for '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`, () => {
+    it(`Should create an ${RestrictionCode.WTHD} restriction when the student withdrew and there is no active ${RestrictionCode.WTHD} restriction.`, async () => {
+      // Arrange
+      mockFormioDryRun({
+        validDryRun: true,
+        studentScholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      });
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED);
+      const studentRestrictions = await db.studentRestriction.find({
+        select: {
+          id: true,
+          restriction: {
+            id: true,
+            restrictionCode: true,
+          },
+        },
+        relations: {
+          restriction: true,
+        },
+        where: { student: { id: application.student.id } },
+      });
+      expect(studentRestrictions).toEqual([
+        {
+          id: expect.any(Number),
+          restriction: {
+            id: wthdRestriction.id,
+            restrictionCode: RestrictionCode.WTHD,
+          },
+        },
+      ]);
+    });
+
+    it(`Should create an ${RestrictionCode.SSR} restriction when the student withdrew and there is an active ${RestrictionCode.WTHD} restriction.`, async () => {
+      // Arrange
+      mockFormioDryRun({
+        validDryRun: true,
+        studentScholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      });
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      const wthdStudentRestriction = createFakeStudentRestriction(
+        {
+          student: application.student,
+          restriction: wthdRestriction,
+        },
+        { isActive: true },
+      );
+      await db.studentRestriction.save(wthdStudentRestriction);
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED);
+      const studentRestrictions = await db.studentRestriction.find({
+        select: {
+          id: true,
+          restriction: {
+            id: true,
+            restrictionCode: true,
+          },
+        },
+        relations: {
+          restriction: true,
+        },
+        where: { student: { id: application.student.id } },
+        order: { restriction: { restrictionCode: "ASC" } },
+      });
+      expect(studentRestrictions).toEqual([
+        {
+          id: expect.any(Number),
+          restriction: {
+            id: ssrRestriction.id,
+            restrictionCode: RestrictionCode.SSR,
+          },
+        },
+        {
+          id: wthdStudentRestriction.id,
+          restriction: {
+            id: wthdRestriction.id,
+            restrictionCode: RestrictionCode.WTHD,
+          },
+        },
+      ]);
+    });
+
+    it(`Should create an ${RestrictionCode.WTHD} and an ${RestrictionCode.SSRN} restrictions when the student withdrew and there is an inactive ${RestrictionCode.SSR} restriction.`, async () => {
+      // Arrange
+      mockFormioDryRun({
+        validDryRun: true,
+        studentScholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      });
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      const ssrStudentRestriction = createFakeStudentRestriction(
+        {
+          student: application.student,
+          restriction: ssrRestriction,
+        },
+        { isActive: false },
+      );
+      await db.studentRestriction.save(ssrStudentRestriction);
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED);
+      const studentRestrictions = await db.studentRestriction.find({
+        select: {
+          id: true,
+          restriction: {
+            id: true,
+            restrictionCode: true,
+          },
+        },
+        relations: {
+          restriction: true,
+        },
+        where: { isActive: true, student: { id: application.student.id } },
+        order: { restriction: { restrictionCode: "ASC" } },
+      });
+      expect(studentRestrictions).toEqual([
+        {
+          id: expect.any(Number),
+          restriction: {
+            id: ssrnRestriction.id,
+            restrictionCode: RestrictionCode.SSRN,
+          },
+        },
+        {
+          id: expect.any(Number),
+          restriction: {
+            id: wthdRestriction.id,
+            restrictionCode: RestrictionCode.WTHD,
+          },
+        },
+      ]);
+    });
   });
 
   /**

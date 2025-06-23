@@ -264,13 +264,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     applicationId: number,
   ): Promise<StudentRestriction[]> {
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      const fullTimeRestriction = await this.getFullTimeStudentRestrictions(
+      return this.getFullTimeStudentRestrictions(
         scholasticStandingData,
         studentId,
         auditUserId,
         applicationId,
       );
-      return fullTimeRestriction ? [fullTimeRestriction] : [];
     }
     if (offeringIntensity === OfferingIntensity.partTime) {
       return this.getPartTimeStudentRestrictions(
@@ -303,57 +302,58 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param applicationId application id.
-   * @returns a new student restriction object, that need to be saved.
+   * @returns new student restriction(s), that need to be saved.
    */
   async getFullTimeStudentRestrictions(
     scholasticStandingData: ScholasticStanding,
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction | undefined> {
+  ): Promise<StudentRestriction[]> {
+    const restrictions: StudentRestriction[] = [];
     if (
-      [
+      ![
         StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
       ].includes(scholasticStandingData.scholasticStandingChangeType)
     ) {
       // If the scholastic standing change type is not related to withdrawal
       // or unsuccessful completion then no restrictions are required.
-      return undefined;
+      return restrictions;
     }
+    // Get all existing restrictions for the student that potentially will be required
+    // to determine the new restriction to be created.
     const existingRestrictions =
       await this.studentRestrictionService.getRestrictionByCodes(studentId, [
         RestrictionCode.SSR,
         RestrictionCode.SSRN,
         RestrictionCode.WTHD,
       ]);
-    const hasSSR = existingRestrictions.some(
+    const ssr = existingRestrictions.find(
       (studentRestriction) =>
         studentRestriction.restriction.restrictionCode === RestrictionCode.SSR,
     );
-    const hasSSRN = existingRestrictions.some(
+    const ssrn = existingRestrictions.find(
       (studentRestriction) =>
         studentRestriction.restriction.restrictionCode === RestrictionCode.SSRN,
     );
-    const hasActiveSSRN = existingRestrictions.some(
-      (studentRestriction) =>
-        studentRestriction.restriction.restrictionCode ===
-          RestrictionCode.SSRN && studentRestriction.isActive,
-    );
+
     // Check for SSR and SSRN pre-existing restrictions.
-    if ((hasSSR || hasSSRN) && !hasActiveSSRN) {
+    if ((ssr || ssrn) && !ssrn?.isActive) {
       // If the student ever had an SSR or SSRN in his account, then create a new SSRN, if SSRN is not active.
-      return this.studentRestrictionSharedService.createRestrictionToSave(
-        studentId,
-        RestrictionCode.SSRN,
-        auditUserId,
-        applicationId,
-      );
-    }
-    if (
+      const ssrnRestriction =
+        await this.studentRestrictionSharedService.createRestrictionToSave(
+          studentId,
+          RestrictionCode.SSRN,
+          auditUserId,
+          applicationId,
+        );
+      restrictions.push(ssrnRestriction);
+    } else if (
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
     ) {
+      // Only check for SSR if SSR or SSRN is not present.
       if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
         throw new Error("Number of unsuccessful weeks is empty.");
       }
@@ -365,35 +365,59 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           scholasticStandingData.numberOfUnsuccessfulWeeks >=
         SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS
       ) {
-        return this.studentRestrictionSharedService.createRestrictionToSave(
-          studentId,
-          RestrictionCode.SSR,
-          auditUserId,
-          applicationId,
-        );
+        const ssrnRestriction =
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            RestrictionCode.SSR,
+            auditUserId,
+            applicationId,
+          );
+        restrictions.push(ssrnRestriction);
+        return restrictions;
       }
     }
     if (
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentWithdrewFromProgram
     ) {
+      // Check for "WTHD" restriction since it should always be created if one is not present and active.
       const hasActiveWTHD = existingRestrictions.some(
         (studentRestriction) =>
           studentRestriction.restriction.restrictionCode ===
             RestrictionCode.WTHD && studentRestriction.isActive,
       );
       // Check if "WTHD" restriction is already present for the student,
-      // if not add "WTHD" restriction else add "SSR" restriction.
-      const restrictionCode = hasActiveWTHD
-        ? RestrictionCode.SSR
-        : RestrictionCode.WTHD;
-      return this.studentRestrictionSharedService.createRestrictionToSave(
-        studentId,
-        restrictionCode,
-        auditUserId,
-        applicationId,
+      // if not, then create a new one.
+      if (!hasActiveWTHD) {
+        const wthdRestriction =
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            RestrictionCode.WTHD,
+            auditUserId,
+            applicationId,
+          );
+        restrictions.push(wthdRestriction);
+      }
+      // Check if an SSR or SSRN was created for the student.
+      const createdSSROrSSRN = restrictions.some((studentRestriction) =>
+        [RestrictionCode.SSR, RestrictionCode.SSRN].includes(
+          studentRestriction.restriction.restrictionCode as RestrictionCode,
+        ),
       );
+      if (hasActiveWTHD && !createdSSROrSSRN) {
+        // If the student does not have SSR or SSRN restriction created yet and there was
+        // already an active WTHD, then create a new SSR restriction.
+        const ssrRestriction =
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            RestrictionCode.SSR,
+            auditUserId,
+            applicationId,
+          );
+        restrictions.push(ssrRestriction);
+      }
     }
+    return restrictions;
   }
 
   /**

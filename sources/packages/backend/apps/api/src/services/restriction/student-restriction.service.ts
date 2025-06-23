@@ -300,12 +300,21 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     return !!hasRestriction;
   }
 
+  /**
+   * Get student restrictions by their codes.
+   * @param studentId student ID.
+   * @param restrictionCodes restriction codes.
+   * @returns student restrictions.
+   */
   async getRestrictionByCodes(studentId: number, restrictionCodes: string[]) {
     return this.repo.find({
       select: {
         id: true,
         isActive: true,
         restriction: { id: true, restrictionCode: true },
+      },
+      relations: {
+        restriction: true,
       },
       where: {
         student: { id: studentId },

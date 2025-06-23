@@ -65,6 +65,12 @@ export enum RestrictionCode {
    */
   SSR = "SSR",
   /**
+   * When an institution report withdrawal for a FT course
+   * and the student already had or has a "SSR" restriction,
+   * an SSRN restriction is added to the student account.
+   */
+  SSRN = "SSRN",
+  /**
    * Legacy Restriction.
    */
   LGCY = "LGCY",
@@ -80,6 +86,11 @@ export enum RestrictionCode {
    * Dual Funding.
    */
   AF4 = "AF4",
+  /**
+   * When an institution report withdrawal for a full-time course application,
+   * "WTHD" restriction is added to student account if one is not already present.
+   */
+  WTHD = "WTHD",
   /**
    * Part-time scholastic standing restrictions - Student withdrew or was unsuccesful from Part Time studies.
    */
