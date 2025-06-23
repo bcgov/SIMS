@@ -800,15 +800,26 @@ export class ApplicationControllerService {
       (incomeVerification) =>
         incomeVerification.supportingUserType === SupportingUserType.Parent,
     );
+
+    supportingUserDetails.parentsInfo = [];
+
     if (parent1) {
-      supportingUserDetails.parent1Info = !parent1.supportingData
-        ? SuccessWaitingStatus.Waiting
-        : SuccessWaitingStatus.Success;
+      supportingUserDetails.parentsInfo.push({
+        parentFullName: parent1.fullName,
+        parentInfo: parent1.supportingData
+          ? SuccessWaitingStatus.Success
+          : SuccessWaitingStatus.Waiting,
+        isAbleToReport: parent1.isAbleToReport,
+      });
     }
     if (parent2) {
-      supportingUserDetails.parent2Info = !parent2.supportingData
-        ? SuccessWaitingStatus.Waiting
-        : SuccessWaitingStatus.Success;
+      supportingUserDetails.parentsInfo.push({
+        parentFullName: parent2.fullName,
+        parentInfo: parent2.supportingData
+          ? SuccessWaitingStatus.Success
+          : SuccessWaitingStatus.Waiting,
+        isAbleToReport: parent2.isAbleToReport,
+      });
     }
 
     // Partner.

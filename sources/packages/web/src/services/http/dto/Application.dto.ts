@@ -18,10 +18,17 @@ import {
   SupportingUserType,
 } from "@/types";
 
+interface ParentDetails {
+  parentFullName: string;
+  parentInfo: SuccessWaitingStatus;
+  isAbleToReport?: boolean;
+}
+
 interface ApplicationSupportingUserDetails {
   parent1Info?: SuccessWaitingStatus;
   parent2Info?: SuccessWaitingStatus;
   partnerInfo?: SuccessWaitingStatus;
+  parentsInfo?: ParentDetails[];
 }
 
 export interface ApplicationIncomeVerification {
