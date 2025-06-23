@@ -119,7 +119,7 @@ export class SupportingUser extends RecordDataModel {
 /**
  * Supporting user personal information.
  */
-export type SupportingUserPersonalInfo = {
+export interface SupportingUserPersonalInfo {
   firstName?: string;
   lastName: string;
-};
+}
