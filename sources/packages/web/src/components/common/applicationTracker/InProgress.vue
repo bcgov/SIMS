@@ -91,9 +91,7 @@
         declaration.
       </template>
       <template #actions>
-        <v-btn color="primary" @click="openParentDeclarationModal(index)"
-          >Student Declare</v-btn
-        >
+        <v-btn color="primary">Student Declare</v-btn>
       </template>
     </application-status-tracker-banner>
   </template>
@@ -253,40 +251,6 @@
       ApplicationExceptionStatus.Approved
     "
   />
-
-  <v-dialog v-model="showParentDeclarationModal" max-width="700">
-    <v-card>
-      <v-card-title class="text-h5">Parent Declaration</v-card-title>
-      <v-card-text>
-        <content-group-info class="mb-2">
-          <div class="mb-5">
-            <span class="label-bold color-blue"
-              >Parent information required for
-              {{ selectedParentFullName }}</span
-            >
-          </div>
-          <p>
-            You have indicated that
-            <strong>{{ selectedParentFullName }}</strong>
-            is unable to complete their declaration. Please complete the
-            following declaration on their behalf. Click on the button below to
-            complete the declaration.
-          </p>
-        </content-group-info>
-      </v-card-text>
-      <v-card-actions class="justify-end">
-        <v-btn
-          color="primary"
-          variant="outlined"
-          @click="closeParentDeclarationModal"
-          >Cancel</v-btn
-        >
-        <v-btn color="primary" @click="completeParentDeclaration"
-          >Declare</v-btn
-        >
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
 </template>
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/common/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
@@ -298,7 +262,7 @@ import {
   ProgramInfoStatus,
   SuccessWaitingStatus,
 } from "@/types";
-import { onMounted, ref, defineComponent, computed } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
@@ -313,53 +277,13 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const applicationDetails = ref({} as InProgressApplicationDetailsAPIOutDTO);
+    const applicationDetails = ref<InProgressApplicationDetailsAPIOutDTO>();
     const router = useRouter();
-    const showParentDeclarationModal = ref(false);
-    const selectedParentFullName = ref("");
-    const selectedParentIndex = ref(-1);
 
     const goToStudentApplication = () => {
       router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
       });
-    };
-
-    const openParentDeclarationModal = (index: number) => {
-      selectedParentIndex.value = index;
-      if (applicationDetails.value.parentsInfo) {
-        selectedParentFullName.value =
-          applicationDetails.value.parentsInfo[index].parentFullName;
-      }
-      showParentDeclarationModal.value = true;
-    };
-
-    const closeParentDeclarationModal = () => {
-      showParentDeclarationModal.value = false;
-    };
-
-    const completeParentDeclaration = async () => {
-      // This is a placeholder. In a real scenario, you would make an API call
-      // to update the parent's declaration status.
-      // For now, let's simulate success and close the modal.
-      console.log(
-        `Declaring for parent at index ${selectedParentIndex.value}: ${selectedParentFullName.value}`,
-      );
-      // After successful declaration, you might want to re-fetch application details
-      // to update the tracker cards.
-      showParentDeclarationModal.value = false;
-      // Simulate updating the parentInfo status directly for demonstration.
-      if (
-        applicationDetails.value.parentsInfo &&
-        selectedParentIndex.value !== -1
-      ) {
-        applicationDetails.value.parentsInfo[
-          selectedParentIndex.value
-        ].parentInfo = SuccessWaitingStatus.Success;
-        applicationDetails.value.parentsInfo[
-          selectedParentIndex.value
-        ].isStudentDeclareRequired = false; // Assuming declaration fulfills this.
-      }
     };
 
     onMounted(async () => {
@@ -369,42 +293,13 @@ export default defineComponent({
         );
     });
 
-    const areAllStudentAndParentDeclarationsComplete = computed(() => {
-      const studentDeclarationComplete =
-        applicationDetails.value?.studentIncomeVerificationStatus ===
-        SuccessWaitingStatus.Success;
-      const allParentsDeclared = applicationDetails.value?.parentsInfo?.every(
-        (parent) => parent.parentInfo === SuccessWaitingStatus.Success,
-      );
-      const allParentsIncomeVerified =
-        (applicationDetails.value?.parent1IncomeVerificationStatus ===
-          SuccessWaitingStatus.Success ||
-          !applicationDetails.value?.parent1IncomeVerificationStatus) &&
-        (applicationDetails.value?.parent2IncomeVerificationStatus ===
-          SuccessWaitingStatus.Success ||
-          !applicationDetails.value?.parent2IncomeVerificationStatus);
-
-      // For now, not considering partner information as part of "student and parent declared information"
-      return (
-        studentDeclarationComplete &&
-        allParentsDeclared &&
-        allParentsIncomeVerified
-      );
-    });
-
     return {
       goToStudentApplication,
-      openParentDeclarationModal,
-      closeParentDeclarationModal,
-      completeParentDeclaration,
       ProgramInfoStatus,
       applicationDetails,
       ApplicationExceptionStatus,
       OfferingStatus,
       SuccessWaitingStatus,
-      areAllStudentAndParentDeclarationsComplete,
-      showParentDeclarationModal,
-      selectedParentFullName,
     };
   },
 });
