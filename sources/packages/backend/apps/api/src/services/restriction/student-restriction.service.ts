@@ -271,33 +271,24 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * @returns true, if the student has the requested active
    * restriction code else false.
    */
-  async hasAnyRestriction(
+  async hasAnyActiveRestriction(
     studentId: number,
     restrictionCodes: string[],
-    options?: {
-      isActive?: boolean;
-      entityManager?: EntityManager;
-    },
+    entityManager?: EntityManager,
   ): Promise<boolean> {
-    const repo =
-      options?.entityManager?.getRepository(StudentRestriction) ?? this.repo;
-    const query = repo
+    const repo = entityManager?.getRepository(StudentRestriction) ?? this.repo;
+    return !!(await repo
       .createQueryBuilder("studentRestrictions")
       .select("studentRestrictions.id")
       .innerJoin("studentRestrictions.restriction", "restriction")
       .innerJoin("studentRestrictions.student", "student")
       .where("student.id = :studentId", { studentId })
+      .andWhere("studentRestrictions.isActive = true")
       .andWhere("restriction.restrictionCode IN (:...restrictionCodes)", {
         restrictionCodes,
       })
-      .limit(1);
-    if (options?.isActive !== undefined) {
-      query.andWhere("studentRestrictions.isActive = :isActive", {
-        isActive: options.isActive,
-      });
-    }
-    const hasRestriction = await query.getOne();
-    return !!hasRestriction;
+      .limit(1)
+      .getOne());
   }
 
   /**
@@ -363,11 +354,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       return;
     }
 
-    const hasSINRestriction = await this.hasAnyRestriction(
-      studentId,
-      [RestrictionCode.SINR],
-      { isActive: true, entityManager },
-    );
+    const hasSINRestriction = await this.hasAnyActiveRestriction(studentId, [
+      RestrictionCode.SINR,
+    ]);
     if (hasSINRestriction) {
       // The student already has an active SIN restriction, avoid adding it again.
       return;

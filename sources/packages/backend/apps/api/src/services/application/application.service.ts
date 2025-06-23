@@ -360,13 +360,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
     // Check if the student already has E2 or RB restriction.
     const hasE2orRBRestriction =
-      await this.studentRestrictionService.hasAnyRestriction(
+      await this.studentRestrictionService.hasAnyActiveRestriction(
         studentId,
         [RestrictionCode.E2, RestrictionCode.RB],
-        {
-          isActive: true,
-          entityManager: transactionalEntityManager,
-        },
+        transactionalEntityManager,
       );
     // If the student does not have E2 or RB restriction, add the E2 restriction.
     if (!hasE2orRBRestriction) {

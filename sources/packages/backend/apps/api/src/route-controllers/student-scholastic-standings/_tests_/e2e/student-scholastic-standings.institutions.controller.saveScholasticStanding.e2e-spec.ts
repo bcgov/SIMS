@@ -969,7 +969,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       ]);
     });
 
-    it(`Should create an ${RestrictionCode.SSRN} restriction when the student already had an ${RestrictionCode.SSR}.`, async () => {
+    it(`Should create an ${RestrictionCode.SSRN} restriction when the student already has an ${RestrictionCode.SSR}.`, async () => {
       // Arrange
       const unsuccessfulWeeks =
         SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS + 1;
@@ -1046,7 +1046,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       ]);
     });
 
-    it(`Should create an ${RestrictionCode.SSRN} restriction when the student already has an ${RestrictionCode.SSRN} but it is inactive.`, async () => {
+    it(`Should create an ${RestrictionCode.SSRN} restriction when the student already has an ${RestrictionCode.SSRN}, but it is inactive.`, async () => {
       // Arrange
       const unsuccessfulWeeks =
         SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS + 1;
@@ -1120,7 +1120,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
   });
 
   describe(`Full-time restrictions for '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`, () => {
-    it(`Should create an ${RestrictionCode.WTHD} restriction when the student withdrew and there is no active ${RestrictionCode.WTHD} restriction.`, async () => {
+    it(`Should create a ${RestrictionCode.WTHD} restriction when the student withdrew and there is no active ${RestrictionCode.WTHD} restriction.`, async () => {
       // Arrange
       mockFormioDryRun({
         validDryRun: true,
@@ -1242,7 +1242,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       ]);
     });
 
-    it(`Should create an ${RestrictionCode.WTHD} and an ${RestrictionCode.SSRN} restrictions when the student withdrew and there is an inactive ${RestrictionCode.SSR} restriction.`, async () => {
+    it(`Should create a ${RestrictionCode.WTHD} and an ${RestrictionCode.SSRN} restriction when the student withdraws and there is an inactive ${RestrictionCode.SSR} restriction.`, async () => {
       // Arrange
       mockFormioDryRun({
         validDryRun: true,
