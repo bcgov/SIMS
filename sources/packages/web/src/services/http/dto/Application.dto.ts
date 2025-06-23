@@ -19,6 +19,7 @@ import {
 } from "@/types";
 
 interface ParentDetails {
+  supportingUserId: number;
   parentFullName: string;
   parentInfo: SuccessWaitingStatus;
   isAbleToReport?: boolean;

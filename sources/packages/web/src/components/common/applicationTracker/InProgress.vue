@@ -52,33 +52,51 @@
     ></application-status-tracker-banner
   >
 
-  <application-status-tracker-banner
-    label="Waiting for additional information from a parent"
-    icon="fa:fas fa-clock"
-    icon-color="secondary"
-    v-if="applicationDetails?.parent1Info === SuccessWaitingStatus.Waiting"
-    ><template #content
-      >We are waiting for
-      <strong>supporting information from a parent.</strong> Please check your
-      email to confirm that you have received a message from us. This email will
-      include important details and links that your parent will need in order to
-      provide their information for your application.</template
-    ></application-status-tracker-banner
+  <template
+    v-for="(parent, index) in applicationDetails?.parentsInfo"
+    :key="index"
   >
+    <application-status-tracker-banner
+      v-if="
+        parent.parentInfo === SuccessWaitingStatus.Waiting &&
+        parent.isAbleToReport
+      "
+      :label="`Waiting for additional information from ${parent.parentFullName}`"
+      icon="fa:fas fa-clock"
+      icon-color="secondary"
+    >
+      <template #content>
+        We are waiting for supporting information from
+        <strong>{{ parent.parentFullName }}</strong
+        >. Please check your email from StudentAidBC for further instructions.
+        The email includes important details and a secure link that your parent
+        will need in order to provide their information for your application.
+      </template>
+    </application-status-tracker-banner>
 
-  <application-status-tracker-banner
-    label="Waiting for additional information from another parent"
-    icon="fa:fas fa-clock"
-    icon-color="secondary"
-    v-if="applicationDetails?.parent2Info === SuccessWaitingStatus.Waiting"
-    ><template #content
-      >We are waiting for
-      <strong>supporting information from another parent.</strong> Please check
-      your email to confirm that you have received a message from us. This email
-      will include important details and links that your parent will need in
-      order to provide their information for your application.</template
-    ></application-status-tracker-banner
-  >
+    <application-status-tracker-banner
+      v-if="
+        parent.parentInfo === SuccessWaitingStatus.Waiting &&
+        !parent.isAbleToReport
+      "
+      :label="`Parent information required for ${parent.parentFullName}`"
+      icon="fa:fas fa-exclamation-triangle"
+      icon-color="warning"
+      background-color="warning-bg"
+    >
+      <template #content>
+        You have indicated that <strong>{{ parent.parentFullName }}</strong> is
+        unable to complete their declaration. Please complete the following
+        declaration on their behalf. Click on the button below to complete the
+        declaration.
+      </template>
+      <template #actions>
+        <v-btn color="primary" @click="openParentDeclarationModal(index)"
+          >Student Declare</v-btn
+        >
+      </template>
+    </application-status-tracker-banner>
+  </template>
 
   <application-status-tracker-banner
     label="Waiting for additional information from your partner"
@@ -163,21 +181,18 @@
     "
   />
 
-  <application-status-tracker-banner
-    label="Parent information request completed"
-    icon="fa:fas fa-check-circle"
-    icon-color="success"
-    content="We have successfully received supporting information from a parent."
-    v-if="applicationDetails?.parent1Info === SuccessWaitingStatus.Success"
-  />
-
-  <application-status-tracker-banner
-    label="Parent information request completed"
-    icon="fa:fas fa-check-circle"
-    icon-color="success"
-    content="We have successfully received supporting information from your other parent."
-    v-if="applicationDetails?.parent2Info === SuccessWaitingStatus.Success"
-  />
+  <template
+    v-for="(parent, index) in applicationDetails?.parentsInfo"
+    :key="index"
+  >
+    <application-status-tracker-banner
+      v-if="parent.parentInfo === SuccessWaitingStatus.Success"
+      label="Parent information request completed"
+      icon="fa:fas fa-check-circle"
+      icon-color="success"
+      :content="`We have successfully received supporting information from ${parent.parentFullName}.`"
+    />
+  </template>
 
   <application-status-tracker-banner
     label="Partner information request completed"
@@ -238,6 +253,40 @@
       ApplicationExceptionStatus.Approved
     "
   />
+
+  <v-dialog v-model="showParentDeclarationModal" max-width="700">
+    <v-card>
+      <v-card-title class="text-h5">Parent Declaration</v-card-title>
+      <v-card-text>
+        <content-group-info class="mb-2">
+          <div class="mb-5">
+            <span class="label-bold color-blue"
+              >Parent information required for
+              {{ selectedParentFullName }}</span
+            >
+          </div>
+          <p>
+            You have indicated that
+            <strong>{{ selectedParentFullName }}</strong>
+            is unable to complete their declaration. Please complete the
+            following declaration on their behalf. Click on the button below to
+            complete the declaration.
+          </p>
+        </content-group-info>
+      </v-card-text>
+      <v-card-actions class="justify-end">
+        <v-btn
+          color="primary"
+          variant="outlined"
+          @click="closeParentDeclarationModal"
+          >Cancel</v-btn
+        >
+        <v-btn color="primary" @click="completeParentDeclaration"
+          >Declare</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/common/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
@@ -249,7 +298,7 @@ import {
   ProgramInfoStatus,
   SuccessWaitingStatus,
 } from "@/types";
-import { onMounted, ref, defineComponent } from "vue";
+import { onMounted, ref, defineComponent, computed } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
@@ -264,13 +313,53 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const applicationDetails = ref<InProgressApplicationDetailsAPIOutDTO>();
+    const applicationDetails = ref({} as InProgressApplicationDetailsAPIOutDTO);
     const router = useRouter();
+    const showParentDeclarationModal = ref(false);
+    const selectedParentFullName = ref("");
+    const selectedParentIndex = ref(-1);
 
     const goToStudentApplication = () => {
       router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
       });
+    };
+
+    const openParentDeclarationModal = (index: number) => {
+      selectedParentIndex.value = index;
+      if (applicationDetails.value.parentsInfo) {
+        selectedParentFullName.value =
+          applicationDetails.value.parentsInfo[index].parentFullName;
+      }
+      showParentDeclarationModal.value = true;
+    };
+
+    const closeParentDeclarationModal = () => {
+      showParentDeclarationModal.value = false;
+    };
+
+    const completeParentDeclaration = async () => {
+      // This is a placeholder. In a real scenario, you would make an API call
+      // to update the parent's declaration status.
+      // For now, let's simulate success and close the modal.
+      console.log(
+        `Declaring for parent at index ${selectedParentIndex.value}: ${selectedParentFullName.value}`,
+      );
+      // After successful declaration, you might want to re-fetch application details
+      // to update the tracker cards.
+      showParentDeclarationModal.value = false;
+      // Simulate updating the parentInfo status directly for demonstration.
+      if (
+        applicationDetails.value.parentsInfo &&
+        selectedParentIndex.value !== -1
+      ) {
+        applicationDetails.value.parentsInfo[
+          selectedParentIndex.value
+        ].parentInfo = SuccessWaitingStatus.Success;
+        applicationDetails.value.parentsInfo[
+          selectedParentIndex.value
+        ].isStudentDeclareRequired = false; // Assuming declaration fulfills this.
+      }
     };
 
     onMounted(async () => {
@@ -280,13 +369,42 @@ export default defineComponent({
         );
     });
 
+    const areAllStudentAndParentDeclarationsComplete = computed(() => {
+      const studentDeclarationComplete =
+        applicationDetails.value?.studentIncomeVerificationStatus ===
+        SuccessWaitingStatus.Success;
+      const allParentsDeclared = applicationDetails.value?.parentsInfo?.every(
+        (parent) => parent.parentInfo === SuccessWaitingStatus.Success,
+      );
+      const allParentsIncomeVerified =
+        (applicationDetails.value?.parent1IncomeVerificationStatus ===
+          SuccessWaitingStatus.Success ||
+          !applicationDetails.value?.parent1IncomeVerificationStatus) &&
+        (applicationDetails.value?.parent2IncomeVerificationStatus ===
+          SuccessWaitingStatus.Success ||
+          !applicationDetails.value?.parent2IncomeVerificationStatus);
+
+      // For now, not considering partner information as part of "student and parent declared information"
+      return (
+        studentDeclarationComplete &&
+        allParentsDeclared &&
+        allParentsIncomeVerified
+      );
+    });
+
     return {
       goToStudentApplication,
+      openParentDeclarationModal,
+      closeParentDeclarationModal,
+      completeParentDeclaration,
       ProgramInfoStatus,
       applicationDetails,
       ApplicationExceptionStatus,
       OfferingStatus,
       SuccessWaitingStatus,
+      areAllStudentAndParentDeclarationsComplete,
+      showParentDeclarationModal,
+      selectedParentFullName,
     };
   },
 });

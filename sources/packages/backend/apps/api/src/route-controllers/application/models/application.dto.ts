@@ -29,6 +29,7 @@ export enum SuccessWaitingStatus {
 }
 
 export interface ParentDetails {
+  supportingUserId: number;
   parentFullName: string;
   parentInfo: SuccessWaitingStatus;
   isAbleToReport?: boolean;
