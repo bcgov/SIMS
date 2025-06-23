@@ -26,6 +26,7 @@ import {
   NotificationMessageType,
   OfferingIntensity,
   Restriction,
+  StudentRestriction,
   StudentScholasticStandingChangeType,
   StudyBreaksAndWeeks,
 } from "@sims/sims-db";
@@ -945,19 +946,9 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED);
-      const studentRestrictions = await db.studentRestriction.find({
-        select: {
-          id: true,
-          restriction: {
-            id: true,
-            restrictionCode: true,
-          },
-        },
-        relations: {
-          restriction: true,
-        },
-        where: { student: { id: application.student.id } },
-      });
+      const studentRestrictions = await getActiveStudentRestrictions(
+        application.student.id,
+      );
       expect(studentRestrictions).toEqual([
         {
           id: expect.any(Number),
@@ -1014,28 +1005,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED);
-      const studentRestrictions = await db.studentRestriction.find({
-        select: {
-          id: true,
-          restriction: {
-            id: true,
-            restrictionCode: true,
-          },
-        },
-        relations: {
-          restriction: true,
-        },
-        where: { student: { id: application.student.id } },
-        order: { restriction: { restrictionCode: "ASC" } },
-      });
+      const studentRestrictions = await getActiveStudentRestrictions(
+        application.student.id,
+      );
       expect(studentRestrictions).toEqual([
-        {
-          id: ssrStudentRestriction.id,
-          restriction: {
-            id: ssrRestriction.id,
-            restrictionCode: RestrictionCode.SSR,
-          },
-        },
         {
           id: expect.any(Number),
           restriction: {
@@ -1091,25 +1064,12 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED);
-      const studentRestrictions = await db.studentRestriction.find({
-        select: {
-          id: true,
-          isActive: true,
-          restriction: {
-            id: true,
-            restrictionCode: true,
-          },
-        },
-        relations: {
-          restriction: true,
-        },
-        where: { isActive: true, student: { id: application.student.id } },
-        order: { id: "ASC" },
-      });
+      const studentRestrictions = await getActiveStudentRestrictions(
+        application.student.id,
+      );
       expect(studentRestrictions).toEqual([
         {
           id: expect.any(Number),
-          isActive: true,
           restriction: {
             id: ssrnRestriction.id,
             restrictionCode: RestrictionCode.SSRN,
@@ -1149,19 +1109,9 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED);
-      const studentRestrictions = await db.studentRestriction.find({
-        select: {
-          id: true,
-          restriction: {
-            id: true,
-            restrictionCode: true,
-          },
-        },
-        relations: {
-          restriction: true,
-        },
-        where: { student: { id: application.student.id } },
-      });
+      const studentRestrictions = await getActiveStudentRestrictions(
+        application.student.id,
+      );
       expect(studentRestrictions).toEqual([
         {
           id: expect.any(Number),
@@ -1210,20 +1160,9 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED);
-      const studentRestrictions = await db.studentRestriction.find({
-        select: {
-          id: true,
-          restriction: {
-            id: true,
-            restrictionCode: true,
-          },
-        },
-        relations: {
-          restriction: true,
-        },
-        where: { student: { id: application.student.id } },
-        order: { restriction: { restrictionCode: "ASC" } },
-      });
+      const studentRestrictions = await getActiveStudentRestrictions(
+        application.student.id,
+      );
       expect(studentRestrictions).toEqual([
         {
           id: expect.any(Number),
@@ -1279,20 +1218,9 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED);
-      const studentRestrictions = await db.studentRestriction.find({
-        select: {
-          id: true,
-          restriction: {
-            id: true,
-            restrictionCode: true,
-          },
-        },
-        relations: {
-          restriction: true,
-        },
-        where: { isActive: true, student: { id: application.student.id } },
-        order: { restriction: { restrictionCode: "ASC" } },
-      });
+      const studentRestrictions = await getActiveStudentRestrictions(
+        application.student.id,
+      );
       expect(studentRestrictions).toEqual([
         {
           id: expect.any(Number),
@@ -1362,6 +1290,31 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       valid: validDryRun,
       formName: FormNames.ReportScholasticStandingChange,
       data: payload,
+    });
+  }
+
+  /**
+   * Get active student restrictions for a given
+   * student ID to execute the assertions.
+   * @param studentId student ID.
+   * @returns active student restrictions.
+   */
+  async function getActiveStudentRestrictions(
+    studentId: number,
+  ): Promise<StudentRestriction[]> {
+    return db.studentRestriction.find({
+      select: {
+        id: true,
+        restriction: {
+          id: true,
+          restrictionCode: true,
+        },
+      },
+      relations: {
+        restriction: true,
+      },
+      where: { isActive: true, student: { id: studentId } },
+      order: { restriction: { restrictionCode: "ASC" } },
     });
   }
 });
