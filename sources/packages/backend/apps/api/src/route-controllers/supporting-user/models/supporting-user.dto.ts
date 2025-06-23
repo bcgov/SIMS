@@ -82,3 +82,8 @@ export class SupportingUserFormDataAPIOutDTO {
   firstName: string;
   lastName: string;
 }
+
+export class StudentSupportingUserAPIOutDTO {
+  fullName: string;
+  formName: string;
+}

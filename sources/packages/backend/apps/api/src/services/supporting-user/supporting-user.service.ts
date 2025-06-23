@@ -171,4 +171,32 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       })
       .getOne();
   }
+
+  /**
+   * Get the supporting user who is identifiable by the full name.
+   * @param supportingUserId supporting user id.
+   * @param options options.
+   * - `studentId` student id.
+   * - `isAbleToReport` is supporting user able to report.
+   * @returns
+   */
+  async getIdentifiableSupportingUser(
+    supportingUserId: number,
+    options?: { studentId?: number; isAbleToReport?: boolean },
+  ): Promise<SupportingUser> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        fullName: true,
+        application: { id: true, programYear: { id: true } },
+      },
+      relations: { application: { programYear: true } },
+      where: {
+        id: supportingUserId,
+        isAbleToReport: options?.isAbleToReport,
+        application: { student: { id: options?.studentId } },
+        supportingUserType: SupportingUserType.Parent,
+      },
+    });
+  }
 }

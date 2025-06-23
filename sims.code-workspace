@@ -215,6 +215,7 @@
     },
     "[sql]": {
       "editor.defaultFormatter": "adpyke.vscode-sql-formatter"
-    }
+    },
+    "sql-formatter.uppercase": true
   }
 }
