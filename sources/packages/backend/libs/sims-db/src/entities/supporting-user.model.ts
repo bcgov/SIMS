@@ -106,4 +106,20 @@ export class SupportingUser extends RecordDataModel {
     nullable: true,
   })
   fullName?: string;
+  /**
+   * Personal information of the supporting user who cannot report by themselves and hence provided by the student.
+   */
+  @Column({
+    name: "personal_info",
+    type: "jsonb",
+    nullable: true,
+  })
+  personalInfo?: SupportingUserPersonalInfo;
 }
+/**
+ * Supporting user personal information.
+ */
+export type SupportingUserPersonalInfo = {
+  firstName?: string;
+  lastName: string;
+};
