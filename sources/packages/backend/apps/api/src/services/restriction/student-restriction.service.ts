@@ -264,9 +264,6 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * Checks if the student has an active requested restriction.
    * @param studentId student id.
    * @param restrictionCodes restriction codes.
-   * @param options optional parameters.
-   * - `isActive` flag to check if the restriction is active or not.
-   * - `entityManager` an optional EntityManager to manage the transaction.
    * @param entityManager manages the transaction where this operation must be executed.
    * @returns true, if the student has the requested active
    * restriction code else false.

@@ -282,21 +282,16 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * Get full time related restrictions for scholastic standing.
-   * When institution report withdrawal for a FT course application,
-   * add WTHD restriction to student.
-   * When institution report Withdrawal for a FT course on a student WITH a WTHD
-   * restriction add SSR restriction.
-   * When institution reports a change related to a FT application for unsuccessful
-   * completion and the total number of unsuccessful weeks hits minimum 68, add SSR
-   * restriction.
-   * If a ministry user resolves the SSR or WTHD restriction, and new withdrawal
-   * is reported, re add the above restrictions.
-   * If a ministry user resolves the SSR restriction, and new unsuccessful completion
-   * is reported, add the restriction (minimum is still at least 68).
-   * * If an active SSR restriction already exists for the student and the
-   * * student withdrawal again or unsuccessful weeks hits minimum 68 again,
-   * * then add another SSR restriction.
+   * Get full-time related restrictions for scholastic standing.
+   * Evaluates the scholastic standing change type and
+   * creates the appropriate restrictions based on the type.
+   * If the scholastic standing change type is not related to withdrawal
+   * or unsuccessful completion, then no restrictions are created.
+   * Once SSR or SSRN are present in the student account, any of the
+   * above mentioned restrictions will create a new SSRN restriction
+   * (if one is not present or active yet).
+   * 'Student withdrew from program' will always create a new WTHD restriction
+   * if one is not present or active yet.
    * @param scholasticStandingData scholastic standing data.
    * @param studentId student id.
    * @param auditUserId user that should be considered the one that is
@@ -304,7 +299,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param applicationId application id.
    * @returns new student restriction(s), that need to be saved.
    */
-  async getFullTimeStudentRestrictions(
+  private async getFullTimeStudentRestrictions(
     scholasticStandingData: ScholasticStanding,
     studentId: number,
     auditUserId: number,
@@ -322,7 +317,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       return restrictions;
     }
     // Get all existing restrictions for the student that potentially will be required
-    // to determine the new restriction to be created.
+    // to determine the new restriction(s) to be created.
     const existingRestrictions =
       await this.studentRestrictionService.getRestrictionByCodes(studentId, [
         RestrictionCode.SSR,
@@ -337,10 +332,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       (studentRestriction) =>
         studentRestriction.restriction.restrictionCode === RestrictionCode.SSRN,
     );
-
     // Check for SSR and SSRN pre-existing restrictions.
     if ((ssr || ssrn) && !ssrn?.isActive) {
-      // If the student ever had an SSR or SSRN in his account, then create a new SSRN, if SSRN is not active.
+      // If the student has ever had an SSR or SSRN in his account, then create a new SSRN if the SSRN is not active.
       const ssrnRestriction =
         await this.studentRestrictionSharedService.createRestrictionToSave(
           studentId,
@@ -353,7 +347,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
     ) {
-      // Only check for SSR if SSR or SSRN is not present.
+      // Only check for SSR if SSR or SSRN are not present.
       if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
         throw new Error("Number of unsuccessful weeks is empty.");
       }
@@ -435,7 +429,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param applicationId application id.
    * @returns a new student restriction objects, that need to be saved.
    */
-  async getPartTimeStudentRestrictions(
+  private async getPartTimeStudentRestrictions(
     scholasticStandingData: ScholasticStanding,
     studentId: number,
     auditUserId: number,
