@@ -801,33 +801,36 @@ export class ApplicationControllerService {
         incomeVerification.supportingUserType === SupportingUserType.Parent,
     );
 
-    supportingUserDetails.parentsInfo = [];
+    // Only initialize parentsInfo array if we have parent data
+    if (parent1 || parent2) {
+      supportingUserDetails.parentsInfo = [];
+    }
 
     if (parent1) {
-      supportingUserDetails.parent1Info = !parent1.supportingData
-        ? SuccessWaitingStatus.Waiting
-        : SuccessWaitingStatus.Success;
-      supportingUserDetails.parentsInfo.push({
-        supportingUserId: parent1.id,
-        parentFullName: parent1.fullName,
-        parentInfo: parent1.supportingData
-          ? SuccessWaitingStatus.Success
-          : SuccessWaitingStatus.Waiting,
-        isAbleToReport: parent1.isAbleToReport,
-      });
+      (supportingUserDetails.parent1Info = parent1.supportingData
+        ? SuccessWaitingStatus.Success
+        : SuccessWaitingStatus.Waiting),
+        supportingUserDetails.parentsInfo.push({
+          supportingUserId: parent1.id,
+          parentFullName: parent1.fullName,
+          parentInfo: parent1.supportingData
+            ? SuccessWaitingStatus.Success
+            : SuccessWaitingStatus.Waiting,
+          isAbleToReport: parent1.isAbleToReport,
+        });
     }
     if (parent2) {
-      supportingUserDetails.parent2Info = !parent2.supportingData
-        ? SuccessWaitingStatus.Waiting
-        : SuccessWaitingStatus.Success;
-      supportingUserDetails.parentsInfo.push({
-        supportingUserId: parent2.id,
-        parentFullName: parent2.fullName,
-        parentInfo: parent2.supportingData
-          ? SuccessWaitingStatus.Success
-          : SuccessWaitingStatus.Waiting,
-        isAbleToReport: parent2.isAbleToReport,
-      });
+      (supportingUserDetails.parent2Info = parent2.supportingData
+        ? SuccessWaitingStatus.Success
+        : SuccessWaitingStatus.Waiting),
+        supportingUserDetails.parentsInfo.push({
+          supportingUserId: parent2.id,
+          parentFullName: parent2.fullName,
+          parentInfo: parent2.supportingData
+            ? SuccessWaitingStatus.Success
+            : SuccessWaitingStatus.Waiting,
+          isAbleToReport: parent2.isAbleToReport,
+        });
     }
 
     // Partner.
