@@ -804,6 +804,9 @@ export class ApplicationControllerService {
     supportingUserDetails.parentsInfo = [];
 
     if (parent1) {
+      supportingUserDetails.parent1Info = !parent1.supportingData
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
       supportingUserDetails.parentsInfo.push({
         supportingUserId: parent1.id,
         parentFullName: parent1.fullName,
@@ -814,6 +817,9 @@ export class ApplicationControllerService {
       });
     }
     if (parent2) {
+      supportingUserDetails.parent2Info = !parent2.supportingData
+        ? SuccessWaitingStatus.Waiting
+        : SuccessWaitingStatus.Success;
       supportingUserDetails.parentsInfo.push({
         supportingUserId: parent2.id,
         parentFullName: parent2.fullName,
