@@ -26,7 +26,7 @@ SELECT
             user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
     ),
     'BCSL Delinquency',
-    '{"Stop full time BC funding"}',
+    ARRAY ['Stop full time BC funding'] :: sims.restriction_action_types [] AS action_type,
     'Error',
     false
 WHERE
@@ -65,7 +65,7 @@ SELECT
             user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
     ),
     'Academic',
-    '{"Stop full time disbursement","Stop full time apply"}',
+    ARRAY ['Stop full time disbursement', 'Stop full time apply'] :: sims.restriction_action_types [] AS action_type,
     'Error',
     false
 WHERE
