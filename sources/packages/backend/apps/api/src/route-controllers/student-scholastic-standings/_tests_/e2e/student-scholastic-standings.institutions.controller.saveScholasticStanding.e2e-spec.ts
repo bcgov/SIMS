@@ -962,13 +962,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
 
     it(`Should create an ${RestrictionCode.SSRN} restriction when the student already has an ${RestrictionCode.SSR}.`, async () => {
       // Arrange
-      const unsuccessfulWeeks =
-        SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS + 1;
       mockFormioDryRun({
         validDryRun: true,
         studentScholasticStandingChangeType:
           StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-        numberOfUnsuccessfulWeeks: unsuccessfulWeeks,
       });
       const application = await saveFakeApplication(
         db.dataSource,
@@ -980,7 +977,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
           applicationStatus: ApplicationStatus.Completed,
           offeringInitialValues: {
             studyBreaks: {
-              totalDays: unsuccessfulWeeks * 7,
+              totalDays: 1,
             } as StudyBreaksAndWeeks,
           },
         },
