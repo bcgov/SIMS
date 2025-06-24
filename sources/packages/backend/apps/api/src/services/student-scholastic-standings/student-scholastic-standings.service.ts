@@ -359,14 +359,14 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           scholasticStandingData.numberOfUnsuccessfulWeeks >=
         SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS
       ) {
-        const ssrnRestriction =
+        const ssrRestriction =
           await this.studentRestrictionSharedService.createRestrictionToSave(
             studentId,
             RestrictionCode.SSR,
             auditUserId,
             applicationId,
           );
-        restrictions.push(ssrnRestriction);
+        restrictions.push(ssrRestriction);
         return restrictions;
       }
     }
