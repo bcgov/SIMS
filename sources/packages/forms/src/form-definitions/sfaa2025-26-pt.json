@@ -4368,6 +4368,59 @@
                   "type": "radio",
                   "optionsLabelPosition": "right",
                   "lockKey": true
+                },
+                {
+                  "title": "",
+                  "customClass": "alert-banner-container alert-banner-warning",
+                  "collapsible": false,
+                  "hideLabel": true,
+                  "key": "estimatedCurrentYearIncomeExceptionConfirmPanel1",
+                  "conditional": {
+                    "show": true,
+                    "when": "hasCurrentYearPartnerIncome",
+                    "eq": "yes"
+                  },
+                  "type": "panel",
+                  "label": "Panel",
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "label": "Content",
+                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                      "attrs": [
+                        {
+                          "value": "",
+                          "attr": ""
+                        }
+                      ],
+                      "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to your spouse/common-law partner having or anticipating a significant decrease in gross income for [dynamic year used for current year income (first year of program year)], due to one of the following circumstances.\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
+                      "refreshOnChange": false,
+                      "key": "partnerCurrentYearIncomeExceptionPanelContent",
+                      "type": "htmlelement",
+                      "input": false,
+                      "hideLabel": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "I confirm I am eligible for this exception category and understand that this process requires ministry review and will lead to delays in my funding.",
+                      "customClass": "formio-component-weight-bold",
+                      "tableView": true,
+                      "defaultValue": false,
+                      "validate": {
+                        "required": true,
+                        "customMessage": "You must confirm you understand the exception eligibility criteria."
+                      },
+                      "validateWhenHidden": false,
+                      "key": "partnerCurrentYearIncomeConfirmation",
+                      "type": "checkbox",
+                      "dataGridLabel": false,
+                      "input": true,
+                      "lockKey": true,
+                      "hideOnChildrenHidden": false
+                    }
+                  ],
+                  "lockKey": true
                 }
               ],
               "type": "panel",
@@ -4426,22 +4479,23 @@
         },
         {
           "title": "Partner Income Panel",
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "partnerIncomePanel",
+          "conditional": {
+            "show": true,
+            "when": "partnerCurrentYearIncomeConfirmation",
+            "eq": "true"
+          },
+          "type": "panel",
+          "label": "Partner Income Panel",
           "breadcrumbClickable": false,
+          "allowPrevious": false,
           "buttonSettings": {
             "previous": false,
             "cancel": false,
             "next": false
           },
-          "collapsible": false,
-          "hideLabel": true,
-          "key": "partnerIncomePanel",
-          "conditional": {
-            "show": "true",
-            "when": "isYourPartnerAbleToReport",
-            "eq": "false"
-          },
-          "type": "panel",
-          "label": "Partner Income Panel",
           "input": false,
           "tableView": false,
           "components": [
@@ -4812,8 +4866,7 @@
               },
               "label": "Panel"
             }
-          ],
-          "allowPrevious": false
+          ]
         }
       ]
     },
@@ -5157,27 +5210,80 @@
               "input": true
             },
             {
-              "title": "Decrease in income panel",
-              "breadcrumbClickable": false,
-              "buttonSettings": {
-                "previous": false,
-                "cancel": false,
-                "next": false
-              },
-              "scrollToTop": false,
+              "title": "",
+              "customClass": "alert-banner-container alert-banner-warning",
               "collapsible": false,
               "hideLabel": true,
-              "key": "decreaseInIncomePanel",
+              "key": "estimatedCurrentYearIncomeExceptionConfirmPanel",
               "conditional": {
                 "show": true,
                 "when": "hasSignificantDegreeOfIncome",
                 "eq": "yes"
               },
               "type": "panel",
-              "label": "Decrease in Income. Panel",
+              "label": "Panel",
               "input": false,
               "tableView": false,
+              "components": [
+                {
+                  "label": "Content",
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to your spouse/common-law partner having or anticipating a significant decrease in gross income for [dynamic year used for current year income (first year of program year)], due to one of the following circumstances.\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
+                  "refreshOnChange": false,
+                  "key": "estimatedCurrentYearIncomeExceptionPanelContent",
+                  "type": "htmlelement",
+                  "input": false,
+                  "hideLabel": true,
+                  "tableView": false
+                },
+                {
+                  "label": "I confirm I am eligible for this exception category and understand that this process requires ministry review and will lead to delays in my funding.",
+                  "customClass": "formio-component-weight-bold",
+                  "tableView": true,
+                  "defaultValue": false,
+                  "validate": {
+                    "required": true,
+                    "customMessage": "You must confirm you understand the exception eligibility criteria."
+                  },
+                  "validateWhenHidden": false,
+                  "key": "estimatedCurrentYearIncomeConfirmation",
+                  "type": "checkbox",
+                  "dataGridLabel": false,
+                  "input": true,
+                  "lockKey": true,
+                  "hideOnChildrenHidden": false
+                }
+              ],
+              "lockKey": true
+            },
+            {
+              "title": "Decrease in income panel",
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "decreaseInIncomePanel",
+              "conditional": {
+                "show": true,
+                "when": "estimatedCurrentYearIncomeConfirmation",
+                "eq": "true"
+              },
+              "type": "panel",
+              "label": "Decrease in Income. Panel",
+              "breadcrumbClickable": false,
               "allowPrevious": false,
+              "buttonSettings": {
+                "previous": false,
+                "cancel": false,
+                "next": false
+              },
+              "scrollToTop": false,
+              "input": false,
+              "tableView": false,
               "components": [
                 {
                   "input": true,
@@ -5591,6 +5697,59 @@
               "lockKey": true
             },
             {
+              "title": "",
+              "customClass": "alert-banner-container alert-banner-warning",
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "additionalTransportationExceptionConfirmPanel",
+              "conditional": {
+                "show": true,
+                "when": "additionalTransportListedDriver",
+                "eq": "yes"
+              },
+              "type": "panel",
+              "label": "Panel",
+              "input": false,
+              "tableView": false,
+              "components": [
+                {
+                  "label": "Content",
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou require additional financial support for transportation due to one of the following criteria:\n<li>Public transit takes more than two hours from your neighborhood to your school and back by the quickest/most direct route.</li>\n<li>I am in a clinical or practicum placement that requires additional travel.</li>\n<li>I have special circumstances that require additional travel (work, family responsibilities, living distance from school).</li>",
+                  "refreshOnChange": false,
+                  "key": "additionalTransportationExceptionPanelContent",
+                  "type": "htmlelement",
+                  "input": false,
+                  "hideLabel": true,
+                  "tableView": false
+                },
+                {
+                  "label": "I confirm I am eligible for this exception category and understand that this process requires ministry review and will lead to delays in my funding.",
+                  "customClass": "formio-component-weight-bold",
+                  "tableView": true,
+                  "validate": {
+                    "required": true,
+                    "customMessage": "You must confirm you understand the exception eligibility criteria."
+                  },
+                  "validateWhenHidden": false,
+                  "key": "additionalTransportationConfirmation",
+                  "type": "checkbox",
+                  "dataGridLabel": false,
+                  "input": true,
+                  "lockKey": true,
+                  "hideOnChildrenHidden": false,
+                  "defaultValue": false
+                }
+              ],
+              "lockKey": true
+            },
+            {
               "key": "additionalTransportationCostContent",
               "label": "Content",
               "input": false,
@@ -5620,9 +5779,9 @@
               "hideLabel": true,
               "key": "panel",
               "conditional": {
-                "show": "true",
-                "when": "additionalTransportListedDriver",
-                "eq": "yes"
+                "show": true,
+                "when": "additionalTransportationConfirmation",
+                "eq": "true"
               },
               "type": "panel",
               "label": "Panel",
