@@ -416,7 +416,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       }
       // Check if an SSR or SSRN was created for the student.
       const createdSSROrSSRN = restrictions.some((studentRestriction) =>
-        [RestrictionCode.SSR, RestrictionCode.SSRN].includes(
+        SCHOLASTIC_ESCALATION_RESTRICTIONS.includes(
           studentRestriction.restriction.restrictionCode as RestrictionCode,
         ),
       );
