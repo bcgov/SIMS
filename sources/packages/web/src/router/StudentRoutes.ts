@@ -21,6 +21,7 @@ import StudentAppealRequests from "@/views/student/StudentAppealRequests.vue";
 import ApplicationOfferingChangeFormView from "@/views/student/application-offering-change-request/ApplicationOfferingChangeFormView.vue";
 import RequestedApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/RequestedApplicationOfferingDetails.vue";
 import ActiveApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/ActiveApplicationOfferingDetails.vue";
+import ReportParentInformation from "@/views/student/ReportParentInformation.vue";
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -105,6 +106,18 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.DYNAMIC_FINANCIAL_APP_FORM_VIEW,
         component: DynamicStudentApp,
         props: true,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentReportParentInformation,
+        name: StudentRoutesConst.REPORT_PARENT_INFORMATION,
+        component: ReportParentInformation,
+        props: (route) => ({
+          applicationId: parseInt(route.params.applicationId as string),
+          supportingUserId: parseInt(route.params.supportingUserId as string),
+        }),
         meta: {
           clientType: ClientIdType.Student,
         },
