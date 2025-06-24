@@ -119,8 +119,9 @@ studentCalculatedTotalIncome</bpmn:text>
       <bpmn:text>IN
 studentDataRelationshipStatus
 calculatedDataHasEligibleDependants
-studentDataLivingWithParents
-studentDataLivingathomeRent
+studentDataLivingAtHome
+studentDataLivingAtHomeRent
+studentDataSelfContainedSuite
 
 OUT
 calculatedDataLivingCategory</bpmn:text>
@@ -2153,7 +2154,7 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmn:documentation>If values can be null and will be used add them here</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataLivingathomeRent = null&#10;then &#34;no&#34;&#10;else&#10;  studentDataLivingathomeRent" target="studentDataLivingathomeRent" />
+          <zeebe:output source="=if studentDataLivingAtHomeRent = null&#10;then &#34;no&#34;&#10;else&#10;  studentDataLivingAtHomeRent" target="studentDataLivingAtHomeRent" />
           <zeebe:output source="=if studentDataDaycareCosts11YearsOrUnder = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts11YearsOrUnder" target="studentDataDaycareCosts11YearsOrUnder" />
           <zeebe:output source="=if studentDataDaycareCosts12YearsOrOver = null&#10;then 0&#10;else&#10;  studentDataDaycareCosts12YearsOrOver" target="studentDataDaycareCosts12YearsOrOver" />
           <zeebe:output source="=if studentDataChildSupportAndOrSpousalSupport = null&#10;then 0&#10;else&#10;  studentDataChildSupportAndOrSpousalSupport" target="studentDataChildSupportAndOrSpousalSupport" />
