@@ -807,30 +807,32 @@ export class ApplicationControllerService {
     }
 
     if (parent1) {
-      (supportingUserDetails.parent1Info = parent1.supportingData
+      supportingUserDetails.parent1Info = parent1.supportingData
         ? SuccessWaitingStatus.Success
-        : SuccessWaitingStatus.Waiting),
-        supportingUserDetails.parentsInfo.push({
-          supportingUserId: parent1.id,
-          parentFullName: parent1.fullName,
-          parentInfo: parent1.supportingData
-            ? SuccessWaitingStatus.Success
-            : SuccessWaitingStatus.Waiting,
-          isAbleToReport: parent1.isAbleToReport,
-        });
+        : SuccessWaitingStatus.Waiting;
+
+      supportingUserDetails.parentsInfo.push({
+        supportingUserId: parent1.id,
+        parentFullName: parent1.fullName,
+        parentInfo: parent1.supportingData
+          ? SuccessWaitingStatus.Success
+          : SuccessWaitingStatus.Waiting,
+        isAbleToReport: parent1.isAbleToReport,
+      });
     }
     if (parent2) {
-      (supportingUserDetails.parent2Info = parent2.supportingData
+      supportingUserDetails.parent2Info = parent2.supportingData
         ? SuccessWaitingStatus.Success
-        : SuccessWaitingStatus.Waiting),
-        supportingUserDetails.parentsInfo.push({
-          supportingUserId: parent2.id,
-          parentFullName: parent2.fullName,
-          parentInfo: parent2.supportingData
-            ? SuccessWaitingStatus.Success
-            : SuccessWaitingStatus.Waiting,
-          isAbleToReport: parent2.isAbleToReport,
-        });
+        : SuccessWaitingStatus.Waiting;
+
+      supportingUserDetails.parentsInfo.push({
+        supportingUserId: parent2.id,
+        parentFullName: parent2.fullName,
+        parentInfo: parent2.supportingData
+          ? SuccessWaitingStatus.Success
+          : SuccessWaitingStatus.Waiting,
+        isAbleToReport: parent2.isAbleToReport,
+      });
     }
 
     // Partner.

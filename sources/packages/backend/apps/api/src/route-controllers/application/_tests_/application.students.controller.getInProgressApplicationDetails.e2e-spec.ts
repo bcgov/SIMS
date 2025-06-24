@@ -183,14 +183,14 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
             supportingUserId: parent1.id,
             parentFullName: null,
             parentInfo: SuccessWaitingStatus.Success,
-            isAbleToReport: true
+            isAbleToReport: true,
           },
           {
             supportingUserId: parent2.id,
             parentFullName: null,
             parentInfo: SuccessWaitingStatus.Success,
-            isAbleToReport: true
-          }
+            isAbleToReport: true,
+          },
         ],
       });
   });
