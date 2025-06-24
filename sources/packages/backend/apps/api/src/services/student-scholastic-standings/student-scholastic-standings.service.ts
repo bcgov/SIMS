@@ -347,22 +347,24 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           studentRestriction.restriction.restrictionCode as RestrictionCode,
         ),
     );
-    const hasActiveSSRN = existingRestrictions.some(
-      (studentRestriction) =>
-        studentRestriction.restriction.restrictionCode ===
-          RestrictionCode.SSRN && studentRestriction.isActive,
-    );
     // Check for SSR and SSRN pre-existing restrictions.
-    if (hasEscalationRestrictions && !hasActiveSSRN) {
-      // If the student has ever had an SSR or SSRN in his account, then create a new SSRN if the SSRN is not active.
-      const ssrnRestriction =
-        await this.studentRestrictionSharedService.createRestrictionToSave(
-          studentId,
-          RestrictionCode.SSRN,
-          auditUserId,
-          applicationId,
-        );
-      restrictions.push(ssrnRestriction);
+    if (hasEscalationRestrictions) {
+      // A SSRN needs to be created ifan active one does not exist.
+      const hasActiveSSRN = existingRestrictions.some(
+        (studentRestriction) =>
+          studentRestriction.restriction.restrictionCode ===
+            RestrictionCode.SSRN && studentRestriction.isActive,
+      );
+      if (!hasActiveSSRN) {
+        const ssrnRestriction =
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            RestrictionCode.SSRN,
+            auditUserId,
+            applicationId,
+          );
+        restrictions.push(ssrnRestriction);
+      }
     } else if (
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
