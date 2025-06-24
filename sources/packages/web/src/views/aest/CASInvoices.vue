@@ -292,7 +292,6 @@ export default defineComponent({
     };
 
     const filterByApprovalStatus = async () => {
-      debugger;
       if (approvalStatusFilter.value.includes(ApprovalStatusFilter.All)) {
         currentPagination.searchCriteria = undefined;
       } else {
