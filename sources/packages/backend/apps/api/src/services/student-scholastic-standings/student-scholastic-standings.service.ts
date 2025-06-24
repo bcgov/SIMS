@@ -32,6 +32,24 @@ import {
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 
 /**
+ * Scholastic standing restrictions that are applied to the student
+ * when a scholastic standing is submitted and the student already had
+ * previous scholastic standing restrictions applied.
+ */
+const SCHOLASTIC_ESCALATION_RESTRICTIONS = [
+  RestrictionCode.SSR,
+  RestrictionCode.SSRN,
+];
+/**
+ * Full-time scholastic standing change types that will
+ * apply restrictions to the student.
+ */
+const SCHOLASTIC_RESTRICTION_TYPES_FULL_TIME = [
+  StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+  StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+];
+
+/**
  * Manages the student scholastic standings related operations.
  */
 @Injectable()
@@ -307,10 +325,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   ): Promise<StudentRestriction[]> {
     const restrictions: StudentRestriction[] = [];
     if (
-      ![
-        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-      ].includes(scholasticStandingData.scholasticStandingChangeType)
+      !SCHOLASTIC_RESTRICTION_TYPES_FULL_TIME.includes(
+        scholasticStandingData.scholasticStandingChangeType,
+      )
     ) {
       // If the scholastic standing change type is not related to withdrawal
       // or unsuccessful completion then no restrictions are required.
@@ -324,16 +341,19 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         RestrictionCode.SSRN,
         RestrictionCode.WTHD,
       ]);
-    const ssr = existingRestrictions.find(
+    const hasEscalationRestrictions = existingRestrictions.some(
       (studentRestriction) =>
-        studentRestriction.restriction.restrictionCode === RestrictionCode.SSR,
+        SCHOLASTIC_ESCALATION_RESTRICTIONS.includes(
+          studentRestriction.restriction.restrictionCode as RestrictionCode,
+        ),
     );
-    const ssrn = existingRestrictions.find(
+    const hasActiveSSRN = existingRestrictions.some(
       (studentRestriction) =>
-        studentRestriction.restriction.restrictionCode === RestrictionCode.SSRN,
+        studentRestriction.restriction.restrictionCode ===
+          RestrictionCode.SSRN && studentRestriction.isActive,
     );
     // Check for SSR and SSRN pre-existing restrictions.
-    if ((ssr || ssrn) && !ssrn?.isActive) {
+    if (hasEscalationRestrictions && !hasActiveSSRN) {
       // If the student has ever had an SSR or SSRN in his account, then create a new SSRN if the SSRN is not active.
       const ssrnRestriction =
         await this.studentRestrictionSharedService.createRestrictionToSave(
