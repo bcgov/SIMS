@@ -91,7 +91,12 @@
         declaration.
       </template>
       <template #actions>
-        <v-btn color="primary">Student Declare</v-btn>
+        <v-btn
+          color="primary"
+          @click="navigateToParentReporting(parent.supportingUserId)"
+        >
+          Student Declare
+        </v-btn>
       </template>
     </application-status-tracker-banner>
   </template>
@@ -280,9 +285,13 @@ export default defineComponent({
     const applicationDetails = ref<InProgressApplicationDetailsAPIOutDTO>();
     const router = useRouter();
 
-    const goToStudentApplication = () => {
+    const navigateToParentReporting = (supportingUserId: number) => {
       router.push({
-        name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
+        name: StudentRoutesConst.REPORT_PARENT_INFORMATION,
+        params: {
+          applicationId: String(props.applicationId),
+          supportingUserId: String(supportingUserId),
+        },
       });
     };
 
@@ -294,7 +303,7 @@ export default defineComponent({
     });
 
     return {
-      goToStudentApplication,
+      navigateToParentReporting,
       ProgramInfoStatus,
       applicationDetails,
       ApplicationExceptionStatus,
