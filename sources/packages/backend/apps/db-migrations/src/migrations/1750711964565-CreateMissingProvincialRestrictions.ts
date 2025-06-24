@@ -14,6 +14,7 @@ export class CreateMissingProvincialRestrictions1750711964565
   }
 
   public async down(): Promise<void> {
-    // No down migration planned.
+    // No down migration planned since reverting this migration would remove the restrictions
+    // and there is no need to restore the DB to its previous state in this scenario.
   }
 }
