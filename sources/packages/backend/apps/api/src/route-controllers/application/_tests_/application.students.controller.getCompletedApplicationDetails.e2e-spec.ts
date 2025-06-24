@@ -1115,8 +1115,22 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           applicationId: changeRequestApplication.id,
           applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
           studentIncomeVerificationStatus: SuccessWaitingStatus.Success,
-          parent1Info: SuccessWaitingStatus.Success,
           parent1IncomeVerificationStatus: SuccessWaitingStatus.Waiting,
+          parentsInfo: [
+            {
+              supportingUserId: parentWaitingIncome.id,
+              parentFullName: parentWaitingIncome.fullName,
+              parentInfo: SuccessWaitingStatus.Success,
+              isAbleToReport: parentWaitingIncome.isAbleToReport,
+            },
+            {
+              supportingUserId: parentWaitingData.id,
+              parentFullName: parentWaitingData.fullName,
+              parentInfo: SuccessWaitingStatus.Waiting,
+              isAbleToReport: parentWaitingData.isAbleToReport,
+            },
+          ],
+          parent1Info: SuccessWaitingStatus.Success,
           parent2Info: SuccessWaitingStatus.Waiting,
         },
       });

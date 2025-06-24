@@ -178,6 +178,20 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         parent1Info: SuccessWaitingStatus.Success,
         parent2Info: SuccessWaitingStatus.Success,
         outstandingAssessmentStatus: SuccessWaitingStatus.Success,
+        parentsInfo: [
+          {
+            supportingUserId: parent1.id,
+            parentFullName: null,
+            parentInfo: SuccessWaitingStatus.Success,
+            isAbleToReport: true
+          },
+          {
+            supportingUserId: parent2.id,
+            parentFullName: null,
+            parentInfo: SuccessWaitingStatus.Success,
+            isAbleToReport: true
+          }
+        ],
       });
   });
 
