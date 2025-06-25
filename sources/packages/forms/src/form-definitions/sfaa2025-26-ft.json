@@ -4935,30 +4935,6 @@
               "tableView": false,
               "tag": "p",
               "hideLabel": true
-            },
-            {
-              "label": "Spouse Estimation",
-              "className": "alert alert-warning fa fa-exclamation-circle",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "<strong> Please be advised this could delay your application</strong> \n<br />\nIf your partner is not eligible for a BC Services Card account, you will need to report their financial information on their behalf. Please note this information may be subject to audit and review, which could delay your application.",
-              "refreshOnChange": false,
-              "customClass": "banner-warning",
-              "key": "spouseEstimation",
-              "conditional": {
-                "show": "true",
-                "when": "isYourPartnerEligibleForBCSCAccount",
-                "eq": "no"
-              },
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "tag": "p",
-              "hideLabel": true
             }
           ]
         },
