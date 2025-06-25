@@ -287,8 +287,8 @@ export default defineComponent({
       router.push({
         name: StudentRoutesConst.REPORT_PARENT_INFORMATION,
         params: {
-          applicationId: String(props.applicationId),
-          supportingUserId: String(supportingUserId),
+          applicationId: props.applicationId.toString(),
+          supportingUserId: supportingUserId.toString(),
         },
       });
     };

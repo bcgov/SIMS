@@ -798,35 +798,19 @@ export class ApplicationControllerService {
     const supportingUserDetails =
       {} as ApplicationIdentifiableSupportingUserDetails;
     // Parent.
-    const [parent1, parent2] = supportingUser.filter(
+    const parents = supportingUser.filter(
       (incomeVerification) =>
         incomeVerification.supportingUserType === SupportingUserType.Parent,
     );
-
-    // Only initialize parentsInfo array if we have parent data.
-    if (parent1 || parent2) {
-      supportingUserDetails.parentsInfo = [];
-    }
-
-    if (parent1) {
-      supportingUserDetails.parentsInfo.push({
-        supportingUserId: parent1.id,
-        parentFullName: parent1.fullName,
-        status: parent1.supportingData
+    if (parents.length) {
+      supportingUserDetails.parentsInfo = parents.map((parent) => ({
+        supportingUserId: parent.id,
+        parentFullName: parent.fullName,
+        status: parent.supportingData
           ? SuccessWaitingStatus.Success
           : SuccessWaitingStatus.Waiting,
-        isAbleToReport: parent1.isAbleToReport,
-      });
-    }
-    if (parent2) {
-      supportingUserDetails.parentsInfo.push({
-        supportingUserId: parent2.id,
-        parentFullName: parent2.fullName,
-        status: parent2.supportingData
-          ? SuccessWaitingStatus.Success
-          : SuccessWaitingStatus.Waiting,
-        isAbleToReport: parent2.isAbleToReport,
-      });
+        isAbleToReport: parent.isAbleToReport,
+      }));
     }
 
     // Partner.

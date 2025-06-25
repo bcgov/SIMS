@@ -114,6 +114,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         initialValues: {
           supportingUserType: SupportingUserType.Parent,
           supportingData: { totalIncome: 2000 },
+          fullName: "Parent One",
         },
       },
     );
@@ -123,6 +124,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         initialValues: {
           supportingUserType: SupportingUserType.Parent,
           supportingData: { totalIncome: 2000 },
+          fullName: "Parent Two",
         },
       },
     );
@@ -179,13 +181,13 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         parentsInfo: [
           {
             supportingUserId: parent1.id,
-            parentFullName: null,
+            parentFullName: parent1.fullName,
             status: SuccessWaitingStatus.Success,
             isAbleToReport: true,
           },
           {
             supportingUserId: parent2.id,
-            parentFullName: null,
+            parentFullName: parent2.fullName,
             status: SuccessWaitingStatus.Success,
             isAbleToReport: true,
           },
