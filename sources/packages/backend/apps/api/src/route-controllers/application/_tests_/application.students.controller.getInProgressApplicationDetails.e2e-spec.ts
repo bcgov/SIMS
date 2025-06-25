@@ -175,20 +175,18 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         studentIncomeVerificationStatus: SuccessWaitingStatus.Success,
         parent1IncomeVerificationStatus: SuccessWaitingStatus.Success,
         parent2IncomeVerificationStatus: SuccessWaitingStatus.Success,
-        parent1Info: SuccessWaitingStatus.Success,
-        parent2Info: SuccessWaitingStatus.Success,
         outstandingAssessmentStatus: SuccessWaitingStatus.Success,
         parentsInfo: [
           {
             supportingUserId: parent1.id,
             parentFullName: null,
-            parentInfo: SuccessWaitingStatus.Success,
+            status: SuccessWaitingStatus.Success,
             isAbleToReport: true,
           },
           {
             supportingUserId: parent2.id,
             parentFullName: null,
-            parentInfo: SuccessWaitingStatus.Success,
+            status: SuccessWaitingStatus.Success,
             isAbleToReport: true,
           },
         ],
