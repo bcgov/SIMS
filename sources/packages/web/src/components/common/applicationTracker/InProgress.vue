@@ -93,7 +93,7 @@
           color="primary"
           @click="navigateToParentReporting(parent.supportingUserId)"
         >
-          Student Declare
+          {{ parent.parentFullName }}
         </v-btn>
       </template>
     </application-status-tracker-banner>
