@@ -349,7 +349,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     );
     // Check for SSR and SSRN pre-existing restrictions.
     if (hasEscalationRestrictions) {
-      // A SSRN needs to be created ifan active one does not exist.
+      // A SSRN needs to be created if an active one does not exist.
       const hasActiveSSRN = existingRestrictions.some(
         (studentRestriction) =>
           studentRestriction.restriction.restrictionCode ===
