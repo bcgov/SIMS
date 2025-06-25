@@ -4,27 +4,30 @@
  */
 export enum RestrictionCode {
   /**
-   * When an institution report withdrawal for a FT course application,
-   * "WTHD" restriction is added to student account or when institution
-   * reports a change related to a FT application for unsuccessful
-   * completion and the total number of unsuccessful weeks hits minimum 68,
-   * the "SSR" restriction is added to the student account.
+   * When an institution report withdrawal for a full-time course application,
+   * "WTHD" restriction is added to student account if one is not already present.
    */
   WTHD = "WTHD",
   /**
-   * When an institution report withdrawal for a FT course on a
-   * student WITH a "WTHD" restriction , then "SSR" restriction
+   * When an institution report withdrawal for a full-time course on a
+   * student WITH a "WTHD" restriction, then "SSR" restriction
    * is added to the student account.
    */
   SSR = "SSR",
   /**
+   * When an institution reports withdrawal for a full-time course and
+   * the student already has or had an "SSR" restriction, an "SSRN" restriction
+   * is added to the student's account.
+   */
+  SSRN = "SSRN",
+  /**
    * when an institution report withdrawal or unsuccessful weeks
-   * for a PT course application, "PTSSR" restriction is added to the student account.
+   * for a part-time course application, "PTSSR" restriction is added to the student account.
    */
   PTSSR = "PTSSR",
   /**
    * When an institution report withdrawal or unsuccessful weeks
-   * for a PT course application, "PTWTHD" restriction is added to the student account.
+   * for a part-time course application, "PTWTHD" restriction is added to the student account.
    */
   PTWTHD = "PTWTHD",
   /**

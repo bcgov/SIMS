@@ -67,10 +67,12 @@ export function createFakeEducationProgramOffering(
   offering.studyEndDate =
     options?.initialValues?.studyEndDate ??
     getISODateOnlyString(faker.date.soon(30));
-  offering.studyBreaks = {
-    totalFundedWeeks: 16,
-    totalDays: 210, // 30 offering weeks * 7 days,
-  } as StudyBreaksAndWeeks;
+  offering.studyBreaks =
+    options?.initialValues?.studyBreaks ??
+    ({
+      totalFundedWeeks: 16,
+      totalDays: 210, // 30 offering weeks * 7 days,
+    } as StudyBreaksAndWeeks);
   offering.offeringStatus = OfferingStatus.Approved;
   offering.parentOffering = offering;
   return offering;
