@@ -1,9 +1,12 @@
 import {
+  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -17,9 +20,16 @@ import {
   SupportingUserService,
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
-import { StudentSupportingUserAPIOutDTO } from "./models/supporting-user.dto";
+import {
+  StudentSupportingUserAPIInDTO,
+  StudentSupportingUserAPIOutDTO,
+} from "./models/supporting-user.dto";
 import { StudentUserToken } from "../../auth";
-import { DynamicFormType } from "@sims/sims-db";
+import {
+  ApplicationEditStatus,
+  ApplicationStatus,
+  DynamicFormType,
+} from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -66,5 +76,52 @@ export class SupportingUserStudentsController {
       fullName: supportingUser.fullName,
       formName,
     };
+  }
+
+  /**
+   *
+   * @param supportingUserId
+   * @param payload
+   * @param studentToken
+   */
+  @Patch(":supportingUserId")
+  @ApiNotFoundResponse({
+    description:
+      "Supporting user not found or not eligible to be accessed by the student.",
+  })
+  async submitSupportingUserDetails(
+    @Param("supportingUserId", ParseIntPipe) supportingUserId: number,
+    @Body() payload: StudentSupportingUserAPIInDTO,
+    @UserToken() studentToken: StudentUserToken,
+  ): Promise<void> {
+    const supportingUser =
+      await this.supportingUserService.getIdentifiableSupportingUser(
+        supportingUserId,
+        {
+          isAbleToReport: false,
+          studentId: studentToken.studentId,
+          loadSupportingData: true,
+        },
+      );
+    if (!supportingUser) {
+      throw new NotFoundException(
+        "Supporting user not found or not eligible to be accessed by the student.",
+      );
+    }
+    if (supportingUser.supportingData) {
+      throw new UnprocessableEntityException(
+        "Supporting data has already been submitted for this supporting user.",
+      );
+    }
+    const isValidToSubmitSupportingData =
+      supportingUser.application.applicationStatus ===
+        ApplicationStatus.InProgress ||
+      supportingUser.application.applicationEditStatus ===
+        ApplicationEditStatus.ChangeInProgress;
+    if (!isValidToSubmitSupportingData) {
+      throw new UnprocessableEntityException(
+        "Application is not expecting any supporting data to be submitted at the current status.",
+      );
+    }
   }
 }

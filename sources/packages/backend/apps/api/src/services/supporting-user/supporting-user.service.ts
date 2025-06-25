@@ -1,11 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, UpdateResult } from "typeorm";
 import {
   RecordDataModelService,
+  SupportingUserData,
   SupportingUser,
   SupportingUserType,
   User,
   configureIdleTransactionSessionTimeout,
+  SupportingUserPersonalInfo,
 } from "@sims/sims-db";
 import { removeWhiteSpaces } from "../../utilities/string-utils";
 import { SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS } from "../../utilities";
@@ -178,17 +180,28 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
    * @param options options.
    * - `studentId` student id.
    * - `isAbleToReport` is supporting user able to report.
-   * @returns
+   * - `loadSupportingData` option to load supporting data.
+   * @returns supporting user details.
    */
   async getIdentifiableSupportingUser(
     supportingUserId: number,
-    options?: { studentId?: number; isAbleToReport?: boolean },
+    options?: {
+      studentId?: number;
+      isAbleToReport?: boolean;
+      loadSupportingData?: boolean;
+    },
   ): Promise<SupportingUser> {
     return this.repo.findOne({
       select: {
         id: true,
         fullName: true,
-        application: { id: true, programYear: { id: true } },
+        supportingData: !!options?.loadSupportingData,
+        application: {
+          id: true,
+          programYear: { id: true },
+          applicationStatus: true,
+          applicationEditStatus: true,
+        },
       },
       relations: { application: { programYear: true } },
       where: {
@@ -198,5 +211,29 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         supportingUserType: SupportingUserType.Parent,
       },
     });
+  }
+
+  /**
+   * Update supporting user reported data for the supporting user who is not able to report.
+   * @param supportingUserId supporting user id.
+   * @param supportingData supporting data.
+   * @param personalInfo personal information.
+   * @param auditUserId user who is making the changes.
+   * @returns update result.
+   */
+  async updateReportedData(
+    supportingUserId: number,
+    supportingData: SupportingUserData,
+    personalInfo: SupportingUserPersonalInfo,
+    auditUserId: number,
+  ): Promise<UpdateResult> {
+    return this.repo.update(
+      { id: supportingUserId, isAbleToReport: false },
+      {
+        supportingData,
+        personalInfo,
+        modifier: { id: auditUserId } as User,
+      },
+    );
   }
 }
