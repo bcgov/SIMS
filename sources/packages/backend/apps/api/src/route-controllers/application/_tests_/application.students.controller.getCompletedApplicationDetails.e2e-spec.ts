@@ -1120,18 +1120,16 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             {
               supportingUserId: parentWaitingIncome.id,
               parentFullName: parentWaitingIncome.fullName,
-              parentInfo: SuccessWaitingStatus.Success,
+              status: SuccessWaitingStatus.Success,
               isAbleToReport: parentWaitingIncome.isAbleToReport,
             },
             {
               supportingUserId: parentWaitingData.id,
               parentFullName: parentWaitingData.fullName,
-              parentInfo: SuccessWaitingStatus.Waiting,
+              status: SuccessWaitingStatus.Waiting,
               isAbleToReport: parentWaitingData.isAbleToReport,
             },
           ],
-          parent1Info: SuccessWaitingStatus.Success,
-          parent2Info: SuccessWaitingStatus.Waiting,
         },
       });
   });
