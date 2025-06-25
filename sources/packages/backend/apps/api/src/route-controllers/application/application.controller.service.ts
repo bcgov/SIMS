@@ -35,6 +35,7 @@ import {
   SaveApplicationAPIInDTO,
   ChangeRequestInProgressAPIOutDTO,
   ApplicationVersionAPIOutDTO,
+  ApplicationIdentifiableSupportingUserDetails,
 } from "./models/application.dto";
 import {
   allowApplicationChangeRequest,
@@ -794,7 +795,8 @@ export class ApplicationControllerService {
   processApplicationSupportingUserDetails(
     supportingUser: SupportingUser[],
   ): ApplicationSupportingUserDetails {
-    const supportingUserDetails = {} as ApplicationSupportingUserDetails;
+    const supportingUserDetails =
+      {} as ApplicationIdentifiableSupportingUserDetails;
     // Parent.
     const [parent1, parent2] = supportingUser.filter(
       (incomeVerification) =>
@@ -807,28 +809,20 @@ export class ApplicationControllerService {
     }
 
     if (parent1) {
-      supportingUserDetails.parent1Info = parent1.supportingData
-        ? SuccessWaitingStatus.Success
-        : SuccessWaitingStatus.Waiting;
-
       supportingUserDetails.parentsInfo.push({
         supportingUserId: parent1.id,
         parentFullName: parent1.fullName,
-        parentInfo: parent1.supportingData
+        status: parent1.supportingData
           ? SuccessWaitingStatus.Success
           : SuccessWaitingStatus.Waiting,
         isAbleToReport: parent1.isAbleToReport,
       });
     }
     if (parent2) {
-      supportingUserDetails.parent2Info = parent2.supportingData
-        ? SuccessWaitingStatus.Success
-        : SuccessWaitingStatus.Waiting;
-
       supportingUserDetails.parentsInfo.push({
         supportingUserId: parent2.id,
         parentFullName: parent2.fullName,
-        parentInfo: parent2.supportingData
+        status: parent2.supportingData
           ? SuccessWaitingStatus.Success
           : SuccessWaitingStatus.Waiting,
         isAbleToReport: parent2.isAbleToReport,

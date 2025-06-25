@@ -58,8 +58,7 @@
   >
     <application-status-tracker-banner
       v-if="
-        parent.parentInfo === SuccessWaitingStatus.Waiting &&
-        parent.isAbleToReport
+        parent.status === SuccessWaitingStatus.Waiting && parent.isAbleToReport
       "
       :label="`Waiting for additional information from ${parent.parentFullName}`"
       icon="fa:fas fa-clock"
@@ -76,8 +75,7 @@
 
     <application-status-tracker-banner
       v-if="
-        parent.parentInfo === SuccessWaitingStatus.Waiting &&
-        !parent.isAbleToReport
+        parent.status === SuccessWaitingStatus.Waiting && !parent.isAbleToReport
       "
       :label="`Parent information required for ${parent.parentFullName}`"
       icon="fa:fas fa-exclamation-triangle"
@@ -189,7 +187,7 @@
     :key="index"
   >
     <application-status-tracker-banner
-      v-if="parent.parentInfo === SuccessWaitingStatus.Success"
+      v-if="parent.status === SuccessWaitingStatus.Success"
       label="Parent information request completed"
       icon="fa:fas fa-check-circle"
       icon-color="success"
