@@ -59,18 +59,18 @@ export enum AssessmentDataType {
  */
 export enum RestrictionCode {
   /**
-   * When an institution report withdrawal for a full-time course application,
+   * When an institution reports a withdrawal for a full-time course application,
    * "WTHD" restriction is added to student account if one is not already present.
    */
   WTHD = "WTHD",
   /**
-   * When an institution report withdrawal for a full-time course on a
+   * When an institution reports a withdrawal for a full-time course on a
    * student WITH a "WTHD" restriction, then "SSR" restriction
    * is added to the student account.
    */
   SSR = "SSR",
   /**
-   * When an institution reports withdrawal for a full-time course and
+   * When an institution reports a withdrawal for a full-time course and
    * the student already has or had an "SSR" restriction, an "SSRN" restriction
    * is added to the student's account.
    */
