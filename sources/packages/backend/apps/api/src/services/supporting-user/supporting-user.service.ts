@@ -133,6 +133,8 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         "supportingUser.id",
         "supportingUser.supportingUserType",
         "supportingUser.supportingData",
+        "supportingUser.isAbleToReport",
+        "supportingUser.fullName",
       ])
       .innerJoin("supportingUser.application", "application")
       .where("application.id = :applicationId", {

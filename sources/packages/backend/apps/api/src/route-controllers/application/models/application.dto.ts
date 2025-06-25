@@ -181,11 +181,23 @@ export enum SuccessWaitingStatus {
   Waiting = "Waiting",
 }
 
+export interface ParentDetails {
+  supportingUserId: number;
+  parentFullName: string;
+  status: SuccessWaitingStatus;
+  isAbleToReport?: boolean;
+}
+
 export class ApplicationIncomeVerification {
   parent1IncomeVerificationStatus?: SuccessWaitingStatus;
   parent2IncomeVerificationStatus?: SuccessWaitingStatus;
   partnerIncomeVerificationStatus?: SuccessWaitingStatus;
   studentIncomeVerificationStatus?: SuccessWaitingStatus;
+}
+
+export class ApplicationIdentifiableSupportingUserDetails {
+  partnerInfo?: SuccessWaitingStatus;
+  parentsInfo?: ParentDetails[];
 }
 
 export class ApplicationSupportingUserDetails {
@@ -195,7 +207,7 @@ export class ApplicationSupportingUserDetails {
 }
 
 export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(
-  ApplicationSupportingUserDetails,
+  ApplicationIdentifiableSupportingUserDetails,
   ApplicationIncomeVerification,
 ) {
   id: number;
@@ -245,6 +257,7 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   changeRequestInProgress?: ChangeRequestInProgressAPIOutDTO;
 }
 
+// TODO: replace the base DTO ApplicationSupportingUserDetails by ApplicationIdentifiableSupportingUserDetails.
 export class ChangeRequestInProgressAPIOutDTO extends IntersectionType(
   ApplicationSupportingUserDetails,
   ApplicationIncomeVerification,

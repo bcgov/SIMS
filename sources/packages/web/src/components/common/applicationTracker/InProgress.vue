@@ -52,33 +52,52 @@
     ></application-status-tracker-banner
   >
 
-  <application-status-tracker-banner
-    label="Waiting for additional information from a parent"
-    icon="fa:fas fa-clock"
-    icon-color="secondary"
-    v-if="applicationDetails?.parent1Info === SuccessWaitingStatus.Waiting"
-    ><template #content
-      >We are waiting for
-      <strong>supporting information from a parent.</strong> Please check your
-      email to confirm that you have received a message from us. This email will
-      include important details and links that your parent will need in order to
-      provide their information for your application.</template
-    ></application-status-tracker-banner
+  <template
+    v-for="parent in applicationDetails?.parentsInfo"
+    :key="parent.supportingUserId"
   >
+    <application-status-tracker-banner
+      v-if="
+        parent.status === SuccessWaitingStatus.Waiting && parent.isAbleToReport
+      "
+      :label="`Waiting for additional information from ${parent.parentFullName}`"
+      icon="fa:fas fa-clock"
+      icon-color="secondary"
+    >
+      <template #content>
+        We are waiting for supporting information from
+        <strong>{{ parent.parentFullName }}</strong
+        >. Please check your email from StudentAidBC for further instructions.
+        The email includes important details and a secure link that your parent
+        will need in order to provide their information for your application.
+      </template>
+    </application-status-tracker-banner>
 
-  <application-status-tracker-banner
-    label="Waiting for additional information from another parent"
-    icon="fa:fas fa-clock"
-    icon-color="secondary"
-    v-if="applicationDetails?.parent2Info === SuccessWaitingStatus.Waiting"
-    ><template #content
-      >We are waiting for
-      <strong>supporting information from another parent.</strong> Please check
-      your email to confirm that you have received a message from us. This email
-      will include important details and links that your parent will need in
-      order to provide their information for your application.</template
-    ></application-status-tracker-banner
-  >
+    <application-status-tracker-banner
+      v-if="
+        parent.status === SuccessWaitingStatus.Waiting && !parent.isAbleToReport
+      "
+      :label="`Parent information required for ${parent.parentFullName}`"
+      icon="fa:fas fa-exclamation-triangle"
+      icon-color="warning"
+      background-color="warning-bg"
+    >
+      <template #content>
+        You have indicated that <strong>{{ parent.parentFullName }}</strong> is
+        unable to complete their declaration. Please complete the following
+        declaration on their behalf. Click on the button below to complete the
+        declaration.
+      </template>
+      <template #actions>
+        <v-btn
+          color="primary"
+          @click="navigateToParentReporting(parent.supportingUserId)"
+        >
+          {{ parent.parentFullName }}
+        </v-btn>
+      </template>
+    </application-status-tracker-banner>
+  </template>
 
   <application-status-tracker-banner
     label="Waiting for additional information from your partner"
@@ -163,21 +182,18 @@
     "
   />
 
-  <application-status-tracker-banner
-    label="Parent information request completed"
-    icon="fa:fas fa-check-circle"
-    icon-color="success"
-    content="We have successfully received supporting information from a parent."
-    v-if="applicationDetails?.parent1Info === SuccessWaitingStatus.Success"
-  />
-
-  <application-status-tracker-banner
-    label="Parent information request completed"
-    icon="fa:fas fa-check-circle"
-    icon-color="success"
-    content="We have successfully received supporting information from your other parent."
-    v-if="applicationDetails?.parent2Info === SuccessWaitingStatus.Success"
-  />
+  <template
+    v-for="parent in applicationDetails?.parentsInfo"
+    :key="parent.supportingUserId"
+  >
+    <application-status-tracker-banner
+      v-if="parent.status === SuccessWaitingStatus.Success"
+      label="Parent information request completed"
+      icon="fa:fas fa-check-circle"
+      icon-color="success"
+      :content="`We have successfully received supporting information from ${parent.parentFullName}.`"
+    />
+  </template>
 
   <application-status-tracker-banner
     label="Partner information request completed"
@@ -267,9 +283,13 @@ export default defineComponent({
     const applicationDetails = ref<InProgressApplicationDetailsAPIOutDTO>();
     const router = useRouter();
 
-    const goToStudentApplication = () => {
+    const navigateToParentReporting = (supportingUserId: number) => {
       router.push({
-        name: StudentRoutesConst.STUDENT_APPLICATION_FORM,
+        name: StudentRoutesConst.REPORT_PARENT_INFORMATION,
+        params: {
+          applicationId: props.applicationId.toString(),
+          supportingUserId: supportingUserId.toString(),
+        },
       });
     };
 
@@ -281,7 +301,7 @@ export default defineComponent({
     });
 
     return {
-      goToStudentApplication,
+      navigateToParentReporting,
       ProgramInfoStatus,
       applicationDetails,
       ApplicationExceptionStatus,

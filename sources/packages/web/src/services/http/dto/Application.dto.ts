@@ -18,7 +18,18 @@ import {
   SupportingUserType,
 } from "@/types";
 
-interface ApplicationSupportingUserDetails {
+interface ParentDetails {
+  supportingUserId: number;
+  parentFullName: string;
+  status: SuccessWaitingStatus;
+  isAbleToReport?: boolean;
+}
+export interface ApplicationIdentifiableSupportingUserDetails {
+  partnerInfo?: SuccessWaitingStatus;
+  parentsInfo?: ParentDetails[];
+}
+
+export interface ApplicationSupportingUserDetails {
   parent1Info?: SuccessWaitingStatus;
   parent2Info?: SuccessWaitingStatus;
   partnerInfo?: SuccessWaitingStatus;
@@ -32,7 +43,7 @@ export interface ApplicationIncomeVerification {
 }
 
 export interface InProgressApplicationDetailsAPIOutDTO
-  extends ApplicationSupportingUserDetails,
+  extends ApplicationIdentifiableSupportingUserDetails,
     ApplicationIncomeVerification {
   id: number;
   applicationStatus: ApplicationStatus;
@@ -194,6 +205,7 @@ export interface CompletedApplicationDetailsAPIOutDTO
   changeRequestInProgress?: ChangeRequestInProgressAPIOutDTO;
 }
 
+// TODO: replace the base DTO ApplicationSupportingUserDetails by ApplicationIdentifiableSupportingUserDetails.
 export interface ChangeRequestInProgressAPIOutDTO
   extends ApplicationSupportingUserDetails,
     ApplicationIncomeVerification {
