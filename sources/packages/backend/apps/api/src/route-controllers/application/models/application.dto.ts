@@ -23,18 +23,6 @@ import { JSON_20KB } from "../../../constants";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import { ChangeTypes } from "@sims/utilities";
 
-export enum SuccessWaitingStatus {
-  Success = "Success",
-  Waiting = "Waiting",
-}
-
-export interface ParentDetails {
-  supportingUserId: number;
-  parentFullName: string;
-  status: SuccessWaitingStatus;
-  isAbleToReport?: boolean;
-}
-
 export class CreateApplicationAPIInDTO {
   /**
    * Application dynamic data.
@@ -186,6 +174,18 @@ export class ApplicationWithProgramYearAPIOutDTO {
   formName: string;
   programYearId: number;
   active: boolean;
+}
+
+export enum SuccessWaitingStatus {
+  Success = "Success",
+  Waiting = "Waiting",
+}
+
+export interface ParentDetails {
+  supportingUserId: number;
+  parentFullName: string;
+  status: SuccessWaitingStatus;
+  isAbleToReport?: boolean;
 }
 
 export class ApplicationIncomeVerification {
