@@ -803,7 +803,7 @@ export class ApplicationControllerService {
         incomeVerification.supportingUserType === SupportingUserType.Parent,
     );
 
-    // Only initialize parentsInfo array if we have parent data
+    // Only initialize parentsInfo array if we have parent data.
     if (parent1 || parent2) {
       supportingUserDetails.parentsInfo = [];
     }

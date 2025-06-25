@@ -53,8 +53,8 @@
   >
 
   <template
-    v-for="(parent, index) in applicationDetails?.parentsInfo"
-    :key="index"
+    v-for="parent in applicationDetails?.parentsInfo"
+    :key="parent.supportingUserId"
   >
     <application-status-tracker-banner
       v-if="
@@ -183,8 +183,8 @@
   />
 
   <template
-    v-for="(parent, index) in applicationDetails?.parentsInfo"
-    :key="index"
+    v-for="parent in applicationDetails?.parentsInfo"
+    :key="parent.supportingUserId"
   >
     <application-status-tracker-banner
       v-if="parent.status === SuccessWaitingStatus.Success"
