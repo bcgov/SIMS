@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { DataSource, UpdateResult } from "typeorm";
 import {
   RecordDataModelService,
-  SupportingUserData,
   SupportingUser,
   SupportingUserType,
   User,
@@ -223,7 +222,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
    */
   async updateReportedData(
     supportingUserId: number,
-    supportingData: SupportingUserData,
+    supportingData: Record<string, unknown>,
     personalInfo: SupportingUserPersonalInfo,
     auditUserId: number,
   ): Promise<UpdateResult> {

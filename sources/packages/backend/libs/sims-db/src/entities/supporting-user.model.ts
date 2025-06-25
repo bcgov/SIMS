@@ -57,7 +57,7 @@ export class SupportingUser extends RecordDataModel {
     type: "jsonb",
     nullable: true,
   })
-  supportingData: SupportingUserData;
+  supportingData: Record<string, unknown>;
   /**
    * Type of the supporting user (e.g. Parent/Partner).
    */
@@ -122,13 +122,4 @@ export class SupportingUser extends RecordDataModel {
 export interface SupportingUserPersonalInfo {
   firstName?: string;
   lastName: string;
-}
-
-/**
- * Supporting user supporting data.
- */
-export interface SupportingUserData {
-  // Dynamic data.
-  [key: string]: unknown;
-  isAbleToReport?: boolean;
 }

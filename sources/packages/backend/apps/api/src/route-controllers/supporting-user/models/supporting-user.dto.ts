@@ -92,11 +92,11 @@ export class StudentSupportingUserAPIOutDTO {
 export class StudentSupportingUserAPIInDTO {
   @Optional()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
-  givenNames: string;
+  givenNames?: string;
   @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   lastName: string;
   @IsNotEmptyObject()
   @JsonMaxSize(JSON_10KB)
-  supportingData: unknown;
+  supportingData: Record<string, unknown>;
 }
