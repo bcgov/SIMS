@@ -3,6 +3,7 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import {
   ApplicationAPIOutDTO,
   ApplicationIdentifierAPIInDTO,
+  StudentSupportingUserAPIOutDTO,
   SupportingUserFormDataAPIOutDTO,
   UpdateSupportingUserAPIInDTO,
 } from "@/services/http/dto";
@@ -30,9 +31,9 @@ export class SupportingUserApi extends HttpBaseClient {
 
   async getSupportingUserData(
     supportingUserId: number,
-  ): Promise<SupportingUserFormDataAPIOutDTO> {
-    return this.getCall<SupportingUserFormDataAPIOutDTO>(
-      this.addClientRoot(`supporting-user/${supportingUserId}`),
-    );
+  ): Promise<SupportingUserFormDataAPIOutDTO | StudentSupportingUserAPIOutDTO> {
+    return this.getCall<
+      SupportingUserFormDataAPIOutDTO | StudentSupportingUserAPIOutDTO
+    >(this.addClientRoot(`supporting-user/${supportingUserId}`));
   }
 }

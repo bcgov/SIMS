@@ -58,3 +58,8 @@ export interface SupportingUserFormDataAPIOutDTO {
   firstName: string;
   lastName: string;
 }
+
+export interface StudentSupportingUserAPIOutDTO {
+  fullName: string;
+  formName: string;
+}

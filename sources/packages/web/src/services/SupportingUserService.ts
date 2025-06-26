@@ -1,9 +1,8 @@
-import { SupportingUserType } from "@/types";
+import { SupportingUser, SupportingUserType } from "@/types";
 import ApiClient from "./http/ApiClient";
 import {
   ApplicationAPIOutDTO,
   ApplicationIdentifierAPIInDTO,
-  SupportingUserFormDataAPIOutDTO,
   UpdateSupportingUserAPIInDTO,
 } from "@/services/http/dto";
 
@@ -37,7 +36,7 @@ export class SupportingUsersService {
 
   async getSupportingUserData(
     supportingUserId: number,
-  ): Promise<SupportingUserFormDataAPIOutDTO> {
+  ): Promise<SupportingUser> {
     return ApiClient.SupportingUserApi.getSupportingUserData(supportingUserId);
   }
 }
