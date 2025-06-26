@@ -11,7 +11,7 @@ import {
   RestrictionActionType,
 } from "@sims/sims-db";
 import { RestrictionNotificationType } from "@sims/sims-db/entities";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, In } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   NoteSharedService,
@@ -286,6 +286,32 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       })
       .limit(1)
       .getOne());
+  }
+
+  /**
+   * Get student restrictions by their codes.
+   * @param studentId student ID.
+   * @param restrictionCodes restriction codes.
+   * @returns student restrictions.
+   */
+  async getRestrictionByCodes(
+    studentId: number,
+    restrictionCodes: string[],
+  ): Promise<StudentRestriction[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        isActive: true,
+        restriction: { id: true, restrictionCode: true },
+      },
+      relations: {
+        restriction: true,
+      },
+      where: {
+        student: { id: studentId },
+        restriction: { restrictionCode: In(restrictionCodes) },
+      },
+    });
   }
 
   /**

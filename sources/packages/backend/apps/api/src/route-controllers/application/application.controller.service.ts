@@ -35,6 +35,7 @@ import {
   SaveApplicationAPIInDTO,
   ChangeRequestInProgressAPIOutDTO,
   ApplicationVersionAPIOutDTO,
+  ApplicationIdentifiableSupportingUserDetails,
 } from "./models/application.dto";
 import {
   allowApplicationChangeRequest,
@@ -794,21 +795,22 @@ export class ApplicationControllerService {
   processApplicationSupportingUserDetails(
     supportingUser: SupportingUser[],
   ): ApplicationSupportingUserDetails {
-    const supportingUserDetails = {} as ApplicationSupportingUserDetails;
+    const supportingUserDetails =
+      {} as ApplicationIdentifiableSupportingUserDetails;
     // Parent.
-    const [parent1, parent2] = supportingUser.filter(
+    const parents = supportingUser.filter(
       (incomeVerification) =>
         incomeVerification.supportingUserType === SupportingUserType.Parent,
     );
-    if (parent1) {
-      supportingUserDetails.parent1Info = !parent1.supportingData
-        ? SuccessWaitingStatus.Waiting
-        : SuccessWaitingStatus.Success;
-    }
-    if (parent2) {
-      supportingUserDetails.parent2Info = !parent2.supportingData
-        ? SuccessWaitingStatus.Waiting
-        : SuccessWaitingStatus.Success;
+    if (parents.length) {
+      supportingUserDetails.parentsInfo = parents.map((parent) => ({
+        supportingUserId: parent.id,
+        parentFullName: parent.fullName,
+        status: parent.supportingData
+          ? SuccessWaitingStatus.Success
+          : SuccessWaitingStatus.Waiting,
+        isAbleToReport: parent.isAbleToReport,
+      }));
     }
 
     // Partner.

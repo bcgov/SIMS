@@ -32,6 +32,24 @@ import {
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 
 /**
+ * Scholastic standing restrictions that are applied to the student
+ * when a scholastic standing is submitted and the student already had
+ * previous scholastic standing restrictions applied.
+ */
+const SCHOLASTIC_ESCALATION_RESTRICTIONS = [
+  RestrictionCode.SSR,
+  RestrictionCode.SSRN,
+];
+/**
+ * Full-time scholastic standing change types that will
+ * apply restrictions to the student.
+ */
+const SCHOLASTIC_RESTRICTION_TYPES_FULL_TIME = [
+  StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+  StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+];
+
+/**
  * Manages the student scholastic standings related operations.
  */
 @Injectable()
@@ -264,13 +282,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     applicationId: number,
   ): Promise<StudentRestriction[]> {
     if (offeringIntensity === OfferingIntensity.fullTime) {
-      const fullTimeRestriction = await this.getFullTimeStudentRestrictions(
+      return this.getFullTimeStudentRestrictions(
         scholasticStandingData,
         studentId,
         auditUserId,
         applicationId,
       );
-      return fullTimeRestriction ? [fullTimeRestriction] : [];
     }
     if (offeringIntensity === OfferingIntensity.partTime) {
       return this.getPartTimeStudentRestrictions(
@@ -283,81 +300,140 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * Get full time related restrictions for scholastic standing.
-   * When institution report withdrawal for a FT course application,
-   * add WTHD restriction to student.
-   * When institution report Withdrawal for a FT course on a student WITH a WTHD
-   * restriction add SSR restriction.
-   * When institution reports a change related to a FT application for unsuccessful
-   * completion and the total number of unsuccessful weeks hits minimum 68, add SSR
-   * restriction.
-   * If a ministry user resolves the SSR or WTHD restriction, and new withdrawal
-   * is reported, re add the above restrictions.
-   * If a ministry user resolves the SSR restriction, and new unsuccessful completion
-   * is reported, add the restriction (minimum is still at least 68).
-   * * If an active SSR restriction already exists for the student and the
-   * * student withdrawal again or unsuccessful weeks hits minimum 68 again,
-   * * then add another SSR restriction.
+   * Get full-time related restrictions for scholastic standing.
+   * Evaluates the scholastic standing change type and
+   * creates the appropriate restrictions based on the type.
+   * If the scholastic standing change type is not related to withdrawal
+   * or unsuccessful completion, then no restrictions are created.
+   * Once SSR or SSRN are present in the student account, any of the
+   * above mentioned restrictions will create a new SSRN restriction
+   * (if one is not present or active yet).
+   * 'Student withdrew from program' will always create a new WTHD restriction
+   * if one is not present or active yet.
    * @param scholasticStandingData scholastic standing data.
    * @param studentId student id.
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param applicationId application id.
-   * @returns a new student restriction object, that need to be saved.
+   * @returns new student restriction(s), that need to be saved.
    */
-  async getFullTimeStudentRestrictions(
+  private async getFullTimeStudentRestrictions(
     scholasticStandingData: ScholasticStanding,
     studentId: number,
     auditUserId: number,
     applicationId: number,
-  ): Promise<StudentRestriction | undefined> {
+  ): Promise<StudentRestriction[]> {
+    const restrictions: StudentRestriction[] = [];
     if (
+      !SCHOLASTIC_RESTRICTION_TYPES_FULL_TIME.includes(
+        scholasticStandingData.scholasticStandingChangeType,
+      )
+    ) {
+      // If the scholastic standing change type is not related to withdrawal
+      // or unsuccessful completion then no restrictions are required.
+      return restrictions;
+    }
+    // Get all existing restrictions for the student that potentially will be required
+    // to determine the new restriction(s) to be created.
+    const existingRestrictions =
+      await this.studentRestrictionService.getRestrictionByCodes(studentId, [
+        RestrictionCode.SSR,
+        RestrictionCode.SSRN,
+        RestrictionCode.WTHD,
+      ]);
+    const hasEscalationRestrictions = existingRestrictions.some(
+      (studentRestriction) =>
+        SCHOLASTIC_ESCALATION_RESTRICTIONS.includes(
+          studentRestriction.restriction.restrictionCode as RestrictionCode,
+        ),
+    );
+    // Check for SSR and SSRN pre-existing restrictions.
+    if (hasEscalationRestrictions) {
+      // A SSRN needs to be created if an active one does not exist.
+      const hasActiveSSRN = existingRestrictions.some(
+        (studentRestriction) =>
+          studentRestriction.restriction.restrictionCode ===
+            RestrictionCode.SSRN && studentRestriction.isActive,
+      );
+      if (!hasActiveSSRN) {
+        const ssrnRestriction =
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            RestrictionCode.SSRN,
+            auditUserId,
+            applicationId,
+          );
+        restrictions.push(ssrnRestriction);
+      }
+    } else if (
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
     ) {
+      // Only check for SSR if SSR or SSRN are not present.
       if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
         throw new Error("Number of unsuccessful weeks is empty.");
       }
       const totalExistingUnsuccessfulWeeks =
         await this.getTotalFullTimeUnsuccessfulWeeks(studentId);
-
       // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
       if (
         totalExistingUnsuccessfulWeeks +
           scholasticStandingData.numberOfUnsuccessfulWeeks >=
         SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS
       ) {
-        return this.studentRestrictionSharedService.createRestrictionToSave(
-          studentId,
-          RestrictionCode.SSR,
-          auditUserId,
-          applicationId,
-        );
+        const ssrRestriction =
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            RestrictionCode.SSR,
+            auditUserId,
+            applicationId,
+          );
+        restrictions.push(ssrRestriction);
+        return restrictions;
       }
     }
     if (
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentWithdrewFromProgram
     ) {
-      // Check if "WTHD" restriction is already present for the student,
-      // if not add "WTHD" restriction else add "SSR" restriction.
-      const isWTHDAlreadyExists =
-        await this.studentRestrictionService.hasAnyActiveRestriction(
-          studentId,
-          [RestrictionCode.WTHD],
-        );
-
-      const restrictionCode = isWTHDAlreadyExists
-        ? RestrictionCode.SSR
-        : RestrictionCode.WTHD;
-
-      return this.studentRestrictionSharedService.createRestrictionToSave(
-        studentId,
-        restrictionCode,
-        auditUserId,
-        applicationId,
+      // Check for "WTHD" restriction since it should always be created if one is not present and active.
+      const hasActiveWTHD = existingRestrictions.some(
+        (studentRestriction) =>
+          studentRestriction.restriction.restrictionCode ===
+            RestrictionCode.WTHD && studentRestriction.isActive,
       );
+      // Check if "WTHD" restriction is already present for the student,
+      // if not, then create a new one.
+      if (!hasActiveWTHD) {
+        const wthdRestriction =
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            RestrictionCode.WTHD,
+            auditUserId,
+            applicationId,
+          );
+        restrictions.push(wthdRestriction);
+      }
+      // Check if an SSR or SSRN was created for the student.
+      const createdSSROrSSRN = restrictions.some((studentRestriction) =>
+        SCHOLASTIC_ESCALATION_RESTRICTIONS.includes(
+          studentRestriction.restriction.restrictionCode as RestrictionCode,
+        ),
+      );
+      if (hasActiveWTHD && !createdSSROrSSRN) {
+        // If the student does not have SSR or SSRN restriction created yet and there was
+        // already an active WTHD, then create a new SSR restriction.
+        const ssrRestriction =
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            studentId,
+            RestrictionCode.SSR,
+            auditUserId,
+            applicationId,
+          );
+        restrictions.push(ssrRestriction);
+      }
     }
+    return restrictions;
   }
 
   /**
@@ -375,7 +451,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param applicationId application id.
    * @returns a new student restriction objects, that need to be saved.
    */
-  async getPartTimeStudentRestrictions(
+  private async getPartTimeStudentRestrictions(
     scholasticStandingData: ScholasticStanding,
     studentId: number,
     auditUserId: number,
