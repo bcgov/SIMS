@@ -25,13 +25,13 @@ instances:
   name: ha # high availability
   replicas: 3
   dataVolumeClaimSpec:
-    storage: 5Gi
+    storage: 1.5Gi
     storageClassName: netapp-block-standard
   requests:
     cpu: 25m
-    memory: 512Mi
+    memory: 256Mi
   limits:
-    memory: 1Gi
+    memory: 512Mi
   replicaCertCopy:
     requests:
       cpu: 50m
@@ -42,7 +42,7 @@ instances:
 # If we need to restore the cluster from a backup, we need to set the following values
 # assuming restore from repo2 (s3), adjust as needed if your S3 repo is different
 dataSource:
-  enabled: true
+  enabled: false
   # should have the same name and contain the same keys as the pgbackrest secret
   secretName: pgbackrest-s3
   repo:
@@ -66,7 +66,7 @@ pgBackRest:
       incremental: 0 0,4,12,16,20 * * *
     volume:
       accessModes: "ReadWriteOnce"
-      storage: 5Gi
+      storage: 1Gi
       storageClassName: netapp-file-backup
   repoHost:
     requests:
