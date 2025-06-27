@@ -4460,8 +4460,8 @@
           "key": "partnerIncomePanel",
           "conditional": {
             "show": true,
-            "when": "isYourPartnerEligibleForBCSCAccount",
-            "eq": "no"
+            "when": "isYourPartnerAbleToReport",
+            "eq": "false"
           },
           "type": "panel",
           "label": "Partner Income Panel",
