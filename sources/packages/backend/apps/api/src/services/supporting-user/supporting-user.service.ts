@@ -1,19 +1,23 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, UpdateResult } from "typeorm";
 import {
+  AddressInfo,
+  ContactInfo,
   RecordDataModelService,
   SupportingUser,
+  SupportingUserPersonalInfo,
   SupportingUserType,
   User,
   configureIdleTransactionSessionTimeout,
-  SupportingUserPersonalInfo,
-  ContactInfo,
 } from "@sims/sims-db";
 import { removeWhiteSpaces } from "../../utilities/string-utils";
 import { SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA } from "./constants";
-import { UpdateSupportingUserInfo } from "./supporting-user.models";
+import {
+  ReportedSupportingUserData,
+  UpdateSupportingUserInfo,
+} from "./supporting-user.models";
 
 @Injectable()
 export class SupportingUserService extends RecordDataModelService<SupportingUser> {
@@ -220,22 +224,38 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
   /**
    * Update supporting user reported data for the supporting user who is not able to report.
    * @param supportingUserId supporting user id.
-   * @param supportingData supporting data.
+   * @param reportedData reported supporting users data.
    * @param personalInfo personal information.
    * @param auditUserId user who is making the changes.
    * @returns update result.
    */
   async updateReportedData(
     supportingUserId: number,
-    supportingData: Record<string, unknown>,
-    personalInfo: SupportingUserPersonalInfo,
-    contactInfo: ContactInfo,
+    reportedData: ReportedSupportingUserData,
     auditUserId: number,
   ): Promise<UpdateResult> {
+    // Get address and contact info.
+    const addressInfo: AddressInfo = {
+      addressLine1: reportedData.addressLine1,
+      addressLine2: reportedData.addressLine2,
+      provinceState: reportedData.provinceState,
+      country: reportedData.country,
+      city: reportedData.city,
+      postalCode: reportedData.postalCode,
+    };
+    const contactInfo: ContactInfo = {
+      phone: reportedData.phone,
+      address: addressInfo,
+    };
+    const personalInfo: SupportingUserPersonalInfo = {
+      givenNames: reportedData.givenNames,
+      lastName: reportedData.lastName,
+    };
+    // Update supporting user.
     return this.repo.update(
       { id: supportingUserId, isAbleToReport: false },
       {
-        supportingData,
+        supportingData: reportedData.supportingData,
         personalInfo,
         contactInfo,
         modifier: { id: auditUserId } as User,

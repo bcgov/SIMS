@@ -74,12 +74,12 @@
                 "maxLength": 100
               },
               "validateWhenHidden": false,
-              "key": "firstName",
+              "key": "givenNames",
               "type": "textfield",
               "input": true
             },
             {
-              "label": "lastName",
+              "label": "Last name",
               "applyMaskOn": "change",
               "tableView": true,
               "validate": {
@@ -87,7 +87,7 @@
                 "maxLength": 100
               },
               "validateWhenHidden": false,
-              "key": "textField1",
+              "key": "lastName",
               "type": "textfield",
               "input": true
             }
@@ -149,20 +149,26 @@
                       "components": [
                         {
                           "label": "Given names",
+                          "applyMaskOn": "change",
                           "disabled": true,
                           "tableView": true,
                           "persistent": false,
-                          "key": "givenNames",
+                          "calculateValue": "value = data.givenNames;",
+                          "validateWhenHidden": false,
+                          "key": "readOnlyGivenNames",
                           "type": "textfield",
                           "input": true,
                           "hideOnChildrenHidden": false
                         },
                         {
                           "label": "Date of birth",
+                          "applyMaskOn": "change",
                           "disabled": true,
                           "tableView": true,
                           "persistent": false,
-                          "key": "dateOfBirth",
+                          "calculateValue": "value = data.dateOfBirth;",
+                          "validateWhenHidden": false,
+                          "key": "readOnlyDateOfBirth",
                           "type": "textfield",
                           "input": true,
                           "hideOnChildrenHidden": false
@@ -179,20 +185,26 @@
                       "components": [
                         {
                           "label": "Last name",
+                          "applyMaskOn": "change",
                           "disabled": true,
                           "tableView": true,
                           "persistent": false,
-                          "key": "lastName",
+                          "calculateValue": "value = data.lastName;",
+                          "validateWhenHidden": false,
+                          "key": "readOnlyLastName",
                           "type": "textfield",
                           "input": true,
                           "hideOnChildrenHidden": false
                         },
                         {
                           "label": "Verified email",
+                          "applyMaskOn": "change",
                           "disabled": true,
                           "tableView": true,
                           "persistent": false,
-                          "key": "email",
+                          "calculateValue": "value = data.email;",
+                          "validateWhenHidden": false,
+                          "key": "readOnlyEmail",
                           "type": "textfield",
                           "input": true,
                           "hideOnChildrenHidden": false

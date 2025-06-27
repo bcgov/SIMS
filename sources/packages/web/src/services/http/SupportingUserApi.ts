@@ -3,8 +3,8 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import {
   ApplicationAPIOutDTO,
   ApplicationIdentifierAPIInDTO,
-  StudentReportSupportingUserAPIInDTO,
-  StudentSupportingUserAPIOutDTO,
+  ReportedSupportingUserAPIInDTO,
+  ReportedSupportingUserAPIOutDTO,
   SupportingUserFormDataAPIOutDTO,
   UpdateSupportingUserAPIInDTO,
 } from "@/services/http/dto";
@@ -37,9 +37,11 @@ export class SupportingUserApi extends HttpBaseClient {
    */
   async getSupportingUserData(
     supportingUserId: number,
-  ): Promise<SupportingUserFormDataAPIOutDTO | StudentSupportingUserAPIOutDTO> {
+  ): Promise<
+    SupportingUserFormDataAPIOutDTO | ReportedSupportingUserAPIOutDTO
+  > {
     return this.getCall<
-      SupportingUserFormDataAPIOutDTO | StudentSupportingUserAPIOutDTO
+      SupportingUserFormDataAPIOutDTO | ReportedSupportingUserAPIOutDTO
     >(this.addClientRoot(`supporting-user/${supportingUserId}`));
   }
 
@@ -50,7 +52,7 @@ export class SupportingUserApi extends HttpBaseClient {
    */
   async updateSupportingUser(
     supportingUserId: number,
-    payload: StudentReportSupportingUserAPIInDTO,
+    payload: ReportedSupportingUserAPIInDTO,
   ): Promise<void> {
     await this.patchCall(
       this.addClientRoot(`supporting-user/${supportingUserId}`),

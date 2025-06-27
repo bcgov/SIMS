@@ -15,7 +15,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import {
-  AddressInfo,
   ApplicationEditStatus,
   ApplicationStatus,
   DynamicFormType,
@@ -35,8 +34,8 @@ import {
 } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import {
-  StudentSupportingUserAPIInDTO,
-  StudentSupportingUserAPIOutDTO,
+  ReportedSupportingUserAPIInDTO,
+  ReportedSupportingUserAPIOutDTO,
 } from "./models/supporting-user.dto";
 import { WorkflowClientService } from "@sims/services";
 
@@ -68,7 +67,7 @@ export class SupportingUserStudentsController {
   async getIdentifiableSupportingUser(
     @Param("supportingUserId", ParseIntPipe) supportingUserId: number,
     @UserToken() studentToken: StudentUserToken,
-  ): Promise<StudentSupportingUserAPIOutDTO> {
+  ): Promise<ReportedSupportingUserAPIOutDTO> {
     const supportingUser =
       await this.supportingUserService.getIdentifiableSupportingUser(
         supportingUserId,
@@ -112,7 +111,7 @@ export class SupportingUserStudentsController {
   })
   async submitSupportingUserDetails(
     @Param("supportingUserId", ParseIntPipe) supportingUserId: number,
-    @Body() payload: StudentSupportingUserAPIInDTO,
+    @Body() payload: ReportedSupportingUserAPIInDTO,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<void> {
     const supportingUser =
@@ -152,21 +151,10 @@ export class SupportingUserStudentsController {
         SupportingUserType.Parent,
         { ...payload, isAbleToReport: supportingUser.isAbleToReport },
       );
-    // Get address info.
-    const addressInfo: AddressInfo = {
-      addressLine1: validatedData.addressLine1,
-      addressLine2: validatedData.addressLine2,
-      provinceState: validatedData.provinceState,
-      country: validatedData.country,
-      city: validatedData.city,
-      postalCode: validatedData.postalCode,
-    };
     // Update supporting user reported data.
     await this.supportingUserService.updateReportedData(
       supportingUserId,
-      validatedData.supportingData,
-      { firstName: validatedData.givenNames, lastName: validatedData.lastName },
-      { phone: validatedData.phone, address: addressInfo },
+      validatedData,
       studentToken.userId,
     );
     // Send message to workflow to allow it to proceed.

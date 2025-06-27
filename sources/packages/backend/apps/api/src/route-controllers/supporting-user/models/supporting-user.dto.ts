@@ -85,13 +85,19 @@ export class SupportingUserFormDataAPIOutDTO {
   isAbleToReport: boolean;
 }
 
-export class StudentSupportingUserAPIOutDTO {
+/**
+ * Supporting user details of the supporting who is unable to report.
+ */
+export class ReportedSupportingUserAPIOutDTO {
   fullName: string;
   formName: string;
   isAbleToReport: boolean;
 }
 
-export class StudentSupportingUserAPIInDTO {
+/**
+ * Details to update the supporting who is unable to report.
+ */
+export class ReportedSupportingUserAPIInDTO {
   @Optional()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   givenNames?: string;

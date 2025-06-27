@@ -74,9 +74,10 @@ import {
   BannerTypes,
 } from "@/types";
 import { SupportingUsersService } from "@/services/SupportingUserService";
-import { useFormioUtils } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
-import { StudentReportSupportingUserAPIInDTO } from "@/services/http/dto";
+import { ReportedSupportingUserAPIInDTO } from "@/services/http/dto";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: { ApplicationHeaderTitle },
@@ -92,6 +93,8 @@ export default defineComponent({
   },
   setup(props) {
     const { disableWizardButtons, excludeExtraneousValues } = useFormioUtils();
+    const router = useRouter();
+    const snackBar = useSnackBar();
     const supportingUser = ref({} as SupportingUser);
     let formInstance: FormIOForm<Record<string, unknown>>;
     const isFirstPage = ref(true);
@@ -147,9 +150,26 @@ export default defineComponent({
 
     const submitted = async (formData: Record<string, unknown>) => {
       const typedData = excludeExtraneousValues(
-        StudentReportSupportingUserAPIInDTO,
+        ReportedSupportingUserAPIInDTO,
         formData,
       );
+      try {
+        await SupportingUsersService.shared.updateSupportingUser(
+          props.supportingUserId,
+          typedData,
+        );
+        snackBar.success("Supporting data submitted successfully.");
+        router.push({
+          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          params: {
+            id: props.applicationId,
+          },
+        });
+      } catch {
+        snackBar.error(
+          "Unexpected error while submitting the supporting data.",
+        );
+      }
     };
     return {
       isFirstPage,

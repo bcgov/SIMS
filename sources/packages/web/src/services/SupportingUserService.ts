@@ -3,7 +3,7 @@ import ApiClient from "./http/ApiClient";
 import {
   ApplicationAPIOutDTO,
   ApplicationIdentifierAPIInDTO,
-  StudentReportSupportingUserAPIInDTO,
+  ReportedSupportingUserAPIInDTO,
   UpdateSupportingUserAPIInDTO,
 } from "@/services/http/dto";
 
@@ -53,7 +53,7 @@ export class SupportingUsersService {
    */
   async updateSupportingUser(
     supportingUserId: number,
-    payload: StudentReportSupportingUserAPIInDTO,
+    payload: ReportedSupportingUserAPIInDTO,
   ): Promise<void> {
     await ApiClient.SupportingUserApi.updateSupportingUser(
       supportingUserId,

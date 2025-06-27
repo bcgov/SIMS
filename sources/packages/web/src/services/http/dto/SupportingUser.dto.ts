@@ -60,13 +60,19 @@ export interface SupportingUserFormDataAPIOutDTO {
   isAbleToReport: boolean;
 }
 
-export interface StudentSupportingUserAPIOutDTO {
+/**
+ * Supporting user details of the supporting who is unable to report.
+ */
+export interface ReportedSupportingUserAPIOutDTO {
   fullName: string;
   formName: string;
   isAbleToReport: boolean;
 }
 
-export class StudentReportSupportingUserAPIInDTO {
+/**
+ * Details to update the supporting who is unable to report.
+ */
+export class ReportedSupportingUserAPIInDTO {
   @Expose()
   givenNames?: string;
   @Expose()
