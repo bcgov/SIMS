@@ -3,6 +3,7 @@ import ApiClient from "./http/ApiClient";
 import {
   ApplicationAPIOutDTO,
   ApplicationIdentifierAPIInDTO,
+  StudentReportSupportingUserAPIInDTO,
   UpdateSupportingUserAPIInDTO,
 } from "@/services/http/dto";
 
@@ -43,5 +44,20 @@ export class SupportingUsersService {
     supportingUserId: number,
   ): Promise<SupportingUser> {
     return ApiClient.SupportingUserApi.getSupportingUserData(supportingUserId);
+  }
+
+  /**
+   * Update supporting user.
+   * @param supportingUserId supporting user id.
+   * @param payload supporting user payload.
+   */
+  async updateSupportingUser(
+    supportingUserId: number,
+    payload: StudentReportSupportingUserAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.SupportingUserApi.updateSupportingUser(
+      supportingUserId,
+      payload,
+    );
   }
 }

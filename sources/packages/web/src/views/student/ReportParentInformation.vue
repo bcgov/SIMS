@@ -76,6 +76,7 @@ import {
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { useFormioUtils } from "@/composables";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
+import { StudentReportSupportingUserAPIInDTO } from "@/services/http/dto";
 
 export default defineComponent({
   components: { ApplicationHeaderTitle },
@@ -145,7 +146,10 @@ export default defineComponent({
     };
 
     const submitted = async (formData: Record<string, unknown>) => {
-      // exclude extraneous values from the form data.
+      const typedData = excludeExtraneousValues(
+        StudentReportSupportingUserAPIInDTO,
+        formData,
+      );
     };
     return {
       isFirstPage,
