@@ -4693,14 +4693,14 @@
       "tableView": false,
       "components": [
         {
+          "label": "Is partner able to report",
+          "calculateValue": "const hasReceivedInputs = !!data.isYourPartnerEligibleForBCSCAccount && (data.hasCurrentYearPartnerIncome === \"no\" || data.partnerCurrentYearIncomeConfirmation);\r\nconst isPartnerEligibleToReport = (data.isYourPartnerEligibleForBCSCAccount === \"yes\" && !data.partnerCurrentYearIncomeConfirmation);\r\nvalue = hasReceivedInputs ? isPartnerEligibleToReport : null;",
+          "calculateServer": true,
+          "key": "isYourPartnerAbleToReport",
+          "type": "hidden",
           "input": true,
           "tableView": false,
-          "key": "isYourPartnerAbleToReport",
-          "label": "Is partner able to report",
-          "type": "hidden",
-          "lockKey": true,
-          "calculateValue": "const hasReceivedInputs = !!data.isYourPartnerEligibleForBCSCAccount && !!data.hasCurrentYearPartnerIncome;\nconst isPartnerEligibleToReport = (data.isYourPartnerEligibleForBCSCAccount === \"yes\" && data.hasCurrentYearPartnerIncome === \"no\");\nvalue = hasReceivedInputs ? isPartnerEligibleToReport : null;",
-          "calculateServer": true
+          "lockKey": true
         },
         {
           "label": "HTML",
@@ -4929,6 +4929,30 @@
                 "show": "true",
                 "when": "isYourPartnerAbleToReport",
                 "eq": "true"
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "tag": "p",
+              "hideLabel": true
+            },
+            {
+              "label": "Spouse Estimation",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> Please be advised this could delay your application</strong> \n<br />\nIf your partner is not eligible for a BC Services Card account, you will need to report their financial information on their behalf. Please note this information may be subject to audit and review, which could delay your application.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "spouseEstimation",
+              "conditional": {
+                "show": "true",
+                "when": "isYourPartnerEligibleForBCSCAccount",
+                "eq": "no"
               },
               "type": "htmlelement",
               "input": false,
