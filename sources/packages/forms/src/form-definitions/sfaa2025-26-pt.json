@@ -4394,7 +4394,7 @@
                           "attr": ""
                         }
                       ],
-                      "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to your spouse/common-law partner having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances.\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
+                      "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to your spouse/common-law partner having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances:\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
                       "refreshOnChange": false,
                       "key": "partnerCurrentYearIncomeExceptionPanelContent",
                       "type": "htmlelement",
@@ -4460,8 +4460,8 @@
           "key": "partnerIncomePanel",
           "conditional": {
             "show": true,
-            "when": "partnerCurrentYearIncomeConfirmation",
-            "eq": "true"
+            "when": "isYourPartnerEligibleForBCSCAccount",
+            "eq": "no"
           },
           "type": "panel",
           "label": "Partner Income Panel",
@@ -4550,9 +4550,18 @@
               "input": true
             },
             {
-              "key": "partnerIncomePanelPanel",
-              "input": false,
               "title": "Decrease in partner income panel",
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "partnerIncomePanelPanel",
+              "conditional": {
+                "show": true,
+                "when": "partnerCurrentYearIncomeConfirmation",
+                "eq": "true"
+              },
+              "type": "panel",
+              "label": "Panel",
+              "input": false,
               "tableView": false,
               "components": [
                 {
@@ -4832,15 +4841,7 @@
                   "calculateValue": "value = \"studentApplicationException\";",
                   "calculateServer": true
                 }
-              ],
-              "type": "panel",
-              "hideLabel": true,
-              "conditional": {
-                "show": "true",
-                "when": "hasCurrentYearPartnerIncome",
-                "eq": "yes"
-              },
-              "label": "Panel"
+              ]
             }
           ]
         }
@@ -5210,7 +5211,7 @@
                       "attr": ""
                     }
                   ],
-                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances.\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
+                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances:\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
                   "refreshOnChange": false,
                   "key": "estimatedCurrentYearIncomeExceptionPanelContent",
                   "type": "htmlelement",
