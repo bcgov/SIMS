@@ -34,6 +34,7 @@ export enum SupportingUserType {
 
 export interface SupportingUser {
   formName: string;
+  isAbleToReport: boolean;
   fullName?: string;
   supportingData?: unknown;
   contactInfo?: ContactInformationAPIOutDTO;

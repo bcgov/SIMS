@@ -34,6 +34,11 @@ export class SupportingUsersService {
     );
   }
 
+  /**
+   * Get supporting user details.
+   * @param supportingUserId supporting user id.
+   * @returns supporting user details.
+   */
   async getSupportingUserData(
     supportingUserId: number,
   ): Promise<SupportingUser> {

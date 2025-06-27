@@ -7,6 +7,7 @@ import {
   User,
   configureIdleTransactionSessionTimeout,
   SupportingUserPersonalInfo,
+  ContactInfo,
 } from "@sims/sims-db";
 import { removeWhiteSpaces } from "../../utilities/string-utils";
 import { SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS } from "../../utilities";
@@ -160,6 +161,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         "supportingUser.sin",
         "supportingUser.birthDate",
         "supportingUser.supportingData",
+        "supportingUser.isAbleToReport",
         "user.firstName",
         "user.lastName",
         "user.email",
@@ -196,6 +198,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       select: {
         id: true,
         fullName: true,
+        isAbleToReport: true,
         supportingData: !!options?.loadSupportingData,
         application: {
           id: true,
@@ -226,6 +229,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     supportingUserId: number,
     supportingData: Record<string, unknown>,
     personalInfo: SupportingUserPersonalInfo,
+    contactInfo: ContactInfo,
     auditUserId: number,
   ): Promise<UpdateResult> {
     return this.repo.update(
@@ -233,6 +237,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       {
         supportingData,
         personalInfo,
+        contactInfo,
         modifier: { id: auditUserId } as User,
       },
     );

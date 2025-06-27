@@ -82,11 +82,13 @@ export class SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
+  isAbleToReport: boolean;
 }
 
 export class StudentSupportingUserAPIOutDTO {
   fullName: string;
   formName: string;
+  isAbleToReport: boolean;
 }
 
 export class StudentSupportingUserAPIInDTO {
@@ -96,6 +98,20 @@ export class StudentSupportingUserAPIInDTO {
   @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   lastName: string;
+  @IsNotEmpty()
+  addressLine1: string;
+  @IsOptional()
+  addressLine2?: string;
+  @IsNotEmpty()
+  city: string;
+  @IsNotEmpty()
+  country: string;
+  @IsNotEmpty()
+  phone: string;
+  @IsNotEmpty()
+  postalCode: string;
+  @IsNotEmpty()
+  provinceState: string;
   @IsNotEmptyObject()
   @JsonMaxSize(JSON_10KB)
   supportingData: Record<string, unknown>;

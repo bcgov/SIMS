@@ -229,6 +229,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
         .expect({
           fullName: parentFullName,
           formName: recentPYParentForm.formDefinitionName,
+          isAbleToReport: false,
         });
     },
   );

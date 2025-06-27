@@ -15,6 +15,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import {
+  AddressInfo,
   ApplicationEditStatus,
   ApplicationStatus,
   DynamicFormType,
@@ -85,6 +86,7 @@ export class SupportingUserStudentsController {
     return {
       fullName: supportingUser.fullName,
       formName,
+      isAbleToReport: supportingUser.isAbleToReport,
     };
   }
 
@@ -96,7 +98,7 @@ export class SupportingUserStudentsController {
   @Patch(":supportingUserId")
   @ApiNotFoundResponse({
     description:
-      "Supporting user not found or not eligible to be accessed by the student.",
+      "Supporting user not found or not eligible to be accessed by the user.",
   })
   @ApiUnprocessableEntityResponse({
     description:
@@ -124,7 +126,7 @@ export class SupportingUserStudentsController {
       );
     if (!supportingUser) {
       throw new NotFoundException(
-        "Supporting user not found or not eligible to be accessed by the student.",
+        "Supporting user not found or not eligible to be accessed by the user.",
       );
     }
     // If the supporting data has already been submitted, throw an error.
@@ -148,13 +150,23 @@ export class SupportingUserStudentsController {
       await this.supportingUserControllerService.validateDryRunSubmission(
         supportingUser.application.programYear.id,
         SupportingUserType.Parent,
-        { ...payload, isAbleToReport: false },
+        { ...payload, isAbleToReport: supportingUser.isAbleToReport },
       );
+    // Get address info.
+    const addressInfo: AddressInfo = {
+      addressLine1: validatedData.addressLine1,
+      addressLine2: validatedData.addressLine2,
+      provinceState: validatedData.provinceState,
+      country: validatedData.country,
+      city: validatedData.city,
+      postalCode: validatedData.postalCode,
+    };
     // Update supporting user reported data.
     await this.supportingUserService.updateReportedData(
       supportingUserId,
       validatedData.supportingData,
       { firstName: validatedData.givenNames, lastName: validatedData.lastName },
+      { phone: validatedData.phone, address: addressInfo },
       studentToken.userId,
     );
     // Send message to workflow to allow it to proceed.

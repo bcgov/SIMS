@@ -57,9 +57,11 @@ export interface SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
+  isAbleToReport: boolean;
 }
 
 export interface StudentSupportingUserAPIOutDTO {
   fullName: string;
   formName: string;
+  isAbleToReport: boolean;
 }
