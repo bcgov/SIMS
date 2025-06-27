@@ -27,7 +27,7 @@ upgrade: helm-dep
 			echo "Error: RESTORE_TARGET is required when RESTORE_ENABLED is true."; \
 			exit 1; \
 		fi; \
-		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED} --set restore.options.target="${RESTORE_TARGET}"; \
+		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED} --set restore.options.target="${RESTORE_TARGET}" --set restore.repoName="${RESTORE_REPO_NAME}"; \
 	else \
 		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED}; \
 	fi
@@ -68,8 +68,8 @@ pg-upgrade:
 
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.
 # .PHONY: uninstall
-# uninstall: helm-dep
-# 	@helm uninstall ${NAME} -n ${NAMESPACE}
+uninstall: helm-dep
+	@helm uninstall ${NAME} -n ${NAMESPACE}
 
 .PHONY: template
 template: helm-dep

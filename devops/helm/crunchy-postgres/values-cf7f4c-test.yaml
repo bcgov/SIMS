@@ -1,3 +1,4 @@
+# TODO: To be removed.
 fullnameOverride: simsdb
 appuser: app-database-user
 nonsuperuser: non-super-user
@@ -16,10 +17,7 @@ standby:
   repoName: repo1
 
 restore:
-  enabled: "${RESTORE_ENABLED}"
-  repoName: repo1
-  options:
-    target: "${RESTORE_TARGET}"
+  enabled: false
 
 instances:
   name: ha # high availability
@@ -47,7 +45,7 @@ dataSource:
   secretName: pgbackrest-s3
   repo:
     name: repo2
-    path: "/habackup"
+    path: "/habackup-andrew-2"
     s3:
       bucket: "postgres-version-upgrade"
       endpoint: "psfs-sims.objectstore.gov.bc.ca"
@@ -86,7 +84,7 @@ pgBackRest:
     # the s3 secret name
     s3Secret: pgbackrest-s3
     # the path start with /, it will be created under bucket if it doesn't exist
-    s3Path: "/habackup"
+    s3Path: "/habackup-andrew-2"
     # s3UriStyle is host or path
     s3UriStyle: path
     # bucket specifies the S3 bucket to use,
