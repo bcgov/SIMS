@@ -7884,7 +7884,7 @@
               "customClass": "alert-banner-container alert-banner-warning",
               "collapsible": false,
               "hideLabel": true,
-              "key": "marriedCommonLawDomesticViolenceExceptionConfirmPanel3",
+              "key": "additionalTransportationExceptionConfirmPanel",
               "conditional": {
                 "show": true,
                 "when": "additionalTransportListedDriver",
