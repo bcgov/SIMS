@@ -3809,13 +3809,13 @@
           "calculateServer": true
         },
         {
+          "label": "Dependant Status",
+          "calculateValue": "const isStudentIndependant =\r\n  data.hasDependents === \"yes\" ||\r\n  [\"married\", \"other\", \"marriedUnable\"].includes(data.relationshipStatus) ||\r\n  data.outOfHighSchoolFor4Years === \"yes\" ||\r\n  data.fulltimelabourForce === \"yes\" ||\r\n  data.parentsDeceased === \"yes\" ||\r\n  [\"irreconcilableRift\", \"unableToContact\"].includes(data.parentSituation) ||\r\n  data.custodyOfChildWelfare === \"yes\";\r\n// If the student is not independant, dependant status is calculated based on personal information answer inputs.\r\nif (!isStudentIndependant) {\r\n  const isPersonalInfoAnswered =\r\n    !!data.hasDependents &&\r\n    !!data.relationshipStatus &&\r\n    !!data.outOfHighSchoolFor4Years &&\r\n    !!data.fulltimelabourForce &&\r\n    !!data.parentsDeceased &&\r\n    !!data.estranged &&\r\n    !!data.youthInCare &&\r\n    (data.youthInCare === \"no\" || !!data.custodyOfChildWelfare) &&\r\n    (data.estranged === \"no\" || !!data.parentSituation);\r\n  // If the answers to required personal information inputs are not provided, set the dependant status to null.\r\n  // Otherwise, dependant status is calculated based on personal information answers.\r\n  const calculatedStatusFromPersonalInfo = isPersonalInfoAnswered\r\n    ? \"dependant\"\r\n    : null;\r\n  instance.setValue(calculatedStatusFromPersonalInfo);\r\n} else {\r\n  instance.setValue(\"independant\");\r\n}",
+          "calculateServer": true,
+          "key": "dependantstatus",
+          "type": "hidden",
           "input": true,
           "tableView": false,
-          "key": "dependantstatus",
-          "label": "Dependant Status",
-          "type": "hidden",
-          "calculateServer": true,
-          "calculateValue": "const isStudentIndependant =\r\n  data.hasDependents === \"yes\" ||\r\n  [\"married\", \"other\", \"marriedUnable\"].includes(data.relationshipStatus) ||\r\n  data.outOfHighSchoolFor4Years === \"yes\" ||\r\n  data.fulltimelabourForce === \"yes\" ||\r\n  data.parentsDeceased === \"yes\" ||\r\n  data.estranged === \"yes\" ||\r\n  data.custodyOfChildWelfare === \"yes\";\r\n// If the student is not independant, dependant status is calculated based on personal information answer inputs.\r\nif (!isStudentIndependant) {\r\n  const isPersonalInfoAnswered =\r\n    !!data.hasDependents &&\r\n    !!data.relationshipStatus &&\r\n    !!data.outOfHighSchoolFor4Years &&\r\n    !!data.fulltimelabourForce &&\r\n    !!data.parentsDeceased &&\r\n    !!data.estranged &&\r\n    !!data.youthInCare &&\r\n    (data.youthInCare === \"no\" || !!data.custodyOfChildWelfare);\r\n  // If the answers to required personal information inputs are not provided, set the dependant status to null.\r\n  // Otherwise, dependant status is calculated based on personal information answers.\r\n  const calculatedStatusFromPersonalInfo = isPersonalInfoAnswered\r\n    ? \"dependant\"\r\n    : null;\r\n  instance.setValue(calculatedStatusFromPersonalInfo);\r\n} else {\r\n  instance.setValue(\"independant\");\r\n}",
           "lockKey": true
         },
         {
@@ -4693,14 +4693,14 @@
       "tableView": false,
       "components": [
         {
+          "label": "Is partner able to report",
+          "calculateValue": "const hasReceivedInputs = !!data.isYourPartnerEligibleForBCSCAccount && (data.hasCurrentYearPartnerIncome === \"no\" || data.partnerCurrentYearIncomeConfirmation);\r\nconst isPartnerEligibleToReport = (data.isYourPartnerEligibleForBCSCAccount === \"yes\" && !data.partnerCurrentYearIncomeConfirmation);\r\nvalue = hasReceivedInputs ? isPartnerEligibleToReport : null;",
+          "calculateServer": true,
+          "key": "isYourPartnerAbleToReport",
+          "type": "hidden",
           "input": true,
           "tableView": false,
-          "key": "isYourPartnerAbleToReport",
-          "label": "Is partner able to report",
-          "type": "hidden",
-          "lockKey": true,
-          "calculateValue": "const hasReceivedInputs = !!data.isYourPartnerEligibleForBCSCAccount && !!data.hasCurrentYearPartnerIncome;\nconst isPartnerEligibleToReport = (data.isYourPartnerEligibleForBCSCAccount === \"yes\" && data.hasCurrentYearPartnerIncome === \"no\");\nvalue = hasReceivedInputs ? isPartnerEligibleToReport : null;",
-          "calculateServer": true
+          "lockKey": true
         },
         {
           "label": "HTML",
@@ -4853,6 +4853,59 @@
                   "type": "radio",
                   "optionsLabelPosition": "right",
                   "lockKey": true
+                },
+                {
+                  "title": "",
+                  "customClass": "alert-banner-container alert-banner-warning",
+                  "collapsible": false,
+                  "hideLabel": true,
+                  "key": "partnerCurrentYearIncomeExceptionConfirmPanel",
+                  "conditional": {
+                    "show": true,
+                    "when": "hasCurrentYearPartnerIncome",
+                    "eq": "yes"
+                  },
+                  "type": "panel",
+                  "label": "Panel",
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "label": "Content",
+                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                      "attrs": [
+                        {
+                          "value": "",
+                          "attr": ""
+                        }
+                      ],
+                      "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to your spouse/common-law partner having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances:\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
+                      "refreshOnChange": false,
+                      "key": "estimatedCurrentYearIncomeExceptionPanelContent1",
+                      "type": "htmlelement",
+                      "input": false,
+                      "hideLabel": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "I confirm I am eligible for this exception category and understand that this process requires ministry review and will lead to delays in my funding.",
+                      "customClass": "formio-component-weight-bold",
+                      "tableView": true,
+                      "defaultValue": false,
+                      "validate": {
+                        "required": true,
+                        "customMessage": "You must confirm you understand the exception eligibility criteria."
+                      },
+                      "validateWhenHidden": false,
+                      "key": "partnerCurrentYearIncomeConfirmation",
+                      "type": "checkbox",
+                      "dataGridLabel": false,
+                      "input": true,
+                      "lockKey": true,
+                      "hideOnChildrenHidden": false
+                    }
+                  ],
+                  "lockKey": true
                 }
               ],
               "type": "panel",
@@ -4911,22 +4964,23 @@
         },
         {
           "title": "Partner Income Panel",
-          "breadcrumbClickable": false,
-          "buttonSettings": {
-            "previous": false,
-            "cancel": false,
-            "next": false
-          },
           "collapsible": false,
           "hideLabel": true,
           "key": "partnerIncomePanel",
           "conditional": {
-            "show": "true",
+            "show": true,
             "when": "isYourPartnerAbleToReport",
             "eq": "false"
           },
           "type": "panel",
           "label": "Partner Income Panel",
+          "breadcrumbClickable": false,
+          "allowPrevious": false,
+          "buttonSettings": {
+            "previous": false,
+            "cancel": false,
+            "next": false
+          },
           "input": false,
           "tableView": false,
           "components": [
@@ -5005,9 +5059,18 @@
               "input": true
             },
             {
-              "key": "partnerIncomePanelPanel",
-              "input": false,
               "title": "Decrease in partner income panel",
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "partnerIncomePanelPanel",
+              "conditional": {
+                "show": true,
+                "when": "partnerCurrentYearIncomeConfirmation",
+                "eq": "true"
+              },
+              "type": "panel",
+              "label": "Panel",
+              "input": false,
               "tableView": false,
               "components": [
                 {
@@ -5287,15 +5350,7 @@
                   "calculateValue": "value = \"studentApplicationException\";",
                   "calculateServer": true
                 }
-              ],
-              "type": "panel",
-              "hideLabel": true,
-              "conditional": {
-                "show": "true",
-                "when": "hasCurrentYearPartnerIncome",
-                "eq": "yes"
-              },
-              "label": "Panel"
+              ]
             },
             {
               "label": "Will your partner be employed full-time or part-time during your study period",
@@ -5757,7 +5812,7 @@
               "allowPrevious": false
             },
             {
-              "label": "Durring your study period, will your partner be taking care of eligible dependants?",
+              "label": "During your study period, will your partner be taking care of eligible dependants?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -5782,8 +5837,7 @@
               "input": true,
               "lockKey": true
             }
-          ],
-          "allowPrevious": false
+          ]
         }
       ]
     },
@@ -6232,27 +6286,80 @@
               "input": true
             },
             {
-              "title": "Decrease in income panel",
-              "breadcrumbClickable": false,
-              "buttonSettings": {
-                "previous": false,
-                "cancel": false,
-                "next": false
-              },
-              "scrollToTop": false,
+              "title": "",
+              "customClass": "alert-banner-container alert-banner-warning",
               "collapsible": false,
               "hideLabel": true,
-              "key": "decreaseInIncomePanel",
+              "key": "estimatedCurrentYearIncomeExceptionConfirmPanel",
               "conditional": {
                 "show": true,
                 "when": "hasSignificantDegreeOfIncome",
                 "eq": "yes"
               },
               "type": "panel",
-              "label": "Decrease in Income. Panel",
+              "label": "Panel",
               "input": false,
               "tableView": false,
+              "components": [
+                {
+                  "label": "Content",
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances:\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
+                  "refreshOnChange": false,
+                  "key": "estimatedCurrentYearIncomeExceptionPanelContent",
+                  "type": "htmlelement",
+                  "input": false,
+                  "hideLabel": true,
+                  "tableView": false
+                },
+                {
+                  "label": "I confirm I am eligible for this exception category and understand that this process requires ministry review and will lead to delays in my funding.",
+                  "customClass": "formio-component-weight-bold",
+                  "tableView": true,
+                  "validate": {
+                    "required": true,
+                    "customMessage": "You must confirm you understand the exception eligibility criteria."
+                  },
+                  "validateWhenHidden": false,
+                  "key": "estimatedCurrentYearIncomeConfirmation",
+                  "type": "checkbox",
+                  "dataGridLabel": false,
+                  "input": true,
+                  "lockKey": true,
+                  "hideOnChildrenHidden": false,
+                  "defaultValue": false
+                }
+              ],
+              "lockKey": true
+            },
+            {
+              "title": "Decrease in income panel",
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "decreaseInIncomePanel",
+              "conditional": {
+                "show": true,
+                "when": "estimatedCurrentYearIncomeConfirmation",
+                "eq": "true"
+              },
+              "type": "panel",
+              "label": "Decrease in Income. Panel",
+              "breadcrumbClickable": false,
               "allowPrevious": false,
+              "buttonSettings": {
+                "previous": false,
+                "cancel": false,
+                "next": false
+              },
+              "scrollToTop": false,
+              "input": false,
+              "tableView": false,
               "components": [
                 {
                   "input": true,
@@ -7508,7 +7615,7 @@
                 {
                   "label": "Are you living independently in a self-contained suite?",
                   "optionsLabelPosition": "right",
-                  "tooltip": "- The suite has a separate entrance, kitchen, bathroom and living area/bedroom; and\r\n\r\n- You are paying fair market rent and responsible for your share of the utilities (hydro, telephone, cable, etc. if not included in rent).",
+                  "tooltip": "- The suite has a separate entrance, kitchen, bathroom and living area/bedroom; and\r\n- You are paying fair market rent and responsible for your share of the utilities (hydro, telephone, cable, etc. if not included in rent).",
                   "inline": false,
                   "tableView": false,
                   "values": [
@@ -7797,6 +7904,59 @@
               "lockKey": true
             },
             {
+              "title": "Additional Transport Confirmation Panel ",
+              "customClass": "alert-banner-container alert-banner-warning",
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "additionalTransportationExceptionConfirmPanel",
+              "conditional": {
+                "show": true,
+                "when": "additionalTransportListedDriver",
+                "eq": "yes"
+              },
+              "type": "panel",
+              "label": "Panel",
+              "input": false,
+              "tableView": false,
+              "components": [
+                {
+                  "label": "Content",
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "attrs": [
+                    {
+                      "value": "",
+                      "attr": ""
+                    }
+                  ],
+                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou require additional financial support for transportation due to one of the following criteria:\n<li>Public transit takes more than two hours from your neighborhood to your school and back by the quickest/most direct route.</li>\n<li>I am in a clinical or practicum placement that requires additional travel.</li>\n<li>I have special circumstances that require additional travel (work, family responsibilities, living distance from school).</li>",
+                  "refreshOnChange": false,
+                  "key": "additionalTransportExceptionPanelContent",
+                  "type": "htmlelement",
+                  "input": false,
+                  "hideLabel": true,
+                  "tableView": false
+                },
+                {
+                  "label": "I confirm I am eligible for this exception category and understand that this process requires ministry review and will lead to delays in my funding.",
+                  "customClass": "formio-component-weight-bold",
+                  "tableView": true,
+                  "validate": {
+                    "required": true,
+                    "customMessage": "You must confirm you understand the exception eligibility criteria."
+                  },
+                  "validateWhenHidden": false,
+                  "key": "additionalTransportConfirmation",
+                  "type": "checkbox",
+                  "dataGridLabel": false,
+                  "input": true,
+                  "lockKey": true,
+                  "hideOnChildrenHidden": false,
+                  "defaultValue": false
+                }
+              ],
+              "lockKey": true
+            },
+            {
               "key": "additionalTransportationCostContent",
               "label": "Content",
               "input": false,
@@ -7826,9 +7986,9 @@
               "hideLabel": true,
               "key": "panel",
               "conditional": {
-                "show": "true",
-                "when": "additionalTransportListedDriver",
-                "eq": "yes"
+                "show": true,
+                "when": "additionalTransportConfirmation",
+                "eq": "true"
               },
               "type": "panel",
               "label": "Panel",
