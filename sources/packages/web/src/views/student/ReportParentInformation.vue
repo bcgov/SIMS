@@ -19,68 +19,26 @@
         :type="BannerTypes.Info"
       ></banner>
     </template>
-    <body-header-container>
-      <template #header>
-        <body-header :title="supportingUser.fullName" />
-      </template>
-      <formio
-        v-if="supportingUser.formName"
-        :formName="supportingUser.formName"
-        :data="formInitialData"
-        @loaded="formLoaded"
-        @submitted="submitted"
-      ></formio>
-    </body-header-container>
-    <v-row v-if="showNav">
-      <v-col>
-        <v-btn
-          color="primary"
-          v-show="!isFirstPage"
-          variant="outlined"
-          data-cy="previousSection"
-          @click="wizardGoPrevious"
-          >Back</v-btn
-        >
-      </v-col>
-      <v-col>
-        <v-btn
-          class="float-right"
-          color="primary"
-          v-show="!isLastPage"
-          @click="wizardGoNext"
-          >Next step</v-btn
-        >
-        <v-btn
-          class="float-right"
-          :disabled="!isLastPage || submitting"
-          v-show="!isFirstPage"
-          color="primary"
-          @click="wizardSubmit()"
-          :loading="submitting"
-        >
-          {{ submitting ? "Submitting..." : "Submit form" }}
-        </v-btn>
-      </v-col>
-    </v-row>
+    <supporting-user-form
+      :supporting-user-id="supportingUserId"
+      @form-submitted="updateSupportingUser"
+      :update-in-progress="supportingUserUpdateInProgress"
+    ></supporting-user-form>
   </student-page-container>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, ref } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import {
-  FormIOForm,
-  SupportingUser,
-  WizardNavigationEvent,
-  BannerTypes,
-} from "@/types";
+import { BannerTypes } from "@/types";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { useFormioUtils, useSnackBar } from "@/composables";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
+import SupportingUserForm from "@/components/common/SupportingUserForm.vue";
 import { ReportedSupportingUserAPIInDTO } from "@/services/http/dto";
 import { useRouter } from "vue-router";
 
 export default defineComponent({
-  components: { ApplicationHeaderTitle },
+  components: { ApplicationHeaderTitle, SupportingUserForm },
   props: {
     applicationId: {
       type: Number,
@@ -92,63 +50,13 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { disableWizardButtons, excludeExtraneousValues } = useFormioUtils();
+    const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
     const snackBar = useSnackBar();
-    const supportingUser = ref({} as SupportingUser);
-    let formInstance: FormIOForm<Record<string, unknown>>;
-    const isFirstPage = ref(true);
-    const isLastPage = ref(false);
-    const showNav = ref(false);
-    const submitting = ref(false);
-    const formInitialData = ref({} as { isAbleToReport: boolean });
+    const supportingUserUpdateInProgress = ref(false);
 
-    onMounted(async () => {
-      supportingUser.value =
-        await SupportingUsersService.shared.getSupportingUserData(
-          props.supportingUserId,
-        );
-      formInitialData.value = {
-        isAbleToReport: supportingUser.value.isAbleToReport,
-      };
-    });
-
-    const wizardSubmit = () => {
-      formInstance.submit();
-    };
-
-    const wizardGoPrevious = () => {
-      formInstance.prevPage();
-    };
-
-    const wizardGoNext = () => {
-      formInstance.nextPage();
-    };
-
-    const formLoaded = async (form: FormIOForm<Record<string, unknown>>) => {
-      showNav.value = true;
-      formInstance = form;
-      // Disable internal submit button.
-      disableWizardButtons(formInstance);
-      formInstance.options.buttonSettings.showSubmit = false;
-      // Handle the navigation using the breadcrumbs.
-      formInstance.on(
-        "wizardPageSelected",
-        (_page: WizardNavigationEvent, index: number) => {
-          isFirstPage.value = index === 0;
-          isLastPage.value = formInstance.isLastPage();
-        },
-      );
-      // Handle the navigation using next/prev buttons.
-      const prevNextNavigation = (navigation: WizardNavigationEvent) => {
-        isFirstPage.value = navigation.page === 0;
-        isLastPage.value = formInstance.isLastPage();
-      };
-      formInstance.on("prevPage", prevNextNavigation);
-      formInstance.on("nextPage", prevNextNavigation);
-    };
-
-    const submitted = async (formData: Record<string, unknown>) => {
+    const updateSupportingUser = async (formData: Record<string, unknown>) => {
+      supportingUserUpdateInProgress.value = true;
       const typedData = excludeExtraneousValues(
         ReportedSupportingUserAPIInDTO,
         formData,
@@ -158,7 +66,7 @@ export default defineComponent({
           props.supportingUserId,
           typedData,
         );
-        snackBar.success("Supporting data submitted successfully.");
+        snackBar.success("Parent information reported successfully.");
         router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
           params: {
@@ -166,25 +74,16 @@ export default defineComponent({
           },
         });
       } catch {
-        snackBar.error(
-          "Unexpected error while submitting the supporting data.",
-        );
+        snackBar.error("Unexpected error reporting parent information.");
+      } finally {
+        supportingUserUpdateInProgress.value = false;
       }
     };
     return {
-      isFirstPage,
-      isLastPage,
-      showNav,
-      wizardSubmit,
-      wizardGoPrevious,
-      wizardGoNext,
-      formLoaded,
-      submitted,
-      submitting,
-      supportingUser,
+      updateSupportingUser,
+      supportingUserUpdateInProgress,
       StudentRoutesConst,
       BannerTypes,
-      formInitialData,
     };
   },
 });
