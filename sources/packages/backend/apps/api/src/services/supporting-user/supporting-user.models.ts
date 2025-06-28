@@ -32,3 +32,16 @@ export interface UpdateSupportingUserInfo {
    */
   userId: number;
 }
+
+export interface ReportedSupportingUserData {
+  givenNames?: string;
+  lastName: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  country: string;
+  phone: string;
+  postalCode: string;
+  provinceState: string;
+  supportingData: Record<string, unknown>;
+}

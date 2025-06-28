@@ -55,7 +55,7 @@ export default defineComponent({
       formName.value = supportingUsersData.formName;
       let contactAddress = {};
       // Here there is only one address for now
-      if (supportingUsersData.contactInfo.address) {
+      if (supportingUsersData.contactInfo?.address) {
         const address = supportingUsersData.contactInfo.address;
         contactAddress = {
           city: address.city,
@@ -74,7 +74,7 @@ export default defineComponent({
         email: supportingUsersData.email,
         dateOfBirth: dateOnlyLongString(supportingUsersData.birthDate),
         sin: supportingUsersData.sin,
-        phone: supportingUsersData.contactInfo.phone,
+        phone: supportingUsersData.contactInfo?.phone,
         supportingData: supportingUsersData.supportingData,
         ...contactAddress,
       };

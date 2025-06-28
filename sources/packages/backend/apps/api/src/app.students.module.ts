@@ -53,6 +53,7 @@ import {
   ScholasticStandingStudentsController,
   ProgramYearControllerService,
   AnnouncementStudentsController,
+  SupportingUserControllerService,
   SupportingUserStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -150,6 +151,7 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     BCeIDService,
     InstitutionUserAuthService,
     UserService,
+    SupportingUserControllerService,
   ],
 })
 export class AppStudentsModule {}

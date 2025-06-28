@@ -14,6 +14,7 @@ import {
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_10KB } from "../../../constants";
+import { Optional } from "@nestjs/common";
 
 /**
  * Information used to uniquely identify a Student Application.
@@ -83,7 +84,41 @@ export class SupportingUserFormDataAPIOutDTO {
   lastName: string;
 }
 
-export class StudentSupportingUserAPIOutDTO {
+/**
+ * Supporting user details of the supporting who is unable to report.
+ */
+export class ReportedSupportingUserAPIOutDTO {
   fullName: string;
   formName: string;
+  isAbleToReport: boolean;
+  programYearStartDate: string;
+}
+
+/**
+ * Details to update the supporting who is unable to report.
+ */
+export class ReportedSupportingUserAPIInDTO {
+  @Optional()
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+  givenNames?: string;
+  @IsNotEmpty()
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+  lastName: string;
+  @IsNotEmpty()
+  addressLine1: string;
+  @IsOptional()
+  addressLine2?: string;
+  @IsNotEmpty()
+  city: string;
+  @IsNotEmpty()
+  country: string;
+  @IsNotEmpty()
+  phone: string;
+  @IsNotEmpty()
+  postalCode: string;
+  @IsNotEmpty()
+  provinceState: string;
+  @IsNotEmptyObject()
+  @JsonMaxSize(JSON_10KB)
+  supportingData: Record<string, unknown>;
 }
