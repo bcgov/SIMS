@@ -165,7 +165,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         "supportingUser.sin",
         "supportingUser.birthDate",
         "supportingUser.supportingData",
-        "supportingUser.isAbleToReport",
         "user.firstName",
         "user.lastName",
         "user.email",
@@ -206,7 +205,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         supportingData: !!options?.loadSupportingData,
         application: {
           id: true,
-          programYear: { id: true },
+          programYear: { id: true, startDate: true },
           applicationStatus: true,
           applicationEditStatus: true,
         },

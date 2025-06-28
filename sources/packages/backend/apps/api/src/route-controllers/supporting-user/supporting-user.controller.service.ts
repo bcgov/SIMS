@@ -19,7 +19,6 @@ export class SupportingUserControllerService {
    * Validate dry run submission for supporting user data.
    * @param programYearId program year id
    * @param supportingUserType supporting user type.
-   * @param isAbleToReport is supporting user able to report.
    * @param submissionData supporting user data.
    * @returns validated supporting user data.
    */

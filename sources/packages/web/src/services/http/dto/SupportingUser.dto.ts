@@ -57,7 +57,6 @@ export interface SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
-  isAbleToReport: boolean;
 }
 
 /**
@@ -67,6 +66,7 @@ export interface ReportedSupportingUserAPIOutDTO {
   fullName: string;
   formName: string;
   isAbleToReport: boolean;
+  programYearStartDate: string;
 }
 
 /**

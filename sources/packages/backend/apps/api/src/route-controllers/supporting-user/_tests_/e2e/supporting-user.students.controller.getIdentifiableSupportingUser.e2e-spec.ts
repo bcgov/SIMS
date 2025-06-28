@@ -230,6 +230,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
           fullName: parentFullName,
           formName: recentPYParentForm.formDefinitionName,
           isAbleToReport: false,
+          programYearStartDate: recentPYParentForm.programYear.startDate,
         });
     },
   );

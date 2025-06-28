@@ -90,6 +90,7 @@ export default defineComponent({
         );
       formInitialData.value = {
         isAbleToReport: supportingUser.value.isAbleToReport,
+        programYearStartDate: supportingUser.value.programYearStartDate,
       };
     });
 

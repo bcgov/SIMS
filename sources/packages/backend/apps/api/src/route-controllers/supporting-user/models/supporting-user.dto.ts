@@ -82,7 +82,6 @@ export class SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
-  isAbleToReport: boolean;
 }
 
 /**
@@ -92,6 +91,7 @@ export class ReportedSupportingUserAPIOutDTO {
   fullName: string;
   formName: string;
   isAbleToReport: boolean;
+  programYearStartDate: string;
 }
 
 /**

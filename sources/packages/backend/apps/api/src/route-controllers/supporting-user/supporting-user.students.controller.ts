@@ -86,6 +86,7 @@ export class SupportingUserStudentsController {
       fullName: supportingUser.fullName,
       formName,
       isAbleToReport: supportingUser.isAbleToReport,
+      programYearStartDate: supportingUser.application.programYear.startDate,
     };
   }
 
