@@ -84,7 +84,7 @@ export function useRules() {
     if (value && value.toString().length > 0) {
       return true;
     }
-    return `${fieldName} is required.`;
+    return `${fieldName} is required`;
   };
 
   const checkOnlyDigitsRule = (value: string, fieldName: string) => {

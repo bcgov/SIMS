@@ -8,3 +8,4 @@ export * from "./student-token-helpers";
 export * from "./student-user-helpers";
 export * from "./institution-user-helpers";
 export * from "./external-token-helpers";
+export * from "./supporting-user-token-helpers";

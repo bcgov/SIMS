@@ -1,83 +1,84 @@
 import { Injectable } from "@nestjs/common";
 import {
-  DataSource,
-  In,
-  Not,
-  Brackets,
-  EntityManager,
-  SelectQueryBuilder,
+    DataSource,
+    In,
+    Not,
+    Brackets,
+    EntityManager,
+    SelectQueryBuilder,
 } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
-  RecordDataModelService,
-  Application,
-  ApplicationStudentFile,
-  EducationProgramOffering,
-  ProgramInfoStatus,
-  ApplicationStatus,
-  Student,
-  StudentFile,
-  ProgramYear,
-  PIRDeniedReason,
-  StudentAssessment,
-  AssessmentTriggerType,
-  User,
-  ApplicationData,
-  getUserFullNameLikeSearch,
-  transformToApplicationEntitySortField,
-  StudentAssessmentStatus,
-  FileOriginType,
-  ApplicationEditStatus,
-  OfferingIntensity,
-  InstitutionLocation,
-  StudentAppeal,
-  APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
+    RecordDataModelService,
+    Application,
+    ApplicationStudentFile,
+    EducationProgramOffering,
+    ProgramInfoStatus,
+    ApplicationStatus,
+    Student,
+    StudentFile,
+    ProgramYear,
+    PIRDeniedReason,
+    StudentAssessment,
+    AssessmentTriggerType,
+    User,
+    ApplicationData,
+    getUserFullNameLikeSearch,
+    transformToApplicationEntitySortField,
+    StudentAssessmentStatus,
+    FileOriginType,
+    ApplicationEditStatus,
+    OfferingIntensity,
+    InstitutionLocation,
+    StudentAppeal,
+    APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
+    SupportingUserType,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
-  ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
-  ApplicationSubmissionResult,
+    ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
+    ApplicationSubmissionResult,
 } from "./application.models";
 import {
-  PIR_DENIED_REASON_OTHER_ID,
-  sortApplicationsColumnMap,
-  STUDY_DATE_OVERLAP_ERROR_MESSAGE,
-  STUDY_DATE_OVERLAP_ERROR,
-  PaginationOptions,
-  PIRPaginationOptions,
-  PaginatedResults,
-  offeringBelongToProgramYear,
-  APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION,
-  allowApplicationChangeRequest,
+    PIR_DENIED_REASON_OTHER_ID,
+    sortApplicationsColumnMap,
+    STUDY_DATE_OVERLAP_ERROR_MESSAGE,
+    STUDY_DATE_OVERLAP_ERROR,
+    PaginationOptions,
+    PIRPaginationOptions,
+    PaginatedResults,
+    offeringBelongToProgramYear,
+    APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION,
+    allowApplicationChangeRequest,
 } from "../../utilities";
 import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
-  SFASApplicationService,
-  SFASPartTimeApplicationsService,
+    SFASApplicationService,
+    SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import {
-  PIR_DENIED_REASON_NOT_FOUND_ERROR,
-  PIR_REQUEST_NOT_FOUND_ERROR,
-  OFFERING_NOT_VALID,
-  INSTITUTION_LOCATION_NOT_VALID,
-  OFFERING_INTENSITY_MISMATCH,
-  OFFERING_DOES_NOT_BELONG_TO_LOCATION,
-  OFFERING_PROGRAM_YEAR_MISMATCH,
-  EDUCATION_PROGRAM_IS_NOT_ACTIVE,
-  EDUCATION_PROGRAM_IS_EXPIRED,
+    PIR_DENIED_REASON_NOT_FOUND_ERROR,
+    PIR_REQUEST_NOT_FOUND_ERROR,
+    OFFERING_NOT_VALID,
+    INSTITUTION_LOCATION_NOT_VALID,
+    OFFERING_INTENSITY_MISMATCH,
+    OFFERING_DOES_NOT_BELONG_TO_LOCATION,
+    OFFERING_PROGRAM_YEAR_MISMATCH,
+    EDUCATION_PROGRAM_IS_NOT_ACTIVE,
+    EDUCATION_PROGRAM_IS_EXPIRED,
 } from "../../constants";
 import {
-  SequenceControlService,
-  StudentRestrictionSharedService,
-  RestrictionCode,
+    SequenceControlService,
+    StudentRestrictionSharedService,
+    RestrictionCode,
 } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import {
-  ApplicationEditedTooManyTimesNotification,
-  NotificationActionsService,
-  NotificationService,
+    ApplicationEditedTooManyTimesNotification,
+    NotificationActionsService,
+    NotificationService,
 } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import { StudentService } from "..";
@@ -1710,6 +1711,60 @@ export class ApplicationService extends RecordDataModelService<Application> {
       })
       .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
       .andWhere("student.birthDate = :birthDate", { birthDate })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            "application.applicationStatus = :inProgressApplicationStatus",
+            {
+              inProgressApplicationStatus: ApplicationStatus.InProgress,
+            },
+          ).orWhere(
+            "application.applicationEditStatus = :changeInProgressApplicationEditStatus",
+            {
+              changeInProgressApplicationEditStatus:
+                ApplicationEditStatus.ChangeInProgress,
+            },
+          );
+        }),
+      )
+      .getOne();
+  }
+
+  /**
+   * When a parent supporting user need to provide supporting data for a Student Application,
+   * this method provides a way to find the specific application using parent's full name
+   * instead of student's date of birth.
+   * @param applicationNumber application number provided.
+   * @param lastName last name of the student associated with the application.
+   * @param parentFullName full name of the parent as provided in student application.
+   * @returns application the application that was found, otherwise null.
+   */
+  async getApplicationForParentSupportingUser(
+    applicationNumber: string,
+    lastName: string,
+    parentFullName: string,
+  ): Promise<Application> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "application.offeringIntensity",
+        "programYear.id",
+        "programYear.startDate",
+        "user.userName",
+        "student.id",
+      ])
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("application.programYear", "programYear")
+      .innerJoin("application.supportingUsers", "supportingUser")
+      .where("application.applicationNumber = :applicationNumber", {
+        applicationNumber,
+      })
+      .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
+      .andWhere("lower(supportingUser.fullName) = lower(:parentFullName)", { parentFullName })
+      .andWhere("supportingUser.supportingUserType = :parentType", { parentType: SupportingUserType.Parent })
+      .andWhere("supportingUser.isAbleToReport = :isAbleToReport", { isAbleToReport: true })
       .andWhere(
         new Brackets((qb) => {
           qb.where(
