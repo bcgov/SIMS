@@ -2,21 +2,21 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import { TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
 import {
-    BEARER_AUTH_TYPE,
-    createTestingAppModule,
-    FakeSupportingUserTypes,
-    getSupportingUserToken,
-    mockJWTUserInfo,
-    resetMockJWTUserInfo,
+  BEARER_AUTH_TYPE,
+  createTestingAppModule,
+  FakeSupportingUserTypes,
+  getSupportingUserToken,
+  mockJWTUserInfo,
+  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
-    createE2EDataSources,
-    createFakeSupportingUser,
-    E2EDataSources,
-    saveFakeApplication,
+  createE2EDataSources,
+  createFakeSupportingUser,
+  E2EDataSources,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import {
-    ApplicationStatus, SupportingUserType
+  ApplicationStatus, SupportingUserType
 } from "@sims/sims-db";
 
 describe("SupportingUserSupportingUsersController(e2e)-getApplicationDetails", () => {

@@ -1,48 +1,48 @@
 import {
-    BadRequestException,
-    Body,
-    Controller,
-    HttpCode,
-    HttpStatus,
-    Param,
-    ParseEnumPipe,
-    Patch,
-    Post,
-    UnprocessableEntityException,
+  BadRequestException,
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseEnumPipe,
+  Patch,
+  Post,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import {
-    ApplicationService,
-    DynamicFormConfigurationService,
-    FormService,
-    SupportingUserService,
-    UserService,
+  ApplicationService,
+  DynamicFormConfigurationService,
+  FormService,
+  SupportingUserService,
+  UserService,
 } from "../../services";
 import { UserToken } from "../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../auth/userToken.interface";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
-    ApplicationIdentifierAPIInDTO,
-    ApplicationAPIOutDTO,
-    UpdateSupportingUserAPIInDTO,
+  ApplicationIdentifierAPIInDTO,
+  ApplicationAPIOutDTO,
+  UpdateSupportingUserAPIInDTO,
 } from "./models/supporting-user.dto";
 import { AddressInfo, ContactInfo, SupportingUserType, Application } from "@sims/sims-db";
 import {
-    ApiProcessError,
-    ClientTypeBaseRoute,
-    DryRunSubmissionResult,
+  ApiProcessError,
+  ClientTypeBaseRoute,
+  DryRunSubmissionResult,
 } from "../../types";
 import {
-    STUDENT_APPLICATION_NOT_FOUND,
-    SUPPORTING_USER_ALREADY_PROVIDED_DATA,
-    SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
-    SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
+  STUDENT_APPLICATION_NOT_FOUND,
+  SUPPORTING_USER_ALREADY_PROVIDED_DATA,
+  SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
+  SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
 import { getSupportingUserFormType } from "../../utilities";
 import {
-    ApiBadRequestResponse,
-    ApiTags,
-    ApiUnprocessableEntityResponse,
+  ApiBadRequestResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { WorkflowClientService } from "@sims/services";

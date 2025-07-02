@@ -1,18 +1,18 @@
 import {
-    IsEnum,
-    IsNotEmpty,
-    IsNotEmptyObject,
-    IsOptional,
-    Length,
-    MaxLength,
-    ValidateIf,
+  IsEnum,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsOptional,
+  Length,
+  MaxLength,
+  ValidateIf,
 } from "class-validator";
 import {
-    ContactInfo,
-    APPLICATION_NUMBER_LENGTH,
-    USER_LAST_NAME_MAX_LENGTH,
-    OfferingIntensity,
-    SupportingUserType,
+  ContactInfo,
+  APPLICATION_NUMBER_LENGTH,
+  USER_LAST_NAME_MAX_LENGTH,
+  OfferingIntensity,
+  SupportingUserType,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_10KB } from "../../../constants";
