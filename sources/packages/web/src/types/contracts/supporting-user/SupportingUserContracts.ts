@@ -1,6 +1,6 @@
 // Expected possible errors returned by the API while submitting supporting data.
 
-import { ContactInformationAPIOutDTO } from "@/services/http/dto";
+import { Address } from "@/types/contracts/Common";
 
 // Not possible to find a Student Application with the data provided by the supporting user.
 export const STUDENT_APPLICATION_NOT_FOUND = "STUDENT_APPLICATION_NOT_FOUND";
@@ -32,13 +32,18 @@ export enum SupportingUserType {
   Partner = "Partner",
 }
 
+interface ContactInfo {
+  address: Address;
+  phone: string;
+}
+
 export interface SupportingUser {
   formName: string;
   programYearStartDate?: string;
   isAbleToReport?: boolean;
   fullName?: string;
   supportingData?: unknown;
-  contactInfo?: ContactInformationAPIOutDTO;
+  contactInfo?: ContactInfo;
   sin?: string;
   birthDate?: string;
   email?: string;

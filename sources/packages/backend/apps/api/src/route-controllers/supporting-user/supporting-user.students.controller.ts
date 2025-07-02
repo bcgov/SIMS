@@ -36,7 +36,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import {
   ReportedSupportingUserAPIInDTO,
   ReportedSupportingUserAPIOutDTO,
-} from "./models/supporting-user.dto";
+} from "..";
 import { WorkflowClientService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
