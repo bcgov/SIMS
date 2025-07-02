@@ -20,7 +20,6 @@ import {
   DynamicFormType,
   SupportingUserType,
 } from "@sims/sims-db";
-import { SupportingUserControllerService } from "..";
 import { StudentUserToken } from "../../auth";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -36,6 +35,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import {
   ReportedSupportingUserAPIInDTO,
   ReportedSupportingUserAPIOutDTO,
+  SupportingUserControllerService,
 } from "..";
 import { WorkflowClientService } from "@sims/services";
 
