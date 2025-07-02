@@ -1762,9 +1762,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationNumber,
       })
       .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
-      .andWhere("lower(supportingUser.fullName) = lower(:parentFullName)", { parentFullName })
-      .andWhere("supportingUser.supportingUserType = :parentType", { parentType: SupportingUserType.Parent })
-      .andWhere("supportingUser.isAbleToReport = :isAbleToReport", { isAbleToReport: true })
+      .andWhere("lower(supportingUser.fullName) = lower(:parentFullName)", {
+        parentFullName,
+      })
+      .andWhere("supportingUser.supportingUserType = :parentType", {
+        parentType: SupportingUserType.Parent,
+      })
+      .andWhere("supportingUser.isAbleToReport = :isAbleToReport", {
+        isAbleToReport: true,
+      })
       .andWhere(
         new Brackets((qb) => {
           qb.where(

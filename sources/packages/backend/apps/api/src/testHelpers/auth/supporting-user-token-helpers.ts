@@ -22,9 +22,8 @@ export async function getSupportingUserToken(
     password: "fake-password",
   };
 
-  return getCachedToken(
-    credential,
-    AuthorizedParties.SupportingUsers,
-    userType.toString(),
-  );
-} 
+  return getCachedToken(AuthorizedParties.supportingUsers, {
+    userPasswordCredential: credential,
+    uniqueTokenCache: userType.toString(),
+  });
+}

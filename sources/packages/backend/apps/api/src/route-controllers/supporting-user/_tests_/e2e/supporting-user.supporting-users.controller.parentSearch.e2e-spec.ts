@@ -15,9 +15,7 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-import {
-  ApplicationStatus, SupportingUserType
-} from "@sims/sims-db";
+import { ApplicationStatus, SupportingUserType } from "@sims/sims-db";
 
 describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
   let app: INestApplication;
@@ -41,7 +39,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
     });
-    
+
     const parentFullName = "John Smith";
     const parent = createFakeSupportingUser(
       { application },
@@ -57,7 +55,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
 
     // Mock supporting user token
     await mockJWTUserInfo(appModule, parent.user);
-    
+
     const searchPayload = {
       applicationNumber: application.applicationNumber,
       studentsLastName: application.student.user.lastName,
@@ -87,7 +85,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
     });
-    
+
     const parentFullName = "John Smith";
     const parent = createFakeSupportingUser(
       { application },
@@ -103,7 +101,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
 
     // Mock supporting user token
     await mockJWTUserInfo(appModule, parent.user);
-    
+
     const searchPayload = {
       applicationNumber: application.applicationNumber,
       studentsLastName: application.student.user.lastName,
@@ -133,7 +131,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
     });
-    
+
     const parentFullName = "John Smith";
     const parent = createFakeSupportingUser(
       { application },
@@ -149,7 +147,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
 
     // Mock supporting user token
     await mockJWTUserInfo(appModule, parent.user);
-    
+
     const searchPayload = {
       applicationNumber: application.applicationNumber,
       studentsLastName: application.student.user.lastName,
@@ -168,7 +166,9 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect((res) => {
-        expect(res.body.message).toContain("Not able to find a Student Application with the provided data");
+        expect(res.body.message).toContain(
+          "Not able to find a Student Application with the provided data",
+        );
       });
   });
 
@@ -177,7 +177,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
     });
-    
+
     const parentFullName = "John Smith";
     const parent = createFakeSupportingUser(
       { application },
@@ -193,7 +193,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
 
     // Mock supporting user token
     await mockJWTUserInfo(appModule, parent.user);
-    
+
     const searchPayload = {
       applicationNumber: application.applicationNumber,
       studentsLastName: application.student.user.lastName,
@@ -212,7 +212,9 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect((res) => {
-        expect(res.body.message).toContain("Not able to find a Student Application with the provided data");
+        expect(res.body.message).toContain(
+          "Not able to find a Student Application with the provided data",
+        );
       });
   });
 
@@ -221,7 +223,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
     });
-    
+
     const parentFullName = "John Smith";
     const parent = createFakeSupportingUser(
       { application },
@@ -237,7 +239,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
 
     // Mock supporting user token
     await mockJWTUserInfo(appModule, parent.user);
-    
+
     const searchPayload = {
       applicationNumber: application.applicationNumber,
       studentsLastName: application.student.user.lastName,
@@ -256,7 +258,9 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect((res) => {
-        expect(res.body.message).toContain("Not able to find a Student Application with the provided data");
+        expect(res.body.message).toContain(
+          "Not able to find a Student Application with the provided data",
+        );
       });
   });
 
@@ -265,7 +269,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
     });
-    
+
     const parentFullName = "John Smith";
     const parent = createFakeSupportingUser(
       { application },
@@ -281,7 +285,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
 
     // Mock supporting user token
     await mockJWTUserInfo(appModule, parent.user);
-    
+
     const searchPayload = {
       applicationNumber: "1234567890", // Wrong application number
       studentsLastName: application.student.user.lastName,
@@ -300,7 +304,9 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect((res) => {
-        expect(res.body.message).toContain("Not able to find a Student Application with the provided data");
+        expect(res.body.message).toContain(
+          "Not able to find a Student Application with the provided data",
+        );
       });
   });
 
@@ -309,7 +315,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
     });
-    
+
     const parentFullName = "John Smith";
     const parent = createFakeSupportingUser(
       { application },
@@ -325,7 +331,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
 
     // Mock supporting user token
     await mockJWTUserInfo(appModule, parent.user);
-    
+
     const searchPayload = {
       applicationNumber: application.applicationNumber,
       studentsLastName: "WrongLastName", // Wrong last name
@@ -344,7 +350,9 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect((res) => {
-        expect(res.body.message).toContain("Not able to find a Student Application with the provided data");
+        expect(res.body.message).toContain(
+          "Not able to find a Student Application with the provided data",
+        );
       });
   });
 
@@ -353,7 +361,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
     });
-    
+
     const parentFullName = "Jean-Pierre O'Connor";
     const parent = createFakeSupportingUser(
       { application },
@@ -369,7 +377,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
 
     // Mock supporting user token
     await mockJWTUserInfo(appModule, parent.user);
-    
+
     const searchPayload = {
       applicationNumber: application.applicationNumber,
       studentsLastName: application.student.user.lastName,
@@ -399,7 +407,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
     });
-    
+
     const parentFullName = "Mary  Jane  Wilson"; // Multiple spaces
     const parent = createFakeSupportingUser(
       { application },
@@ -415,7 +423,7 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
 
     // Mock supporting user token
     await mockJWTUserInfo(appModule, parent.user);
-    
+
     const searchPayload = {
       applicationNumber: application.applicationNumber,
       studentsLastName: application.student.user.lastName,
@@ -443,4 +451,4 @@ describe("SupportingUserSupportingUsersController(e2e)-ParentSearch", () => {
   afterAll(async () => {
     await app?.close();
   });
-}); 
+});

@@ -25,22 +25,22 @@ import { JSON_10KB } from "../../../constants";
 export class ApplicationIdentifierAPIInDTO {
   @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
   applicationNumber: string;
-  
+
   @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
-  
+
   // For partner search: use student's date of birth
   @ValidateIf((o) => o.supportingUserType === SupportingUserType.Partner)
   @IsNotEmpty()
   studentsDateOfBirth: string;
-  
+
   // For parent search: use parent's full name
   @ValidateIf((o) => o.supportingUserType === SupportingUserType.Parent)
   @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   parentFullName: string;
-  
+
   @IsEnum(SupportingUserType)
   supportingUserType: SupportingUserType;
 }
@@ -77,18 +77,18 @@ export class UpdateSupportingUserAPIInDTO {
   supportingData: unknown;
   @IsEnum(OfferingIntensity)
   offeringIntensity: OfferingIntensity;
-  
+
   // For partner search: use student's date of birth
   @ValidateIf((o) => o.supportingUserType === SupportingUserType.Partner)
   @IsNotEmpty()
   studentsDateOfBirth: string;
-  
+
   // For parent search: use parent's full name
   @ValidateIf((o) => o.supportingUserType === SupportingUserType.Parent)
   @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   parentFullName: string;
-  
+
   @IsEnum(SupportingUserType)
   supportingUserType: SupportingUserType;
 }

@@ -26,7 +26,12 @@ import {
   ApplicationAPIOutDTO,
   UpdateSupportingUserAPIInDTO,
 } from "./models/supporting-user.dto";
-import { AddressInfo, ContactInfo, SupportingUserType, Application } from "@sims/sims-db";
+import {
+  AddressInfo,
+  ContactInfo,
+  SupportingUserType,
+  Application,
+} from "@sims/sims-db";
 import {
   ApiProcessError,
   ClientTypeBaseRoute,
@@ -92,17 +97,19 @@ export class SupportingUserSupportingUsersController extends BaseController {
     let application: Application;
 
     if (supportingUserType === SupportingUserType.Parent) {
-      application = await this.applicationService.getApplicationForParentSupportingUser(
-        payload.applicationNumber,
-        payload.studentsLastName,
-        payload.parentFullName,
-      );
+      application =
+        await this.applicationService.getApplicationForParentSupportingUser(
+          payload.applicationNumber,
+          payload.studentsLastName,
+          payload.parentFullName,
+        );
     } else {
-      application = await this.applicationService.getApplicationForSupportingUser(
-        payload.applicationNumber,
-        payload.studentsLastName,
-        payload.studentsDateOfBirth,
-      );
+      application =
+        await this.applicationService.getApplicationForSupportingUser(
+          payload.applicationNumber,
+          payload.studentsLastName,
+          payload.studentsDateOfBirth,
+        );
     }
 
     if (!application) {
@@ -180,17 +187,19 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // per defined by the Ministry policies.
     let applicationQuery;
     if (supportingUserType === SupportingUserType.Parent) {
-      applicationQuery = this.applicationService.getApplicationForParentSupportingUser(
-        payload.applicationNumber,
-        payload.studentsLastName,
-        payload.parentFullName,
-      );
+      applicationQuery =
+        this.applicationService.getApplicationForParentSupportingUser(
+          payload.applicationNumber,
+          payload.studentsLastName,
+          payload.parentFullName,
+        );
     } else {
-      applicationQuery = this.applicationService.getApplicationForSupportingUser(
-        payload.applicationNumber,
-        payload.studentsLastName,
-        payload.studentsDateOfBirth,
-      );
+      applicationQuery =
+        this.applicationService.getApplicationForSupportingUser(
+          payload.applicationNumber,
+          payload.studentsLastName,
+          payload.studentsDateOfBirth,
+        );
     }
 
     // Wait for both queries to finish.

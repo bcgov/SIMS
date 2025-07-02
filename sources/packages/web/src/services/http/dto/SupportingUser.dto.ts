@@ -10,18 +10,18 @@ import { Expose } from "class-transformer";
 export class ApplicationIdentifierAPIInDTO {
   @Expose()
   applicationNumber: string;
-  
+
   @Expose()
   studentsLastName: string;
-  
+
   // For partner search: use student's date of birth
   @Expose()
   studentsDateOfBirth?: string;
-  
+
   // For parent search: use parent's full name
   @Expose()
   parentFullName?: string;
-  
+
   @Expose()
   supportingUserType: SupportingUserType;
 }
