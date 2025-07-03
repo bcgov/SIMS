@@ -90,11 +90,11 @@ pgBackRest:
     endpoint: "endpointName"
     # region specifies the S3 region to use. If your S3 storage system does not
     # use "region", fill this in with a random value.
-    region: "ca-central-1"
+    region: "regionName"
     # setting the below to be one plus of the default schedule
     # to avoid conflicts
-    fullSchedule: "0 9 * * *"
-    incrementalSchedule: "0 1,5,13,17,21 * * *"
+    fullSchedule: "0 10 * * *"
+    incrementalSchedule: "0 2,6,14,18,22 * * *"
 
 patroni:
   postgresql:
