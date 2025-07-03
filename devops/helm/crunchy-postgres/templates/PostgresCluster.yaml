@@ -79,23 +79,6 @@ spec:
       databases:
         - {{ template "crunchy-postgres.fullname" . }}
 
-  {{ if .Values.dataSource.enabled }}
-  dataSource:
-    pgbackrest:
-      configuration:
-        - secret:
-            name: {{ .Values.dataSource.secretName }}
-      global:
-        repo2-path: {{ .Values.dataSource.repo.path }}
-      repo:
-        name: {{ .Values.dataSource.repo.name }}
-        s3:
-          bucket: {{ .Values.dataSource.repo.s3.bucket }}
-          endpoint: {{ .Values.dataSource.repo.s3.endpoint }}
-          region: {{ .Values.dataSource.repo.s3.region }}
-      stanza: {{ .Values.dataSource.stanza }}
-  {{ end }}
-
   backups:
     pgbackrest:
       restore:
