@@ -20,8 +20,8 @@
               v-model="applicationNumber"
               data-cy="applicationNumber"
               :rules="[
-                (v) => checkNullOrEmptyRule(v, 'Application number'),
-                (v) => checkOnlyDigitsRule(v, 'Application number'),
+                (v) => checkNullOrEmptyRule(v, 'Number'),
+                (v) => checkOnlyDigitsRule(v, 'Number'),
               ]"
               hide-details="auto"
             />
@@ -46,17 +46,6 @@
               data-cy="studentsDateOfBirth"
               type="date"
               :rules="[(v) => checkNullOrEmptyRule(v, 'Date of birth')]"
-              hide-details="auto"
-            />
-          </v-col>
-          <v-col v-if="supportingUserType === 'Parent'">
-            <v-text-field
-              density="compact"
-              label="Parent's Full Name"
-              variant="outlined"
-              v-model="parentFullName"
-              data-cy="parentFullName"
-              :rules="[(v) => checkNullOrEmptyRule(v, 'Parent\'s Full Name')]"
               hide-details="auto"
             />
           </v-col>
@@ -153,7 +142,6 @@ export default defineComponent({
     const applicationNumber = ref("");
     const studentsLastName = ref("");
     const studentsDateOfBirth = ref();
-    const parentFullName = ref("");
     const initialData = ref();
     const { disableWizardButtons, excludeExtraneousValues } = useFormioUtils();
     const isFirstPage = ref(true);
@@ -213,8 +201,6 @@ export default defineComponent({
       applicationNumber: applicationNumber.value,
       studentsLastName: studentsLastName.value,
       studentsDateOfBirth: studentsDateOfBirth.value,
-      parentFullName: parentFullName.value,
-      supportingUserType: props.supportingUserType,
     });
 
     const applicationSearch = async () => {
@@ -334,7 +320,6 @@ export default defineComponent({
       applicationNumber,
       studentsDateOfBirth,
       studentsLastName,
-      parentFullName,
       applicationSearch,
       wizardGoNext,
       wizardGoPrevious,

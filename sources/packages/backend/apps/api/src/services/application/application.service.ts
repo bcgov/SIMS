@@ -1744,7 +1744,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     lastName: string,
     parentFullName: string,
   ): Promise<Application> {
-    return this.repo
+    const query = this.repo
       .createQueryBuilder("application")
       .select([
         "application.id",
@@ -1753,11 +1753,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.startDate",
         "user.userName",
         "student.id",
+        "supportingUser.id",
+        "supportingUser.user",
       ])
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .innerJoin("application.programYear", "programYear")
-      .innerJoin("application.supportingUsers", "supportingUser")
+      .leftJoinAndSelect("application.supportingUsers", "supportingUser")
       .where("application.applicationNumber = :applicationNumber", {
         applicationNumber,
       })
@@ -1786,8 +1788,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
             },
           );
         }),
-      )
-      .getOne();
+      );
+    return query.getOne();
   }
 
   /**

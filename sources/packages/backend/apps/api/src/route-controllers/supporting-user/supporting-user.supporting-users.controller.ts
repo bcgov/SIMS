@@ -26,12 +26,7 @@ import {
   ApplicationAPIOutDTO,
   UpdateSupportingUserAPIInDTO,
 } from "./models/supporting-user.dto";
-import {
-  AddressInfo,
-  ContactInfo,
-  SupportingUserType,
-  Application,
-} from "@sims/sims-db";
+import { AddressInfo, SupportingUserType, Application } from "@sims/sims-db";
 import {
   ApiProcessError,
   ClientTypeBaseRoute,
@@ -39,7 +34,6 @@ import {
 } from "../../types";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
-  SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
   SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
@@ -52,6 +46,7 @@ import {
 import BaseController from "../BaseController";
 import { WorkflowClientService } from "@sims/services";
 import { RequiresUserAccount } from "../../auth/decorators";
+import { CustomNamedError } from "@sims/utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.supportingUsers)
 @Controller("supporting-user")
@@ -95,20 +90,35 @@ export class SupportingUserSupportingUsersController extends BaseController {
     @Body() payload: ApplicationIdentifierAPIInDTO,
   ): Promise<ApplicationAPIOutDTO> {
     let application: Application;
-
-    if (supportingUserType === SupportingUserType.Parent) {
-      application =
-        await this.applicationService.getApplicationForParentSupportingUser(
-          payload.applicationNumber,
-          payload.studentsLastName,
-          payload.parentFullName,
-        );
-    } else {
-      application =
-        await this.applicationService.getApplicationForSupportingUser(
-          payload.applicationNumber,
-          payload.studentsLastName,
-          payload.studentsDateOfBirth,
+    switch (supportingUserType) {
+      case SupportingUserType.Parent:
+        application =
+          await this.applicationService.getApplicationForParentSupportingUser(
+            payload.applicationNumber,
+            payload.studentsLastName,
+            payload.parentFullName,
+          );
+        if (application?.supportingUsers[0]?.user) {
+          // This parent already provided the information.
+          throw new UnprocessableEntityException(
+            new ApiProcessError(
+              "This parent/partner already provided the information.",
+              SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
+            ),
+          );
+        }
+        break;
+      case SupportingUserType.Partner:
+        application =
+          await this.applicationService.getApplicationForSupportingUser(
+            payload.applicationNumber,
+            payload.studentsLastName,
+            payload.studentsDateOfBirth,
+          );
+        break;
+      default:
+        throw new BadRequestException(
+          `Supporting user type not implemented: ${supportingUserType}`,
         );
     }
 
@@ -174,39 +184,36 @@ export class SupportingUserSupportingUsersController extends BaseController {
     supportingUserType: SupportingUserType,
     @Body() payload: UpdateSupportingUserAPIInDTO,
   ): Promise<void> {
-    // Regardless of the API call is successful or not, create/update
-    // the user being used to execute the request.
-    const userQuery = this.userService.syncUser(
+    const user = await this.userService.syncUser(
       userToken.userName,
       userToken.email,
       userToken.givenNames,
       userToken.lastName,
     );
-    // Use the provided data to search for the Student Application.
-    // The application must be search using at least 3 criteria as
-    // per defined by the Ministry policies.
-    let applicationQuery;
-    if (supportingUserType === SupportingUserType.Parent) {
-      applicationQuery =
-        this.applicationService.getApplicationForParentSupportingUser(
-          payload.applicationNumber,
-          payload.studentsLastName,
-          payload.parentFullName,
-        );
-    } else {
-      applicationQuery =
-        this.applicationService.getApplicationForSupportingUser(
-          payload.applicationNumber,
-          payload.studentsLastName,
-          payload.studentsDateOfBirth,
+
+    let application: Application;
+    switch (supportingUserType) {
+      case SupportingUserType.Parent:
+        application =
+          await this.applicationService.getApplicationForParentSupportingUser(
+            payload.applicationNumber,
+            payload.studentsLastName,
+            payload.parentFullName,
+          );
+        break;
+      case SupportingUserType.Partner:
+        application =
+          await this.applicationService.getApplicationForSupportingUser(
+            payload.applicationNumber,
+            payload.studentsLastName,
+            payload.studentsDateOfBirth,
+          );
+        break;
+      default:
+        throw new BadRequestException(
+          `Supporting user type not implemented: ${supportingUserType}`,
         );
     }
-
-    // Wait for both queries to finish.
-    const [user, application] = await Promise.all([
-      userQuery,
-      applicationQuery,
-    ]);
 
     if (!application) {
       throw new UnprocessableEntityException(
@@ -250,22 +257,13 @@ export class SupportingUserSupportingUsersController extends BaseController {
       );
     }
 
-    // Check if the same user is trying to provide data to the same application
-    // that he already provided.
-    const supportingUserForApplication =
-      await this.supportingUserService.getSupportingUserByUserId(
-        application.id,
-        user.id,
-      );
-
-    if (supportingUserForApplication) {
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "Supporting data already provided by this user to the Student Application.",
-          SUPPORTING_USER_ALREADY_PROVIDED_DATA,
-        ),
-      );
-    }
+    // For a parent, there could be up to 2 supporting users.
+    // The query on getApplicationForParentSupportingUser will ensure that only the
+    // supporting users that did not provide the data will be returned.
+    const supportingUserId =
+      supportingUserType === SupportingUserType.Parent
+        ? application.supportingUsers[0].id
+        : undefined;
 
     try {
       const addressInfo: AddressInfo = {
@@ -277,35 +275,35 @@ export class SupportingUserSupportingUsersController extends BaseController {
         postalCode: submissionResult.data.data.postalCode,
       };
 
-      const contactInfo: ContactInfo = {
-        phone: submissionResult.data.data.phone,
-        address: addressInfo,
-      };
-
-      const updatedUser = await this.supportingUserService.updateSupportingUser(
-        application.id,
-        supportingUserType,
-        user.id,
-        {
-          contactInfo,
-          sin: submissionResult.data.data.sin,
-          birthDate: userToken.birthdate,
-          supportingData: submissionResult.data.data.supportingData,
-          userId: user.id,
-        },
-      );
-
+      const updatedSupportingUser =
+        await this.supportingUserService.updateSupportingUser(
+          application.id,
+          supportingUserType,
+          user.id,
+          {
+            userId: user.id,
+            contactInfo: {
+              address: addressInfo,
+              phone: submissionResult.data.data.phone,
+            },
+            sin: submissionResult.data.data.sin,
+            birthDate: submissionResult.data.data.dateOfBirth,
+            supportingData: submissionResult.data.data,
+          },
+          supportingUserId,
+        );
+      // Send message to workflow to resume the assessment.
       await this.workflowClientService.sendSupportingUsersCompletedMessage(
-        updatedUser.id,
+        updatedSupportingUser.id,
       );
     } catch (error) {
-      if (error.name === SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(
-            error.message,
-            SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
-          ),
-        );
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
       }
       throw error;
     }

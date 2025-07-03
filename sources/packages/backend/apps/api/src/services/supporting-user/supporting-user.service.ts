@@ -29,6 +29,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
    * @param updateInfo information that must be updated
    * altogether when a supporting user is providing
    * the supporting data for a Student Application.
+   * @param supportingUserId optional supporting user id to prioritize
    * @returns update result. Expected one and only one
    * row to be updated. If no rows are updated it means that
    * there is no supporting user record to be updated at
@@ -41,6 +42,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     supportingUserType: SupportingUserType,
     auditUserId: number,
     updateInfo: UpdateSupportingUserInfo,
+    supportingUserId?: number,
   ): Promise<SupportingUser> {
     const queryRunner = this.dataSource.createQueryRunner();
     await configureIdleTransactionSessionTimeout(
@@ -73,7 +75,8 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
 
       // Case there are more than one records (e.g. two parents), just selected one
       // to execute the update.
-      const userToUpdate = possibleUsersToUpdate.shift();
+      const userToUpdate =
+        supportingUserId ?? possibleUsersToUpdate.shift()?.id;
       if (!userToUpdate) {
         throw new CustomNamedError(
           `The application is not expecting supporting information from a ${supportingUserType.toLowerCase()} to be provided at this time.`,
@@ -84,13 +87,15 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       // The SIN can be received with a few white spaces in the middle, so we need remove then
       // before inserting it because the DB will accept only 9 characters.
       const sinWithNoSpaces = removeWhiteSpaces(updateInfo.sin);
-      userToUpdate.contactInfo = updateInfo.contactInfo;
-      userToUpdate.sin = sinWithNoSpaces;
-      userToUpdate.birthDate = updateInfo.birthDate;
-      userToUpdate.supportingData = updateInfo.supportingData;
-      userToUpdate.user = { id: updateInfo.userId } as User;
-      userToUpdate.modifier = { id: auditUserId } as User;
-      const updatedUser = await transactionRepo.save(userToUpdate);
+      const userToUpdateEntity = new SupportingUser();
+      userToUpdateEntity.id = userToUpdate;
+      userToUpdateEntity.contactInfo = updateInfo.contactInfo;
+      userToUpdateEntity.sin = sinWithNoSpaces;
+      userToUpdateEntity.birthDate = updateInfo.birthDate;
+      userToUpdateEntity.supportingData = updateInfo.supportingData;
+      userToUpdateEntity.user = { id: updateInfo.userId } as User;
+      userToUpdateEntity.modifier = { id: auditUserId } as User;
+      const updatedUser = await transactionRepo.save(userToUpdateEntity);
       await queryRunner.commitTransaction();
       return updatedUser;
     } catch (error) {
