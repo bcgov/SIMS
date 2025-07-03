@@ -27,12 +27,14 @@ import {
 } from "@sims/sims-db";
 import { ReportedSupportingUserAPIInDTO } from "../../../../route-controllers";
 import { AppStudentsModule } from "../../../../app.students.module";
+import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let db: E2EDataSources;
   let recentPYParentForm: DynamicFormConfiguration;
+  let zeebeClient: ZeebeGrpcClient;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -40,6 +42,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
+    zeebeClient = app.get(ZeebeGrpcClient);
     recentPYParentForm = await db.dynamicFormConfiguration.findOne({
       select: {
         id: true,
@@ -256,7 +259,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
         select: { personalInfo: true, contactInfo: true, supportingData: true },
         where: { id: parent.id },
       });
-
+      // Assert supporting user reported details.
       expect(updatedSupportingUser).toEqual({
         personalInfo: {
           givenNames: payload.givenNames,
@@ -274,6 +277,14 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
         },
         supportingData: payload.supportingData,
       });
+      // Assert workflow message.
+      expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          correlationKey: parent.id.toString(),
+          name: "supporting-user-info-received",
+          variables: {},
+        }),
+      );
     },
   );
 
