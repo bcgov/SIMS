@@ -68,8 +68,8 @@ pg-upgrade:
 
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.
 # .PHONY: uninstall
-uninstall: helm-dep
-	@helm uninstall ${NAME} -n ${NAMESPACE}
+# uninstall: helm-dep
+# 	@helm uninstall ${NAME} -n ${NAMESPACE}
 
 .PHONY: template
 template: helm-dep

@@ -18,6 +18,7 @@ standby:
 # enable this to go back to a specific timestamp in history in the current cluster.
 # follow https://access.crunchydata.com/documentation/postgres-operator/5.2.0/tutorial/disaster-recovery/
 # Perform an In-Place Point-in-time-Recovery (PITR)
+# this configuration for restore is a dummy configuration. Actual values used for the restore are provided to make through the github actions workflow
 restore:
   enabled: false
   repoName: repo1 # provide repo name
