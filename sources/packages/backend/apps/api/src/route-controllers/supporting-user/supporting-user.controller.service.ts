@@ -6,7 +6,7 @@ import {
 import { DynamicFormConfigurationService, FormService } from "../../services";
 import { SupportingUserType } from "@sims/sims-db";
 import { getSupportingUserFormType } from "../../utilities";
-import { DryRunSubmissionResult } from "apps/api/src/types";
+import { DryRunSubmissionResult } from "../../types";
 
 @Injectable()
 export class SupportingUserControllerService {

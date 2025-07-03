@@ -6,7 +6,7 @@ import { FormService } from "../../services";
 /**
  * Mock dry run submission.
  * @param formName form name.
- * @param formData  form data.
+ * @param formData form data.
  */
 export async function mockDryRunSubmission(
   testingModule: TestingModule,

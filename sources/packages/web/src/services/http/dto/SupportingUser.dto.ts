@@ -60,7 +60,7 @@ export interface SupportingUserFormDataAPIOutDTO {
 }
 
 /**
- * Supporting user details of the supporting who is unable to report.
+ * Supporting user details of the supporting user who is unable to report.
  */
 export interface ReportedSupportingUserAPIOutDTO {
   fullName: string;
@@ -70,7 +70,7 @@ export interface ReportedSupportingUserAPIOutDTO {
 }
 
 /**
- * Details to update the supporting who is unable to report.
+ * Details to update the supporting user who is unable to report.
  */
 export class ReportedSupportingUserAPIInDTO {
   @Expose()

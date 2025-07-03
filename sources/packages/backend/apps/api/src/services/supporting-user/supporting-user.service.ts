@@ -224,7 +224,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
    * Update supporting user reported data for the supporting user who is not able to report.
    * @param supportingUserId supporting user id.
    * @param reportedData reported supporting users data.
-   * @param personalInfo personal information.
    * @param auditUserId user who is making the changes.
    * @returns update result.
    */
