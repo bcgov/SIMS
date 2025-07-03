@@ -256,11 +256,19 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
 
       // Assert
       const updatedSupportingUser = await db.supportingUser.findOne({
-        select: { personalInfo: true, contactInfo: true, supportingData: true },
+        select: {
+          id: true,
+          personalInfo: true,
+          contactInfo: true,
+          supportingData: true,
+          modifier: { id: true },
+        },
+        relations: { modifier: true },
         where: { id: parent.id },
       });
       // Assert supporting user reported details.
       expect(updatedSupportingUser).toEqual({
+        id: parent.id,
         personalInfo: {
           givenNames: payload.givenNames,
           lastName: payload.lastName,
@@ -276,6 +284,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
           phone: payload.phone,
         },
         supportingData: payload.supportingData,
+        modifier: { id: student.user.id },
       });
       // Assert workflow message.
       expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
