@@ -26,7 +26,12 @@ import {
   ApplicationAPIOutDTO,
   UpdateSupportingUserAPIInDTO,
 } from "./models/supporting-user.dto";
-import { AddressInfo, ContactInfo, SupportingUserType } from "@sims/sims-db";
+import {
+  AddressInfo,
+  Application,
+  ContactInfo,
+  SupportingUserType,
+} from "@sims/sims-db";
 import {
   ApiProcessError,
   ClientTypeBaseRoute,
@@ -89,13 +94,45 @@ export class SupportingUserSupportingUsersController extends BaseController {
     supportingUserType: SupportingUserType,
     @Body() payload: ApplicationIdentifierAPIInDTO,
   ): Promise<ApplicationAPIOutDTO> {
-    const application =
-      await this.applicationService.getApplicationForSupportingUser(
-        payload.applicationNumber,
-        payload.studentsLastName,
-        payload.studentsDateOfBirth,
+    let application: Application | null = null;
+    if (supportingUserType === SupportingUserType.Parent) {
+      if (!payload.parentFullName) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(
+            "Parent's full name is required for parent search.",
+            STUDENT_APPLICATION_NOT_FOUND,
+          ),
+        );
+      }
+      application =
+        await this.applicationService.getApplicationForSupportingUser(
+          payload.applicationNumber,
+          payload.studentsLastName,
+          payload.parentFullName,
+        );
+    } else if (supportingUserType === SupportingUserType.Partner) {
+      if (!payload.studentsDateOfBirth) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(
+            "Student's date of birth is required for partner search.",
+            STUDENT_APPLICATION_NOT_FOUND,
+          ),
+        );
+      }
+      application =
+        await this.applicationService.getApplicationForSupportingPartner(
+          payload.applicationNumber,
+          payload.studentsLastName,
+          payload.studentsDateOfBirth,
+        );
+    } else {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Invalid supporting user type.",
+          STUDENT_APPLICATION_NOT_FOUND,
+        ),
       );
-
+    }
     if (!application) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
@@ -169,12 +206,45 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // Use the provided data to search for the Student Application.
     // The application must be search using at least 3 criteria as
     // per defined by the Ministry policies.
-    const applicationQuery =
-      this.applicationService.getApplicationForSupportingUser(
-        payload.applicationNumber,
-        payload.studentsLastName,
-        payload.studentsDateOfBirth,
+    let applicationQuery;
+    if (supportingUserType === SupportingUserType.Parent) {
+      if (!payload.parentFullName) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(
+            "Parent's full name is required for parent submission.",
+            STUDENT_APPLICATION_NOT_FOUND,
+          ),
+        );
+      }
+      applicationQuery =
+        this.applicationService.getApplicationForSupportingUser(
+          payload.applicationNumber,
+          payload.studentsLastName,
+          payload.parentFullName,
+        );
+    } else if (supportingUserType === SupportingUserType.Partner) {
+      if (!payload.studentsDateOfBirth) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(
+            "Student's date of birth is required for partner submission.",
+            STUDENT_APPLICATION_NOT_FOUND,
+          ),
+        );
+      }
+      applicationQuery =
+        this.applicationService.getApplicationForSupportingPartner(
+          payload.applicationNumber,
+          payload.studentsLastName,
+          payload.studentsDateOfBirth,
+        );
+    } else {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Invalid supporting user type.",
+          STUDENT_APPLICATION_NOT_FOUND,
+        ),
       );
+    }
 
     // Wait for both queries to finish.
     const [user, application] = await Promise.all([

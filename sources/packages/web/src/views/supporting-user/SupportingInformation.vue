@@ -20,7 +20,8 @@
               v-model="applicationNumber"
               data-cy="applicationNumber"
               :rules="[
-                (v) => checkNullOrEmptyRule(v, 'Number'),
+                (v) =>
+                  checkNullOrEmptyRule(v, 'Application number is required'),
                 (v) => checkOnlyDigitsRule(v, 'Number'),
               ]"
               hide-details="auto"
@@ -40,12 +41,11 @@
           <v-col>
             <v-text-field
               density="compact"
-              label="Student's date of birth"
+              label="Parent's Full Name"
               variant="outlined"
-              v-model="studentsDateOfBirth"
-              data-cy="studentsDateOfBirth"
-              type="date"
-              :rules="[(v) => checkNullOrEmptyRule(v, 'Date of birth')]"
+              v-model="parentFullName"
+              data-cy="parentFullName"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Parent\'s Full Name')]"
               hide-details="auto"
             />
           </v-col>
@@ -141,7 +141,6 @@ export default defineComponent({
     const formName = ref();
     const applicationNumber = ref("");
     const studentsLastName = ref("");
-    const studentsDateOfBirth = ref();
     const initialData = ref();
     const { disableWizardButtons, excludeExtraneousValues } = useFormioUtils();
     const isFirstPage = ref(true);
@@ -150,6 +149,7 @@ export default defineComponent({
     let formInstance: FormIOForm;
     const searchApplicationsForm = ref({} as VForm);
     const { checkOnlyDigitsRule, checkNullOrEmptyRule } = useRules();
+    const parentFullName = ref("");
 
     const wizardSubmit = () => {
       formInstance.submit();
@@ -200,7 +200,7 @@ export default defineComponent({
     const getIdentifiedApplication = () => ({
       applicationNumber: applicationNumber.value,
       studentsLastName: studentsLastName.value,
-      studentsDateOfBirth: studentsDateOfBirth.value,
+      parentFullName: parentFullName.value,
     });
 
     const applicationSearch = async () => {
@@ -318,7 +318,6 @@ export default defineComponent({
       submitted,
       submitting,
       applicationNumber,
-      studentsDateOfBirth,
       studentsLastName,
       applicationSearch,
       wizardGoNext,
@@ -331,6 +330,7 @@ export default defineComponent({
       checkOnlyDigitsRule,
       checkNullOrEmptyRule,
       searchApplicationsForm,
+      parentFullName,
     };
   },
 });

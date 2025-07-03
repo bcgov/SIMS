@@ -1676,18 +1676,72 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * When a supporting user (e.g. parent/partner) need to provide
-   * supporting data for a Student Application, this method provides
-   * a way to find the specific application to be updated using the
-   * right amount of criteria as per defined in the Ministry Policies.
+   * Finds a Student Application for a supporting user (parent) based on application number, student last name, and parent's full name.
+   * Only parents with isAbleToReport = true are eligible.
    * @param applicationNumber application number provided.
-   * @param lastName last name of the student associated with the
-   * application (search will be case insensitive).
-   * @param birthDate birth date of the student associated with the
-   * application.
+   * @param lastName last name of the student associated with the application (search will be case insensitive).
+   * @param parentFullName full name of the parent as provided in the application (case-insensitive, exact match).
    * @returns application the application that was found, otherwise null.
    */
   async getApplicationForSupportingUser(
+    applicationNumber: string,
+    lastName: string,
+    parentFullName: string,
+  ): Promise<Application> {
+    return this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "application.offeringIntensity",
+        "programYear.id",
+        "programYear.startDate",
+        "user.userName",
+        "student.id",
+      ])
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("application.programYear", "programYear")
+      .innerJoin(
+        "application.supportingUsers",
+        "parent",
+        "parent.supportingUserType = :type",
+        { type: "Parent" },
+      )
+      .where("application.applicationNumber = :applicationNumber", {
+        applicationNumber,
+      })
+      .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
+      .andWhere("lower(parent.fullName) = lower(:parentFullName)", {
+        parentFullName,
+      })
+      .andWhere("parent.isAbleToReport = true")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            "application.applicationStatus = :inProgressApplicationStatus",
+            {
+              inProgressApplicationStatus: ApplicationStatus.InProgress,
+            },
+          ).orWhere(
+            "application.applicationEditStatus = :changeInProgressApplicationEditStatus",
+            {
+              changeInProgressApplicationEditStatus:
+                ApplicationEditStatus.ChangeInProgress,
+            },
+          );
+        }),
+      )
+      .getOne();
+  }
+
+  /**
+   * Finds a Student Application for a supporting user (partner) based on application number, student last name, and student's date of birth.
+   * @param applicationNumber application number provided.
+   * @param lastName last name of the student associated with the application (search will be case insensitive).
+   * @param birthDate date of birth of the student (exact match).
+   * @returns application the application that was found, otherwise null.
+   */
+  async getApplicationForSupportingPartner(
     applicationNumber: string,
     lastName: string,
     birthDate: string,
