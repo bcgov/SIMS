@@ -26,12 +26,12 @@ on:
         type: string
         default: ""
       restore_repo_name:
-        description: "Repo to restore the backup from:"
+        description: "Repo to restore the backup from (repo1 for PVC, repo2 for S3)"
         required: true
         type: choice
         options:
-          - repo1 (PVC)
-          - repo2 (S3)
+          - repo1
+          - repo2
 
 jobs:
   manageCrunchyDB:
