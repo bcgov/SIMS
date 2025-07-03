@@ -7,6 +7,7 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
+  mockDryRunSubmission,
   mockJWTUserInfo,
   resetMockJWTUserInfo,
 } from "../../../../testHelpers";
@@ -14,7 +15,6 @@ import {
   createE2EDataSources,
   createFakeSupportingUser,
   E2EDataSources,
-  getProviderInstanceForModule,
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
@@ -25,9 +25,8 @@ import {
   SupportingUser,
   SupportingUserType,
 } from "@sims/sims-db";
-import { AppStudentsModule } from "../../../../app.students.module";
-import { FormService } from "../../../../services";
 import { ReportedSupportingUserAPIInDTO } from "../../../../route-controllers";
+import { AppStudentsModule } from "../../../../app.students.module";
 
 describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", () => {
   let app: INestApplication;
@@ -67,6 +66,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
     async () => {
       // Arrange
       // Create fake application and supporting user.
+      // The supporting user is able to report and student is not allowed to submit supporting data.
       const { application, supportingUser: parent } =
         await createApplicationAndSupportingUser({ isAbleToReport: true });
       const student = application.student;
@@ -79,6 +79,8 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       // Mock dry run submission.
       const payload = createSupportingUserPayload();
       await mockDryRunSubmission(
+        appModule,
+        AppStudentsModule,
         recentPYParentForm.formDefinitionName,
         payload,
       );
@@ -97,47 +99,44 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
     },
   );
 
-  it(
-    "Should throw not found error when trying to update supporting user details of a supporting user who is a partner and" +
-      " the supporting user is associated to the student submitted application and" +
-      " the supporting user is not able to report.",
-    async () => {
-      // Arrange
-      // Create fake application and supporting user.
-      const { application, supportingUser: partner } =
-        await createApplicationAndSupportingUser({
-          supportingUserType: SupportingUserType.Partner,
-        });
-      const student = application.student;
-      // Mock student user token.
-      await mockJWTUserInfo(appModule, student.user);
-      const endpoint = `/students/supporting-user/${partner.id}`;
-      const token = await getStudentToken(
-        FakeStudentUsersTypes.FakeStudentUserType1,
-      );
-      // Mock dry run submission.
-      const payload = createSupportingUserPayload();
-      await mockDryRunSubmission(
-        recentPYParentForm.formDefinitionName,
-        payload,
-      );
-      // Act/Assert
-      await request(app.getHttpServer())
-        .patch(endpoint)
-        .send(payload)
-        .auth(token, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.NOT_FOUND)
-        .expect({
-          statusCode: HttpStatus.NOT_FOUND,
-          message:
-            "Supporting user not found or not eligible to be accessed by the user.",
-          error: "Not Found",
-        });
-    },
-  );
+  it("Should throw not found error when trying to update supporting user details of a supporting user who is a partner.", async () => {
+    // Arrange
+    // Create fake application and supporting user partner.
+    const { application, supportingUser: partner } =
+      await createApplicationAndSupportingUser({
+        supportingUserType: SupportingUserType.Partner,
+      });
+    const student = application.student;
+    // Mock student user token.
+    await mockJWTUserInfo(appModule, student.user);
+    const endpoint = `/students/supporting-user/${partner.id}`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    // Mock dry run submission.
+    const payload = createSupportingUserPayload();
+    await mockDryRunSubmission(
+      appModule,
+      AppStudentsModule,
+      recentPYParentForm.formDefinitionName,
+      payload,
+    );
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message:
+          "Supporting user not found or not eligible to be accessed by the user.",
+        error: "Not Found",
+      });
+  });
 
   it(
-    "Should throw unprocessable entity error when when trying to update supporting user details of a supporting user who is a parent and" +
+    "Should throw unprocessable entity error when trying to update supporting user details of a supporting user who is a parent and" +
       " the supporting user is associated to the student submitted application and" +
       " the supporting user is not able to report but supporting data has already been submitted.",
     async () => {
@@ -158,6 +157,8 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       // Mock dry run submission.
       const payload = createSupportingUserPayload();
       await mockDryRunSubmission(
+        appModule,
+        AppStudentsModule,
         recentPYParentForm.formDefinitionName,
         payload,
       );
@@ -172,6 +173,47 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
           message:
             "Supporting data has already been submitted for this supporting user.",
           error: "Unprocessable Entity",
+        });
+    },
+  );
+
+  it(
+    "Should throw bad request error when trying to update supporting user details of a supporting user who is a parent and" +
+      " the supporting user is associated to the student submitted application and" +
+      " the supporting user is not able to report but submitted data is invalid.",
+    async () => {
+      // Arrange
+      // Create fake application and supporting user.
+      const { application, supportingUser: parent } =
+        await createApplicationAndSupportingUser();
+      const student = application.student;
+      // Mock student user token.
+      await mockJWTUserInfo(appModule, student.user);
+      const endpoint = `/students/supporting-user/${parent.id}`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Mock dry run submission.
+      const payload = createSupportingUserPayload();
+      // Mock invalid dry run submission.
+      await mockDryRunSubmission(
+        appModule,
+        AppStudentsModule,
+        recentPYParentForm.formDefinitionName,
+        payload,
+        { valid: false },
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect({
+          statusCode: HttpStatus.BAD_REQUEST,
+          message:
+            "Not able to update supporting user data due to an invalid request.",
+          error: "Bad Request",
         });
     },
   );
@@ -195,6 +237,8 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       // Mock dry run submission.
       const payload = createSupportingUserPayload();
       await mockDryRunSubmission(
+        appModule,
+        AppStudentsModule,
         recentPYParentForm.formDefinitionName,
         payload,
       );
@@ -273,29 +317,6 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
     );
     await db.supportingUser.save(supportingUser);
     return { application, supportingUser };
-  }
-
-  /**
-   * Mock dry run submission.
-   * @param formName form name.
-   * @param formData  form data.
-   */
-  async function mockDryRunSubmission(
-    formName: string,
-    formData: unknown,
-  ): Promise<void> {
-    const formService = await getProviderInstanceForModule(
-      appModule,
-      AppStudentsModule,
-      FormService,
-    );
-    const dryRunSubmissionMock = jest.fn().mockResolvedValueOnce({
-      valid: true,
-      formName,
-      data: { data: formData },
-    });
-
-    formService.dryRunSubmission = dryRunSubmissionMock;
   }
 
   /**
