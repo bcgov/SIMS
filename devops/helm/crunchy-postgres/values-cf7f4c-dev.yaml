@@ -1,15 +1,14 @@
+# TODO: To be removed.
 fullnameOverride: simsdb
 appuser: app-database-user
 nonsuperuser: non-super-user
+readonlyuser: read-only-user
 
 crunchyImage: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
 #crunchyImage: artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres-gis:ubi8-15.2-3.3-0 # use this image for POSTGIS
 postgresVersion: 15
 #postGISVersion: '3.3' # use this version of POSTGIS. both crunchyImage and this property needs to have valid values for POSTGIS to be enabled.
 imagePullPolicy: IfNotPresent
-
-pgUpgrade:
-  name: "postgres-version-upgrade"
 
 # enable to bootstrap a standby cluster from backup. Then disable to promote this standby to primary
 standby:
@@ -21,22 +20,22 @@ standby:
 # follow https://access.crunchydata.com/documentation/postgres-operator/5.2.0/tutorial/disaster-recovery/
 # Perform an In-Place Point-in-time-Recovery (PITR)
 restore:
-  enabled: false
-  repoName: repo1 # provide repo name
+  enabled: true
+  repoName: repo2 # provide repo name
   options:
-    target: ~ # 2024-03-24 17:16:00 this is the UTC target timestamp to go back to in current cluster
+    target: "2025-07-02 17:50:00" # this is the UTC target timestamp to go back to in current cluster
 
 instances:
   name: ha # high availability
   replicas: 3
   dataVolumeClaimSpec:
-    storage: 10Gi
+    storage: 1.5Gi
     storageClassName: netapp-block-standard
   requests:
-    cpu: 250m
-    memory: 512Mi
+    cpu: 25m
+    memory: 256Mi
   limits:
-    memory: 1Gi
+    memory: 512Mi
   replicaCertCopy:
     requests:
       cpu: 50m
@@ -49,14 +48,15 @@ pgBackRest:
   retention: "30" # Ideally a larger number such as 30 backups/days
   # If retention-full-type set to 'count' then the oldest backups will expire when the number of backups reach the number defined in retention
   # If retention-full-type set to 'time' then the number defined in retention will take that many days worth of full backups before expiration
+  clusterCounter: 1 # this is the number to identify what is the current counter for the cluster, each time it is cloned it should be incremented.
   retentionFullType: count
   repos:
     schedules:
-      full: 0 8 * * *
-      incremental: 0 0,4,12,16,20 * * *
+      full: 30 10 * * *
+      incremental: 35 10 * * *
     volume:
       accessModes: "ReadWriteOnce"
-      storage: 10Gi
+      storage: 1Gi
       storageClassName: netapp-file-backup
   repoHost:
     requests:
@@ -71,31 +71,25 @@ pgBackRest:
     limits:
       memory: 256Mi
   s3:
-    enabled: false
+    enabled: true
     createS3Secret: true
     # the s3 secret name
     s3Secret: pgbackrest-s3
     # the path start with /, it will be created under bucket if it doesn't exist
-    s3Path: "/habackup"
+    s3Path: "/habackup-shashank"
     # s3UriStyle is host or path
     s3UriStyle: path
     # bucket specifies the S3 bucket to use,
-    bucket: "bucketName"
+    bucket: "postgres-version-upgrade"
     # endpoint specifies the S3 endpoint to use.
-    endpoint: "endpointName"
+    endpoint: "psfs-sims.objectstore.gov.bc.ca"
     # region specifies the S3 region to use. If your S3 storage system does not
     # use "region", fill this in with a random value.
     region: "ca-central-1"
-    # key is the S3 key. This is stored in a Secret.
-    # Please DO NOT push this value to GitHub
-    key: "s3keyValue"
-    # keySecret is the S3 key secret. This is stored in a Secret.
-    # Please DO NOT push this value to GitHub
-    keySecret: "s3SecretValue"
     # setting the below to be one plus of the default schedule
     # to avoid conflicts
-    fullSchedule: "0 9 * * *"
-    incrementalSchedule: "0 1,5,13,17,21 * * *"
+    fullSchedule: "30 10 * * *"
+    incrementalSchedule: "35 10 * * *"
 
 patroni:
   postgresql:
