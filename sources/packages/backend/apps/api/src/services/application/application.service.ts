@@ -1736,6 +1736,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Finds a Student Application for a supporting user (partner) based on application number, student last name, and student's date of birth.
+   * Only partners with isAbleToReport = true are eligible.
    * @param applicationNumber application number provided.
    * @param lastName last name of the student associated with the application (search will be case insensitive).
    * @param birthDate date of birth of the student (exact match).
@@ -1759,6 +1760,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .innerJoin("application.programYear", "programYear")
+      .innerJoin(
+        "application.supportingUsers",
+        "partner",
+        "partner.supportingUserType = :type AND partner.isAbleToReport = true",
+        { type: "Partner" },
+      )
       .where("application.applicationNumber = :applicationNumber", {
         applicationNumber,
       })

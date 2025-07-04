@@ -38,7 +38,7 @@
               hide-details="auto"
             />
           </v-col>
-          <v-col>
+          <v-col v-if="supportingUserType === SupportingUserType.Parent">
             <v-text-field
               density="compact"
               label="Parent's Full Name"
@@ -46,6 +46,18 @@
               v-model="parentFullName"
               data-cy="parentFullName"
               :rules="[(v) => checkNullOrEmptyRule(v, 'Parent\'s Full Name')]"
+              hide-details="auto"
+            />
+          </v-col>
+          <v-col v-if="supportingUserType === SupportingUserType.Partner">
+            <v-text-field
+              density="compact"
+              label="Student's Date of Birth"
+              variant="outlined"
+              v-model="studentsDateOfBirth"
+              data-cy="studentsDateOfBirth"
+              type="date"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Date of Birth')]"
               hide-details="auto"
             />
           </v-col>
@@ -150,6 +162,7 @@ export default defineComponent({
     const searchApplicationsForm = ref({} as VForm);
     const { checkOnlyDigitsRule, checkNullOrEmptyRule } = useRules();
     const parentFullName = ref("");
+    const studentsDateOfBirth = ref("");
 
     const wizardSubmit = () => {
       formInstance.submit();
@@ -197,11 +210,22 @@ export default defineComponent({
      * The 3 pieces of information necessary to identify a Student application.
      * Used for search the application and submit supporting information.
      */
-    const getIdentifiedApplication = () => ({
-      applicationNumber: applicationNumber.value,
-      studentsLastName: studentsLastName.value,
-      parentFullName: parentFullName.value,
-    });
+    const getIdentifiedApplication = () => {
+      return {
+        applicationNumber: applicationNumber.value.trim(),
+        studentsLastName: studentsLastName.value.trim(),
+        parentFullName:
+          props.supportingUserType === SupportingUserType.Parent &&
+          parentFullName.value
+            ? parentFullName.value.trim()
+            : undefined,
+        studentsDateOfBirth:
+          props.supportingUserType === SupportingUserType.Partner &&
+          studentsDateOfBirth.value
+            ? studentsDateOfBirth.value.trim()
+            : undefined,
+      };
+    };
 
     const applicationSearch = async () => {
       const validationResult = await searchApplicationsForm.value.validate();
@@ -331,6 +355,8 @@ export default defineComponent({
       checkNullOrEmptyRule,
       searchApplicationsForm,
       parentFullName,
+      studentsDateOfBirth,
+      SupportingUserType,
     };
   },
 });
