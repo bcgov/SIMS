@@ -20,8 +20,7 @@
               v-model="applicationNumber"
               data-cy="applicationNumber"
               :rules="[
-                (v) =>
-                  checkNullOrEmptyRule(v, 'Application number is required'),
+                (v) => checkNullOrEmptyRule(v, 'Application number'),
                 (v) => checkOnlyDigitsRule(v, 'Number'),
               ]"
               hide-details="auto"
@@ -41,7 +40,7 @@
           <v-col v-if="supportingUserType === SupportingUserType.Parent">
             <v-text-field
               density="compact"
-              label="Parent's Full Name"
+              label="Parent's full name"
               variant="outlined"
               v-model="parentFullName"
               data-cy="parentFullName"
