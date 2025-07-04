@@ -1,4 +1,6 @@
+import { Address } from "@/types/contracts/Common";
 // Expected possible errors returned by the API while submitting supporting data.
+
 // Not possible to find a Student Application with the data provided by the supporting user.
 export const STUDENT_APPLICATION_NOT_FOUND = "STUDENT_APPLICATION_NOT_FOUND";
 // The same user currently authenticated already provided supporting data for the
@@ -27,4 +29,23 @@ export enum SupportingUserType {
    * Partner of a student submitting an application.
    */
   Partner = "Partner",
+}
+
+interface ContactInfo {
+  address: Address;
+  phone: string;
+}
+
+export interface SupportingUser {
+  formName: string;
+  programYearStartDate?: string;
+  isAbleToReport?: boolean;
+  fullName?: string;
+  supportingData?: unknown;
+  contactInfo?: ContactInfo;
+  sin?: string;
+  birthDate?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
 }

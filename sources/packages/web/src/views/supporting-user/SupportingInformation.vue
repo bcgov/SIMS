@@ -202,6 +202,8 @@ export default defineComponent({
         dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
         programYearStartDate,
         offeringIntensity,
+        // Temporary solution until the supporting user search and submit is enhanced.
+        isAbleToReport: true,
       };
     };
 

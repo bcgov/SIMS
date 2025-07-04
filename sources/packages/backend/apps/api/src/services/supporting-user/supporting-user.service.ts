@@ -1,8 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, IsNull, UpdateResult } from "typeorm";
 import {
+  AddressInfo,
+  ContactInfo,
   RecordDataModelService,
   SupportingUser,
+  SupportingUserPersonalInfo,
   SupportingUserType,
   User,
   configureIdleTransactionSessionTimeout,
@@ -11,7 +14,10 @@ import { removeWhiteSpaces } from "../../utilities/string-utils";
 import { SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA } from "./constants";
-import { UpdateSupportingUserInfo } from "./supporting-user.models";
+import {
+  ReportedSupportingUserData,
+  UpdateSupportingUserInfo,
+} from "./supporting-user.models";
 
 @Injectable()
 export class SupportingUserService extends RecordDataModelService<SupportingUser> {
@@ -180,17 +186,29 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
    * @param options options.
    * - `studentId` student id.
    * - `isAbleToReport` is supporting user able to report.
-   * @returns
+   * - `loadSupportingData` option to load supporting data.
+   * @returns supporting user details.
    */
   async getIdentifiableSupportingUser(
     supportingUserId: number,
-    options?: { studentId?: number; isAbleToReport?: boolean },
+    options?: {
+      studentId?: number;
+      isAbleToReport?: boolean;
+      loadSupportingData?: boolean;
+    },
   ): Promise<SupportingUser> {
     return this.repo.findOne({
       select: {
         id: true,
         fullName: true,
-        application: { id: true, programYear: { id: true } },
+        isAbleToReport: true,
+        supportingData: !!options?.loadSupportingData,
+        application: {
+          id: true,
+          programYear: { id: true, startDate: true },
+          applicationStatus: true,
+          applicationEditStatus: true,
+        },
       },
       relations: { application: { programYear: true } },
       where: {
@@ -200,5 +218,46 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         supportingUserType: SupportingUserType.Parent,
       },
     });
+  }
+
+  /**
+   * Update supporting user reported data for the supporting user who is not able to report.
+   * @param supportingUserId supporting user id.
+   * @param reportedData reported supporting users data.
+   * @param auditUserId user who is making the changes.
+   * @returns update result.
+   */
+  async updateReportedData(
+    supportingUserId: number,
+    reportedData: ReportedSupportingUserData,
+    auditUserId: number,
+  ): Promise<UpdateResult> {
+    // Get address and contact info.
+    const addressInfo: AddressInfo = {
+      addressLine1: reportedData.addressLine1,
+      addressLine2: reportedData.addressLine2,
+      provinceState: reportedData.provinceState,
+      country: reportedData.country,
+      city: reportedData.city,
+      postalCode: reportedData.postalCode,
+    };
+    const contactInfo: ContactInfo = {
+      phone: reportedData.phone,
+      address: addressInfo,
+    };
+    const personalInfo: SupportingUserPersonalInfo = {
+      givenNames: reportedData.givenNames,
+      lastName: reportedData.lastName,
+    };
+    // Update supporting user.
+    return this.repo.update(
+      { id: supportingUserId, isAbleToReport: false, supportingData: IsNull() },
+      {
+        supportingData: reportedData.supportingData,
+        personalInfo,
+        contactInfo,
+        modifier: { id: auditUserId } as User,
+      },
+    );
   }
 }

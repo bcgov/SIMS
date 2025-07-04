@@ -66,3 +66,39 @@ export interface SupportingUserFormDataAPIOutDTO {
   firstName: string;
   lastName: string;
 }
+
+/**
+ * Supporting user details of the supporting user who is unable to report.
+ */
+export interface ReportedSupportingUserAPIOutDTO {
+  fullName: string;
+  formName: string;
+  isAbleToReport: boolean;
+  programYearStartDate: string;
+}
+
+/**
+ * Details to update the supporting user who is unable to report.
+ */
+export class ReportedSupportingUserAPIInDTO {
+  @Expose()
+  givenNames?: string;
+  @Expose()
+  lastName: string;
+  @Expose()
+  addressLine1: string;
+  @Expose()
+  addressLine2?: string;
+  @Expose()
+  city: string;
+  @Expose()
+  country: string;
+  @Expose()
+  phone: string;
+  @Expose()
+  postalCode: string;
+  @Expose()
+  provinceState: string;
+  @Expose()
+  supportingData: Record<string, unknown>;
+}

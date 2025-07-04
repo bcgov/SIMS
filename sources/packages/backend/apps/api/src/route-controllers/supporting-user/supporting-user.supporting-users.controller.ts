@@ -239,8 +239,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
     if (payload.offeringIntensity !== application.offeringIntensity) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
+    const submissionData = { ...payload, isAbleToReport: true };
     const submissionResult: DryRunSubmissionResult =
-      await this.formService.dryRunSubmission(formName, payload);
+      await this.formService.dryRunSubmission(formName, submissionData);
 
     if (!submissionResult.valid) {
       throw new BadRequestException(
