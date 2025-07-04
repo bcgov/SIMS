@@ -206,45 +206,10 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // Use the provided data to search for the Student Application.
     // The application must be search using at least 3 criteria as
     // per defined by the Ministry policies.
-    let applicationQuery;
-    if (supportingUserType === SupportingUserType.Parent) {
-      if (!payload.parentFullName) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(
-            "Parent's full name is required for parent submission.",
-            STUDENT_APPLICATION_NOT_FOUND,
-          ),
-        );
-      }
-      applicationQuery =
-        this.applicationService.getApplicationForSupportingUser(
-          payload.applicationNumber,
-          payload.studentsLastName,
-          payload.parentFullName,
-        );
-    } else if (supportingUserType === SupportingUserType.Partner) {
-      if (!payload.studentsDateOfBirth) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(
-            "Student's date of birth is required for partner submission.",
-            STUDENT_APPLICATION_NOT_FOUND,
-          ),
-        );
-      }
-      applicationQuery =
-        this.applicationService.getApplicationForSupportingPartner(
-          payload.applicationNumber,
-          payload.studentsLastName,
-          payload.studentsDateOfBirth,
-        );
-    } else {
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "Invalid supporting user type.",
-          STUDENT_APPLICATION_NOT_FOUND,
-        ),
-      );
-    }
+    const applicationQuery = this.getApplicationQuery(
+      supportingUserType,
+      payload,
+    );
 
     // Wait for both queries to finish.
     const [user, application] = await Promise.all([
@@ -352,6 +317,48 @@ export class SupportingUserSupportingUsersController extends BaseController {
         );
       }
       throw error;
+    }
+  }
+
+  private getApplicationQuery(
+    supportingUserType: SupportingUserType,
+    payload: UpdateSupportingUserAPIInDTO,
+  ) {
+    if (supportingUserType === SupportingUserType.Parent) {
+      if (!payload.parentFullName) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(
+            "Parent's full name is required for parent submission.",
+            STUDENT_APPLICATION_NOT_FOUND,
+          ),
+        );
+      }
+      return this.applicationService.getApplicationForSupportingUser(
+        payload.applicationNumber,
+        payload.studentsLastName,
+        payload.parentFullName,
+      );
+    } else if (supportingUserType === SupportingUserType.Partner) {
+      if (!payload.studentsDateOfBirth) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(
+            "Student's date of birth is required for partner submission.",
+            STUDENT_APPLICATION_NOT_FOUND,
+          ),
+        );
+      }
+      return this.applicationService.getApplicationForSupportingPartner(
+        payload.applicationNumber,
+        payload.studentsLastName,
+        payload.studentsDateOfBirth,
+      );
+    } else {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Invalid supporting user type.",
+          STUDENT_APPLICATION_NOT_FOUND,
+        ),
+      );
     }
   }
 }

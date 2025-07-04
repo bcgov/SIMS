@@ -45,7 +45,7 @@
               variant="outlined"
               v-model="parentFullName"
               data-cy="parentFullName"
-              :rules="[(v) => checkNullOrEmptyRule(v, 'Parent\'s Full Name')]"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Parent\'s full name')]"
               hide-details="auto"
             />
           </v-col>
