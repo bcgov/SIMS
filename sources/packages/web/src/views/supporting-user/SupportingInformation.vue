@@ -20,7 +20,7 @@
               v-model="applicationNumber"
               data-cy="applicationNumber"
               :rules="[
-                (v) => checkNullOrEmptyRule(v, 'Number'),
+                (v) => checkNullOrEmptyRule(v, 'Application number'),
                 (v) => checkOnlyDigitsRule(v, 'Number'),
               ]"
               hide-details="auto"
@@ -37,15 +37,26 @@
               hide-details="auto"
             />
           </v-col>
-          <v-col>
+          <v-col v-if="supportingUserType === SupportingUserType.Parent">
             <v-text-field
               density="compact"
-              label="Student's date of birth"
+              label="Parent's full name"
+              variant="outlined"
+              v-model="parentFullName"
+              data-cy="parentFullName"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Parent\'s full name')]"
+              hide-details="auto"
+            />
+          </v-col>
+          <v-col v-if="supportingUserType === SupportingUserType.Partner">
+            <v-text-field
+              density="compact"
+              label="Student's Date of Birth"
               variant="outlined"
               v-model="studentsDateOfBirth"
               data-cy="studentsDateOfBirth"
               type="date"
-              :rules="[(v) => checkNullOrEmptyRule(v, 'Date of birth')]"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Date of Birth')]"
               hide-details="auto"
             />
           </v-col>
@@ -141,7 +152,6 @@ export default defineComponent({
     const formName = ref();
     const applicationNumber = ref("");
     const studentsLastName = ref("");
-    const studentsDateOfBirth = ref();
     const initialData = ref();
     const { disableWizardButtons, excludeExtraneousValues } = useFormioUtils();
     const isFirstPage = ref(true);
@@ -150,6 +160,8 @@ export default defineComponent({
     let formInstance: FormIOForm;
     const searchApplicationsForm = ref({} as VForm);
     const { checkOnlyDigitsRule, checkNullOrEmptyRule } = useRules();
+    const parentFullName = ref("");
+    const studentsDateOfBirth = ref("");
 
     const wizardSubmit = () => {
       formInstance.submit();
@@ -199,11 +211,22 @@ export default defineComponent({
      * The 3 pieces of information necessary to identify a Student application.
      * Used for search the application and submit supporting information.
      */
-    const getIdentifiedApplication = () => ({
-      applicationNumber: applicationNumber.value,
-      studentsLastName: studentsLastName.value,
-      studentsDateOfBirth: studentsDateOfBirth.value,
-    });
+    const getIdentifiedApplication = () => {
+      return {
+        applicationNumber: applicationNumber.value.trim(),
+        studentsLastName: studentsLastName.value.trim(),
+        parentFullName:
+          props.supportingUserType === SupportingUserType.Parent &&
+          parentFullName.value
+            ? parentFullName.value.trim()
+            : undefined,
+        studentsDateOfBirth:
+          props.supportingUserType === SupportingUserType.Partner &&
+          studentsDateOfBirth.value
+            ? studentsDateOfBirth.value.trim()
+            : undefined,
+      };
+    };
 
     const applicationSearch = async () => {
       const validationResult = await searchApplicationsForm.value.validate();
@@ -320,7 +343,6 @@ export default defineComponent({
       submitted,
       submitting,
       applicationNumber,
-      studentsDateOfBirth,
       studentsLastName,
       applicationSearch,
       wizardGoNext,
@@ -333,6 +355,9 @@ export default defineComponent({
       checkOnlyDigitsRule,
       checkNullOrEmptyRule,
       searchApplicationsForm,
+      parentFullName,
+      studentsDateOfBirth,
+      SupportingUserType,
     };
   },
 });

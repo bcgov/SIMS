@@ -11,9 +11,17 @@ export class ApplicationIdentifierAPIInDTO {
   @Expose()
   applicationNumber: string;
   @Expose()
-  studentsDateOfBirth: string;
-  @Expose()
   studentsLastName: string;
+  /**
+   * For Parent search only. Optional for Partner.
+   */
+  @Expose()
+  parentFullName?: string;
+  /**
+   * For Partner search only. Optional for Parent.
+   */
+  @Expose()
+  studentsDateOfBirth?: string;
 }
 
 /**

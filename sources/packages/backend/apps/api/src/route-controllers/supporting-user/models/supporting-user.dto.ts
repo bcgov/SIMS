@@ -24,10 +24,19 @@ export class ApplicationIdentifierAPIInDTO {
   @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
   applicationNumber: string;
   @IsNotEmpty()
-  studentsDateOfBirth: string;
-  @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
+  /**
+   * For Parent search only. Optional for Partner.
+   */
+  @IsOptional()
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+  parentFullName?: string;
+  /**
+   * For Partner search only. Optional for Parent.
+   */
+  @IsOptional()
+  studentsDateOfBirth?: string;
 }
 
 /**
@@ -55,10 +64,19 @@ export class UpdateSupportingUserAPIInDTO {
   @IsNotEmpty()
   sin: string;
   @IsNotEmpty()
-  studentsDateOfBirth: string;
-  @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
+  /**
+   * For Parent search only. Optional for Partner.
+   */
+  @IsOptional()
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+  parentFullName?: string;
+  /**
+   * For Partner search only. Optional for Parent.
+   */
+  @IsOptional()
+  studentsDateOfBirth?: string;
   @IsNotEmptyObject()
   @JsonMaxSize(JSON_10KB)
   supportingData: unknown;
