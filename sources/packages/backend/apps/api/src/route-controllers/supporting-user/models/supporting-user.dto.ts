@@ -83,7 +83,41 @@ export class SupportingUserFormDataAPIOutDTO {
   lastName: string;
 }
 
-export class StudentSupportingUserAPIOutDTO {
+/**
+ * Supporting user details of the supporting user who is unable to report.
+ */
+export class ReportedSupportingUserAPIOutDTO {
   fullName: string;
   formName: string;
+  isAbleToReport: boolean;
+  programYearStartDate: string;
+}
+
+/**
+ * Details to update the supporting user who is unable to report.
+ */
+export class ReportedSupportingUserAPIInDTO {
+  @IsOptional()
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+  givenNames?: string;
+  @IsNotEmpty()
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+  lastName: string;
+  @IsNotEmpty()
+  addressLine1: string;
+  @IsOptional()
+  addressLine2?: string;
+  @IsNotEmpty()
+  city: string;
+  @IsNotEmpty()
+  country: string;
+  @IsNotEmpty()
+  phone: string;
+  @IsNotEmpty()
+  postalCode: string;
+  @IsNotEmpty()
+  provinceState: string;
+  @IsNotEmptyObject()
+  @JsonMaxSize(JSON_10KB)
+  supportingData: Record<string, unknown>;
 }

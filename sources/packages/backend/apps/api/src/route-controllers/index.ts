@@ -10,6 +10,8 @@ export * from "./education-program/education-program.institutions.controller";
 export * from "./education-program/education-program.students.controller";
 export * from "./program-info-request/program-info-request.institutions.controller";
 export * from "./confirmation-of-enrollment/confirmation-of-enrollment.institutions.controller";
+export * from "./supporting-user/models/supporting-user.dto";
+export * from "./supporting-user/supporting-user.controller.service";
 export * from "./supporting-user/supporting-user.supporting-users.controller";
 export * from "./note/note.aest.controller";
 export * from "./restriction/restriction.aest.controller";

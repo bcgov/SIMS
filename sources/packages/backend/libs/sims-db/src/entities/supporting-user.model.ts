@@ -57,7 +57,7 @@ export class SupportingUser extends RecordDataModel {
     type: "jsonb",
     nullable: true,
   })
-  supportingData: any;
+  supportingData: Record<string, unknown>;
   /**
    * Type of the supporting user (e.g. Parent/Partner).
    */
@@ -120,6 +120,6 @@ export class SupportingUser extends RecordDataModel {
  * Supporting user personal information.
  */
 export interface SupportingUserPersonalInfo {
-  firstName?: string;
+  givenNames?: string;
   lastName: string;
 }
