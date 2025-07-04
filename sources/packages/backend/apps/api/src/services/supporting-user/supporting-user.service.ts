@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, UpdateResult } from "typeorm";
+import { DataSource, IsNull, UpdateResult } from "typeorm";
 import {
   AddressInfo,
   ContactInfo,
@@ -251,7 +251,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     };
     // Update supporting user.
     return this.repo.update(
-      { id: supportingUserId, isAbleToReport: false },
+      { id: supportingUserId, isAbleToReport: false, supportingData: IsNull() },
       {
         supportingData: reportedData.supportingData,
         personalInfo,

@@ -46,8 +46,7 @@
   </body-header-container>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
-import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import { defineComponent, ref, watchEffect } from "vue";
 import {
   FormIOForm,
   SupportingUser,
@@ -83,15 +82,17 @@ export default defineComponent({
     const showNav = ref(false);
     const formInitialData = ref({} as Record<string, unknown>);
 
-    onMounted(async () => {
-      supportingUser.value =
-        await SupportingUsersService.shared.getSupportingUserData(
-          props.supportingUserId,
-        );
-      formInitialData.value = {
-        isAbleToReport: supportingUser.value.isAbleToReport,
-        programYearStartDate: supportingUser.value.programYearStartDate,
-      };
+    watchEffect(async () => {
+      if (props.supportingUserId) {
+        supportingUser.value =
+          await SupportingUsersService.shared.getSupportingUserData(
+            props.supportingUserId,
+          );
+        formInitialData.value = {
+          isAbleToReport: supportingUser.value.isAbleToReport,
+          programYearStartDate: supportingUser.value.programYearStartDate,
+        };
+      }
     });
 
     const wizardSubmit = () => {
@@ -137,7 +138,6 @@ export default defineComponent({
       wizardGoNext,
       formLoaded,
       supportingUser,
-      StudentRoutesConst,
       BannerTypes,
       formInitialData,
     };

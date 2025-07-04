@@ -40,9 +40,9 @@ export class SupportingUserApi extends HttpBaseClient {
   ): Promise<
     SupportingUserFormDataAPIOutDTO | ReportedSupportingUserAPIOutDTO
   > {
-    return this.getCall<
-      SupportingUserFormDataAPIOutDTO | ReportedSupportingUserAPIOutDTO
-    >(this.addClientRoot(`supporting-user/${supportingUserId}`));
+    return this.getCall(
+      this.addClientRoot(`supporting-user/${supportingUserId}`),
+    );
   }
 
   /**

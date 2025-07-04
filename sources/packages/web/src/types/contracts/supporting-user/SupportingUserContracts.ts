@@ -1,6 +1,5 @@
-// Expected possible errors returned by the API while submitting supporting data.
-
 import { Address } from "@/types/contracts/Common";
+// Expected possible errors returned by the API while submitting supporting data.
 
 // Not possible to find a Student Application with the data provided by the supporting user.
 export const STUDENT_APPLICATION_NOT_FOUND = "STUDENT_APPLICATION_NOT_FOUND";
