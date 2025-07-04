@@ -11,7 +11,6 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
-  ApplicationService,
   DynamicFormConfigurationService,
   FormService,
   SupportingUserService,
@@ -26,12 +25,7 @@ import {
   ApplicationAPIOutDTO,
   UpdateSupportingUserAPIInDTO,
 } from "./models/supporting-user.dto";
-import {
-  AddressInfo,
-  Application,
-  ContactInfo,
-  SupportingUserType,
-} from "@sims/sims-db";
+import { AddressInfo, ContactInfo, SupportingUserType } from "@sims/sims-db";
 import {
   ApiProcessError,
   ClientTypeBaseRoute,
@@ -59,7 +53,6 @@ import { RequiresUserAccount } from "../../auth/decorators";
 export class SupportingUserSupportingUsersController extends BaseController {
   constructor(
     private readonly supportingUserService: SupportingUserService,
-    private readonly applicationService: ApplicationService,
     private readonly userService: UserService,
     private readonly formService: FormService,
     private readonly workflowClientService: WorkflowClientService,
@@ -94,46 +87,18 @@ export class SupportingUserSupportingUsersController extends BaseController {
     supportingUserType: SupportingUserType,
     @Body() payload: ApplicationIdentifierAPIInDTO,
   ): Promise<ApplicationAPIOutDTO> {
-    let application: Application | null = null;
-    if (supportingUserType === SupportingUserType.Parent) {
-      if (!payload.parentFullName) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(
-            "Parent's full name is required for parent search.",
-            STUDENT_APPLICATION_NOT_FOUND,
-          ),
-        );
-      }
-      application =
-        await this.applicationService.getApplicationForSupportingUser(
-          payload.applicationNumber,
-          payload.studentsLastName,
-          payload.parentFullName,
-        );
-    } else if (supportingUserType === SupportingUserType.Partner) {
-      if (!payload.studentsDateOfBirth) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(
-            "Student's date of birth is required for partner search.",
-            STUDENT_APPLICATION_NOT_FOUND,
-          ),
-        );
-      }
-      application =
-        await this.applicationService.getApplicationForSupportingPartner(
-          payload.applicationNumber,
-          payload.studentsLastName,
-          payload.studentsDateOfBirth,
-        );
-    } else {
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "Invalid supporting user type.",
-          STUDENT_APPLICATION_NOT_FOUND,
-        ),
+    const supportingUser =
+      await this.supportingUserService.getSupportingUserForApplication(
+        supportingUserType,
+        payload.applicationNumber,
+        payload.studentsLastName,
+        {
+          parentFullName: payload.parentFullName,
+          studentsDateOfBirth: payload.studentsDateOfBirth,
+        },
       );
-    }
-    if (!application) {
+
+    if (!supportingUser) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "Not able to find a Student Application with the provided data.",
@@ -144,7 +109,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
 
     // Ensure that the user providing the supporting data is not the same user that
     // submitted the Student Application.
-    if (application.student.user.userName === userToken.userName) {
+    if (
+      supportingUser.application.student.user.userName === userToken.userName
+    ) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "The user searching for applications to provide data " +
@@ -156,7 +123,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     const formType = getSupportingUserFormType(supportingUserType);
     const formName = this.dynamicFormConfigurationService.getDynamicFormName(
       formType,
-      { programYearId: application.programYear.id },
+      { programYearId: supportingUser.application.programYear.id },
     );
     if (!formName) {
       throw new UnprocessableEntityException(
@@ -164,9 +131,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
       );
     }
     return {
-      programYearStartDate: application.programYear.startDate,
+      programYearStartDate: supportingUser.application.programYear.startDate,
       formName,
-      offeringIntensity: application.offeringIntensity,
+      offeringIntensity: supportingUser.application.offeringIntensity,
     };
   }
 
@@ -206,18 +173,24 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // Use the provided data to search for the Student Application.
     // The application must be search using at least 3 criteria as
     // per defined by the Ministry policies.
-    const applicationQuery = this.getApplicationQuery(
-      supportingUserType,
-      payload,
-    );
+    const supportingUserQuery =
+      this.supportingUserService.getSupportingUserForApplication(
+        supportingUserType,
+        payload.applicationNumber,
+        payload.studentsLastName,
+        {
+          parentFullName: payload.parentFullName,
+          studentsDateOfBirth: payload.studentsDateOfBirth,
+        },
+      );
 
     // Wait for both queries to finish.
-    const [user, application] = await Promise.all([
+    const [user, supportingUser] = await Promise.all([
       userQuery,
-      applicationQuery,
+      supportingUserQuery,
     ]);
 
-    if (!application) {
+    if (!supportingUser) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "Not able to find a Student Application to update the supporting data.",
@@ -228,7 +201,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     const formType = getSupportingUserFormType(supportingUserType);
     const formName = this.dynamicFormConfigurationService.getDynamicFormName(
       formType,
-      { programYearId: application.programYear.id },
+      { programYearId: supportingUser.application.programYear.id },
     );
     if (!formName) {
       throw new UnprocessableEntityException(
@@ -236,7 +209,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
       );
     }
     // Ensure the offering intensity provided is the same from the application.
-    if (payload.offeringIntensity !== application.offeringIntensity) {
+    if (
+      payload.offeringIntensity !== supportingUser.application.offeringIntensity
+    ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
     const submissionData = { ...payload, isAbleToReport: true };
@@ -251,7 +226,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
 
     // Ensure that the user providing the supporting data is not the same user that
     // submitted the Student Application.
-    if (application.student.user.userName === userToken.userName) {
+    if (
+      supportingUser.application.student.user.userName === userToken.userName
+    ) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "The user currently authenticated is the same user that submitted the application.",
@@ -264,7 +241,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // that he already provided.
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUserByUserId(
-        application.id,
+        supportingUser.application.id,
         user.id,
       );
 
@@ -293,7 +270,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
       };
 
       const updatedUser = await this.supportingUserService.updateSupportingUser(
-        application.id,
+        supportingUser.application.id,
         supportingUserType,
         user.id,
         {
@@ -318,48 +295,6 @@ export class SupportingUserSupportingUsersController extends BaseController {
         );
       }
       throw error;
-    }
-  }
-
-  private getApplicationQuery(
-    supportingUserType: SupportingUserType,
-    payload: UpdateSupportingUserAPIInDTO,
-  ) {
-    if (supportingUserType === SupportingUserType.Parent) {
-      if (!payload.parentFullName) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(
-            "Parent's full name is required for parent submission.",
-            STUDENT_APPLICATION_NOT_FOUND,
-          ),
-        );
-      }
-      return this.applicationService.getApplicationForSupportingUser(
-        payload.applicationNumber,
-        payload.studentsLastName,
-        payload.parentFullName,
-      );
-    } else if (supportingUserType === SupportingUserType.Partner) {
-      if (!payload.studentsDateOfBirth) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(
-            "Student's date of birth is required for partner submission.",
-            STUDENT_APPLICATION_NOT_FOUND,
-          ),
-        );
-      }
-      return this.applicationService.getApplicationForSupportingPartner(
-        payload.applicationNumber,
-        payload.studentsLastName,
-        payload.studentsDateOfBirth,
-      );
-    } else {
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "Invalid supporting user type.",
-          STUDENT_APPLICATION_NOT_FOUND,
-        ),
-      );
     }
   }
 }

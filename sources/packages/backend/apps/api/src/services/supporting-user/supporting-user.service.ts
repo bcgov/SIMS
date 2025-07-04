@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, IsNull, UpdateResult } from "typeorm";
+import { Brackets, DataSource, IsNull, UpdateResult } from "typeorm";
 import {
   AddressInfo,
+  ApplicationEditStatus,
+  ApplicationStatus,
   ContactInfo,
   RecordDataModelService,
   SupportingUser,
@@ -259,5 +261,88 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         modifier: { id: auditUserId } as User,
       },
     );
+  }
+
+  /**
+   * Get application for supporting user based on type and payload.
+   * Unified method that handles both Parent and Partner supporting user types.
+   * @param supportingUserType type of supporting user (Parent/Partner).
+   * @param applicationNumber application number.
+   * @param studentsLastName students last name.
+   * @param options options.
+   * - `parentFullName` parent full name.
+   * - `studentsDateOfBirth` students date of birth.
+   * @returns application query promise.
+   */
+  async getSupportingUserForApplication(
+    supportingUserType: SupportingUserType,
+    applicationNumber: string,
+    studentsLastName: string,
+    options?: {
+      parentFullName?: string;
+      studentsDateOfBirth?: string;
+    },
+  ): Promise<SupportingUser> {
+    // Query to get the application for the supporting user.
+    const query = this.repo
+      .createQueryBuilder("supportingUser")
+      .select([
+        "supportingUser.id",
+        "supportingUser.fullName",
+        "supportingUser.isAbleToReport",
+        "supportingUser.supportingData",
+        "student.id",
+        "user.id",
+        "user.userName",
+        "application.id",
+        "application.offeringIntensity",
+        "programYear.id",
+        "programYear.startDate",
+      ])
+      .innerJoin("supportingUser.application", "application")
+      .innerJoin("application.programYear", "programYear")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where("application.applicationNumber = :applicationNumber", {
+        applicationNumber,
+      })
+      .andWhere("user.lastName ILIKE :lastName", {
+        lastName: studentsLastName,
+      })
+      .andWhere("supportingUser.supportingUserType = :supportingUserType", {
+        supportingUserType,
+      })
+      .andWhere("supportingUser.isAbleToReport = true")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            "application.applicationStatus = :inProgressApplicationStatus",
+            {
+              inProgressApplicationStatus: ApplicationStatus.InProgress,
+            },
+          ).orWhere(
+            "application.applicationEditStatus = :changeInProgressApplicationEditStatus",
+            {
+              changeInProgressApplicationEditStatus:
+                ApplicationEditStatus.ChangeInProgress,
+            },
+          );
+        }),
+      );
+
+    // Application for parent supporting user type.
+    if (options?.parentFullName) {
+      query.andWhere("supportingUser.fullName ILIKE :parentFullName", {
+        parentFullName: options.parentFullName,
+      });
+    }
+    // Application for partner supporting user type.
+    if (options?.studentsDateOfBirth) {
+      query.andWhere("student.birthDate = :birthDate", {
+        birthDate: options.studentsDateOfBirth,
+      });
+    }
+
+    return query.getOne();
   }
 }
