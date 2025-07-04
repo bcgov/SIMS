@@ -1,47 +1,41 @@
 <template>
   <body-header-container>
-    <template #header>
+    <template #header v-if="supportingUser.fullName">
       <body-header :title="supportingUser.fullName" />
     </template>
     <template v-if="supportingUser.formName"
-      ><formio
+      ><formio-container
         :formName="supportingUser.formName"
-        :data="formInitialData"
+        :formData="formInitialData"
+        :readOnly="isReadonly"
         @loaded="formLoaded"
-        @submitted="$emit('formSubmitted', $event)"
-      ></formio>
-      <!-- Navigation buttons -->
-      <v-row v-if="showNav">
-        <v-col>
-          <v-btn
-            color="primary"
-            v-show="!isFirstPage"
-            variant="outlined"
-            data-cy="previousSection"
-            @click="wizardGoPrevious"
-            >Back</v-btn
+        @submitted="submitted"
+      >
+        <!-- Navigation buttons -->
+        <template #actions="{ submit }" v-if="!isReadonly">
+          <footer-buttons
+            :justify="isFirstPage ? 'end' : 'space-between'"
+            :processing="updateInProgress"
+            @secondaryClick="wizardGoPrevious"
+            secondaryLabel="Back"
+            :showSecondaryButton="!isFirstPage"
+            @primaryClick="wizardGoNext"
+            primaryLabel="Next step"
           >
-        </v-col>
-        <v-col>
-          <v-btn
-            class="float-right"
-            color="primary"
-            v-show="!isLastPage"
-            @click="wizardGoNext"
-            >Next step</v-btn
-          >
-          <v-btn
-            class="float-right"
-            :disabled="!isLastPage || updateInProgress"
-            v-show="!isFirstPage"
-            color="primary"
-            @click="wizardSubmit()"
-            :loading="updateInProgress"
-          >
-            {{ updateInProgress ? "Submitting..." : "Submit form" }}
-          </v-btn>
-        </v-col>
-      </v-row></template
+            <!-- On the last page, show the submit button as primary. -->
+            <template #primary-buttons v-if="isLastPage">
+              <v-btn
+                class="float-right"
+                color="primary"
+                @click="submit"
+                :loading="updateInProgress"
+              >
+                {{ updateInProgress ? "Submitting..." : "Submit form" }}
+              </v-btn>
+            </template>
+          </footer-buttons>
+        </template>
+      </formio-container></template
     >
   </body-header-container>
 </template>
@@ -72,8 +66,13 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    isReadonly: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
-  setup(props) {
+  setup(props, context) {
     const { disableWizardButtons } = useFormioUtils();
     const supportingUser = ref({} as SupportingUser);
     let formInstance: FormIOForm<Record<string, unknown>>;
@@ -95,16 +94,16 @@ export default defineComponent({
       }
     });
 
-    const wizardSubmit = () => {
-      formInstance.submit();
-    };
-
     const wizardGoPrevious = () => {
       formInstance.prevPage();
     };
 
     const wizardGoNext = () => {
       formInstance.nextPage();
+    };
+
+    const submitted = (form: FormIOForm<Record<string, unknown>>) => {
+      context.emit("formSubmitted", form.data);
     };
 
     const formLoaded = async (form: FormIOForm<Record<string, unknown>>) => {
@@ -133,10 +132,10 @@ export default defineComponent({
       isFirstPage,
       isLastPage,
       showNav,
-      wizardSubmit,
       wizardGoPrevious,
       wizardGoNext,
       formLoaded,
+      submitted,
       supportingUser,
       BannerTypes,
       formInitialData,

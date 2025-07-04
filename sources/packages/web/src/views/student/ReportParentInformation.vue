@@ -23,6 +23,7 @@
       :supporting-user-id="supportingUserId"
       @form-submitted="updateSupportingUser"
       :update-in-progress="supportingUserUpdateInProgress"
+      :is-readonly="false"
     ></supporting-user-form>
   </student-page-container>
 </template>
