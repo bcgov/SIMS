@@ -88,10 +88,10 @@ pgBackRest:
     # bucket specifies the S3 bucket to use,
     bucket: "bucketName"
     # endpoint specifies the S3 endpoint to use.
-    endpoint: "endpointName"
+    endpoint: "psfs-sims.objectstore.gov.bc.ca"
     # region specifies the S3 region to use. If your S3 storage system does not
     # use "region", fill this in with a random value.
-    region: "regionName"
+    region: "ca-central-1"
     # setting the below to be one plus of the default schedule
     # to avoid conflicts
     fullSchedule: "0 10 * * *"
