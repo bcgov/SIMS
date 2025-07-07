@@ -25,6 +25,13 @@ on:
         required: false
         type: string
         default: ""
+      restore_repo_name:
+        description: "Repo to restore the backup from (repo1 for PVC, repo2 for S3)"
+        required: true
+        type: choice
+        options:
+          - repo1
+          - repo2
 
 jobs:
   manageCrunchyDB:
@@ -64,5 +71,5 @@ jobs:
           if [ "${{ inputs.action }}" == "install" ]; then
             make install NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
           elif [ "${{ inputs.action }}" == "upgrade" ]; then
-            make upgrade NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} RESTORE_ENABLED=${{ inputs.restore_enabled }} RESTORE_TARGET="${{ inputs.restore_target }}"
+            make upgrade NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} RESTORE_ENABLED=${{ inputs.restore_enabled }} RESTORE_TARGET="${{ inputs.restore_target }}" RESTORE_REPO_NAME="${{ inputs.restore_repo_name }}"
           fi

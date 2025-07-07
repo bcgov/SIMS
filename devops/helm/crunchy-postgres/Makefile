@@ -27,7 +27,8 @@ upgrade: helm-dep
 			echo "Error: RESTORE_TARGET is required when RESTORE_ENABLED is true."; \
 			exit 1; \
 		fi; \
-		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED} --set restore.options.target="${RESTORE_TARGET}"; \
+		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED} --set restore.options.target="${RESTORE_TARGET}" --set restore.repoName="${RESTORE_REPO_NAME}"; \
+		oc annotate -n ${NAMESPACE} postgrescluster simsdb --overwrite postgres-operator.crunchydata.com/pgbackrest-restore="${RESTORE_TARGET}"; \
 	else \
 		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED}; \
 	fi

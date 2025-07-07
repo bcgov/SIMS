@@ -5,7 +5,7 @@ readonlyuser: read-only-user
 
 crunchyImage: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
 #crunchyImage: artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres-gis:ubi8-15.2-3.3-0 # use this image for POSTGIS
-postgresVersion: 15
+postgresVersion: 17
 #postGISVersion: '3.3' # use this version of POSTGIS. both crunchyImage and this property needs to have valid values for POSTGIS to be enabled.
 imagePullPolicy: IfNotPresent
 
@@ -14,12 +14,6 @@ standby:
   enabled: false
   # If you want to recover from PVC, use repo1. If you want to recover from S3, use repo2
   repoName: repo1
-
-restore:
-  enabled: "${RESTORE_ENABLED}"
-  repoName: repo1
-  options:
-    target: "${RESTORE_TARGET}"
 
 instances:
   name: ha # high availability
