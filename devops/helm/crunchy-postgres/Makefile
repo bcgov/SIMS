@@ -17,6 +17,7 @@ helm-dep:
 
 .PHONY: install
 install: helm-dep
+install:
 	@helm install $(call arguments) --set restore.enabled=false;
 
 .PHONY: upgrade
