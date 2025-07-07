@@ -64,8 +64,6 @@ pgBackRest:
       memory: 128Mi
     limits:
       memory: 256Mi
-  s3:
-    enabled: false
 
 patroni:
   postgresql:
