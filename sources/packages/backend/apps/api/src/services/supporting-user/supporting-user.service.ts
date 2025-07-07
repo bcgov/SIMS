@@ -264,7 +264,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
   }
 
   /**
-   * Get application for supporting user based on type and payload.
+   * Get supporting user for application based on type and payload.
    * Unified method that handles both Parent and Partner supporting user types.
    * @param supportingUserType type of supporting user (Parent/Partner).
    * @param applicationNumber application number.
@@ -272,7 +272,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
    * @param options options.
    * - `parentFullName` parent full name.
    * - `studentsDateOfBirth` students date of birth.
-   * @returns application query promise.
+   * @returns supporting user.
    */
   async getSupportingUserForApplication(
     supportingUserType: SupportingUserType,
@@ -329,14 +329,11 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
           );
         }),
       );
-
-    // Application for parent supporting user type.
     if (options?.parentFullName) {
       query.andWhere("supportingUser.fullName ILIKE :parentFullName", {
         parentFullName: options.parentFullName,
       });
     }
-    // Application for partner supporting user type.
     if (options?.studentsDateOfBirth) {
       query.andWhere("student.birthDate = :birthDate", {
         birthDate: options.studentsDateOfBirth,

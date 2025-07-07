@@ -11,6 +11,11 @@ import { User } from "./user.model";
 import { Application, ContactInfo, SupportingUserType } from ".";
 
 /**
+ * Maximum length for supporting user full name as defined in the database schema.
+ */
+export const SUPPORTING_USER_FULL_NAME_MAX_LENGTH = 250;
+
+/**
  * Users that provide supporting information for a Student Application
  * (e.g. parents and partners). For every application that requires a
  * parent/partner information, a new entry will be created to allow

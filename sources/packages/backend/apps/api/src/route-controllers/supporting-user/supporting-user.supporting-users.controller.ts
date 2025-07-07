@@ -223,7 +223,12 @@ export class SupportingUserSupportingUsersController extends BaseController {
         "Not able to update supporting user data due to an invalid request.",
       );
     }
-
+    // If the supporting data has already been submitted, throw an error.
+    if (supportingUser.supportingData) {
+      throw new UnprocessableEntityException(
+        "Supporting data has already been submitted for this supporting user.",
+      );
+    }
     // Ensure that the user providing the supporting data is not the same user that
     // submitted the Student Application.
     if (

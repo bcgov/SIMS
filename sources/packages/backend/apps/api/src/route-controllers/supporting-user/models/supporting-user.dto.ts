@@ -5,11 +5,14 @@ import {
   IsOptional,
   Length,
   MaxLength,
+  ValidateIf,
 } from "class-validator";
 import {
   ContactInfo,
   APPLICATION_NUMBER_LENGTH,
   USER_LAST_NAME_MAX_LENGTH,
+  SUPPORTING_USER_FULL_NAME_MAX_LENGTH,
+  SupportingUserType,
   OfferingIntensity,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
@@ -26,15 +29,19 @@ export class ApplicationIdentifierAPIInDTO {
   @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
+  @IsEnum(SupportingUserType)
+  supportingUserType: SupportingUserType;
   /**
-   * For Parent search only. Optional for Partner.
+   * For Parent search only. Required for Parent, Optional for Partner.
    */
-  @IsOptional()
-  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+  @ValidateIf((o) => o.supportingUserType === SupportingUserType.Parent)
+  @IsNotEmpty()
+  @MaxLength(SUPPORTING_USER_FULL_NAME_MAX_LENGTH)
   parentFullName?: string;
   /**
    * For Partner search only. Optional for Parent.
    */
+  @ValidateIf((o) => o.supportingUserType === SupportingUserType.Partner)
   @IsOptional()
   studentsDateOfBirth?: string;
 }
@@ -66,15 +73,19 @@ export class UpdateSupportingUserAPIInDTO {
   @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
+  @IsEnum(SupportingUserType)
+  supportingUserType: SupportingUserType;
   /**
-   * For Parent search only. Optional for Partner.
+   * For Parent search only. Required for Parent, Optional for Partner.
    */
-  @IsOptional()
-  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+  @ValidateIf((o) => o.supportingUserType === SupportingUserType.Parent)
+  @IsNotEmpty()
+  @MaxLength(SUPPORTING_USER_FULL_NAME_MAX_LENGTH)
   parentFullName?: string;
   /**
    * For Partner search only. Optional for Parent.
    */
+  @ValidateIf((o) => o.supportingUserType === SupportingUserType.Partner)
   @IsOptional()
   studentsDateOfBirth?: string;
   @IsNotEmptyObject()

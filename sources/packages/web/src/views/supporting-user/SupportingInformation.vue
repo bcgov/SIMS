@@ -18,10 +18,9 @@
               label="Application number"
               variant="outlined"
               v-model="applicationNumber"
-              data-cy="applicationNumber"
               :rules="[
                 (v) => checkNullOrEmptyRule(v, 'Application number'),
-                (v) => checkOnlyDigitsRule(v, 'Number'),
+                (v) => checkOnlyDigitsRule(v, 'Application number'),
               ]"
               hide-details="auto"
             />
@@ -32,7 +31,6 @@
               label="Student's last name"
               variant="outlined"
               v-model="studentsLastName"
-              data-cy="studentsLastName"
               :rules="[(v) => checkNullOrEmptyRule(v, 'Last name')]"
               hide-details="auto"
             />
@@ -43,20 +41,17 @@
               label="Parent's full name"
               variant="outlined"
               v-model="parentFullName"
-              data-cy="parentFullName"
-              :rules="[(v) => checkNullOrEmptyRule(v, 'Parent\'s full name')]"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Parent full name')]"
               hide-details="auto"
             />
           </v-col>
           <v-col v-if="supportingUserType === SupportingUserType.Partner">
-            <v-text-field
+            <v-date-picker
               density="compact"
               label="Student's Date of Birth"
               variant="outlined"
               v-model="studentsDateOfBirth"
-              data-cy="studentsDateOfBirth"
-              type="date"
-              :rules="[(v) => checkNullOrEmptyRule(v, 'Date of Birth')]"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Date of birth')]"
               hide-details="auto"
             />
           </v-col>
@@ -160,8 +155,8 @@ export default defineComponent({
     let formInstance: FormIOForm;
     const searchApplicationsForm = ref({} as VForm);
     const { checkOnlyDigitsRule, checkNullOrEmptyRule } = useRules();
-    const parentFullName = ref("");
-    const studentsDateOfBirth = ref("");
+    const parentFullName = ref<string>();
+    const studentsDateOfBirth = ref<string>();
 
     const wizardSubmit = () => {
       formInstance.submit();
