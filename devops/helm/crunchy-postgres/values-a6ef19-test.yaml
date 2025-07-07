@@ -64,6 +64,8 @@ pgBackRest:
       memory: 128Mi
     limits:
       memory: 256Mi
+  s3:
+    bucket: "sims-staging-database-backups"
 
 patroni:
   postgresql:
