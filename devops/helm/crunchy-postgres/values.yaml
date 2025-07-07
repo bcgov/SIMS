@@ -77,7 +77,7 @@ pgBackRest:
     limits:
       memory: 256Mi
   s3:
-    enabled: false
+    enabled: true
     createS3Secret: true
     # the s3 secret name
     s3Secret: pgbackrest-s3
