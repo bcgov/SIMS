@@ -89,13 +89,18 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
 
       // The SIN can be received with a few white spaces in the middle, so we need remove then
       // before inserting it because the DB will accept only 9 characters.
-      const sinWithNoSpaces = removeWhiteSpaces(updateInfo.sin);
+      const sinWithNoSpaces = updateInfo.sin
+        ? removeWhiteSpaces(updateInfo.sin)
+        : null;
       userToUpdate.contactInfo = updateInfo.contactInfo;
       userToUpdate.sin = sinWithNoSpaces;
       userToUpdate.birthDate = updateInfo.birthDate;
       userToUpdate.supportingData = updateInfo.supportingData;
       userToUpdate.user = { id: updateInfo.userId } as User;
       userToUpdate.modifier = { id: auditUserId } as User;
+      userToUpdate.personalInfo = updateInfo.hasValidSIN
+        ? { hasValidSIN: updateInfo.hasValidSIN }
+        : null;
       const updatedUser = await transactionRepo.save(userToUpdate);
       await queryRunner.commitTransaction();
       return updatedUser;
@@ -165,6 +170,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         "supportingUser.sin",
         "supportingUser.birthDate",
         "supportingUser.supportingData",
+        "supportingUser.personalInfo",
         "user.firstName",
         "user.lastName",
         "user.email",

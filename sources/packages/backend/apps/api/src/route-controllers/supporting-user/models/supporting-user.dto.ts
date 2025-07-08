@@ -11,6 +11,7 @@ import {
   APPLICATION_NUMBER_LENGTH,
   USER_LAST_NAME_MAX_LENGTH,
   OfferingIntensity,
+  FormYesNoOptions,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_10KB } from "../../../constants";
@@ -81,6 +82,7 @@ export class SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
+  hasValidSIN?: FormYesNoOptions;
 }
 
 /**
