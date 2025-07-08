@@ -69,6 +69,7 @@ export default defineComponent({
       // for both parent and partner first tab is same
       // and the information on the 2nd tab is fed in `supportingData`
       formData.value = {
+        isAbleToReport: supportingUsersData.isAbleToReport,
         givenNames: supportingUsersData.firstName,
         lastName: supportingUsersData.lastName,
         email: supportingUsersData.email,
@@ -77,6 +78,7 @@ export default defineComponent({
         phone: supportingUsersData.contactInfo?.phone,
         supportingData: supportingUsersData.supportingData,
         ...contactAddress,
+        hasValidSIN: supportingUsersData.hasValidSIN,
       };
     });
     return { formName, formData, AESTRoutesConst, BannerTypes };

@@ -14,6 +14,7 @@ import {
   SUPPORTING_USER_FULL_NAME_MAX_LENGTH,
   SupportingUserType,
   OfferingIntensity,
+  FormYesNoOptions,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_10KB } from "../../../constants";
@@ -74,8 +75,8 @@ export class UpdateSupportingUserAPIInDTO {
   postalCode: string;
   @IsOptional()
   provinceState?: string;
-  @IsNotEmpty()
-  sin: string;
+  @IsOptional()
+  sin?: string;
   @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
@@ -99,6 +100,9 @@ export class UpdateSupportingUserAPIInDTO {
   supportingData: unknown;
   @IsEnum(OfferingIntensity)
   offeringIntensity: OfferingIntensity;
+  @IsOptional()
+  @IsEnum(FormYesNoOptions)
+  hasValidSIN?: FormYesNoOptions;
 }
 
 export class ApplicationAPIOutDTO {
@@ -109,6 +113,7 @@ export class ApplicationAPIOutDTO {
 
 export class SupportingUserFormDataAPIOutDTO {
   formName: string;
+  isAbleToReport: boolean;
   supportingData: unknown;
   contactInfo: ContactInfo;
   sin: string;
@@ -116,6 +121,7 @@ export class SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
+  hasValidSIN?: FormYesNoOptions;
 }
 
 /**

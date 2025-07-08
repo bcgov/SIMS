@@ -8,7 +8,12 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
-import { Application, ContactInfo, SupportingUserType } from ".";
+import {
+  Application,
+  ContactInfo,
+  FormYesNoOptions,
+  SupportingUserType,
+} from ".";
 
 /**
  * Maximum length for supporting user full name as defined in the database schema.
@@ -112,7 +117,7 @@ export class SupportingUser extends RecordDataModel {
   })
   fullName?: string;
   /**
-   * Personal information of the supporting user who cannot report by themselves and hence provided by the student.
+   * Personal information of the supporting user.
    */
   @Column({
     name: "personal_info",
@@ -122,9 +127,10 @@ export class SupportingUser extends RecordDataModel {
   personalInfo?: SupportingUserPersonalInfo;
 }
 /**
- * Supporting user personal information.
+ * Supporting user personal information details.
  */
 export interface SupportingUserPersonalInfo {
   givenNames?: string;
-  lastName: string;
+  lastName?: string;
+  hasValidSIN?: FormYesNoOptions;
 }

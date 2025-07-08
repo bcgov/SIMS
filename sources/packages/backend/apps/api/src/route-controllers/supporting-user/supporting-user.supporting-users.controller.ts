@@ -256,6 +256,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
         {
           contactInfo,
           sin: submissionResult.sin,
+          hasValidSIN: submissionResult.hasValidSIN,
           birthDate: userToken.birthdate,
           supportingData: submissionResult.supportingData,
           userId: user.id,

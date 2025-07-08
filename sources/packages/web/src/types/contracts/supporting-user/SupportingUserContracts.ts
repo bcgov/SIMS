@@ -1,4 +1,4 @@
-import { Address } from "@/types/contracts/Common";
+import { Address, FormYesNoOptions } from "@/types/contracts/Common";
 // Expected possible errors returned by the API while submitting supporting data.
 
 // Not possible to find a Student Application with the data provided by the supporting user.
@@ -38,8 +38,8 @@ interface ContactInfo {
 
 export interface SupportingUser {
   formName: string;
+  isAbleToReport: boolean;
   programYearStartDate?: string;
-  isAbleToReport?: boolean;
   fullName?: string;
   supportingData?: unknown;
   contactInfo?: ContactInfo;
@@ -48,4 +48,5 @@ export interface SupportingUser {
   email?: string;
   firstName?: string;
   lastName?: string;
+  hasValidSIN?: FormYesNoOptions;
 }

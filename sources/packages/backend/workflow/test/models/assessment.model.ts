@@ -99,7 +99,8 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataWhenDidYouGraduateOrLeaveHighSchool: string;
   studentDataIndigenousStatus: YesNoOptions;
   studentDataHasDependents: YesNoOptions;
-  studentDataLivingWithParents: YesNoOptions;
+  studentDataLivingAtHome: YesNoOptions;
+  studentDataSelfContainedSuite: YesNoOptions;
   studentDataYouthInCare: YesNoOptions | "preferNotToAnswer";
   studentTaxYear: number;
   programLocation: Provinces;
