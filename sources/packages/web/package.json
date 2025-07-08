@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@bcgov/bc-sans": "^2.1.0",
-    "@formio/js": "^5.0.0",
+    "@formio/js": "^5.0.2",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
     "@vee-validate/rules": "^4.0.4",
