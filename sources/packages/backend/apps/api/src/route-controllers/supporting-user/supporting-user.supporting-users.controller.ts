@@ -194,7 +194,10 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // If the supporting data has already been submitted, throw an error.
     if (supportingUser.supportingData) {
       throw new UnprocessableEntityException(
-        "Supporting data has already been submitted for this supporting user.",
+        new ApiProcessError(
+          "Supporting data has already been submitted for this supporting user.",
+          SUPPORTING_USER_ALREADY_PROVIDED_DATA,
+        ),
       );
     }
     const submissionData = { ...payload, isAbleToReport: true };
