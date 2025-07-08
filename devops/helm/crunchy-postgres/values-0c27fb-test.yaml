@@ -50,7 +50,7 @@ pgBackRest:
       incremental: 0 0,4,12,16,20 * * *
     volume:
       accessModes: "ReadWriteOnce"
-      storage: 5Gi
+      storage: 20Gi
       storageClassName: netapp-file-backup
   repoHost:
     requests:
