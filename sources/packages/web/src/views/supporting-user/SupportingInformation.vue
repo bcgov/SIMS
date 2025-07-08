@@ -46,13 +46,14 @@
             />
           </v-col>
           <v-col v-if="supportingUserType === SupportingUserType.Partner">
-            <v-date-picker
+            <v-date-input
               density="compact"
               label="Student's Date of Birth"
               variant="outlined"
               v-model="studentsDateOfBirth"
               :rules="[(v) => checkNullOrEmptyRule(v, 'Date of birth')]"
               hide-details="auto"
+              :display-format="getISODateOnlyString"
             />
           </v-col>
           <v-col
@@ -156,7 +157,8 @@ export default defineComponent({
     const searchApplicationsForm = ref({} as VForm);
     const { checkOnlyDigitsRule, checkNullOrEmptyRule } = useRules();
     const parentFullName = ref<string>();
-    const studentsDateOfBirth = ref<string>();
+    const studentsDateOfBirth = ref<string | Date>();
+    const { getISODateOnlyString } = useFormatters();
 
     const wizardSubmit = () => {
       formInstance.submit();
@@ -210,16 +212,15 @@ export default defineComponent({
       return {
         applicationNumber: applicationNumber.value.trim(),
         studentsLastName: studentsLastName.value.trim(),
+        supportingUserType: props.supportingUserType,
         parentFullName:
           props.supportingUserType === SupportingUserType.Parent &&
           parentFullName.value
             ? parentFullName.value.trim()
             : undefined,
-        studentsDateOfBirth:
-          props.supportingUserType === SupportingUserType.Partner &&
-          studentsDateOfBirth.value
-            ? studentsDateOfBirth.value.trim()
-            : undefined,
+        studentsDateOfBirth: studentsDateOfBirth.value
+          ? getISODateOnlyString(studentsDateOfBirth.value)
+          : undefined,
       };
     };
 
@@ -353,6 +354,7 @@ export default defineComponent({
       parentFullName,
       studentsDateOfBirth,
       SupportingUserType,
+      getISODateOnlyString,
     };
   },
 });

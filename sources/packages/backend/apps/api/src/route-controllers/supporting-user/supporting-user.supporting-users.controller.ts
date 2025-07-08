@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   HttpCode,
@@ -12,7 +11,6 @@ import {
 } from "@nestjs/common";
 import {
   DynamicFormConfigurationService,
-  FormService,
   SupportingUserService,
   UserService,
 } from "../../services";
@@ -26,11 +24,7 @@ import {
   UpdateSupportingUserAPIInDTO,
 } from "./models/supporting-user.dto";
 import { AddressInfo, ContactInfo, SupportingUserType } from "@sims/sims-db";
-import {
-  ApiProcessError,
-  ClientTypeBaseRoute,
-  DryRunSubmissionResult,
-} from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
@@ -46,6 +40,7 @@ import {
 import BaseController from "../BaseController";
 import { WorkflowClientService } from "@sims/services";
 import { RequiresUserAccount } from "../../auth/decorators";
+import { SupportingUserControllerService } from "./supporting-user.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.supportingUsers)
 @Controller("supporting-user")
@@ -54,9 +49,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
   constructor(
     private readonly supportingUserService: SupportingUserService,
     private readonly userService: UserService,
-    private readonly formService: FormService,
     private readonly workflowClientService: WorkflowClientService,
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
+    private readonly supportingUserControllerService: SupportingUserControllerService,
   ) {
     super();
   }
@@ -198,16 +193,6 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-    const formType = getSupportingUserFormType(supportingUserType);
-    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
-      formType,
-      { programYearId: supportingUser.application.programYear.id },
-    );
-    if (!formName) {
-      throw new UnprocessableEntityException(
-        `Dynamic form configuration for ${formType} not found.`,
-      );
-    }
     // Ensure the offering intensity provided is the same from the application.
     if (
       payload.offeringIntensity !== supportingUser.application.offeringIntensity
@@ -215,14 +200,12 @@ export class SupportingUserSupportingUsersController extends BaseController {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
     const submissionData = { ...payload, isAbleToReport: true };
-    const submissionResult: DryRunSubmissionResult =
-      await this.formService.dryRunSubmission(formName, submissionData);
-
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to update supporting user data due to an invalid request.",
+    const submissionResult =
+      await this.supportingUserControllerService.validateDryRunSubmission(
+        supportingUser.application.programYear.id,
+        supportingUserType,
+        submissionData,
       );
-    }
     // If the supporting data has already been submitted, throw an error.
     if (supportingUser.supportingData) {
       throw new UnprocessableEntityException(
@@ -261,16 +244,16 @@ export class SupportingUserSupportingUsersController extends BaseController {
 
     try {
       const addressInfo: AddressInfo = {
-        addressLine1: submissionResult.data.data.addressLine1,
-        addressLine2: submissionResult.data.data.addressLine2,
-        provinceState: submissionResult.data.data.provinceState,
-        country: submissionResult.data.data.country,
-        city: submissionResult.data.data.city,
-        postalCode: submissionResult.data.data.postalCode,
+        addressLine1: submissionResult.addressLine1,
+        addressLine2: submissionResult.addressLine2,
+        provinceState: submissionResult.provinceState,
+        country: submissionResult.country,
+        city: submissionResult.city,
+        postalCode: submissionResult.postalCode,
       };
 
       const contactInfo: ContactInfo = {
-        phone: submissionResult.data.data.phone,
+        phone: submissionResult.phone,
         address: addressInfo,
       };
 
@@ -280,9 +263,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
         user.id,
         {
           contactInfo,
-          sin: submissionResult.data.data.sin,
+          sin: submissionResult.sin,
           birthDate: userToken.birthdate,
-          supportingData: submissionResult.data.data.supportingData,
+          supportingData: submissionResult.supportingData,
           userId: user.id,
         },
       );

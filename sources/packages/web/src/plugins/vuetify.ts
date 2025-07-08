@@ -9,12 +9,14 @@ import * as directives from "vuetify/directives";
 import { aliases, fa } from "vuetify/iconsets/fa";
 import { mdi } from "vuetify/iconsets/mdi";
 import { VDivider, VDataTableServer, VDataTable } from "vuetify/components";
+import { VDateInput } from "vuetify/labs/VDateInput";
 
 export default createVuetify({
   components: {
     ...components,
     VDataTableServer,
     VDataTable,
+    VDateInput,
   },
   aliases: {
     VDividerOpaque: VDivider,

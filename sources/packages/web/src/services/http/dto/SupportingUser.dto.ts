@@ -1,4 +1,4 @@
-import { OfferingIntensity } from "@/types";
+import { OfferingIntensity, SupportingUserType } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { Expose } from "class-transformer";
 
@@ -12,6 +12,8 @@ export class ApplicationIdentifierAPIInDTO {
   applicationNumber: string;
   @Expose()
   studentsLastName: string;
+  @Expose()
+  supportingUserType: SupportingUserType;
   /**
    * For Parent search only. Optional for Partner.
    */
