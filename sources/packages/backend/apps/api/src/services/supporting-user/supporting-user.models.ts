@@ -13,7 +13,7 @@ export interface UpdateSupportingUserInfo {
   contactInfo: ContactInfo;
   /**
    * Indicates if the supporting user has a valid SIN.
-   * The valid sin indicator is introduced from program year 2025-2026 onwards
+   * The valid SIN indicator is introduced from program year 2025-2026 onwards
    * and hence is not available for program years prior to 2025-2026.
    */
   hasValidSIN?: FormYesNoOptions;
