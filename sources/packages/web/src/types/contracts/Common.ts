@@ -49,6 +49,14 @@ export interface AddressInfo {
 }
 
 /**
+ * Yes and no values coming from form data to database.
+ */
+export enum FormYesNoOptions {
+  Yes = "yes",
+  No = "no",
+}
+
+/**
  * Layout template types for page container components.
  */
 export enum LayoutTemplates {

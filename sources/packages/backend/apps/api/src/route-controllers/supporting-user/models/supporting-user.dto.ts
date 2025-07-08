@@ -53,8 +53,8 @@ export class UpdateSupportingUserAPIInDTO {
   postalCode: string;
   @IsOptional()
   provinceState?: string;
-  @IsNotEmpty()
-  sin: string;
+  @IsOptional()
+  sin?: string;
   @IsNotEmpty()
   studentsDateOfBirth: string;
   @IsNotEmpty()
@@ -65,6 +65,9 @@ export class UpdateSupportingUserAPIInDTO {
   supportingData: unknown;
   @IsEnum(OfferingIntensity)
   offeringIntensity: OfferingIntensity;
+  @IsOptional()
+  @IsEnum(FormYesNoOptions)
+  hasValidSIN?: FormYesNoOptions;
 }
 
 export class ApplicationAPIOutDTO {
@@ -75,6 +78,7 @@ export class ApplicationAPIOutDTO {
 
 export class SupportingUserFormDataAPIOutDTO {
   formName: string;
+  isAbleToReport: boolean;
   supportingData: unknown;
   contactInfo: ContactInfo;
   sin: string;

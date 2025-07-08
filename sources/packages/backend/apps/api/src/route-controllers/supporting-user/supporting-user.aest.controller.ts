@@ -74,6 +74,7 @@ export class SupportingUserAESTController {
     }
     return {
       formName,
+      isAbleToReport: supportingUserForApplication.isAbleToReport,
       supportingData: supportingUserForApplication.supportingData,
       contactInfo: supportingUserForApplication.contactInfo,
       sin: supportingUserForApplication.sin,
