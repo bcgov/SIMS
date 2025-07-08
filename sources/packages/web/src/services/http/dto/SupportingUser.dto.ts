@@ -1,4 +1,4 @@
-import { OfferingIntensity } from "@/types";
+import { FormYesNoOptions, OfferingIntensity } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { Expose } from "class-transformer";
 
@@ -40,6 +40,8 @@ export class UpdateSupportingUserAPIInDTO extends ApplicationIdentifierAPIInDTO 
   supportingData: unknown;
   @Expose()
   offeringIntensity: OfferingIntensity;
+  @Expose()
+  hasValidSIN?: FormYesNoOptions;
 }
 
 export interface ApplicationAPIOutDTO {
@@ -50,6 +52,7 @@ export interface ApplicationAPIOutDTO {
 
 export interface SupportingUserFormDataAPIOutDTO {
   formName: string;
+  isAbleToReport: boolean;
   supportingData: unknown;
   contactInfo: ContactInformationAPIOutDTO;
   sin: string;
@@ -57,6 +60,7 @@ export interface SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
+  hasValidSIN?: FormYesNoOptions;
 }
 
 /**

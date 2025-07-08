@@ -74,6 +74,7 @@ export class SupportingUserAESTController {
     }
     return {
       formName,
+      isAbleToReport: supportingUserForApplication.isAbleToReport,
       supportingData: supportingUserForApplication.supportingData,
       contactInfo: supportingUserForApplication.contactInfo,
       sin: supportingUserForApplication.sin,
@@ -81,6 +82,7 @@ export class SupportingUserAESTController {
       email: supportingUserForApplication.user.email,
       firstName: supportingUserForApplication.user.firstName,
       lastName: supportingUserForApplication.user.lastName,
+      hasValidSIN: supportingUserForApplication.personalInfo?.hasValidSIN,
     };
   }
 }

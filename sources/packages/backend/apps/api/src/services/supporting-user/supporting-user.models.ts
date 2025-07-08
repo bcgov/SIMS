@@ -1,4 +1,4 @@
-import { ContactInfo } from "@sims/sims-db";
+import { ContactInfo, FormYesNoOptions } from "@sims/sims-db";
 
 /**
  * Represents the information that must be updated
@@ -12,9 +12,17 @@ export interface UpdateSupportingUserInfo {
    */
   contactInfo: ContactInfo;
   /**
-   * SIN provided by the supporting user.
+   * Indicates if the supporting user has a valid SIN.
+   * The valid SIN indicator is introduced from program year 2025-2026 onwards
+   * and hence is not available for program years prior to 2025-2026.
    */
-  sin: string;
+  hasValidSIN?: FormYesNoOptions;
+  /**
+   * SIN provided by the supporting user.
+   * If the supporting user does not have a valid SIN,
+   * this field must be empty.
+   */
+  sin?: string;
   /**
    * Birth date present on the supporting user
    * authentication information.
