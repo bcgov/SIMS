@@ -40,7 +40,7 @@
               density="compact"
               label="Parent's full name"
               variant="outlined"
-              v-model="parentFullName"
+              v-model="fullName"
               :rules="[(v) => checkNullOrEmptyRule(v, 'Parent full name')]"
               hide-details="auto"
             />
@@ -48,12 +48,11 @@
           <v-col v-if="supportingUserType === SupportingUserType.Partner">
             <v-date-input
               density="compact"
-              label="Student's Date of Birth"
+              label="Student's date of birth"
               variant="outlined"
               v-model="studentsDateOfBirth"
               :rules="[(v) => checkNullOrEmptyRule(v, 'Date of birth')]"
               hide-details="auto"
-              :display-format="getISODateOnlyString"
             />
           </v-col>
           <v-col
@@ -131,6 +130,7 @@ import {
   OfferingIntensity,
 } from "@/types";
 import { UpdateSupportingUserAPIInDTO } from "@/services/http/dto";
+import router from "@/router";
 
 export default defineComponent({
   props: {
@@ -156,8 +156,8 @@ export default defineComponent({
     let formInstance: FormIOForm;
     const searchApplicationsForm = ref({} as VForm);
     const { checkOnlyDigitsRule, checkNullOrEmptyRule } = useRules();
-    const parentFullName = ref<string>();
-    const studentsDateOfBirth = ref<string | Date>();
+    const fullName = ref<string>();
+    const studentsDateOfBirth = ref<Date>();
     const { getISODateOnlyString } = useFormatters();
 
     const wizardSubmit = () => {
@@ -213,11 +213,7 @@ export default defineComponent({
         applicationNumber: applicationNumber.value.trim(),
         studentsLastName: studentsLastName.value.trim(),
         supportingUserType: props.supportingUserType,
-        parentFullName:
-          props.supportingUserType === SupportingUserType.Parent &&
-          parentFullName.value
-            ? parentFullName.value.trim()
-            : undefined,
+        fullName: fullName.value?.trim(),
         studentsDateOfBirth: studentsDateOfBirth.value
           ? getISODateOnlyString(studentsDateOfBirth.value)
           : undefined,
@@ -351,7 +347,7 @@ export default defineComponent({
       checkOnlyDigitsRule,
       checkNullOrEmptyRule,
       searchApplicationsForm,
-      parentFullName,
+      fullName,
       studentsDateOfBirth,
       SupportingUserType,
       getISODateOnlyString,

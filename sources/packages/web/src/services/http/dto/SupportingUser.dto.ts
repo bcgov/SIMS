@@ -18,7 +18,7 @@ export class ApplicationIdentifierAPIInDTO {
    * For Parent search only. Optional for Partner.
    */
   @Expose()
-  parentFullName?: string;
+  fullName?: string;
   /**
    * For Partner search only. Optional for Parent.
    */

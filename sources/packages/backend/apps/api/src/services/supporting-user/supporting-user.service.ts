@@ -270,7 +270,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
    * @param applicationNumber application number.
    * @param studentsLastName students last name.
    * @param options options.
-   * - `parentFullName` parent full name.
+   * - `fullName` parent full name.
    * - `studentsDateOfBirth` students date of birth.
    * @returns supporting user.
    */
@@ -279,7 +279,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
     applicationNumber: string,
     studentsLastName: string,
     options?: {
-      parentFullName?: string;
+      fullName?: string;
       studentsDateOfBirth?: string;
     },
   ): Promise<SupportingUser> {
@@ -329,9 +329,9 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
           );
         }),
       );
-    if (options?.parentFullName) {
-      query.andWhere("supportingUser.fullName ILIKE :parentFullName", {
-        parentFullName: options.parentFullName,
+    if (options?.fullName) {
+      query.andWhere("supportingUser.fullName ILIKE :fullName", {
+        fullName: options.fullName,
       });
     }
     if (options?.studentsDateOfBirth) {

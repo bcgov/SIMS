@@ -88,7 +88,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
         payload.applicationNumber,
         payload.studentsLastName,
         {
-          parentFullName: payload.parentFullName,
+          fullName: payload.fullName,
           studentsDateOfBirth: payload.studentsDateOfBirth,
         },
       );
@@ -174,7 +174,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
         payload.applicationNumber,
         payload.studentsLastName,
         {
-          parentFullName: payload.parentFullName,
+          fullName: payload.fullName,
           studentsDateOfBirth: payload.studentsDateOfBirth,
         },
       );
@@ -199,6 +199,12 @@ export class SupportingUserSupportingUsersController extends BaseController {
     ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
+    // If the supporting data has already been submitted, throw an error.
+    if (supportingUser.supportingData) {
+      throw new UnprocessableEntityException(
+        "Supporting data has already been submitted for this supporting user.",
+      );
+    }
     const submissionData = { ...payload, isAbleToReport: true };
     const submissionResult =
       await this.supportingUserControllerService.validateDryRunSubmission(
@@ -206,12 +212,6 @@ export class SupportingUserSupportingUsersController extends BaseController {
         supportingUserType,
         submissionData,
       );
-    // If the supporting data has already been submitted, throw an error.
-    if (supportingUser.supportingData) {
-      throw new UnprocessableEntityException(
-        "Supporting data has already been submitted for this supporting user.",
-      );
-    }
     // Ensure that the user providing the supporting data is not the same user that
     // submitted the Student Application.
     if (
