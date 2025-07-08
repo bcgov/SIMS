@@ -15,12 +15,6 @@ standby:
   # If you want to recover from PVC, use repo1. If you want to recover from S3, use repo2
   repoName: repo1
 
-restore:
-  enabled: "${RESTORE_ENABLED}"
-  repoName: repo1
-  options:
-    target: "${RESTORE_TARGET}"
-
 instances:
   name: ha # high availability
   replicas: 3
@@ -71,7 +65,7 @@ pgBackRest:
     limits:
       memory: 256Mi
   s3:
-    enabled: false
+    bucket: "sims-staging-database-backups"
 
 patroni:
   postgresql:

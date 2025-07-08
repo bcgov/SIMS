@@ -17,11 +17,15 @@ standby:
   # If you want to recover from PVC, use repo1. If you want to recover from S3, use repo2
   repoName: repo1
 
+# enable this to go back to a specific timestamp in history in the current cluster.
+# follow https://access.crunchydata.com/documentation/postgres-operator/5.2.0/tutorial/disaster-recovery/
+# Perform an In-Place Point-in-time-Recovery (PITR)
+# this configuration for restore is a dummy configuration. Actual values used for the restore are provided to make through the github actions workflow
 restore:
-  enabled: "${RESTORE_ENABLED}"
-  repoName: repo1
+  enabled: false
+  repoName: repo1 # provide repo name
   options:
-    target: "${RESTORE_TARGET}"
+    target: ~ # 2024-03-24 17:16:00 this is the UTC target timestamp to go back to in current cluster
 
 instances:
   name: ha # high availability
@@ -73,7 +77,25 @@ pgBackRest:
     limits:
       memory: 256Mi
   s3:
-    enabled: false
+    enabled: true
+    createS3Secret: true
+    # the s3 secret name
+    s3Secret: pgbackrest-s3
+    # the path start with /, it will be created under bucket if it doesn't exist
+    s3Path: "/habackup"
+    # s3UriStyle is host or path
+    s3UriStyle: path
+    # bucket specifies the S3 bucket to use,
+    bucket: "bucketName"
+    # endpoint specifies the S3 endpoint to use.
+    endpoint: "psfs-sims.objectstore.gov.bc.ca"
+    # region specifies the S3 region to use. If your S3 storage system does not
+    # use "region", fill this in with a random value.
+    region: "ca-central-1"
+    # setting the below to be one plus of the default schedule
+    # to avoid conflicts
+    fullSchedule: "0 10 * * *"
+    incrementalSchedule: "0 2,6,14,18,22 * * *"
 
 patroni:
   postgresql:
