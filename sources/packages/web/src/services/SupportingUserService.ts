@@ -1,4 +1,4 @@
-import { SupportingUser, SupportingUserType } from "@/types";
+import { SupportingUser } from "@/types";
 import ApiClient from "./http/ApiClient";
 import {
   ApplicationAPIOutDTO,
@@ -16,23 +16,15 @@ export class SupportingUsersService {
   }
 
   async getApplicationDetails(
-    supportingUserType: SupportingUserType,
     payload: ApplicationIdentifierAPIInDTO,
   ): Promise<ApplicationAPIOutDTO> {
-    return ApiClient.SupportingUserApi.getApplicationDetails(
-      supportingUserType,
-      payload,
-    );
+    return ApiClient.SupportingUserApi.getApplicationDetails(payload);
   }
 
   async updateSupportingInformation(
-    supportingUserType: SupportingUserType,
     payload: UpdateSupportingUserAPIInDTO,
   ): Promise<void> {
-    await ApiClient.SupportingUserApi.updateSupportingInformation(
-      supportingUserType,
-      payload,
-    );
+    await ApiClient.SupportingUserApi.updateSupportingInformation(payload);
   }
 
   /**

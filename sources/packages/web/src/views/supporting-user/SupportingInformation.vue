@@ -130,7 +130,6 @@ import {
   OfferingIntensity,
 } from "@/types";
 import { UpdateSupportingUserAPIInDTO } from "@/services/http/dto";
-import router from "@/router";
 
 export default defineComponent({
   props: {
@@ -229,7 +228,6 @@ export default defineComponent({
       try {
         const searchResult =
           await SupportingUsersService.shared.getApplicationDetails(
-            props.supportingUserType,
             getIdentifiedApplication(),
           );
         setInitialData(
@@ -268,10 +266,10 @@ export default defineComponent({
           UpdateSupportingUserAPIInDTO,
           formData,
         );
-        await SupportingUsersService.shared.updateSupportingInformation(
-          props.supportingUserType,
-          { ...typedData, ...getIdentifiedApplication() },
-        );
+        await SupportingUsersService.shared.updateSupportingInformation({
+          ...typedData,
+          ...getIdentifiedApplication(),
+        });
 
         snackBar.success("Supporting data submitted with success.");
         router.push({ name: SupportingUserRoutesConst.DASHBOARD });
