@@ -43,3 +43,4 @@ networks:
 
 volumes:
   mdb-data:
+    name: formio-mdb-data
