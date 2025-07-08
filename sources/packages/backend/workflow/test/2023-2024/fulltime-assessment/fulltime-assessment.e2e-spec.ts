@@ -63,8 +63,17 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
     expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(
       expectedAssessmentData.childcareCost,
     );
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
+    ).toBe(expectedAssessmentData.livingAllowance);
+    expect(calculatedAssessment.variables.calculatedDataTotalCosts).toBe(
+      expectedAssessmentData.totalAssessedCost,
+    );
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
       expectedAssessmentData.totalFamilyIncome,
+    );
+    expect(calculatedAssessment.variables.awardNetFederalTotalAward).toBe(
+      expectedAssessmentData.totalFederalAward,
     );
     expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(
       expectedAssessmentData.otherAllowableCost,
@@ -81,18 +90,33 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
     expect(
       calculatedAssessment.variables.calculatedDataRemainingBookLimit,
     ).toBe(expectedAssessmentData.booksAndSuppliesRemainingLimit);
+    expect(calculatedAssessment.variables.awardNetProvincialTotalAward).toBe(
+      expectedAssessmentData.totalProvincialAward,
+    );
     expect(
       calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
     ).toBe(expectedAssessmentData.alimonyOrChildSupport);
+    expect(
+      calculatedAssessment.variables.calculatedDataFederalAssessedNeed,
+    ).toBe(expectedAssessmentData.federalAssessmentNeed);
     expect(calculatedAssessment.variables.offeringExceptionalExpenses).toBe(
       expectedAssessmentData.exceptionalEducationCost,
     );
+    expect(
+      calculatedAssessment.variables.calculatedDataProvincialAssessedNeed,
+    ).toBe(expectedAssessmentData.provincialAssessmentNeed);
     expect(
       calculatedAssessment.variables.calculatedDataTotalParentalContribution,
     ).toBe(expectedAssessmentData.parentAssessedContribution);
     expect(
       calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
     ).toBe(expectedAssessmentData.partnerAssessedContribution);
+    expect(calculatedAssessment.variables.calculatedDataTotalFederalFSC).toBe(
+      expectedAssessmentData.studentTotalFederalContribution,
+    );
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
+    ).toBe(expectedAssessmentData.studentTotalProvincialContribution);
   });
 
   afterAll(async () => {
