@@ -27,7 +27,6 @@ import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
-  SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
 import { getSupportingUserFormType } from "../../utilities";
 import {
@@ -267,10 +266,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
 
     if (updateResult.affected !== 1) {
       throw new UnprocessableEntityException(
-        new ApiProcessError(
-          `The application is not expecting supporting information from a ${payload.supportingUserType} to be provided at this time.`,
-          SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
-        ),
+        `Error while updating the supporting user details for ${supportingUser.id}. Number of affected rows was ${updateResult.affected}, expected 1.`,
       );
     }
     // Send the message to the workflow to complete the supporting user process.
