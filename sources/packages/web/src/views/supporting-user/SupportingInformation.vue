@@ -18,10 +18,9 @@
               label="Application number"
               variant="outlined"
               v-model="applicationNumber"
-              data-cy="applicationNumber"
               :rules="[
-                (v) => checkNullOrEmptyRule(v, 'Number'),
-                (v) => checkOnlyDigitsRule(v, 'Number'),
+                (v) => checkNullOrEmptyRule(v, 'Application number'),
+                (v) => checkOnlyDigitsRule(v, 'Application number'),
               ]"
               hide-details="auto"
             />
@@ -32,19 +31,26 @@
               label="Student's last name"
               variant="outlined"
               v-model="studentsLastName"
-              data-cy="studentsLastName"
               :rules="[(v) => checkNullOrEmptyRule(v, 'Last name')]"
               hide-details="auto"
             />
           </v-col>
-          <v-col>
+          <v-col v-if="supportingUserType === SupportingUserType.Parent">
             <v-text-field
+              density="compact"
+              label="Parent's full name"
+              variant="outlined"
+              v-model="fullName"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Parent full name')]"
+              hide-details="auto"
+            />
+          </v-col>
+          <v-col v-if="supportingUserType === SupportingUserType.Partner">
+            <v-date-input
               density="compact"
               label="Student's date of birth"
               variant="outlined"
               v-model="studentsDateOfBirth"
-              data-cy="studentsDateOfBirth"
-              type="date"
               :rules="[(v) => checkNullOrEmptyRule(v, 'Date of birth')]"
               hide-details="auto"
             />
@@ -141,7 +147,6 @@ export default defineComponent({
     const formName = ref();
     const applicationNumber = ref("");
     const studentsLastName = ref("");
-    const studentsDateOfBirth = ref();
     const initialData = ref();
     const { disableWizardButtons, excludeExtraneousValues } = useFormioUtils();
     const isFirstPage = ref(true);
@@ -150,6 +155,9 @@ export default defineComponent({
     let formInstance: FormIOForm;
     const searchApplicationsForm = ref({} as VForm);
     const { checkOnlyDigitsRule, checkNullOrEmptyRule } = useRules();
+    const fullName = ref<string>();
+    const studentsDateOfBirth = ref<Date>();
+    const { getISODateOnlyString } = useFormatters();
 
     const wizardSubmit = () => {
       formInstance.submit();
@@ -199,11 +207,17 @@ export default defineComponent({
      * The 3 pieces of information necessary to identify a Student application.
      * Used for search the application and submit supporting information.
      */
-    const getIdentifiedApplication = () => ({
-      applicationNumber: applicationNumber.value,
-      studentsLastName: studentsLastName.value,
-      studentsDateOfBirth: studentsDateOfBirth.value,
-    });
+    const getIdentifiedApplication = () => {
+      return {
+        applicationNumber: applicationNumber.value.trim(),
+        studentsLastName: studentsLastName.value.trim(),
+        supportingUserType: props.supportingUserType,
+        fullName: fullName.value?.trim(),
+        studentsDateOfBirth: studentsDateOfBirth.value
+          ? getISODateOnlyString(studentsDateOfBirth.value)
+          : undefined,
+      };
+    };
 
     const applicationSearch = async () => {
       const validationResult = await searchApplicationsForm.value.validate();
@@ -214,7 +228,6 @@ export default defineComponent({
       try {
         const searchResult =
           await SupportingUsersService.shared.getApplicationDetails(
-            props.supportingUserType,
             getIdentifiedApplication(),
           );
         setInitialData(
@@ -253,10 +266,10 @@ export default defineComponent({
           UpdateSupportingUserAPIInDTO,
           formData,
         );
-        await SupportingUsersService.shared.updateSupportingInformation(
-          props.supportingUserType,
-          { ...typedData, ...getIdentifiedApplication() },
-        );
+        await SupportingUsersService.shared.updateSupportingInformation({
+          ...typedData,
+          ...getIdentifiedApplication(),
+        });
 
         snackBar.success("Supporting data submitted with success.");
         router.push({ name: SupportingUserRoutesConst.DASHBOARD });
@@ -320,7 +333,6 @@ export default defineComponent({
       submitted,
       submitting,
       applicationNumber,
-      studentsDateOfBirth,
       studentsLastName,
       applicationSearch,
       wizardGoNext,
@@ -333,6 +345,10 @@ export default defineComponent({
       checkOnlyDigitsRule,
       checkNullOrEmptyRule,
       searchApplicationsForm,
+      fullName,
+      studentsDateOfBirth,
+      SupportingUserType,
+      getISODateOnlyString,
     };
   },
 });

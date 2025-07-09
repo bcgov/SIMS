@@ -30,7 +30,10 @@ import {
   SFASApplicationService,
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
-import { SupportingUserSupportingUsersController } from "./route-controllers";
+import {
+  SupportingUserControllerService,
+  SupportingUserSupportingUsersController,
+} from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 
 @Module({
@@ -62,6 +65,7 @@ import { AuthModule } from "./auth/auth.module";
     NoteSharedService,
     InstitutionLocationService,
     DesignationAgreementLocationService,
+    SupportingUserControllerService,
   ],
 })
 export class AppSupportingUsersModule {}

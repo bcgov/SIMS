@@ -1676,60 +1676,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * When a supporting user (e.g. parent/partner) need to provide
-   * supporting data for a Student Application, this method provides
-   * a way to find the specific application to be updated using the
-   * right amount of criteria as per defined in the Ministry Policies.
-   * @param applicationNumber application number provided.
-   * @param lastName last name of the student associated with the
-   * application (search will be case insensitive).
-   * @param birthDate birth date of the student associated with the
-   * application.
-   * @returns application the application that was found, otherwise null.
-   */
-  async getApplicationForSupportingUser(
-    applicationNumber: string,
-    lastName: string,
-    birthDate: string,
-  ): Promise<Application> {
-    return this.repo
-      .createQueryBuilder("application")
-      .select([
-        "application.id",
-        "application.offeringIntensity",
-        "programYear.id",
-        "programYear.startDate",
-        "user.userName",
-        "student.id",
-      ])
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .innerJoin("application.programYear", "programYear")
-      .where("application.applicationNumber = :applicationNumber", {
-        applicationNumber,
-      })
-      .andWhere("lower(user.lastName) = lower(:lastName)", { lastName })
-      .andWhere("student.birthDate = :birthDate", { birthDate })
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where(
-            "application.applicationStatus = :inProgressApplicationStatus",
-            {
-              inProgressApplicationStatus: ApplicationStatus.InProgress,
-            },
-          ).orWhere(
-            "application.applicationEditStatus = :changeInProgressApplicationEditStatus",
-            {
-              changeInProgressApplicationEditStatus:
-                ApplicationEditStatus.ChangeInProgress,
-            },
-          );
-        }),
-      )
-      .getOne();
-  }
-
-  /**
    * Validates to make sure that a student cannot create more than one application with overlapping study period dates.
    * When an application is pending for PIR approval then study period dates are subjective. In this case another application
    * is not allowed to be created because on PIR approval the study period dates may overlap with an existing application.

@@ -1,4 +1,8 @@
-import { FormYesNoOptions, OfferingIntensity } from "@/types";
+import {
+  FormYesNoOptions,
+  OfferingIntensity,
+  SupportingUserType,
+} from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { Expose } from "class-transformer";
 
@@ -11,9 +15,19 @@ export class ApplicationIdentifierAPIInDTO {
   @Expose()
   applicationNumber: string;
   @Expose()
-  studentsDateOfBirth: string;
-  @Expose()
   studentsLastName: string;
+  @Expose()
+  supportingUserType: SupportingUserType;
+  /**
+   * For Parent search only. Optional for Partner.
+   */
+  @Expose()
+  fullName?: string;
+  /**
+   * For Partner search only. Optional for Parent.
+   */
+  @Expose()
+  studentsDateOfBirth?: string;
 }
 
 /**

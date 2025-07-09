@@ -1,19 +1,14 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   HttpCode,
   HttpStatus,
-  Param,
-  ParseEnumPipe,
   Patch,
   Post,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
-  ApplicationService,
   DynamicFormConfigurationService,
-  FormService,
   SupportingUserService,
   UserService,
 } from "../../services";
@@ -26,12 +21,8 @@ import {
   ApplicationAPIOutDTO,
   UpdateSupportingUserAPIInDTO,
 } from "./models/supporting-user.dto";
-import { AddressInfo, ContactInfo, SupportingUserType } from "@sims/sims-db";
-import {
-  ApiProcessError,
-  ClientTypeBaseRoute,
-  DryRunSubmissionResult,
-} from "../../types";
+import { AddressInfo, ContactInfo } from "@sims/sims-db";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
@@ -47,6 +38,7 @@ import {
 import BaseController from "../BaseController";
 import { WorkflowClientService } from "@sims/services";
 import { RequiresUserAccount } from "../../auth/decorators";
+import { SupportingUserControllerService } from "./supporting-user.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.supportingUsers)
 @Controller("supporting-user")
@@ -54,11 +46,10 @@ import { RequiresUserAccount } from "../../auth/decorators";
 export class SupportingUserSupportingUsersController extends BaseController {
   constructor(
     private readonly supportingUserService: SupportingUserService,
-    private readonly applicationService: ApplicationService,
     private readonly userService: UserService,
-    private readonly formService: FormService,
     private readonly workflowClientService: WorkflowClientService,
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
+    private readonly supportingUserControllerService: SupportingUserControllerService,
   ) {
     super();
   }
@@ -68,13 +59,12 @@ export class SupportingUserSupportingUsersController extends BaseController {
    * !Here the post method is used to avoid sending the
    * !student data exposed in the URL. The method return a
    * !200 status to reinforce that nothing was created.
-   * @param supportingUserType supporting user type.
    * @param payload payload that identifies the Student
    * Application.
    * @returns application details.
    */
   @RequiresUserAccount(false)
-  @Post(":supportingUserType/application")
+  @Post("application")
   @HttpCode(HttpStatus.OK)
   @ApiUnprocessableEntityResponse({
     description:
@@ -85,18 +75,20 @@ export class SupportingUserSupportingUsersController extends BaseController {
   })
   async getApplicationDetails(
     @UserToken() userToken: IUserToken,
-    @Param("supportingUserType", new ParseEnumPipe(SupportingUserType))
-    supportingUserType: SupportingUserType,
     @Body() payload: ApplicationIdentifierAPIInDTO,
   ): Promise<ApplicationAPIOutDTO> {
-    const application =
-      await this.applicationService.getApplicationForSupportingUser(
+    const supportingUser =
+      await this.supportingUserService.getSupportingUserForApplication(
+        payload.supportingUserType,
         payload.applicationNumber,
         payload.studentsLastName,
-        payload.studentsDateOfBirth,
+        {
+          fullName: payload.fullName,
+          studentsDateOfBirth: payload.studentsDateOfBirth,
+        },
       );
 
-    if (!application) {
+    if (!supportingUser) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "Not able to find a Student Application with the provided data.",
@@ -107,7 +99,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
 
     // Ensure that the user providing the supporting data is not the same user that
     // submitted the Student Application.
-    if (application.student.user.userName === userToken.userName) {
+    if (
+      supportingUser.application.student.user.userName === userToken.userName
+    ) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "The user searching for applications to provide data " +
@@ -116,10 +110,10 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-    const formType = getSupportingUserFormType(supportingUserType);
+    const formType = getSupportingUserFormType(payload.supportingUserType);
     const formName = this.dynamicFormConfigurationService.getDynamicFormName(
       formType,
-      { programYearId: application.programYear.id },
+      { programYearId: supportingUser.application.programYear.id },
     );
     if (!formName) {
       throw new UnprocessableEntityException(
@@ -127,9 +121,9 @@ export class SupportingUserSupportingUsersController extends BaseController {
       );
     }
     return {
-      programYearStartDate: application.programYear.startDate,
+      programYearStartDate: supportingUser.application.programYear.startDate,
       formName,
-      offeringIntensity: application.offeringIntensity,
+      offeringIntensity: supportingUser.application.offeringIntensity,
     };
   }
 
@@ -137,12 +131,11 @@ export class SupportingUserSupportingUsersController extends BaseController {
    * Updates the supporting data for a particular supporting user
    * where the application is waiting for his input.
    * @param userToken authentication information.
-   * @param supportingUserType type of the supporting user providing
    * the supporting data (e.g. parent/partner).
    * @param payload data used for validation and to execute the update.
    */
   @RequiresUserAccount(false)
-  @Patch(":supportingUserType")
+  @Patch()
   @ApiUnprocessableEntityResponse({
     description:
       "Invalid offering intensity or " +
@@ -154,8 +147,6 @@ export class SupportingUserSupportingUsersController extends BaseController {
   @ApiBadRequestResponse({ description: "Invalid request." })
   async updateSupportingInformation(
     @UserToken() userToken: IUserToken,
-    @Param("supportingUserType", new ParseEnumPipe(SupportingUserType))
-    supportingUserType: SupportingUserType,
     @Body() payload: UpdateSupportingUserAPIInDTO,
   ): Promise<void> {
     // Regardless of the API call is successful or not, create/update
@@ -169,20 +160,24 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // Use the provided data to search for the Student Application.
     // The application must be search using at least 3 criteria as
     // per defined by the Ministry policies.
-    const applicationQuery =
-      this.applicationService.getApplicationForSupportingUser(
+    const supportingUserQuery =
+      this.supportingUserService.getSupportingUserForApplication(
+        payload.supportingUserType,
         payload.applicationNumber,
         payload.studentsLastName,
-        payload.studentsDateOfBirth,
+        {
+          fullName: payload.fullName,
+          studentsDateOfBirth: payload.studentsDateOfBirth,
+        },
       );
 
     // Wait for both queries to finish.
-    const [user, application] = await Promise.all([
+    const [user, supportingUser] = await Promise.all([
       userQuery,
-      applicationQuery,
+      supportingUserQuery,
     ]);
 
-    if (!application) {
+    if (!supportingUser) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "Not able to find a Student Application to update the supporting data.",
@@ -190,33 +185,33 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-    const formType = getSupportingUserFormType(supportingUserType);
-    const formName = this.dynamicFormConfigurationService.getDynamicFormName(
-      formType,
-      { programYearId: application.programYear.id },
-    );
-    if (!formName) {
-      throw new UnprocessableEntityException(
-        `Dynamic form configuration for ${formType} not found.`,
-      );
-    }
     // Ensure the offering intensity provided is the same from the application.
-    if (payload.offeringIntensity !== application.offeringIntensity) {
+    if (
+      payload.offeringIntensity !== supportingUser.application.offeringIntensity
+    ) {
       throw new UnprocessableEntityException("Invalid offering intensity.");
     }
-    const submissionData = { ...payload, isAbleToReport: true };
-    const submissionResult: DryRunSubmissionResult =
-      await this.formService.dryRunSubmission(formName, submissionData);
-
-    if (!submissionResult.valid) {
-      throw new BadRequestException(
-        "Not able to update supporting user data due to an invalid request.",
+    // If the supporting data has already been submitted, throw an error.
+    if (supportingUser.supportingData) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Supporting data has already been submitted for this supporting user.",
+          SUPPORTING_USER_ALREADY_PROVIDED_DATA,
+        ),
       );
     }
-
+    const submissionData = { ...payload, isAbleToReport: true };
+    const submissionResult =
+      await this.supportingUserControllerService.validateDryRunSubmission(
+        supportingUser.application.programYear.id,
+        payload.supportingUserType,
+        submissionData,
+      );
     // Ensure that the user providing the supporting data is not the same user that
     // submitted the Student Application.
-    if (application.student.user.userName === userToken.userName) {
+    if (
+      supportingUser.application.student.user.userName === userToken.userName
+    ) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
           "The user currently authenticated is the same user that submitted the application.",
@@ -229,7 +224,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // that he already provided.
     const supportingUserForApplication =
       await this.supportingUserService.getSupportingUserByUserId(
-        application.id,
+        supportingUser.application.id,
         user.id,
       );
 
@@ -244,29 +239,29 @@ export class SupportingUserSupportingUsersController extends BaseController {
 
     try {
       const addressInfo: AddressInfo = {
-        addressLine1: submissionResult.data.data.addressLine1,
-        addressLine2: submissionResult.data.data.addressLine2,
-        provinceState: submissionResult.data.data.provinceState,
-        country: submissionResult.data.data.country,
-        city: submissionResult.data.data.city,
-        postalCode: submissionResult.data.data.postalCode,
+        addressLine1: submissionResult.addressLine1,
+        addressLine2: submissionResult.addressLine2,
+        provinceState: submissionResult.provinceState,
+        country: submissionResult.country,
+        city: submissionResult.city,
+        postalCode: submissionResult.postalCode,
       };
 
       const contactInfo: ContactInfo = {
-        phone: submissionResult.data.data.phone,
+        phone: submissionResult.phone,
         address: addressInfo,
       };
 
       const updatedUser = await this.supportingUserService.updateSupportingUser(
-        application.id,
-        supportingUserType,
+        supportingUser.application.id,
+        payload.supportingUserType,
         user.id,
         {
           contactInfo,
-          sin: submissionResult.data.data.sin,
-          hasValidSIN: submissionResult.data.data.hasValidSIN,
+          sin: submissionResult.sin,
+          hasValidSIN: submissionResult.hasValidSIN,
           birthDate: userToken.birthdate,
-          supportingData: submissionResult.data.data.supportingData,
+          supportingData: submissionResult.supportingData,
           userId: user.id,
         },
       );

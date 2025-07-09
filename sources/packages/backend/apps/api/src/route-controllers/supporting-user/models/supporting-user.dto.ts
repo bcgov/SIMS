@@ -5,11 +5,14 @@ import {
   IsOptional,
   Length,
   MaxLength,
+  ValidateIf,
 } from "class-validator";
 import {
   ContactInfo,
   APPLICATION_NUMBER_LENGTH,
   USER_LAST_NAME_MAX_LENGTH,
+  SUPPORTING_USER_FULL_NAME_MAX_LENGTH,
+  SupportingUserType,
   OfferingIntensity,
   FormYesNoOptions,
 } from "@sims/sims-db";
@@ -25,10 +28,29 @@ export class ApplicationIdentifierAPIInDTO {
   @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
   applicationNumber: string;
   @IsNotEmpty()
-  studentsDateOfBirth: string;
-  @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
+  @IsEnum(SupportingUserType)
+  supportingUserType: SupportingUserType;
+  /**
+   * For Parent search only. Required for Parent, Optional for Partner.
+   */
+  @ValidateIf(
+    (object: ApplicationIdentifierAPIInDTO) =>
+      object.supportingUserType === SupportingUserType.Parent,
+  )
+  @IsNotEmpty()
+  @MaxLength(SUPPORTING_USER_FULL_NAME_MAX_LENGTH)
+  fullName?: string;
+  /**
+   * For Partner search only. Optional for Parent.
+   */
+  @ValidateIf(
+    (object: ApplicationIdentifierAPIInDTO) =>
+      object.supportingUserType === SupportingUserType.Partner,
+  )
+  @IsNotEmpty()
+  studentsDateOfBirth?: string;
 }
 
 /**
@@ -56,10 +78,29 @@ export class UpdateSupportingUserAPIInDTO {
   @IsOptional()
   sin?: string;
   @IsNotEmpty()
-  studentsDateOfBirth: string;
-  @IsNotEmpty()
   @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   studentsLastName: string;
+  @IsEnum(SupportingUserType)
+  supportingUserType: SupportingUserType;
+  /**
+   * For Parent search only. Optional for Partner.
+   */
+  @ValidateIf(
+    (object: UpdateSupportingUserAPIInDTO) =>
+      object.supportingUserType === SupportingUserType.Parent,
+  )
+  @IsNotEmpty()
+  @MaxLength(SUPPORTING_USER_FULL_NAME_MAX_LENGTH)
+  fullName?: string;
+  /**
+   * For Partner search only. Optional for Parent.
+   */
+  @ValidateIf(
+    (object: UpdateSupportingUserAPIInDTO) =>
+      object.supportingUserType === SupportingUserType.Partner,
+  )
+  @IsNotEmpty()
+  studentsDateOfBirth?: string;
   @IsNotEmptyObject()
   @JsonMaxSize(JSON_10KB)
   supportingData: unknown;
