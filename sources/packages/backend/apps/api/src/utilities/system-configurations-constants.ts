@@ -1,9 +1,6 @@
 import { RestrictionCode } from "@sims/services";
 
 export const PIR_DENIED_REASON_OTHER_ID = 1;
-// Timeout to handle the worst-case scenario where the commit/rollback
-// was not executed due to a possible catastrophic failure.
-export const SUPPORTING_USERS_TRANSACTION_IDLE_TIMEOUT_SECONDS = 10;
 /**
  * For multipart forms, the max number of file fields.
  */
