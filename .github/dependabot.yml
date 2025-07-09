@@ -1,0 +1,49 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/sources/packages/web"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "Dependencies"
+      - "npm"
+      - "Web portal"
+
+  - package-ecosystem: "npm"
+    directory: "/sources/packages/backend"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "Dependencies"
+      - "npm"
+      - "Backend"
+    groups:
+      nestjs:
+        patterns:
+          - "@nestjs*"
+
+  - package-ecosystem: "npm"
+    directory: "/sources/packages/forms"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "Dependencies"
+      - "npm"
+      - "Form.io"
+
+  - package-ecosystem: "npm"
+    directory: "/sources/packages/load-test"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "Dependencies"
+      - "npm"
+      - "Load Test"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "Dependencies"
+      - "GitHub actions"
