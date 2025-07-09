@@ -83,17 +83,23 @@ export class UpdateSupportingUserAPIInDTO {
   @IsEnum(SupportingUserType)
   supportingUserType: SupportingUserType;
   /**
-   * For Parent search only. Required for Parent, Optional for Partner.
+   * For Parent search only. Optional for Partner.
    */
-  @ValidateIf((o) => o.supportingUserType === SupportingUserType.Parent)
+  @ValidateIf(
+    (object: UpdateSupportingUserAPIInDTO) =>
+      object.supportingUserType === SupportingUserType.Parent,
+  )
   @IsNotEmpty()
   @MaxLength(SUPPORTING_USER_FULL_NAME_MAX_LENGTH)
   fullName?: string;
   /**
    * For Partner search only. Optional for Parent.
    */
-  @ValidateIf((o) => o.supportingUserType === SupportingUserType.Partner)
-  @IsOptional()
+  @ValidateIf(
+    (object: UpdateSupportingUserAPIInDTO) =>
+      object.supportingUserType === SupportingUserType.Partner,
+  )
+  @IsNotEmpty()
   studentsDateOfBirth?: string;
   @IsNotEmptyObject()
   @JsonMaxSize(JSON_10KB)
