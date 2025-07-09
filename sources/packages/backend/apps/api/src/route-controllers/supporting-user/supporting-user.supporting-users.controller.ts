@@ -252,23 +252,26 @@ export class SupportingUserSupportingUsersController extends BaseController {
         address: addressInfo,
       };
 
-      const updatedUser = await this.supportingUserService.updateSupportingUser(
-        supportingUser.application.id,
-        payload.supportingUserType,
-        user.id,
-        {
-          contactInfo,
-          sin: submissionResult.sin,
-          hasValidSIN: submissionResult.hasValidSIN,
-          birthDate: userToken.birthdate,
-          supportingData: submissionResult.supportingData,
-          userId: user.id,
-        },
-      );
+      const updateResult =
+        await this.supportingUserService.updateSupportingUserReportedData(
+          supportingUser.id,
+          payload.supportingUserType,
+          user.id,
+          {
+            contactInfo,
+            sin: submissionResult.sin,
+            hasValidSIN: submissionResult.hasValidSIN,
+            birthDate: userToken.birthdate,
+            supportingData: submissionResult.supportingData,
+            userId: user.id,
+          },
+        );
 
-      await this.workflowClientService.sendSupportingUsersCompletedMessage(
-        updatedUser.id,
-      );
+      if (updateResult.affected > 0) {
+        await this.workflowClientService.sendSupportingUsersCompletedMessage(
+          supportingUser.id,
+        );
+      }
     } catch (error) {
       if (error.name === SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA) {
         throw new UnprocessableEntityException(
