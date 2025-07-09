@@ -12,8 +12,6 @@ import {
   User,
 } from "@sims/sims-db";
 import { removeWhiteSpaces } from "../../utilities/string-utils";
-import { CustomNamedError } from "@sims/utilities";
-import { SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA } from "./constants";
 import {
   ReportedSupportingUserData,
   UpdateSupportingUserInfo,
@@ -28,14 +26,12 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
   /**
    * Updates supporting user (e.g. parent/partner) data.
    * @param supportingUserId The ID of the supporting user record to be updated.
-   * @param supportingUserType The type of the user, used for crafting the error message.
    * @param auditUserId The user performing the update.
    * @param updateInfo The information to be updated.
    * @returns The result of the update operation.
    */
   async updateSupportingUserReportedData(
     supportingUserId: number,
-    supportingUserType: SupportingUserType,
     auditUserId: number,
     updateInfo: UpdateSupportingUserInfo,
   ): Promise<UpdateResult> {
@@ -46,6 +42,8 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
       ? { hasValidSIN: updateInfo.hasValidSIN }
       : null;
 
+    const auditUser = { id: auditUserId } as User;
+    const user = { id: updateInfo.userId } as User;
     const updateResult = await this.repo.update(
       { id: supportingUserId, user: { id: IsNull() } },
       {
@@ -53,19 +51,11 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         sin: sinWithNoSpaces,
         birthDate: updateInfo.birthDate,
         supportingData: updateInfo.supportingData,
-        user: { id: updateInfo.userId } as User,
+        user,
         personalInfo,
-        modifier: { id: auditUserId } as User,
+        modifier: auditUser,
       },
     );
-    // If no records are updated, it means the supporting user record either
-    // did not exist or was already updated by another process.
-    if (updateResult.affected === 0) {
-      throw new CustomNamedError(
-        `The application is not expecting supporting information from a ${supportingUserType} to be provided at this time.`,
-        SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
-      );
-    }
 
     return updateResult;
   }

@@ -237,51 +237,45 @@ export class SupportingUserSupportingUsersController extends BaseController {
       );
     }
 
-    try {
-      const addressInfo: AddressInfo = {
-        addressLine1: submissionResult.addressLine1,
-        addressLine2: submissionResult.addressLine2,
-        provinceState: submissionResult.provinceState,
-        country: submissionResult.country,
-        city: submissionResult.city,
-        postalCode: submissionResult.postalCode,
-      };
+    const addressInfo: AddressInfo = {
+      addressLine1: submissionResult.addressLine1,
+      addressLine2: submissionResult.addressLine2,
+      provinceState: submissionResult.provinceState,
+      country: submissionResult.country,
+      city: submissionResult.city,
+      postalCode: submissionResult.postalCode,
+    };
 
-      const contactInfo: ContactInfo = {
-        phone: submissionResult.phone,
-        address: addressInfo,
-      };
+    const contactInfo: ContactInfo = {
+      phone: submissionResult.phone,
+      address: addressInfo,
+    };
 
-      const updateResult =
-        await this.supportingUserService.updateSupportingUserReportedData(
-          supportingUser.id,
-          payload.supportingUserType,
-          user.id,
-          {
-            contactInfo,
-            sin: submissionResult.sin,
-            hasValidSIN: submissionResult.hasValidSIN,
-            birthDate: userToken.birthdate,
-            supportingData: submissionResult.supportingData,
-            userId: user.id,
-          },
-        );
+    const updateResult =
+      await this.supportingUserService.updateSupportingUserReportedData(
+        supportingUser.id,
+        user.id,
+        {
+          contactInfo,
+          sin: submissionResult.sin,
+          hasValidSIN: submissionResult.hasValidSIN,
+          birthDate: userToken.birthdate,
+          supportingData: submissionResult.supportingData,
+          userId: user.id,
+        },
+      );
 
-      if (updateResult.affected > 0) {
-        await this.workflowClientService.sendSupportingUsersCompletedMessage(
-          supportingUser.id,
-        );
-      }
-    } catch (error) {
-      if (error.name === SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(
-            error.message,
-            SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
-          ),
-        );
-      }
-      throw error;
+    if (updateResult.affected !== 1) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          `The application is not expecting supporting information from a ${payload.supportingUserType} to be provided at this time.`,
+          SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
+        ),
+      );
     }
+    // Send the message to the workflow to complete the supporting user process.
+    await this.workflowClientService.sendSupportingUsersCompletedMessage(
+      supportingUser.id,
+    );
   }
 }
