@@ -36,7 +36,7 @@ export class ApplicationIdentifierAPIInDTO {
    * For Parent search only. Required for Parent, Optional for Partner.
    */
   @ValidateIf(
-    (object: UpdateSupportingUserAPIInDTO) =>
+    (object: ApplicationIdentifierAPIInDTO) =>
       object.supportingUserType === SupportingUserType.Parent,
   )
   @IsNotEmpty()
@@ -46,7 +46,7 @@ export class ApplicationIdentifierAPIInDTO {
    * For Partner search only. Optional for Parent.
    */
   @ValidateIf(
-    (object: UpdateSupportingUserAPIInDTO) =>
+    (object: ApplicationIdentifierAPIInDTO) =>
       object.supportingUserType === SupportingUserType.Partner,
   )
   @IsNotEmpty()
