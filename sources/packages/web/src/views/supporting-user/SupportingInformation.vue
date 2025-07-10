@@ -120,7 +120,6 @@ import { PropType, ref, defineComponent } from "vue";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
-  SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
   WizardNavigationEvent,
   SupportingUserType,
@@ -285,13 +284,6 @@ export default defineComponent({
             case SUPPORTING_USER_ALREADY_PROVIDED_DATA:
               snackBar.warn(
                 `User already provided data.
-                ${error.message}`,
-                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-              );
-              break;
-            case SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA:
-              snackBar.warn(
-                `Not expecting data for a ${props.supportingUserType}.
                 ${error.message}`,
                 snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
               );

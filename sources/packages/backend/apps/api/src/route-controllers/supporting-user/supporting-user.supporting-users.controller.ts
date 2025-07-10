@@ -27,7 +27,6 @@ import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
-  SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
 } from "../../services/supporting-user/constants";
 import { getSupportingUserFormType } from "../../utilities";
 import {
@@ -237,24 +236,23 @@ export class SupportingUserSupportingUsersController extends BaseController {
       );
     }
 
-    try {
-      const addressInfo: AddressInfo = {
-        addressLine1: submissionResult.addressLine1,
-        addressLine2: submissionResult.addressLine2,
-        provinceState: submissionResult.provinceState,
-        country: submissionResult.country,
-        city: submissionResult.city,
-        postalCode: submissionResult.postalCode,
-      };
+    const addressInfo: AddressInfo = {
+      addressLine1: submissionResult.addressLine1,
+      addressLine2: submissionResult.addressLine2,
+      provinceState: submissionResult.provinceState,
+      country: submissionResult.country,
+      city: submissionResult.city,
+      postalCode: submissionResult.postalCode,
+    };
 
-      const contactInfo: ContactInfo = {
-        phone: submissionResult.phone,
-        address: addressInfo,
-      };
+    const contactInfo: ContactInfo = {
+      phone: submissionResult.phone,
+      address: addressInfo,
+    };
 
-      const updatedUser = await this.supportingUserService.updateSupportingUser(
-        supportingUser.application.id,
-        payload.supportingUserType,
+    const updateResult =
+      await this.supportingUserService.updateSupportingUserReportedData(
+        supportingUser.id,
         user.id,
         {
           contactInfo,
@@ -266,19 +264,14 @@ export class SupportingUserSupportingUsersController extends BaseController {
         },
       );
 
-      await this.workflowClientService.sendSupportingUsersCompletedMessage(
-        updatedUser.id,
+    if (updateResult.affected !== 1) {
+      throw new UnprocessableEntityException(
+        `Error while updating the supporting user details for ${supportingUser.id}. Number of affected rows was ${updateResult.affected}, expected 1.`,
       );
-    } catch (error) {
-      if (error.name === SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(
-            error.message,
-            SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA,
-          ),
-        );
-      }
-      throw error;
     }
+    // Send the message to the workflow to complete the supporting user process.
+    await this.workflowClientService.sendSupportingUsersCompletedMessage(
+      supportingUser.id,
+    );
   }
 }

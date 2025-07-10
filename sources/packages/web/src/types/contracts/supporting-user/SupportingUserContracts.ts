@@ -7,10 +7,6 @@ export const STUDENT_APPLICATION_NOT_FOUND = "STUDENT_APPLICATION_NOT_FOUND";
 // Student Application.
 export const SUPPORTING_USER_ALREADY_PROVIDED_DATA =
   "SUPPORTING_USER_ALREADY_PROVIDED_DATA";
-// The same supporting user type (parent/partner) already provided supporting data for the
-// Student Application.
-export const SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA =
-  "SUPPORTING_USER_TYPE_ALREADY_PROVIDED_DATA";
 // The user currently authenticated is the student and the student cannot provide supporting
 // data for his own application.
 export const SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION =
