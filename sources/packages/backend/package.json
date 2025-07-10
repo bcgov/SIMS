@@ -133,7 +133,7 @@
     "mockdate": "^3.0.5",
     "prettier": "^2.1.2",
     "supertest": "^6.3.3",
-    "ts-jest": "^29.2.5",
+    "ts-jest": "^29.4.0",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
