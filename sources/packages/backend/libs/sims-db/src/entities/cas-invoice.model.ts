@@ -111,7 +111,6 @@ export class CASInvoice extends RecordDataModel {
     type: "varchar",
   })
   errors?: string[];
-
   /**
    * Date and time when the invoice was sent to CAS.
    */

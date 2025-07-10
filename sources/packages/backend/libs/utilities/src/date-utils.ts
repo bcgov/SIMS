@@ -87,7 +87,7 @@ export const getPSTPDTDateFormatted = (
 ): string => {
   const local = options?.local ?? false;
   const format = options?.format ?? DATE_ONLY_ISO_FORMAT;
-  return dayjs(new Date(date)).tz(PST_TIMEZONE, local).format(format);
+  return dayjs(date).tz(PST_TIMEZONE, local).format(format);
 };
 
 /**
