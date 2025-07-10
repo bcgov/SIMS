@@ -39,6 +39,10 @@ import StatusInfoLabel from "@/components/generic/StatusInfoLabel.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
+// Form.io Bootstrap Templates (see https://github.com/formio/bootstrap).
+import bootstrap5 from "@formio/bootstrap/bootstrap5";
+import { Formio } from "@formio/js";
+Formio.use(bootstrap5);
 
 AppConfigService.shared.init().then(() => {
   createApp(App)

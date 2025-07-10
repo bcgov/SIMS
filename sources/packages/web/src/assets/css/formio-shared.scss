@@ -782,21 +782,6 @@ td .formio-custom-tooltip:hover .tooltip-text {
   display: none;
 }
 
-// Shows the remove icon
-.bi-trash::before {
-  content: "\f5de" !important;
-}
-
-// Shows the calendar icon
-.bi-calendar::before {
-  content: "\f1f6" !important;
-}
-
-// Shows the tooltip icon
-.bi-question-circle::before {
-  content: "\f504" !important;
-}
-
 // Styles related to the application changes
 // between the current and previous application versions.
 .changed-value-base {
