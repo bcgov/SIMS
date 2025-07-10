@@ -125,7 +125,7 @@
     "copy-webpack-plugin": "^11.0.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.24.0",
-    "eslint-config-prettier": "7.0.0",
+    "eslint-config-prettier": "10.1.5",
     "eslint-plugin-prettier": "^3.1.4",
     "faker": "^5.2.0",
     "find-config": "^1.0.0",
