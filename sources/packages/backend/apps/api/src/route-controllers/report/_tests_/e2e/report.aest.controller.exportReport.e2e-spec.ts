@@ -42,11 +42,14 @@ import {
   SupplierStatus,
   WorkflowData,
 } from "@sims/sims-db";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
+import {
+  addDays,
+  getISODateOnlyString,
+  getPSTPDTDateFormatted,
+} from "@sims/utilities";
 import { DataSource } from "typeorm";
 import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
-import { getPSTPDTDateFormatted } from "@sims/test-utils/utils";
 import { MinistryReportsFilterAPIInDTO } from "apps/api/src/route-controllers/report/models/report.dto";
 
 describe("ReportAestController(e2e)-exportReport", () => {

@@ -16,6 +16,7 @@ import {
 import { SystemUsersService } from "@sims/services";
 import { parse } from "papaparse";
 import {
+  CASInvoiceStatus,
   DisbursementValueType,
   OfferingIntensity,
   SupplierStatus,
@@ -134,6 +135,10 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchReport", () => {
       fullTimeInvoicePromise,
       partTimeInvoicePromise,
     ]);
+    // Set the full-time invoice to be sent to CAS.
+    fullTimeInvoice.invoiceStatus = CASInvoiceStatus.Sent;
+    fullTimeInvoice.dateSent = new Date();
+    await db.casInvoice.save(fullTimeInvoice);
     // Creating variables to provide easy access to some nested values.
     // Full-time related variables.
     const fullTimeStudent =
@@ -141,18 +146,15 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchReport", () => {
         .application.student;
     const fullTimeDocumentNumber =
       fullTimeInvoice.disbursementReceipt.disbursementSchedule.documentNumber.toString();
-    const fullTimeGLDate = getPSTPDTDateTime(
-      fullTimeInvoice.disbursementReceipt.createdAt,
-    );
+    const fullTimeGLDate = getPSTPDTDateTime(fullTimeInvoice.dateSent);
     // Part-time related variables.
     const partTimeStudent =
       partTimeInvoice.disbursementReceipt.disbursementSchedule.studentAssessment
         .application.student;
     const partTimeDocumentNumber =
       partTimeInvoice.disbursementReceipt.disbursementSchedule.documentNumber.toString();
-    const partTimeGLDate = getPSTPDTDateTime(
-      partTimeInvoice.disbursementReceipt.createdAt.toISOString(),
-    );
+    // Part-time invoice is not sent to CAS, so the GL date is not available.
+    const partTimeGLDate = "n/a";
 
     const endpoint = `/aest/cas-invoice-batch/${casInvoiceBatch.id}/report`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
