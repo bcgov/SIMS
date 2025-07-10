@@ -95,6 +95,21 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
         "Invoice sent to CAS SUCCEEDED.",
       ]),
     ).toBe(true);
+
+    // Assert invoice status, date sent and status updated date are updated.
+    const updatedCASInvoice = await db.casInvoice.findOne({
+      select: {
+        invoiceStatus: true,
+        invoiceStatusUpdatedOn: true,
+        dateSent: true,
+      },
+      where: { id: casInvoice.id },
+    });
+    expect(updatedCASInvoice).toEqual({
+      invoiceStatus: CASInvoiceStatus.Sent,
+      invoiceStatusUpdatedOn: expect.any(Date),
+      dateSent: expect.any(Date),
+    });
   });
 
   it("Should contain log 'No pending invoices found' when there are no pending invoices found.", async () => {
