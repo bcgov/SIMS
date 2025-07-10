@@ -44,7 +44,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
 
     const auditUser = { id: auditUserId } as User;
     const user = { id: updateInfo.userId } as User;
-    const updateResult = await this.repo.update(
+    return this.repo.update(
       { id: supportingUserId, user: { id: IsNull() } },
       {
         contactInfo: updateInfo.contactInfo,
@@ -56,8 +56,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         modifier: auditUser,
       },
     );
-
-    return updateResult;
   }
 
   /**
