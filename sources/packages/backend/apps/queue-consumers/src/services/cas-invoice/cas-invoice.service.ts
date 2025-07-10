@@ -15,6 +15,8 @@ import {
   processInParallel,
   CustomNamedError,
   getAbbreviatedDateOnlyFormat,
+  getPSTPDTDateFormatted,
+  ABBREVIATED_MONTH_DATE_FORMAT,
 } from "@sims/utilities";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { Repository } from "typeorm";
@@ -138,8 +140,11 @@ export class CASInvoiceService {
       `Processing pending invoice: ${pendingInvoice.invoiceNumber}.`,
     );
     try {
-      const pendingInvoicePayload =
-        this.getPendingInvoicePayload(pendingInvoice);
+      const now = new Date();
+      const pendingInvoicePayload = this.getPendingInvoicePayload(
+        pendingInvoice,
+        now,
+      );
       const response = await this.casService.sendInvoice(pendingInvoicePayload);
       if (response.invoiceNumber) {
         summary.info(`Invoice sent to CAS ${response.casReturnedMessages}.`);
@@ -154,7 +159,8 @@ export class CASInvoiceService {
         },
         {
           invoiceStatus: CASInvoiceStatus.Sent,
-          invoiceStatusUpdatedOn: new Date(),
+          invoiceStatusUpdatedOn: now,
+          dateSent: now,
           modifier: { id: this.systemUsersService.systemUser.id },
         },
       );
@@ -213,10 +219,12 @@ export class CASInvoiceService {
   /**
    * Generate the pending invoice payload.
    * @param pendingInvoice pending invoice.
+   * @param invoiceSendDate date when the invoice is being sent.
    * @returns pending invoice payload.
    */
   private getPendingInvoicePayload(
     pendingInvoice: CASInvoice,
+    invoiceSendDate: Date,
   ): PendingInvoicePayload {
     // Fixed values as constants.
     const INVOICE_TYPE = "Standard";
@@ -258,9 +266,10 @@ export class CASInvoiceService {
       terms: TERMS,
       remittanceMessage1: EMPTY_STRING,
       remittanceMessage2: EMPTY_STRING,
-      glDate: getAbbreviatedDateOnlyFormat(
-        pendingInvoice.casInvoiceBatch.createdAt,
-      ),
+      // The GL date sent to CAS API must be in BC time.
+      glDate: getPSTPDTDateFormatted(invoiceSendDate, {
+        format: ABBREVIATED_MONTH_DATE_FORMAT,
+      }),
       invoiceBatchName: pendingInvoice.casInvoiceBatch.batchName,
       currencyCode: CURRENCY_CODE,
       invoiceLineDetails: invoiceLineDetails,
