@@ -735,36 +735,6 @@
                   "input": true
                 },
                 {
-                  "label": "Will you be living with your Partner during your Partner's study period?",
-                  "optionsLabelPosition": "right",
-                  "inline": false,
-                  "tableView": false,
-                  "values": [
-                    {
-                      "label": "Yes",
-                      "value": "yes",
-                      "shortcut": ""
-                    },
-                    {
-                      "label": "No",
-                      "value": "no",
-                      "shortcut": ""
-                    }
-                  ],
-                  "validate": {
-                    "required": true,
-                    "onlyAvailableItems": true
-                  },
-                  "key": "partnerLivingWithStudent",
-                  "type": "radio",
-                  "input": true,
-                  "conditional": {
-                    "show": "true",
-                    "when": "offeringIntensity",
-                    "eq": "Full Time"
-                  }
-                },
-                {
                   "label": "Will you be a full-time post-secondary student for some or all of your Partner's study period?",
                   "optionsLabelPosition": "right",
                   "inline": false,
