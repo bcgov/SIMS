@@ -6015,7 +6015,7 @@
                               "attr": ""
                             }
                           ],
-                          "content": "Partner current year income",
+                          "content": "Parent current year income",
                           "refreshOnChange": false,
                           "key": "parentCurrentYearIncomeHeader",
                           "type": "htmlelement",
@@ -6132,7 +6132,7 @@
                         "eq": "false"
                       },
                       "type": "panel",
-                      "label": "Partner Income Panel",
+                      "label": "Parent Income Panel",
                       "breadcrumbClickable": false,
                       "allowPrevious": false,
                       "buttonSettings": {
@@ -6153,7 +6153,7 @@
                               "value": ""
                             }
                           ],
-                          "content": "Partner financial information",
+                          "content": "Parent financial information",
                           "refreshOnChange": false,
                           "key": "html67",
                           "type": "htmlelement",
