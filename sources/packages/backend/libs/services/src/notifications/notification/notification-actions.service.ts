@@ -33,6 +33,8 @@ import {
   SupportingUserInformationNotification,
   StudentPDPPDNotification,
   StudentSecondDisbursementNotification,
+  ParentDeclarationRequiredParentCanReportNotification,
+  ParentDeclarationRequiredParentCannotReportNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -1227,6 +1229,82 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
+          supportingUserType: notification.supportingUserType,
+        },
+      },
+    };
+    await this.notificationService.saveNotifications(
+      [supportingUserInformationNotification],
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Create supporting user information notification for student
+   * when parent declaration is required for 2025 PY onwards application
+   * and parent can report.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveParentDeclarationRequiredParentCanReportNotification(
+    notification: ParentDeclarationRequiredParentCanReportNotification,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.ParentDeclarationRequiredParentCanReportNotification,
+      );
+    const supportingUserInformationNotification = {
+      userId: notification.userId,
+      messageType:
+        NotificationMessageType.ParentDeclarationRequiredParentCanReportNotification,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          parentFullName: notification.parentFullName,
+          supportingUserType: notification.supportingUserType,
+        },
+      },
+    };
+    await this.notificationService.saveNotifications(
+      [supportingUserInformationNotification],
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Create supporting user information notification for student
+   * when parent declaration is required for 2025 PY onwards application
+   * and parent cannot report (student self reporting).
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveParentDeclarationRequiredParentCannotReportNotification(
+    notification: ParentDeclarationRequiredParentCannotReportNotification,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.ParentDeclarationRequiredParentCannotReportNotification,
+      );
+    const supportingUserInformationNotification = {
+      userId: notification.userId,
+      messageType:
+        NotificationMessageType.ParentDeclarationRequiredParentCannotReportNotification,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          parentFullName: notification.parentFullName,
           supportingUserType: notification.supportingUserType,
         },
       },

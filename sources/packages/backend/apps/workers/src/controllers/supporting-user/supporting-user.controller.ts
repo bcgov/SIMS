@@ -172,9 +172,9 @@ export class SupportingUserController {
           return job.error(SUPPORTING_USER_FULL_NAME_NOT_RESOLVED, message);
         }
       }
+      const isAbleToReport = job.variables.isAbleToReport;
+      // If the full name is not provided, use the student
       return this.dataSource.transaction(
-        // Transaction created with the expectation that a notification will also be created
-        // for the supporting user and it should be saved in the same transaction.
         async (entityManager: EntityManager) => {
           const createdSupportingUserId =
             await this.supportingUserService.createIdentifiableSupportingUser(
@@ -182,10 +182,41 @@ export class SupportingUserController {
                 applicationId: job.variables.applicationId,
                 supportingUserType: job.variables.supportingUserType,
                 fullName,
-                isAbleToReport: job.variables.isAbleToReport,
+                isAbleToReport,
               },
               entityManager,
             );
+          if (isAbleToReport) {
+            await this.notificationActionsService.saveParentDeclarationRequiredParentCanReportNotification(
+              {
+                givenNames: application.student.user.firstName,
+                lastName: application.student.user.lastName,
+                toAddress: application.student.user.email,
+                userId: application.student.user.id,
+                supportingUserType:
+                  job.variables.supportingUserType === "Parent"
+                    ? "parent"
+                    : "partner",
+                parentFullName: fullName,
+              },
+              entityManager,
+            );
+          } else {
+            await this.notificationActionsService.saveParentDeclarationRequiredParentCannotReportNotification(
+              {
+                givenNames: application.student.user.firstName,
+                lastName: application.student.user.lastName,
+                toAddress: application.student.user.email,
+                userId: application.student.user.id,
+                supportingUserType:
+                  job.variables.supportingUserType === "Parent"
+                    ? "parent"
+                    : "partner",
+                parentFullName: fullName,
+              },
+              entityManager,
+            );
+          }
           return job.complete({
             [CREATED_SUPPORTING_USER_ID]: createdSupportingUserId,
           });
