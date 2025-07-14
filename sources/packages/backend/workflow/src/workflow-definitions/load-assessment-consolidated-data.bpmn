@@ -109,6 +109,7 @@
           <zeebe:header key="studentDataStudentParentsCppLine30800" value="$.data.studentParentsCppLine30800" />
           <zeebe:header key="studentDataStudentParentsCppLine31000" value="$.data.studentParentsCppLine31000" />
           <zeebe:header key="studentDataStudentParentsEiLine31200" value="$.data.studentParentsEiLine31200" />
+          <zeebe:header key="studentDataStudentParentsCurrentYearParentIncome" value="$.data.parents.currentYearParentIncome" />
           <zeebe:header key="studentDataPartnerTotalIncomeAssistance" value="$.data.partnertotalincomeAssistance" />
           <zeebe:header key="studentDataPartnerTotalStudentLoan" value="$.data.partnerStudentLoanCosts" />
           <zeebe:header key="studentDataPartTimeAwardTypesToBeConsidered" value="$.data.partTimeAwardTypesToBeConsidered" />
