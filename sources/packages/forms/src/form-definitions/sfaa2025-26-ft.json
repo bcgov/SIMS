@@ -6122,79 +6122,39 @@
                       ]
                     },
                     {
-                      "title": "Parent Income Panel",
+                      "title": "Decrease in parent income panel",
                       "collapsible": false,
                       "hideLabel": true,
-                      "key": "parentIncomePanel",
+                      "key": "parentIncomePanel1",
                       "conditional": {
                         "show": true,
-                        "when": "parents.parentIsAbleToReport",
-                        "eq": "false"
+                        "when": "parents.parentCurrentYearIncomeConfirmation",
+                        "eq": "true"
                       },
                       "type": "panel",
-                      "label": "Parent Income Panel",
-                      "breadcrumbClickable": false,
-                      "allowPrevious": false,
-                      "buttonSettings": {
-                        "previous": false,
-                        "cancel": false,
-                        "next": false
-                      },
+                      "label": "Panel",
                       "input": false,
                       "tableView": false,
                       "components": [
                         {
-                          "label": "Parent financial information",
-                          "tag": "h3",
-                          "className": "category-header-medium primary-color",
-                          "attrs": [
-                            {
-                              "attr": "",
-                              "value": ""
-                            }
-                          ],
-                          "content": "Parent financial information",
-                          "refreshOnChange": false,
-                          "key": "html67",
-                          "type": "htmlelement",
-                          "input": false,
-                          "tableView": false
-                        },
-                        {
-                          "label": "HTML",
+                          "label": "Current year income blurb",
                           "tag": "p",
                           "attrs": [
                             {
-                              "attr": "",
-                              "value": ""
+                              "value": "",
+                              "attr": ""
                             }
                           ],
-                          "content": "Please provide your  parent/step-parent/sponsor/legal guardian's financial information.",
+                          "content": "Add your parent/step-parent/sponsor/legal guardian's actual gross income from the beginning of {{data.currentTaxYear}} up to the date their gross income changed, along with the estimated gross income for the remainder of the year, to calculate their total estimated gross income for the current year.",
                           "refreshOnChange": false,
-                          "key": "html68",
+                          "key": "parentIncomePanelContent",
                           "type": "htmlelement",
                           "input": false,
+                          "hideLabel": true,
                           "tableView": false
                         },
                         {
-                          "label": "I have been authorized by my parent/step-parent/sponsor/legal guardian to submit their financial information, including their total reported income from their {{data.calculatedTaxYear}} tax return.",
-                          "tableView": false,
-                          "defaultValue": false,
-                          "validate": {
-                            "required": true
-                          },
-                          "validateWhenHidden": false,
-                          "key": "parentAuthorized",
-                          "conditional": {
-                            "show": true,
-                            "when": "parents.hasCurrentYearParentIncome",
-                            "eq": "no"
-                          },
-                          "type": "checkbox",
-                          "input": true
-                        },
-                        {
-                          "label": "Enter your parent/step-parent/sponsor/legal guardian's reported total income from line 15000 of their {{data.calculatedTaxYear}} income tax return. If they did not file a {{data.calculatedTaxYear}} income tax return, enter their total income from all sources both inside and outside of Canada.",
+                          "label": "My  parent/step-parent/sponsor/legal guardian's current year gross income is:",
                           "prefix": "$",
                           "applyMaskOn": "change",
                           "mask": false,
@@ -6208,25 +6168,61 @@
                             "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
                           },
                           "validateWhenHidden": false,
-                          "key": "estimatedParentIncome",
-                          "conditional": {
-                            "show": true,
-                            "when": "parents.hasCurrentYearParentIncome",
-                            "eq": "no"
-                          },
+                          "key": "currentYearParentIncome",
                           "type": "number",
                           "decimalLimit": 0,
                           "input": true
                         },
                         {
-                          "title": "Decrease in parent income panel",
+                          "label": "Select the reason for your parent/step-parent/sponsor/legal guardian's significant decrease in gross income:",
+                          "optionsLabelPosition": "right",
+                          "inline": false,
+                          "tableView": true,
+                          "values": [
+                            {
+                              "value": "medicalIllnessOrInjury",
+                              "label": "Medical illness or injury",
+                              "shortcut": ""
+                            },
+                            {
+                              "value": "familyEmergencyEGDeathOrInjury",
+                              "label": "Family emergency (e.g., death or injury)",
+                              "shortcut": ""
+                            },
+                            {
+                              "value": "naturalDisaster",
+                              "label": "Natural disaster",
+                              "shortcut": ""
+                            },
+                            {
+                              "value": "layoffStrikeLockoutOrOtherReductionInEarningsBeyondTheFamilysControl",
+                              "label": "Layoff, strike, lockout or other reduction in earnings beyond the family’s control",
+                              "shortcut": ""
+                            },
+                            {
+                              "value": "other",
+                              "label": "Other",
+                              "shortcut": ""
+                            }
+                          ],
+                          "validate": {
+                            "required": true
+                          },
+                          "validateWhenHidden": false,
+                          "key": "reasonSignificantDecreaseInParentIncome",
+                          "type": "radio",
+                          "input": true,
+                          "lockKey": true
+                        },
+                        {
+                          "title": "Other reason for significant decrease in income",
                           "collapsible": false,
                           "hideLabel": true,
-                          "key": "parentIncomePanel",
+                          "key": "parentIncomeDecreaseReason",
                           "conditional": {
                             "show": true,
-                            "when": "parents.parentCurrentYearIncomeConfirmation",
-                            "eq": "true"
+                            "when": "parents.reasonSignificantDecreaseInParentIncome",
+                            "eq": "other"
                           },
                           "type": "panel",
                           "label": "Panel",
@@ -6234,305 +6230,210 @@
                           "tableView": false,
                           "components": [
                             {
-                              "label": "Current year income blurb",
-                              "tag": "p",
-                              "attrs": [
-                                {
-                                  "value": "",
-                                  "attr": ""
-                                }
-                              ],
-                              "content": "Add your parent/step-parent/sponsor/legal guardian's actual gross income from the beginning of {{data.currentTaxYear}} up to the date their gross income changed, along with the estimated gross income for the remainder of the year, to calculate their total estimated gross income for the current year.",
-                              "refreshOnChange": false,
-                              "key": "parentIncomePanelContent",
-                              "type": "htmlelement",
-                              "input": false,
-                              "hideLabel": true,
-                              "tableView": false
-                            },
-                            {
-                              "label": "My  parent/step-parent/sponsor/legal guardian's current year gross income is:",
-                              "prefix": "$",
+                              "label": "Please explain your  parent/step-parent/sponsor/legal guardian's situation:",
                               "applyMaskOn": "change",
-                              "mask": false,
-                              "tableView": false,
-                              "delimiter": true,
-                              "requireDecimal": false,
-                              "inputFormat": "plain",
-                              "truncateMultipleSpaces": false,
-                              "validate": {
-                                "required": true,
-                                "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                              },
-                              "validateWhenHidden": false,
-                              "key": "currentYearParentIncome",
-                              "type": "number",
-                              "decimalLimit": 0,
-                              "input": true
-                            },
-                            {
-                              "label": "Select the reason for your parent/step-parent/sponsor/legal guardian's significant decrease in gross income:",
-                              "optionsLabelPosition": "right",
-                              "inline": false,
+                              "autoExpand": false,
                               "tableView": true,
-                              "values": [
-                                {
-                                  "value": "medicalIllnessOrInjury",
-                                  "label": "Medical illness or injury",
-                                  "shortcut": ""
-                                },
-                                {
-                                  "value": "familyEmergencyEGDeathOrInjury",
-                                  "label": "Family emergency (e.g., death or injury)",
-                                  "shortcut": ""
-                                },
-                                {
-                                  "value": "naturalDisaster",
-                                  "label": "Natural disaster",
-                                  "shortcut": ""
-                                },
-                                {
-                                  "value": "layoffStrikeLockoutOrOtherReductionInEarningsBeyondTheFamilysControl",
-                                  "label": "Layoff, strike, lockout or other reduction in earnings beyond the family’s control",
-                                  "shortcut": ""
-                                },
-                                {
-                                  "value": "other",
-                                  "label": "Other",
-                                  "shortcut": ""
-                                }
-                              ],
+                              "inputFormat": "plain",
                               "validate": {
                                 "required": true
                               },
                               "validateWhenHidden": false,
-                              "key": "reasonSignificantDecreaseInParentIncome",
-                              "type": "radio",
+                              "key": "otherExceptionalParentCircumstance",
+                              "type": "textarea",
                               "input": true,
-                              "lockKey": true
-                            },
-                            {
-                              "title": "Other reason for significant decrease in income",
-                              "collapsible": false,
-                              "hideLabel": true,
-                              "key": "parentIncomeDecreaseReason",
-                              "conditional": {
-                                "show": true,
-                                "when": "parents.reasonSignificantDecreaseInParentIncome",
-                                "eq": "other"
-                              },
-                              "type": "panel",
-                              "label": "Panel",
-                              "input": false,
-                              "tableView": false,
-                              "components": [
-                                {
-                                  "label": "Please explain your  parent/step-parent/sponsor/legal guardian's situation:",
-                                  "applyMaskOn": "change",
-                                  "autoExpand": false,
-                                  "tableView": true,
-                                  "inputFormat": "plain",
-                                  "validate": {
-                                    "required": true
-                                  },
-                                  "validateWhenHidden": false,
-                                  "key": "otherExceptionalParentCircumstance",
-                                  "type": "textarea",
-                                  "input": true,
-                                  "lockKey": true
-                                }
-                              ]
-                            },
-                            {
-                              "label": "Upload file",
-                              "tag": "h3",
-                              "className": "category-header-medium primary-color",
-                              "attrs": [
-                                {
-                                  "value": "",
-                                  "attr": ""
-                                }
-                              ],
-                              "content": "Upload supporting documents for  parent/step-parent/sponsor/legal guardian's {{data.currentTaxYear}} estimated gross income.",
-                              "refreshOnChange": false,
-                              "key": "parentIncomePanelUploadFile",
-                              "type": "htmlelement",
-                              "input": false,
-                              "hideLabel": true,
-                              "tableView": false
-                            },
-                            {
-                              "label": "Supporting Documentation Parent Content",
-                              "tag": "p",
-                              "attrs": [
-                                {
-                                  "value": "",
-                                  "attr": ""
-                                }
-                              ],
-                              "content": "Please provide supporting documentation for your request to use current year estimated gross income for your parent/step-parent/sponsor/legal guardian.",
-                              "refreshOnChange": false,
-                              "key": "parentIncomePanelProvideDocumentation",
-                              "type": "htmlelement",
-                              "input": false,
-                              "hideLabel": true,
-                              "tableView": false
-                            },
-                            {
-                              "label": "HTML",
-                              "tag": "p",
-                              "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                              "attrs": [
-                                {
-                                  "value": "",
-                                  "attr": ""
-                                }
-                              ],
-                              "content": "<span class=\"font-bold ml-2\"> Request for Exception</span>\n <br> \n<span>Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.<span>",
-                              "refreshOnChange": false,
-                              "customClass": "banner-warning",
-                              "key": "parentIncomePanelHTMLComponent",
-                              "type": "htmlelement",
-                              "input": false,
-                              "hideLabel": true,
-                              "tableView": false
-                            },
-                            {
-                              "label": "Required Documents Parent Content",
-                              "attrs": [
-                                {
-                                  "value": "",
-                                  "attr": ""
-                                }
-                              ],
-                              "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Appeal Criteria (see above) and a detailed breakdown of how you calculated total estimated gross income (if applicable).</li></ul>",
-                              "refreshOnChange": false,
-                              "customClass": "align-bullets",
-                              "key": "parentIncomePanelRequiredDocuments",
-                              "type": "htmlelement",
-                              "input": false,
-                              "hideLabel": true,
-                              "tableView": false
-                            },
-                            {
-                              "label": "Relevant Documents Parent Income",
-                              "attrs": [
-                                {
-                                  "value": "",
-                                  "attr": ""
-                                }
-                              ],
-                              "content": "<h4 class=\"category-header-medium-small\">AND</h4>\n<ul>\n<li>All relevant supporting documentation of the circumstance(s) (medical records, letter from physician, record of employment, layoff or strike, etc.).</li>\n<li>(If the year matching your application number is still in progress): All relevant supporting documentation of estimated total gross income for the current year, including all year-to-date gross income (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li></ul>\n<h4 class=\"category-header-medium-small\">OR</h4>\n<ul>\n<li>(If the year matching your application number is complete): CRA Income Tax Return and gross income information for the year matching the student financial assistance application number.</li>\n</ul>",
-                              "refreshOnChange": false,
-                              "customClass": "align-bullets",
-                              "key": "parentIncomeContentRelevantDocuments",
-                              "type": "htmlelement",
-                              "input": false,
-                              "hideLabel": true,
-                              "tableView": false
-                            },
-                            {
-                              "label": "Upload supporting documents",
-                              "tableView": true,
-                              "storage": "url",
-                              "webcam": false,
-                              "capture": false,
-                              "fileTypes": [
-                                {
-                                  "label": "",
-                                  "value": ""
-                                }
-                              ],
-                              "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                              "fileMaxSize": "15MB",
-                              "multiple": true,
-                              "validate": {
-                                "required": true,
-                                "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
-                                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
-                              },
-                              "validateWhenHidden": false,
-                              "key": "decreaseInParentIncomeSupportingDocuments",
-                              "type": "file",
-                              "url": "student/files",
-                              "input": true,
-                              "lockKey": true
-                            },
-                            {
-                              "label": "Columns",
-                              "columns": [
-                                {
-                                  "components": [
-                                    {
-                                      "label": "File Type",
-                                      "tag": "span",
-                                      "attrs": [
-                                        {
-                                          "value": "",
-                                          "attr": ""
-                                        }
-                                      ],
-                                      "content": "We accept <strong class=\"font-bold\">JPG, PNG, DOC, DOCX, PDF, TXT</strong>",
-                                      "refreshOnChange": false,
-                                      "key": "parentIncomePanelPanelColumnsFileType",
-                                      "type": "htmlelement",
-                                      "input": false,
-                                      "hideLabel": true,
-                                      "tableView": false
-                                    }
-                                  ],
-                                  "width": 6,
-                                  "offset": 0,
-                                  "push": 0,
-                                  "pull": 0,
-                                  "size": "md",
-                                  "currentWidth": 6
-                                },
-                                {
-                                  "components": [
-                                    {
-                                      "key": "parentIncomePanelPanelColumnsFileLimit",
-                                      "label": "File Limit",
-                                      "input": false,
-                                      "tag": "span",
-                                      "attrs": [
-                                        {
-                                          "value": "",
-                                          "attr": ""
-                                        }
-                                      ],
-                                      "className": "pull-right",
-                                      "content": "15MB file limit each",
-                                      "type": "htmlelement",
-                                      "hideLabel": true,
-                                      "tableView": false
-                                    }
-                                  ],
-                                  "width": 6,
-                                  "offset": 0,
-                                  "push": 0,
-                                  "pull": 0,
-                                  "size": "md",
-                                  "currentWidth": 6
-                                }
-                              ],
-                              "key": "parentIncomePanelColumns",
-                              "type": "columns",
-                              "input": false,
-                              "tableView": false,
-                              "hideLabel": true
-                            },
-                            {
-                              "label": "Application Exception - Current Year Parent Income",
-                              "calculateValue": "value = \"studentApplicationException\";",
-                              "calculateServer": true,
-                              "key": "currentYearParentIncomeApplicationException",
-                              "type": "hidden",
-                              "input": true,
-                              "tableView": false,
                               "lockKey": true
                             }
                           ]
+                        },
+                        {
+                          "label": "Upload file",
+                          "tag": "h3",
+                          "className": "category-header-medium primary-color",
+                          "attrs": [
+                            {
+                              "value": "",
+                              "attr": ""
+                            }
+                          ],
+                          "content": "Upload supporting documents for  parent/step-parent/sponsor/legal guardian's {{data.currentTaxYear}} estimated gross income.",
+                          "refreshOnChange": false,
+                          "key": "parentIncomePanelUploadFile",
+                          "type": "htmlelement",
+                          "input": false,
+                          "hideLabel": true,
+                          "tableView": false
+                        },
+                        {
+                          "label": "Supporting Documentation Parent Content",
+                          "tag": "p",
+                          "attrs": [
+                            {
+                              "value": "",
+                              "attr": ""
+                            }
+                          ],
+                          "content": "Please provide supporting documentation for your request to use current year estimated gross income for your parent/step-parent/sponsor/legal guardian.",
+                          "refreshOnChange": false,
+                          "key": "parentIncomePanelProvideDocumentation",
+                          "type": "htmlelement",
+                          "input": false,
+                          "hideLabel": true,
+                          "tableView": false
+                        },
+                        {
+                          "label": "HTML",
+                          "tag": "p",
+                          "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                          "attrs": [
+                            {
+                              "value": "",
+                              "attr": ""
+                            }
+                          ],
+                          "content": "<span class=\"font-bold ml-2\"> Request for Exception</span>\n <br> \n<span>Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.<span>",
+                          "refreshOnChange": false,
+                          "customClass": "banner-warning",
+                          "key": "parentIncomePanelHTMLComponent",
+                          "type": "htmlelement",
+                          "input": false,
+                          "hideLabel": true,
+                          "tableView": false
+                        },
+                        {
+                          "label": "Required Documents Parent Content",
+                          "attrs": [
+                            {
+                              "value": "",
+                              "attr": ""
+                            }
+                          ],
+                          "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Appeal Criteria (see above) and a detailed breakdown of how you calculated total estimated gross income (if applicable).</li></ul>",
+                          "refreshOnChange": false,
+                          "customClass": "align-bullets",
+                          "key": "parentIncomePanelRequiredDocuments",
+                          "type": "htmlelement",
+                          "input": false,
+                          "hideLabel": true,
+                          "tableView": false
+                        },
+                        {
+                          "label": "Relevant Documents Parent Income",
+                          "attrs": [
+                            {
+                              "value": "",
+                              "attr": ""
+                            }
+                          ],
+                          "content": "<h4 class=\"category-header-medium-small\">AND</h4>\n<ul>\n<li>All relevant supporting documentation of the circumstance(s) (medical records, letter from physician, record of employment, layoff or strike, etc.).</li>\n<li>(If the year matching your application number is still in progress): All relevant supporting documentation of estimated total gross income for the current year, including all year-to-date gross income (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li></ul>\n<h4 class=\"category-header-medium-small\">OR</h4>\n<ul>\n<li>(If the year matching your application number is complete): CRA Income Tax Return and gross income information for the year matching the student financial assistance application number.</li>\n</ul>",
+                          "refreshOnChange": false,
+                          "customClass": "align-bullets",
+                          "key": "parentIncomeContentRelevantDocuments",
+                          "type": "htmlelement",
+                          "input": false,
+                          "hideLabel": true,
+                          "tableView": false
+                        },
+                        {
+                          "label": "Upload supporting documents",
+                          "tableView": true,
+                          "storage": "url",
+                          "webcam": false,
+                          "capture": false,
+                          "fileTypes": [
+                            {
+                              "label": "",
+                              "value": ""
+                            }
+                          ],
+                          "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+                          "fileMaxSize": "15MB",
+                          "multiple": true,
+                          "validate": {
+                            "required": true,
+                            "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
+                          },
+                          "validateWhenHidden": false,
+                          "key": "decreaseInParentIncomeSupportingDocuments",
+                          "type": "file",
+                          "url": "student/files",
+                          "input": true,
+                          "lockKey": true
+                        },
+                        {
+                          "label": "Columns",
+                          "columns": [
+                            {
+                              "components": [
+                                {
+                                  "label": "File Type",
+                                  "tag": "span",
+                                  "attrs": [
+                                    {
+                                      "value": "",
+                                      "attr": ""
+                                    }
+                                  ],
+                                  "content": "We accept <strong class=\"font-bold\">JPG, PNG, DOC, DOCX, PDF, TXT</strong>",
+                                  "refreshOnChange": false,
+                                  "key": "parentIncomePanelPanelColumnsFileType",
+                                  "type": "htmlelement",
+                                  "input": false,
+                                  "hideLabel": true,
+                                  "tableView": false
+                                }
+                              ],
+                              "width": 6,
+                              "offset": 0,
+                              "push": 0,
+                              "pull": 0,
+                              "size": "md",
+                              "currentWidth": 6
+                            },
+                            {
+                              "components": [
+                                {
+                                  "key": "parentIncomePanelPanelColumnsFileLimit",
+                                  "label": "File Limit",
+                                  "input": false,
+                                  "tag": "span",
+                                  "attrs": [
+                                    {
+                                      "value": "",
+                                      "attr": ""
+                                    }
+                                  ],
+                                  "className": "pull-right",
+                                  "content": "15MB file limit each",
+                                  "type": "htmlelement",
+                                  "hideLabel": true,
+                                  "tableView": false
+                                }
+                              ],
+                              "width": 6,
+                              "offset": 0,
+                              "push": 0,
+                              "pull": 0,
+                              "size": "md",
+                              "currentWidth": 6
+                            }
+                          ],
+                          "key": "parentIncomePanelColumns",
+                          "type": "columns",
+                          "input": false,
+                          "tableView": false,
+                          "hideLabel": true
+                        },
+                        {
+                          "label": "Application Exception - Current Year Parent Income",
+                          "calculateValue": "value = \"studentApplicationException\";",
+                          "calculateServer": true,
+                          "key": "currentYearParentIncomeApplicationException",
+                          "type": "hidden",
+                          "input": true,
+                          "tableView": false,
+                          "lockKey": true
                         }
                       ]
                     }
