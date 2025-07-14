@@ -387,8 +387,11 @@
           "label": ""
         },
         {
-          "clearOnHide": false,
+          "label": "Current Year Partner Income Exception",
           "key": "currentYearPartnerIncomeApplicationException",
+          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
+          "type": "well",
+          "clearOnHide": false,
           "input": false,
           "components": [
             {
@@ -411,15 +414,15 @@
             }
           ],
           "tableView": false,
-          "type": "well",
           "hideLabel": true,
-          "lockKey": true,
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "label": ""
+          "lockKey": true
         },
         {
-          "clearOnHide": false,
+          "label": "Current Year Parent Income",
           "key": "currentYearPartnerIncomeApplicationException1",
+          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
+          "type": "well",
+          "clearOnHide": false,
           "input": false,
           "components": [
             {
@@ -443,11 +446,8 @@
             }
           ],
           "tableView": false,
-          "type": "well",
           "hideLabel": true,
-          "lockKey": true,
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "label": ""
+          "lockKey": true
         },
         {
           "clearOnHide": false,
