@@ -6184,7 +6184,7 @@
                             "required": true
                           },
                           "validateWhenHidden": false,
-                          "key": "partnerAuthorized",
+                          "key": "parentAuthorized",
                           "conditional": {
                             "show": true,
                             "when": "parents.hasCurrentYearParentIncome",
@@ -6194,7 +6194,7 @@
                           "input": true
                         },
                         {
-                          "label": "Enter your  parent/step-parent/sponsor/legal guardian's reported total income from line 15000 of their {{data.calculatedTaxYear}} income tax return. If they did not file a {{data.calculatedTaxYear}} income tax return, enter their total income from all sources both inside and outside of Canada.",
+                          "label": "Enter your parent/step-parent/sponsor/legal guardian's reported total income from line 15000 of their {{data.calculatedTaxYear}} income tax return. If they did not file a {{data.calculatedTaxYear}} income tax return, enter their total income from all sources both inside and outside of Canada.",
                           "prefix": "$",
                           "applyMaskOn": "change",
                           "mask": false,
@@ -6211,7 +6211,7 @@
                           "key": "estimatedParentIncome",
                           "conditional": {
                             "show": true,
-                            "when": "hasCurrentYearPartnerIncome",
+                            "when": "parents.hasCurrentYearParentIncome",
                             "eq": "no"
                           },
                           "type": "number",
@@ -6242,9 +6242,9 @@
                                   "attr": ""
                                 }
                               ],
-                              "content": "Add your  parent/step-parent/sponsor/legal guardian's actual gross income from the beginning of {{data.currentTaxYear}} up to the date their gross income changed, along with the estimated gross income for the remainder of the year, to calculate their total estimated gross income for the current year.",
+                              "content": "Add your parent/step-parent/sponsor/legal guardian's actual gross income from the beginning of {{data.currentTaxYear}} up to the date their gross income changed, along with the estimated gross income for the remainder of the year, to calculate their total estimated gross income for the current year.",
                               "refreshOnChange": false,
-                              "key": "partnerIncomePanelPanelContent",
+                              "key": "parentIncomePanelContent",
                               "type": "htmlelement",
                               "input": false,
                               "hideLabel": true,
@@ -6336,7 +6336,7 @@
                                     "required": true
                                   },
                                   "validateWhenHidden": false,
-                                  "key": "otherExceptionalPartnerCircumstance",
+                                  "key": "otherExceptionalParentCircumstance",
                                   "type": "textarea",
                                   "input": true,
                                   "lockKey": true
@@ -6491,7 +6491,7 @@
                                 {
                                   "components": [
                                     {
-                                      "key": "partnerIncomePanelPanelColumnsFileLimit",
+                                      "key": "parentIncomePanelPanelColumnsFileLimit",
                                       "label": "File Limit",
                                       "input": false,
                                       "tag": "span",
