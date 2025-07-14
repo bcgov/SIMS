@@ -24,7 +24,6 @@ import { useFormatters, useApplication } from "@/composables";
 import {
   ApplicationSupportingUsersAPIOutDTO,
   ApplicationVersionAPIOutDTO,
-  ParentDetails,
 } from "@/services/http/dto";
 import useEmitterEvents from "@/composables/useEmitterEvents";
 
@@ -53,20 +52,12 @@ export default defineComponent({
 
     // Function to load application data and update menu items.
     const loadApplicationData = async () => {
-      const [overallDetails, inProgressDetails] = await Promise.all([
-        ApplicationService.shared.getApplicationOverallDetails(
+      const overallDetails =
+        await ApplicationService.shared.getApplicationOverallDetails(
           props.applicationId,
-        ),
-        ApplicationService.shared.getInProgressApplicationDetails(
-          props.applicationId,
-        ).catch(() => ({ parentsInfo: [] })), // Fallback if not available
-      ]);
-      
+        );
       menuItems.value = [
-        ...createCurrentApplicationMenuItems(
-          overallDetails.currentApplication,
-          inProgressDetails.parentsInfo || [],
-        ),
+        ...createCurrentApplicationMenuItems(overallDetails.currentApplication),
         ...createChangeRequestMenuItems(overallDetails.inProgressChangeRequest),
         ...createVersionsMenuItems(overallDetails.previousVersions),
       ];
@@ -103,32 +94,19 @@ export default defineComponent({
     /**
      * Get display name for supporting user with truncation.
      * @param supportingUser supporting user information.
-     * @param parentsInfo parent details with full names.
      * @param index index for fallback naming.
-     * @param useFullNames whether to use full names (for active) or Parent 1/2 (for history).
      */
     const getSupportingUserDisplayName = (
       supportingUser: ApplicationSupportingUsersAPIOutDTO,
-      parentsInfo: ParentDetails[],
       index: number,
-      useFullNames = true,
     ): string => {
       if (supportingUser.supportingUserType === SupportingUserType.Partner) {
         return "Partner";
       }
 
-      // For history, always use Parent 1/Parent 2
-      if (!useFullNames) {
-        return `Parent ${index + 1}`;
-      }
-
-      // For active section, try to find the parent details
-      const parentDetail = parentsInfo.find(
-        (parent) => parent.supportingUserId === supportingUser.supportingUserId,
-      );
-
-      if (parentDetail?.parentFullName) {
-        const fullName = parentDetail.parentFullName.trim();
+      // For parents, use full name if available, otherwise default to Parent 1/Parent 2
+      if (supportingUser.supportingUserFullName) {
+        const fullName = supportingUser.supportingUserFullName.trim();
         // Truncate if name is longer than 36 characters
         return fullName.length > 36
           ? `${fullName.substring(0, 33)}...`
@@ -142,23 +120,16 @@ export default defineComponent({
     /**
      * Get subtitle for supporting user based on who declared the information.
      * @param supportingUser supporting user information.
-     * @param parentsInfo parent details with declaration info.
      */
     const getSupportingUserSubtitle = (
       supportingUser: ApplicationSupportingUsersAPIOutDTO,
-      parentsInfo: ParentDetails[],
     ): string => {
       if (supportingUser.supportingUserType === SupportingUserType.Partner) {
         return "";
       }
 
-      // Find the parent details
-      const parentDetail = parentsInfo.find(
-        (parent) => parent.supportingUserId === supportingUser.supportingUserId,
-      );
-
       // For parents, determine if it was student declared or parent declared
-      if (parentDetail?.isAbleToReport === false) {
+      if (supportingUser.isAbleToReport === false) {
         return "Student Declared";
       } else {
         return "Parent Declared";
@@ -168,27 +139,14 @@ export default defineComponent({
     /**
      * Create one or more menu items for one to two parents or one partner.
      * @param supportingUsers supporting users information.
-     * @param parentsInfo parent details with full names.
-     * @param includeSubtitle whether to include declaration subtitles.
-     * @param useFullNames whether to use full names (active) or Parent 1/2 (history).
      */
     const createSupportingUsersMenu = (
       supportingUsers: ApplicationSupportingUsersAPIOutDTO[],
-      parentsInfo: ParentDetails[] = [],
-      includeSubtitle = false,
-      useFullNames = true,
     ): MenuItemModel[] => {
       return (
         supportingUsers.map((supportingUser, index) => {
-          const title = getSupportingUserDisplayName(
-            supportingUser,
-            parentsInfo,
-            index,
-            useFullNames,
-          );
-          const subtitle = includeSubtitle
-            ? getSupportingUserSubtitle(supportingUser, parentsInfo)
-            : undefined;
+          const title = getSupportingUserDisplayName(supportingUser, index);
+          const subtitle = getSupportingUserSubtitle(supportingUser);
           return {
             title,
             props: {
@@ -238,17 +196,12 @@ export default defineComponent({
     /**
      * Create the menu for the current application (Active).
      * @param currentVersion application version information.
-     * @param parentsInfo parent details with full names.
      */
     const createCurrentApplicationMenuItems = (
       currentVersion: ApplicationVersionAPIOutDTO,
-      parentsInfo: ParentDetails[],
     ): MenuItemModel[] => {
       const supportingUsers = createSupportingUsersMenu(
         currentVersion.supportingUsers,
-        parentsInfo,
-        true, // Include subtitles for active section
-        true, // Use full names for active section
       );
       return [
         {
@@ -338,9 +291,6 @@ export default defineComponent({
       );
       const supportingUsersMenuItems = createSupportingUsersMenu(
         inProgressChangeRequest?.supportingUsers,
-        [], // No parent details available for change requests
-        false, // No subtitles for change requests
-        false, // Use Parent 1/2 for change requests
       );
       const menuItems = [
         DIVIDER_MENU_ITEM,
@@ -382,9 +332,6 @@ export default defineComponent({
       versions.forEach((version) => {
         const versionSupportingUsersMenuItems = createSupportingUsersMenu(
           version.supportingUsers,
-          [], // No parent details available for history
-          false, // No subtitles for application history
-          false, // Use Parent 1/2 for history
         );
         menuItems.push({
           title: `${getISODateHourMinuteString(version.submittedDate)}`,

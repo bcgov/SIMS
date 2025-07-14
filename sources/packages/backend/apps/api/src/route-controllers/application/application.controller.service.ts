@@ -892,6 +892,8 @@ export class ApplicationControllerService {
       supportingUsers: application.supportingUsers.map((user) => ({
         supportingUserId: user.id,
         supportingUserType: user.supportingUserType,
+        supportingUserFullName: user.fullName,
+        isAbleToReport: user.isAbleToReport,
       })),
     };
   }
