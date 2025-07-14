@@ -5554,34 +5554,6 @@
               "input": true
             },
             {
-              "label": "Will your partner be living with you during your study period?",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "key": "livingWithPartner",
-              "attributes": {
-                "data-cy": "livingWithPartner"
-              },
-              "type": "radio",
-              "input": true
-            },
-            {
               "label": "Will your partner be a full-time post-secondary student for some or all of your study period?",
               "optionsLabelPosition": "right",
               "inline": false,
@@ -7542,11 +7514,6 @@
           "collapsible": false,
           "hideLabel": true,
           "key": "livingSituationPanel",
-          "conditional": {
-            "show": false,
-            "when": "relationshipStatus",
-            "eq": "married"
-          },
           "type": "panel",
           "label": "Panel",
           "input": false,
@@ -7568,6 +7535,37 @@
               "type": "htmlelement",
               "input": false,
               "tableView": false
+            },
+            {
+              "label": "Will your partner be living with you during your study period?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "validateWhenHidden": false,
+              "key": "livingWithPartner",
+              "conditional": {
+                "show": true,
+                "when": "relationshipStatus",
+                "eq": "married"
+              },
+              "type": "radio",
+              "input": true
             },
             {
               "label": "Will you be living in a home paid for by your parent(s)/step-parent/sponsor/legal guardian during your study period?",
@@ -7593,6 +7591,11 @@
               "validateWhenHidden": false,
               "errorLabel": "Living with your parent/guardian",
               "key": "livingAtHome",
+              "conditional": {
+                "show": false,
+                "when": "relationshipStatus",
+                "eq": "married"
+              },
               "type": "radio",
               "input": true,
               "lockKey": true
