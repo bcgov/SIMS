@@ -111,6 +111,7 @@
           <zeebe:header key="studentDataStudentParentsEiLine31200" value="$.data.studentParentsEiLine31200" />
           <zeebe:header key="studentDataPartnerTotalIncomeAssistance" value="$.data.partnertotalincomeAssistance" />
           <zeebe:header key="studentDataPartnerTotalStudentLoan" value="$.data.partnerStudentLoanCosts" />
+          <zeebe:header key="studentDataPartnerChildSupportCosts" value="$.data.partnerchildsupportCosts" />
           <zeebe:header key="studentDataPartTimeAwardTypesToBeConsidered" value="$.data.partTimeAwardTypesToBeConsidered" />
           <zeebe:header key="studentDataAdditionalTransportRequested" value="$.data.additionalTransportRequested" />
           <zeebe:header key="studentDataAdditionalTransportListedDriver" value="$.data.additionalTransportListedDriver" />
