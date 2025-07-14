@@ -1,8 +1,4 @@
 import {
-  createFakeStudentDependentEligible,
-  DependentEligibility,
-} from "workflow/test/test-utils/factories";
-import {
   CredentialType,
   InstitutionTypes,
   ProgramLengthOptions,
@@ -12,6 +8,10 @@ import {
   createFakeConsolidatedFulltimeData,
   executeFullTimeAssessmentForProgramYear,
 } from "../../../test-utils";
+import {
+  DependentEligibility,
+  createFakeStudentDependentEligible,
+} from "../../../test-utils/factories";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
 /**
