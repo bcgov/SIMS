@@ -419,6 +419,38 @@
         },
         {
           "clearOnHide": false,
+          "key": "currentYearPartnerIncomeApplicationException1",
+          "input": false,
+          "components": [
+            {
+              "label": "Current Year Parent Income",
+              "tag": "strong",
+              "className": "font-bold",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "content": "Parent current year income",
+              "refreshOnChange": false,
+              "key": "currentYearParentIncomeApplicationException",
+              "type": "htmlelement",
+              "input": false,
+              "hideLabel": true,
+              "isNew": false,
+              "tableView": false
+            }
+          ],
+          "tableView": false,
+          "type": "well",
+          "hideLabel": true,
+          "lockKey": true,
+          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
+          "label": ""
+        },
+        {
+          "clearOnHide": false,
           "key": "marriedCommonLawDomesticViolenceApplicationException",
           "input": false,
           "components": [
