@@ -7558,7 +7558,7 @@
                 "onlyAvailableItems": true
               },
               "validateWhenHidden": false,
-              "key": "livingWithPartner1",
+              "key": "livingWithPartner",
               "conditional": {
                 "show": true,
                 "when": "relationshipStatus",
