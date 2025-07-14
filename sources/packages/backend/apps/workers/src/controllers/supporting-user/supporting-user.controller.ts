@@ -198,6 +198,7 @@ export class SupportingUserController {
                     ? "parent"
                     : "partner",
                 parentFullName: fullName,
+                applicationNumber: application.applicationNumber,
               },
               entityManager,
             );
@@ -213,6 +214,7 @@ export class SupportingUserController {
                     ? "parent"
                     : "partner",
                 parentFullName: fullName,
+                applicationNumber: application.applicationNumber,
               },
               entityManager,
             );

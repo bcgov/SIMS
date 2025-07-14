@@ -193,6 +193,7 @@ export interface ParentDeclarationRequiredParentCanReportNotification {
   lastName: string;
   toAddress: string;
   parentFullName: string;
+  applicationNumber: string;
   userId: number;
   supportingUserType: NotificationSupportingUserType;
 }
@@ -202,6 +203,7 @@ export interface ParentDeclarationRequiredParentCannotReportNotification {
   lastName: string;
   toAddress: string;
   parentFullName: string;
+  applicationNumber: string;
   userId: number;
   supportingUserType: NotificationSupportingUserType;
 }
