@@ -195,6 +195,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
       expect(
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
       ).toBe(3000);
+      //If the partner is studying for more than 12 weeks, the total alimony and child support costs are reduced by half.
       expect(
         calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
       ).toBe(1500);
@@ -208,8 +209,8 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 2500;
-      assessmentConsolidatedData.studentDataPartnerChildSupportCosts = 2500;
+      assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 3000;
+      assessmentConsolidatedData.studentDataPartnerChildSupportCosts = 2000;
       assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
       assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
         YesNoOptions.No;

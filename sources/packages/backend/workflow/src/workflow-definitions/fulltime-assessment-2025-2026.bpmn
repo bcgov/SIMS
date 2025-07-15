@@ -572,7 +572,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_0y4e5jh" name="Total Alimony / Child Support">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=min(dmnFullTimeProgramYearMaximums.limitWeeklyAlimonyChildSupport * offeringWeeks,&#10;  sum([studentDataChildSupportAndOrSpousalSupport,&#10;       calculatedDataPartnerAlimonySupport][item != null]))" target="calculatedDataChildSpousalSupport" />
+          <zeebe:output source="=min(dmnFullTimeProgramYearMaximums.limitWeeklyAlimonyChildSupport * offeringWeeks,&#10;  sum([studentDataChildSupportAndOrSpousalSupport,&#10;       calculatedDataPartnerAlimonySupport,0][item != null]))" target="calculatedDataChildSpousalSupport" />
           <zeebe:output source="=if &#10;  studentDataRelationshipStatus = &#34;married&#34;&#10;  and&#10;  calculatedDataPartnerStudyWeeks &#62;=12&#10;then&#10;  calculatedDataChildSpousalSupport / 2&#10;else&#10;  calculatedDataChildSpousalSupport" target="calculatedDataTotalChildSpousalSupport" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
