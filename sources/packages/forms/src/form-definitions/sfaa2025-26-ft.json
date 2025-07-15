@@ -5353,34 +5353,6 @@
               ]
             },
             {
-              "label": "Will your partner be employed full-time or part-time during your study period",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "key": "partnerEmployed",
-              "attributes": {
-                "data-cy": "partnerEmployed"
-              },
-              "type": "radio",
-              "input": true
-            },
-            {
               "input": true,
               "tableView": false,
               "label": "Will your partner receive Employment Insurance (EI) benefits during your study period?",
@@ -5546,10 +5518,8 @@
                 "required": true,
                 "onlyAvailableItems": true
               },
-              "key": "partnercaringforeligibleDependent",
-              "attributes": {
-                "data-cy": "partnercaringforeligibleDependent"
-              },
+              "validateWhenHidden": false,
+              "key": "partnerCaringForDependant",
               "type": "radio",
               "input": true
             },
@@ -5782,32 +5752,6 @@
                 }
               ],
               "allowPrevious": false
-            },
-            {
-              "label": "During your study period, will your partner be taking care of eligible dependants?",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "key": "isPartnerTakingCareOfEligibleDependents",
-              "type": "radio",
-              "input": true,
-              "lockKey": true
             }
           ]
         }

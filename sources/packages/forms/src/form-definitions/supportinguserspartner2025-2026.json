@@ -510,36 +510,6 @@
                   "inputType": "number"
                 },
                 {
-                  "label": "Will you be employed full-time or part-time during your Partner's study period",
-                  "optionsLabelPosition": "right",
-                  "inline": false,
-                  "tableView": false,
-                  "values": [
-                    {
-                      "label": "Yes",
-                      "value": "yes",
-                      "shortcut": ""
-                    },
-                    {
-                      "label": "No",
-                      "value": "no",
-                      "shortcut": ""
-                    }
-                  ],
-                  "validate": {
-                    "required": true,
-                    "onlyAvailableItems": true
-                  },
-                  "key": "partnerEmployed",
-                  "type": "radio",
-                  "input": true,
-                  "conditional": {
-                    "show": "true",
-                    "when": "offeringIntensity",
-                    "eq": "Full Time"
-                  }
-                },
-                {
                   "input": true,
                   "tableView": false,
                   "label": "During the applicant's study period, will you receive Employment Insurance (EI)?",
@@ -946,37 +916,6 @@
                       "inputType": "number"
                     }
                   ]
-                },
-                {
-                  "label": "Will you be taking care of eligible dependants during your Partner's Study Period?",
-                  "optionsLabelPosition": "right",
-                  "inline": false,
-                  "tableView": false,
-                  "values": [
-                    {
-                      "label": "Yes",
-                      "value": "yes",
-                      "shortcut": ""
-                    },
-                    {
-                      "label": "No",
-                      "value": "no",
-                      "shortcut": ""
-                    }
-                  ],
-                  "validate": {
-                    "required": true,
-                    "onlyAvailableItems": true
-                  },
-                  "key": "isPartnerTakingCareOfEligibleDependents",
-                  "type": "radio",
-                  "input": true,
-                  "conditional": {
-                    "show": "true",
-                    "when": "offeringIntensity",
-                    "eq": "Full Time"
-                  },
-                  "lockKey": true
                 },
                 {
                   "label": "HTML",
