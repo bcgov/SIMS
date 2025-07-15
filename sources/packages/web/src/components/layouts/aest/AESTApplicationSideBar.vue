@@ -103,14 +103,7 @@ export default defineComponent({
       if (supportingUser.supportingUserType === SupportingUserType.Partner) {
         return "Partner";
       }
-
-      // For parents, use full name if available, otherwise default to Parent 1/Parent 2.
-      if (supportingUser.supportingUserFullName) {
-        return supportingUser.supportingUserFullName.trim();
-      }
-
-      // Fallback to Parent 1/Parent 2 when no name is available.
-      return `Parent ${index + 1}`;
+      return supportingUser.supportingUserFullName ?? `Parent ${index + 1}`;
     };
 
     /**
@@ -146,7 +139,7 @@ export default defineComponent({
             props: {
               prependIcon: "mdi-account-outline",
               slim: true,
-              subtitle: subtitle || undefined,
+              subtitle,
               to: {
                 name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
                 params: {
