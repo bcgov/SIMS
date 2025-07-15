@@ -6058,7 +6058,8 @@
                             }
                           ],
                           "validate": {
-                            "required": true
+                            "required": true,
+                            "onlyAvailableItems": true
                           },
                           "validateWhenHidden": false,
                           "key": "hasCurrentYearParentIncome",
@@ -6206,7 +6207,8 @@
                             }
                           ],
                           "validate": {
-                            "required": true
+                            "required": true,
+                            "onlyAvailableItems": true
                           },
                           "validateWhenHidden": false,
                           "key": "reasonSignificantDecreaseInParentIncome",
