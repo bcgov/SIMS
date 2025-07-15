@@ -272,6 +272,7 @@ export interface AssessmentModel {
 }
 
 export interface CalculatedAssessmentModel {
+  [x: string]: any;
   calculatedDataRemainingScholarshipsBursariesLimit: number;
   calculatedDataRelationshipStatus: RelationshipStatusType;
   calculatedDataPartner1TotalIncome: number;
@@ -287,6 +288,8 @@ export interface CalculatedAssessmentModel {
   calculatedDataDaycareCosts12YearsOrOver: number;
   calculatedDataChildCareCost: number;
   calculatedDataTotalChildCareCost: number;
+  calculatedDataChildSpousalSupport: number;
+  calculatedDataTotalChildSpousalSupport: number;
   calculatedDataTotalMSOLAllowance: number;
   calculatedDataTotalCosts: number;
   calculatedDataTotalFamilyIncome: number;
@@ -298,7 +301,6 @@ export interface CalculatedAssessmentModel {
   calculatedDataProgramRelatedCosts: number;
   calculatedDataTotalBookCost: number;
   awardNetProvincialTotalAward: number;
-  calculatedDataTotalChildSpousalSupport: number;
   calculatedDataFederalAssessedNeed: number;
   offeringExceptionalExpenses: number;
   calculatedDataProvincialAssessedNeed: number;
