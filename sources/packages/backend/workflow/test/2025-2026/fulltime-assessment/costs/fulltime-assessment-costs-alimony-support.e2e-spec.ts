@@ -1,3 +1,4 @@
+import { YesNoOptions } from "@sims/test-utils";
 import {
   ZeebeMockedClient,
   createFakeConsolidatedFulltimeData,
@@ -98,9 +99,16 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 3500;
-      assessmentConsolidatedData.partner1ChildSpousalSupportCost = null;
       assessmentConsolidatedData.studentDataPartnerChildSupportCosts = null;
+      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+      assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(
@@ -127,8 +135,16 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 2000;
-      assessmentConsolidatedData.partner1ChildSpousalSupportCost = 1000;
+      assessmentConsolidatedData.studentDataPartnerChildSupportCosts = 1000;
+      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+      assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(
@@ -156,9 +172,17 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 2000;
-      assessmentConsolidatedData.partner1ChildSpousalSupportCost = 1000;
-      assessmentConsolidatedData.partner1StudyPeriodWeeks = 13; // Partner is studying for 16 weeks.
+      assessmentConsolidatedData.studentDataPartnerStudyWeeks = 13;
+      assessmentConsolidatedData.studentDataPartnerChildSupportCosts = 1000;
+      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+      assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(
@@ -184,9 +208,16 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
       assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 2500;
-      assessmentConsolidatedData.partner1ChildSpousalSupportCost = 2500;
+      assessmentConsolidatedData.studentDataPartnerChildSupportCosts = 2500;
+      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
+      assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(
