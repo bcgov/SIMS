@@ -79,6 +79,17 @@
                 >
               </v-btn>
               <v-btn
+                v-if="canDisplaySubmitAppeal(item)"
+                :disabled="!hasSINValidStatus || item.isArchived"
+                color="primary"
+                @click="$emit('submitAppeal', item.id)"
+                append-icon="mdi-pencil-outline"
+                >Appeal
+                <v-tooltip activator="parent" location="start"
+                  >Click to submit an appeal to this application</v-tooltip
+                >
+              </v-btn>
+              <v-btn
                 v-if="canDisplayEditOrCancel(item)"
                 :disabled="!hasSINValidStatus || item.isArchived"
                 color="primary"
@@ -146,6 +157,7 @@ import {
   ITEMS_PER_PAGE,
   DataTableOptions,
   PaginationOptions,
+  OfferingIntensity,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
@@ -177,6 +189,7 @@ export default defineComponent({
       !!applicationId && !!callback,
     goToApplication: (applicationId: number) => !!applicationId,
     viewApplicationVersion: (applicationId: number) => !!applicationId,
+    submitAppeal: (applicationId: number) => !!applicationId,
   },
   setup(_, { emit }) {
     const loading = ref(false);
@@ -287,12 +300,26 @@ export default defineComponent({
       return application.status === ApplicationStatus.Completed;
     };
 
+    /**
+     * Only completed full-time applications can submit an appeal.
+     * @param application application.
+     */
+    const canDisplaySubmitAppeal = (
+      application: ApplicationSummaryAPIOutDTO,
+    ) => {
+      return (
+        application.status === ApplicationStatus.Completed &&
+        application.offeringIntensity === OfferingIntensity.fullTime
+      );
+    };
+
     return {
       dateOnlyLongString,
       getISODateHourMinuteString,
       emptyStringFiller,
       canDisplayEditOrCancel,
       canDisplayChangeRequest,
+      canDisplaySubmitAppeal,
       ApplicationStatus,
       applicationsAndCount,
       DEFAULT_PAGE_LIMIT,
