@@ -84,7 +84,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
       ).toBe(3536);
       expect(
-        calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+        calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
       ).toBe(3536);
     },
   );
@@ -99,6 +99,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 3500;
       assessmentConsolidatedData.partner1ChildSpousalSupportCost = null;
+      assessmentConsolidatedData.studentDataPartnerChildSupportCosts = null;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
       // Act
       const calculatedAssessment =
