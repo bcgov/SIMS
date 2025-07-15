@@ -72,15 +72,22 @@ export const dateDifference = (
 /**
  * Convert the date to (PST: UTC−08:00/PDT: UTC−07:00).
  * @param date date to be converted to PST.
- * @param local, if local is set to true,
+ * @param options date conversion options.
+ * - `local` if local is set to true,
  * then the offset will be directly append to the date without
  * converting to the timezone actual date,
  * if set to false, the date will be converted
  * to the actual timezone time with offset.
+ * `format` date format to be used for the output.
  * @returns date in  PST/PDT(PST: UTC−08:00, PDT: UTC−07:00).
  */
-export const getPSTPDTDate = (date: string | Date, local = false): string => {
-  return dayjs(new Date(date)).tz(PST_TIMEZONE, local).format();
+export const getPSTPDTDateFormatted = (
+  date: string | Date,
+  options?: { local?: boolean; format?: string },
+): string => {
+  const local = options?.local ?? false;
+  const format = options?.format ?? DATE_ONLY_ISO_FORMAT;
+  return dayjs(date).tz(PST_TIMEZONE, local).format(format);
 };
 
 /**

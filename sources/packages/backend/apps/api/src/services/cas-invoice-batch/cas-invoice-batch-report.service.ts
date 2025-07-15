@@ -100,7 +100,7 @@ export class CASInvoiceBatchReportService {
       SIN: student.sinValidation.sin,
       "Supplier Number": invoice.casSupplier.supplierNumber,
       "Document Number": schedule.documentNumber.toString(),
-      "GL Date": getPSTPDTDateTime(invoice.disbursementReceipt.createdAt),
+      "GL Date": invoice.dateSent ? getPSTPDTDateTime(invoice.dateSent) : "n/a",
     };
   }
 
@@ -121,6 +121,7 @@ export class CASInvoiceBatchReportService {
           id: true,
           invoiceNumber: true,
           invoiceStatus: true,
+          dateSent: true,
           casSupplier: { id: true, supplierNumber: true },
           casInvoiceDetails: {
             id: true,
