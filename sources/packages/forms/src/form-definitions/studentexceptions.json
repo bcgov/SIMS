@@ -418,8 +418,8 @@
           "lockKey": true
         },
         {
-          "label": "Current Year Parent Income",
-          "key": "currentYearPartnerIncomeApplicationException1",
+          "label": "Current Year Parent Income Exception",
+          "key": "currentYearParentIncomeApplicationException",
           "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
           "type": "well",
           "clearOnHide": false,

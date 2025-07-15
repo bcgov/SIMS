@@ -109,7 +109,6 @@
           <zeebe:header key="studentDataStudentParentsCppLine30800" value="$.data.studentParentsCppLine30800" />
           <zeebe:header key="studentDataStudentParentsCppLine31000" value="$.data.studentParentsCppLine31000" />
           <zeebe:header key="studentDataStudentParentsEiLine31200" value="$.data.studentParentsEiLine31200" />
-          <zeebe:header key="studentDataStudentCurrentYearParentIncome" value="$.data.parents.currentYearParentIncome" />
           <zeebe:header key="studentDataPartnerTotalIncomeAssistance" value="$.data.partnertotalincomeAssistance" />
           <zeebe:header key="studentDataPartnerTotalStudentLoan" value="$.data.partnerStudentLoanCosts" />
           <zeebe:header key="studentDataPartTimeAwardTypesToBeConsidered" value="$.data.partTimeAwardTypesToBeConsidered" />
@@ -134,7 +133,7 @@
           <zeebe:header key="partner1HasTotalIncomeAssistance" value="$.supportingUsers.Partner1.supportingData.hasTotalIncomeAssistance" />
           <zeebe:header key="partner1BCEAIncomeAssistanceAmount" value="$.supportingUsers.Partner1.supportingData.bceaIncomeAssistanceAmount" />
           <zeebe:header key="studentDataExceptionalExpenseAmount" value="$.data.exceptionalExpenseAmount" />
-          <zeebe:header key="studentDataParents" value="$.data.parents[*][&#39;parentIsAbleToReport&#39;]" />
+          <zeebe:header key="studentDataParents" value="$.data.parents[*][&#39;parentIsAbleToReport&#39;,&#39;currentYearParentIncome&#39;]" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>
