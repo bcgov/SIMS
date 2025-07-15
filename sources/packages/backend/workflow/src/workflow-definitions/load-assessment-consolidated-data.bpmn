@@ -128,12 +128,12 @@
           <zeebe:header key="studentDataPartnerHasFedralProvincialPDReceipt" value="$.data.partnerHasFedralProvincialPDReceipt" />
           <zeebe:header key="studentDataPartnerHasTotalIncomeAssistance" value="$.data.partnerHasTotalIncomeAssistance" />
           <zeebe:header key="studentDataPartnerBCEAIncomeAssistanceAmount" value="$.data.partnerBCEAIncomeAssistanceAmount" />
-          <zeebe:header key="studentDataPartnerCaringForDependent" value="$.data.partnerCaringForDependent" />
+          <zeebe:header key="studentDataPartnerCaringForDependant" value="$.data.partnerCaringForDependant" />
           <zeebe:header key="partner1HasEmploymentInsuranceBenefits" value="$.supportingUsers.Partner1.supportingData.hasEmploymentInsuranceBenefits" />
           <zeebe:header key="partner1HasFedralProvincialPDReceipt" value="$.supportingUsers.Partner1.supportingData.hasFedralProvincialPDReceipt" />
           <zeebe:header key="partner1HasTotalIncomeAssistance" value="$.supportingUsers.Partner1.supportingData.hasTotalIncomeAssistance" />
           <zeebe:header key="partner1BCEAIncomeAssistanceAmount" value="$.supportingUsers.Partner1.supportingData.bceaIncomeAssistanceAmount" />
-          <zeebe:header key="partner1PartnerCaringForDependent" value="$.supportingUsers.Partner1.supportingData.partnerCaringForDependent" />
+          <zeebe:header key="partner1PartnerCaringForDependant" value="$.supportingUsers.Partner1.supportingData.partnerCaringForDependant" />
           <zeebe:header key="studentDataExceptionalExpenseAmount" value="$.data.exceptionalExpenseAmount" />
           <zeebe:header key="studentDataParents" value="$.data.parents[*][&#39;parentIsAbleToReport&#39;,&#39;currentYearParentIncome&#39;]" />
         </zeebe:taskHeaders>

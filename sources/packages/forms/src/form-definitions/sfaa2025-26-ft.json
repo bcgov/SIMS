@@ -5519,7 +5519,7 @@
                 "onlyAvailableItems": true
               },
               "validateWhenHidden": false,
-              "key": "partnerCaringForDependent",
+              "key": "partnerCaringForDependant",
               "type": "radio",
               "input": true
             },
