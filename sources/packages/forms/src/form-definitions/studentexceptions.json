@@ -437,7 +437,7 @@
               ],
               "content": "Parent current year income",
               "refreshOnChange": false,
-              "key": "currentYearParentIncomeApplicationException",
+              "key": "currentYearParentIncomeApplicationExceptionLabel",
               "type": "htmlelement",
               "input": false,
               "hideLabel": true,
