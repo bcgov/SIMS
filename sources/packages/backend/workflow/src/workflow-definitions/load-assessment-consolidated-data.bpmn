@@ -133,7 +133,7 @@
           <zeebe:header key="partner1HasTotalIncomeAssistance" value="$.supportingUsers.Partner1.supportingData.hasTotalIncomeAssistance" />
           <zeebe:header key="partner1BCEAIncomeAssistanceAmount" value="$.supportingUsers.Partner1.supportingData.bceaIncomeAssistanceAmount" />
           <zeebe:header key="studentDataExceptionalExpenseAmount" value="$.data.exceptionalExpenseAmount" />
-          <zeebe:header key="studentDataParents" value="$.data.parents[*][&#39;parentIsAbleToReport&#39;]" />
+          <zeebe:header key="studentDataParents" value="$.data.parents[*][&#39;parentIsAbleToReport&#39;,&#39;currentYearParentIncome&#39;]" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>
