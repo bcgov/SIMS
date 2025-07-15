@@ -399,6 +399,7 @@ export class StudentControllerService {
       isChangeRequestAllowedForPY: allowApplicationChangeRequest(
         application.programYear,
       ),
+      offeringIntensity: application.offeringIntensity,
     };
   };
 
