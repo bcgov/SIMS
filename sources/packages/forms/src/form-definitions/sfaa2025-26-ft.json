@@ -5519,10 +5519,7 @@
                 "onlyAvailableItems": true
               },
               "validateWhenHidden": false,
-              "key": "partnerCaringForEligibleDependent",
-              "attributes": {
-                "data-cy": "partnercaringforeligibleDependent"
-              },
+              "key": "partnerCaringForDependent",
               "type": "radio",
               "input": true
             },
