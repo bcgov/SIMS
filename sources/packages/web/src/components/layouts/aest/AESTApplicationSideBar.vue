@@ -104,16 +104,12 @@ export default defineComponent({
         return "Partner";
       }
 
-      // For parents, use full name if available, otherwise default to Parent 1/Parent 2
+      // For parents, use full name if available, otherwise default to Parent 1/Parent 2.
       if (supportingUser.supportingUserFullName) {
-        const fullName = supportingUser.supportingUserFullName.trim();
-        // Truncate if name is longer than 36 characters
-        return fullName.length > 36
-          ? `${fullName.substring(0, 33)}...`
-          : fullName;
+        return supportingUser.supportingUserFullName.trim();
       }
 
-      // Fallback to Parent 1/Parent 2 when no name is available
+      // Fallback to Parent 1/Parent 2 when no name is available.
       return `Parent ${index + 1}`;
     };
 
@@ -128,12 +124,10 @@ export default defineComponent({
         return "";
       }
 
-      // For parents, determine if it was student declared or parent declared
-      if (supportingUser.isAbleToReport === false) {
-        return "Student Declared";
-      } else {
-        return "Parent Declared";
-      }
+      // For parents, determine if it was student declared or parent declared.
+      return supportingUser.isAbleToReport
+        ? "Parent declared"
+        : "Student declared";
     };
 
     /**
