@@ -28,7 +28,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
       ).toBe(0);
       expect(
-        calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+        calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
       ).toBe(0);
     },
   );
@@ -56,7 +56,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
       ).toBe(3500);
       expect(
-        calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+        calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
       ).toBe(3500);
     },
   );
@@ -99,6 +99,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 3500;
       assessmentConsolidatedData.partner1ChildSpousalSupportCost = null;
+      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(
@@ -112,7 +113,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
       ).toBe(3500);
       expect(
-        calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+        calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
       ).toBe(3500);
     },
   );
@@ -126,6 +127,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 2000;
       assessmentConsolidatedData.partner1ChildSpousalSupportCost = 1000;
+      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(
@@ -139,7 +141,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
       ).toBe(3000);
       expect(
-        calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+        calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
       ).toBe(3000);
     },
   );
@@ -169,7 +171,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
       ).toBe(3000);
       expect(
-        calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+        calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
       ).toBe(1500);
     },
   );
@@ -181,6 +183,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
       assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 2500;
       assessmentConsolidatedData.partner1ChildSpousalSupportCost = 2500;
       // Act
@@ -196,7 +199,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
       ).toBe(3536);
       expect(
-        calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+        calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
       ).toBe(3536);
     },
   );
