@@ -237,6 +237,8 @@ export interface ApplicationWarningsAPIOutDTO {
 export interface ApplicationSupportingUsersAPIOutDTO {
   supportingUserId: number;
   supportingUserType: SupportingUserType;
+  supportingUserFullName?: string;
+  isAbleToReport?: boolean;
 }
 
 /**

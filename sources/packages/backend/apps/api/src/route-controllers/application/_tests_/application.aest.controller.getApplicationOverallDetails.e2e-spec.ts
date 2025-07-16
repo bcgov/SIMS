@@ -194,6 +194,8 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
               {
                 supportingUserId: partner.id,
                 supportingUserType: partner.supportingUserType,
+                supportingUserFullName: partner.fullName,
+                isAbleToReport: partner.isAbleToReport,
               },
             ],
           },
@@ -328,10 +330,14 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
             {
               supportingUserId: parent1.id,
               supportingUserType: parent1.supportingUserType,
+              supportingUserFullName: parent1.fullName,
+              isAbleToReport: parent1.isAbleToReport,
             },
             {
               supportingUserId: parent2.id,
               supportingUserType: parent2.supportingUserType,
+              supportingUserFullName: parent2.fullName,
+              isAbleToReport: parent2.isAbleToReport,
             },
           ],
         },
@@ -345,6 +351,8 @@ describe("ApplicationAESTController(e2e)-getApplicationOverallDetails", () => {
               {
                 supportingUserId: partner.id,
                 supportingUserType: partner.supportingUserType,
+                supportingUserFullName: partner.fullName,
+                isAbleToReport: partner.isAbleToReport,
               },
             ],
           },

@@ -10,7 +10,7 @@
   </header-navigator>
   <full-page-container class="my-2">
     <formio
-      v-if="formName"
+      v-if="formName && formData.supportingData"
       :formName="formName"
       :data="formData"
       :readOnly="true"
