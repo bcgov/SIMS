@@ -1,13 +1,13 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class InsertParentDeclarationRequiredParentCanReportNotification1752517099854
+export class InsertParentDeclarationRequiredNotifications1752517099854
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Insert-parent-declaration-required-parent-can-report-message.sql",
+        "Insert-parent-declaration-required-message.sql",
         "NotificationMessages",
       ),
     );
@@ -16,7 +16,7 @@ export class InsertParentDeclarationRequiredParentCanReportNotification175251709
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-insert-parent-declaration-required-parent-can-report-message.sql",
+        "Rollback-insert-parent-declaration-required-message.sql",
         "NotificationMessages",
       ),
     );

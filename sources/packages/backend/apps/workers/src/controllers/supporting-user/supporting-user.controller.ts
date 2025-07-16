@@ -37,6 +37,8 @@ import {
 import {
   NotificationActionsService,
   NotificationSupportingUserType,
+  ParentInformationRequiredFromParentNotification,
+  ParentInformationRequiredFromStudentNotification,
 } from "@sims/services";
 import { SupportingUserType } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
@@ -173,7 +175,6 @@ export class SupportingUserController {
         }
       }
       const isAbleToReport = job.variables.isAbleToReport;
-      // If the full name is not provided, use the student
       return this.dataSource.transaction(
         async (entityManager: EntityManager) => {
           const createdSupportingUserId =
@@ -186,36 +187,26 @@ export class SupportingUserController {
               },
               entityManager,
             );
+          const notificationPayload = {
+            givenNames: application.student.user.firstName,
+            lastName: application.student.user.lastName,
+            toAddress: application.student.user.email,
+            userId: application.student.user.id,
+            supportingUserType:
+              job.variables.supportingUserType === SupportingUserType.Parent
+                ? "parent"
+                : "partner",
+            parentFullName: fullName,
+            applicationNumber: application.applicationNumber,
+          };
           if (isAbleToReport) {
-            await this.notificationActionsService.saveParentDeclarationRequiredParentCanReportNotification(
-              {
-                givenNames: application.student.user.firstName,
-                lastName: application.student.user.lastName,
-                toAddress: application.student.user.email,
-                userId: application.student.user.id,
-                supportingUserType:
-                  job.variables.supportingUserType === "Parent"
-                    ? "parent"
-                    : "partner",
-                parentFullName: fullName,
-                applicationNumber: application.applicationNumber,
-              },
+            await this.notificationActionsService.saveParentInformationRequiredFromParentNotification(
+              notificationPayload as ParentInformationRequiredFromParentNotification,
               entityManager,
             );
           } else {
-            await this.notificationActionsService.saveParentDeclarationRequiredParentCannotReportNotification(
-              {
-                givenNames: application.student.user.firstName,
-                lastName: application.student.user.lastName,
-                toAddress: application.student.user.email,
-                userId: application.student.user.id,
-                supportingUserType:
-                  job.variables.supportingUserType === "Parent"
-                    ? "parent"
-                    : "partner",
-                parentFullName: fullName,
-                applicationNumber: application.applicationNumber,
-              },
+            await this.notificationActionsService.saveParentInformationRequiredFromStudentNotification(
+              notificationPayload as ParentInformationRequiredFromStudentNotification,
               entityManager,
             );
           }

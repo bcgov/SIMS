@@ -188,8 +188,8 @@ export interface SupportingUserInformationNotification {
   supportingUserType: NotificationSupportingUserType;
 }
 
-export interface ParentDeclarationRequiredParentCanReportNotification {
-  givenNames: string;
+export interface ParentInformationRequiredFromParentNotification {
+  givenNames?: string;
   lastName: string;
   toAddress: string;
   parentFullName: string;
@@ -198,8 +198,8 @@ export interface ParentDeclarationRequiredParentCanReportNotification {
   supportingUserType: NotificationSupportingUserType;
 }
 
-export interface ParentDeclarationRequiredParentCannotReportNotification {
-  givenNames: string;
+export interface ParentInformationRequiredFromStudentNotification {
+  givenNames?: string;
   lastName: string;
   toAddress: string;
   parentFullName: string;

@@ -33,8 +33,8 @@ import {
   SupportingUserInformationNotification,
   StudentPDPPDNotification,
   StudentSecondDisbursementNotification,
-  ParentDeclarationRequiredParentCanReportNotification,
-  ParentDeclarationRequiredParentCannotReportNotification,
+  ParentInformationRequiredFromParentNotification,
+  ParentInformationRequiredFromStudentNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
@@ -1242,13 +1242,12 @@ export class NotificationActionsService {
 
   /**
    * Create supporting user information notification for student
-   * when parent declaration is required for 2025 PY onwards application
-   * and parent can report.
+   * when parent declaration is required from parent.
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveParentDeclarationRequiredParentCanReportNotification(
-    notification: ParentDeclarationRequiredParentCanReportNotification,
+  async saveParentInformationRequiredFromParentNotification(
+    notification: ParentInformationRequiredFromParentNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
@@ -1281,13 +1280,12 @@ export class NotificationActionsService {
 
   /**
    * Create supporting user information notification for student
-   * when parent declaration is required for 2025 PY onwards application
-   * and parent cannot report (student self reporting).
+   * when parent declaration is required from student.
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveParentDeclarationRequiredParentCannotReportNotification(
-    notification: ParentDeclarationRequiredParentCannotReportNotification,
+  async saveParentInformationRequiredFromStudentNotification(
+    notification: ParentInformationRequiredFromStudentNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
