@@ -126,38 +126,11 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       });
       // Validate the creation of notification for the parent declare information
       // to be provided by the parent.
-      const notificationMessageType =
-        NotificationMessageType.ParentDeclarationRequiredParentCanReportNotification;
-      const notification = await db.notification.findOne({
-        select: {
-          id: true,
-          dateSent: true,
-          messagePayload: true,
-          notificationMessage: { id: true, templateId: true },
-          user: { id: true, email: true, firstName: true, lastName: true },
-        },
-        relations: { notificationMessage: true, user: true },
-        where: {
-          notificationMessage: {
-            id: notificationMessageType,
-          },
-          user: {
-            id: savedApplication.student.user.id,
-          },
-        },
-      });
-      expect(notification.dateSent).toBeNull();
-      expect(notification.messagePayload).toStrictEqual({
-        email_address: notification.user.email,
-        template_id: notification.notificationMessage.templateId,
-        personalisation: {
-          applicationNumber: savedApplication.applicationNumber,
-          parentFullName,
-          supportingUserType: "parent",
-          lastName: notification.user.lastName,
-          givenNames: notification.user.firstName,
-        },
-      });
+      await notificationLookupAndAssertion(
+        savedApplication,
+        parentFullName,
+        NotificationMessageType.ParentDeclarationRequiredParentCanReportNotification,
+      );
     },
   );
 
@@ -239,36 +212,11 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       // to be provided by the student.
       const notificationMessageType =
         NotificationMessageType.ParentDeclarationRequiredParentCannotReportNotification;
-      const notification = await db.notification.findOne({
-        select: {
-          id: true,
-          dateSent: true,
-          messagePayload: true,
-          notificationMessage: { id: true, templateId: true },
-          user: { id: true, email: true, firstName: true, lastName: true },
-        },
-        relations: { notificationMessage: true, user: true },
-        where: {
-          notificationMessage: {
-            id: notificationMessageType,
-          },
-          user: {
-            id: savedApplication.student.user.id,
-          },
-        },
-      });
-      expect(notification.dateSent).toBeNull();
-      expect(notification.messagePayload).toStrictEqual({
-        email_address: notification.user.email,
-        template_id: notification.notificationMessage.templateId,
-        personalisation: {
-          applicationNumber: savedApplication.applicationNumber,
-          parentFullName: parentFullName2,
-          supportingUserType: "parent",
-          lastName: notification.user.lastName,
-          givenNames: notification.user.firstName,
-        },
-      });
+      await notificationLookupAndAssertion(
+        savedApplication,
+        parentFullName2,
+        notificationMessageType,
+      );
     },
   );
 
@@ -402,4 +350,47 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       resultType: MockedZeebeJobResult.Error,
     });
   });
+
+  /**
+   * Helper function to lookup notifications and perform assertions.
+   * @param savedApplication the saved application.
+   * @param parentFullName the full name of the parent.
+   * @param notificationMessageType the notification message type to check.
+   */
+  async function notificationLookupAndAssertion(
+    savedApplication: any,
+    parentFullName: string,
+    notificationMessageType: NotificationMessageType,
+  ): Promise<void> {
+    const notification = await db.notification.findOne({
+      select: {
+        id: true,
+        dateSent: true,
+        messagePayload: true,
+        notificationMessage: { id: true, templateId: true },
+        user: { id: true, email: true, firstName: true, lastName: true },
+      },
+      relations: { notificationMessage: true, user: true },
+      where: {
+        notificationMessage: {
+          id: notificationMessageType,
+        },
+        user: {
+          id: savedApplication.student.user.id,
+        },
+      },
+    });
+    expect(notification.dateSent).toBeNull();
+    expect(notification.messagePayload).toStrictEqual({
+      email_address: notification.user.email,
+      template_id: notification.notificationMessage.templateId,
+      personalisation: {
+        applicationNumber: savedApplication.applicationNumber,
+        parentFullName,
+        supportingUserType: "parent",
+        lastName: notification.user.lastName,
+        givenNames: notification.user.firstName,
+      },
+    });
+  }
 });
