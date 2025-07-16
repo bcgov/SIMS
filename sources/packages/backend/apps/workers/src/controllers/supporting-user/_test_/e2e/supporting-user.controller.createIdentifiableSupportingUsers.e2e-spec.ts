@@ -26,7 +26,7 @@ import {
   APPLICATION_NOT_FOUND,
   SUPPORTING_USER_FULL_NAME_NOT_RESOLVED,
 } from "@sims/services/constants";
-import { IsNull } from "typeorm";
+import { In, IsNull } from "typeorm";
 
 describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () => {
   let db: E2EDataSources;
@@ -41,14 +41,22 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
   beforeEach(async () => {
     // Update the date sent for the notifications to current date where the date sent is null.
     await db.notification.update(
-      { dateSent: IsNull() },
+      {
+        dateSent: IsNull(),
+        notificationMessage: {
+          id: In([
+            NotificationMessageType.ParentDeclarationRequiredParentCanReportNotification,
+            NotificationMessageType.ParentDeclarationRequiredParentCannotReportNotification,
+          ]),
+        },
+      },
       { dateSent: new Date() },
     );
   });
 
   it(
-    "Should create a supporting user for the first provided parent, save the associated full name and send a notification to the student " +
-      " indicating that the parent's declaration needs to be completed by the parent when one parent's information is added to the student application " +
+    "Should create a supporting user for the first provided parent, save the associated full name and send a notification to the student. " +
+      "The notification indicates that the parent's declaration needs to be completed by the parent when one parent's information is added to the student application, " +
       "with the parent being able to report their own information.",
     async () => {
       // Arrange
@@ -138,7 +146,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
           },
         },
       });
-      expect(notification.dateSent).toBe(null);
+      expect(notification.dateSent).toBeNull();
       expect(notification.messagePayload).toStrictEqual({
         email_address: notification.user.email,
         template_id: notification.notificationMessage.templateId,
@@ -154,8 +162,8 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
   );
 
   it(
-    "Should create supporting user for the second provided parent, save the associated full name and send a notification to the student" +
-      " indicating that the parent's declaration needs to be completed by the student when the parent's information is added to the student application" +
+    "Should create supporting user for the second provided parent, save the associated full name and send a notification to the student. " +
+      "The notification indicates that the parent's declaration needs to be completed by the student when the parent's information is added to the student application, " +
       " with the parent unable to report their information.",
     async () => {
       // Arrange
@@ -249,7 +257,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
           },
         },
       });
-      expect(notification.dateSent).toBe(null);
+      expect(notification.dateSent).toBeNull();
       expect(notification.messagePayload).toStrictEqual({
         email_address: notification.user.email,
         template_id: notification.notificationMessage.templateId,
