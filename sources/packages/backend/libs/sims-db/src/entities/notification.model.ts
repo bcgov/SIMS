@@ -222,11 +222,11 @@ export enum NotificationMessageType {
    */
   StudentSecondDisbursementNotification = 31,
   /**
-   * Parent Declaration Required Parent Can Report Notification.
+   * Parent Information Required From Parent Notification.
    */
-  ParentDeclarationRequiredParentCanReportNotification = 32,
+  ParentInformationRequiredFromParentNotification = 32,
   /**
-   * Parent Declaration Required Parent Cannot Report Notification.
+   * Parent Information Required From Student Notification.
    */
-  ParentDeclarationRequiredParentCannotReportNotification = 33,
+  ParentInformationRequiredFromStudentNotification = 33,
 }

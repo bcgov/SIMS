@@ -27,7 +27,6 @@ import {
   APPLICATION_NOT_FOUND,
   SUPPORTING_USER_FULL_NAME_NOT_RESOLVED,
 } from "@sims/services/constants";
-import { In, IsNull } from "typeorm";
 
 describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () => {
   let db: E2EDataSources;
@@ -39,26 +38,9 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     supportingUserController = nestApplication.get(SupportingUserController);
   });
 
-  beforeEach(async () => {
-    // Update the date sent for the notifications to current date where the date sent is null.
-    await db.notification.update(
-      {
-        dateSent: IsNull(),
-        notificationMessage: {
-          id: In([
-            NotificationMessageType.ParentDeclarationRequiredParentCanReportNotification,
-            NotificationMessageType.ParentDeclarationRequiredParentCannotReportNotification,
-          ]),
-        },
-      },
-      { dateSent: new Date() },
-    );
-  });
-
   it(
-    "Should create a supporting user for the first provided parent, save the associated full name and send a notification to the student. " +
-      "The notification indicates that the parent's declaration needs to be completed by the parent when one parent's information is added to the student application, " +
-      "with the parent being able to report their own information.",
+    "Should create supporting user for the first provided parent and save the associated full name when one parent's information is added to the student application " +
+      "and create a student notification for parent declaration required by parent.",
     async () => {
       // Arrange
       const parentFullName = faker.datatype.uuid();
@@ -130,15 +112,14 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       await notificationLookupAndAssertion(
         savedApplication,
         parentFullName,
-        NotificationMessageType.ParentDeclarationRequiredParentCanReportNotification,
+        NotificationMessageType.ParentInformationRequiredFromParentNotification,
       );
     },
   );
 
   it(
-    "Should create supporting user for the second provided parent, save the associated full name and send a notification to the student. " +
-      "The notification indicates that the parent's declaration needs to be completed by the student when the parent's information is added to the student application, " +
-      "with the parent unable to report their information.",
+    "Should create supporting user for the second provided parent and save the associated full name when the two parent's information is added to the student application " +
+      "and create a student notification for parent declaration required by student.",
     async () => {
       // Arrange
       const parentFullName1 = faker.datatype.uuid();
@@ -211,12 +192,10 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       });
       // Validate the creation of notification for the parent declare information
       // to be provided by the student.
-      const notificationMessageType =
-        NotificationMessageType.ParentDeclarationRequiredParentCannotReportNotification;
       await notificationLookupAndAssertion(
         savedApplication,
         parentFullName2,
-        notificationMessageType,
+        NotificationMessageType.ParentInformationRequiredFromStudentNotification,
       );
     },
   );
@@ -383,14 +362,14 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     });
     expect(notification.dateSent).toBeNull();
     expect(notification.messagePayload).toStrictEqual({
-      email_address: notification.user.email,
+      email_address: savedApplication.student.user.email,
       template_id: notification.notificationMessage.templateId,
       personalisation: {
         applicationNumber: savedApplication.applicationNumber,
         parentFullName,
         supportingUserType: "parent",
-        lastName: notification.user.lastName,
-        givenNames: notification.user.firstName,
+        lastName: savedApplication.student.user.lastName,
+        givenNames: savedApplication.student.user.firstName,
       },
     });
   }
