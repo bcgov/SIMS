@@ -140,6 +140,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataPartnerStudyWeeks?: number;
   studentDataPartnerEmploymentInsurance?: YesNoOptions;
   studentDataPartnerFedralProvincialPDReceiptCost?: number;
+  studentDataPartnerChildSupportCosts?: number;
   studentDataParentDependentTable?: JSONDoc;
   studentDataPartnerCaringForDependant?: YesNoOptions;
   studentDataStudentParentNetAssests?: number;
@@ -288,6 +289,8 @@ export interface CalculatedAssessmentModel {
   calculatedDataDaycareCosts12YearsOrOver: number;
   calculatedDataChildCareCost: number;
   calculatedDataTotalChildCareCost: number;
+  calculatedDataChildSpousalSupport: number;
+  calculatedDataTotalChildSpousalSupport: number;
   calculatedDataTotalMSOLAllowance: number;
   calculatedDataTotalCosts: number;
   calculatedDataTotalFamilyIncome: number;
@@ -299,7 +302,6 @@ export interface CalculatedAssessmentModel {
   calculatedDataProgramRelatedCosts: number;
   calculatedDataTotalBookCost: number;
   awardNetProvincialTotalAward: number;
-  calculatedDataTotalChildSpousalSupport: number;
   calculatedDataFederalAssessedNeed: number;
   offeringExceptionalExpenses: number;
   calculatedDataProvincialAssessedNeed: number;
