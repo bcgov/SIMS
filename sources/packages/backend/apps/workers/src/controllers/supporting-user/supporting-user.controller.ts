@@ -187,7 +187,9 @@ export class SupportingUserController {
               },
               entityManager,
             );
-          const notificationPayload = {
+          const notificationPayload:
+            | ParentInformationRequiredFromParentNotification
+            | ParentInformationRequiredFromStudentNotification = {
             givenNames: application.student.user.firstName,
             lastName: application.student.user.lastName,
             toAddress: application.student.user.email,
@@ -201,12 +203,12 @@ export class SupportingUserController {
           };
           if (isAbleToReport) {
             await this.notificationActionsService.saveParentInformationRequiredFromParentNotification(
-              notificationPayload as ParentInformationRequiredFromParentNotification,
+              notificationPayload,
               entityManager,
             );
           } else {
             await this.notificationActionsService.saveParentInformationRequiredFromStudentNotification(
-              notificationPayload as ParentInformationRequiredFromStudentNotification,
+              notificationPayload,
               entityManager,
             );
           }
