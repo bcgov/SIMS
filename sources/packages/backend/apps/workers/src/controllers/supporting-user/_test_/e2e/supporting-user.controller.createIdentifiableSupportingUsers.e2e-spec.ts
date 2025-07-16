@@ -164,7 +164,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
   it(
     "Should create supporting user for the second provided parent, save the associated full name and send a notification to the student. " +
       "The notification indicates that the parent's declaration needs to be completed by the student when the parent's information is added to the student application, " +
-      " with the parent unable to report their information.",
+      "with the parent unable to report their information.",
     async () => {
       // Arrange
       const parentFullName1 = faker.datatype.uuid();
