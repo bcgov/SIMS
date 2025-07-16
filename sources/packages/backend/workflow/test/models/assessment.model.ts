@@ -272,7 +272,6 @@ export interface AssessmentModel {
 }
 
 export interface CalculatedAssessmentModel {
-  [x: string]: any;
   calculatedDataRemainingScholarshipsBursariesLimit: number;
   calculatedDataRelationshipStatus: RelationshipStatusType;
   calculatedDataPartner1TotalIncome: number;
