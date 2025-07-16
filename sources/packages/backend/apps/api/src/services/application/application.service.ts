@@ -2217,8 +2217,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "version.applicationEditStatus",
         "supportingUser.id",
         "supportingUser.supportingUserType",
+        "supportingUser.fullName",
+        "supportingUser.isAbleToReport",
         "versionSupportingUser.id",
         "versionSupportingUser.supportingUserType",
+        "versionSupportingUser.fullName",
+        "versionSupportingUser.isAbleToReport",
       ])
       .innerJoin("application.parentApplication", "parentApplication")
       .leftJoin("application.supportingUsers", "supportingUser")

@@ -37,6 +37,8 @@ import {
 import {
   NotificationActionsService,
   NotificationSupportingUserType,
+  ParentInformationRequiredFromParentNotification,
+  ParentInformationRequiredFromStudentNotification,
 } from "@sims/services";
 import { SupportingUserType } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
@@ -172,9 +174,8 @@ export class SupportingUserController {
           return job.error(SUPPORTING_USER_FULL_NAME_NOT_RESOLVED, message);
         }
       }
+      const isAbleToReport = job.variables.isAbleToReport;
       return this.dataSource.transaction(
-        // Transaction created with the expectation that a notification will also be created
-        // for the supporting user and it should be saved in the same transaction.
         async (entityManager: EntityManager) => {
           const createdSupportingUserId =
             await this.supportingUserService.createIdentifiableSupportingUser(
@@ -182,10 +183,35 @@ export class SupportingUserController {
                 applicationId: job.variables.applicationId,
                 supportingUserType: job.variables.supportingUserType,
                 fullName,
-                isAbleToReport: job.variables.isAbleToReport,
+                isAbleToReport,
               },
               entityManager,
             );
+          const notificationPayload:
+            | ParentInformationRequiredFromParentNotification
+            | ParentInformationRequiredFromStudentNotification = {
+            givenNames: application.student.user.firstName,
+            lastName: application.student.user.lastName,
+            toAddress: application.student.user.email,
+            userId: application.student.user.id,
+            supportingUserType:
+              job.variables.supportingUserType === SupportingUserType.Parent
+                ? "parent"
+                : "partner",
+            parentFullName: fullName,
+            applicationNumber: application.applicationNumber,
+          };
+          if (isAbleToReport) {
+            await this.notificationActionsService.saveParentInformationRequiredFromParentNotification(
+              notificationPayload,
+              entityManager,
+            );
+          } else {
+            await this.notificationActionsService.saveParentInformationRequiredFromStudentNotification(
+              notificationPayload,
+              entityManager,
+            );
+          }
           return job.complete({
             [CREATED_SUPPORTING_USER_ID]: createdSupportingUserId,
           });

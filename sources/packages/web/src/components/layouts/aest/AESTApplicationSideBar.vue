@@ -92,6 +92,38 @@ export default defineComponent({
     };
 
     /**
+     * Get display name for supporting user with truncation.
+     * @param supportingUser supporting user information.
+     * @param index index for fallback naming.
+     */
+    const getSupportingUserDisplayName = (
+      supportingUser: ApplicationSupportingUsersAPIOutDTO,
+      index: number,
+    ): string => {
+      if (supportingUser.supportingUserType === SupportingUserType.Partner) {
+        return "Partner";
+      }
+      return supportingUser.supportingUserFullName ?? `Parent ${index + 1}`;
+    };
+
+    /**
+     * Get subtitle for supporting user based on who declared the information.
+     * @param supportingUser supporting user information.
+     */
+    const getSupportingUserSubtitle = (
+      supportingUser: ApplicationSupportingUsersAPIOutDTO,
+    ): string => {
+      if (supportingUser.supportingUserType === SupportingUserType.Partner) {
+        return "";
+      }
+
+      // For parents, determine if it was student declared or parent declared.
+      return supportingUser.isAbleToReport
+        ? "Parent declared"
+        : "Student declared";
+    };
+
+    /**
      * Create one or more menu items for one to two parents or one partner.
      * @param supportingUsers supporting users information.
      */
@@ -100,15 +132,14 @@ export default defineComponent({
     ): MenuItemModel[] => {
       return (
         supportingUsers.map((supportingUser, index) => {
-          const title =
-            supportingUser.supportingUserType === SupportingUserType.Parent
-              ? `Parent ${index + 1}`
-              : "Partner";
+          const title = getSupportingUserDisplayName(supportingUser, index);
+          const subtitle = getSupportingUserSubtitle(supportingUser);
           return {
             title,
             props: {
               prependIcon: "mdi-account-outline",
               slim: true,
+              subtitle,
               to: {
                 name: AESTRoutesConst.SUPPORTING_USER_DETAILS,
                 params: {
@@ -151,7 +182,7 @@ export default defineComponent({
 
     /**
      * Create the menu for the current application (Active).
-     * @param applicationVersion application version information.
+     * @param currentVersion application version information.
      */
     const createCurrentApplicationMenuItems = (
       currentVersion: ApplicationVersionAPIOutDTO,

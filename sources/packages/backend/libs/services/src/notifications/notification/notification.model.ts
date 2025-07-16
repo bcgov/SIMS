@@ -188,6 +188,26 @@ export interface SupportingUserInformationNotification {
   supportingUserType: NotificationSupportingUserType;
 }
 
+export interface ParentInformationRequiredFromParentNotification {
+  givenNames?: string;
+  lastName: string;
+  toAddress: string;
+  parentFullName: string;
+  applicationNumber: string;
+  userId: number;
+  supportingUserType: NotificationSupportingUserType;
+}
+
+export interface ParentInformationRequiredFromStudentNotification {
+  givenNames?: string;
+  lastName: string;
+  toAddress: string;
+  parentFullName: string;
+  applicationNumber: string;
+  userId: number;
+  supportingUserType: NotificationSupportingUserType;
+}
+
 export interface StudentPDPPDNotification {
   userId: number;
   assessmentId: number;

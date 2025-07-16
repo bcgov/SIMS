@@ -79,9 +79,9 @@ export class SupportingUserAESTController {
       contactInfo: supportingUserForApplication.contactInfo,
       sin: supportingUserForApplication.sin,
       birthDate: supportingUserForApplication.birthDate,
-      email: supportingUserForApplication.user.email,
-      firstName: supportingUserForApplication.user.firstName,
-      lastName: supportingUserForApplication.user.lastName,
+      email: supportingUserForApplication.user?.email,
+      firstName: supportingUserForApplication.user?.firstName,
+      lastName: supportingUserForApplication.user?.lastName,
       hasValidSIN: supportingUserForApplication.personalInfo?.hasValidSIN,
     };
   }
