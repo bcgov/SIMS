@@ -1,4 +1,5 @@
 import {
+  Application,
   ApplicationData,
   NotificationMessageType,
   SupportingUserType,
@@ -358,7 +359,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
    * @param notificationMessageType the notification message type to check.
    */
   async function notificationLookupAndAssertion(
-    savedApplication: any,
+    savedApplication: Application,
     parentFullName: string,
     notificationMessageType: NotificationMessageType,
   ): Promise<void> {
