@@ -572,8 +572,8 @@ dmnFullTimeIncomeThreshold</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_0y4e5jh" name="Total Alimony / Child Support">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=min(dmnFullTimeProgramYearMaximums.limitWeeklyAlimonyChildSupport * offeringWeeks,studentDataChildSupportAndOrSpousalSupport)" target="calculatedDataChildSpousalSupport" />
-          <zeebe:output source="=if &#10;  studentDataRelationshipStatus = &#34;married&#34;&#10;  and&#10;  calculatedDataPartnerStudyWeeks &#62;=12&#10;then&#10;  studentDataChildSupportAndOrSpousalSupport / 2&#10;else&#10;  if studentDataChildSupportAndOrSpousalSupport != null&#10;  then calculatedDataChildSpousalSupport&#10;  else 0" target="calculatedDataTotalChildSpousalSupport" />
+          <zeebe:output source="=min(dmnFullTimeProgramYearMaximums.limitWeeklyAlimonyChildSupport * offeringWeeks,&#10;  sum([studentDataChildSupportAndOrSpousalSupport,&#10;       calculatedDataPartnerAlimonySupport,0][item != null]))" target="calculatedDataChildSpousalSupport" />
+          <zeebe:output source="=if &#10;  studentDataRelationshipStatus = &#34;married&#34;&#10;  and&#10;  calculatedDataPartnerStudyWeeks &#62;=12&#10;then&#10;  calculatedDataChildSpousalSupport / 2&#10;else&#10;  calculatedDataChildSpousalSupport" target="calculatedDataTotalChildSpousalSupport" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_02yam1s</bpmn:incoming>
@@ -1970,12 +1970,14 @@ TotalChildcareDependants: 11yo and younger and 12+ on taxes</bpmn:documentation>
       <bpmn:incoming>Flow_1gzgc13</bpmn:incoming>
       <bpmn:outgoing>Flow_1w7m8ku</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_0um94bq" name="Partner Student Loan">
+    <bpmn:intermediateThrowEvent id="Event_0um94bq" name="Partner Costs">
       <bpmn:documentation>Student Loan Payments by Partner during the study period can be considered a cost.
-Priority to loan reported by partner directly, then by student. Otherwise will be 0.</bpmn:documentation>
+Priority to loan reported by partner directly, then by student. Otherwise will be 0.
+Alimony/Child Support paid by the Partner during the study period can be considered towards costs. If not entered, consider their costs for this 0.</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if partner1TotalStudentLoan = null&#10;then &#10;  if studentDataPartnerTotalStudentLoan = null&#10;  then 0&#10;  else studentDataPartnerTotalStudentLoan&#10;else&#10;  partner1TotalStudentLoan" target="calculatedDataPartnerStudentLoans" />
+          <zeebe:output source="=if (studentDataPartnerChildSupportCosts = null and partner1ChildSpousalSupportCost = null)&#10;then 0&#10;else&#10;  if studentDataPartnerChildSupportCosts = null&#10;  then partner1ChildSpousalSupportCost&#10;  else studentDataPartnerChildSupportCosts&#10;" target="calculatedDataPartnerAlimonySupport" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1ekiozl</bpmn:incoming>
@@ -3055,7 +3057,7 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmndi:BPMNShape id="Event_0um94bq_di" bpmnElement="Event_0um94bq">
         <dc:Bounds x="1252" y="633" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1232" y="676" width="78" height="27" />
+          <dc:Bounds x="1237" y="676" width="68" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1dmk5d0" bpmnElement="Event_19k9jpj">
