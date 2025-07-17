@@ -1780,6 +1780,31 @@
               "inputType": "checkbox"
             },
             {
+              "label": "HTML",
+              "tag": "p",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>StudentAid BC does not provide any assistance to students for Private Pilot Training.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "html22",
+              "conditional": {
+                "show": true,
+                "when": "credentialTypesAvi",
+                "eq": "privatePilotTraining"
+              },
+              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\" && data.minHoursWeekAvi === \"no\");",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true
+            },
+            {
               "label": "Does this program include a minimum of 15 instructional hours per week",
               "optionsLabelPosition": "right",
               "inline": false,
