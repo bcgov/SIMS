@@ -8,6 +8,7 @@
     subTitle="Financial Aid Application"
   >
   </header-navigator>
+  <application-header-title :application-id="applicationId" />
   <full-page-container class="my-2">
     <formio
       v-if="formName && formData.supportingData"
@@ -30,14 +31,22 @@ import { SupportingUsersService } from "@/services/SupportingUserService";
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
+  components: {
+    ApplicationHeaderTitle,
+  },
   props: {
     studentId: {
       type: Number,
       required: true,
     },
     supportingUserId: {
+      type: Number,
+      required: true,
+    },
+    applicationId: {
       type: Number,
       required: true,
     },
@@ -70,8 +79,8 @@ export default defineComponent({
       // and the information on the 2nd tab is fed in `supportingData`
       formData.value = {
         isAbleToReport: supportingUsersData.isAbleToReport,
-        givenNames: supportingUsersData.firstName,
-        lastName: supportingUsersData.lastName,
+        givenNames: supportingUsersData.personalInfo?.givenNames,
+        lastName: supportingUsersData.personalInfo?.lastName,
         email: supportingUsersData.email,
         dateOfBirth: dateOnlyLongString(supportingUsersData.birthDate),
         sin: supportingUsersData.sin,
@@ -81,7 +90,12 @@ export default defineComponent({
         hasValidSIN: supportingUsersData.hasValidSIN,
       };
     });
-    return { formName, formData, AESTRoutesConst, BannerTypes };
+    return {
+      formName,
+      formData,
+      AESTRoutesConst,
+      BannerTypes,
+    };
   },
 });
 </script>

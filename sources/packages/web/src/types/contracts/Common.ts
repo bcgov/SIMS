@@ -78,3 +78,12 @@ export enum LayoutTemplates {
    */
   CenteredCardTab = "centered-card-tab",
 }
+
+/**
+ * Supporting user personal information details.
+ */
+export interface SupportingUserPersonalInfo {
+  givenNames?: string;
+  lastName?: string;
+  hasValidSIN?: FormYesNoOptions;
+}
