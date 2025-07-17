@@ -734,102 +734,6 @@
               "input": true
             },
             {
-              "label": "Is this an aviation program?",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true
-              },
-              "key": "isAviationProgram",
-              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\");",
-              "attributes": {
-                "data-cy": "isAviationProgram"
-              },
-              "type": "radio",
-              "input": true
-            },
-            {
-              "label": "HTML",
-              "className": "alert alert-warning fa fa-exclamation-circle",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "<strong> This program is inegligible for StudentAid BC funding</strong><br>The program needs to be a minimum of 20 instructional hours.",
-              "refreshOnChange": true,
-              "customClass": "banner-warning",
-              "key": "html6",
-              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"no\");",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "hideLabel": true,
-              "tag": "p"
-            },
-            {
-              "label": "Does this program include a minimum of 15 instructional hours per week",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true
-              },
-              "key": "minHoursWeekAvi",
-              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\");",
-              "attributes": {
-                "data-cy": "minHoursWeekAvi"
-              },
-              "type": "radio",
-              "input": true
-            },
-            {
-              "label": "HTML",
-              "className": "alert alert-warning fa fa-exclamation-circle",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>The aviation program needs to be a minimum of 15 instructional hours.",
-              "refreshOnChange": false,
-              "customClass": "banner-warning",
-              "key": "html5",
-              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\" && data.minHoursWeekAvi === \"no\");",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "hideLabel": true,
-              "tag": "p"
-            },
-            {
               "label": "HTML",
               "attrs": [
                 {
@@ -1723,6 +1627,202 @@
               "customClass": "banner-warning",
               "key": "html19",
               "customConditional": "show = (data.hasIntlExchange === \"yes\" && data.intlExchangeProgramEligibility === \"no\");",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            }
+          ],
+          "title": ""
+        },
+        {
+          "label": "HTML",
+          "tag": "h2",
+          "className": "category-header-large primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Aviation",
+          "refreshOnChange": false,
+          "key": "html21",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideLabel": true
+        },
+        {
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel19",
+          "logic": [
+            {
+              "name": "Disable Exchange Input",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = data.hasOfferings;"
+              },
+              "actions": [
+                {
+                  "name": "Disable Input",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                }
+              ]
+            }
+          ],
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Does this program contain aviation?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "validateWhenHidden": false,
+              "key": "isAviationProgram",
+              "type": "radio",
+              "input": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is inegligible for StudentAid BC funding</strong><br>The program needs to be a minimum of 20 instructional hours.",
+              "refreshOnChange": true,
+              "customClass": "banner-warning",
+              "key": "html6",
+              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"no\");",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            },
+            {
+              "label": "Which credential type(s) are included? (Select all that apply)",
+              "optionsLabelPosition": "right",
+              "tableView": false,
+              "defaultValue": {
+                "commercialPilotTraining": false,
+                "instructorsRating": false,
+                "endorsements": false,
+                "privatePilotTraining": false,
+                "noneOfTheAbove": false
+              },
+              "values": [
+                {
+                  "label": "Commercial Pilot Training",
+                  "value": "commercialPilotTraining",
+                  "shortcut": ""
+                },
+                {
+                  "label": "Instructor's Rating",
+                  "value": "instructorsRating",
+                  "shortcut": ""
+                },
+                {
+                  "label": "Endorsements",
+                  "value": "endorsements",
+                  "shortcut": ""
+                },
+                {
+                  "label": "Private Pilot Training",
+                  "value": "privatePilotTraining",
+                  "shortcut": ""
+                },
+                {
+                  "label": "None of the above",
+                  "value": "noneOfTheAbove",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "validateWhenHidden": false,
+              "key": "credentialTypesAvi",
+              "customConditional": "show = data.isAviationProgram === \"yes\";",
+              "type": "selectboxes",
+              "input": true,
+              "inputType": "checkbox"
+            },
+            {
+              "label": "Does this program include a minimum of 15 instructional hours per week",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "validateWhenHidden": false,
+              "key": "minHoursWeekAvi",
+              "customConditional": "show = data.isAviationProgram === \"yes\";",
+              "attributes": {
+                "data-cy": "minHoursWeekAvi"
+              },
+              "type": "radio",
+              "input": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is ineligible for StudentAid BC funding</strong><br>The aviation program needs to be a minimum of 15 instructional hours.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "html5",
+              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\" && data.minHoursWeekAvi === \"no\");",
               "type": "htmlelement",
               "input": false,
               "tableView": false,
