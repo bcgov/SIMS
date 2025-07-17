@@ -16,11 +16,6 @@ export interface StudentDependent extends JSONDoc {
   declaredOnTaxes: YesNoOptions;
 }
 
-export interface StudentParents extends JSONDoc {
-  parentIsAbleToReport: YesNoOptions;
-  currentYearParentIncome: number;
-}
-
 export interface StudentDependantAppealData extends JSONDoc {
   hasDependents: YesNoOptions;
   dependants: StudentDependent[];
@@ -224,7 +219,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   programYearTotalFullTimeBooksAndSuppliesCost: number;
   programYearTotalPartTimeReturnTransportationCost: number;
   programYearTotalFullTimeReturnTransportationCost: number;
-  studentDataParents?: StudentParents[];
+  studentDataParents?: IdentifiableParentData[];
 }
 
 /**
@@ -249,6 +244,7 @@ export interface ConfigureDisbursementData extends JSONDoc {
 
 export interface IdentifiableParentData extends JSONDoc {
   parentIsAbleToReport: YesNoOptions;
+  currentYearParentIncome?: number;
 }
 
 export interface AssessmentModel {
