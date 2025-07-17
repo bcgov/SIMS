@@ -106,17 +106,6 @@ objects:
           securityContext: {}
           schedulerName: default-scheduler
       test: false
-      triggers:
-        - type: ConfigChange
-        - imageChangeParams:
-            automatic: true
-            containerNames:
-              - ${NAME}
-            from:
-              kind: ImageStreamTag
-              namespace: "${TOOLS_NAMESPACE}"
-              name: "${IMAGE_STREAM_TAG}"
-          type: ImageChange
 
   - apiVersion: v1
     kind: Service
