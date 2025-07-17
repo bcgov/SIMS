@@ -1,34 +1,27 @@
 <template>
   <student-page-container class="overflow-visible">
     <template #header>
-      <header-navigator title="Student" subTitle="Request a Change" />
+      <header-navigator title="Student" subTitle="Submit Appeal" />
     </template>
     <student-appeal-submit
       :application-id="applicationId"
-      appeals-form-name="studentRequestChange"
-      :is-change-request="true"
-      ><template #submit-appeal-header>
+      appeals-form-name="studentAppeals"
+      ><template #select-appeal-header>
+        <body-header
+          title="When to request a change"
+          subTitle="After your school has confirmed your enrolment, you must inform StudentAid BC of any changes to the information you provided in your application."
+        >
+        </body-header>
+        <student-appeal-instructions />
+      </template>
+      <template #submit-appeal-header>
         <body-header
           title="Complete all question(s) below"
           subTitle="All requested changes will be reviewed by StudentAid BC after you submit for review."
         >
         </body-header>
-        <div class="mt-4">
-          <p class="font-bold">Instructions:</p>
-          <ul>
-            <li>You must complete all fields of the change request form.</li>
-            <li>
-              All information that has not changed should match what was entered
-              on your application.
-            </li>
-            <li>
-              Information from previously approved Change Requests attached to
-              this application must be re-entered here.
-            </li>
-          </ul>
-        </div>
-      </template></student-appeal-submit
-    >
+        <student-appeal-instructions /> </template
+    ></student-appeal-submit>
   </student-page-container>
 </template>
 <script lang="ts">
@@ -37,6 +30,7 @@ import { ApiProcessError, FormIOForm, StudentAppealRequest } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import StudentAppealSubmit from "@/components/students/StudentAppealSubmit.vue";
+import StudentAppealInstructions from "@/components/students/StudentAppealInstructions.vue";
 import { useSnackBar } from "@/composables";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
@@ -55,6 +49,7 @@ interface StudentRequestSelectedForms {
 export default defineComponent({
   components: {
     StudentAppealSubmit,
+    StudentAppealInstructions,
   },
   props: {
     applicationId: {

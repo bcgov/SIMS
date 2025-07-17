@@ -13,6 +13,7 @@ import NotificationsSettings from "@/views/student/NotificationsSettings.vue";
 import StudentApplicationSummary from "@/views/student/StudentApplicationSummary.vue";
 import StudentApplicationDetails from "@/views/student/StudentApplicationDetails.vue";
 import StudentAppealRequest from "@/views/student/StudentAppealRequest.vue";
+import StudentAppeal from "@/views/student/StudentAppeal.vue";
 import StudentAccountActivity from "@/views/student/StudentAccountActivity.vue";
 import StudentOverawardsBalance from "@/views/student/StudentOverawardsBalance.vue";
 import StudentAccountApplicationInProgress from "@/views/student/StudentAccountApplicationInProgress.vue";
@@ -190,6 +191,17 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.RequestChange,
         name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
         component: StudentAppealRequest,
+        props: (route) => ({
+          applicationId: parseInt(route.params.applicationId as string),
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentAppeal,
+        name: StudentRoutesConst.STUDENT_APPEAL,
+        component: StudentAppeal,
         props: (route) => ({
           applicationId: parseInt(route.params.applicationId as string),
         }),

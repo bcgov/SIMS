@@ -1,47 +1,54 @@
 <template>
-  <student-page-container class="overflow-visible">
-    <template #header>
-      <header-navigator title="Student" subTitle="Request a Change" />
-    </template>
-    <student-appeal-submit
-      :application-id="applicationId"
-      appeals-form-name="studentRequestChange"
-      :is-change-request="true"
-      ><template #submit-appeal-header>
-        <body-header
-          title="Complete all question(s) below"
-          subTitle="All requested changes will be reviewed by StudentAid BC after you submit for review."
-        >
-        </body-header>
-        <div class="mt-4">
-          <p class="font-bold">Instructions:</p>
-          <ul>
-            <li>You must complete all fields of the change request form.</li>
-            <li>
-              All information that has not changed should match what was entered
-              on your application.
-            </li>
-            <li>
-              Information from previously approved Change Requests attached to
-              this application must be re-entered here.
-            </li>
-          </ul>
-        </div>
-      </template></student-appeal-submit
+  <div v-if="showRequestForAppeal">
+    <!-- Select appeal area -->
+    <slot name="select-appeal-header"></slot>
+    <formio-container
+      :formName="appealsFormName"
+      :formData="initialData"
+      @submitted="submitRequest"
     >
-  </student-page-container>
+      <template #actions="{ submit }">
+        <v-btn @click="submit" color="primary" class="float-right">
+          Next
+        </v-btn>
+      </template>
+    </formio-container>
+  </div>
+  <div v-else>
+    <!-- Submit appeal area -->
+    <slot name="submit-appeal-header"></slot>
+    <appeal-requests-form
+      :student-appeal-requests="appealRequestsForms"
+      @submitted="submitAppeal"
+    >
+      <template #actions="{ submit }">
+        <v-btn
+          color="primary"
+          variant="outlined"
+          class="mr-2"
+          @click="backToRequestForm"
+          >Back
+        </v-btn>
+
+        <v-btn
+          color="primary"
+          class="ml-2 float-right"
+          @click="submit"
+          :loading="processing"
+          >Submit for review</v-btn
+        >
+      </template>
+    </appeal-requests-form>
+  </div>
 </template>
 <script lang="ts">
 import { computed, ref, defineComponent, onMounted } from "vue";
 import { ApiProcessError, FormIOForm, StudentAppealRequest } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentAppealService } from "@/services/StudentAppealService";
-import StudentAppealSubmit from "@/components/students/StudentAppealSubmit.vue";
+import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
 import { useSnackBar } from "@/composables";
-import {
-  APPLICATION_CHANGE_NOT_ELIGIBLE,
-  APPLICATION_HAS_PENDING_APPEAL,
-} from "@/constants";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
 import { ApplicationProgramYearAPIOutDTO } from "@/services/http/dto";
 
 /**
@@ -54,12 +61,22 @@ interface StudentRequestSelectedForms {
 
 export default defineComponent({
   components: {
-    StudentAppealSubmit,
+    AppealRequestsForm,
   },
   props: {
     applicationId: {
       type: Number,
       required: true,
+    },
+    appealsFormName: {
+      type: String,
+      required: true,
+    },
+    isChangeRequest: {
+      type: Boolean,
+      required: false,
+      // This prop is used to determine if the operation is for a change request or an appeal.
+      default: false,
     },
   },
   setup(props) {
@@ -71,6 +88,7 @@ export default defineComponent({
     const showRequestForAppeal = computed(
       () => appealRequestsForms.value.length === 0,
     );
+    const operation = props.isChangeRequest ? "request for change" : "appeal";
 
     onMounted(async () => {
       try {
@@ -84,7 +102,7 @@ export default defineComponent({
         };
       } catch (error: unknown) {
         snackBar.error(
-          "An unexpected error happened while retrieving the application to request a change.",
+          `An unexpected error happened while retrieving the application to submit the ${operation}.`,
         );
       }
     });
@@ -112,9 +130,7 @@ export default defineComponent({
           props.applicationId,
           appealRequests,
         );
-        snackBar.success(
-          "The request for change has been submitted successfully.",
-        );
+        snackBar.success(`The ${operation} has been submitted successfully.`);
         backToRequestForm();
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
@@ -122,11 +138,15 @@ export default defineComponent({
             case APPLICATION_CHANGE_NOT_ELIGIBLE:
               snackBar.warn(`Not able to submit. ${error.message}`);
               break;
-            case APPLICATION_HAS_PENDING_APPEAL:
-              snackBar.error(`${error.message}`);
+            default:
+              snackBar.error(error.message);
               break;
           }
+          return;
         }
+        snackBar.error(
+          `An unexpected error happened while submitting the ${operation}.`,
+        );
       } finally {
         processing.value = false;
       }
