@@ -100,7 +100,7 @@ export default defineComponent({
           applicationNumber: applicationAppealData.applicationNumber,
           formNames: [],
         };
-      } catch (error: unknown) {
+      } catch {
         snackBar.error(
           `An unexpected error happened while retrieving the application to submit the ${operation}.`,
         );
