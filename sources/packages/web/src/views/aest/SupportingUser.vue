@@ -10,7 +10,7 @@
   </header-navigator>
   <application-header-title :application-id="applicationId" />
   <div class="mb-2" v-if="formData && formData.parentFullName">
-    <strong>Parent Name:</strong> {{ formData.parentFullName }}
+    <detail-header :header-map="{ 'Parent Name': formData.parentFullName }" />
   </div>
   <full-page-container class="my-2">
     <formio
@@ -35,10 +35,12 @@ import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
+import DetailHeader from "@/components/generic/DetailHeader.vue";
 
 export default defineComponent({
   components: {
     ApplicationHeaderTitle,
+    DetailHeader,
   },
   props: {
     studentId: {
@@ -90,7 +92,7 @@ export default defineComponent({
         phone: supportingUsersData.contactInfo?.phone,
         supportingData: supportingUsersData.supportingData,
         ...contactAddress,
-        hasValidSIN: supportingUsersData.hasValidSIN,
+        hasValidSIN: supportingUsersData.personalInfo?.hasValidSIN,
         parentFullName: supportingUsersData.parentFullName,
       };
     });

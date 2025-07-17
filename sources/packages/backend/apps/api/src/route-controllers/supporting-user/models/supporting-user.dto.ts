@@ -15,7 +15,6 @@ import {
   SupportingUserType,
   OfferingIntensity,
   FormYesNoOptions,
-  SupportingUserPersonalInfo,
 } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_10KB } from "../../../constants";
@@ -128,9 +127,22 @@ export class SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
-  hasValidSIN?: FormYesNoOptions;
   parentFullName: string;
   personalInfo: SupportingUserPersonalInfo;
+}
+
+export class SupportingUserPersonalInfo {
+  @IsOptional()
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+  givenNames?: string;
+
+  @IsOptional()
+  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+  lastName?: string;
+
+  @IsOptional()
+  @IsEnum(FormYesNoOptions)
+  hasValidSIN?: FormYesNoOptions;
 }
 
 /**
