@@ -275,13 +275,13 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
           assessmentConsolidatedData,
         );
       // Assert
-      // Lesser of the child care costs submitted in application or the number of offering weeks times weekly limit
-      // Submitted costs are less (1000) than maximum (18 * $268 = $4824)
+      // Lesser of the child care costs submitted in application or the number of offering weeks times weekly limit.
+      // Submitted costs are less (1000) than maximum (18 * $268 = $4824).
       expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(
         1000,
       );
       // Total calculated childcare costs are changed from the calculated child care costs above if student is
-      // married to a full-time student who is studying for 12 or more weeks during this study period
+      // married to a full-time student who is studying for 12 or more weeks during this study period.
       expect(
         calculatedAssessment.variables.calculatedDataTotalChildCareCost,
       ).toBe(0);
@@ -320,13 +320,13 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
           assessmentConsolidatedData,
         );
       // Assert
-      // Lesser of the child care costs submitted in application or the number of offering weeks times weekly limit
-      // Submitted costs are less (1000) than maximum (18 * $268 = $4824)
+      // Lesser of the child care costs submitted in application or the number of offering weeks times weekly limit.
+      // Submitted costs are less (1000) than maximum (18 * $268 = $4824).
       expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(
         1000,
       );
       // Total calculated childcare costs are changed from the calculated child care costs above if student is
-      // married to a full-time student who is studying for 12 or more weeks during this study period
+      // married to a full-time student who is studying for 12 or more weeks during this study period.
       expect(
         calculatedAssessment.variables.calculatedDataTotalChildCareCost,
       ).toBe(1000);
