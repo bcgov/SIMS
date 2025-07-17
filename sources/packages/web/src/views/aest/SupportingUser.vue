@@ -9,6 +9,9 @@
   >
   </header-navigator>
   <application-header-title :application-id="applicationId" />
+  <div class="mb-2" v-if="formData && formData.parentFullName">
+    <strong>Parent Name:</strong> {{ formData.parentFullName }}
+  </div>
   <full-page-container class="my-2">
     <formio
       v-if="formName && formData.supportingData"
@@ -88,6 +91,7 @@ export default defineComponent({
         supportingData: supportingUsersData.supportingData,
         ...contactAddress,
         hasValidSIN: supportingUsersData.hasValidSIN,
+        parentFullName: supportingUsersData.parentFullName,
       };
     });
     return {

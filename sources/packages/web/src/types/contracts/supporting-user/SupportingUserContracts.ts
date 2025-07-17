@@ -49,5 +49,6 @@ export interface SupportingUser {
   firstName?: string;
   lastName?: string;
   hasValidSIN?: FormYesNoOptions;
+  parentFullName?: string;
   personalInfo?: SupportingUserPersonalInfo;
 }

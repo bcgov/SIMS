@@ -129,6 +129,7 @@ export class SupportingUserFormDataAPIOutDTO {
   firstName: string;
   lastName: string;
   hasValidSIN?: FormYesNoOptions;
+  parentFullName: string;
   personalInfo: SupportingUserPersonalInfo;
 }
 
