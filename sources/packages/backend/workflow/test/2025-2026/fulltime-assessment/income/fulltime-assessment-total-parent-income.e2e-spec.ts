@@ -4,6 +4,7 @@ import {
   createFakeConsolidatedFulltimeData,
   executeFullTimeAssessmentForProgramYear,
 } from "../../../test-utils";
+import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-income.`, () => {
   it(
@@ -15,6 +16,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataDependantstatus = "dependant";
       assessmentConsolidatedData.studentDataNumberOfParents = 1;
+      assessmentConsolidatedData.studentDataParents[1].parentIsAbleToReport =
+        YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataTaxReturnIncome = 5000;
       assessmentConsolidatedData.parent1CRAReportedIncome = 50000;
       assessmentConsolidatedData.parent1TotalIncome = 99999;
