@@ -735,6 +735,26 @@
             },
             {
               "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> This program is inegligible for StudentAid BC funding</strong><br>The program needs to be a minimum of 20 instructional hours.",
+              "refreshOnChange": true,
+              "customClass": "banner-warning",
+              "key": "html6",
+              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"no\");",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true,
+              "tag": "p"
+            },
+            {
+              "label": "HTML",
               "attrs": [
                 {
                   "attr": "",
@@ -1711,26 +1731,6 @@
               "input": true
             },
             {
-              "label": "HTML",
-              "className": "alert alert-warning fa fa-exclamation-circle",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "<strong> This program is inegligible for StudentAid BC funding</strong><br>The program needs to be a minimum of 20 instructional hours.",
-              "refreshOnChange": true,
-              "customClass": "banner-warning",
-              "key": "html6",
-              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"no\");",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "hideLabel": true,
-              "tag": "p"
-            },
-            {
               "label": "Which credential type(s) are included? (Select all that apply)",
               "optionsLabelPosition": "right",
               "tableView": false,
@@ -1798,7 +1798,6 @@
                 "when": "credentialTypesAvi",
                 "eq": "privatePilotTraining"
               },
-              "customConditional": "show = (data.courseLoadCalculation === \"hours\" && data.minHoursWeek === \"no\" && data.isAviationProgram === \"yes\" && data.minHoursWeekAvi === \"no\");",
               "type": "htmlelement",
               "input": false,
               "tableView": false,
