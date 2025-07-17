@@ -41,10 +41,95 @@
             "calculateServer": true
         },
         {
-            "title": "Room and board appeal panel",
+            "label": "HTML",
+            "tag": "h3",
+            "className": "category-header-medium primary-color",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "Room and board appeal",
+            "refreshOnChange": false,
+            "key": "html116",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false,
+            "hideLabel": true
+        },
+        {
+            "label": "Please indicate any of the following circumstances that apply to you.",
+            "optionsLabelPosition": "right",
+            "tableView": false,
+            "defaultValue": {
+                "livingAtHomePayingRoomAndBoard": false,
+                "parentReceiveIncomeAssistance": false,
+                "parentEarnLowIncome": false,
+                "parentReceiveCanadaPensionOrOldAgeSupplement": false,
+                "parentUnEmployed": false
+            },
+            "values": [
+                {
+                    "label": "I am living at home and paying room and board",
+                    "value": "livingAtHomePayingRoomAndBoard",
+                    "shortcut": ""
+                },
+                {
+                    "label": "My parent(s)/guardian receive income assistance or disability benefits",
+                    "value": "parentReceiveIncomeAssistance",
+                    "shortcut": ""
+                },
+                {
+                    "label": "My parent(s)/guardian receive Canada Pension or old age supplement with no other income",
+                    "value": "parentReceiveCanadaPensionOrOldAgeSupplement",
+                    "shortcut": ""
+                },
+                {
+                    "label": "My parent(s)/guardian earn a low income",
+                    "value": "parentEarnLowIncome",
+                    "shortcut": ""
+                },
+                {
+                    "label": "My parent(s)/guardian are unemployed due to layoff, strike, or lockout",
+                    "value": "parentUnEmployed",
+                    "shortcut": ""
+                }
+            ],
+            "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+            },
+            "validateWhenHidden": false,
+            "key": "roomAndBoardSituations",
+            "type": "selectboxes",
+            "input": true,
+            "inputType": "checkbox"
+        },
+        {
+            "label": "Monthly room and board amount:",
+            "prefix": "$",
+            "applyMaskOn": "change",
+            "mask": false,
+            "tableView": false,
+            "delimiter": true,
+            "requireDecimal": false,
+            "inputFormat": "plain",
+            "truncateMultipleSpaces": false,
+            "validate": {
+                "required": true,
+                "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
+            },
+            "validateWhenHidden": false,
+            "key": "roomAndBoardAmount",
+            "type": "number",
+            "decimalLimit": 0,
+            "input": true
+        },
+        {
+            "title": "Upload supporting documents",
             "collapsible": false,
-            "hideLabel": true,
-            "key": "panel",
+            "key": "panel1",
             "type": "panel",
             "label": "Panel",
             "input": false,
@@ -60,172 +145,92 @@
                             "value": ""
                         }
                     ],
-                    "content": "Room and board appeal",
+                    "content": "Upload supporting documents",
                     "refreshOnChange": false,
-                    "key": "html116",
+                    "key": "supportingDocumentSectionHeader",
                     "type": "htmlelement",
                     "input": false,
-                    "tableView": false,
-                    "hideLabel": true
+                    "tableView": false
                 },
                 {
-                    "label": "Please indicate any of the following circumstances that apply to you.",
-                    "optionsLabelPosition": "right",
-                    "tableView": false,
-                    "defaultValue": {
-                        "livingAtHomePayingRoomAndBoard": false,
-                        "parentReceiveIncomeAssistance": false,
-                        "parentEarnLowIncome": false,
-                        "parentReceiveCanadaPensionOrOldAgeSupplement": false,
-                        "parentUnEmployed": false
-                    },
-                    "values": [
+                    "label": "HTML",
+                    "tag": "h4",
+                    "className": "category-header-medium-small",
+                    "attrs": [
                         {
-                            "label": "I am living at home and paying room and board",
-                            "value": "livingAtHomePayingRoomAndBoard",
-                            "shortcut": ""
-                        },
-                        {
-                            "label": "My parent(s)/guardian receive income assistance or disability benefits",
-                            "value": "parentReceiveIncomeAssistance",
-                            "shortcut": ""
-                        },
-                        {
-                            "label": "My parent(s)/guardian receive Canada Pension or old age supplement with no other income",
-                            "value": "parentReceiveCanadaPensionOrOldAgeSupplement",
-                            "shortcut": ""
-                        },
-                        {
-                            "label": "My parent(s)/guardian earn a low income",
-                            "value": "parentEarnLowIncome",
-                            "shortcut": ""
-                        },
-                        {
-                            "label": "My parent(s)/guardian are unemployed due to layoff, strike, or lockout",
-                            "value": "parentUnEmployed",
-                            "shortcut": ""
+                            "attr": "",
+                            "value": ""
                         }
                     ],
-                    "validate": {
-                        "required": true,
-                        "onlyAvailableItems": true
-                    },
-                    "validateWhenHidden": false,
-                    "key": "roomAndBoardSituations",
-                    "type": "selectboxes",
-                    "input": true,
-                    "inputType": "checkbox"
-                },
-                {
-                    "label": "Monthly room and board amount",
-                    "prefix": "$",
-                    "applyMaskOn": "change",
-                    "mask": false,
-                    "tableView": false,
-                    "delimiter": true,
-                    "requireDecimal": false,
-                    "inputFormat": "plain",
-                    "truncateMultipleSpaces": false,
-                    "validate": {
-                        "required": true,
-                        "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
-                    },
-                    "validateWhenHidden": false,
-                    "key": "roomAndBoardAmount",
-                    "type": "number",
-                    "decimalLimit": 0,
-                    "input": true
-                },
-                {
-                    "title": "Upload supporting documents",
-                    "collapsible": false,
-                    "key": "panel1",
-                    "type": "panel",
-                    "label": "Panel",
+                    "content": "Provide all of the following documents:",
+                    "refreshOnChange": false,
+                    "key": "html4",
+                    "type": "htmlelement",
                     "input": false,
-                    "tableView": false,
-                    "components": [
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "attrs": [
                         {
-                            "label": "HTML",
-                            "tag": "h3",
-                            "className": "category-header-medium primary-color",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "Upload supporting documents",
-                            "refreshOnChange": false,
-                            "key": "supportingDocumentSectionHeader",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false
-                        },
-                        {
-                            "label": "HTML",
-                            "tag": "h4",
-                            "className": "category-header-medium-small",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "Provide all of the following documents:",
-                            "refreshOnChange": false,
-                            "key": "html4",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false
-                        },
-                        {
-                            "label": "HTML",
-                            "attrs": [
-                                {
-                                    "attr": "",
-                                    "value": ""
-                                }
-                            ],
-                            "content": "<ul>\n<li>Upload a letter from you explaining why this room and board cost should be included in your StudentAid BC assessment.</li>\n<li>Upload a letter from your parent(s)/step-parent/sponsor/legal guardian confirming:\n  <ul>\n    <li>The amount of room and board charged.</li>\n    <li>The date you began paying room and board.</li>\n    <li>The reasons you are being charged room and board.</li>\n  </ul>\n</li>\n<li>Upload proof of payment (cancelled cheques or bank statements showing monthly lump sum payments)(Receipts are not accepted).</li>\n<li>Upload documentation of parental income, such as:\n  <ul>\n    <li>Pay stubs.</li>\n    <li>Tax returns.</li>\n    <li>Proof of income assistance, employment insurance, and/or pension benefits.</li>\n  </ul>\n</li>\n</ul>",
-                            "refreshOnChange": false,
-                            "customClass": "align-bullets",
-                            "key": "html23",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false
-                        },
-                        {
-                            "label": "Upload supporting documents",
-                            "customClass": "font-weight-bold",
-                            "hideLabel": true,
-                            "tableView": false,
-                            "storage": "url",
-                            "dir": "Room and board appeal - Supporting Documents",
-                            "webcam": false,
-                            "capture": false,
-                            "fileTypes": [
-                                {
-                                    "label": "",
-                                    "value": ""
-                                }
-                            ],
-                            "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                            "fileMaxSize": "15MB",
-                            "multiple": true,
-                            "validate": {
-                                "required": true,
-                                "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
-                                "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
-                            },
-                            "validateWhenHidden": false,
-                            "key": "roomAndBoardSupportingDocuments",
-                            "type": "file",
-                            "url": "student/files",
-                            "input": true,
-                            "lockKey": true
+                            "attr": "",
+                            "value": ""
                         }
-                    ]
+                    ],
+                    "content": "<ul>\n<li>Upload a letter from you explaining why this room and board cost should be included in your StudentAid BC assessment.</li>\n<li>Upload a letter from your parent(s)/step-parent/sponsor/legal guardian confirming:\n  <ul>\n    <li>The amount of room and board charged.</li>\n    <li>The date you began paying room and board.</li>\n    <li>The reasons you are being charged room and board.</li>\n  </ul>\n</li>\n<li>Upload proof of payment (cancelled cheques or bank statements showing monthly lump sum payments)(Receipts are not accepted).</li>\n<li>Upload documentation of parental income, such as:\n  <ul>\n    <li>Pay stubs.</li>\n    <li>Tax returns.</li>\n    <li>Proof of income assistance, employment insurance, and/or pension benefits.</li>\n  </ul>\n</li>\n</ul>",
+                    "refreshOnChange": false,
+                    "customClass": "align-bullets",
+                    "key": "html23",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "Upload supporting documents",
+                    "customClass": "font-weight-bold",
+                    "hideLabel": true,
+                    "tableView": false,
+                    "storage": "url",
+                    "dir": "Room and board appeal - Supporting Documents",
+                    "webcam": false,
+                    "capture": false,
+                    "fileTypes": [
+                        {
+                            "label": "",
+                            "value": ""
+                        }
+                    ],
+                    "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+                    "fileMaxSize": "15MB",
+                    "multiple": true,
+                    "validate": {
+                        "required": true,
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
+                    },
+                    "validateWhenHidden": false,
+                    "key": "roomAndBoardSupportingDocuments",
+                    "type": "file",
+                    "url": "student/files",
+                    "input": true,
+                    "lockKey": true
+                },
+                {
+                    "label": "Content",
+                    "className": "file-upload-info-container",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
+                    "refreshOnChange": false,
+                    "key": "acceptedFileFormatAndSize",
+                    "type": "htmlelement",
+                    "input": false,
+                    "hideLabel": true,
+                    "tableView": false
                 }
             ]
         }
