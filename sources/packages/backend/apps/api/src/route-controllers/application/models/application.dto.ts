@@ -281,6 +281,8 @@ export class ApplicationWarningsAPIOutDTO {
 export class ApplicationSupportingUsersAPIOutDTO {
   supportingUserId: number;
   supportingUserType: SupportingUserType;
+  supportingUserFullName?: string;
+  isAbleToReport?: boolean;
 }
 
 /**

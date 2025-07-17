@@ -387,8 +387,11 @@
           "label": ""
         },
         {
-          "clearOnHide": false,
+          "label": "Current Year Partner Income Exception",
           "key": "currentYearPartnerIncomeApplicationException",
+          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
+          "type": "well",
+          "clearOnHide": false,
           "input": false,
           "components": [
             {
@@ -411,11 +414,40 @@
             }
           ],
           "tableView": false,
-          "type": "well",
           "hideLabel": true,
-          "lockKey": true,
+          "lockKey": true
+        },
+        {
+          "label": "Current Year Parent Income Exception",
+          "key": "currentYearParentIncomeApplicationException",
           "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "label": ""
+          "type": "well",
+          "clearOnHide": false,
+          "input": false,
+          "components": [
+            {
+              "label": "Current Year Parent Income",
+              "tag": "strong",
+              "className": "font-bold",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "content": "Parent current year income",
+              "refreshOnChange": false,
+              "key": "currentYearParentIncomeApplicationExceptionLabel",
+              "type": "htmlelement",
+              "input": false,
+              "hideLabel": true,
+              "isNew": false,
+              "tableView": false
+            }
+          ],
+          "tableView": false,
+          "hideLabel": true,
+          "lockKey": true
         },
         {
           "clearOnHide": false,
