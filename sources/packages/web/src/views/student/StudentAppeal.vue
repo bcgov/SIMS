@@ -8,7 +8,7 @@
       appeals-form-name="studentAppeals"
       ><template #select-appeal-header>
         <body-header
-          title="When to request a change"
+          title="When to submit an appeal"
           subTitle="After your school has confirmed your enrolment, you must inform StudentAid BC of any changes to the information you provided in your application."
         >
         </body-header>
