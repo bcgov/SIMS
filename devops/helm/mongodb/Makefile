@@ -2,8 +2,8 @@ SHELL := /usr/bin/env bash
 NAME := mongodb
 
 NAMESPACE=
-FORMS_USER=
-FORMS_PASSWORD=
+FORMS_DB_USER=
+FORMS_DB_PASSWORD=
 
 ifndef NAMESPACE
 $(error NAMESPACE is not set)
@@ -11,17 +11,17 @@ endif
 
 .PHONY: check-args-defined
 check-args-defined:
-ifndef FORMS_USER
-	$(error FORMS_USER is not set)
+ifndef FORMS_DB_USER
+	$(error FORMS_DB_USER is not set)
 endif
-ifndef FORMS_PASSWORD
-	$(error FORMS_PASSWORD is not set)
+ifndef FORMS_DB_PASSWORD
+	$(error FORMS_DB_PASSWORD is not set)
 endif
 
 define arguments
 	"${NAME}" . -n "${NAMESPACE}" -f values.yaml -f "values-${NAMESPACE}.yaml" \
-	--set auth.usernames={"${FORMS_USER}"} \
-	--set-string auth.passwords={"${FORMS_PASSWORD}"} \
+	--set auth.usernames={"${FORMS_DB_USER}"} \
+	--set-string auth.passwords={"${FORMS_DB_PASSWORD}"} \
 	--set-string auth.databases={"forms"}
 endef
 

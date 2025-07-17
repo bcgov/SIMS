@@ -1,7 +1,7 @@
-name: Env Setup - Deploy HA Mongo in Openshift for Formio
-run-name: Env Setup - Deploy HA Mongo in Openshift from ${{ github.ref_name }} to ${{ inputs.environment }}
+name: Env Setup - Deploy Mongo HA in Openshift for Formio
+run-name: Env Setup - Deploy(${{ inputs.action }}) Mongo HA in Openshift from ${{ github.ref_name }} to ${{ inputs.environment }}
 
-concurrency: ha-mongo-setup
+concurrency: mongo-ha-setup
 
 on:
   workflow_dispatch:
@@ -10,18 +10,19 @@ on:
         description: "Environment"
         required: true
         type: environment
-      volume_capacity:
-        description: "Volume space available for data (e.g., 10Gi, 20Gi) - (Optional defaults to 2Gi)."
-        required: false
-        type: string
+      action:
+        description: "Action"
+        required: true
+        type: choice
+        options:
+          - install
+          - upgrade
 
 jobs:
   deployMongo:
     name: Deploy Mongo in Openshift
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
-    env:
-      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
     steps:
       - name: Checkout Target Branch
         uses: actions/checkout@v4
@@ -35,7 +36,6 @@ jobs:
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
       - name: Deploy Mongo
-        working-directory: "./devops/"
+        working-directory: "./devops/helm/mongodb/"
         run: |
-          VOLUME_CAPACITY="${{ inputs.volume_capacity || '2Gi' }}"
-          make oc-deploy-ha-mongo VOLUME_CAPACITY="$VOLUME_CAPACITY"
+          make ${{ inputs.action }} NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} FORMS_DB_USER=${{ secrets.FORMS_DB_USER }} FORMS_DB_PASSWORD=${{ secrets.FORMS_DB_PASSWORD }}
