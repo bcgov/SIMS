@@ -322,6 +322,10 @@ export interface CalculatedAssessmentModel {
   calculatedDataStudentTotalIncome: number;
   calculatedDataCurrentYearPartnerIncome: number;
   partner1CRAReportedIncome?: number;
+  calculatedDataTotalParentIncome: number;
+  calculatedDataParent1IncomeDeductions: number;
+  calculatedDataTotalParentDeductions: number;
+  calculatedDataTotalNetFamilyIncome: number;
 
   // Common variables used in both full-time and part-time.
   // CSGP

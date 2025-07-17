@@ -2077,8 +2077,8 @@ Alimony/Child Support paid by the Partner during the study period can be conside
         <zeebe:ioMapping>
           <zeebe:output source="=if&#10;  studentDataCurrentYearPartnerIncome = null&#10;then &#10;  if (partner1CRAReportedIncome = null)&#10;   then &#10;    if partner1TotalIncome = null&#10;      then &#10;          studentDataEstimatedSpouseIncome&#10;      else &#10;          partner1TotalIncome&#10;    else&#10;      partner1CRAReportedIncome&#10;else &#10;  studentDataCurrentYearPartnerIncome" target="calculatedDataPartner1TotalIncome" />
           <zeebe:output source="=if&#10;  studentDataCurrentYearIncome = null&#10;then &#10;  if (studentDataCRAReportedIncome = null)&#10;   then &#10;      studentDataTaxReturnIncome&#10;    else&#10;      studentDataCRAReportedIncome&#10;else &#10;  studentDataCurrentYearIncome" target="calculatedDataStudentTotalIncome" />
-          <zeebe:output source="=if&#10;  parent2CRAReportedIncome = null&#10;then&#10;  parent2TotalIncome&#10;else&#10;  parent2CRAReportedIncome" target="calculatedDataParent2TotalIncome" />
-          <zeebe:output source="=if&#10;  parent1CRAReportedIncome = null&#10;then &#10;  parent1TotalIncome&#10;else&#10;  parent1CRAReportedIncome" target="calculatedDataParent1TotalIncome" />
+          <zeebe:output source="=if studentDataParents[1].currentYearParentIncome = null&#10;then&#10;  if parent2CRAReportedIncome = null&#10;  then &#10;    parent2TotalIncome&#10;  else &#10;    parent2CRAReportedIncome&#10;else&#10;  studentDataParents[1].currentYearParentIncome" target="calculatedDataParent2TotalIncome" />
+          <zeebe:output source="=if studentDataParents[0].currentYearParentIncome = null&#10;then&#10;  if parent1CRAReportedIncome = null&#10;  then &#10;    parent1TotalIncome&#10;  else &#10;    parent1CRAReportedIncome&#10;else&#10;  studentDataParents[0].currentYearParentIncome" target="calculatedDataParent1TotalIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_14thi6n</bpmn:incoming>
