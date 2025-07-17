@@ -1,6 +1,6 @@
 export const ACCEPTED_FILE_FORMAT_AND_SIZE = {
-  title: "File - Format and size",
-  icon: "info",
+  title: "Info - File format and size",
+  icon: "info-square",
   schema: {
     label: "Content",
     input: false,

@@ -11,16 +11,6 @@
         {
             "input": true,
             "tableView": false,
-            "key": "calculatedTaxYear",
-            "label": "Calculated Tax Year",
-            "type": "hidden",
-            "calculateValue": "const [programYear] = data.programYear ? data.programYear.split(\"-\") : [];\nvalue = programYear ? programYear -1: \"\";",
-            "calculateServer": true,
-            "lockKey": true
-        },
-        {
-            "input": true,
-            "tableView": false,
             "key": "maxMoneyValue",
             "label": "Max Money Value",
             "persistent": false,
@@ -57,6 +47,22 @@
             "input": false,
             "tableView": false,
             "hideLabel": true
+        },
+        {
+            "label": "HTML",
+            "tag": "p",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "Important: This appeal is for students living at home who are paying room and board to a parent, step-parent, sponsor, or legal guardian.",
+            "refreshOnChange": false,
+            "key": "subHeader",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false
         },
         {
             "label": "Please indicate any of the following circumstances that apply to you.",
@@ -107,6 +113,22 @@
             "inputType": "checkbox"
         },
         {
+            "label": "HTML",
+            "className": "mt-6",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "Please enter the amount you pay monthly to your parent, step-parent, sponsor, or legal guardian.",
+            "refreshOnChange": false,
+            "key": "roomAndBoardAmountDescription",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false
+        },
+        {
             "label": "Monthly room and board amount:",
             "prefix": "$",
             "applyMaskOn": "change",
@@ -129,6 +151,7 @@
         {
             "title": "Upload supporting documents",
             "collapsible": false,
+            "hideLabel": true,
             "key": "panel1",
             "type": "panel",
             "label": "Panel",
@@ -205,8 +228,7 @@
                     "multiple": true,
                     "validate": {
                         "required": true,
-                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
-                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}."
                     },
                     "validateWhenHidden": false,
                     "key": "roomAndBoardSupportingDocuments",

@@ -1,7 +1,13 @@
 <template>
   <student-page-container class="overflow-visible">
     <template #header>
-      <header-navigator title="Student" subTitle="Submit Appeal" />
+      <header-navigator
+        title="Applications"
+        subTitle="Submit Appeal"
+        :routeLocation="{
+          name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+        }"
+      />
     </template>
     <student-appeal-submit
       :application-id="applicationId"
@@ -26,6 +32,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import StudentAppealSubmit from "@/components/students/StudentAppealSubmit.vue";
 import StudentAppealInstructions from "@/components/students/StudentAppealInstructions.vue";
 
@@ -39,6 +46,11 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+  },
+  setup() {
+    return {
+      StudentRoutesConst,
+    };
   },
 });
 </script>

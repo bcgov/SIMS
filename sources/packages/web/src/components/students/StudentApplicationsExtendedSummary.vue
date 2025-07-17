@@ -308,6 +308,7 @@ export default defineComponent({
       application: ApplicationSummaryAPIOutDTO,
     ) => {
       return (
+        application.isChangeRequestAllowedForPY &&
         application.status === ApplicationStatus.Completed &&
         application.offeringIntensity === OfferingIntensity.fullTime
       );
