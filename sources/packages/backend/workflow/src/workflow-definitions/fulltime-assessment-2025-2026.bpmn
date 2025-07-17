@@ -583,7 +583,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=min(dmnFullTimeProgramYearMaximums.limitWeeklyChildCare * offeringWeeks * calculatedDataTotalChildcareDependants,&#10;  studentDataDaycareCosts11YearsOrUnder + studentDataDaycareCosts12YearsOrOver)" target="calculatedDataChildCareCost" />
-          <zeebe:output source="=if &#10;  studentDataRelationshipStatus = &#34;married&#34; &#10;  and&#10;  calculatedDataPartnerStudyWeeks &#62;=12 &#10;then&#10;  calculatedDataChildCareCost / 2 &#10;else&#10;  calculatedDataChildCareCost" target="calculatedDataTotalChildCareCost" />
+          <zeebe:output source="=if studentDataRelationshipStatus = &#34;married&#34; &#10;  and calculatedDataPartnerCaringForDependant = &#34;yes&#34;&#10;then &#10;  0&#10;else &#10;  if studentDataRelationshipStatus = &#34;married&#34; &#10;  and calculatedDataPartnerStudyWeeks &#62;=12 &#10;then&#10;  calculatedDataChildCareCost / 2 &#10;else&#10;  calculatedDataChildCareCost" target="calculatedDataTotalChildCareCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_01apq7i</bpmn:incoming>
@@ -1105,7 +1105,7 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
     <bpmn:intermediateThrowEvent id="Event_0arma0u" name="awardEligibilityBCAG2Year">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-            <zeebe:output source="=if institutionType = &#34;BC Public&#34; then (&#10;if (calculatedDataProvincialAssessedNeed &#62;= 1)&#10;    and (programCredentialType = &#34;undergraduateCitation&#34;&#10;       or programCredentialType = &#34;undergraduateDiploma&#34;&#10;       or programCredentialType = &#34;undergraduateDegree&#34;&#10;       or programCredentialType = &#34;undergraduateCertificate&#34;&#10;       or programCredentialType = &#34;qualifyingStudies&#34;)&#10;    and (programLength = &#34;60WeeksToLessThan2Years&#34;&#10;       or programLength = &#34;2YearsToLessThan3Years&#34;&#10;       or programLength = &#34;3YearsToLessThan4Years&#34;&#10;       or programLength = &#34;4YearsToLessThan5Years&#34;&#10;       or programLength = &#34;5YearsOrMore&#34;) &#10;   and (calculatedDataTotalFamilyIncome &#60;= dmnFullTimeAwardFamilySizeVariables.limitAwardBCAGTopUpIncomeCap)&#10;then true &#10;else false&#10;) &#10;else false" target="awardEligibilityBCAG2Year" />
+          <zeebe:output source="=if institutionType = &#34;BC Public&#34; then (&#10;if (calculatedDataProvincialAssessedNeed &#62;= 1)&#10;    and (programCredentialType = &#34;undergraduateCitation&#34;&#10;       or programCredentialType = &#34;undergraduateDiploma&#34;&#10;       or programCredentialType = &#34;undergraduateDegree&#34;&#10;       or programCredentialType = &#34;undergraduateCertificate&#34;&#10;       or programCredentialType = &#34;qualifyingStudies&#34;)&#10;    and (programLength = &#34;60WeeksToLessThan2Years&#34;&#10;       or programLength = &#34;2YearsToLessThan3Years&#34;&#10;       or programLength = &#34;3YearsToLessThan4Years&#34;&#10;       or programLength = &#34;4YearsToLessThan5Years&#34;&#10;       or programLength = &#34;5YearsOrMore&#34;) &#10;   and (calculatedDataTotalFamilyIncome &#60;= dmnFullTimeAwardFamilySizeVariables.limitAwardBCAGTopUpIncomeCap)&#10;then true &#10;else false&#10;) &#10;else false" target="awardEligibilityBCAG2Year" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0utsrvh</bpmn:incoming>
@@ -1977,6 +1977,7 @@ Alimony/Child Support paid by the Partner during the study period can be conside
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if partner1TotalStudentLoan = null&#10;then &#10;  if studentDataPartnerTotalStudentLoan = null&#10;  then 0&#10;  else studentDataPartnerTotalStudentLoan&#10;else&#10;  partner1TotalStudentLoan" target="calculatedDataPartnerStudentLoans" />
+          <zeebe:output source="=if partner1PartnerCaringForDependant = null&#10;then &#10;  studentDataPartnerCaringForDependant&#10;else&#10;  partner1PartnerCaringForDependant" target="calculatedDataPartnerCaringForDependant" />
           <zeebe:output source="=if (studentDataPartnerChildSupportCosts = null and partner1ChildSpousalSupportCost = null)&#10;then 0&#10;else&#10;  if studentDataPartnerChildSupportCosts = null&#10;  then partner1ChildSpousalSupportCost&#10;  else studentDataPartnerChildSupportCosts&#10;" target="calculatedDataPartnerAlimonySupport" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -4126,6 +4127,10 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
         <di:waypoint x="868" y="581" />
         <di:waypoint x="932" y="581" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04nzmk7_di" bpmnElement="Flow_04nzmk7">
+        <di:waypoint x="1288" y="391" />
+        <di:waypoint x="1375" y="391" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1o4g869_di" bpmnElement="Association_1o4g869">
         <di:waypoint x="1043" y="346" />
         <di:waypoint x="1050" y="541" />
@@ -4137,10 +4142,6 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmndi:BPMNEdge id="Association_0q448eh_di" bpmnElement="Association_0q448eh">
         <di:waypoint x="3061" y="1138" />
         <di:waypoint x="3063" y="1113" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_04nzmk7_di" bpmnElement="Flow_04nzmk7">
-        <di:waypoint x="1288" y="391" />
-        <di:waypoint x="1375" y="391" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
         <dc:Bounds x="5020" y="1180" width="960" height="760" />
