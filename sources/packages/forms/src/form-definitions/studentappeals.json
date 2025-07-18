@@ -20,8 +20,10 @@
             "components": [
                 {
                     "label": "Application number:",
+                    "applyMaskOn": "change",
                     "disabled": true,
-                    "tableView": true,
+                    "tableView": false,
+                    "validateWhenHidden": false,
                     "key": "applicationNumber",
                     "type": "textfield",
                     "input": true
@@ -29,7 +31,7 @@
                 {
                     "label": "Submit an appeal to:",
                     "widget": "choicesjs",
-                    "tableView": true,
+                    "tableView": false,
                     "multiple": true,
                     "data": {
                         "values": [

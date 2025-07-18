@@ -38,7 +38,7 @@
   </template>
 </template>
 <script lang="ts">
-import { computed, ref, defineComponent, onMounted } from "vue";
+import { computed, ref, defineComponent, watchEffect } from "vue";
 import { ApiProcessError, FormIOForm, StudentAppealRequest } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentAppealService } from "@/services/StudentAppealService";
@@ -80,22 +80,26 @@ export default defineComponent({
     const showRequestForAppeal = computed(
       () => appealRequestsForms.value.length === 0,
     );
-    const operation = props.isChangeRequest ? "request for change" : "appeal";
+    const operation = computed(() =>
+      props.isChangeRequest ? "request for change" : "appeal",
+    );
 
-    onMounted(async () => {
-      try {
-        applicationAppealData =
-          await ApplicationService.shared.getApplicationForRequestChange(
-            props.applicationId,
+    watchEffect(async () => {
+      if (props.applicationId) {
+        try {
+          applicationAppealData =
+            await ApplicationService.shared.getApplicationForRequestChange(
+              props.applicationId,
+            );
+          initialData.value = {
+            applicationNumber: applicationAppealData.applicationNumber,
+            formNames: [],
+          };
+        } catch {
+          snackBar.error(
+            `An unexpected error happened while retrieving the application to submit the ${operation.value}.`,
           );
-        initialData.value = {
-          applicationNumber: applicationAppealData.applicationNumber,
-          formNames: [],
-        };
-      } catch {
-        snackBar.error(
-          `An unexpected error happened while retrieving the application to submit the ${operation}.`,
-        );
+        }
       }
     });
 
@@ -122,7 +126,9 @@ export default defineComponent({
           props.applicationId,
           appealRequests,
         );
-        snackBar.success(`The ${operation} has been submitted successfully.`);
+        snackBar.success(
+          `The ${operation.value} has been submitted successfully.`,
+        );
         backToRequestForm();
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
@@ -137,7 +143,7 @@ export default defineComponent({
           return;
         }
         snackBar.error(
-          `An unexpected error happened while submitting the ${operation}.`,
+          `An unexpected error happened while submitting the ${operation.value}.`,
         );
       } finally {
         processing.value = false;
