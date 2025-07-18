@@ -127,24 +127,13 @@ export class SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
-
-  @MaxLength(SUPPORTING_USER_FULL_NAME_MAX_LENGTH)
   parentFullName: string;
-
-  personalInfo: SupportingUserPersonalInfo;
+  personalInfo: SupportingUserPersonalInfoAPIOutDTO;
 }
 
-export class SupportingUserPersonalInfo {
-  @IsOptional()
-  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
+export class SupportingUserPersonalInfoAPIOutDTO {
   givenNames?: string;
-
-  @IsOptional()
-  @MaxLength(USER_LAST_NAME_MAX_LENGTH)
   lastName?: string;
-
-  @IsOptional()
-  @IsEnum(FormYesNoOptions)
   hasValidSIN?: FormYesNoOptions;
 }
 

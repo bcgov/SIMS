@@ -20,7 +20,7 @@ import {
   SupportingUserType,
 } from "@sims/sims-db";
 
-describe("SupportingAestStudentsController(e2e)-getIdentifiableSupportingUser", () => {
+describe("SupportingUserAESTController(e2e)-getIdentifiableSupportingUser", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let recentPYParentForm: DynamicFormConfiguration;
@@ -72,22 +72,24 @@ describe("SupportingAestStudentsController(e2e)-getIdentifiableSupportingUser", 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-
-    // Assert
-    expect(response.body).toMatchObject({
-      formName: recentPYParentForm.formDefinitionName,
-      isAbleToReport: false,
-      parentFullName: parentFullName,
-      personalInfo: {
-        givenNames: "TestGivenNames",
-        lastName: "TestLastName",
-        hasValidSIN: FormYesNoOptions.Yes,
-      },
-    });
+      .expect(HttpStatus.OK)
+      .expect({
+        formName: recentPYParentForm.formDefinitionName,
+        isAbleToReport: false,
+        parentFullName: parentFullName,
+        supportingData: null,
+        contactInfo: null,
+        sin: null,
+        birthDate: null,
+        personalInfo: {
+          givenNames: "TestGivenNames",
+          lastName: "TestLastName",
+          hasValidSIN: FormYesNoOptions.Yes,
+        },
+      });
   });
 
   afterAll(async () => {
