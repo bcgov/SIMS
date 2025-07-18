@@ -15,9 +15,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataDependantstatus = "dependant";
-      assessmentConsolidatedData.studentDataNumberOfParents = 1;
-      assessmentConsolidatedData.studentDataParents[1].parentIsAbleToReport =
-        YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataTaxReturnIncome = 5000;
       assessmentConsolidatedData.parent1CRAReportedIncome = 50000;
       assessmentConsolidatedData.parent1TotalIncome = 99999;
@@ -27,6 +24,13 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       assessmentConsolidatedData.parent1Tax = 700;
       assessmentConsolidatedData.parent1Contributions = 0;
       assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
+      assessmentConsolidatedData.studentDataParents = [
+        {
+          numberOfParents: 1,
+          parentIsAbleToReport: YesNoOptions.Yes,
+        },
+      ];
+
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(
