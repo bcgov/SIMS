@@ -1,6 +1,6 @@
-export const ACCEPTED_FILE_FORMAT_AND_SIZE = {
-  title: "Info - File format and size",
-  icon: "info-square",
+export const UPLOADER_FORMAT_AND_SIZE = {
+  title: "Uploader - Format and size",
+  icon: "cloud-arrow-up",
   schema: {
     label: "Content",
     input: false,

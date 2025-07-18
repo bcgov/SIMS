@@ -5,7 +5,6 @@
     </template>
     <student-appeal-submit
       :application-id="applicationId"
-      appeals-form-name="studentRequestChange"
       :is-change-request="true"
       ><template #submit-appeal-header>
         <body-header

@@ -1,20 +1,23 @@
 <template>
-  <div v-if="showRequestForAppeal">
+  <template v-if="showRequestForAppeal">
     <!-- Select appeal area -->
     <slot name="select-appeal-header"></slot>
     <formio-container
-      :formName="appealsFormName"
+      :formName="isChangeRequest ? 'studentRequestChange' : 'studentAppeals'"
       :formData="initialData"
       @submitted="submitRequest"
     >
       <template #actions="{ submit }">
-        <v-btn @click="submit" color="primary" class="float-right">
-          Next
-        </v-btn>
+        <footer-buttons
+          justify="end"
+          :show-secondary-button="false"
+          @primaryClick="submit"
+          primaryLabel="Next"
+        ></footer-buttons>
       </template>
     </formio-container>
-  </div>
-  <div v-else>
+  </template>
+  <template v-else>
     <!-- Submit appeal area -->
     <slot name="submit-appeal-header"></slot>
     <appeal-requests-form
@@ -22,24 +25,17 @@
       @submitted="submitAppeal"
     >
       <template #actions="{ submit }">
-        <v-btn
-          color="primary"
-          variant="outlined"
-          class="mr-2"
-          @click="backToRequestForm"
-          >Back
-        </v-btn>
-
-        <v-btn
-          color="primary"
-          class="ml-2 float-right"
-          @click="submit"
-          :loading="processing"
-          >Submit for review</v-btn
-        >
+        <footer-buttons
+          justify="space-between"
+          :processing="processing"
+          @secondaryClick="backToRequestForm"
+          secondaryLabel="Back"
+          @primaryClick="submit"
+          primaryLabel="Submit for review"
+        ></footer-buttons>
       </template>
     </appeal-requests-form>
-  </div>
+  </template>
 </template>
 <script lang="ts">
 import { computed, ref, defineComponent, onMounted } from "vue";
@@ -66,10 +62,6 @@ export default defineComponent({
   props: {
     applicationId: {
       type: Number,
-      required: true,
-    },
-    appealsFormName: {
-      type: String,
       required: true,
     },
     isChangeRequest: {

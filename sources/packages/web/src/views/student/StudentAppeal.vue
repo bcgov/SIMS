@@ -9,9 +9,7 @@
         }"
       />
     </template>
-    <student-appeal-submit
-      :application-id="applicationId"
-      appeals-form-name="studentAppeals"
+    <student-appeal-submit :application-id="applicationId"
       ><template #select-appeal-header>
         <body-header
           title="When to submit an appeal"
