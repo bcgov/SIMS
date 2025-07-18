@@ -1,0 +1,56 @@
+{
+    "title": "Student Appeals",
+    "name": "studentAppeals",
+    "path": "studentappeals",
+    "type": "form",
+    "display": "form",
+    "tags": [
+        "common"
+    ],
+    "components": [
+        {
+            "title": "Student appeals panel",
+            "collapsible": false,
+            "hideLabel": true,
+            "key": "studentRequestPanel",
+            "type": "panel",
+            "label": "Panel",
+            "input": false,
+            "tableView": false,
+            "components": [
+                {
+                    "label": "Application number:",
+                    "applyMaskOn": "change",
+                    "disabled": true,
+                    "tableView": false,
+                    "validateWhenHidden": false,
+                    "key": "applicationNumber",
+                    "type": "textfield",
+                    "input": true
+                },
+                {
+                    "label": "Submit an appeal to:",
+                    "widget": "choicesjs",
+                    "tableView": false,
+                    "multiple": true,
+                    "data": {
+                        "values": [
+                            {
+                                "value": "roomandboardcostsappeal",
+                                "label": "Room and board costs"
+                            }
+                        ]
+                    },
+                    "validate": {
+                        "required": true,
+                        "onlyAvailableItems": true
+                    },
+                    "validateWhenHidden": false,
+                    "key": "formNames",
+                    "type": "select",
+                    "input": true
+                }
+            ]
+        }
+    ]
+}

@@ -24,6 +24,7 @@ import {
   USER_LAST_NAME_MAX_LENGTH,
   USER_GIVEN_NAMES_MAX_LENGTH,
   SpecificIdentityProviders,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
@@ -250,6 +251,10 @@ export class ApplicationSummaryAPIOutDTO {
    * change request feature. Other conditions may apply.
    */
   isChangeRequestAllowedForPY: boolean;
+  /**
+   * Application offering intensity.
+   */
+  offeringIntensity: OfferingIntensity;
 }
 
 /**

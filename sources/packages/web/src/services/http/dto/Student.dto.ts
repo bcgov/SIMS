@@ -3,6 +3,7 @@ import {
   DisabilityStatus,
   SpecificIdentityProviders,
   ApplicationStatus,
+  OfferingIntensity,
 } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { AddressDetailsFormAPIDTO } from "./Common.dto";
@@ -185,6 +186,10 @@ export interface ApplicationSummaryAPIOutDTO {
    * change request feature. Other conditions may apply.
    */
   isChangeRequestAllowedForPY: boolean;
+  /**
+   * Application offering intensity.
+   */
+  offeringIntensity: OfferingIntensity;
 }
 
 /**

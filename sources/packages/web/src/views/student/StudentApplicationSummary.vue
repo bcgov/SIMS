@@ -16,6 +16,7 @@
           @openConfirmCancel="confirmCancelApplication"
           @goToApplication="goToApplication"
           @viewApplicationVersion="goToApplicationForm"
+          @submit-appeal="submitAppeal"
         />
       </v-col>
     </v-row>
@@ -103,6 +104,15 @@ export default defineComponent({
       }
     };
 
+    const submitAppeal = async (applicationId: number) => {
+      router.push({
+        name: StudentRoutesConst.STUDENT_APPEAL,
+        params: {
+          applicationId,
+        },
+      });
+    };
+
     const confirmEditApplication = async (applicationId: number) => {
       if (await editApplicationModal.value.showModal()) {
         await goToApplicationForm(applicationId);
@@ -150,6 +160,7 @@ export default defineComponent({
       reloadData,
       goToApplication,
       goToApplicationForm,
+      submitAppeal,
       cancelApplicationModal,
       isMobile,
     };

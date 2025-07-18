@@ -4,6 +4,7 @@ import {
   HEADER_MEDIUM,
   HEADER_SMALL,
   CURRENCY,
+  UPLOADER_FORMAT_AND_SIZE,
 } from "@/types/formio/custom-components";
 
 export const FORMIO_CUSTOM_COMPONENTS = {
@@ -14,5 +15,6 @@ export const FORMIO_CUSTOM_COMPONENTS = {
     HEADER_SMALL,
     APPLICATION_EXCEPTION,
     CURRENCY,
+    UPLOADER_FORMAT_AND_SIZE,
   },
 };

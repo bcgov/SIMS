@@ -5,4 +5,3 @@
     </div>
   </student-page-container>
 </template>
-<script lang="ts"></script>

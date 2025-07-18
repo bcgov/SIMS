@@ -26,7 +26,7 @@ export default defineComponent({
   emits: ["submitted"],
   props: {
     studentAppealRequests: {
-      type: Object as PropType<StudentAppealRequest>,
+      type: Array as PropType<StudentAppealRequest[]>,
       required: true,
     },
     readOnly: {

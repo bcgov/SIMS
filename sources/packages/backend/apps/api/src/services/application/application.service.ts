@@ -1014,6 +1014,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.applicationNumber",
         "application.isArchived",
         "application.id",
+        "application.offeringIntensity",
         "parentApplication.id",
         "parentApplication.submittedDate",
         "currentAssessment.id",
