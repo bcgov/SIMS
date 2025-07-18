@@ -2,7 +2,6 @@ import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   ZeebeMockedClient,
   createFakeConsolidatedFulltimeData,
-  createIdentifiableParentsData,
   executeFullTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { YesNoOptions } from "@sims/test-utils";
@@ -64,13 +63,25 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       "and the parent is able to report their financial information with deductions less than the maximum for the year.",
     async () => {
       // Arrange
-      const assessmentConsolidatedData = {
-        ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
-        ...createIdentifiableParentsData({
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataDependantstatus = "dependant";
+      assessmentConsolidatedData.studentDataTaxReturnIncome = 5000;
+      assessmentConsolidatedData.parent1CRAReportedIncome = 50000;
+      assessmentConsolidatedData.parent1TotalIncome = 99999;
+      assessmentConsolidatedData.parent1CppEmployment = 500;
+      assessmentConsolidatedData.parent1CppSelfemploymentOther = 200;
+      assessmentConsolidatedData.parent1Ei = 600;
+      assessmentConsolidatedData.parent1Tax = 700;
+      assessmentConsolidatedData.parent1Contributions = 0;
+      assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
+      assessmentConsolidatedData.studentDataParents = [
+        {
           numberOfParents: 1,
-          currentYearIncome: true,
-        }),
-      };
+          parentIsAbleToReport: YesNoOptions.Yes,
+          currentYearParentIncome: 100,
+        },
+      ];
 
       // Act
       const calculatedAssessment =
@@ -87,7 +98,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       // The deductions for CPP and EI are capped at the maximum for the year.
       expect(
         calculatedAssessment.variables.calculatedDataParent1IncomeDeductions,
-      ).toBe(3868);
+      ).toBe(2000);
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
