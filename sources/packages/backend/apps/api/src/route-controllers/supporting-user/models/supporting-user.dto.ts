@@ -127,7 +127,10 @@ export class SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
+
+  @MaxLength(SUPPORTING_USER_FULL_NAME_MAX_LENGTH)
   parentFullName: string;
+
   personalInfo: SupportingUserPersonalInfo;
 }
 
