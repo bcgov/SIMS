@@ -44,5 +44,12 @@ export interface SupportingUser {
   email?: string;
   firstName?: string;
   lastName?: string;
+  parentFullName?: string;
+  personalInfo?: SupportingUserPersonalInfo;
+}
+
+export interface SupportingUserPersonalInfo {
+  givenNames?: string;
+  lastName?: string;
   hasValidSIN?: FormYesNoOptions;
 }

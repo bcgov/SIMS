@@ -74,9 +74,15 @@ export interface SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
-  hasValidSIN?: FormYesNoOptions;
+  personalInfo: SupportingUserPersonalInfoAPIOutDTO;
+  parentFullName: string;
 }
 
+export class SupportingUserPersonalInfoAPIOutDTO {
+  givenNames?: string;
+  lastName?: string;
+  hasValidSIN?: FormYesNoOptions;
+}
 /**
  * Supporting user details of the supporting user who is unable to report.
  */
