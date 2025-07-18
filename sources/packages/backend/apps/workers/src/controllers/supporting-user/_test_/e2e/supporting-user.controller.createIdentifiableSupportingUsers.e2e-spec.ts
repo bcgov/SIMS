@@ -1,4 +1,9 @@
-import { ApplicationData, SupportingUserType } from "@sims/sims-db";
+import {
+  Application,
+  ApplicationData,
+  NotificationMessageType,
+  SupportingUserType,
+} from "@sims/sims-db";
 import {
   createE2EDataSources,
   createFakeSupportingUser,
@@ -33,145 +38,167 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     supportingUserController = nestApplication.get(SupportingUserController);
   });
 
-  it("Should create supporting user for the first provided parent and save the associated full name when one parent's information is added to the student application.", async () => {
-    // Arrange
-    const parentFullName = faker.datatype.uuid();
-    const savedApplication = await saveFakeApplication(
-      db.dataSource,
-      undefined,
-      {
-        applicationData: {
-          workflowName: "some-workflow",
-          parents: [
-            {
-              parentFullName,
-            },
-          ],
-        } as ApplicationData,
-      },
-    );
-    const fakePayload = createFakeCreateIdentifiableSupportingUsersPayload({
-      applicationId: savedApplication.id,
-      supportingUserType: SupportingUserType.Parent,
-      parent: 1,
-      isAbleToReport: true,
-    });
-
-    // Act
-    const result =
-      await supportingUserController.createIdentifiableSupportingUsers(
-        createFakeWorkerJob<
-          CreateIdentifiableSupportingUsersJobInDTO,
-          ICustomHeaders,
-          CreateIdentifiableSupportingUsersJobOutDTO
-        >(fakePayload),
-      );
-
-    // Assert
-    // Validate DB creation.
-    const updatedApplication = await db.application.findOne({
-      select: {
-        id: true,
-        supportingUsers: {
-          id: true,
-          supportingUserType: true,
-          isAbleToReport: true,
-          fullName: true,
+  it(
+    "Should create supporting user for the first provided parent and save the associated full name when one parent's information is added to the student application " +
+      "and create a student notification for parent declaration required by parent.",
+    async () => {
+      // Arrange
+      const parentFullName = faker.datatype.uuid();
+      const savedApplication = await saveFakeApplication(
+        db.dataSource,
+        undefined,
+        {
+          applicationData: {
+            workflowName: "some-workflow",
+            parents: [
+              {
+                parentFullName,
+              },
+            ],
+          } as ApplicationData,
         },
-      },
-      relations: { supportingUsers: true },
-      where: {
-        id: savedApplication.id,
-      },
-    });
-    expect(updatedApplication.supportingUsers).toHaveLength(1);
-    const [parent] = updatedApplication.supportingUsers;
-    expect(parent).toEqual({
-      id: expect.any(Number),
-      supportingUserType: SupportingUserType.Parent,
-      isAbleToReport: true,
-      fullName: parentFullName,
-    });
-    // Validate job result.
-    expect(result).toEqual({
-      resultType: MockedZeebeJobResult.Complete,
-      outputVariables: {
-        createdSupportingUserId: parent.id,
-      },
-    });
-  });
-
-  it("Should create supporting user for the second provided parent and save the associated full name when the two parent's information is added to the student application.", async () => {
-    // Arrange
-    const parentFullName1 = faker.datatype.uuid();
-    const parentFullName2 = faker.datatype.uuid();
-    const savedApplication = await saveFakeApplication(
-      db.dataSource,
-      undefined,
-      {
-        applicationData: {
-          workflowName: "some-workflow",
-          parents: [
-            {
-              parentFullName: parentFullName1,
-            },
-            {
-              parentFullName: parentFullName2,
-            },
-          ],
-        } as ApplicationData,
-      },
-    );
-    const fakePayload = createFakeCreateIdentifiableSupportingUsersPayload({
-      applicationId: savedApplication.id,
-      supportingUserType: SupportingUserType.Parent,
-      parent: 2,
-      isAbleToReport: false,
-    });
-
-    // Act
-    const result =
-      await supportingUserController.createIdentifiableSupportingUsers(
-        createFakeWorkerJob<
-          CreateIdentifiableSupportingUsersJobInDTO,
-          ICustomHeaders,
-          CreateIdentifiableSupportingUsersJobOutDTO
-        >(fakePayload),
       );
+      const fakePayload = createFakeCreateIdentifiableSupportingUsersPayload({
+        applicationId: savedApplication.id,
+        supportingUserType: SupportingUserType.Parent,
+        parent: 1,
+        isAbleToReport: true,
+      });
 
-    // Assert
-    // Validate DB creation.
-    const updatedApplication = await db.application.findOne({
-      select: {
-        id: true,
-        supportingUsers: {
+      // Act
+      const result =
+        await supportingUserController.createIdentifiableSupportingUsers(
+          createFakeWorkerJob<
+            CreateIdentifiableSupportingUsersJobInDTO,
+            ICustomHeaders,
+            CreateIdentifiableSupportingUsersJobOutDTO
+          >(fakePayload),
+        );
+
+      // Assert
+      // Validate DB creation.
+      const updatedApplication = await db.application.findOne({
+        select: {
           id: true,
-          supportingUserType: true,
-          isAbleToReport: true,
-          fullName: true,
+          supportingUsers: {
+            id: true,
+            supportingUserType: true,
+            isAbleToReport: true,
+            fullName: true,
+          },
         },
-      },
-      relations: { supportingUsers: true },
-      where: {
-        id: savedApplication.id,
-      },
-    });
-    expect(updatedApplication.supportingUsers).toHaveLength(1);
-    const [parent] = updatedApplication.supportingUsers;
-    expect(parent).toEqual({
-      id: expect.any(Number),
-      supportingUserType: SupportingUserType.Parent,
-      isAbleToReport: false,
-      fullName: parentFullName2,
-    });
-    // Validate job result.
-    expect(result).toEqual({
-      resultType: MockedZeebeJobResult.Complete,
-      outputVariables: {
-        createdSupportingUserId: parent.id,
-      },
-    });
-  });
+        relations: { supportingUsers: true },
+        where: {
+          id: savedApplication.id,
+        },
+      });
+      expect(updatedApplication.supportingUsers).toHaveLength(1);
+      const [parent] = updatedApplication.supportingUsers;
+      expect(parent).toEqual({
+        id: expect.any(Number),
+        supportingUserType: SupportingUserType.Parent,
+        isAbleToReport: true,
+        fullName: parentFullName,
+      });
+      // Validate job result.
+      expect(result).toEqual({
+        resultType: MockedZeebeJobResult.Complete,
+        outputVariables: {
+          createdSupportingUserId: parent.id,
+        },
+      });
+      // Validate the creation of notification for the parent declare information
+      // to be provided by the parent.
+      await notificationLookupAndAssertion(
+        savedApplication,
+        parentFullName,
+        NotificationMessageType.ParentInformationRequiredFromParentNotification,
+      );
+    },
+  );
+
+  it(
+    "Should create supporting user for the second provided parent and save the associated full name when the two parent's information is added to the student application " +
+      "and create a student notification for parent declaration required by student.",
+    async () => {
+      // Arrange
+      const parentFullName1 = faker.datatype.uuid();
+      const parentFullName2 = faker.datatype.uuid();
+      const savedApplication = await saveFakeApplication(
+        db.dataSource,
+        undefined,
+        {
+          applicationData: {
+            workflowName: "some-workflow",
+            parents: [
+              {
+                parentFullName: parentFullName1,
+              },
+              {
+                parentFullName: parentFullName2,
+              },
+            ],
+          } as ApplicationData,
+        },
+      );
+      const fakePayload = createFakeCreateIdentifiableSupportingUsersPayload({
+        applicationId: savedApplication.id,
+        supportingUserType: SupportingUserType.Parent,
+        parent: 2,
+        isAbleToReport: false,
+      });
+
+      // Act
+      const result =
+        await supportingUserController.createIdentifiableSupportingUsers(
+          createFakeWorkerJob<
+            CreateIdentifiableSupportingUsersJobInDTO,
+            ICustomHeaders,
+            CreateIdentifiableSupportingUsersJobOutDTO
+          >(fakePayload),
+        );
+
+      // Assert
+      // Validate DB creation.
+      const updatedApplication = await db.application.findOne({
+        select: {
+          id: true,
+          supportingUsers: {
+            id: true,
+            supportingUserType: true,
+            isAbleToReport: true,
+            fullName: true,
+          },
+        },
+        relations: { supportingUsers: true },
+        where: {
+          id: savedApplication.id,
+        },
+      });
+      expect(updatedApplication.supportingUsers).toHaveLength(1);
+      const [parent] = updatedApplication.supportingUsers;
+      expect(parent).toEqual({
+        id: expect.any(Number),
+        supportingUserType: SupportingUserType.Parent,
+        isAbleToReport: false,
+        fullName: parentFullName2,
+      });
+      // Validate job result.
+      expect(result).toEqual({
+        resultType: MockedZeebeJobResult.Complete,
+        outputVariables: {
+          createdSupportingUserId: parent.id,
+        },
+      });
+      // Validate the creation of notification for the parent declare information
+      // to be provided by the student.
+      await notificationLookupAndAssertion(
+        savedApplication,
+        parentFullName2,
+        NotificationMessageType.ParentInformationRequiredFromStudentNotification,
+      );
+    },
+  );
 
   it("Should not create a parent when the parent was already created.", async () => {
     // Arrange
@@ -303,4 +330,47 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       resultType: MockedZeebeJobResult.Error,
     });
   });
+
+  /**
+   * Helper function to lookup notifications and perform assertions.
+   * @param savedApplication the saved application.
+   * @param parentFullName the full name of the parent.
+   * @param notificationMessageType the notification message type to check.
+   */
+  async function notificationLookupAndAssertion(
+    savedApplication: Application,
+    parentFullName: string,
+    notificationMessageType: NotificationMessageType,
+  ): Promise<void> {
+    const notification = await db.notification.findOne({
+      select: {
+        id: true,
+        dateSent: true,
+        messagePayload: true,
+        notificationMessage: { id: true, templateId: true },
+        user: { id: true, email: true, firstName: true, lastName: true },
+      },
+      relations: { notificationMessage: true, user: true },
+      where: {
+        notificationMessage: {
+          id: notificationMessageType,
+        },
+        user: {
+          id: savedApplication.student.user.id,
+        },
+      },
+    });
+    expect(notification.dateSent).toBeNull();
+    expect(notification.messagePayload).toStrictEqual({
+      email_address: savedApplication.student.user.email,
+      template_id: notification.notificationMessage.templateId,
+      personalisation: {
+        applicationNumber: savedApplication.applicationNumber,
+        parentFullName,
+        supportingUserType: "parent",
+        lastName: savedApplication.student.user.lastName,
+        givenNames: savedApplication.student.user.firstName,
+      },
+    });
+  }
 });

@@ -1253,12 +1253,12 @@ export class NotificationActionsService {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.ParentDeclarationRequiredParentCanReportNotification,
+        NotificationMessageType.ParentInformationRequiredFromParentNotification,
       );
     const supportingUserInformationNotification = {
       userId: notification.userId,
       messageType:
-        NotificationMessageType.ParentDeclarationRequiredParentCanReportNotification,
+        NotificationMessageType.ParentInformationRequiredFromParentNotification,
       messagePayload: {
         email_address: notification.toAddress,
         template_id: templateId,
@@ -1291,12 +1291,12 @@ export class NotificationActionsService {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.ParentDeclarationRequiredParentCannotReportNotification,
+        NotificationMessageType.ParentInformationRequiredFromStudentNotification,
       );
     const supportingUserInformationNotification = {
       userId: notification.userId,
       messageType:
-        NotificationMessageType.ParentDeclarationRequiredParentCannotReportNotification,
+        NotificationMessageType.ParentInformationRequiredFromStudentNotification,
       messagePayload: {
         email_address: notification.toAddress,
         template_id: templateId,
