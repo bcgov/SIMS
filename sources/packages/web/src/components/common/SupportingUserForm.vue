@@ -48,7 +48,7 @@ import {
   BannerTypes,
 } from "@/types";
 import { SupportingUsersService } from "@/services/SupportingUserService";
-import { useFormioUtils } from "@/composables";
+import { useFormioUtils, useFormatters } from "@/composables";
 
 export default defineComponent({
   emits: {
@@ -74,6 +74,7 @@ export default defineComponent({
   },
   setup(props, context) {
     const { disableWizardButtons } = useFormioUtils();
+    const { dateOnlyLongString } = useFormatters();
     const supportingUser = ref({} as SupportingUser);
     let formInstance: FormIOForm<Record<string, unknown>>;
     const isFirstPage = ref(true);
@@ -87,9 +88,34 @@ export default defineComponent({
           await SupportingUsersService.shared.getSupportingUserData(
             props.supportingUserId,
           );
+        // Here there is only one address for now
+        let contactAddress = {};
+        if (supportingUser.value.contactInfo?.address) {
+          const address = supportingUser.value.contactInfo.address;
+          contactAddress = {
+            city: address.city,
+            country: address.country,
+            provinceState: address.provinceState,
+            postalCode: address.postalCode,
+            addressLine1: address.addressLine1,
+            addressLine2: address.addressLine2,
+          };
+        }
+        // for both parent and partner first tab is same
+        // and the information on the 2nd tab is fed in `supportingData`
         formInitialData.value = {
           isAbleToReport: supportingUser.value.isAbleToReport,
           programYearStartDate: supportingUser.value.programYearStartDate,
+          givenNames: supportingUser.value.personalInfo?.givenNames,
+          lastName: supportingUser.value.personalInfo?.lastName,
+          email: supportingUser.value.email,
+          dateOfBirth: dateOnlyLongString(supportingUser.value.birthDate),
+          sin: supportingUser.value.sin,
+          phone: supportingUser.value.contactInfo?.phone,
+          supportingData: supportingUser.value.supportingData,
+          ...contactAddress,
+          hasValidSIN: supportingUser.value.personalInfo?.hasValidSIN,
+          parentFullName: supportingUser.value.parentFullName,
         };
       }
     });
