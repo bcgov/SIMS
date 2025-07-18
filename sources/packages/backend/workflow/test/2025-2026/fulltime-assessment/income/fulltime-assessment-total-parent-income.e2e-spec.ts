@@ -8,14 +8,112 @@ import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-income.`, () => {
   it(
-    "Should calculate total gross and net parent income as the CRA verified income value when the student is dependant with one parent " +
-      "and the parent is able to report their financial information with deductions less than the maximum for the year.",
+    "Should calculate total gross family income as the declared value when CRA or current year income are not provided " +
+      "and the deductions are more than the maximum for the year " +
+      "and the one parent is able to report their financial information.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataDependantstatus = "dependant";
-      assessmentConsolidatedData.studentDataTaxReturnIncome = 5000;
+      assessmentConsolidatedData.parent1TotalIncome = 65000;
+      assessmentConsolidatedData.parent1CppEmployment = 3000;
+      assessmentConsolidatedData.parent1CppSelfemploymentOther = 3000;
+      assessmentConsolidatedData.parent1Ei = 1200;
+      assessmentConsolidatedData.parent1Tax = 700;
+      assessmentConsolidatedData.parent1Contributions = 0;
+      assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
+      assessmentConsolidatedData.studentDataParents = [
+        {
+          parentIsAbleToReport: YesNoOptions.Yes,
+        },
+      ];
+
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // Calculated total parent income must be consistent with the parent total income.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalParentIncome,
+      ).toBe(65000);
+      // Calculated total parent deductions must combine total CPP, EI and Income Tax.
+      // The deductions for CPP ($3868) and EI ($1049) are capped at the maximum for the year.
+      expect(
+        calculatedAssessment.variables.calculatedDataParent1IncomeDeductions,
+      ).toBe(5617);
+      // Calculated total family income should be the gross parent income.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+      ).toBe(65000);
+      // Calculated total net family income should be the gross parent income minus the deductions.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
+      ).toBe(59383);
+    },
+  );
+
+  it(
+    "Should calculate total gross family income as the declared value when CRA or current year income are not provided " +
+      "and the deductions are less than the maximum for the year " +
+      "and the one parent is able to report their financial information.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataDependantstatus = "dependant";
+      assessmentConsolidatedData.parent1TotalIncome = 99999;
+      assessmentConsolidatedData.parent1CppEmployment = 500;
+      assessmentConsolidatedData.parent1CppSelfemploymentOther = 200;
+      assessmentConsolidatedData.parent1Ei = 600;
+      assessmentConsolidatedData.parent1Tax = 700;
+      assessmentConsolidatedData.parent1Contributions = 0;
+      assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
+      assessmentConsolidatedData.studentDataParents = [
+        {
+          parentIsAbleToReport: YesNoOptions.Yes,
+        },
+      ];
+
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // Calculated total parent income must be consistent with the parent total income.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalParentIncome,
+      ).toBe(99999);
+      // Calculated total parent deductions must combine total CPP, EI and Income Tax.
+      // The deductions for CPP and EI are capped at the maximum for the year.
+      expect(
+        calculatedAssessment.variables.calculatedDataParent1IncomeDeductions,
+      ).toBe(2000);
+      // Calculated total family income should be the gross parent income.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+      ).toBe(99999);
+      // Calculated total net family income should be the gross parent income minus the deductions.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
+      ).toBe(97999);
+    },
+  );
+
+  it(
+    "Should calculate total gross family income as the CRA income value when present " +
+      "and the deductions are less than the maximum for the year " +
+      "and the one parent is able to report their financial information.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataDependantstatus = "dependant";
       assessmentConsolidatedData.parent1CRAReportedIncome = 50000;
       assessmentConsolidatedData.parent1TotalIncome = 99999;
       assessmentConsolidatedData.parent1CppEmployment = 500;
@@ -26,7 +124,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
       assessmentConsolidatedData.studentDataParents = [
         {
-          numberOfParents: 1,
           parentIsAbleToReport: YesNoOptions.Yes,
         },
       ];
@@ -57,16 +154,16 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       ).toBe(48000);
     },
   );
+
   it(
-    "Should calculate total gross and net parent income as the current year income value when present " +
-      "and the student is dependant with one parent " +
-      "and the parent is able to report their financial information with deductions less than the maximum for the year.",
+    "Should calculate total gross family income as the current year income value when present " +
+      "and the deductions are less than the maximum for the year " +
+      "and the one parent is able to report their financial information.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataDependantstatus = "dependant";
-      assessmentConsolidatedData.studentDataTaxReturnIncome = 5000;
       assessmentConsolidatedData.parent1CRAReportedIncome = 50000;
       assessmentConsolidatedData.parent1TotalIncome = 99999;
       assessmentConsolidatedData.parent1CppEmployment = 500;
@@ -77,7 +174,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
       assessmentConsolidatedData.studentDataParents = [
         {
-          numberOfParents: 1,
           parentIsAbleToReport: YesNoOptions.Yes,
           currentYearParentIncome: 100,
         },

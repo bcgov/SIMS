@@ -209,30 +209,6 @@ export function createFakeConsolidatedFulltimeData(
 }
 
 /**
- * Create fake full time consolidated data with default parent data
- * based on program year.
- * @param programYear program year.
- * @param includeCurrentYearIncome indicates if the current year income should be included.
- * @returns assessment consolidated data for full time application.
- */
-export function createFakeConsolidatedFulltimeWithParentsData(
-  programYear: string,
-  includeCurrentYearIncome: boolean,
-): AssessmentConsolidatedData {
-  const [, programEndYear] = programYear.split("-");
-  const assessmentConsolidatedData =
-    createFakeAssessmentConsolidatedData(programYear);
-  createIdentifiableParentsData({
-    numberOfParents: 1,
-    currentYearIncome: includeCurrentYearIncome,
-  });
-  assessmentConsolidatedData.offeringIntensity = OfferingIntensity.fullTime;
-  assessmentConsolidatedData.offeringStudyStartDate = `${programEndYear}-02-01`;
-  assessmentConsolidatedData.offeringStudyEndDate = `${programEndYear}-05-24`;
-  return assessmentConsolidatedData;
-}
-
-/**
  * Create fake part time consolidated data
  * based on program year.
  * @param programYear program year.
@@ -323,7 +299,6 @@ export function createIdentifiableParentsData(options?: {
   dataType?: AssessmentDataType;
   parents?: IdentifiableParentData[];
   numberOfParents?: 1 | 2;
-  currentYearIncome?: boolean;
 }): Partial<AssessmentConsolidatedData> {
   // Default values for options when not provided.
   const dataType = options.dataType ?? AssessmentDataType.Submit;
@@ -335,9 +310,6 @@ export function createIdentifiableParentsData(options?: {
       { length: options.numberOfParents },
       () => ({
         parentIsAbleToReport: YesNoOptions.Yes,
-        ...(options.currentYearIncome && {
-          currentYearParentIncome: 100,
-        }),
       }),
     );
   } else {
