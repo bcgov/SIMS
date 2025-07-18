@@ -1,5 +1,7 @@
+# Deploys the MongoDB High Availability (HA) setup in OpenShift for Formio using Helm.
+# If the helm is present, it updates the existing deployment; otherwise, it installs a new one.
 name: Env Setup - Deploy Mongo HA in Openshift for Formio
-run-name: Env Setup - Deploy(${{ inputs.action }}) Mongo HA in Openshift from ${{ github.ref_name }} to ${{ inputs.environment }}
+run-name: Env Setup - Deploy Mongo HA in Openshift from ${{ github.ref_name }} to ${{ inputs.environment }}
 
 concurrency: mongo-ha-setup
 
@@ -10,13 +12,6 @@ on:
         description: "Environment"
         required: true
         type: environment
-      action:
-        description: "Action"
-        required: true
-        type: choice
-        options:
-          - install
-          - upgrade
 
 jobs:
   deployMongo:
@@ -38,4 +33,4 @@ jobs:
       - name: Deploy Mongo
         working-directory: "./devops/helm/mongodb/"
         run: |
-          make ${{ inputs.action }} NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} FORMS_DB_USER=${{ secrets.FORMS_DB_USER }} FORMS_DB_PASSWORD=${{ secrets.FORMS_DB_PASSWORD }}
+          make upgrade NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} FORMS_DB_USER=${{ secrets.FORMS_DB_USER }} FORMS_DB_PASSWORD=${{ secrets.FORMS_DB_PASSWORD }}

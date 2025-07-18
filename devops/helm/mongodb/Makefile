@@ -1,6 +1,20 @@
 SHELL := /usr/bin/env bash
 NAME := mongodb
 
+# --- Chart Management ---
+# This Makefile uses a pre-downloaded chart package. To manage the chart:
+#
+# 1. Add the Bitnami repo (one-time setup):
+#    helm repo add bitnami https://charts.bitnami.com/bitnami
+#
+# 2. Find available chart versions:
+#    helm search repo bitnami/mongodb --versions
+#
+# 3. Download a specific version (e.g., 16.6.2):
+#    helm pull bitnami/mongodb --version 16.6.2
+#
+# 4. After downloading, update the CHART_PACKAGE variable below.
+CHART_PACKAGE=mongodb-16.5.32.tgz
 NAMESPACE=
 FORMS_DB_USER=
 FORMS_DB_PASSWORD=
@@ -19,37 +33,18 @@ ifndef FORMS_DB_PASSWORD
 endif
 
 define arguments
-	"${NAME}" . -n "${NAMESPACE}" -f values.yaml -f "values-${NAMESPACE}.yaml" \
+	"${NAME}" ${CHART_PACKAGE} -n "${NAMESPACE}" -f "values-${NAMESPACE}.yaml" \
 	--set auth.usernames={"${FORMS_DB_USER}"} \
 	--set-string auth.passwords={"${FORMS_DB_PASSWORD}"} \
 	--set-string auth.databases={"forms"}
 endef
 
-.PHONY: helm-dep
-helm-dep:
-	@helm dependency update
-
-.PHONY: install
-install: check-args-defined helm-dep
-install:
-	@helm install $(call arguments)
-	
-
+# Install the helm chart if not present, otherwise, updates it.
 .PHONY: upgrade
-upgrade: check-args-defined helm-dep
+upgrade: check-args-defined
 	@helm upgrade --install $(call arguments)
 
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.
 .PHONY: uninstall
-uninstall: helm-dep
 uninstall:
 	@helm uninstall ${NAME} -n ${NAMESPACE}
-
-.PHONY: template
-template: helm-dep
-template:
-	@helm template $(call arguments) > template.yaml
-
-.PHONY: force-install
-force-install: uninstall
-force-install: install
