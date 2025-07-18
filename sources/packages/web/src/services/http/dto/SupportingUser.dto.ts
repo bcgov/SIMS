@@ -74,16 +74,13 @@ export interface SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
-  personalInfo: SupportingUserPersonalInfo;
+  personalInfo: SupportingUserPersonalInfoAPIOutDTO;
   parentFullName: string;
 }
 
-export class SupportingUserPersonalInfo {
-  @Expose()
+export class SupportingUserPersonalInfoAPIOutDTO {
   givenNames?: string;
-  @Expose()
   lastName?: string;
-  @Expose()
   hasValidSIN?: FormYesNoOptions;
 }
 /**

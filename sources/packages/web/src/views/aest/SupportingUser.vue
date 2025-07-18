@@ -9,15 +9,15 @@
   >
   </header-navigator>
   <application-header-title :application-id="applicationId" />
-  <div v-if="formData && formData.parentFullName">
+  <div v-if="parentFullName">
     <detail-header
       class="mb-2"
-      :header-map="{ 'Parent Name': formData.parentFullName }"
+      :header-map="{ 'Parent Name': parentFullName }"
     />
   </div>
   <full-page-container class="my-2">
     <supporting-user-form
-      v-if="formName && formData.supportingData"
+      v-if="supportingUser"
       :supporting-user-id="supportingUserId"
       :is-readonly="true"
     ></supporting-user-form>
@@ -60,23 +60,20 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const formName = ref();
-    const formData = ref();
+    const parentFullName = ref<string>();
+    const supportingUser = ref<boolean>(false);
 
     onMounted(async () => {
       const supportingUsersData =
         await SupportingUsersService.shared.getSupportingUserData(
           props.supportingUserId,
         );
-      formName.value = supportingUsersData.formName;
-      formData.value = {
-        supportingData: supportingUsersData.supportingData,
-        parentFullName: supportingUsersData.parentFullName,
-      };
+      parentFullName.value = supportingUsersData.parentFullName;
+      supportingUser.value = !!supportingUsersData.supportingData;
     });
     return {
-      formName,
-      formData,
+      parentFullName,
+      supportingUser,
       AESTRoutesConst,
       BannerTypes,
     };

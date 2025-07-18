@@ -101,8 +101,8 @@ export default defineComponent({
             addressLine2: address.addressLine2,
           };
         }
-        // for both parent and partner first tab is same
-        // and the information on the 2nd tab is fed in `supportingData`
+        // For both parent and partner, the first tab is the same,
+        // and the information on the 2nd tab is fed into supportingData.
         formInitialData.value = {
           isAbleToReport: supportingUser.value.isAbleToReport,
           programYearStartDate: supportingUser.value.programYearStartDate,
