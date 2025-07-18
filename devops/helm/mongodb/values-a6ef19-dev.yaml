@@ -615,10 +615,10 @@ containerSecurityContext:
 ## Example:
 resources:
   requests:
-    cpu: 250m
-    memory: 512Mi
+    cpu: 100m
+    memory: 256Mi
   limits:
-    memory: 2Gi
+    memory: 1Gi
 ## @param containerPorts.mongodb MongoDB(&reg;) container port
 ##
 containerPorts:
