@@ -2,7 +2,7 @@ import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   ZeebeMockedClient,
   createFakeConsolidatedFulltimeData,
-  createFakeConsolidatedFulltimeWithParentsData,
+  createIdentifiableParentsData,
   executeFullTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { YesNoOptions } from "@sims/test-utils";
@@ -64,9 +64,13 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       "and the parent is able to report their financial information with deductions less than the maximum for the year.",
     async () => {
       // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedFulltimeWithParentsData(PROGRAM_YEAR, true);
-      assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
+      const assessmentConsolidatedData = {
+        ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+        ...createIdentifiableParentsData({
+          numberOfParents: 1,
+          currentYearIncome: true,
+        }),
+      };
 
       // Act
       const calculatedAssessment =
