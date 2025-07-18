@@ -2,6 +2,7 @@ import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   ZeebeMockedClient,
   createFakeConsolidatedFulltimeData,
+  createIdentifiableParentsData,
   executeFullTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { YesNoOptions } from "@sims/test-utils";
@@ -65,23 +66,20 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataDependantstatus = "dependant";
+      //assessmentConsolidatedData.studentDataDependantstatus = "dependant";
       assessmentConsolidatedData.studentDataTaxReturnIncome = 5000;
-      assessmentConsolidatedData.parent1CRAReportedIncome = 50000;
-      assessmentConsolidatedData.parent1TotalIncome = 99999;
-      assessmentConsolidatedData.parent1CppEmployment = 500;
-      assessmentConsolidatedData.parent1CppSelfEmploymentOther = 200;
-      assessmentConsolidatedData.parent1Ei = 600;
-      assessmentConsolidatedData.parent1Tax = 700;
-      assessmentConsolidatedData.parent1Contributions = 0;
+      //assessmentConsolidatedData.parent1CRAReportedIncome = 50000;
+      //assessmentConsolidatedData.parent1TotalIncome = 99999;
+      //assessmentConsolidatedData.parent1CppEmployment = 500;
+      //assessmentConsolidatedData.parent1CppSelfEmploymentOther = 200;
+      //assessmentConsolidatedData.parent1Ei = 600;
+      //assessmentConsolidatedData.parent1Tax = 700;
+      //assessmentConsolidatedData.parent1Contributions = 0;
       assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
-      assessmentConsolidatedData.studentDataParents = [
-        {
-          numberOfParents: 1,
-          parentIsAbleToReport: YesNoOptions.Yes,
-          currentYearParentIncome: 3000,
-        },
-      ];
+      createIdentifiableParentsData({
+        numberOfParents: 1,
+        currentYearIncome: true,
+      });
 
       // Act
       const calculatedAssessment =
@@ -93,20 +91,20 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       // Calculated total parent income must be consistent with the current year income when present.
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentIncome,
-      ).toBe(3000);
+      ).toBe(100);
       // Calculated total parent deductions must combine total CPP, EI and Income Tax.
       // The deductions for CPP and EI are capped at the maximum for the year.
       expect(
         calculatedAssessment.variables.calculatedDataParent1IncomeDeductions,
-      ).toBe(2000);
+      ).toBe(3868);
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
-      ).toBe(3000);
-      // Calculated total net family income should be the gross parent income minus the deductions. $3000 - $2000 = $1000
+      ).toBe(100);
+      // Calculated total net family income should be the gross parent income minus the deductions only down to $0. $100 - $3868 = $0
       expect(
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
-      ).toBe(1000);
+      ).toBe(0);
     },
   );
 

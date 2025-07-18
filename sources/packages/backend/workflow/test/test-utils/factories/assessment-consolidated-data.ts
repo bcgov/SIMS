@@ -299,6 +299,7 @@ export function createIdentifiableParentsData(options?: {
   dataType?: AssessmentDataType;
   parents?: IdentifiableParentData[];
   numberOfParents?: 1 | 2;
+  currentYearIncome?: boolean;
 }): Partial<AssessmentConsolidatedData> {
   // Default values for options when not provided.
   const dataType = options.dataType ?? AssessmentDataType.Submit;
@@ -310,6 +311,9 @@ export function createIdentifiableParentsData(options?: {
       { length: options.numberOfParents },
       () => ({
         parentIsAbleToReport: YesNoOptions.Yes,
+        ...(options.currentYearIncome && {
+          currentYearParentIncome: 100,
+        }),
       }),
     );
   } else {
