@@ -1664,7 +1664,7 @@ Alimony/Child Support paid by the Partner during the study period can be conside
     <bpmn:intermediateThrowEvent id="Event_1n57xgo" name="Partner Social Assistance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true then &#10;  partner1HasTotalIncomeAssist&#10;else &#10;  studentDataPartnerHasTotalIncomeAssistance" target="calculatedDataPartnerSocialAssistance" />
+          <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true then &#10;  partner1HasTotalIncomeAssistance&#10;else &#10;  studentDataPartnerHasTotalIncomeAssistance" target="calculatedDataPartnerSocialAssistance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0l4ido8</bpmn:incoming>
