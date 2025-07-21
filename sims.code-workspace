@@ -213,7 +213,12 @@
       "typeorm",
       "unparse",
       "WTHD",
-      "Zeebe"
+      "Zeebe",
+      "studentdependantsappeal",
+      "studentadditionaltransportationappeal",
+      "studentdisabilityappeal",
+      "studentfinancialinformationappeal",
+      "partnerinformationandincomeappeal"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"

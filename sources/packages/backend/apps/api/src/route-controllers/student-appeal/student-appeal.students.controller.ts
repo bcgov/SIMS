@@ -48,6 +48,16 @@ import { StudentAppealRequestModel } from "../../services/student-appeal/student
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
 import { StudentAppealServerSideSubmissionData } from "./models/student-appeal.model";
 import { allowApplicationChangeRequest } from "../../utilities";
+/**
+ * Student appeal form that were used for change request process before 2025-26 program year.
+ */
+const CHANGE_REQUEST_APPEAL_FORMS = [
+  "studentdependantsappeal",
+  "studentadditionaltransportationappeal",
+  "studentdisabilityappeal",
+  "studentfinancialinformationappeal",
+  "partnerinformationandincomeappeal",
+];
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -105,6 +115,12 @@ export class StudentAppealStudentsController extends BaseController {
     // If the submission is for new appeal process, then set the operation name as appeal.
     // Otherwise, set it to change request.
     const operation = isProgramYearForNewProcess ? "appeal" : "change request";
+
+    // Validate the submitted form names for the submission type.
+    this.validateSubmittedFormNames(
+      isProgramYearForNewProcess,
+      payload.studentAppealRequests.map((request) => request.formName),
+    );
 
     if (application.isArchived) {
       throw new UnprocessableEntityException(
@@ -197,5 +213,39 @@ export class StudentAppealStudentsController extends BaseController {
       appealId,
       { studentId: userToken.studentId },
     );
+  }
+
+  /**
+   * Validates the submitted form names for the submission type(change request | appeal).
+   * @throws BadRequestException if the form names are not valid for the submission type.
+   */
+  private validateSubmittedFormNames(
+    isChangeRequest: boolean,
+    formNames: string[],
+  ): void {
+    // Validate for appeal submission.
+    if (!isChangeRequest) {
+      const hasChangeRequestForm = formNames.some((formName) =>
+        CHANGE_REQUEST_APPEAL_FORMS.includes(formName.toLowerCase()),
+      );
+
+      if (hasChangeRequestForm) {
+        throw new BadRequestException(
+          "One or more forms submitted are not valid for appeal submission.",
+        );
+      }
+    }
+    // Validate for change request submission.
+    else {
+      const hasAppealForm = formNames.some(
+        (formName) =>
+          !CHANGE_REQUEST_APPEAL_FORMS.includes(formName.toLowerCase()),
+      );
+      if (hasAppealForm) {
+        throw new BadRequestException(
+          "One or more forms submitted are not valid for change request submission.",
+        );
+      }
+    }
   }
 }
