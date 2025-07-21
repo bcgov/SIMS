@@ -98,13 +98,13 @@ export class StudentAppealStudentsController extends BaseController {
         "Given application either does not exist or is not complete to submit change request or appeal.",
       );
     }
-    // Check if the submission is for old change request process(change request process until 2024-25 program year).
-    const isChangeRequest = allowApplicationChangeRequest(
+    // Check if the submission is for new appeal process(appeal process is for submissions from 2025-26 program year).
+    const isProgramYearForNewProcess = allowApplicationChangeRequest(
       application.programYear,
     );
-    // If the submission is for old change request process, then set the operation name as change request.
-    // Otherwise, set it to appeal.
-    const operation = isChangeRequest ? "change request" : "appeal";
+    // If the submission is for new appeal process, then set the operation name as appeal.
+    // Otherwise, set it to change request.
+    const operation = isProgramYearForNewProcess ? "appeal" : "change request";
 
     if (application.isArchived) {
       throw new UnprocessableEntityException(
