@@ -25,7 +25,7 @@
     "cypress-mochawesome-reporter": "^3.1.0",
     "cypress-multi-reporters": "^1.6.0",
     "cypress-xpath": "^1.6.2",
-    "form-data": "^4.0.0",
+    "form-data": "^4.0.4",
     "mochawesome-merge": "^4.2.1",
     "mochawesome-report-generator": "^6.2.0",
     "ts-loader": "^9.2.7",
