@@ -6,7 +6,6 @@
     "serve": "vite",
     "build": "vite build",
     "preview": "vite preview --port 8080",
-    "test:unit": "vitest",
     "lint": "eslint ./src --ext .vue,.js,.ts --fix",
     "build-local": "NODE_ENV=development vite build",
     "format": "prettier --write \"src/**/*.{ts,vue,scss,html,json}\""
@@ -17,7 +16,6 @@
     "@formio/js": "^5.0.2",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
-    "@vee-validate/rules": "^4.0.4",
     "axios": "^1.8.4",
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.10.5",
@@ -33,7 +31,6 @@
     "uuid": "^9.0.1",
     "vee-validate": "^4.5.10",
     "vue": "^3.5.13",
-    "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.3.2",
     "vuetify": "^3.7.2",
     "vuex": "^4.1.0"
@@ -46,7 +43,6 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^9.1.0",
-    "@vue/test-utils": "^2.4.5",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^8.0.3",
     "prettier": "^2.5.0",
@@ -54,7 +50,6 @@
     "sass": "^1.75.0",
     "typescript": "^4.9.5",
     "vite": "^6.3.4",
-    "vite-plugin-vuetify": "^2.1.0",
-    "vitest": "^3.0.7"
+    "vite-plugin-vuetify": "^2.1.0"
   }
 }
