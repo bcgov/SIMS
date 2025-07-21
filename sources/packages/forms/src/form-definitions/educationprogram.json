@@ -1774,7 +1774,11 @@
               },
               "validateWhenHidden": false,
               "key": "credentialTypesAvi",
-              "customConditional": "show = data.isAviationProgram === \"yes\";",
+              "conditional": {
+                "show": true,
+                "when": "isAviationProgram",
+                "eq": "yes"
+              },
               "type": "selectboxes",
               "input": true,
               "inputType": "checkbox"
@@ -1826,7 +1830,11 @@
               },
               "validateWhenHidden": false,
               "key": "minHoursWeekAvi",
-              "customConditional": "show = data.isAviationProgram === \"yes\";",
+              "conditional": {
+                "show": true,
+                "when": "isAviationProgram",
+                "eq": "yes"
+              },
               "attributes": {
                 "data-cy": "minHoursWeekAvi"
               },
@@ -1976,7 +1984,7 @@
     },
     {
       "label": "Program Status",
-      "calculateValue": "if (\r\n  (data.isBCPrivate && data.programDeliveryTypes.deliveredOnline && !data.programDeliveryTypes.deliveredOnSite) ||\r\n  data.hasJointDesignatedInstitution === \"no\" ||\r\n  data.eslEligibility === \"20OrMore\" ||\r\n  data.entranceRequirements.noneOfTheAboveEntranceRequirements === true ||\r\n  (data.deliveredOnlineAlsoOnsite === \"no\" &&\r\n    data.sameOnlineCreditsEarned === \"no\" &&\r\n    data.earnAcademicCreditsOtherInstitution === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"yes\" &&\r\n    data.minHoursWeekAvi === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" &&\r\n    data.isWILApproved === \"yes\" &&\r\n    data.wilProgramEligibility === \"no\") ||\r\n  (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\") ||\r\n  (data.hasIntlExchange === \"yes\" &&\r\n    data.intlExchangeProgramEligibility === \"no\")\r\n) {\r\n  value = \"Pending\";\r\n} else {\r\n  value = \"Approved\";\r\n}",
+      "calculateValue": "if (\r\n  (data.isBCPrivate && data.programDeliveryTypes.deliveredOnline && !data.programDeliveryTypes.deliveredOnSite) ||\r\n  data.hasJointDesignatedInstitution === \"no\" ||\r\n  data.eslEligibility === \"20OrMore\" ||\r\n  data.entranceRequirements.noneOfTheAboveEntranceRequirements === true ||\r\n  (data.deliveredOnlineAlsoOnsite === \"no\" &&\r\n    data.sameOnlineCreditsEarned === \"no\" &&\r\n    data.earnAcademicCreditsOtherInstitution === \"no\") ||\r\n  (data.courseLoadCalculation === \"hours\" &&\r\n    data.minHoursWeek === \"no\" &&\r\n    data.isAviationProgram === \"no\") ||\r\n  data.isAviationProgram === \"yes\" ||\r\n  (data.hasWILComponent === \"yes\" && data.isWILApproved === \"no\") ||\r\n  (data.hasWILComponent === \"yes\" &&\r\n    data.isWILApproved === \"yes\" &&\r\n    data.wilProgramEligibility === \"no\") ||\r\n  (data.hasTravel === \"yes\" && data.travelProgramEligibility === \"no\") ||\r\n  (data.hasIntlExchange === \"yes\" &&\r\n    data.intlExchangeProgramEligibility === \"no\")\r\n) {\r\n  value = \"Pending\";\r\n} else {\r\n  value = \"Approved\";\r\n}",
       "calculateServer": true,
       "key": "programStatus",
       "type": "hidden",
