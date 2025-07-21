@@ -74,7 +74,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
   );
 
   it(
-    "Should show interface policy applies when a married student declares income assistance of less than $1500 and " +
+    "Should not show interface policy applies when a married student declares income assistance of less than $1500 and " +
       "has a partner that will receive BCEA income assistance of less than $1500.",
     async () => {
       // Arrange

@@ -328,6 +328,11 @@ export interface CalculatedAssessmentModel {
   partner1CRAReportedIncome?: number;
   calculatedDataPartnerBCEAIncomeAssistanceAmount?: number;
   calculatedDataInterfacePolicyApplies: boolean;
+  calculatedDataInterfaceEducationCosts?: number;
+  calculatedDataInterfaceNeed?: number;
+  calculatedDataInterfaceChildCareCosts?: number;
+  calculatedDataInterfaceTransportationAmount?: number;
+  calculatedDataInterfaceNonEducationCosts?: number;
 
   // Common variables used in both full-time and part-time.
   // CSGP
