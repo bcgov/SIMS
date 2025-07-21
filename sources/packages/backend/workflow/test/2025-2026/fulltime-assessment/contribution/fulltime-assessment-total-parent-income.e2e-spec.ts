@@ -232,6 +232,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         {
           parentIsAbleToReport: YesNoOptions.Yes,
         },
+        {
+          parentIsAbleToReport: YesNoOptions.Yes,
+        },
       ];
 
       // Act
