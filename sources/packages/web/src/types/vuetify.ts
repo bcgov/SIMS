@@ -1,5 +1,3 @@
-import { Vue } from "vue-class-component";
-
 /**
  * Vuetify result from a call to the 'validate()' method.
  */
@@ -17,7 +15,7 @@ export interface ErrorMessage {
 /**
  * Vuetify v-form type definition.
  */
-export type VForm = Vue & {
+export type VForm = {
   /**
    * Validates all registered inputs. Returns true if successful and false if not.
    */
