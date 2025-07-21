@@ -1,4 +1,5 @@
 import {
+  AviationProgramCredentialTypes,
   EntranceRequirements,
   ProgramDeliveryTypes,
   ProgramIntensity,
@@ -148,6 +149,8 @@ export class EducationProgramAPIInDTO {
   programDeclaration: boolean;
   @Expose()
   fieldOfStudyCode: number;
+  @Expose()
+  credentialTypesAvi?: AviationProgramCredentialTypes;
   isBCPrivate: boolean;
   isBCPublic: boolean;
 }
