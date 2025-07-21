@@ -183,6 +183,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   partner1CRAReportedIncome?: number;
   partner1TotalIncome?: number;
   partner1PartnerCaringForDependant?: YesNoOptions;
+  partner1BCEAIncomeAssistanceAmount?: number;
   assessmentId?: number;
   studentDataSelectedOffering: number;
   studentDataApplicationPDPPDStatus: string;
@@ -205,6 +206,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataPartnerHasEmploymentInsuranceBenefits?: YesNoOptions;
   studentDataPartnerHasFedralProvincialPDReceipt?: YesNoOptions;
   studentDataPartnerHasTotalIncomeAssistance?: YesNoOptions;
+  studentDataPartnerBCEAIncomeAssistanceAmount?: number;
   partner1HasEmploymentInsuranceBenefits?: YesNoOptions;
   partner1HasFedralProvincialPDReceipt?: YesNoOptions;
   partner1HasTotalIncomeAssistance?: YesNoOptions;
@@ -324,6 +326,8 @@ export interface CalculatedAssessmentModel {
   calculatedDataStudentTotalIncome: number;
   calculatedDataCurrentYearPartnerIncome: number;
   partner1CRAReportedIncome?: number;
+  calculatedDataPartnerBCEAIncomeAssistanceAmount?: number;
+  calculatedDataInterfacePolicyApplies: boolean;
 
   // Common variables used in both full-time and part-time.
   // CSGP
