@@ -20,14 +20,7 @@ objects:
     kind: Deployment
     metadata:
       annotations:
-        app.openshift.io/connects-to:
-          [
-            {
-              "apiVersion": "apps/v1",
-              "kind": "StatefulSet",
-              "name": "mongo-ha",
-            },
-          ]
+        app.openshift.io/connects-to: '[{ "apiVersion": "apps/v1", "kind": "StatefulSet", "name": "mongo-ha" }]'
       labels:
         app: ${NAME}
       name: ${NAME}
