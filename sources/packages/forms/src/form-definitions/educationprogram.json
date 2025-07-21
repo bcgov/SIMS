@@ -1808,7 +1808,7 @@
               "hideLabel": true
             },
             {
-              "label": "Does this program include a minimum of 15 instructional hours per week",
+              "label": "Does this program include a minimum of 15 instructional hours per week?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,

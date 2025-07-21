@@ -49,6 +49,14 @@ export class EntranceRequirements {
   noneOfTheAboveEntranceRequirements: boolean;
 }
 
+export interface AviationProgramCredentialTypes {
+  commercialPilotTraining: boolean;
+  instructorsRating: boolean;
+  endorsements: boolean;
+  privatePilotTraining: boolean;
+  noneOfTheAbove: boolean;
+}
+
 export interface ProgramOfferingHeader {
   institutionId: number;
   institutionName: string;
