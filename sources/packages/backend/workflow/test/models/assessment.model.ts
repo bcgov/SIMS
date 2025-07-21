@@ -142,6 +142,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataPartnerFedralProvincialPDReceiptCost?: number;
   studentDataPartnerChildSupportCosts?: number;
   studentDataParentDependentTable?: JSONDoc;
+  studentDataPartnerCaringForDependant?: YesNoOptions;
   studentDataStudentParentNetAssests?: number;
   studentDataStudentParentNetContribution?: number;
   studentDataPartnerTotalIncomeAssistance?: number;
@@ -181,6 +182,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   partner1StudentStudyWeeks?: number;
   partner1CRAReportedIncome?: number;
   partner1TotalIncome?: number;
+  partner1PartnerCaringForDependant?: YesNoOptions;
   assessmentId?: number;
   studentDataSelectedOffering: number;
   studentDataApplicationPDPPDStatus: string;

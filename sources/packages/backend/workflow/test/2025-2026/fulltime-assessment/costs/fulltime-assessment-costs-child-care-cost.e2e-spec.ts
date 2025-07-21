@@ -243,6 +243,96 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
     },
   );
 
+  it(
+    "Should calculate total child care cost as $0 when " +
+      "student has one dependent 11 years or under with child care costs entered " +
+      "and student is married with the partner declaring that they are caring for dependants.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
+      assessmentConsolidatedData.offeringWeeks = 18;
+      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+      assessmentConsolidatedData.studentDataPartnerCaringForDependant =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
+      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 10000;
+      assessmentConsolidatedData.studentDataTaxReturnIncome = 10002;
+      // Creates 1 eligible dependent.
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataDependants = [
+        createFakeStudentDependentEligibleForChildcareCost(
+          DependentChildCareEligibility.Eligible0To11YearsOld,
+          assessmentConsolidatedData.offeringStudyStartDate,
+        ),
+      ];
+
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // Lesser of the child care costs submitted in application or the number of offering weeks times weekly limit.
+      // Submitted costs are less (1000) than maximum (18 * $268 = $4824).
+      expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(
+        1000,
+      );
+      // Total calculated childcare costs are changed from the calculated child care costs above if student is
+      // married to a full-time student who is studying for 12 or more weeks during this study period.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+      ).toBe(0);
+    },
+  );
+
+  it(
+    "Should calculate total child care cost as $0 when " +
+      "student has one dependent 11 years or under with child care costs entered " +
+      "and student is married with the partner did not declare that they are caring for dependants.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
+      assessmentConsolidatedData.offeringWeeks = 18;
+      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+      assessmentConsolidatedData.studentDataPartnerCaringForDependant =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
+      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 10000;
+      assessmentConsolidatedData.studentDataTaxReturnIncome = 10002;
+      // Creates 1 eligible dependent.
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataDependants = [
+        createFakeStudentDependentEligibleForChildcareCost(
+          DependentChildCareEligibility.Eligible0To11YearsOld,
+          assessmentConsolidatedData.offeringStudyStartDate,
+        ),
+      ];
+
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // Lesser of the child care costs submitted in application or the number of offering weeks times weekly limit.
+      // Submitted costs are less (1000) than maximum (18 * $268 = $4824).
+      expect(calculatedAssessment.variables.calculatedDataChildCareCost).toBe(
+        1000,
+      );
+      // Total calculated childcare costs are changed from the calculated child care costs above if student is
+      // married to a full-time student who is studying for 12 or more weeks during this study period.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalChildCareCost,
+      ).toBe(1000);
+    },
+  );
+
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
     await ZeebeMockedClient.getMockedZeebeInstance().close();
