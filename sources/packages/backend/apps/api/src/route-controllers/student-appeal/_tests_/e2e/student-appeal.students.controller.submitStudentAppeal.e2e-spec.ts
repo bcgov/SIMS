@@ -252,7 +252,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       .expect(HttpStatus.NOT_FOUND)
       .expect({
         message:
-          "Given application either does not exist or is not complete to request change.",
+          "Given application either does not exist or is not complete to submit change request or appeal.",
         error: "Not Found",
         statusCode: HttpStatus.NOT_FOUND,
       });
@@ -297,7 +297,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       .send(payload)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        message: "This application is no longer eligible to request changes.",
+        message:
+          "This application is no longer eligible to submit change request.",
         errorType: APPLICATION_CHANGE_NOT_ELIGIBLE,
       });
   });
@@ -353,7 +354,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: "Not able to submit student appeal due to invalid request.",
+        message: "Not able to submit change request due to invalid request.",
         error: "Bad Request",
       });
   });

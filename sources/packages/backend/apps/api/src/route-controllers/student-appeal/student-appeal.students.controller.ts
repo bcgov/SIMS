@@ -47,6 +47,7 @@ import {
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
 import { StudentAppealServerSideSubmissionData } from "./models/student-appeal.model";
+import { allowApplicationChangeRequest } from "../../utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -70,14 +71,16 @@ export class StudentAppealStudentsController extends BaseController {
    */
   @ApiNotFoundResponse({
     description:
-      "Application either not found or not eligible to request an appeal.",
+      "Application either not found or not eligible to submit change request/appeal.",
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "There is either an existing appeal for this application or this application is no longer eligible to request changes.",
+      "Only one change request/appeal can be submitted at a time for each application. " +
+      "When your current request is approved or denied by StudentAid BC, you will be able to submit a new one.",
   })
   @ApiBadRequestResponse({
-    description: "Not able to submit student appeal due to invalid request.",
+    description:
+      "Not able to submit change request/appeal due to invalid request.",
   })
   @Post("application/:applicationId")
   async submitStudentAppeal(
@@ -92,14 +95,21 @@ export class StudentAppealStudentsController extends BaseController {
       );
     if (!application) {
       throw new NotFoundException(
-        "Given application either does not exist or is not complete to request change.",
+        "Given application either does not exist or is not complete to submit change request or appeal.",
       );
     }
+    // Check if the submission is for old change request process(change request process until 2024-25 program year).
+    const isChangeRequest = allowApplicationChangeRequest(
+      application.programYear,
+    );
+    // If the submission is for old change request process, then set the operation name as change request.
+    // Otherwise, set it to appeal.
+    const operation = isChangeRequest ? "change request" : "appeal";
 
     if (application.isArchived) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
-          "This application is no longer eligible to request changes.",
+          `This application is no longer eligible to submit ${operation}.`,
           APPLICATION_CHANGE_NOT_ELIGIBLE,
         ),
       );
@@ -109,7 +119,7 @@ export class StudentAppealStudentsController extends BaseController {
     if (existingApplicationAppeal) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
-          "Only one change request can be submitted at a time for each application. When your current request is approved or denied by StudentAid BC, you will be able to submit a new one.",
+          `Only one ${operation} can be submitted at a time for each application. When your current request is approved or denied by StudentAid BC, you will be able to submit a new one.`,
           APPLICATION_HAS_PENDING_APPEAL,
         ),
       );
@@ -142,7 +152,7 @@ export class StudentAppealStudentsController extends BaseController {
     );
     if (invalidRequest) {
       throw new BadRequestException(
-        "Not able to submit student appeal due to invalid request.",
+        `Not able to submit ${operation} due to invalid request.`,
       );
     }
 
