@@ -116,9 +116,9 @@ export class StudentAppealStudentsController extends BaseController {
     // Otherwise, set it to change request.
     const operation = isProgramYearForNewProcess ? "appeal" : "change request";
 
-    // Validate the submitted form names for the submission type.
+    // Validate the submitted form names for the operation.
     this.validateSubmittedFormNames(
-      isProgramYearForNewProcess,
+      operation,
       payload.studentAppealRequests.map((request) => request.formName),
     );
 
@@ -216,15 +216,16 @@ export class StudentAppealStudentsController extends BaseController {
   }
 
   /**
-   * Validates the submitted form names for the submission type(change request | appeal).
-   * @throws BadRequestException if the form names are not valid for the submission type.
+   * Validates the submitted form names for the submission operation.
+   * @param operation operation(change request | appeal).
+   * @param formNames submitted form names.
+   * @throws BadRequestException if the form names are not valid for the submission operation.
    */
   private validateSubmittedFormNames(
-    isChangeRequest: boolean,
+    operation: string,
     formNames: string[],
   ): void {
-    // Validate for appeal submission.
-    if (!isChangeRequest) {
+    if (operation === "appeal") {
       const hasChangeRequestForm = formNames.some((formName) =>
         CHANGE_REQUEST_APPEAL_FORMS.includes(formName.toLowerCase()),
       );
