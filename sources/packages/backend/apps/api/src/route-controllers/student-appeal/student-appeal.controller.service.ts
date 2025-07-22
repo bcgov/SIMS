@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import {
   DetailedStudentAppealRequestAPIOutDTO,
   StudentAppealAPIOutDTO,
@@ -6,6 +10,17 @@ import {
 } from "./models/student-appeal.dto";
 import { getUserFullName } from "../../utilities";
 import { StudentAppealService } from "../../services";
+
+/**
+ * Student appeal form that were used for change request process before 2025-26 program year.
+ */
+const CHANGE_REQUEST_APPEAL_FORMS = [
+  "studentdependantsappeal",
+  "studentadditionaltransportationappeal",
+  "studentdisabilityappeal",
+  "studentfinancialinformationappeal",
+  "partnerinformationandincomeappeal",
+];
 
 @Injectable()
 export class StudentAppealControllerService {
@@ -64,5 +79,39 @@ export class StudentAppealControllerService {
         return request;
       }),
     };
+  }
+
+  /**
+   * Validates the submitted form names for the submission operation.
+   * @param operation operation(change request | appeal).
+   * @param formNames submitted form names.
+   * @throws UnprocessableEntityException if the form names are not valid for the submission operation.
+   */
+  validateSubmittedFormNames(
+    operation: "appeal" | "change request",
+    formNames: string[],
+  ): void {
+    if (operation === "appeal") {
+      const hasChangeRequestForm = formNames.some((formName) =>
+        CHANGE_REQUEST_APPEAL_FORMS.includes(formName.toLowerCase()),
+      );
+
+      if (hasChangeRequestForm) {
+        throw new UnprocessableEntityException(
+          "One or more forms submitted are not valid for appeal submission.",
+        );
+      }
+      return;
+    }
+    // Validate for change request submission.
+    const hasAppealForm = formNames.some(
+      (formName) =>
+        !CHANGE_REQUEST_APPEAL_FORMS.includes(formName.toLowerCase()),
+    );
+    if (hasAppealForm) {
+      throw new UnprocessableEntityException(
+        "One or more forms submitted are not valid for change request submission.",
+      );
+    }
   }
 }

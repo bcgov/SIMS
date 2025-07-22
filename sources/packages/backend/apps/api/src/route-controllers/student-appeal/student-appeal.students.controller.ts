@@ -48,16 +48,6 @@ import { StudentAppealRequestModel } from "../../services/student-appeal/student
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
 import { StudentAppealServerSideSubmissionData } from "./models/student-appeal.model";
 import { allowApplicationChangeRequest } from "../../utilities";
-/**
- * Student appeal form that were used for change request process before 2025-26 program year.
- */
-const CHANGE_REQUEST_APPEAL_FORMS = [
-  "studentdependantsappeal",
-  "studentadditionaltransportationappeal",
-  "studentdisabilityappeal",
-  "studentfinancialinformationappeal",
-  "partnerinformationandincomeappeal",
-];
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -118,7 +108,7 @@ export class StudentAppealStudentsController extends BaseController {
     const operation = isProgramYearForNewProcess ? "appeal" : "change request";
 
     // Validate the submitted form names for the operation.
-    this.validateSubmittedFormNames(
+    this.studentAppealControllerService.validateSubmittedFormNames(
       operation,
       payload.studentAppealRequests.map((request) => request.formName),
     );
@@ -214,40 +204,5 @@ export class StudentAppealStudentsController extends BaseController {
       appealId,
       { studentId: userToken.studentId },
     );
-  }
-
-  /**
-   * Validates the submitted form names for the submission operation.
-   * @param operation operation(change request | appeal).
-   * @param formNames submitted form names.
-   * @throws UnprocessableEntityException if the form names are not valid for the submission operation.
-   */
-  private validateSubmittedFormNames(
-    operation: string,
-    formNames: string[],
-  ): void {
-    if (operation === "appeal") {
-      const hasChangeRequestForm = formNames.some((formName) =>
-        CHANGE_REQUEST_APPEAL_FORMS.includes(formName.toLowerCase()),
-      );
-
-      if (hasChangeRequestForm) {
-        throw new UnprocessableEntityException(
-          "One or more forms submitted are not valid for appeal submission.",
-        );
-      }
-    }
-    // Validate for change request submission.
-    else {
-      const hasAppealForm = formNames.some(
-        (formName) =>
-          !CHANGE_REQUEST_APPEAL_FORMS.includes(formName.toLowerCase()),
-      );
-      if (hasAppealForm) {
-        throw new UnprocessableEntityException(
-          "One or more forms submitted are not valid for change request submission.",
-        );
-      }
-    }
   }
 }
