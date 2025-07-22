@@ -218,7 +218,8 @@
       "studentadditionaltransportationappeal",
       "studentdisabilityappeal",
       "studentfinancialinformationappeal",
-      "partnerinformationandincomeappeal"
+      "partnerinformationandincomeappeal",
+      "roomandboardcostsappeal"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"

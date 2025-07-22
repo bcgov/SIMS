@@ -85,8 +85,9 @@ export class StudentAppealStudentsController extends BaseController {
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "Only one change request/appeal can be submitted at a time for each application. " +
-      "When your current request is approved or denied by StudentAid BC, you will be able to submit a new one.",
+      "Only one change request/appeal can be submitted at a time for each application or " +
+      "when your current request is approved or denied by StudentAid BC, you will be able to submit a new one or " +
+      "one or more forms submitted are not valid for appeal submission.",
   })
   @ApiBadRequestResponse({
     description:
@@ -219,7 +220,7 @@ export class StudentAppealStudentsController extends BaseController {
    * Validates the submitted form names for the submission operation.
    * @param operation operation(change request | appeal).
    * @param formNames submitted form names.
-   * @throws BadRequestException if the form names are not valid for the submission operation.
+   * @throws UnprocessableEntityException if the form names are not valid for the submission operation.
    */
   private validateSubmittedFormNames(
     operation: string,
@@ -231,7 +232,7 @@ export class StudentAppealStudentsController extends BaseController {
       );
 
       if (hasChangeRequestForm) {
-        throw new BadRequestException(
+        throw new UnprocessableEntityException(
           "One or more forms submitted are not valid for appeal submission.",
         );
       }
@@ -243,7 +244,7 @@ export class StudentAppealStudentsController extends BaseController {
           !CHANGE_REQUEST_APPEAL_FORMS.includes(formName.toLowerCase()),
       );
       if (hasAppealForm) {
-        throw new BadRequestException(
+        throw new UnprocessableEntityException(
           "One or more forms submitted are not valid for change request submission.",
         );
       }
