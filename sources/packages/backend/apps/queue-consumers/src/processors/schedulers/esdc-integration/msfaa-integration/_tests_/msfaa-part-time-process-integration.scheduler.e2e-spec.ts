@@ -168,9 +168,8 @@ describe(
       // Act/Assert
       const result = await processor.processQueue(mockedJob.job);
       expect(createMSFAARequestContentMock).toHaveBeenCalledTimes(1);
-      const { processDateFormatted } = getProcessDateFromMSFAARequestContent(
-        createMSFAARequestContentMock,
-      );
+      const { processDateFormatted, processTimeFormatted } =
+        getProcessDateFromMSFAARequestContent(createMSFAARequestContentMock);
       const uploadedFile = getUploadedFile(sftpClientMock);
       expect(uploadedFile.remoteFilePath).toContain(processDateFormatted);
       expect(result).toStrictEqual([
@@ -179,9 +178,12 @@ describe(
       ]);
       expect(uploadedFile.fileLines.length).toBe(2);
       const [header, footer] = uploadedFile.fileLines;
-      expect(header).toContain("MSFAA");
-      expect(footer).toContain("MSFAA");
-      expect(footer).toMatch(/000000000/);
+      expect(header).toBe(
+        `100BC  MSFAA SENT                              ${processDateFormatted}${processTimeFormatted}000201                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       `,
+      );
+      expect(footer).toBe(
+        "999MSFAA SENT                              000000000000000000000000                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ",
+      );
     });
   },
 );
