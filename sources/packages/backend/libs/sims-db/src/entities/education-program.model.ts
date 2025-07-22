@@ -225,7 +225,6 @@ export class EducationProgram extends RecordDataModel {
     name: "credential_types_aviation",
     type: "jsonb",
     nullable: true,
-    comment: "Aviation program credential types.",
   })
   credentialTypesAviation?: AviationProgramCredentialTypes;
 
