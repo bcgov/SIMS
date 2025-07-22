@@ -1,118 +1,25 @@
 version: 2
 updates:
-  # Major versions updates for all npm packages (non-grouped).
   - package-ecosystem: "npm"
     directory: "/sources/packages/web"
     schedule:
       interval: "weekly"
     labels:
       - "Dependencies"
-      - "npm"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          ["version-update:semver-patch", "version-update:semver-minor"]
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/backend"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "npm"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          ["version-update:semver-patch", "version-update:semver-minor"]
-      # NestJS packages are excluded from major updates to ensure compatibility with the framework's ecosystem.
-      - dependency-name: "@nestjs*"
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/forms"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "npm"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          ["version-update:semver-patch", "version-update:semver-minor"]
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/load-test"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "npm"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          ["version-update:semver-patch", "version-update:semver-minor"]
-  # Minor version updates for all npm packages (grouped).
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/web"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
+      - "Web portal"
       - "npm"
     groups:
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
       minor-updates:
         patterns:
           - "*"
         update-types:
           - "minor"
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/backend"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "npm"
-    groups:
-      minor-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-    ignore:
-      - dependency-name: "@nestjs*"
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/forms"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "npm"
-    groups:
-      minor-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/load-test"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "npm"
-    groups:
-      minor-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-  # Security updates for all npm packages (non-grouped).
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/web"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "Security-related"
-      - "npm"
-    groups:
-      patch-updates:
+      patches-updates:
         patterns:
           - "*"
         update-types:
@@ -123,55 +30,72 @@ updates:
       interval: "weekly"
     labels:
       - "Dependencies"
-      - "Security-related"
-      - "npm"
-    groups:
-      patch-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "patch"
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/forms"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "Security-related"
-      - "npm"
-    groups:
-      patch-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "patch"
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/load-test"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "Security-related"
-      - "npm"
-    groups:
-      patch-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "patch"
-  # Nestjs packages updates monitored separately.
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/backend"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "npm"
       - "Backend"
+      - "npm"
     groups:
-      nestjs:
+      major-updates:
         patterns:
-          - "@nestjs*"
+          - "*"
+        update-types:
+          - "major"
+      minor-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+      patches-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+  - package-ecosystem: "npm"
+    directory: "/sources/packages/forms"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "Dependencies"
+      - "Form.io"
+      - "npm"
+    groups:
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+      minor-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+      patches-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+  - package-ecosystem: "npm"
+    directory: "/sources/packages/load-test"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "Dependencies"
+      - "Load Test"
+      - "npm"
+    groups:
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+      minor-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+      patches-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
   # GitHub Actions updates.
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -180,3 +104,7 @@ updates:
     labels:
       - "Dependencies"
       - "GitHub actions"
+    groups:
+      github-actions-updates:
+        patterns:
+          - "*"
