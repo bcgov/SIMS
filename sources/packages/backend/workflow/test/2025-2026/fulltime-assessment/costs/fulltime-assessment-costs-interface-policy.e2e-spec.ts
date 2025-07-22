@@ -7,44 +7,26 @@ import {
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
 describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface-policy.`, () => {
-  it("Should show interface policy applies when the student declares income assistance of $1500 or more.", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1500;
+  describe("Should show interface policy applies when ", async () => {
+    it("a student declares income assistance of $1500 or more.", async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1500;
 
-    // Act
-    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-    // Assert
-    expect(
-      calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
-    ).toBe(true);
-  });
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(
+        calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
+      ).toBe(true);
+    });
 
-  it("Should not show interface policy applies when the student declares income assistance of less than $1500.", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1000;
-
-    // Act
-    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-    // Assert
-    expect(
-      calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
-    ).toBe(false);
-  });
-
-  it(
-    "Should show interface policy applies when a married student who declares less than $1500 income assistance and " +
-      "has a partner that will receive BCEA income assistance of $1500 or more.",
-    async () => {
+    it("a married student who declares less than $1500 income assistance and has a partner that will receive BCEA income assistance of $1500 or more.", async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -70,13 +52,46 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
       expect(
         calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
       ).toBe(true);
-    },
-  );
+    });
+  });
 
-  it(
-    "Should not show interface policy applies when a married student declares income assistance of less than $1500 and " +
-      "has a partner that will receive BCEA income assistance of less than $1500.",
-    async () => {
+  describe("Should show interface policy does not apply when", async () => {
+    it("a student declares income assistance of less than $1500.", async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1000;
+
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(
+        calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
+      ).toBe(false);
+    });
+
+    it("a student declares no income assistance amount.", async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(
+        calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
+      ).toBe(false);
+    });
+
+    it("a married student declares income assistance of less than $1500 and has a partner that will receive BCEA income assistance of less than $1500.", async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -101,9 +116,9 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
       // Assert
       expect(
         calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
-      ).toBe(true);
-    },
-  );
+      ).toBe(false);
+    });
+  });
 
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
