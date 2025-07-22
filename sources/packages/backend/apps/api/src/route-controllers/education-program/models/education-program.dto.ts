@@ -1,5 +1,6 @@
 import { Allow, IsDateString, IsNotEmpty, MaxLength } from "class-validator";
 import {
+  AviationProgramCredentialTypes,
   EntranceRequirements,
   ProgramDeliveryTypes,
 } from "../../../services/education-program/education-program.service.models";
@@ -156,6 +157,8 @@ export class EducationProgramAPIInDTO {
   programDeclaration: boolean;
   @Allow()
   fieldOfStudyCode: number;
+  @Allow()
+  credentialTypesAvi?: AviationProgramCredentialTypes;
   /**
    * Indicates the institution type as BC Private. isBCPrivate is part of the form and defines if the dynamic
    * area of the form.io definition will be visible or not. It will impact the validation using the dryrun.

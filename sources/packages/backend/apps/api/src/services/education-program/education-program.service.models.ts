@@ -13,6 +13,14 @@ export interface EntranceRequirements {
   noneOfTheAboveEntranceRequirements: boolean;
 }
 
+export interface AviationProgramCredentialTypes {
+  commercialPilotTraining: boolean;
+  instructorsRating: boolean;
+  endorsements: boolean;
+  privatePilotTraining: boolean;
+  noneOfTheAbove: boolean;
+}
+
 export interface SaveEducationProgram {
   name: string;
   description?: string;

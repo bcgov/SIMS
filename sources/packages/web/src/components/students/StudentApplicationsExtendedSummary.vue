@@ -43,7 +43,11 @@
             <status-chip-application :status="item.status" />
           </template>
           <template #[`item.actions`]="{ item }">
-            <v-btn-group variant="text" :rounded="false">
+            <v-btn-group
+              variant="text"
+              :direction="isMobile ? 'vertical' : 'horizontal'"
+              :rounded="false"
+            >
               <v-btn color="primary" @click="$emit('goToApplication', item.id)"
                 >View
                 <v-tooltip activator="parent" location="start"

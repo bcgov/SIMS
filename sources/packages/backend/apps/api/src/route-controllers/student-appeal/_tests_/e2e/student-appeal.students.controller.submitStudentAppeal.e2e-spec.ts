@@ -5,8 +5,10 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   FakeStudentUsersTypes,
+  getRecentActiveProgramYear,
   getStudentToken,
-  mockUserLoginInfo,
+  mockJWTUserInfo,
+  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   E2EDataSources,
@@ -24,6 +26,7 @@ import {
   Application,
   ApplicationStatus,
   FileOriginType,
+  ProgramYear,
   StudentAppealRequest,
   StudentAppealStatus,
   StudentFile,
@@ -47,6 +50,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   const FINANCIAL_INFORMATION_FORM_NAME = "studentfinancialinformationappeal";
   const DEPENDANT_INFORMATION_FORM_NAME = "studentDependantsAppeal";
   const PARTNER_INFORMATION_FORM_NAME = "partnerinformationandincomeappeal";
+  const ROOM_AND_BOARD_COSTS_FORM_NAME = "roomandboardcostsappeal";
+  let recentActiveProgramYear: ProgramYear;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -58,6 +63,11 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     applicationRepo = dataSource.getRepository(Application);
     studentAppealRequestRepo = dataSource.getRepository(StudentAppealRequest);
     studentFileRepo = dataSource.getRepository(StudentFile);
+    recentActiveProgramYear = await getRecentActiveProgramYear(db);
+  });
+
+  beforeEach(async () => {
+    await resetMockJWTUserInfo(appModule);
   });
 
   it(
@@ -91,8 +101,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           },
         ],
       };
-      // Mock user service to return the saved student.
-      await mockUserLoginInfo(appModule, student);
+
       // Get any student user token.
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
@@ -114,6 +123,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       formService.dryRunSubmission = dryRunSubmissionMock;
 
       const endpoint = `/students/appeal/application/${application.id}`;
+      await mockJWTUserInfo(appModule, student.user);
 
       // Act/Assert
       let createdAppealId: number;
@@ -196,14 +206,13 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           },
         ],
       };
-      // Mock user service to return the saved student.
-      await mockUserLoginInfo(appModule, student);
+
       // Get any student user token.
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
       const endpoint = `/students/appeal/application/${application.id}`;
-
+      await mockJWTUserInfo(appModule, student.user);
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
@@ -235,8 +244,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         },
       ],
     };
-    // Mock user service to return the saved student.
-    mockUserLoginInfo(appModule, student);
+    // Mock JWT user to return the saved student from token.
+    mockJWTUserInfo(appModule, student.user);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -252,7 +261,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       .expect(HttpStatus.NOT_FOUND)
       .expect({
         message:
-          "Given application either does not exist or is not complete to request change.",
+          "Given application either does not exist or is not complete to submit change request or appeal.",
         error: "Not Found",
         statusCode: HttpStatus.NOT_FOUND,
       });
@@ -281,8 +290,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         },
       ],
     };
-    // Mock user service to return the saved student.
-    mockUserLoginInfo(appModule, student);
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, student.user);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -297,7 +306,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       .send(payload)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        message: "This application is no longer eligible to request changes.",
+        message:
+          "This application is no longer eligible to submit change request.",
         errorType: APPLICATION_CHANGE_NOT_ELIGIBLE,
       });
   });
@@ -324,8 +334,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         },
       ],
     };
-    // Mock user service to return the saved student.
-    mockUserLoginInfo(appModule, student);
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, student.user);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -353,7 +363,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: "Not able to submit student appeal due to invalid request.",
+        message: "Not able to submit change request due to invalid request.",
         error: "Bad Request",
       });
   });
@@ -438,8 +448,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         },
       ],
     };
-    // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, student.user);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -546,8 +556,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         },
       ],
     };
-    // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, application.student);
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, application.student.user);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -602,6 +612,175 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       },
     );
   });
+
+  it(
+    "Should create room and board costs appeal " +
+      "when student submit an appeal for a program year which is eligible for appeal process.",
+    async () => {
+      // Arrange
+      // Create student to submit application.
+      const student = await saveFakeStudent(appDataSource);
+      // Create application submit appeal with eligible program year.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          programYear: recentActiveProgramYear,
+        },
+        { applicationStatus: ApplicationStatus.Completed },
+      );
+      // Create a temporary file for room and board costs appeal.
+      const roomAndBoardFile = await saveFakeStudentFileUpload(
+        appDataSource,
+        {
+          student,
+          creator: student.user,
+        },
+        { fileOrigin: FileOriginType.Temporary },
+      );
+      // Prepare the data to request a change of financial information.
+      const roomAndBoardAppealData = {
+        roomAndBoardAmount: 561,
+        roomAndBoardSituations: {
+          parentUnEmployed: false,
+          parentEarnLowIncome: false,
+          parentReceiveIncomeAssistance: false,
+          livingAtHomePayingRoomAndBoard: true,
+          parentReceiveCanadaPensionOrOldAgeSupplement: false,
+        },
+        roomAndBoardSupportingDocuments: [
+          {
+            url: `student/files/${roomAndBoardFile.uniqueFileName}`,
+            hash: "",
+            name: roomAndBoardFile.uniqueFileName,
+            size: 4,
+            type: "text/plain",
+            storage: "url",
+            originalName: roomAndBoardFile.fileName,
+          },
+        ],
+      };
+      const payload: StudentAppealAPIInDTO = {
+        studentAppealRequests: [
+          {
+            formName: ROOM_AND_BOARD_COSTS_FORM_NAME,
+            formData: roomAndBoardAppealData,
+            files: [roomAndBoardFile.uniqueFileName],
+          },
+        ],
+      };
+      // Mock JWT user to return the saved student from token.
+      await mockJWTUserInfo(appModule, student.user);
+      // Get any student user token.
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Mock the form service to validate the dry-run submission result.
+      // and this mock must be removed.
+      const formService = await getProviderInstanceForModule(
+        appModule,
+        AppStudentsModule,
+        FormService,
+      );
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: ROOM_AND_BOARD_COSTS_FORM_NAME,
+        data: { data: roomAndBoardAppealData },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+      const endpoint = `/students/appeal/application/${application.id}`;
+
+      // Act/Assert
+      let createdAppealId: number;
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          expect(response.body.id).toBeGreaterThan(0);
+          createdAppealId = +response.body.id;
+        });
+      const studentAppeal = await db.studentAppeal.findOne({
+        select: {
+          id: true,
+          appealRequests: {
+            id: true,
+            submittedFormName: true,
+            submittedData: true,
+          },
+        },
+        relations: { appealRequests: true },
+        where: { application: { id: application.id } },
+      });
+      const [appealRequest] = studentAppeal.appealRequests;
+      expect(studentAppeal.id).toBe(createdAppealId);
+      expect(appealRequest.submittedFormName).toBe(
+        ROOM_AND_BOARD_COSTS_FORM_NAME,
+      );
+      expect(appealRequest.submittedData).toStrictEqual(roomAndBoardAppealData);
+      // Expect to call the dry run submission.
+      expect(dryRunSubmissionMock).toHaveBeenCalledWith(
+        ROOM_AND_BOARD_COSTS_FORM_NAME,
+        roomAndBoardAppealData,
+      );
+    },
+  );
+
+  it(
+    "Should throw unprocessable entity exception when student submit an appeal with a change request form" +
+      " which is not eligible for the appeal submission.",
+    async () => {
+      // Arrange
+      // Create student to submit application.
+      const student = await saveFakeStudent(appDataSource);
+      // Create application submit appeal with eligible program year.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          programYear: recentActiveProgramYear,
+        },
+        { applicationStatus: ApplicationStatus.Completed },
+      );
+      // Prepare the data to request a change of financial information which is not an eligible appeal.
+      const financialInformationData = {
+        programYear: application.programYear.programYear,
+        taxReturnIncome: 8000,
+        haveDaycareCosts12YearsOrOver: "no",
+        haveDaycareCosts11YearsOrUnder: "no",
+      };
+      const payload: StudentAppealAPIInDTO = {
+        studentAppealRequests: [
+          {
+            formName: FINANCIAL_INFORMATION_FORM_NAME,
+            formData: financialInformationData,
+            files: [],
+          },
+        ],
+      };
+      // Mock JWT user to return the saved student from token.
+      await mockJWTUserInfo(appModule, student.user);
+      // Get any student user token.
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      const endpoint = `/students/appeal/application/${application.id}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          message:
+            "One or more forms submitted are not valid for appeal submission.",
+          error: "Unprocessable Entity",
+        });
+    },
+  );
 
   afterAll(async () => {
     await app?.close();
