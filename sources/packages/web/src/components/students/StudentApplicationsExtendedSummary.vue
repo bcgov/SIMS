@@ -43,68 +43,67 @@
             <status-chip-application :status="item.status" />
           </template>
           <template #[`item.actions`]="{ item }">
-            <v-btn
-              color="primary"
+            <v-btn-group
               variant="text"
-              @click="$emit('goToApplication', item.id)"
-              >View
-              <v-tooltip activator="parent" location="start"
-                >Click to view this application</v-tooltip
-              >
-            </v-btn>
-            <v-btn
-              v-if="canDisplayEditOrCancel(item)"
-              :disabled="!hasSINValidStatus || item.isArchived"
-              color="primary"
-              variant="text"
-              @click="$emit('editApplicationAction', item.status, item.id)"
-              append-icon="mdi-pencil-outline"
-              >Edit
-              <v-tooltip activator="parent" location="start"
-                >Click to edit this application</v-tooltip
-              >
-            </v-btn>
-            <v-btn
-              v-if="canDisplayChangeRequest(item)"
-              :disabled="!hasSINValidStatus || item.isArchived"
-              color="primary"
-              variant="text"
-              @click="
-                $emit(
-                  'changeApplicationAction',
-                  item.id,
-                  item.isChangeRequestAllowedForPY,
-                )
-              "
-              append-icon="mdi-pencil-outline"
-              >Change Request
-              <v-tooltip activator="parent" location="start"
-                >Click to request a change in this application</v-tooltip
-              >
-            </v-btn>
-            <v-btn
-              v-if="canDisplaySubmitAppeal(item)"
-              :disabled="!hasSINValidStatus || item.isArchived"
-              color="primary"
-              variant="text"
-              @click="$emit('submitAppeal', item.id)"
-              append-icon="mdi-pencil-outline"
-              >Appeal
-              <v-tooltip activator="parent" location="start"
-                >Click to submit an appeal to this application</v-tooltip
-              >
-            </v-btn>
-            <v-btn
-              v-if="canDisplayEditOrCancel(item)"
-              :disabled="!hasSINValidStatus || item.isArchived"
-              color="primary"
-              variant="text"
-              @click="emitCancel(item.id)"
-              >Cancel
-              <v-tooltip activator="parent" location="start"
-                >Click to cancel this application</v-tooltip
-              >
-            </v-btn>
+              :direction="isMobile ? 'vertical' : 'horizontal'"
+              :rounded="false"
+            >
+              <v-btn color="primary" @click="$emit('goToApplication', item.id)"
+                >View
+                <v-tooltip activator="parent" location="start"
+                  >Click to view this application</v-tooltip
+                >
+              </v-btn>
+              <v-btn
+                v-if="canDisplayEditOrCancel(item)"
+                :disabled="!hasSINValidStatus || item.isArchived"
+                color="primary"
+                @click="$emit('editApplicationAction', item.status, item.id)"
+                append-icon="mdi-pencil-outline"
+                >Edit
+                <v-tooltip activator="parent" location="start"
+                  >Click to edit this application</v-tooltip
+                >
+              </v-btn>
+              <v-btn
+                v-if="canDisplayChangeRequest(item)"
+                :disabled="!hasSINValidStatus || item.isArchived"
+                color="primary"
+                @click="
+                  $emit(
+                    'changeApplicationAction',
+                    item.id,
+                    item.isChangeRequestAllowedForPY,
+                  )
+                "
+                append-icon="mdi-pencil-outline"
+                >Change Request
+                <v-tooltip activator="parent" location="start"
+                  >Click to request a change in this application</v-tooltip
+                >
+              </v-btn>
+              <v-btn
+                v-if="canDisplaySubmitAppeal(item)"
+                :disabled="!hasSINValidStatus || item.isArchived"
+                color="primary"
+                @click="$emit('submitAppeal', item.id)"
+                append-icon="mdi-pencil-outline"
+                >Appeal
+                <v-tooltip activator="parent" location="start"
+                  >Click to submit an appeal to this application</v-tooltip
+                >
+              </v-btn>
+              <v-btn
+                v-if="canDisplayEditOrCancel(item)"
+                :disabled="!hasSINValidStatus || item.isArchived"
+                color="primary"
+                @click="emitCancel(item.id)"
+                >Cancel
+                <v-tooltip activator="parent" location="start"
+                  >Click to cancel this application</v-tooltip
+                >
+              </v-btn>
+            </v-btn-group>
           </template>
           <template
             #[`item.data-table-expand`]="{
