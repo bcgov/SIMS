@@ -23,6 +23,7 @@ updates:
       - dependency-name: "*"
         update-types:
           ["version-update:semver-patch", "version-update:semver-minor"]
+      - dependency-name: "@nestjs*"
   - package-ecosystem: "npm"
     directory: "/sources/packages/forms"
     schedule:
@@ -59,8 +60,6 @@ updates:
           - "*"
         update-types:
           - "minor"
-    ignore:
-      - dependency-name: "@nestjs*"
   - package-ecosystem: "npm"
     directory: "/sources/packages/backend"
     schedule:
@@ -89,8 +88,6 @@ updates:
           - "*"
         update-types:
           - "minor"
-    ignore:
-      - dependency-name: "@nestjs*"
   - package-ecosystem: "npm"
     directory: "/sources/packages/load-test"
     schedule:
@@ -104,8 +101,6 @@ updates:
           - "*"
         update-types:
           - "minor"
-    ignore:
-      - dependency-name: "@nestjs*"
   # Security updates for all npm packages (non-grouped).
   - package-ecosystem: "npm"
     directory: "/sources/packages/web"
@@ -121,8 +116,6 @@ updates:
           - "*"
         update-types:
           - "patch"
-    ignore:
-      - dependency-name: "@nestjs*"
   - package-ecosystem: "npm"
     directory: "/sources/packages/backend"
     schedule:
@@ -137,8 +130,6 @@ updates:
           - "*"
         update-types:
           - "patch"
-    ignore:
-      - dependency-name: "@nestjs*"
   - package-ecosystem: "npm"
     directory: "/sources/packages/forms"
     schedule:
@@ -153,24 +144,6 @@ updates:
           - "*"
         update-types:
           - "patch"
-    ignore:
-      - dependency-name: "@nestjs*"
-  - package-ecosystem: "npm"
-    directory: "/sources/packages/forms"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "Security-related"
-      - "npm"
-    groups:
-      patch-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "patch"
-    ignore:
-      - dependency-name: "@nestjs*"
   - package-ecosystem: "npm"
     directory: "/sources/packages/load-test"
     schedule:
@@ -185,8 +158,6 @@ updates:
           - "*"
         update-types:
           - "patch"
-    ignore:
-      - dependency-name: "@nestjs*"
   # Nestjs packages updates monitored separately.
   - package-ecosystem: "npm"
     directory: "/sources/packages/backend"
