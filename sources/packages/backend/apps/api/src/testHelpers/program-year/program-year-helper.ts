@@ -53,3 +53,18 @@ export async function createPYStudentApplicationFormConfiguration(
     partTimeConfiguration,
   };
 }
+
+/**
+ * Get the most recent active program year.
+ * @param db e2e DataSources.
+ * @returns the most recent active program year.
+ */
+export async function getRecentActiveProgramYear(
+  db: E2EDataSources,
+): Promise<ProgramYear> {
+  return db.programYear.findOne({
+    select: { id: true, startDate: true, endDate: true, programYear: true },
+    where: { active: true },
+    order: { startDate: "DESC" },
+  });
+}

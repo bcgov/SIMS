@@ -93,6 +93,7 @@
           <zeebe:header key="appealsPartnerInformationAndIncomeAppealData" value="$.appeals.partnerInformationAndIncomeAppeal.submittedData" />
           <zeebe:header key="appealsStudentDependantsAppealData" value="$.appeals.studentDependantsAppeal.submittedData.dependants[*][&#39;dateOfBirth&#39;,&#39;declaredOnTaxes&#39;,&#39;attendingPostSecondarySchool&#39;]" />
           <zeebe:header key="appealsStudentHasDependentsAppealData" value="$.appeals.studentDependantsAppeal.submittedData.hasDependents" />
+          <zeebe:header key="appealsRoomAndBoardCostsAppealData" value="$.appeals.roomAndBoardCostsAppeal.submittedData" />
           <zeebe:header key="offeringCourseLoad" value="$.offering.courseLoad" />
           <zeebe:header key="offeringWeeks" value="$.offering.studyBreaks.totalFundedWeeks" />
           <zeebe:header key="studentDataDependants" value="$.data.dependants[*][&#39;dateOfBirth&#39;,&#39;declaredOnTaxes&#39;,&#39;attendingPostSecondarySchool&#39;]" />
