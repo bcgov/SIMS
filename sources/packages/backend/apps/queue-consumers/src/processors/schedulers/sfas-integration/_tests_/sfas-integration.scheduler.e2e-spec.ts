@@ -43,6 +43,8 @@ import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validati
 // SFAS received file mocks.
 const SFAS_ALL_RESTRICTIONS_FILENAME =
   "SFAS-TO-SIMS-2024MAR07-ALL-RESTRICTIONS.txt";
+const SFAS_TO_SIMS_SSR_SSRN_RESOLVED_RESTRICTIONS =
+  "SFAS-TO-SIMS-SSR-SSRN-RESOLVED-RESTRICTIONS.txt";
 const SFAS_SAIL_DATA_FILENAME =
   "SFAS-TO-SIMS-2024MAR21-PT-APPLICATION-DATA-IMPORT.txt";
 const SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME =
@@ -114,6 +116,11 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     await db.restriction.update(
       { isLegacy: true, restrictionCode: Not(RestrictionCode.LGCY) },
       { isLegacy: false, restrictionCode: "E2E_UPDATE" },
+    );
+    // Set SSR/SSRN to a different code to avoid conflicts with the resolved restrictions test cases.
+    await db.restriction.update(
+      { restrictionCode: In([RestrictionCode.SSR, RestrictionCode.SSRN]) },
+      { restrictionCode: "E2E_UPDATE" },
     );
     // Set all legacy restrictions notification to sent.
     await db.notification.update(
@@ -257,6 +264,46 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       });
     },
   );
+
+  it.only("Should import a resolved SSR, an active SSRN, and ignore one resolved SSRN when the student does not have any SSR and SSRN restrictions in his account.", async () => {
+    // Arrange
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+    mockDownloadFiles(sftpClientMock, [
+      SFAS_TO_SIMS_SSR_SSRN_RESOLVED_RESTRICTIONS,
+    ]);
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+    // Assert
+    // Expect the file was archived on SFTP.
+    expect(result).toStrictEqual([
+      "Completed processing SFAS integration files.",
+    ]);
+    expect(sftpClientMock.rename).toHaveBeenCalled();
+    // Expect a total of 5 restrictions to be inserted.
+    // Two originally inserted restrictions (LGCY & B6B) from before the file processing and then two AF restrictions and one SSR restriction added from the file import.
+    const studentRestrictions = await db.studentRestriction.find({
+      select: {
+        id: true,
+        restriction: {
+          restrictionCode: true,
+        },
+      },
+      relations: { restriction: true },
+      where: { student: { id: sharedStudent.id } },
+    });
+    expect(studentRestrictions.length).toBe(2);
+    const restrictionsCount: Record<string, number> = {};
+    studentRestrictions.forEach((restriction) => {
+      const code = restriction.restriction.restrictionCode;
+      restrictionsCount[code] = (restrictionsCount[code] || 0) + 1;
+    });
+    // Assert the count of individual restriction types.
+    expect(restrictionsCount).toStrictEqual({
+      [RestrictionCode.SSR]: 1,
+      [RestrictionCode.SSRN]: 1,
+    });
+  });
 
   it(
     "Should add a SFAS part time application record when importing data from SFAS " +

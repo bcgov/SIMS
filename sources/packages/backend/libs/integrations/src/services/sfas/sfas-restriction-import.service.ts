@@ -32,6 +32,7 @@ export class SFASRestrictionImportService
   implements SFASDataImporter
 {
   private readonly bulkInsertSFASMappedRestrictionsSQL: string;
+  private readonly bulkInsertSFASResolvedRestrictionsSQL: string;
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
@@ -44,6 +45,10 @@ export class SFASRestrictionImportService
     super(dataSource.getRepository(SFASRestriction));
     this.bulkInsertSFASMappedRestrictionsSQL = getSQLFileData(
       "Bulk-insert-sfas-mapped-restrictions.sql",
+      SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
+    );
+    this.bulkInsertSFASResolvedRestrictionsSQL = getSQLFileData(
+      "Bulk-insert-sfas-resolved-restrictions.sql",
       SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
     );
   }
@@ -102,8 +107,17 @@ export class SFASRestrictionImportService
       const creator = this.systemUsersService.systemUser;
       const referenceDate = new Date();
       await this.dataSource.transaction(async (transactionalEntityManager) => {
+        // Insert the mapped restrictions and active restrictions.
         await transactionalEntityManager.query(
           this.bulkInsertSFASMappedRestrictionsSQL,
+          [creator.id, referenceDate],
+        );
+        // Resolved restrictions must be executed after the active restrictions
+        // inserted by the previous query are processed.
+        // The resolved restrictions should not be inserted if there is already
+        // one restriction of the same code for the student (active or not).
+        await transactionalEntityManager.query(
+          this.bulkInsertSFASResolvedRestrictionsSQL,
           [creator.id, referenceDate],
         );
         const processedUpdatePromise = transactionalEntityManager
