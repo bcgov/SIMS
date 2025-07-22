@@ -36,6 +36,7 @@ export interface EducationProgramAPIOutDTO {
   institutionProgramCode?: string;
   minHoursWeek?: string;
   isAviationProgram?: string;
+  credentialTypesAvi?: AviationProgramCredentialTypes;
   minHoursWeekAvi?: string;
   entranceRequirements: EntranceRequirements;
   hasWILComponent: string;
