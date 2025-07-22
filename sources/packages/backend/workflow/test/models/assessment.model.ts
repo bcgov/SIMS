@@ -221,6 +221,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   programYearTotalFullTimeBooksAndSuppliesCost: number;
   programYearTotalPartTimeReturnTransportationCost: number;
   programYearTotalFullTimeReturnTransportationCost: number;
+  studentDataParents?: IdentifiableParentData[];
 }
 
 /**
@@ -245,6 +246,7 @@ export interface ConfigureDisbursementData extends JSONDoc {
 
 export interface IdentifiableParentData extends JSONDoc {
   parentIsAbleToReport: YesNoOptions;
+  currentYearParentIncome?: number;
 }
 
 export interface AssessmentModel {
@@ -324,6 +326,10 @@ export interface CalculatedAssessmentModel {
   calculatedDataStudentTotalIncome: number;
   calculatedDataCurrentYearPartnerIncome: number;
   partner1CRAReportedIncome?: number;
+  calculatedDataTotalParentIncome: number;
+  calculatedDataParent1IncomeDeductions: number;
+  calculatedDataTotalParentDeductions: number;
+  calculatedDataTotalNetFamilyIncome: number;
 
   // Common variables used in both full-time and part-time.
   // CSGP
