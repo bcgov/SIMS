@@ -1,6 +1,6 @@
 services:
   mongo:
-    image: mongo:4.1
+    image: mongo:8.0.11
     restart: always
     volumes:
       - mdb-data:/data/db
@@ -43,3 +43,4 @@ networks:
 
 volumes:
   mdb-data:
+    name: formio-mongo-data
