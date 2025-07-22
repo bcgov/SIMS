@@ -93,7 +93,8 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
           transactionalEntityManager,
           async (nextSequenceNumber: number) => {
             processSummary.info("Creating MSFAA request content.");
-            // For 0-record files, msfaaRecords and totalSINHash will be empty/0.
+            // Create the Request content for the MSFAA file by populating the
+            // header, footer and trailer content.
             fileContent = this.msfaaService.createMSFAARequestContent(
               msfaaRecords,
               nextSequenceNumber,
@@ -128,7 +129,6 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
           generatedFile: fileInfo.filePath,
           uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
         };
-
         // Creates the repository based on the entity manager that
         // holds the transaction already created to manage the
         // sequence number.
