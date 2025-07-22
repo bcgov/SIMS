@@ -1773,7 +1773,7 @@
                 "onlyAvailableItems": true
               },
               "validateWhenHidden": false,
-              "key": "credentialTypesAvi",
+              "key": "credentialTypesAviation",
               "conditional": {
                 "show": true,
                 "when": "isAviationProgram",
@@ -1799,7 +1799,7 @@
               "key": "html22",
               "conditional": {
                 "show": true,
-                "when": "credentialTypesAvi",
+                "when": "credentialTypesAviation",
                 "eq": "privatePilotTraining"
               },
               "type": "htmlelement",

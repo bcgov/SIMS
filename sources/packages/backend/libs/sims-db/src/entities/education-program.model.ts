@@ -219,14 +219,13 @@ export class EducationProgram extends RecordDataModel {
   isAviationProgram?: string;
 
   /**
-   * A jsonb column to store various credential types related to aviation programs.
+   * Aviation program credential types.
    */
   @Column({
     name: "credential_types_aviation",
     type: "jsonb",
     nullable: true,
-    comment:
-      "A jsonb column to store various credential types related to aviation programs.",
+    comment: "Aviation program credential types.",
   })
   credentialTypesAviation?: AviationProgramCredentialTypes;
 

@@ -39,7 +39,7 @@ export class EducationProgramAPIOutDTO {
   institutionProgramCode?: string;
   minHoursWeek?: string;
   isAviationProgram?: string;
-  credentialTypesAvi?: AviationProgramCredentialTypes;
+  credentialTypesAviation?: AviationProgramCredentialTypes;
   minHoursWeekAvi?: string;
   entranceRequirements: EntranceRequirements;
   hasWILComponent: string;
@@ -137,7 +137,7 @@ export class EducationProgramAPIInDTO {
   @Allow()
   isAviationProgram?: string;
   @Allow()
-  credentialTypesAvi?: AviationProgramCredentialTypes;
+  credentialTypesAviation?: AviationProgramCredentialTypes;
   @Allow()
   minHoursWeekAvi?: string;
   @Allow()

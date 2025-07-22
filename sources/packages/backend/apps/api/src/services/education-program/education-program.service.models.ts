@@ -51,7 +51,7 @@ export interface SaveEducationProgram {
   programDeclaration: boolean;
   programStatus: ProgramStatus;
   fieldOfStudyCode: number;
-  credentialTypesAvi?: AviationProgramCredentialTypes;
+  credentialTypesAviation?: AviationProgramCredentialTypes;
 }
 
 export interface EducationProgramsSummary {

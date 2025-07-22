@@ -225,7 +225,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.institutionProgramCode = educationProgram.institutionProgramCode;
       program.minHoursWeek = educationProgram.minHoursWeek;
       program.isAviationProgram = educationProgram.isAviationProgram;
-      program.credentialTypesAviation = educationProgram.credentialTypesAvi;
+      program.credentialTypesAviation =
+        educationProgram.credentialTypesAviation;
       program.minHoursWeekAvi = educationProgram.minHoursWeekAvi;
       program.minHighSchool =
         educationProgram.entranceRequirements.minHighSchool;
