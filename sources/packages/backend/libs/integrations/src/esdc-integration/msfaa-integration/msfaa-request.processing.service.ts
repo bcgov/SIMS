@@ -54,12 +54,6 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
     );
     const pendingMSFAARequests =
       await this.msfaaNumberService.getPendingMSFAARequest(offeringIntensity);
-    if (!pendingMSFAARequests.length) {
-      return {
-        generatedFile: "none",
-        uploadedRecords: 0,
-      };
-    }
     processSummary.info(
       `Found ${pendingMSFAARequests.length} MSFAA number(s) for ${offeringIntensity} application that needs request.`,
     );
@@ -99,8 +93,7 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
           transactionalEntityManager,
           async (nextSequenceNumber: number) => {
             processSummary.info("Creating MSFAA request content.");
-            // Create the Request content for the MSFAA file by populating the
-            // header, footer and trailer content.
+            // For 0-record files, msfaaRecords and totalSINHash will be empty/0.
             fileContent = this.msfaaService.createMSFAARequestContent(
               msfaaRecords,
               nextSequenceNumber,
@@ -135,16 +128,16 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
           generatedFile: fileInfo.filePath,
           uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
         };
-        // Creates the repository based on the entity manager that
-        // holds the transaction already created to manage the
-        // sequence number.
-        const msfaaNumberRepo =
-          transactionalEntityManager.getRepository(MSFAANumber);
-        await this.msfaaNumberService.updateRecordsInSentFile(
-          msfaaRecordIds,
-          processDate,
-          msfaaNumberRepo,
-        );
+        // Only update DB records if there are any records in the file.
+        if (msfaaRecordIds.length > 0) {
+          const msfaaNumberRepo =
+            transactionalEntityManager.getRepository(MSFAANumber);
+          await this.msfaaNumberService.updateRecordsInSentFile(
+            msfaaRecordIds,
+            processDate,
+            msfaaNumberRepo,
+          );
+        }
       } catch (error: unknown) {
         const errorMessage = `Error while uploading content for ${offeringIntensity} MSFAA request.`;
         this.logger.error(errorMessage, error);

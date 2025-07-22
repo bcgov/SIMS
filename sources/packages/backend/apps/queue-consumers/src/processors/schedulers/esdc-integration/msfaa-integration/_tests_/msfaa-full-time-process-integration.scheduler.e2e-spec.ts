@@ -2,9 +2,9 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames, getISODateOnlyString } from "@sims/utilities";
 import {
-  createTestingAppModule,
-  describeProcessorRootTest,
-  mockBullJob,
+    createTestingAppModule,
+    describeProcessorRootTest,
+    mockBullJob,
 } from "../../../../../../test/helpers";
 import { FullTimeMSFAAProcessIntegrationScheduler } from "../msfaa-full-time-process-integration.scheduler";
 import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
@@ -13,15 +13,15 @@ import * as Client from "ssh2-sftp-client";
 import { In, IsNull } from "typeorm";
 import { saveMSFAATestInputsData } from "./msfaa-factory";
 import {
-  MSFAA_FULL_TIME_MARRIED,
-  MSFAA_FULL_TIME_OTHER_COUNTRY,
-  MSFAA_FULL_TIME_RELATIONSHIP_OTHER,
+    MSFAA_FULL_TIME_MARRIED,
+    MSFAA_FULL_TIME_OTHER_COUNTRY,
+    MSFAA_FULL_TIME_RELATIONSHIP_OTHER,
 } from "./msfaa-process-integration.scheduler.models";
 import { OfferingIntensity } from "@sims/sims-db";
 import {
-  createMSFAARequestContentSpyOnMock,
-  getMSFAASequenceGroupName,
-  getProcessDateFromMSFAARequestContent,
+    createMSFAARequestContentSpyOnMock,
+    getMSFAASequenceGroupName,
+    getProcessDateFromMSFAARequestContent,
 } from "./msfaa-helper";
 import * as dayjs from "dayjs";
 
@@ -150,5 +150,40 @@ describe(describeProcessorRootTest(QueueNames.FullTimeMSFAAIntegration), () => {
       dayjs(msfaa.dateRequested).isSame(processDate),
     );
     expect(allMSFAAsHaveDateRequested).toBe(true);
+  });
+
+  it("Should generate an MSFAA Full-time file with only header and footer when there are no pending MSFAA records.", async () => {
+    // Arrange
+    // Set the life time sequence value to ensure it is different from the file name sequence value.
+    const lifeTimeSequenceValue = "200";
+    await db.sequenceControl.insert({
+      sequenceName: msfaaLifeTimeSequenceGroupName,
+      sequenceNumber: lifeTimeSequenceValue,
+    });
+    // Ensure there are no pending MSFAA records (all are cancelled in beforeEach)
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+    // Spy on the MSFAA content creation to intercept the process date and time used.
+    const createMSFAARequestContentMock = createMSFAARequestContentSpyOnMock(app);
+
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    expect(createMSFAARequestContentMock).toHaveBeenCalledTimes(1);
+    const { processDateFormatted } = getProcessDateFromMSFAARequestContent(createMSFAARequestContentMock);
+    const uploadedFile = getUploadedFile(sftpClientMock);
+    // Assert file name with the sequence gap added.
+    expect(uploadedFile.remoteFilePath).toContain(processDateFormatted);
+    // Assert process result.
+    expect(result[1]).toBe("Uploaded records: 0");
+    // Assert file output: only header and footer.
+    expect(uploadedFile.fileLines.length).toBe(2);
+    const [header, footer] = uploadedFile.fileLines;
+    expect(header).toContain("MSFAA"); // Should contain header code
+    expect(footer).toContain("MSFAA"); // Should contain trailer code
+    // Footer record count should be 0
+    // (parse the record count from the footer if needed, or just check the string contains '000000000')
+    expect(footer).toMatch(/000000000/);
   });
 });
