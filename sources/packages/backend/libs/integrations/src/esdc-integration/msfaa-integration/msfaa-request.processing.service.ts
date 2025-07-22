@@ -128,16 +128,17 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
           generatedFile: fileInfo.filePath,
           uploadedRecords: fileContent.length - 2, // Do not consider header and footer.
         };
-        // Only update DB records if there are any records in the file.
-        if (msfaaRecordIds.length > 0) {
-          const msfaaNumberRepo =
-            transactionalEntityManager.getRepository(MSFAANumber);
-          await this.msfaaNumberService.updateRecordsInSentFile(
-            msfaaRecordIds,
-            processDate,
-            msfaaNumberRepo,
-          );
-        }
+
+        // Creates the repository based on the entity manager that
+        // holds the transaction already created to manage the
+        // sequence number.
+        const msfaaNumberRepo =
+          transactionalEntityManager.getRepository(MSFAANumber);
+        await this.msfaaNumberService.updateRecordsInSentFile(
+          msfaaRecordIds,
+          processDate,
+          msfaaNumberRepo,
+        );
       } catch (error: unknown) {
         const errorMessage = `Error while uploading content for ${offeringIntensity} MSFAA request.`;
         this.logger.error(errorMessage, error);
