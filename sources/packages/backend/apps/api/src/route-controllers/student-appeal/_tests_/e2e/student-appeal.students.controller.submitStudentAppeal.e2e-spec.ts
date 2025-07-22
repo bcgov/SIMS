@@ -7,7 +7,8 @@ import {
   FakeStudentUsersTypes,
   getRecentActiveProgramYear,
   getStudentToken,
-  mockUserLoginInfo,
+  mockJWTUserInfo,
+  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   E2EDataSources,
@@ -65,6 +66,10 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     recentActiveProgramYear = await getRecentActiveProgramYear(db);
   });
 
+  beforeEach(async () => {
+    await resetMockJWTUserInfo(appModule);
+  });
+
   it(
     "Should create a student appeal for financial information change when student submit " +
       "an appeal and does not have any other pending appeal.",
@@ -96,8 +101,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           },
         ],
       };
-      // Mock user service to return the saved student.
-      await mockUserLoginInfo(appModule, student);
+
       // Get any student user token.
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
@@ -119,6 +123,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       formService.dryRunSubmission = dryRunSubmissionMock;
 
       const endpoint = `/students/appeal/application/${application.id}`;
+      await mockJWTUserInfo(appModule, student.user);
 
       // Act/Assert
       let createdAppealId: number;
@@ -201,14 +206,13 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           },
         ],
       };
-      // Mock user service to return the saved student.
-      await mockUserLoginInfo(appModule, student);
+
       // Get any student user token.
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
       const endpoint = `/students/appeal/application/${application.id}`;
-
+      await mockJWTUserInfo(appModule, student.user);
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
@@ -240,8 +244,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         },
       ],
     };
-    // Mock user service to return the saved student.
-    mockUserLoginInfo(appModule, student);
+    // Mock JWT user to return the saved student from token.
+    mockJWTUserInfo(appModule, student.user);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -286,8 +290,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         },
       ],
     };
-    // Mock user service to return the saved student.
-    mockUserLoginInfo(appModule, student);
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, student.user);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -330,8 +334,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         },
       ],
     };
-    // Mock user service to return the saved student.
-    mockUserLoginInfo(appModule, student);
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, student.user);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -444,8 +448,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         },
       ],
     };
-    // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, student.user);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -552,8 +556,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         },
       ],
     };
-    // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, application.student);
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, application.student.user);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -665,8 +669,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           },
         ],
       };
-      // Mock user service to return the saved student.
-      await mockUserLoginInfo(appModule, student);
+      // Mock JWT user to return the saved student from token.
+      await mockJWTUserInfo(appModule, student.user);
       // Get any student user token.
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
@@ -724,7 +728,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   );
 
   it(
-    "Should throw bad request exception when student submit an appeal with a change request form" +
+    "Should throw unprocessable entity exception when student submit an appeal with a change request form" +
       " which is not eligible for the appeal submission.",
     async () => {
       // Arrange
@@ -755,8 +759,8 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           },
         ],
       };
-      // Mock user service to return the saved student.
-      await mockUserLoginInfo(appModule, student);
+      // Mock JWT user to return the saved student from token.
+      await mockJWTUserInfo(appModule, student.user);
       // Get any student user token.
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
