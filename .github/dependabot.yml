@@ -23,6 +23,7 @@ updates:
       - dependency-name: "*"
         update-types:
           ["version-update:semver-patch", "version-update:semver-minor"]
+      # NestJS packages are excluded from major updates to ensure compatibility with the framework's ecosystem.
       - dependency-name: "@nestjs*"
   - package-ecosystem: "npm"
     directory: "/sources/packages/forms"
