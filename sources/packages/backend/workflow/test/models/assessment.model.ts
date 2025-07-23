@@ -329,7 +329,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataCurrentYearPartnerIncome: number;
   partner1CRAReportedIncome?: number;
   calculatedDataPartnerBCEAIncomeAssistanceAmount?: number;
-  calculatedDataInterfacePolicyApplies: YesNoOptions;
+  calculatedDataInterfacePolicyApplies: boolean;
   calculatedDataInterfaceEducationCosts?: number;
   calculatedDataInterfaceNeed?: number;
   calculatedDataInterfaceChildCareCosts?: number;
