@@ -36,6 +36,9 @@ FROM
   LEFT JOIN sims.student_restrictions student_restrictions ON student_restrictions.student_id = sfas_individuals.student_id
   AND student_restrictions.restriction_id = restrictions.id
 WHERE
+  -- Multiple restrictions can be mapped to SSR or SSRN based in the sfas_restriction_maps table,
+  -- so filtering by the mapped codes (instead of limiting the subquery) will ensure that changes
+  -- in the configuration would not require further changes in this script.
   mapped_restrictions.mapped_code IN ('SSR', 'SSRN')
   AND sfas_individuals.student_id IS NOT NULL
   AND student_restrictions.restriction_id IS NULL;
