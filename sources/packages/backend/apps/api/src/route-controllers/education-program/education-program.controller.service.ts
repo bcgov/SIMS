@@ -25,11 +25,7 @@ import {
   getUserFullName,
   PaginatedResults,
 } from "../../utilities";
-import {
-  CustomNamedError,
-  getISODateOnlyString,
-  isSameOrAfterDate,
-} from "@sims/utilities";
+import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { FormNames } from "../../services/form/constants";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
@@ -247,7 +243,7 @@ export class EducationProgramControllerService {
       isBCPrivate: program.institution.institutionType.isBCPrivate,
       hasOfferings,
       isActive: program.isActive,
-      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
+      isExpired: program.isExpired,
     };
   }
 
