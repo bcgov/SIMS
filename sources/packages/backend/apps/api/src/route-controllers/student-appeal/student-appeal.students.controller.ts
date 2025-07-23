@@ -78,7 +78,8 @@ export class StudentAppealStudentsController extends BaseController {
     description:
       "Only one change request/appeal can be submitted at a time for each application. " +
       "When your current request is approved or denied by StudentAid BC, you will be able to submit a new one or " +
-      "one or more forms submitted are not valid for appeal submission.",
+      "one or more forms submitted are not valid for appeal submission or " +
+      "appeals cannot be submitted for part-time applications.",
   })
   @ApiBadRequestResponse({
     description:
