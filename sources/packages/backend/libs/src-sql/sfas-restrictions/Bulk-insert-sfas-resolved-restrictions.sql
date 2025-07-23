@@ -1,7 +1,8 @@
--- @format ignore
 -- Insert resolved SFAS restrictions into SIMS student_restrictions table.
 -- Only SSR and SSRN mapped codes should be considered.
 -- If the student already has a restriction (active or not), it should not be inserted again.
+-- The student may have multiple resolved restrictions, but only one is required for each code,
+-- that is why the DISTINCT clause is used.
 INSERT INTO
   sims.student_restrictions (student_id, restriction_id, is_active, creator, created_at)
 SELECT DISTINCT
