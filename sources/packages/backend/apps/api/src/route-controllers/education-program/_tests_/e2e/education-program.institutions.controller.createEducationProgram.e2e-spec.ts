@@ -168,7 +168,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         programIntensity: payload.programIntensity,
         institutionProgramCode: payload.institutionProgramCode,
         minHoursWeek: null,
-        isAviationProgram: null,
+        isAviationProgram: "no",
         minHoursWeekAvi: null,
         hasMinimumAge: payload.entranceRequirements.hasMinimumAge,
         minHighSchool: payload.entranceRequirements.minHighSchool,
