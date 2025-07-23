@@ -36,6 +36,7 @@ export interface EducationProgramAPIOutDTO {
   institutionProgramCode?: string;
   minHoursWeek?: string;
   isAviationProgram?: string;
+  credentialTypesAviation?: AviationProgramCredentialTypes;
   minHoursWeekAvi?: string;
   entranceRequirements: EntranceRequirements;
   hasWILComponent: string;
@@ -150,7 +151,7 @@ export class EducationProgramAPIInDTO {
   @Expose()
   fieldOfStudyCode: number;
   @Expose()
-  credentialTypesAvi?: AviationProgramCredentialTypes;
+  credentialTypesAviation?: AviationProgramCredentialTypes;
   isBCPrivate: boolean;
   isBCPublic: boolean;
 }

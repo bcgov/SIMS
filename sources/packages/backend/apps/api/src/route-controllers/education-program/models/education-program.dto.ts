@@ -1,6 +1,5 @@
 import { Allow, IsDateString, IsNotEmpty, MaxLength } from "class-validator";
 import {
-  AviationProgramCredentialTypes,
   EntranceRequirements,
   ProgramDeliveryTypes,
 } from "../../../services/education-program/education-program.service.models";
@@ -8,6 +7,7 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   ProgramStatus,
   ProgramIntensity,
+  AviationProgramCredentialTypes,
 } from "@sims/sims-db";
 
 /**
@@ -39,6 +39,7 @@ export class EducationProgramAPIOutDTO {
   institutionProgramCode?: string;
   minHoursWeek?: string;
   isAviationProgram?: string;
+  credentialTypesAviation?: AviationProgramCredentialTypes;
   minHoursWeekAvi?: string;
   entranceRequirements: EntranceRequirements;
   hasWILComponent: string;
@@ -136,6 +137,8 @@ export class EducationProgramAPIInDTO {
   @Allow()
   isAviationProgram?: string;
   @Allow()
+  credentialTypesAviation?: AviationProgramCredentialTypes;
+  @Allow()
   minHoursWeekAvi?: string;
   @Allow()
   entranceRequirements: EntranceRequirements;
@@ -157,8 +160,6 @@ export class EducationProgramAPIInDTO {
   programDeclaration: boolean;
   @Allow()
   fieldOfStudyCode: number;
-  @Allow()
-  credentialTypesAvi?: AviationProgramCredentialTypes;
   /**
    * Indicates the institution type as BC Private. isBCPrivate is part of the form and defines if the dynamic
    * area of the form.io definition will be visible or not. It will impact the validation using the dryrun.

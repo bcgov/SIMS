@@ -50,6 +50,7 @@ export function createFakeEducationProgram(
   program.institution = relations?.institution ?? createFakeInstitution();
   program.programIntensity =
     options?.initialValue?.programIntensity ?? ProgramIntensity.fullTime;
+  program.isAviationProgram = options?.initialValue?.isAviationProgram ?? "no";
   program.submittedBy = relations?.user;
   program.fieldOfStudyCode = 1;
   program.isActive = options?.initialValue?.isActive ?? true;

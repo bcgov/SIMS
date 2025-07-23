@@ -219,6 +219,16 @@ export class EducationProgram extends RecordDataModel {
   isAviationProgram?: string;
 
   /**
+   * Aviation program credential types.
+   */
+  @Column({
+    name: "credential_types_aviation",
+    type: "jsonb",
+    nullable: true,
+  })
+  credentialTypesAviation?: AviationProgramCredentialTypes;
+
+  /**
    * Minimum hours check for a aviation program.
    */
   @Column({
@@ -430,4 +440,15 @@ export class EducationProgram extends RecordDataModel {
     nullable: true,
   })
   isActiveUpdatedOn?: Date;
+}
+
+/**
+ * Aviation program credential types.
+ */
+export interface AviationProgramCredentialTypes {
+  commercialPilotTraining: boolean;
+  instructorsRating: boolean;
+  endorsements: boolean;
+  privatePilotTraining: boolean;
+  noneOfTheAbove: boolean;
 }

@@ -1,4 +1,8 @@
-import { ProgramIntensity, ProgramStatus } from "@sims/sims-db";
+import {
+  AviationProgramCredentialTypes,
+  ProgramIntensity,
+  ProgramStatus,
+} from "@sims/sims-db";
 
 export interface ProgramDeliveryTypes {
   deliveredOnSite: boolean;
@@ -11,14 +15,6 @@ export interface EntranceRequirements {
   requirementsByInstitution: boolean;
   requirementsByBCITA: boolean;
   noneOfTheAboveEntranceRequirements: boolean;
-}
-
-export interface AviationProgramCredentialTypes {
-  commercialPilotTraining: boolean;
-  instructorsRating: boolean;
-  endorsements: boolean;
-  privatePilotTraining: boolean;
-  noneOfTheAbove: boolean;
 }
 
 export interface SaveEducationProgram {
@@ -55,6 +51,7 @@ export interface SaveEducationProgram {
   programDeclaration: boolean;
   programStatus: ProgramStatus;
   fieldOfStudyCode: number;
+  credentialTypesAviation?: AviationProgramCredentialTypes;
 }
 
 export interface EducationProgramsSummary {
