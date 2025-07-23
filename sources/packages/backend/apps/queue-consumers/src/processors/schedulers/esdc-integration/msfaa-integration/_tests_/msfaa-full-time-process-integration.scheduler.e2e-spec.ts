@@ -151,4 +151,37 @@ describe(describeProcessorRootTest(QueueNames.FullTimeMSFAAIntegration), () => {
     );
     expect(allMSFAAsHaveDateRequested).toBe(true);
   });
+
+  it("Should generate an MSFAA Full-time file with only header and footer when there are no pending MSFAA records.", async () => {
+    // Arrange
+    const lifeTimeSequenceValue = "200";
+    await db.sequenceControl.insert({
+      sequenceName: msfaaLifeTimeSequenceGroupName,
+      sequenceNumber: lifeTimeSequenceValue,
+    });
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+    const createMSFAARequestContentMock =
+      createMSFAARequestContentSpyOnMock(app);
+
+    // Act/Assert
+    const result = await processor.processQueue(mockedJob.job);
+    expect(createMSFAARequestContentMock).toHaveBeenCalledTimes(1);
+    const { processDateFormatted, processTimeFormatted } =
+      getProcessDateFromMSFAARequestContent(createMSFAARequestContentMock);
+    const uploadedFile = getUploadedFile(sftpClientMock);
+    expect(uploadedFile.remoteFilePath).toContain(processDateFormatted);
+    expect(result).toStrictEqual([
+      `Generated file: ${uploadedFile.remoteFilePath}`,
+      `Uploaded records: 0`,
+    ]);
+    expect(uploadedFile.fileLines.length).toBe(2);
+    const [header, footer] = uploadedFile.fileLines;
+    expect(header).toBe(
+      `100BC  MSFAA SENT                              ${processDateFormatted}${processTimeFormatted}000201                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       `,
+    );
+    expect(footer).toBe(
+      "999MSFAA SENT                              000000000000000000000000                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ",
+    );
+  });
 });

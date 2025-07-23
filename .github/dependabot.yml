@@ -6,40 +6,97 @@ updates:
       interval: "weekly"
     labels:
       - "Dependencies"
-      - "npm"
       - "Web portal"
-
+      - "npm"
+    groups:
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+      minor-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+      patches-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
   - package-ecosystem: "npm"
     directory: "/sources/packages/backend"
     schedule:
       interval: "weekly"
     labels:
       - "Dependencies"
-      - "npm"
       - "Backend"
+      - "npm"
     groups:
-      nestjs:
+      major-updates:
         patterns:
-          - "@nestjs*"
-
+          - "*"
+        update-types:
+          - "major"
+      minor-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+      patches-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
   - package-ecosystem: "npm"
     directory: "/sources/packages/forms"
     schedule:
       interval: "weekly"
     labels:
       - "Dependencies"
-      - "npm"
       - "Form.io"
-
+      - "npm"
+    groups:
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+      minor-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+      patches-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
   - package-ecosystem: "npm"
     directory: "/sources/packages/load-test"
     schedule:
       interval: "weekly"
     labels:
       - "Dependencies"
-      - "npm"
       - "Load Test"
-
+      - "npm"
+    groups:
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+      minor-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+      patches-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+  # GitHub Actions updates.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -47,3 +104,7 @@ updates:
     labels:
       - "Dependencies"
       - "GitHub actions"
+    groups:
+      github-actions-updates:
+        patterns:
+          - "*"

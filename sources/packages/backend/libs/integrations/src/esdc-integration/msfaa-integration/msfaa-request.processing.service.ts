@@ -54,12 +54,6 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
     );
     const pendingMSFAARequests =
       await this.msfaaNumberService.getPendingMSFAARequest(offeringIntensity);
-    if (!pendingMSFAARequests.length) {
-      return {
-        generatedFile: "none",
-        uploadedRecords: 0,
-      };
-    }
     processSummary.info(
       `Found ${pendingMSFAARequests.length} MSFAA number(s) for ${offeringIntensity} application that needs request.`,
     );
