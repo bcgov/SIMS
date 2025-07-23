@@ -26,6 +26,7 @@ import {
   Application,
   ApplicationStatus,
   FileOriginType,
+  OfferingIntensity,
   ProgramYear,
   StudentAppealRequest,
   StudentAppealStatus,
@@ -627,7 +628,10 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           student,
           programYear: recentActiveProgramYear,
         },
-        { applicationStatus: ApplicationStatus.Completed },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
       );
       // Create a temporary file for room and board costs appeal.
       const roomAndBoardFile = await saveFakeStudentFileUpload(
@@ -741,7 +745,10 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           student,
           programYear: recentActiveProgramYear,
         },
-        { applicationStatus: ApplicationStatus.Completed },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
       );
       // Prepare the data to request a change of financial information which is not an eligible appeal.
       const financialInformationData = {
