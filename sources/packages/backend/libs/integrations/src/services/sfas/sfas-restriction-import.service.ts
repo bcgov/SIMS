@@ -113,9 +113,10 @@ export class SFASRestrictionImportService
           [creator.id, referenceDate],
         );
         // Resolved restrictions must be executed after the active restrictions
-        // inserted by the previous query are processed.
+        // are inserted by the previous query are processed.
         // The resolved restrictions should not be inserted if there is already
-        // one restriction of the same code for the student (active or not).
+        // one restriction of the same mapped code for the student (active or not).
+        // Currently only SSR and SSRN mapped codes are considered.
         await transactionalEntityManager.query(
           this.bulkInsertSFASResolvedRestrictionsSQL,
           [creator.id, referenceDate],
