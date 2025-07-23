@@ -48,6 +48,7 @@ import { StudentAppealRequestModel } from "../../services/student-appeal/student
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
 import { StudentAppealServerSideSubmissionData } from "./models/student-appeal.model";
 import { allowApplicationChangeRequest } from "../../utilities";
+import { OfferingIntensity } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -106,6 +107,16 @@ export class StudentAppealStudentsController extends BaseController {
     // If the submission is for new appeal process, then set the operation name as appeal.
     // Otherwise, set it to change request.
     const operation = isProgramYearForNewProcess ? "appeal" : "change request";
+
+    // Validate the application offering intensity for the operation.
+    if (
+      operation === "appeal" &&
+      application.offeringIntensity === OfferingIntensity.partTime
+    ) {
+      throw new UnprocessableEntityException(
+        "Appeals cannot be submitted for part-time applications.",
+      );
+    }
 
     // Validate the submitted form names for the operation.
     this.studentAppealControllerService.validateSubmittedFormNames(
