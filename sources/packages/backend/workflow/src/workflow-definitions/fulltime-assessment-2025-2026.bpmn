@@ -2197,7 +2197,7 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
     <bpmn:intermediateThrowEvent id="Event_1fdxon1" name="Interface Policy Flag">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (studentDataIncomeAssistanceAmount &#62;= 1500) or (calculatedDataPartnerBCEAIncomeAssistanceAmount &#62;= 1500)&#10;then &#34;yes&#34;&#10;else &#34;no&#34;" target="calculatedDataInterfacePolicyApplies" />
+          <zeebe:output source="=if (studentDataIncomeAssistanceAmount &#62;= 1500) or (calculatedDataPartnerBCEAIncomeAssistanceAmount &#62;= 1500)&#10;then &#34;trues&#34;&#10;else &#34;false&#34;" target="calculatedDataInterfacePolicyApplies" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0eae1bf</bpmn:incoming>
