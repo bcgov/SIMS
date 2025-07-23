@@ -400,6 +400,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         requirementsByBCITA: true,
         noneOfTheAboveEntranceRequirements: false,
       },
+      isAviationProgram: "no",
       eslEligibility: "lessThan20",
       hasJointInstitution: "no",
       hasWILComponent: "no",
