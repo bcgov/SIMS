@@ -1147,7 +1147,7 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataInterfaceEducationCosts + calculatedDataInterfaceChildCareCosts + calculatedDataInterfaceTransportationAmount + calculatedDataInterfaceAdditionalTransportationAmount - studentDataGovernmentFundingCosts" target="calculatedDataInterfaceNeed" />
           <zeebe:output source="=min(calculatedDataProvincialAssessedNeed,calculatedDataInterfaceNeed)" target="calculatedDataProvincialAssessedNeed" />
-          <zeebe:output source="=min(calculatedDataFederalAssessedNeed,calculatedDataInterfaceNeed)" target="calculatedDataFederalAssessedNeed" />  
+          <zeebe:output source="=min(calculatedDataFederalAssessedNeed,calculatedDataInterfaceNeed)" target="calculatedDataFederalAssessedNeed" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1rrzsre</bpmn:incoming>
@@ -2197,7 +2197,7 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
     <bpmn:intermediateThrowEvent id="Event_1fdxon1" name="Interface Policy Flag">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (studentDataIncomeAssistanceAmount &#62;= 1500) or (calculatedDataPartnerBCEAIncomeAssistanceAmount &#62;= 1500)&#10;then &#34;trues&#34;&#10;else &#34;false&#34;" target="calculatedDataInterfacePolicyApplies" />
+          <zeebe:output source="=if (studentDataIncomeAssistanceAmount &#62;= 1500) or (calculatedDataPartnerBCEAIncomeAssistanceAmount &#62;= 1500)&#10;then true&#10;else false" target="calculatedDataInterfacePolicyApplies" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0eae1bf</bpmn:incoming>
@@ -4154,6 +4154,10 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
         <di:waypoint x="1288" y="391" />
         <di:waypoint x="1375" y="391" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k0i5o3_di" bpmnElement="Flow_1k0i5o3">
+        <di:waypoint x="8548" y="2320" />
+        <di:waypoint x="8585" y="2320" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1o4g869_di" bpmnElement="Association_1o4g869">
         <di:waypoint x="1043" y="346" />
         <di:waypoint x="1050" y="541" />
@@ -4165,10 +4169,6 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmndi:BPMNEdge id="Association_0q448eh_di" bpmnElement="Association_0q448eh">
         <di:waypoint x="3061" y="1138" />
         <di:waypoint x="3063" y="1113" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1k0i5o3_di" bpmnElement="Flow_1k0i5o3">
-        <di:waypoint x="8548" y="2320" />
-        <di:waypoint x="8585" y="2320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
         <dc:Bounds x="5020" y="1180" width="960" height="760" />
