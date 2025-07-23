@@ -3,12 +3,13 @@
 -- Only SSR and SSRN mapped codes should be considered.
 -- If the student already has a restriction (active or not), it should not be inserted again.
 INSERT INTO
-  sims.student_restrictions (student_id, restriction_id, creator, created_at)
-SELECT
+  sims.student_restrictions (student_id, restriction_id, is_active, creator, created_at)
+SELECT DISTINCT
   sfas_individuals.student_id,
   restrictions.id,
-  $1,
-  $2
+  false,
+  $1::INT,
+  $2::TIMESTAMPTZ
 FROM
   (
     -- select sfas_restrictions records with mapped restriction (from SFAS to SIMS) codes
