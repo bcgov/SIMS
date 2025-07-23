@@ -88,7 +88,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1500;
+    assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
     assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
@@ -98,7 +98,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
       YesNoOptions.No;
     assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
-    assessmentConsolidatedData.studentDataPartnerBCEAIncomeAssistanceAmount = 1500;
+    assessmentConsolidatedData.studentDataPartnerBCEAIncomeAssistanceAmount = 1000;
 
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(

@@ -585,7 +585,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=min(dmnFullTimeProgramYearMaximums.limitWeeklyChildCare * offeringWeeks * calculatedDataTotalChildcareDependants,&#10;  studentDataDaycareCosts11YearsOrUnder + studentDataDaycareCosts12YearsOrOver)" target="calculatedDataChildCareCost" />
-          <zeebe:output source="=if &#10;  studentDataRelationshipStatus = &#34;married&#34; &#10;  and&#10;  calculatedDataPartnerStudyWeeks &#62;=12 &#10;then&#10;  calculatedDataChildCareCost / 2 &#10;else&#10;  calculatedDataChildCareCost" target="calculatedDataTotalChildCareCost" />
+          <zeebe:output source="=if studentDataRelationshipStatus = &#34;married&#34; &#10; and calculatedDataPartnerCaringForDependant = &#34;yes&#34;&#10;then &#10; 0&#10;else &#10; if studentDataRelationshipStatus = &#34;married&#34; &#10; and calculatedDataPartnerStudyWeeks &#62;=12 &#10;then&#10; calculatedDataChildCareCost / 2 &#10;else&#10; calculatedDataChildCareCost" target="calculatedDataTotalChildCareCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_01apq7i</bpmn:incoming>
@@ -1972,6 +1972,7 @@ Alimony/Child Support paid by the Partner during the study period can be conside
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if partner1TotalStudentLoan = null&#10;then &#10;  if studentDataPartnerTotalStudentLoan = null&#10;  then 0&#10;  else studentDataPartnerTotalStudentLoan&#10;else&#10;  partner1TotalStudentLoan" target="calculatedDataPartnerStudentLoans" />
+          <zeebe:output source="=if partner1PartnerCaringForDependant = null&#10;then &#10; studentDataPartnerCaringForDependant&#10;else&#10; partner1PartnerCaringForDependant" target="calculatedDataPartnerCaringForDependant" />
           <zeebe:output source="=if (studentDataPartnerChildSupportCosts = null and partner1ChildSpousalSupportCost = null)&#10;then 0&#10;else&#10;  if studentDataPartnerChildSupportCosts = null&#10;  then partner1ChildSpousalSupportCost&#10;  else studentDataPartnerChildSupportCosts&#10;" target="calculatedDataPartnerAlimonySupport" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
