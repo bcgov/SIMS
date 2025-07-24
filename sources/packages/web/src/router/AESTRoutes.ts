@@ -46,7 +46,7 @@ import AssessmentsSummary from "@/views/aest/student/applicationDetails/Assessme
 import StudentAppealRequestsApproval from "@/views/aest/student/applicationDetails/StudentAppealRequestsApproval.vue";
 import NoticeOfAssessment from "@/views/aest/student/applicationDetails/NoticeOfAssessment.vue";
 import ApplicationExceptionsApproval from "@/views/aest/student/applicationDetails/ApplicationExceptionsApproval.vue";
-import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
+import ViewScholasticStanding from "@/views/student/ViewScholasticStanding.vue";
 import SINManagement from "@/views/aest/student/SINManagement.vue";
 import CASSupplierInformation from "@/views/aest/student/CASSupplierInformation.vue";
 import Balances from "@/views/aest/student/Balances.vue";

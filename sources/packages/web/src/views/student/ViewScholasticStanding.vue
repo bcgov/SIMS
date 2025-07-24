@@ -15,7 +15,7 @@ import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.v
 import { computed, onMounted, ref, defineComponent } from "vue";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { RouteLocationRaw } from "vue-router";
+import { RouteLocationRaw, useRoute } from "vue-router";
 import { useFormatters } from "@/composables";
 import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
 
@@ -26,7 +26,7 @@ export default defineComponent({
   props: {
     studentId: {
       type: Number,
-      required: true,
+      required: false,
     },
     applicationId: {
       type: Number,
@@ -40,13 +40,13 @@ export default defineComponent({
   setup(props) {
     const initialData = ref({} as ScholasticStandingSubmittedDetailsAPIOutDTO);
     const { dateOnlyLongString } = useFormatters();
+    const route = useRoute();
 
     onMounted(async () => {
       const applicationDetails =
         await ScholasticStandingService.shared.getScholasticStanding(
           props.scholasticStandingId,
         );
-
       initialData.value = {
         ...applicationDetails,
         applicationOfferingStartDate: dateOnlyLongString(
@@ -62,6 +62,7 @@ export default defineComponent({
               breakEndDate: dateOnlyLongString(studyBreak.breakEndDate),
             }),
           ),
+        showCompleteInfo: Boolean(route.query.showCompleteInfo) || false,
       };
     });
     const goBackRouteParams = computed(
