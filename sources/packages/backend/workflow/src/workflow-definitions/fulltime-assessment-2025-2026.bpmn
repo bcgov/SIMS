@@ -1266,7 +1266,7 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
     <bpmn:sequenceFlow id="Flow_0ao0mi8" sourceRef="Gateway_0u6r40r" targetRef="Event_0ff3d52" />
     <bpmn:sequenceFlow id="Flow_03ap1yw" sourceRef="Event_0ff3d52" targetRef="Gateway_1g0qy1m" />
     <bpmn:sequenceFlow id="Flow_1umq6zv" name="Interface Applies" sourceRef="Gateway_0u7w3hd" targetRef="Event_1sskkpc">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataInterfacePolicyApplies = "yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataInterfacePolicyApplies</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0frefsk" sourceRef="Event_1sskkpc" targetRef="Event_1s4od9l" />
     <bpmn:sequenceFlow id="Flow_1rrzsre" sourceRef="Event_1s4od9l" targetRef="Event_1a3rd8z" />
