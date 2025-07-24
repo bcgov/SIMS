@@ -2225,7 +2225,7 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
     <bpmn:intermediateThrowEvent id="Event_14jfj5g" name="Total MSOL Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=(calculatedDataStudentMSOLAllowance * offeringWeeks) + calculatedDataDependantTotalMSOLAllowance" target="calculatedDataTotalMSOLAllowance" />
+          <zeebe:output source="=(calculatedDataStudentMSOLAllowance * offeringWeeks) + calculatedDataDependantTotalMSOLAllowance + calculatedDataTotalRoomAndBoardAmount" target="calculatedDataTotalMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1v1hxvs</bpmn:incoming>

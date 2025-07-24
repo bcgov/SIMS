@@ -28,6 +28,10 @@ export interface StudentFinancialInformationAppealData extends JSONDoc {
   currentYearPartnerIncome?: number;
 }
 
+export interface StudentRoomAndBoardAppealData extends JSONDoc {
+  roomAndBoardAmount?: number;
+}
+
 export enum TransportationCostSituation {
   NoLimit = "noLimit",
   EducationPlacement = "educationPlacement",
@@ -124,6 +128,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentFinancialInformationAppealData?: StudentFinancialInformationAppealData;
   appealsStudentAdditionalTransportationAppealData?: StudentAdditionalTransportationAppealData;
   appealsPartnerInformationAndIncomeAppealData?: PartnerInformationAndIncomeAppealData;
+  appealsRoomAndBoardCostsAppealData?: StudentRoomAndBoardAppealData;
   appealsStudentDependantsAppealData?: StudentDependent[];
   appealsStudentHasDependentsAppealData?: YesNoOptions;
   studentDataIsYourPartnerAbleToReport?: boolean;
