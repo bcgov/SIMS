@@ -280,7 +280,6 @@ dmnFullTimeIncomeThreshold</bpmn:text>
         <bpmn:flowNodeRef>Event_084hvhv</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1hl3pah</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1yndxhv</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_1o1cgxp</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1xrobzd</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1qic3co</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_03n821f</bpmn:flowNodeRef>
@@ -326,6 +325,8 @@ dmnFullTimeIncomeThreshold</bpmn:text>
         <bpmn:flowNodeRef>Gateway_0pktb33</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_0imfp5r</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1wciqrl</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1o1cgxp</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1fdxon1</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0v6vyq5">
           <bpmn:lane id="Lane_0l32w49" name="Assessed Need and Eligility">
             <bpmn:flowNodeRef>Event_1ki3afc</bpmn:flowNodeRef>
@@ -348,6 +349,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
             <bpmn:flowNodeRef>Event_1hl3pah</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1yndxhv</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1o1cgxp</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_1fdxon1</bpmn:flowNodeRef>
           </bpmn:lane>
           <bpmn:lane id="Lane_0pbg2l1" name="Costs and Resources">
             <bpmn:flowNodeRef>Event_0agnvys</bpmn:flowNodeRef>
@@ -583,7 +585,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=min(dmnFullTimeProgramYearMaximums.limitWeeklyChildCare * offeringWeeks * calculatedDataTotalChildcareDependants,&#10;  studentDataDaycareCosts11YearsOrUnder + studentDataDaycareCosts12YearsOrOver)" target="calculatedDataChildCareCost" />
-          <zeebe:output source="=if studentDataRelationshipStatus = &#34;married&#34; &#10;  and calculatedDataPartnerCaringForDependant = &#34;yes&#34;&#10;then &#10;  0&#10;else &#10;  if studentDataRelationshipStatus = &#34;married&#34; &#10;  and calculatedDataPartnerStudyWeeks &#62;=12 &#10;then&#10;  calculatedDataChildCareCost / 2 &#10;else&#10;  calculatedDataChildCareCost" target="calculatedDataTotalChildCareCost" />
+          <zeebe:output source="=if studentDataRelationshipStatus = &#34;married&#34; &#10; and calculatedDataPartnerCaringForDependant = &#34;yes&#34;&#10;then &#10; 0&#10;else &#10; if studentDataRelationshipStatus = &#34;married&#34; &#10; and calculatedDataPartnerStudyWeeks &#62;=12 &#10;then&#10; calculatedDataChildCareCost / 2 &#10;else&#10; calculatedDataChildCareCost" target="calculatedDataTotalChildCareCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_01apq7i</bpmn:incoming>
@@ -1123,7 +1125,7 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
     <bpmn:intermediateThrowEvent id="Event_1sskkpc" name="Education Costs">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=max(calculatedDataTotalCosts - studentDataGovernmentFundingCosts,0)" target="calculatedDataInterfaceEducationCosts" />
+          <zeebe:output source="=calculatedDataExceptionalExpenses + calculatedDataTotalTutionCost + calculatedDataTotalBookCost" target="calculatedDataInterfaceEducationCosts" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1umq6zv</bpmn:incoming>
@@ -1132,7 +1134,9 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
     <bpmn:intermediateThrowEvent id="Event_1s4od9l" name="Non-Educational Costs">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataChildCareCost + (dmnFullTimeProgramYearMaximums.limitWeeklytransportationAllowance*offeringWeeks)" target="calculatedDataInterfaceNonEducationCosts" />
+          <zeebe:output source="=calculatedDataTotalChildCareCost" target="calculatedDataInterfaceChildCareCosts" />
+          <zeebe:output source="=dmnFullTimeProgramYearMaximums.limitWeeklytransportationAllowance*offeringWeeks" target="calculatedDataInterfaceTransportationAmount" />
+          <zeebe:output source="=calculatedDataTotalAdditionalTransportationAllowance" target="calculatedDataInterfaceAdditionalTransportationAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0frefsk</bpmn:incoming>
@@ -1141,15 +1145,16 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
     <bpmn:intermediateThrowEvent id="Event_1a3rd8z" name="Interface Assessed Need">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=min(calculatedDataProvincialAssessedNeed,calculatedDataInterfaceEducationCosts+calculatedDataInterfaceNonEducationCosts)" target="calculatedDataProvincialAssessedNeed" />
-          <zeebe:output source="=min(calculatedDataFederalAssessedNeed,calculatedDataInterfaceEducationCosts+calculatedDataInterfaceNonEducationCosts)" target="calculatedDataFederalAssessedNeed" />
+          <zeebe:output source="=calculatedDataInterfaceEducationCosts + calculatedDataInterfaceChildCareCosts + calculatedDataInterfaceTransportationAmount + calculatedDataInterfaceAdditionalTransportationAmount - studentDataGovernmentFundingCosts" target="calculatedDataInterfaceNeed" />
+          <zeebe:output source="=min(calculatedDataProvincialAssessedNeed,calculatedDataInterfaceNeed)" target="calculatedDataProvincialAssessedNeed" />
+          <zeebe:output source="=min(calculatedDataFederalAssessedNeed,calculatedDataInterfaceNeed)" target="calculatedDataFederalAssessedNeed" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1rrzsre</bpmn:incoming>
       <bpmn:outgoing>Flow_0utoiuw</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:exclusiveGateway id="Gateway_0u7w3hd" name="MSDPR INTERFACE" default="Flow_1xpbiiq">
-      <bpmn:incoming>Flow_0eae1bf</bpmn:incoming>
+      <bpmn:incoming>Flow_1k0i5o3</bpmn:incoming>
       <bpmn:outgoing>Flow_1xpbiiq</bpmn:outgoing>
       <bpmn:outgoing>Flow_1umq6zv</bpmn:outgoing>
     </bpmn:exclusiveGateway>
@@ -1252,17 +1257,6 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
       <bpmn:incoming>Flow_0f51edb</bpmn:incoming>
       <bpmn:outgoing>Flow_00adhzi</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_1o1cgxp" name="Assessed Need">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataTotalCosts - calculatedDataTotalProvincialContribution" target="calculatedDataProvincialAssessedNeed" />
-          <zeebe:output source="=calculatedDataTotalCosts - calculatedDataTotalFederalContribution" target="calculatedDataFederalAssessedNeed" />
-          <zeebe:output source="=max(calculatedDataFederalAssessedNeed, calculatedDataProvincialAssessedNeed)" target="calculatedDataTotalAssessedNeed" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_05xztlk</bpmn:incoming>
-      <bpmn:outgoing>Flow_0eae1bf</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_157t178" sourceRef="Gateway_0u6r40r" targetRef="Event_1ki3afc" />
     <bpmn:sequenceFlow id="Flow_0ulp5sz" sourceRef="Event_1ki3afc" targetRef="Gateway_1g0qy1m" />
     <bpmn:sequenceFlow id="Flow_0ri2jnh" sourceRef="Gateway_0u6r40r" targetRef="Event_0pjh86g" />
@@ -1271,14 +1265,14 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
     <bpmn:sequenceFlow id="Flow_11x4bh5" sourceRef="Event_0arma0u" targetRef="Gateway_1g0qy1m" />
     <bpmn:sequenceFlow id="Flow_0ao0mi8" sourceRef="Gateway_0u6r40r" targetRef="Event_0ff3d52" />
     <bpmn:sequenceFlow id="Flow_03ap1yw" sourceRef="Event_0ff3d52" targetRef="Gateway_1g0qy1m" />
-    <bpmn:sequenceFlow id="Flow_1umq6zv" name="Above Threshold" sourceRef="Gateway_0u7w3hd" targetRef="Event_1sskkpc">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIncomeAssistanceAmount &gt;1500</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_1umq6zv" name="Interface Applies" sourceRef="Gateway_0u7w3hd" targetRef="Event_1sskkpc">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataInterfacePolicyApplies</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0frefsk" sourceRef="Event_1sskkpc" targetRef="Event_1s4od9l" />
     <bpmn:sequenceFlow id="Flow_1rrzsre" sourceRef="Event_1s4od9l" targetRef="Event_1a3rd8z" />
     <bpmn:sequenceFlow id="Flow_0utoiuw" sourceRef="Event_1a3rd8z" targetRef="Gateway_1iqwpcj" />
-    <bpmn:sequenceFlow id="Flow_0eae1bf" sourceRef="Event_1o1cgxp" targetRef="Gateway_0u7w3hd" />
-    <bpmn:sequenceFlow id="Flow_1xpbiiq" name="Below Threshold" sourceRef="Gateway_0u7w3hd" targetRef="Gateway_1iqwpcj" />
+    <bpmn:sequenceFlow id="Flow_0eae1bf" sourceRef="Event_1o1cgxp" targetRef="Event_1fdxon1" />
+    <bpmn:sequenceFlow id="Flow_1xpbiiq" sourceRef="Gateway_0u7w3hd" targetRef="Gateway_1iqwpcj" />
     <bpmn:sequenceFlow id="Flow_0wu3q13" sourceRef="Gateway_1iqwpcj" targetRef="Activity_0aqfvkl" />
     <bpmn:sequenceFlow id="Flow_06m28pu" sourceRef="Event_1c10y3o" targetRef="Gateway_1g0qy1m" />
     <bpmn:sequenceFlow id="Flow_0iderj0" sourceRef="Event_0yeddu5" targetRef="Gateway_1g0qy1m" />
@@ -1938,6 +1932,7 @@ TotalChildcareDependants: 11yo and younger and 12+ on taxes</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true then &#10;  partner1HasFedralProvincialPDReceipt&#10;else &#10;  studentDataPartnerHasFedralProvincialPDReceipt" target="calculatedDataPartnerFedralProvincialPDReceipt" />
+          <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true then&#10;  partner1BCEAIncomeAssistanceAmount&#10;else&#10;  studentDataPartnerBCEAIncomeAssistanceAmount" target="calculatedDataPartnerBCEAIncomeAssistanceAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0wb0sz0</bpmn:incoming>
@@ -1946,7 +1941,7 @@ TotalChildcareDependants: 11yo and younger and 12+ on taxes</bpmn:documentation>
     <bpmn:intermediateThrowEvent id="Event_1n57xgo" name="Partner Social Assistance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true then &#10;  partner1HasTotalIncomeAssist&#10;else &#10;  studentDataPartnerHasTotalIncomeAssistance" target="calculatedDataPartnerSocialAssistance" />
+          <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true then &#10;  partner1HasTotalIncomeAssistance&#10;else &#10;  studentDataPartnerHasTotalIncomeAssistance" target="calculatedDataPartnerSocialAssistance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0l4ido8</bpmn:incoming>
@@ -1977,7 +1972,7 @@ Alimony/Child Support paid by the Partner during the study period can be conside
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if partner1TotalStudentLoan = null&#10;then &#10;  if studentDataPartnerTotalStudentLoan = null&#10;  then 0&#10;  else studentDataPartnerTotalStudentLoan&#10;else&#10;  partner1TotalStudentLoan" target="calculatedDataPartnerStudentLoans" />
-          <zeebe:output source="=if partner1PartnerCaringForDependant = null&#10;then &#10;  studentDataPartnerCaringForDependant&#10;else&#10;  partner1PartnerCaringForDependant" target="calculatedDataPartnerCaringForDependant" />
+          <zeebe:output source="=if partner1PartnerCaringForDependant = null&#10;then &#10; studentDataPartnerCaringForDependant&#10;else&#10; partner1PartnerCaringForDependant" target="calculatedDataPartnerCaringForDependant" />
           <zeebe:output source="=if (studentDataPartnerChildSupportCosts = null and partner1ChildSpousalSupportCost = null)&#10;then 0&#10;else&#10;  if studentDataPartnerChildSupportCosts = null&#10;  then partner1ChildSpousalSupportCost&#10;  else studentDataPartnerChildSupportCosts&#10;" target="calculatedDataPartnerAlimonySupport" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -2187,6 +2182,27 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmn:outgoing>Flow_04nzmk7</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_04nzmk7" sourceRef="Event_1qvwy4q" targetRef="Gateway_1hun062" />
+    <bpmn:intermediateThrowEvent id="Event_1o1cgxp" name="Assessed Need">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=calculatedDataTotalCosts - calculatedDataTotalProvincialContribution" target="calculatedDataProvincialAssessedNeed" />
+          <zeebe:output source="=calculatedDataTotalCosts - calculatedDataTotalFederalContribution" target="calculatedDataFederalAssessedNeed" />
+          <zeebe:output source="=max(calculatedDataFederalAssessedNeed, calculatedDataProvincialAssessedNeed)" target="calculatedDataTotalAssessedNeed" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05xztlk</bpmn:incoming>
+      <bpmn:outgoing>Flow_0eae1bf</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_1k0i5o3" sourceRef="Event_1fdxon1" targetRef="Gateway_0u7w3hd" />
+    <bpmn:intermediateThrowEvent id="Event_1fdxon1" name="Interface Policy Flag">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if (studentDataIncomeAssistanceAmount &#62;= 1500) or (calculatedDataPartnerBCEAIncomeAssistanceAmount &#62;= 1500)&#10;then true&#10;else false" target="calculatedDataInterfacePolicyApplies" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0eae1bf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1k0i5o3</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
     <bpmn:association id="Association_1o4g869" associationDirection="None" sourceRef="TextAnnotation_10pqvkj" targetRef="Activity_05w97d8" />
     <bpmn:association id="Association_0yc2t6b" sourceRef="Event_0hxxmu9" targetRef="TextAnnotation_1myp6tg" />
     <bpmn:association id="Association_0q448eh" sourceRef="Activity_1wciqrl" targetRef="TextAnnotation_0k0cdo7" />
@@ -2690,12 +2706,6 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
           <dc:Bounds x="9455" y="2485" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1o1cgxp_di" bpmnElement="Event_1o1cgxp">
-        <dc:Bounds x="8442" y="2302" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="8428" y="2345" width="77" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1xrobzd_di" bpmnElement="Event_1xrobzd">
         <dc:Bounds x="10432" y="3312" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -3150,6 +3160,18 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
           <dc:Bounds x="1227" y="416" width="86" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1o1cgxp_di" bpmnElement="Event_1o1cgxp">
+        <dc:Bounds x="8412" y="2302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="8398" y="2345" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fdxon1_di" bpmnElement="Event_1fdxon1">
+        <dc:Bounds x="8512" y="2302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="8494" y="2345" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1ynr3u7_di" bpmnElement="Flow_1ynr3u7">
         <di:waypoint x="7225" y="1308" />
         <di:waypoint x="7332" y="1308" />
@@ -3356,8 +3378,9 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_05xztlk_di" bpmnElement="Flow_05xztlk">
         <di:waypoint x="8288" y="1308" />
-        <di:waypoint x="8460" y="1308" />
-        <di:waypoint x="8460" y="2302" />
+        <di:waypoint x="8380" y="1308" />
+        <di:waypoint x="8380" y="2320" />
+        <di:waypoint x="8412" y="2320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1goqpi4_di" bpmnElement="Flow_1goqpi4">
         <di:waypoint x="778" y="581" />
@@ -3645,7 +3668,7 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
         <di:waypoint x="8610" y="2440" />
         <di:waypoint x="8692" y="2440" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="8620" y="2409" width="83" height="14" />
+          <dc:Bounds x="8622" y="2409" width="82" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0frefsk_di" bpmnElement="Flow_0frefsk">
@@ -3662,8 +3685,8 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
         <di:waypoint x="8940" y="2345" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0eae1bf_di" bpmnElement="Flow_0eae1bf">
-        <di:waypoint x="8478" y="2320" />
-        <di:waypoint x="8585" y="2320" />
+        <di:waypoint x="8448" y="2320" />
+        <di:waypoint x="8512" y="2320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1xpbiiq_di" bpmnElement="Flow_1xpbiiq">
         <di:waypoint x="8635" y="2320" />
@@ -4130,6 +4153,10 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmndi:BPMNEdge id="Flow_04nzmk7_di" bpmnElement="Flow_04nzmk7">
         <di:waypoint x="1288" y="391" />
         <di:waypoint x="1375" y="391" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k0i5o3_di" bpmnElement="Flow_1k0i5o3">
+        <di:waypoint x="8548" y="2320" />
+        <di:waypoint x="8585" y="2320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1o4g869_di" bpmnElement="Association_1o4g869">
         <di:waypoint x="1043" y="346" />
