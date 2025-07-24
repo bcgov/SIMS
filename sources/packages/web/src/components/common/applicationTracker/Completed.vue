@@ -324,7 +324,7 @@ export default defineComponent({
     };
 
     /**
-     * Navigate to the Student Account Activity page.
+     * Navigate to the student account activity page.
      */
     const goToStudentAccountActivity = () => {
       router.push({
