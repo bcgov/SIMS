@@ -327,6 +327,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
         <bpmn:flowNodeRef>Activity_1wciqrl</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1o1cgxp</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1fdxon1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1oxqxsm</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0v6vyq5">
           <bpmn:lane id="Lane_0l32w49" name="Assessed Need and Eligility">
             <bpmn:flowNodeRef>Event_1ki3afc</bpmn:flowNodeRef>
@@ -426,6 +427,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
             <bpmn:flowNodeRef>Gateway_0pktb33</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_0imfp5r</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Activity_1wciqrl</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Event_1oxqxsm</bpmn:flowNodeRef>
           </bpmn:lane>
           <bpmn:lane id="Lane_0r9twzh" name="Award Calculation">
             <bpmn:flowNodeRef>Event_1xrobzd</bpmn:flowNodeRef>
@@ -560,7 +562,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_1tnbq9t" name="Total Non Educational Cost">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=sum([calculatedDataTotalMSOLAllowance,&#10;     calculatedDataTotalTransportationCost,&#10;     calculatedDataTotalChildSpousalSupport,&#10;     calculatedDataTotalChildCareCost,&#10;     calculatedDataTotalSecondResidence,&#10;     calculatedDataPartnerStudentLoans,&#10;     calculatedDataExceptionalCosts&#10;   ][item != null]&#10;)" target="calculatedDataTotalNonEducationalCost" />
+          <zeebe:output source="=sum([calculatedDataTotalMSOLAllowance,&#10;     calculatedDataTotalTransportationCost,&#10;     calculatedDataTotalChildSpousalSupport,&#10;     calculatedDataTotalChildCareCost,&#10;     calculatedDataTotalSecondResidence,&#10;     calculatedDataPartnerStudentLoans,&#10;     calculatedDataExceptionalCosts,&#10;     calculatedDataAppealsRoomAndBoardAmount&#10;   ][item != null]&#10;)" target="calculatedDataTotalNonEducationalCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0mxpzu4</bpmn:incoming>
@@ -659,7 +661,7 @@ There is an application limit based on offering weeks and a total program year l
       <bpmn:incoming>Flow_07s9wgn</bpmn:incoming>
       <bpmn:incoming>Flow_1cy7d7p</bpmn:incoming>
       <bpmn:incoming>Flow_1qsclmi</bpmn:incoming>
-      <bpmn:incoming>Flow_1vcsr2q</bpmn:incoming>
+      <bpmn:incoming>Flow_0zsz707</bpmn:incoming>
       <bpmn:outgoing>Flow_0mxpzu4</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:parallelGateway id="Gateway_1hhsw8r">
@@ -1026,7 +1028,7 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
       <bpmn:incoming>Flow_1x8ntar</bpmn:incoming>
       <bpmn:outgoing>Flow_1vcsr2q</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_1vcsr2q" sourceRef="Event_0n3kqyy" targetRef="Gateway_1h0rb41" />
+    <bpmn:sequenceFlow id="Flow_1vcsr2q" sourceRef="Event_0n3kqyy" targetRef="Event_1oxqxsm" />
     <bpmn:parallelGateway id="Gateway_1z05bsy">
       <bpmn:incoming>Flow_0ucemn4</bpmn:incoming>
       <bpmn:incoming>Flow_1l0zlgv</bpmn:incoming>
@@ -2203,6 +2205,16 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmn:incoming>Flow_0eae1bf</bpmn:incoming>
       <bpmn:outgoing>Flow_1k0i5o3</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_1oxqxsm" name="Room and Board (Appeal)">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if appealsRoomAndBoardCostsAppealData = null&#10;then 0&#10;else&#10;min(appealsRoomAndBoardCostsAppealData.roomAndBoardAmount,dmnFullTimeProgramYearMaximums.limitAppealWeeklyRoomAndBoard)&#10;" target="calculatedDataAppealsRoomAndBoardAmount" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1vcsr2q</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zsz707</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_0zsz707" sourceRef="Event_1oxqxsm" targetRef="Gateway_1h0rb41" />
     <bpmn:association id="Association_1o4g869" associationDirection="None" sourceRef="TextAnnotation_10pqvkj" targetRef="Activity_05w97d8" />
     <bpmn:association id="Association_0yc2t6b" sourceRef="Event_0hxxmu9" targetRef="TextAnnotation_1myp6tg" />
     <bpmn:association id="Association_0q448eh" sourceRef="Activity_1wciqrl" targetRef="TextAnnotation_0k0cdo7" />
@@ -3172,6 +3184,12 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
           <dc:Bounds x="8494" y="2345" width="76" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1oxqxsm_di" bpmnElement="Event_1oxqxsm">
+        <dc:Bounds x="3872" y="1290" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3851" y="1333" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1ynr3u7_di" bpmnElement="Flow_1ynr3u7">
         <di:waypoint x="7225" y="1308" />
         <di:waypoint x="7332" y="1308" />
@@ -3612,7 +3630,7 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1vcsr2q_di" bpmnElement="Flow_1vcsr2q">
         <di:waypoint x="3808" y="1308" />
-        <di:waypoint x="4625" y="1308" />
+        <di:waypoint x="3872" y="1308" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1m4nh31_di" bpmnElement="Flow_1m4nh31">
         <di:waypoint x="6388" y="1401" />
@@ -4169,6 +4187,10 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmndi:BPMNEdge id="Association_0q448eh_di" bpmnElement="Association_0q448eh">
         <di:waypoint x="3061" y="1138" />
         <di:waypoint x="3063" y="1113" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zsz707_di" bpmnElement="Flow_0zsz707">
+        <di:waypoint x="3908" y="1308" />
+        <di:waypoint x="4625" y="1308" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
         <dc:Bounds x="5020" y="1180" width="960" height="760" />
