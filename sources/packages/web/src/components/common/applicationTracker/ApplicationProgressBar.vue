@@ -78,9 +78,9 @@ import {
   ApplicationExceptionStatus,
   COEStatus,
   StudentAppealStatus,
-  StudentScholasticStandingChangeType,
   ApplicationOfferingChangeRequestStatus,
   AssessmentTriggerType,
+  StudentScholasticStandingChangeType,
 } from "@/types";
 import { ref, defineComponent, computed, watchEffect } from "vue";
 import { ApplicationProgressDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
@@ -173,8 +173,6 @@ export default defineComponent({
           );
 
         if (
-          applicationProgressDetails.value.scholasticStandingChangeType ===
-            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram ||
           applicationProgressDetails.value.pirStatus ===
             ProgramInfoStatus.declined ||
           applicationProgressDetails.value.exceptionStatus ===
@@ -187,6 +185,8 @@ export default defineComponent({
           // One of the requests or confirmations is declined.
           statusIconDetails.value = STATUS_ICON_ERROR;
         } else if (
+          applicationProgressDetails.value.scholasticStandingChangeType ===
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram ||
           applicationProgressDetails.value.appealStatus ===
             StudentAppealStatus.Pending ||
           applicationProgressDetails.value
