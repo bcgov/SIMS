@@ -151,7 +151,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         props: true,
         component: ViewScholasticStanding,
         meta: {
-          clientType: ClientIdType.AEST,
+          clientType: ClientIdType.Student,
         },
       },
       {
