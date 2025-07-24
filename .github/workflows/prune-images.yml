@@ -1,5 +1,7 @@
 name: Prune Images
 run-name: Pruning all but the most recent ${{ inputs.minTags }} tags prior to what is deployed in ${{ inputs.environment }}
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:

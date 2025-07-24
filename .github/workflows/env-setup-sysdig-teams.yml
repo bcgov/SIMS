@@ -1,5 +1,7 @@
 name: Env Setup - Update Sysdig Team in Openshift
 run-name: Env Setup - Update Sysdig Team in Openshift using ${{ github.ref_name }}
+permissions:
+  contents: read
 
 concurrency: update-sysdig-team
 

@@ -1,5 +1,7 @@
 name: Crunchy DB - Install/Upgrade
 run-name: Crunchy DB - ${{ inputs.environment }} Crunchy DB in ${{ inputs.environment }} using ${{ github.ref_name }}
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:

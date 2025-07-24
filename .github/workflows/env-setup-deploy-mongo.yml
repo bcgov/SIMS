@@ -2,6 +2,8 @@
 # If the helm is present, it updates the existing deployment; otherwise, it installs a new one.
 name: Env Setup - Deploy Mongo HA in Openshift for Formio
 run-name: Env Setup - Deploy Mongo HA in Openshift from ${{ github.ref_name }} to ${{ inputs.environment }}
+permissions:
+  contents: read
 
 concurrency: mongo-ha-setup
 

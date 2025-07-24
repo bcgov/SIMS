@@ -1,5 +1,7 @@
 name: Release - Deploy Camunda Resources
 run-name: Release - Deploy Camunda resources from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:

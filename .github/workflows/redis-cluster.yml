@@ -1,5 +1,7 @@
 name: Redis Cluster - Install/Upgrade
 run-name: Redis Cluster - ${{ inputs.environment }} Redis Cluster in ${{ inputs.environment }} using ${{ github.ref_name }}
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:
