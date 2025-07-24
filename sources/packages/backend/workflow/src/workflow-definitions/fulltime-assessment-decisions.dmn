@@ -20,7 +20,7 @@
       <output id="OutputClause_0bkyfho" label="limitAdditionalTransportationNonOwner" name="limitAdditionalTransportationNonOwner" typeRef="string" />
       <output id="OutputClause_118w6c3" label="limitAdditionalTransportationPlacement" name="limitAdditionalTransportationPlacement" typeRef="string" />
       <output id="OutputClause_082mspl" label="limitProgramYearReturnTransportation" name="limitProgramYearReturnTransportation" typeRef="string" />
-      <output id="OutputClause_0corbvv" label="limitAppealWeeklyRoomAndBoard" name="limitAppealWeeklyRoomAndBoard" typeRef="string" />
+      <output id="OutputClause_0corbvv" label="limitAppealMonthlyRoomAndBoard" name="limitAppealMonthlyRoomAndBoard" typeRef="string" />
       <rule id="DecisionRule_0bfepni">
         <inputEntry id="UnaryTests_1s74yiy">
           <text>"2022-2023"</text>
@@ -206,7 +206,7 @@
           <text>1800</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_03ptm6a">
-          <text>357</text>
+          <text>1535</text>
         </outputEntry>
       </rule>
     </decisionTable>
