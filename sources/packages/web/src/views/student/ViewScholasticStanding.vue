@@ -7,7 +7,11 @@
         :routeLocation="goBackRouteParams"
       />
     </template>
-    <scholastic-standing-form :initialData="initialData" :readOnly="true" />
+    <scholastic-standing-form
+      :initialData="initialData"
+      :readOnly="true"
+      :showCompleteInfo="showCompleteInfo"
+    />
   </full-page-container>
 </template>
 <script lang="ts">
@@ -41,6 +45,7 @@ export default defineComponent({
     const initialData = ref({} as ScholasticStandingSubmittedDetailsAPIOutDTO);
     const { dateOnlyLongString } = useFormatters();
     const route = useRoute();
+    const showCompleteInfo = Boolean(route.query.showCompleteInfo) || false;
 
     onMounted(async () => {
       const applicationDetails =
@@ -62,7 +67,7 @@ export default defineComponent({
               breakEndDate: dateOnlyLongString(studyBreak.breakEndDate),
             }),
           ),
-        showCompleteInfo: Boolean(route.query.showCompleteInfo) || false,
+        showCompleteInfo,
       };
     });
     const goBackRouteParams = computed(
@@ -76,7 +81,7 @@ export default defineComponent({
         } as RouteLocationRaw),
     );
 
-    return { initialData, goBackRouteParams };
+    return { initialData, goBackRouteParams, showCompleteInfo };
   },
 });
 </script>

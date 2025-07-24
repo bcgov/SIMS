@@ -5,14 +5,17 @@
     @submitted="submitted"
   >
     <template #actions="{ submit }">
-      <footer-buttons
-        :processing="processing"
-        @primaryClick="submit"
-        primaryLabel="Submit update"
-        @secondaryClick="cancel"
-        :disablePrimaryButton="readOnly"
-      /> </template
-  ></formio-container>
+      <div v-if="showCompleteInfo">
+        <footer-buttons
+          :processing="processing"
+          @primaryClick="submit"
+          primaryLabel="Submit update"
+          @secondaryClick="cancel"
+          :disablePrimaryButton="readOnly"
+        />
+      </div>
+    </template>
+  </formio-container>
 </template>
 
 <script lang="ts">
@@ -47,6 +50,10 @@ export default defineComponent({
       type: Boolean,
       required: true,
       default: false,
+    },
+    showCompleteInfo: {
+      type: Boolean,
+      required: true,
     },
   },
   setup(props, context) {
