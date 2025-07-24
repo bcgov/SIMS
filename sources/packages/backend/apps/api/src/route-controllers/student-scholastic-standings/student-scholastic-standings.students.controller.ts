@@ -30,6 +30,20 @@ export class ScholasticStandingStudentsController extends BaseController {
   }
 
   /**
+   * Get Scholastic Standing summary details.
+   * @param studentToken token from the authenticated student.
+   * @returns Scholastic Standing Summary details.
+   */
+  @Get("summary")
+  async getScholasticStandingSummary(
+    @UserToken() studentUserToken: StudentUserToken,
+  ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
+    return this.scholasticStandingControllerService.getScholasticStandingSummary(
+      studentUserToken.studentId,
+    );
+  }
+
+  /**
    * Get Scholastic Standing submitted details.
    * @param scholasticStandingId scholastic standing id.
    * @returns Scholastic Standing.
@@ -47,20 +61,6 @@ export class ScholasticStandingStudentsController extends BaseController {
       {
         studentId: studentUserToken.studentId,
       },
-    );
-  }
-
-  /**
-   * Get Scholastic Standing summary details.
-   * @param studentToken token from the authenticated student.
-   * @returns Scholastic Standing Summary details.
-   */
-  @Get("summary")
-  async getScholasticStandingSummary(
-    @UserToken() studentUserToken: StudentUserToken,
-  ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
-    return this.scholasticStandingControllerService.getScholasticStandingSummary(
-      studentUserToken.studentId,
     );
   }
 }
