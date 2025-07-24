@@ -1,5 +1,7 @@
 name: Release - Deploy DB Migrations REPL
 run-name: Release - Deploy DB Migrations REPL ${{ github.ref_name }} to ${{ inputs.environment }}
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:

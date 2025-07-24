@@ -1,5 +1,7 @@
 name: Release - Create Branch
 run-name: Release - Create ${{ inputs.releaseType }} branch version ${{ inputs.versionName }}
+permissions:
+  contents: write
 
 on:
   workflow_dispatch:

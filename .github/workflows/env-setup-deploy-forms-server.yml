@@ -1,5 +1,7 @@
 name: Env Setup - Deploy Forms Server
 run-name: Env Setup - Deploy forms server from ${{ github.ref_name }}(form.io tag ${{ inputs.formioTag }}) to ${{ inputs.environment }}
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:

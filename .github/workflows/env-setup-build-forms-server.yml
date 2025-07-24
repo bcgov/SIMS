@@ -1,5 +1,7 @@
 name: Env Setup - Build Forms Server
 run-name: Env Setup - Build forms server from ${{ github.ref_name }}(form.io tag ${{ inputs.formioTag }})
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:

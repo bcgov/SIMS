@@ -1,5 +1,7 @@
 name: ClamAV - Install/Upgrade/Remove
 run-name: ClamAV -  ${{ inputs.environment }} ClamAV in ${{ inputs.environment }} using ${{ github.ref_name }}
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:
