@@ -2,7 +2,8 @@
 UPDATE
     sims.sfas_restrictions
 SET
-    processed = false
+    processed = false,
+    updated_at = now()
 FROM
     sims.sfas_individuals
 WHERE
