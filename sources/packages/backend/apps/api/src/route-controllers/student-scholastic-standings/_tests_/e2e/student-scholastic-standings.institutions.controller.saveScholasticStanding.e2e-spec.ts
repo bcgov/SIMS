@@ -1235,6 +1235,77 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         },
       ]);
     });
+
+    it(
+      `Should create only ${RestrictionCode.PTSSR} restriction and not archive the application` +
+        " when the institution reports an unsuccessful completion for a part-time application.",
+      async () => {
+        // Arrange
+        mockFormioDryRun({
+          validDryRun: true,
+          studentScholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        });
+        const application = await saveFakeApplication(
+          db.dataSource,
+          {
+            institutionLocation: collegeFLocation,
+          },
+          {
+            offeringIntensity: OfferingIntensity.partTime,
+            applicationStatus: ApplicationStatus.Completed,
+          },
+        );
+        // Institution token.
+        const institutionUserToken = await getInstitutionToken(
+          InstitutionTokenTypes.CollegeFUser,
+        );
+        const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+        let createdScholasticStandingId: number;
+
+        // Act/Assert
+        await request(app.getHttpServer())
+          .post(endpoint)
+          .send(payload)
+          .auth(institutionUserToken, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.CREATED)
+          .expect((response) => {
+            createdScholasticStandingId = response.body.id;
+            expect(createdScholasticStandingId).toBeGreaterThan(0);
+          });
+        // Verify the scholastic standing was created and the application is not archived.
+        const scholasticStanding = await db.studentScholasticStanding.findOne({
+          select: {
+            id: true,
+            changeType: true,
+            application: { id: true, isArchived: true },
+          },
+          relations: {
+            application: true,
+          },
+          where: { id: createdScholasticStandingId },
+        });
+        expect(scholasticStanding).toEqual({
+          id: createdScholasticStandingId,
+          changeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+          application: { id: application.id, isArchived: false },
+        });
+        // Verify that student restriction PTSSR was created.
+        const studentRestrictions = await getActiveStudentRestrictions(
+          application.student.id,
+        );
+        expect(studentRestrictions).toEqual([
+          {
+            id: expect.any(Number),
+            restriction: {
+              id: expect.any(Number),
+              restrictionCode: RestrictionCode.PTSSR,
+            },
+          },
+        ]);
+      },
+    );
   });
 
   /**
