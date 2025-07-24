@@ -54,7 +54,6 @@ export interface AviationProgramCredentialTypes {
   instructorsRating: boolean;
   endorsements: boolean;
   privatePilotTraining: boolean;
-  noneOfTheAbove: boolean;
 }
 
 export interface ProgramOfferingHeader {
