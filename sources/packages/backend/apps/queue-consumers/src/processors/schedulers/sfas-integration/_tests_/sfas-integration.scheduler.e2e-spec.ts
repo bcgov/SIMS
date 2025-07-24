@@ -43,6 +43,8 @@ import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validati
 // SFAS received file mocks.
 const SFAS_ALL_RESTRICTIONS_FILENAME =
   "SFAS-TO-SIMS-2024MAR07-ALL-RESTRICTIONS.txt";
+const SFAS_TO_SIMS_SSR_SSRN_RESOLVED_RESTRICTIONS =
+  "SFAS-TO-SIMS-SSR-SSRN-RESOLVED-RESTRICTIONS.txt";
 const SFAS_SAIL_DATA_FILENAME =
   "SFAS-TO-SIMS-2024MAR21-PT-APPLICATION-DATA-IMPORT.txt";
 const SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME =
@@ -102,11 +104,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    // Set the isActive field to false for each record of the sharedStudent in the student restrictions table to not interfere with other tests.
-    await db.studentRestriction.update(
-      { student: { id: sharedStudent.id } },
-      { isActive: false },
-    );
+    // Delete student restrictions of the sharedStudent to not interfere with other tests.
+    await db.studentRestriction.delete({ student: { id: sharedStudent.id } });
     // Remove any custom legacy restriction that is not part
     // of the DB original seeding.
     await db.sfasRestrictionMap.delete({ isLegacyOnly: true });
@@ -254,6 +253,98 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         [RestrictionCode.AF]: 2,
         [RestrictionCode.B6B]: 1,
         [RestrictionCode.SSR]: 1,
+      });
+    },
+  );
+
+  it("Should import a resolved SSD and SSR as a single resolved SSR, and a resolved SSRN when the student does not have SSR or SSRN restrictions in his account.", async () => {
+    // Arrange
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+    mockDownloadFiles(sftpClientMock, [
+      SFAS_TO_SIMS_SSR_SSRN_RESOLVED_RESTRICTIONS,
+    ]);
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+    // Assert
+    // Expect the file was archived on SFTP.
+    expect(result).toStrictEqual([
+      "Completed processing SFAS integration files.",
+    ]);
+    expect(sftpClientMock.rename).toHaveBeenCalled();
+    // Expect a total of 2 restrictions to be inserted.
+    // The file has 3 resolved restrictions but SSD and SSR must be mapped
+    // to SSR in SIMS and imported once.
+    const studentRestrictions = await db.studentRestriction.find({
+      select: {
+        id: true,
+        restriction: {
+          restrictionCode: true,
+        },
+      },
+      relations: { restriction: true },
+      where: { student: { id: sharedStudent.id }, isActive: false },
+    });
+    expect(studentRestrictions.length).toBe(2);
+    const restrictionsCount: Record<string, number> = {};
+    studentRestrictions.forEach((restriction) => {
+      const code = restriction.restriction.restrictionCode;
+      restrictionsCount[code] = (restrictionsCount[code] || 0) + 1;
+    });
+    // Assert the count of individual restriction types.
+    expect(restrictionsCount).toStrictEqual({
+      [RestrictionCode.SSR]: 1,
+      [RestrictionCode.SSRN]: 1,
+    });
+  });
+
+  it(
+    "Should import a resolved SSRN and do not import the SSD and SSR resolved restrictions " +
+      "when the student already has a SSR restriction and does not have a SSRN restriction in his account.",
+    async () => {
+      // Arrange
+      const studentRestrictionSSR = await findAndSaveRestriction(
+        RestrictionCode.SSR,
+      );
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+      mockDownloadFiles(sftpClientMock, [
+        SFAS_TO_SIMS_SSR_SSRN_RESOLVED_RESTRICTIONS,
+      ]);
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+      // Assert
+      expect(result).toStrictEqual([
+        "Completed processing SFAS integration files.",
+      ]);
+      // Expect the file was archived on SFTP.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
+      // Expect a total of 1 restrictions to be inserted.
+      // The file has 3 resolved restrictions but SSD and SSR must be mapped
+      // to SSR in SIMS and imported once.
+      // There is already a SSR restriction in the student account, hence it is not imported again.
+      const studentRestrictions = await db.studentRestriction.find({
+        select: {
+          id: true,
+          isActive: true,
+          restriction: {
+            restrictionCode: true,
+          },
+        },
+        relations: { restriction: true },
+        where: {
+          student: { id: sharedStudent.id },
+          id: Not(studentRestrictionSSR.id),
+        },
+      });
+      expect(studentRestrictions.length).toBe(1);
+      const [expectedRestriction] = studentRestrictions;
+      expect(expectedRestriction).toEqual({
+        id: expect.any(Number),
+        isActive: false,
+        restriction: {
+          restrictionCode: RestrictionCode.SSRN,
+        },
       });
     },
   );
