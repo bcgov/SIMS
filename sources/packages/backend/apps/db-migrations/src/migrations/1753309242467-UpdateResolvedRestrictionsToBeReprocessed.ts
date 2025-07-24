@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class SetResolvedRestrictionsToBeReprocessed1753309242467
+export class UpdateResolvedRestrictionsToBeReprocessed1753309242467
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
