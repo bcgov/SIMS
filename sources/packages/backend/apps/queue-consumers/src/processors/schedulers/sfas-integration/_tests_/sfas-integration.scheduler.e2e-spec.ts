@@ -314,10 +314,10 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Act
       const result = await processor.processQueue(mockedJob.job);
       // Assert
-      // Expect the file was archived on SFTP.
       expect(result).toStrictEqual([
         "Completed processing SFAS integration files.",
       ]);
+      // Expect the file was archived on SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect a total of 1 restrictions to be inserted.
       // The file has 3 resolved restrictions but SSD and SSR must be mapped
