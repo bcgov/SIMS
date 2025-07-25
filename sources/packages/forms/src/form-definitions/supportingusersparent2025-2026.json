@@ -560,11 +560,6 @@
               "tableView": false
             },
             {
-              "collapsible": false,
-              "hideLabel": true,
-              "key": "panel4",
-              "type": "panel",
-              "label": "Panel",
               "breadcrumbClickable": true,
               "buttonSettings": {
                 "previous": true,
@@ -572,6 +567,11 @@
                 "next": true
               },
               "scrollToTop": false,
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "panel4",
+              "type": "panel",
+              "label": "Panel",
               "input": false,
               "tableView": false,
               "components": [
@@ -613,11 +613,21 @@
                   "lockKey": true
                 },
                 {
-                  "input": false,
-                  "key": "panel",
-                  "tableView": false,
-                  "label": "Panel",
+                  "title": "Income",
+                  "collapsible": false,
+                  "hideLabel": true,
+                  "key": "incomePanel",
                   "type": "panel",
+                  "label": "Income",
+                  "breadcrumbClickable": true,
+                  "buttonSettings": {
+                    "previous": true,
+                    "cancel": true,
+                    "next": true
+                  },
+                  "scrollToTop": false,
+                  "input": false,
+                  "tableView": false,
                   "components": [
                     {
                       "label": "HTML",
@@ -739,11 +749,19 @@
                   ]
                 },
                 {
+                  "title": "Family assets",
                   "collapsible": false,
                   "hideLabel": true,
-                  "key": "panel1",
+                  "key": "familyAssets",
                   "type": "panel",
-                  "label": "Panel",
+                  "label": "Declaration",
+                  "breadcrumbClickable": true,
+                  "buttonSettings": {
+                    "previous": true,
+                    "cancel": true,
+                    "next": true
+                  },
+                  "scrollToTop": false,
                   "input": false,
                   "tableView": false,
                   "components": [
@@ -817,11 +835,19 @@
                   ]
                 },
                 {
+                  "title": "Other dependants",
                   "collapsible": false,
                   "hideLabel": true,
-                  "key": "panel2",
+                  "key": "otherDependants",
                   "type": "panel",
-                  "label": "Panel",
+                  "label": "Declaration",
+                  "breadcrumbClickable": true,
+                  "buttonSettings": {
+                    "previous": true,
+                    "cancel": true,
+                    "next": true
+                  },
+                  "scrollToTop": false,
                   "input": false,
                   "tableView": false,
                   "components": [
@@ -877,7 +903,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "Only 1 Parent may enter dependant information",
+                      "content": "Only 1 parent may enter dependant information",
                       "refreshOnChange": false,
                       "customClass": "value-extra-small",
                       "key": "html3",
