@@ -911,9 +911,19 @@
           "tag": "p"
         },
         {
-          "key": "panelPanel",
-          "input": false,
           "title": "When do I report a change for a Student?",
+          "customClass": "collapsible",
+          "collapsible": true,
+          "key": "panelPanel",
+          "conditional": {
+            "show": true,
+            "when": "showCompleteInfo",
+            "eq": "true"
+          },
+          "type": "panel",
+          "label": "Panel",
+          "collapsed": true,
+          "input": false,
           "tableView": false,
           "components": [
             {
@@ -924,12 +934,7 @@
               "tableView": false,
               "label": "Content"
             }
-          ],
-          "type": "panel",
-          "collapsible": true,
-          "collapsed": true,
-          "customClass": "collapsible",
-          "label": "Panel"
+          ]
         },
         {
           "label": "Select a change in circumstance",
@@ -1547,6 +1552,13 @@
           "hideLabel": true
         }
       ]
+    },
+    {
+      "label": "Show Complete Info",
+      "key": "showCompleteInfo",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
     }
   ]
 }

@@ -1,5 +1,5 @@
-import { Controller, Get } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -8,7 +8,10 @@ import {
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
-import { ScholasticStandingSummaryDetailsAPIOutDTO } from "./models/student-scholastic-standings.dto";
+import {
+  ScholasticStandingSubmittedDetailsAPIOutDTO,
+  ScholasticStandingSummaryDetailsAPIOutDTO,
+} from "./models/student-scholastic-standings.dto";
 import { ScholasticStandingControllerService } from "..";
 import { StudentUserToken } from "../../auth";
 
@@ -37,6 +40,27 @@ export class ScholasticStandingStudentsController extends BaseController {
   ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
     return this.scholasticStandingControllerService.getScholasticStandingSummary(
       studentUserToken.studentId,
+    );
+  }
+
+  /**
+   * Get Scholastic Standing submitted details.
+   * @param scholasticStandingId scholastic standing id.
+   * @returns Scholastic Standing.
+   */
+  @Get(":scholasticStandingId")
+  @ApiNotFoundResponse({
+    description: "Scholastic Standing not found.",
+  })
+  async getScholasticStanding(
+    @Param("scholasticStandingId", ParseIntPipe) scholasticStandingId: number,
+    @UserToken() studentUserToken: StudentUserToken,
+  ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
+    return this.scholasticStandingControllerService.getScholasticStanding(
+      scholasticStandingId,
+      {
+        studentId: studentUserToken.studentId,
+      },
     );
   }
 }

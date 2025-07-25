@@ -3,8 +3,6 @@
     :studentId="studentId"
     :applicationId="applicationId"
     :scholasticStandingId="scholasticStandingId"
-    :showFooter="true"
-    :showCompleteInfo="true"
   />
 </template>
 <script lang="ts">

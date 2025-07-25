@@ -6,13 +6,15 @@
   >
     <template #actions="{ submit }">
       <footer-buttons
+        v-if="showFooter"
         :processing="processing"
         @primaryClick="submit"
         primaryLabel="Submit update"
         @secondaryClick="cancel"
         :disablePrimaryButton="readOnly"
-      /> </template
-  ></formio-container>
+      />
+    </template>
+  </formio-container>
 </template>
 
 <script lang="ts">
@@ -46,6 +48,11 @@ export default defineComponent({
     processing: {
       type: Boolean,
       required: true,
+      default: false,
+    },
+    showFooter: {
+      type: Boolean,
+      required: false,
       default: false,
     },
   },

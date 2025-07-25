@@ -17,6 +17,7 @@
       goToStudentApplicationOfferingChangeRequest
     "
     @viewAssessment="goToViewAssessment"
+    @viewScholasticStandingChange="goToScholasticStanding"
   />
 </template>
 <script lang="ts">
@@ -44,6 +45,7 @@ export default defineComponent({
     const studentAssessmentRequestTypes = [
       AssessmentTriggerType.StudentAppeal,
       AssessmentTriggerType.ApplicationOfferingChange,
+      AssessmentTriggerType.ScholasticStandingChange,
     ];
 
     const goToViewAssessment = (assessmentId: number) => {
@@ -65,6 +67,7 @@ export default defineComponent({
         },
       });
     };
+
     const goToStudentApplicationOfferingChangeRequest = (
       applicationOfferingChangeRequestId: number,
     ) => {
@@ -76,11 +79,23 @@ export default defineComponent({
         },
       });
     };
+
+    const goToScholasticStanding = (scholasticStandingId: number) => {
+      router.push({
+        name: StudentRoutesConst.SCHOLASTIC_STANDING_VIEW,
+        params: {
+          applicationId: props.applicationId,
+          scholasticStandingId,
+        },
+      });
+    };
+
     return {
       goToViewAssessment,
       goToStudentAppeal,
       goToStudentApplicationOfferingChangeRequest,
       studentAssessmentRequestTypes,
+      goToScholasticStanding,
     };
   },
 });
