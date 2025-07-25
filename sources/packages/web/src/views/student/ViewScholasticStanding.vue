@@ -1,27 +1,17 @@
 <template>
-  <full-page-container>
-    <template #header>
-      <header-navigator
-        title="Assessments"
-        subTitle="View Submission"
-        :routeLocation="goBackRouteParams"
-      />
-    </template>
-    <scholastic-standing-form :initialData="initialData" :readOnly="true" />
-  </full-page-container>
+  <scholastic-standing-view-base
+    :studentId="studentId"
+    :applicationId="applicationId"
+    :scholasticStandingId="scholasticStandingId"
+  />
 </template>
 <script lang="ts">
-import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
-import { computed, onMounted, ref, defineComponent } from "vue";
-import { ScholasticStandingService } from "@/services/ScholasticStandingService";
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { RouteLocationRaw } from "vue-router";
-import { useFormatters } from "@/composables";
-import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
+import ScholasticStandingViewBase from "@/components/common/ScholasticStandingViewBase.vue";
 
-export default defineComponent({
+export default {
+  name: "ViewScholasticStanding",
   components: {
-    ScholasticStandingForm,
+    ScholasticStandingViewBase,
   },
   props: {
     studentId: {
@@ -37,45 +27,5 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
-    const initialData = ref({} as ScholasticStandingSubmittedDetailsAPIOutDTO);
-    const { dateOnlyLongString } = useFormatters();
-
-    onMounted(async () => {
-      const applicationDetails =
-        await ScholasticStandingService.shared.getScholasticStanding(
-          props.scholasticStandingId,
-        );
-      initialData.value = {
-        ...applicationDetails,
-        applicationOfferingStartDate: dateOnlyLongString(
-          applicationDetails.applicationOfferingStartDate,
-        ),
-        applicationOfferingEndDate: dateOnlyLongString(
-          applicationDetails.applicationOfferingEndDate,
-        ),
-        applicationOfferingStudyBreak:
-          applicationDetails.applicationOfferingStudyBreak?.map(
-            (studyBreak) => ({
-              breakStartDate: dateOnlyLongString(studyBreak.breakStartDate),
-              breakEndDate: dateOnlyLongString(studyBreak.breakEndDate),
-            }),
-          ),
-        showCompleteInfo: true,
-      };
-    });
-    const goBackRouteParams = computed(
-      () =>
-        ({
-          name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-          params: {
-            applicationId: props.applicationId,
-            studentId: props.studentId,
-          },
-        } as RouteLocationRaw),
-    );
-
-    return { initialData, goBackRouteParams };
-  },
-});
+};
 </script>
