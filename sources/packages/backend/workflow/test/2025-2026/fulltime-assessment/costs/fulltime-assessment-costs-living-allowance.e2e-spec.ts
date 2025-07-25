@@ -8,7 +8,7 @@ import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   createFakeStudentDependentEligible,
   DependentEligibility,
-} from "workflow/test/test-utils/factories";
+} from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-allowance.`, () => {
   it("Should calculate standard living allowance when the student is single, independent, living away from home, no dependants, and is attending school in BC.", async () => {
