@@ -123,10 +123,10 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
       assessmentConsolidatedData,
     );
     // Assert
-    // Interface policy applies, so this should include the following costs: exceptional expenses (offering), tuition (including mandatory fees), and books and supplies.
+    // Interface policy applies, so this should include the following costs: exceptional expenses (offering), tuition (including mandatory fees), and books and supplies (calculated).
     expect(
       calculatedAssessment.variables.calculatedDataInterfaceEducationCosts,
-    ).toBe(22800);
+    ).toBe(22500);
     // Student has no eligible dependants or child care costs, so this should be 0.
     expect(
       calculatedAssessment.variables.calculatedDataInterfaceChildCareCosts,
@@ -143,7 +143,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     ).toBe(0);
     // Interface need should be the sum of the education costs, child care costs, transportation amount, and additional transportation amount.
     expect(calculatedAssessment.variables.calculatedDataInterfaceNeed).toBe(
-      22800 + 400 + 0,
+      22500 + 400 + 0,
     );
     // The provincial assessed need should be the same as the interface need.
     expect(
