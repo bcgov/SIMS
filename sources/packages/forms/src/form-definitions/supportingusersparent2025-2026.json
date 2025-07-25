@@ -560,6 +560,11 @@
               "tableView": false
             },
             {
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "panel4",
+              "type": "panel",
+              "label": "Panel",
               "breadcrumbClickable": true,
               "buttonSettings": {
                 "previous": true,
@@ -567,11 +572,6 @@
                 "next": true
               },
               "scrollToTop": false,
-              "collapsible": false,
-              "hideLabel": true,
-              "key": "panel4",
-              "type": "panel",
-              "label": "Panel",
               "input": false,
               "tableView": false,
               "components": [
@@ -739,11 +739,13 @@
                   ]
                 },
                 {
-                  "input": false,
+                  "collapsible": false,
+                  "hideLabel": true,
                   "key": "panel1",
-                  "tableView": false,
-                  "label": "Panel",
                   "type": "panel",
+                  "label": "Panel",
+                  "input": false,
+                  "tableView": false,
                   "components": [
                     {
                       "label": "HTML",
@@ -815,11 +817,13 @@
                   ]
                 },
                 {
-                  "input": false,
+                  "collapsible": false,
+                  "hideLabel": true,
                   "key": "panel2",
-                  "tableView": false,
-                  "label": "Panel",
                   "type": "panel",
+                  "label": "Panel",
+                  "input": false,
+                  "tableView": false,
                   "components": [
                     {
                       "label": "HTML",
