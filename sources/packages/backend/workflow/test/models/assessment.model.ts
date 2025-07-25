@@ -296,6 +296,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalTutionCost: number;
   calculatedDataDaycareCosts11YearsOrUnder: number;
   calculatedDataDaycareCosts12YearsOrOver: number;
+  calculatedDataDependantTotalMSOLAllowance: number;
   calculatedDataChildCareCost: number;
   calculatedDataTotalChildCareCost: number;
   calculatedDataChildSpousalSupport: number;
@@ -324,6 +325,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataDependants11YearsOrUnder: number;
   calculatedDataDependants12YearsOverOnTaxes: number;
   calculatedDataTotalEligibleDependentsForChildCare: number;
+  calculatedDataTotalRoomAndBoardAmount: number;
   calculatedDataFamilySize: number;
   totalFederalContribution: number;
   totalProvincialContribution: number;
