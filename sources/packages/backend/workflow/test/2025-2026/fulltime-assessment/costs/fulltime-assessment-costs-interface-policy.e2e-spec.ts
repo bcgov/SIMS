@@ -111,6 +111,49 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     ).toBe(false);
   });
 
+  it("Should calculate a lower need amount when interface policy applies.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1500;
+
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // Interface policy applies, so this should include the following costs: exceptional expenses (offering), tuition (including mandatory fees), and books and supplies.
+    expect(
+      calculatedAssessment.variables.calculatedDataInterfaceEducationCosts,
+    ).toBe(22800);
+    // Student has no eligible dependants or child care costs, so this should be 0.
+    expect(
+      calculatedAssessment.variables.calculatedDataInterfaceChildCareCosts,
+    ).toBe(0);
+    // Interface policy applies, so this should be the limit for weekly transportation costs * offering weeks.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataInterfaceTransportationAmount,
+    ).toBe(400);
+    // If no additional transportation costs are provided, this should be 0.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataInterfaceAdditionalTransportationAmount,
+    ).toBe(0);
+    // Interface need should be the sum of the education costs, child care costs, transportation amount, and additional transportation amount.
+    expect(calculatedAssessment.variables.calculatedDataInterfaceNeed).toBe(
+      22800 + 400 + 0,
+    );
+    // The provincial assessed need should be the same as the interface need.
+    expect(
+      calculatedAssessment.variables.calculatedDataProvincialAssessedNeed,
+    ).toBe(calculatedAssessment.variables.calculatedDataInterfaceNeed);
+    expect(
+      calculatedAssessment.variables.calculatedDataFederalAssessedNeed,
+    ).toBe(calculatedAssessment.variables.calculatedDataInterfaceNeed);
+  });
+
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
     await ZeebeMockedClient.getMockedZeebeInstance().close();

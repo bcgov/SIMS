@@ -335,6 +335,8 @@ export interface CalculatedAssessmentModel {
   calculatedDataInterfaceChildCareCosts?: number;
   calculatedDataInterfaceTransportationAmount?: number;
   calculatedDataInterfaceNonEducationCosts?: number;
+  calculatedDataInterfaceAdditionalTransportationAmount?: number;
+
   calculatedDataTotalParentIncome: number;
   calculatedDataParent1IncomeDeductions: number;
   calculatedDataTotalParentDeductions: number;
