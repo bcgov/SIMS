@@ -1,4 +1,4 @@
-import { YesNoOptions } from "@sims/test-utils";
+import { Provinces, YesNoOptions } from "@sims/test-utils";
 import {
   ZeebeMockedClient,
   createFakeConsolidatedFulltimeData,
@@ -32,6 +32,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.institutionLocationProvince = Provinces.Alberta;
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
@@ -51,6 +52,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataDependantstatus = "dependant";
     assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.No;
     assessmentConsolidatedData.parent1TotalIncome = 65000;
     assessmentConsolidatedData.parent1CppEmployment = 3000;
     assessmentConsolidatedData.parent1CppSelfemploymentOther = 3000;
