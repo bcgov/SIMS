@@ -111,9 +111,9 @@ export const OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_FULL_TIME = 12;
 export const OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_PART_TIME = 6;
 
 /**
- * Part time scholastic standing restrictions.
+ * Part time scholastic standing withdrawal restrictions.
  */
-export const PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS: RestrictionCode[] = [
+export const PART_TIME_WITHDRAWAL_RESTRICTIONS: RestrictionCode[] = [
   RestrictionCode.PTSSR,
   RestrictionCode.PTWTHD,
 ];
