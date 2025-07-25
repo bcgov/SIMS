@@ -1,5 +1,8 @@
 name: Release - Deploy All
 run-name: Release - Deploy all from ${{ github.ref_name }} to ${{ inputs.environment }}
+permissions:
+  contents: read
+  actions: read
 
 on:
   workflow_dispatch:

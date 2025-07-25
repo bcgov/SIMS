@@ -1738,8 +1738,7 @@
                 "commercialPilotTraining": false,
                 "instructorsRating": false,
                 "endorsements": false,
-                "privatePilotTraining": false,
-                "noneOfTheAbove": false
+                "privatePilotTraining": false
               },
               "values": [
                 {
@@ -1761,11 +1760,6 @@
                   "label": "Private Pilot Training",
                   "value": "privatePilotTraining",
                   "shortcut": ""
-                },
-                {
-                  "label": "None of the above",
-                  "value": "noneOfTheAbove",
-                  "shortcut": ""
                 }
               ],
               "validate": {
@@ -1773,7 +1767,7 @@
                 "onlyAvailableItems": true
               },
               "validateWhenHidden": false,
-              "key": "credentialTypesAvi",
+              "key": "credentialTypesAviation",
               "conditional": {
                 "show": true,
                 "when": "isAviationProgram",
@@ -1799,7 +1793,7 @@
               "key": "html22",
               "conditional": {
                 "show": true,
-                "when": "credentialTypesAvi",
+                "when": "credentialTypesAviation",
                 "eq": "privatePilotTraining"
               },
               "type": "htmlelement",

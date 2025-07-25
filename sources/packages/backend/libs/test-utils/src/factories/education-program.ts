@@ -38,6 +38,7 @@ export function createFakeEducationProgram(
   program.institution = relations?.institution ?? createFakeInstitution();
   program.programIntensity =
     options?.initialValues?.programIntensity ?? ProgramIntensity.fullTime;
+  program.isAviationProgram = options?.initialValues?.isAviationProgram ?? "no";
   program.submittedBy = relations.auditUser;
   program.isActive = options?.initialValues?.isActive ?? true;
   program.effectiveEndDate = options?.initialValues?.effectiveEndDate ?? null;

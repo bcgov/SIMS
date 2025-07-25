@@ -99,12 +99,18 @@
       assessmentDetails.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
     "
-    label="Your institution reported that you did not complete your studies"
-    icon="fa:fas fa-exclamation-circle"
-    icon-color="danger"
-    background-color="error-bg"
-    content="You no longer meet StudentAid BC's requirements to receive funding for financial aid. Any scheduled payments will be cancelled. Please contact the Financial Aid Officer from your institution if you require more information."
-  />
+    label="Your institution reported an unsuccessful completion of studies for your application"
+    icon="fa:fas fa-exclamation-triangle"
+    icon-color="warning"
+    background-color="warning-bg"
+    content="Your institution reported an unsuccessful completion of studies for your application. Please contact the Financial Aid Officer from your institution if you require more information. You can find additional information on Account Activity page."
+  >
+    <template #actions>
+      <v-btn color="primary" @click="goToStudentAccountActivity"
+        >View page</v-btn
+      >
+    </template>
+  </application-status-tracker-banner>
   <!-- Student appeal - declined -->
   <application-status-tracker-banner
     v-if="assessmentDetails.appealStatus === StudentAppealStatus.Declined"
@@ -317,6 +323,15 @@ export default defineComponent({
       await loadCompletedApplicationDetails();
     };
 
+    /**
+     * Navigate to the student account activity page.
+     */
+    const goToStudentAccountActivity = () => {
+      router.push({
+        name: StudentRoutesConst.STUDENT_ACCOUNT_ACTIVITY,
+      });
+    };
+
     return {
       assessmentDetails,
       multipleCOEDenialReason,
@@ -330,6 +345,7 @@ export default defineComponent({
       ApplicationOfferingChangeRequestStatus,
       viewApplicationOfferingChangeRequest,
       changeRequestCancelled,
+      goToStudentAccountActivity,
     };
   },
 });

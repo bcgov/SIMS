@@ -1137,6 +1137,8 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
           <zeebe:output source="=calculatedDataTotalChildCareCost" target="calculatedDataInterfaceChildCareCosts" />
           <zeebe:output source="=dmnFullTimeProgramYearMaximums.limitWeeklytransportationAllowance*offeringWeeks" target="calculatedDataInterfaceTransportationAmount" />
           <zeebe:output source="=// This may not be calculated (resulting in a null value) if the student did not request it.&#10;if calculatedDataTotalAdditionalTransportationAllowance = null&#10;then 0&#10;else &#10;  calculatedDataTotalAdditionalTransportationAllowance" target="calculatedDataInterfaceAdditionalTransportationAmount" />
+          <zeebe:output source="=calculatedDataTotalAdditionalTransportationAllowance" target="calculatedDataInterfaceAdditionalTransportationAmount" />
+
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0frefsk</bpmn:incoming>

@@ -214,6 +214,7 @@ export class EducationProgramControllerService {
       institutionProgramCode: program.institutionProgramCode,
       minHoursWeek: program.minHoursWeek,
       isAviationProgram: program.isAviationProgram,
+      credentialTypesAviation: program.credentialTypesAviation,
       minHoursWeekAvi: program.minHoursWeekAvi,
       entranceRequirements: {
         hasMinimumAge: program.hasMinimumAge,

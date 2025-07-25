@@ -1,5 +1,7 @@
 name: Env Setup - Redis-cluster recovery in Openshift
 run-name: Env Setup - Redis-cluster recovery in Openshift from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+permissions:
+  contents: read
 
 concurrency: redis-setup
 

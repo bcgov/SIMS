@@ -1,5 +1,7 @@
 name: Release - Deploy Form.io resources
 run-name: Release - Deploy Form.io resources from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+permissions:
+  contents: read
 
 on:
   workflow_dispatch:

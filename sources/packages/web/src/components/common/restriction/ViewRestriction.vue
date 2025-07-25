@@ -14,6 +14,7 @@
             :propertyValue="restrictionData.description"
           />
           <title-value
+            v-if="restrictionData.restrictionNote"
             propertyTitle="Notes"
             :propertyValue="restrictionData.restrictionNote"
           />
@@ -170,7 +171,11 @@ export default defineComponent({
     const showResolution = computed(
       () =>
         props.canResolveRestriction &&
-        props.restrictionData.restrictionType !== RestrictionType.Federal,
+        props.restrictionData.restrictionType !== RestrictionType.Federal &&
+        // If no resolution note is present, consider no resolution was provided.
+        // For instance, resolved provincial restrictions imported from legacy
+        // will not have a resolution associated with it.
+        props.restrictionData.resolutionNote,
     );
 
     return {

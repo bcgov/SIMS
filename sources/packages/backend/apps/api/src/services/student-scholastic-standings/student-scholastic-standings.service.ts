@@ -21,7 +21,7 @@ import {
 } from "./student-scholastic-standings.models";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import {
-  PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS,
+  PART_TIME_WITHDRAWAL_RESTRICTIONS,
   SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS,
 } from "../../utilities";
 import {
@@ -85,7 +85,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       const auditUser = { id: auditUserId } as User;
 
       // Get existing offering.
-      const existingOffering = await this.offeringRepo
+      const existingOffering = await transactionalEntityManager
+        .getRepository(EducationProgramOffering)
         .createQueryBuilder("offering")
         .select([
           "offering",
@@ -207,6 +208,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
             id: application.currentAssessment.studentAppeal.id,
           } as StudentAppeal;
         }
+        // Set archive to true only when the scholastic standing change type is not 'Student did not complete program'.
+        application.isArchived = true;
       } else {
         // If unsuccessful weeks, then add to the column.
         // * No cloning of offering and re-assessment is required in this scenario.
@@ -224,9 +227,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           id: scholasticStanding.studentAssessment.id,
         } as StudentAssessment;
       }
-
-      // Set archive to true.
-      application.isArchived = true;
 
       // Save current application.
       await transactionalEntityManager
@@ -457,27 +457,31 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     auditUserId: number,
     applicationId: number,
   ): Promise<StudentRestriction[]> {
-    const studentRestriction: StudentRestriction[] = [];
+    // If the scholastic standing change type does not create restrictions then return empty array.
     if (
-      [
+      ![
         StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
       ].includes(scholasticStandingData.scholasticStandingChangeType)
     ) {
-      // Create an array to hold the restriction promises.
-      const restrictionPromises =
-        PART_TIME_SCHOLASTIC_STANDING_RESTRICTIONS.map((restrictionCode) =>
-          this.studentRestrictionSharedService.createRestrictionToSave(
-            studentId,
-            restrictionCode,
-            auditUserId,
-            applicationId,
-          ),
-        );
-      const restrictions = await Promise.all(restrictionPromises);
-      studentRestriction.push(...restrictions);
+      return [];
     }
-    return studentRestriction;
+    // Create an array to hold the restriction promises.
+    const restrictionCodes =
+      scholasticStandingData.scholasticStandingChangeType ===
+      StudentScholasticStandingChangeType.StudentWithdrewFromProgram
+        ? PART_TIME_WITHDRAWAL_RESTRICTIONS
+        : [RestrictionCode.PTSSR];
+    const restrictionPromises = restrictionCodes.map((restrictionCode) =>
+      this.studentRestrictionSharedService.createRestrictionToSave(
+        studentId,
+        restrictionCode,
+        auditUserId,
+        applicationId,
+      ),
+    );
+    const restrictions = await Promise.all(restrictionPromises);
+    return restrictions;
   }
 
   /**
