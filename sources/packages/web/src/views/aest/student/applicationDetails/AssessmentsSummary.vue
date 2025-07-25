@@ -124,9 +124,6 @@ export default defineComponent({
           applicationId: props.applicationId,
           scholasticStandingId,
         },
-        query: {
-          showCompleteInfo: "true",
-        },
       });
     };
     const goToOfferingRequest = (offeringId: number, programId: number) => {
