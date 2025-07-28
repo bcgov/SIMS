@@ -1,7 +1,7 @@
 <template>
   <formio-container
     formName="reportScholasticStandingChange"
-    :formData="data"
+    :formData="formData"
     @submitted="submitted"
   >
     <template #actions="{ submit }">
@@ -21,7 +21,6 @@
 import { ref, defineComponent, PropType, watchEffect } from "vue";
 import {
   ActiveApplicationDataAPIOutDTO,
-  ScholasticStandingDataAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "@/services/http/dto";
 import { FormIOForm } from "@/types";
@@ -29,27 +28,23 @@ import { useFormatters } from "@/composables";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 
 /**
- * Represents the scholastic standing submitted details.
+ * Represents the scholastic standing details.
  */
-interface ScholasticStandingSubmittedDetails
-  extends ScholasticStandingDataAPIInDTO,
-    ActiveApplicationDataAPIOutDTO {
-  showCompleteInfo?: boolean;
-}
-interface ScholasticStanding
-  extends ScholasticStandingSubmittedDetailsAPIOutDTO {
-  readOnly: boolean;
-}
-interface ScholasticStandingBeforeSubmission
-  extends ActiveApplicationDataAPIOutDTO {
-  readOnly: boolean;
-}
+type ScholasticStandingData =
+  | (
+      | ScholasticStandingSubmittedDetailsAPIOutDTO
+      | ActiveApplicationDataAPIOutDTO
+    ) & {
+      showCompleteInfo?: boolean;
+      readOnly: boolean;
+    };
+
 export default defineComponent({
   emits: ["submit", "cancel"],
   props: {
     scholasticStandingId: {
       type: Number,
-      required: true,
+      required: false,
     },
     showFooter: {
       type: Boolean,
@@ -62,7 +57,7 @@ export default defineComponent({
       default: false,
     },
     initialData: {
-      type: Object as PropType<ScholasticStandingSubmittedDetailsAPIOutDTO>,
+      type: Object as PropType<ActiveApplicationDataAPIOutDTO>,
       required: false,
     },
     readOnly: {
@@ -77,16 +72,16 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const initialData = ref({} as ScholasticStandingSubmittedDetails);
+    const formData = ref({} as ScholasticStandingData);
     const { dateOnlyLongString } = useFormatters();
 
     watchEffect(async () => {
-      if (!props.initialData) {
+      if (props.scholasticStandingId) {
         const applicationDetails =
           await ScholasticStandingService.shared.getScholasticStanding(
             props.scholasticStandingId,
           );
-        initialData.value = {
+        formData.value = {
           ...applicationDetails,
           applicationOfferingStartDate: dateOnlyLongString(
             applicationDetails.applicationOfferingStartDate,
@@ -102,30 +97,18 @@ export default defineComponent({
               }),
             ),
           showCompleteInfo: props.showCompleteInfo,
+          readOnly: props.readOnly,
         };
         return;
       }
-      initialData.value = {
+      formData.value = {
         ...props.initialData,
         showCompleteInfo: props.showCompleteInfo,
-      };
-    });
-    const data = ref(
-      {} as ScholasticStanding | ScholasticStandingBeforeSubmission,
-    );
-
-    const setReadOnlyData = () => {
-      data.value = {
-        ...initialData.value,
         readOnly: props.readOnly,
       };
-    };
-
-    watchEffect(async () => {
-      setReadOnlyData();
     });
 
-    const submitted = (form: FormIOForm<ScholasticStanding>) => {
+    const submitted = (form: FormIOForm<ScholasticStandingData>) => {
       context.emit("submit", form.data);
     };
 
@@ -133,7 +116,7 @@ export default defineComponent({
       context.emit("cancel");
     };
 
-    return { data, submitted, cancel };
+    return { formData, submitted, cancel };
   },
 });
 </script>
