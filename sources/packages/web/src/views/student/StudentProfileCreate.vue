@@ -54,55 +54,63 @@ export default defineComponent({
     const studentStore = useStudentStore();
     const processing = ref(false);
 
+    const populateBcscAddressFields = (data: StudentProfileFormModel) => {
+      if (!bcscParsedToken.address) return;
+
+      if (bcscParsedToken.address.street_address) {
+        const normalizedAddress =
+          bcscParsedToken.address.street_address.replace(/\\n/g, "\n");
+        const addressParts = normalizedAddress.split("\n");
+        data.addressLine1 = addressParts[0];
+        if (addressParts.length > 1) {
+          data.addressLine2 = addressParts.slice(1).join("\n");
+        }
+      }
+      if (bcscParsedToken.address.locality) {
+        data.city = bcscParsedToken.address.locality;
+      }
+      if (bcscParsedToken.address.region) {
+        data.provinceState = bcscParsedToken.address.region;
+      }
+      if (bcscParsedToken.address.postal_code) {
+        data.canadaPostalCode = bcscParsedToken.address.postal_code;
+      }
+      if (bcscParsedToken.address.country) {
+        data.country = bcscParsedToken.address.country;
+        data.selectedCountry =
+          bcscParsedToken.address.country.toLowerCase() === "ca" ||
+          bcscParsedToken.address.country.toLowerCase() === "canada"
+            ? "Canada"
+            : "other";
+      }
+    };
+
+    const populateBcscUserData = (data: StudentProfileFormModel) => {
+      data.firstName = bcscParsedToken.givenNames;
+      data.lastName = bcscParsedToken.lastName;
+      data.email = bcscParsedToken.email;
+      data.dateOfBirth = dateOnlyLongString(bcscParsedToken.birthdate);
+      populateBcscAddressFields(data);
+    };
+
+    const populateBasicUserData = (data: StudentProfileFormModel) => {
+      data.email = bceidParsedToken.email;
+    };
+
     const getStudentDetails = async () => {
       const data = {
         mode: StudentProfileFormModes.StudentCreate,
         identityProvider: AuthService.shared.userToken?.identityProvider,
       } as StudentProfileFormModel;
-      if (
-        AuthService.shared.userToken?.identityProvider ===
-        IdentityProviders.BCSC
-      ) {
-        data.firstName = bcscParsedToken.givenNames;
-        data.lastName = bcscParsedToken.lastName;
-        data.email = bcscParsedToken.email;
-        data.dateOfBirth = dateOnlyLongString(bcscParsedToken.birthdate);
 
-        // Populate address fields from BCSC if available.
-        if (bcscParsedToken.address) {
-          if (bcscParsedToken.address.street_address) {
-            const normalizedAddress =
-              bcscParsedToken.address.street_address.replace(/\\n/g, "\n");
-            const addressParts = normalizedAddress.split("\n");
-            data.addressLine1 = addressParts[0];
-            if (addressParts.length > 1) {
-              data.addressLine2 = addressParts.slice(1).join("\n");
-            }
-          }
-          if (bcscParsedToken.address.locality) {
-            data.city = bcscParsedToken.address.locality;
-          }
-          if (bcscParsedToken.address.region) {
-            data.provinceState = bcscParsedToken.address.region;
-          }
-          if (bcscParsedToken.address.postal_code) {
-            data.canadaPostalCode = bcscParsedToken.address.postal_code;
-          }
-          if (bcscParsedToken.address.country) {
-            data.country = bcscParsedToken.address.country;
-            data.selectedCountry =
-              bcscParsedToken.address.country.toLowerCase() === "ca" ||
-              bcscParsedToken.address.country.toLowerCase() === "canada"
-                ? "Canada"
-                : "other";
-          }
-        }
-      } else if (
-        AuthService.shared.userToken?.identityProvider ===
-        IdentityProviders.BCeIDBoth
-      ) {
-        data.email = bceidParsedToken.email;
+      const identityProvider = AuthService.shared.userToken?.identityProvider;
+
+      if (identityProvider === IdentityProviders.BCSC) {
+        populateBcscUserData(data);
+      } else if (identityProvider === IdentityProviders.BCeIDBoth) {
+        populateBasicUserData(data);
       }
+
       initialData.value = data;
     };
 
