@@ -71,7 +71,13 @@ export default defineComponent({
         // Populate address fields from BCSC if available.
         if (bcscParsedToken.address) {
           if (bcscParsedToken.address.street_address) {
-            data.addressLine1 = bcscParsedToken.address.street_address;
+            const normalizedAddress =
+              bcscParsedToken.address.street_address.replace(/\\n/g, "\n");
+            const addressParts = normalizedAddress.split("\n");
+            data.addressLine1 = addressParts[0];
+            if (addressParts.length > 1) {
+              data.addressLine2 = addressParts.slice(1).join("\n");
+            }
           }
           if (bcscParsedToken.address.locality) {
             data.city = bcscParsedToken.address.locality;
@@ -80,7 +86,7 @@ export default defineComponent({
             data.provinceState = bcscParsedToken.address.region;
           }
           if (bcscParsedToken.address.postal_code) {
-            data.postalCode = bcscParsedToken.address.postal_code;
+            data.canadaPostalCode = bcscParsedToken.address.postal_code;
           }
           if (bcscParsedToken.address.country) {
             data.country = bcscParsedToken.address.country;
