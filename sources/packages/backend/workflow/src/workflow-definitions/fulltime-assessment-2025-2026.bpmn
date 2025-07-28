@@ -2216,7 +2216,7 @@ There is also a per application limit based on the number of weeks in the offeri
     <bpmn:intermediateThrowEvent id="Event_1q1jh85" name="Total MSOL Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataStudentMSOLAllowance + calculatedDataDependantTotalMSOLAllowance + calculatedDataTotalRoomAndBoardAmount" target="calculatedDataTotalMSOLAllowance" />
+          <zeebe:output source="=calculatedDataStudentTotalMSOLAllowance + calculatedDataDependantTotalMSOLAllowance + calculatedDataTotalRoomAndBoardAmount" target="calculatedDataTotalMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1oedy28</bpmn:incoming>
@@ -2237,7 +2237,7 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
     <bpmn:intermediateThrowEvent id="Event_1tsivxc" name="Total MSOL Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataStudentMSOLAllowance + calculatedDataDependantTotalMSOLAllowance" target="calculatedDataTotalMSOLAllowance" />
+          <zeebe:output source="=calculatedDataStudentTotalMSOLAllowance + calculatedDataDependantTotalMSOLAllowance" target="calculatedDataTotalMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_04i7wb9</bpmn:incoming>
@@ -2247,7 +2247,7 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataDependantMSOLAllowance * calculatedDataTotalEligibleDependants *offeringWeeks" target="calculatedDataDependantTotalMSOLAllowance" />
-          <zeebe:output source="=calculatedDataStudentMSOLAllowance * offeringWeeks" target="calculatedDataStudentMSOLAllowance" />
+          <zeebe:output source="=calculatedDataStudentMSOLAllowance * offeringWeeks" target="calculatedDataStudentTotalMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1mukp8v</bpmn:incoming>
