@@ -7,16 +7,19 @@
         :routeLocation="goBackRouteParams"
       />
     </template>
-    <scholastic-standing-form :initialData="initialData" :readOnly="true" />
+    <scholastic-standing-form
+      :readOnly="true"
+      :showFooter="true"
+      :showCompleteInfo="true"
+      :scholasticStandingId="scholasticStandingId"
+    />
   </full-page-container>
 </template>
 <script lang="ts">
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
-import { computed, onMounted, ref, defineComponent } from "vue";
-import { ScholasticStandingService } from "@/services/ScholasticStandingService";
+import { computed, defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { RouteLocationRaw } from "vue-router";
-import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   components: {
@@ -33,15 +36,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const initialData = ref({} as ScholasticStandingSubmittedDetailsAPIOutDTO);
-
-    onMounted(async () => {
-      initialData.value =
-        await ScholasticStandingService.shared.getScholasticStanding(
-          props.scholasticStandingId,
-        );
-    });
-
     const goBackRouteParams = computed(
       () =>
         ({
@@ -52,7 +46,7 @@ export default defineComponent({
         } as RouteLocationRaw),
     );
 
-    return { initialData, goBackRouteParams };
+    return { goBackRouteParams };
   },
 });
 </script>
