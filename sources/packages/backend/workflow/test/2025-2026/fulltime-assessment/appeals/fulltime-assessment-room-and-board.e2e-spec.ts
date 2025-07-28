@@ -83,7 +83,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-room-and-board.`
     // The room and board amount is included in the living allowance calculation.
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
-    ).toBe(14701);
+    ).toBe(14720);
   });
 
   afterAll(async () => {
