@@ -67,6 +67,30 @@ export default defineComponent({
         data.lastName = bcscParsedToken.lastName;
         data.email = bcscParsedToken.email;
         data.dateOfBirth = dateOnlyLongString(bcscParsedToken.birthdate);
+
+        // Populate address fields from BCSC if available.
+        if (bcscParsedToken.address) {
+          if (bcscParsedToken.address.street_address) {
+            data.addressLine1 = bcscParsedToken.address.street_address;
+          }
+          if (bcscParsedToken.address.locality) {
+            data.city = bcscParsedToken.address.locality;
+          }
+          if (bcscParsedToken.address.region) {
+            data.provinceState = bcscParsedToken.address.region;
+          }
+          if (bcscParsedToken.address.postal_code) {
+            data.postalCode = bcscParsedToken.address.postal_code;
+          }
+          if (bcscParsedToken.address.country) {
+            data.country = bcscParsedToken.address.country;
+            data.selectedCountry =
+              bcscParsedToken.address.country.toLowerCase() === "ca" ||
+              bcscParsedToken.address.country.toLowerCase() === "canada"
+                ? "Canada"
+                : "other";
+          }
+        }
       } else if (
         AuthService.shared.userToken?.identityProvider ===
         IdentityProviders.BCeIDBoth

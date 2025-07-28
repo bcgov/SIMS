@@ -71,6 +71,13 @@ export interface BCSCParsedToken extends ApplicationToken {
   familyName: string;
   gender: string;
   givenName: string;
+  address?: {
+    locality?: string;
+    region?: string;
+    postal_code?: string;
+    country?: string;
+    street_address?: string;
+  };
 }
 
 export interface BCeIDParsedToken extends ApplicationToken {
