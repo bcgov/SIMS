@@ -2216,7 +2216,7 @@ There is also a per application limit based on the number of weeks in the offeri
     <bpmn:intermediateThrowEvent id="Event_1q1jh85" name="Total MSOL Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=(calculatedDataStudentMSOLAllowance * offeringWeeks) + calculatedDataDependantTotalMSOLAllowance + calculatedDataTotalRoomAndBoardAmount" target="calculatedDataTotalMSOLAllowance" />
+          <zeebe:output source="=calculatedDataStudentMSOLAllowance + calculatedDataDependantTotalMSOLAllowance + calculatedDataTotalRoomAndBoardAmount" target="calculatedDataTotalMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1oedy28</bpmn:incoming>
@@ -2243,7 +2243,7 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
       <bpmn:incoming>Flow_04i7wb9</bpmn:incoming>
       <bpmn:outgoing>Flow_1gedwb8</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_03czdun" name="Dependant Total MSOL Allowance">
+    <bpmn:intermediateThrowEvent id="Event_03czdun" name="Total MSOL Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataDependantMSOLAllowance * calculatedDataTotalEligibleDependants *offeringWeeks" target="calculatedDataDependantTotalMSOLAllowance" />
@@ -3236,7 +3236,7 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
       <bpmndi:BPMNShape id="Event_03czdun_di" bpmnElement="Event_03czdun">
         <dc:Bounds x="3362" y="1403" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3339" y="1446" width="84" height="27" />
+          <dc:Bounds x="3352" y="1446" width="58" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1ynr3u7_di" bpmnElement="Flow_1ynr3u7">
