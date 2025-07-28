@@ -107,7 +107,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
     ).toBe(14672);
   });
 
-  it("Should calculate standard living allowance when the student is single, independent, living away from home, with two eligible dependants, and is attending school in BC.", async () => {
+  it("Should calculate standard living allowance when the student is single, independent, living away from home, with two dependants, and is attending school in BC.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -137,6 +137,58 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
     ).toBe(17744);
+  });
+
+  it("Should calculate standard living allowance when the student is married, with no dependants, and is attending school in BC.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+      YesNoOptions.No;
+    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+      YesNoOptions.No;
+    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+      YesNoOptions.No;
+    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // The standard living allowance for a married student, living at home in BC is $1066 per week.
+    // For a 16-week program, the total living allowance would be: 16 weeks * $1066 = $17,056.
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
+    ).toBe(17056);
+  });
+
+  it("Should calculate standard living allowance when the student is married but unable to report due to domestic abuse, with no dependants, and is attending school in BC.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "marriedUnable";
+    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+      YesNoOptions.No;
+    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+      YesNoOptions.No;
+    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+      YesNoOptions.No;
+    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // The standard living allowance for a student who is married and unable to report, living at home in BC is $563 per week.
+    // For a 16-week program, the total living allowance would be: 16 weeks * $563 = $9,008.
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
+    ).toBe(9008);
   });
 
   afterAll(async () => {
