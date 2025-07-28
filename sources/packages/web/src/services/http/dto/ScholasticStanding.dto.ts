@@ -31,9 +31,7 @@ export interface ScholasticStandingDataAPIInDTO {
  */
 export interface ScholasticStandingSubmittedDetailsAPIOutDTO
   extends ScholasticStandingDataAPIInDTO,
-    ActiveApplicationDataAPIOutDTO {
-  showCompleteInfo: boolean;
-}
+    ActiveApplicationDataAPIOutDTO {}
 
 /**
  * Represents the scholastic standing summary details.

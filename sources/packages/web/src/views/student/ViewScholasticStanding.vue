@@ -1,23 +1,30 @@
 <template>
-  <scholastic-standing-view-base
-    :studentId="studentId"
-    :applicationId="applicationId"
-    :scholasticStandingId="scholasticStandingId"
-  />
+  <student-page-container>
+    <template #header>
+      <header-navigator
+        title="Assessments"
+        subTitle="View Submission"
+        :routeLocation="goBackRouteParams"
+      />
+    </template>
+    <scholastic-standing-form
+      :scholasticStandingId="scholasticStandingId"
+      :readOnly="true"
+    />
+  </student-page-container>
 </template>
 <script lang="ts">
-import ScholasticStandingViewBase from "@/components/common/ScholasticStandingViewBase.vue";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import { computed } from "vue";
+import { RouteLocationRaw } from "vue-router";
+import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 
 export default {
   name: "ViewScholasticStanding",
   components: {
-    ScholasticStandingViewBase,
+    ScholasticStandingForm,
   },
   props: {
-    studentId: {
-      type: Number,
-      required: false,
-    },
     applicationId: {
       type: Number,
       required: true,
@@ -26,6 +33,17 @@ export default {
       type: Number,
       required: true,
     },
+  },
+  setup(props) {
+    const goBackRouteParams = computed(
+      () =>
+        ({
+          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          params: { id: props.applicationId },
+        } as RouteLocationRaw),
+    );
+
+    return { goBackRouteParams };
   },
 };
 </script>

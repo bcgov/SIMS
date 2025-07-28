@@ -9,9 +9,11 @@
     </template>
     <scholastic-standing-form
       :initialData="initialData"
+      :showFooter="true"
+      :showCompleteInfo="true"
+      :processing="processing"
       :readOnly="isReadOnlyUser(locationId)"
       @submit="submit"
-      :processing="processing"
       @cancel="goBack"
     />
   </full-page-container>

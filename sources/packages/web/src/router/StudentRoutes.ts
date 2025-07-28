@@ -146,7 +146,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.ScholasticStandingView,
+        path: AppRoutes.StudentScholasticStandingView,
         name: StudentRoutesConst.SCHOLASTIC_STANDING_VIEW,
         props: true,
         component: ViewScholasticStanding,
