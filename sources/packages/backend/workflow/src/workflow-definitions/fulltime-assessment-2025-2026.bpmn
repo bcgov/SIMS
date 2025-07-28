@@ -2237,7 +2237,7 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
     <bpmn:intermediateThrowEvent id="Event_1tsivxc" name="Total MSOL Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=(calculatedDataStudentMSOLAllowance * offeringWeeks) + calculatedDataDependantTotalMSOLAllowance" target="calculatedDataTotalMSOLAllowance" />
+          <zeebe:output source="=calculatedDataStudentMSOLAllowance + calculatedDataDependantTotalMSOLAllowance" target="calculatedDataTotalMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_04i7wb9</bpmn:incoming>
@@ -2247,6 +2247,7 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataDependantMSOLAllowance * calculatedDataTotalEligibleDependants *offeringWeeks" target="calculatedDataDependantTotalMSOLAllowance" />
+          <zeebe:output source="=calculatedDataStudentMSOLAllowance * offeringWeeks" target="calculatedDataStudentMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1mukp8v</bpmn:incoming>
@@ -3932,14 +3933,6 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
         <di:waypoint x="8548" y="2320" />
         <di:waypoint x="8585" y="2320" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1o4g869_di" bpmnElement="Association_1o4g869">
-        <di:waypoint x="1043" y="346" />
-        <di:waypoint x="1050" y="541" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
-        <di:waypoint x="941" y="566" />
-        <di:waypoint x="873" y="458" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_17bqzie_di" bpmnElement="Flow_17bqzie">
         <di:waypoint x="5268" y="1308" />
         <di:waypoint x="5305" y="1308" />
@@ -4263,10 +4256,20 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
         <di:waypoint x="3740" y="1478" />
         <di:waypoint x="3740" y="1446" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0q448eh_di" bpmnElement="Association_0q448eh">
-        <di:waypoint x="3301" y="1138" />
-        <di:waypoint x="3303" y="1113" />
+      <bpmndi:BPMNEdge id="Association_1o4g869_di" bpmnElement="Association_1o4g869">
+        <di:waypoint x="1043" y="346" />
+        <di:waypoint x="1050" y="541" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
+        <di:waypoint x="941" y="566" />
+        <di:waypoint x="873" y="458" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
+        <dc:Bounds x="5200" y="1180" width="870" height="760" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="5598" y="1187" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_1oapo8x_di" bpmnElement="Group_1oapo8x">
         <dc:Bounds x="7300" y="1191" width="779" height="357" />
         <bpmndi:BPMNLabel>
@@ -4314,6 +4317,14 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0o432k6_di" bpmnElement="TextAnnotation_0o432k6">
         <dc:Bounds x="210" y="60" width="362" height="113" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0k0cdo7_di" bpmnElement="TextAnnotation_0k0cdo7">
+        <dc:Bounds x="3180" y="973" width="237" height="140" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1vgejl5_di" bpmnElement="TextAnnotation_1vgejl5">
+        <dc:Bounds x="3088" y="1593" width="202" height="99" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_1ko7vs4_di" bpmnElement="Group_1ko7vs4">
@@ -4428,6 +4439,24 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
         <dc:Bounds x="2700" y="338" width="220" height="99" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0wrmddh_di" bpmnElement="Group_0wrmddh">
+        <dc:Bounds x="3230" y="1130" width="530" height="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3434" y="1096" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0r02s90_di" bpmnElement="Group_0r02s90">
+        <dc:Bounds x="4140" y="1380" width="460" height="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4333" y="1387" width="81" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0kmxk7d_di" bpmnElement="Group_0kmxk7d">
+        <dc:Bounds x="3070" y="1350" width="370" height="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3240" y="1357" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1cey5l7_di" bpmnElement="Association_1cey5l7">
         <di:waypoint x="7617" y="1728" />
         <di:waypoint x="7637" y="1845" />
@@ -4496,38 +4525,10 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
         <di:waypoint x="2505" y="541" />
         <di:waypoint x="2466" y="432" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
-        <dc:Bounds x="5200" y="1180" width="870" height="760" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="5598" y="1187" width="85" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Group_0r02s90_di" bpmnElement="Group_0r02s90">
-        <dc:Bounds x="4140" y="1380" width="460" height="230" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="4333" y="1387" width="81" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0k0cdo7_di" bpmnElement="TextAnnotation_0k0cdo7">
-        <dc:Bounds x="3180" y="973" width="237" height="140" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Group_0wrmddh_di" bpmnElement="Group_0wrmddh">
-        <dc:Bounds x="3230" y="1130" width="530" height="140" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3434" y="1096" width="90" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1vgejl5_di" bpmnElement="TextAnnotation_1vgejl5">
-        <dc:Bounds x="3088" y="1593" width="202" height="99" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Group_0kmxk7d_di" bpmnElement="Group_0kmxk7d">
-        <dc:Bounds x="3070" y="1350" width="370" height="230" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3240" y="1357" width="33" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0q448eh_di" bpmnElement="Association_0q448eh">
+        <di:waypoint x="3301" y="1138" />
+        <di:waypoint x="3303" y="1113" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
