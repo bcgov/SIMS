@@ -260,6 +260,37 @@ objects:
   - apiVersion: route.openshift.io/v1
     kind: Route
     metadata:
+      name: ${NAME}-external-route
+      annotations:
+        haproxy.router.openshift.io/balance: leastconn
+        haproxy.router.openshift.io/disable_cookies: "true"
+        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
+        haproxy.router.openshift.io/timeout: 30s
+        haproxy.router.openshift.io/ip_whitelist: ${EXTERNAL_IP_WHITELIST}
+    spec:
+      host: ${HOST_NAME}
+      path: ${EXTERNAL_API_PATH}
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CERTIFICATE}
+          -----END CERTIFICATE-----
+        key: |
+          -----BEGIN PRIVATE KEY-----
+          ${TLS_KEY}
+          -----END PRIVATE KEY-----
+        caCertificate: |
+          -----BEGIN CERTIFICATE-----
+          ${TLS_CA_CERTIFICATE}
+          -----END CERTIFICATE-----
+      to:
+        kind: Service
+        name: ${NAME}
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
       name: ${NAME}-route
       annotations:
         haproxy.router.openshift.io/balance: leastconn
@@ -553,4 +584,9 @@ parameters:
   - name: TLS_CA_CERTIFICATE
     required: true
   - name: ALLOW_BETA_USERS_ONLY
+    required: true
+  - name: EXTERNAL_API_PATH
+    value: /api/external
+    required: true
+  - name: EXTERNAL_IP_WHITELIST
     required: true

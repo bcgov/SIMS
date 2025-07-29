@@ -372,6 +372,7 @@ deploy-api:
 	test -n "$(API_MEMORY_REQUEST)"
 	test -n "${API_MEMORY_LIMIT}"
 	test -n "${API_REPLICAS}"
+	test -n "${EXTERNAL_IP_WHITELIST}"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -403,6 +404,7 @@ deploy-api:
 		-p TLS_KEY=$(TLS_KEY) \
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 		-p ALLOW_BETA_USERS_ONLY=$(ALLOW_BETA_USERS_ONLY) \
+		-p EXTERNAL_IP_WHITELIST=$(EXTERNAL_IP_WHITELIST) \
 		-p QUEUE_DASHBOARD_BASE_URL=https://$(HOST) \
 		-p CPU_REQUEST=$(API_CPU_REQUEST) \
 		-p MEMORY_REQUEST=$(API_MEMORY_REQUEST) \
