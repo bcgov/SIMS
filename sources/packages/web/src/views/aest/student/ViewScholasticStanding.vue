@@ -12,6 +12,7 @@
       :readOnly="true"
       :showFooter="true"
       :showCompleteInfo="true"
+      :processing="false"
     />
   </full-page-container>
 </template>

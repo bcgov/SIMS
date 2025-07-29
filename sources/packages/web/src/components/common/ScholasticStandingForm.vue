@@ -67,7 +67,7 @@ export default defineComponent({
     },
     processing: {
       type: Boolean,
-      required: false,
+      required: true,
       default: false,
     },
   },

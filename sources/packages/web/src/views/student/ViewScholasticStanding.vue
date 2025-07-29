@@ -2,7 +2,7 @@
   <student-page-container>
     <template #header>
       <header-navigator
-        title="Assessments"
+        title="Application Details"
         subTitle="View Submission"
         :routeLocation="goBackRouteParams"
       />
@@ -10,6 +10,7 @@
     <scholastic-standing-form
       :scholasticStandingId="scholasticStandingId"
       :readOnly="true"
+      :processing="false"
     />
   </student-page-container>
 </template>

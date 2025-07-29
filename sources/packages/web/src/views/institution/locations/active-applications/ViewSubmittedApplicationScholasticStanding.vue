@@ -12,6 +12,7 @@
       :showFooter="true"
       :showCompleteInfo="true"
       :scholasticStandingId="scholasticStandingId"
+      :processing="false"
     />
   </full-page-container>
 </template>
