@@ -29,7 +29,7 @@ export interface StudentFinancialInformationAppealData extends JSONDoc {
 }
 
 export interface StudentRoomAndBoardAppealData extends JSONDoc {
-  roomAndBoardAmount?: number;
+  roomAndBoardAmount: number;
 }
 
 export enum TransportationCostSituation {
