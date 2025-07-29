@@ -37,7 +37,10 @@ import {
 } from "@/types";
 import { AuthService } from "@/services/AuthService";
 import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
-import { STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS } from "@/constants";
+import {
+  STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS,
+  CANADA_COUNTRY_CODE,
+} from "@/constants";
 
 export default defineComponent({
   components: {
@@ -54,25 +57,52 @@ export default defineComponent({
     const studentStore = useStudentStore();
     const processing = ref(false);
 
+    const populateBCSCAddressFields = (data: StudentProfileFormModel) => {
+      // BCSC users address fields to StudentProfileFormModel.
+      if (bcscParsedToken.address.street_address) {
+        data.addressLine1 = bcscParsedToken.address.street_address.replace(
+          /\r\n|\n/g,
+          " ",
+        );
+      }
+      data.city = bcscParsedToken.address.locality;
+      if (bcscParsedToken.address.country === CANADA_COUNTRY_CODE) {
+        data.provinceState = bcscParsedToken.address.region;
+        data.canadaPostalCode = bcscParsedToken.address.postal_code;
+      }
+      data.country = bcscParsedToken.address.country;
+      data.selectedCountry =
+        bcscParsedToken.address.country === CANADA_COUNTRY_CODE
+          ? "Canada"
+          : "other";
+    };
+
+    const populateBCSCUserData = (data: StudentProfileFormModel) => {
+      data.firstName = bcscParsedToken.givenNames;
+      data.lastName = bcscParsedToken.lastName;
+      data.email = bcscParsedToken.email;
+      data.dateOfBirth = dateOnlyLongString(bcscParsedToken.birthdate);
+      populateBCSCAddressFields(data);
+    };
+
+    const populateBCeIDBothUserData = (data: StudentProfileFormModel) => {
+      data.email = bceidParsedToken.email;
+    };
+
     const getStudentDetails = async () => {
       const data = {
         mode: StudentProfileFormModes.StudentCreate,
         identityProvider: AuthService.shared.userToken?.identityProvider,
       } as StudentProfileFormModel;
-      if (
-        AuthService.shared.userToken?.identityProvider ===
-        IdentityProviders.BCSC
-      ) {
-        data.firstName = bcscParsedToken.givenNames;
-        data.lastName = bcscParsedToken.lastName;
-        data.email = bcscParsedToken.email;
-        data.dateOfBirth = dateOnlyLongString(bcscParsedToken.birthdate);
-      } else if (
-        AuthService.shared.userToken?.identityProvider ===
-        IdentityProviders.BCeIDBoth
-      ) {
-        data.email = bceidParsedToken.email;
+
+      const identityProvider = AuthService.shared.userToken?.identityProvider;
+
+      if (identityProvider === IdentityProviders.BCSC) {
+        populateBCSCUserData(data);
+      } else if (identityProvider === IdentityProviders.BCeIDBoth) {
+        populateBCeIDBothUserData(data);
       }
+
       initialData.value = data;
     };
 
