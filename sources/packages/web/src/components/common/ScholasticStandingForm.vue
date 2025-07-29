@@ -105,7 +105,7 @@ export default defineComponent({
         ...props.initialData,
         showCompleteInfo: props.showCompleteInfo,
         readOnly: props.readOnly,
-      };
+      } as ScholasticStandingData;
     });
 
     const submitted = (form: FormIOForm<ScholasticStandingData>) => {
