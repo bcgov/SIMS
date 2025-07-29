@@ -372,6 +372,7 @@ deploy-api:
 	test -n "$(API_MEMORY_REQUEST)"
 	test -n "${API_MEMORY_LIMIT}"
 	test -n "${API_REPLICAS}"
+	test -n "${EXTERNAL_IP_WHITELIST}"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
