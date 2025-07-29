@@ -2,7 +2,7 @@
   <student-page-container>
     <template #header>
       <header-navigator
-        title="Application Details"
+        title="Application details"
         subTitle="View Submission"
         :routeLocation="goBackRouteParams"
       />
