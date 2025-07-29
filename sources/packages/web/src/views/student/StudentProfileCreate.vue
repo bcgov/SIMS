@@ -54,46 +54,27 @@ export default defineComponent({
     const studentStore = useStudentStore();
     const processing = ref(false);
 
-    const populateBcscAddressFields = (data: StudentProfileFormModel) => {
+    const populateBCSCAddressFields = (data: StudentProfileFormModel) => {
       if (!bcscParsedToken.address) return;
-
-      if (bcscParsedToken.address.street_address) {
-        const normalizedAddress =
-          bcscParsedToken.address.street_address.replace(/\\n/g, "\n");
-        const addressParts = normalizedAddress.split("\n");
-        data.addressLine1 = addressParts[0];
-        if (addressParts.length > 1) {
-          data.addressLine2 = addressParts.slice(1).join("\n");
-        }
-      }
-      if (bcscParsedToken.address.locality) {
-        data.city = bcscParsedToken.address.locality;
-      }
-      if (bcscParsedToken.address.region) {
-        data.provinceState = bcscParsedToken.address.region;
-      }
-      if (bcscParsedToken.address.postal_code) {
-        data.canadaPostalCode = bcscParsedToken.address.postal_code;
-      }
-      if (bcscParsedToken.address.country) {
-        data.country = bcscParsedToken.address.country;
-        data.selectedCountry =
-          bcscParsedToken.address.country.toLowerCase() === "ca" ||
-          bcscParsedToken.address.country.toLowerCase() === "canada"
-            ? "Canada"
-            : "other";
-      }
+      // BCSC users address fields to StudentProfileFormModel.
+      data.addressLine1 = bcscParsedToken.address.street_address;
+      data.city = bcscParsedToken.address.locality;
+      data.provinceState = bcscParsedToken.address.region;
+      data.canadaPostalCode = bcscParsedToken.address.postal_code;
+      data.country = bcscParsedToken.address.country;
+      data.selectedCountry =
+        bcscParsedToken.address.country === "CA" ? "Canada" : "other";
     };
 
-    const populateBcscUserData = (data: StudentProfileFormModel) => {
+    const populateBCSCUserData = (data: StudentProfileFormModel) => {
       data.firstName = bcscParsedToken.givenNames;
       data.lastName = bcscParsedToken.lastName;
       data.email = bcscParsedToken.email;
       data.dateOfBirth = dateOnlyLongString(bcscParsedToken.birthdate);
-      populateBcscAddressFields(data);
+      populateBCSCAddressFields(data);
     };
 
-    const populateBasicUserData = (data: StudentProfileFormModel) => {
+    const populateBCeIDBothUserData = (data: StudentProfileFormModel) => {
       data.email = bceidParsedToken.email;
     };
 
@@ -106,9 +87,9 @@ export default defineComponent({
       const identityProvider = AuthService.shared.userToken?.identityProvider;
 
       if (identityProvider === IdentityProviders.BCSC) {
-        populateBcscUserData(data);
+        populateBCSCUserData(data);
       } else if (identityProvider === IdentityProviders.BCeIDBoth) {
-        populateBasicUserData(data);
+        populateBCeIDBothUserData(data);
       }
 
       initialData.value = data;
