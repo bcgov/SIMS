@@ -37,7 +37,10 @@ import {
 } from "@/types";
 import { AuthService } from "@/services/AuthService";
 import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
-import { STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS } from "@/constants";
+import {
+  STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS,
+  CANADA_COUNTRY_CODE,
+} from "@/constants";
 
 export default defineComponent({
   components: {
@@ -55,15 +58,23 @@ export default defineComponent({
     const processing = ref(false);
 
     const populateBCSCAddressFields = (data: StudentProfileFormModel) => {
-      if (!bcscParsedToken.address) return;
       // BCSC users address fields to StudentProfileFormModel.
-      data.addressLine1 = bcscParsedToken.address.street_address;
+      if (bcscParsedToken.address.street_address) {
+        data.addressLine1 = bcscParsedToken.address.street_address.replace(
+          /\r\n|\n/g,
+          " ",
+        );
+      }
       data.city = bcscParsedToken.address.locality;
-      data.provinceState = bcscParsedToken.address.region;
-      data.canadaPostalCode = bcscParsedToken.address.postal_code;
+      if (bcscParsedToken.address.country === CANADA_COUNTRY_CODE) {
+        data.provinceState = bcscParsedToken.address.region;
+        data.canadaPostalCode = bcscParsedToken.address.postal_code;
+      }
       data.country = bcscParsedToken.address.country;
       data.selectedCountry =
-        bcscParsedToken.address.country === "CA" ? "Canada" : "other";
+        bcscParsedToken.address.country === CANADA_COUNTRY_CODE
+          ? "Canada"
+          : "other";
     };
 
     const populateBCSCUserData = (data: StudentProfileFormModel) => {

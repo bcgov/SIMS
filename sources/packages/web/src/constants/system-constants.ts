@@ -18,3 +18,7 @@ export const COUNT_DOWN_TIMER_FOR_LOGOUT = 30;
  * High estimated value to defined a max money amount for inputs that does not have a constrain defined.
  */
 export const MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE = 100000000;
+/**
+ * Canada country code.
+ */
+export const CANADA_COUNTRY_CODE = "CA";
