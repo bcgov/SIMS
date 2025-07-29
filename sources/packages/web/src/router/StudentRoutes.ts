@@ -23,6 +23,7 @@ import ApplicationOfferingChangeFormView from "@/views/student/application-offer
 import RequestedApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/RequestedApplicationOfferingDetails.vue";
 import ActiveApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/ActiveApplicationOfferingDetails.vue";
 import ReportParentInformation from "@/views/student/ReportParentInformation.vue";
+import ViewScholasticStanding from "@/views/student/ViewScholasticStanding.vue";
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -140,6 +141,15 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.ASSESSMENT_AWARD_VIEW,
         props: true,
         component: StudentAssessmentAward,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentScholasticStandingView,
+        name: StudentRoutesConst.SCHOLASTIC_STANDING_VIEW,
+        props: true,
+        component: ViewScholasticStanding,
         meta: {
           clientType: ClientIdType.Student,
         },

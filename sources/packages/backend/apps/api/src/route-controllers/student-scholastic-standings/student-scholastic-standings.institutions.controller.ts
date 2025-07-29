@@ -186,7 +186,7 @@ export class ScholasticStandingInstitutionsController extends BaseController {
   ): Promise<ScholasticStandingSubmittedDetailsAPIOutDTO> {
     return this.scholasticStandingControllerService.getScholasticStanding(
       scholasticStandingId,
-      userToken.authorizations.getLocationsIds(),
+      { locationIds: userToken.authorizations.getLocationsIds() },
     );
   }
 

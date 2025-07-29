@@ -7,19 +7,23 @@
         :routeLocation="goBackRouteParams"
       />
     </template>
-    <scholastic-standing-form :initialData="initialData" :readOnly="true" />
+    <scholastic-standing-form
+      :scholasticStandingId="scholasticStandingId"
+      :readOnly="true"
+      :showFooter="true"
+      :showCompleteInfo="true"
+      :processing="false"
+    />
   </full-page-container>
 </template>
 <script lang="ts">
-import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
-import { computed, onMounted, ref, defineComponent } from "vue";
-import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { computed } from "vue";
 import { RouteLocationRaw } from "vue-router";
-import { useFormatters } from "@/composables";
-import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
+import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 
-export default defineComponent({
+export default {
+  name: "ViewScholasticStanding",
   components: {
     ScholasticStandingForm,
   },
@@ -38,32 +42,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const initialData = ref({} as ScholasticStandingSubmittedDetailsAPIOutDTO);
-    const { dateOnlyLongString } = useFormatters();
-
-    onMounted(async () => {
-      const applicationDetails =
-        await ScholasticStandingService.shared.getScholasticStanding(
-          props.scholasticStandingId,
-        );
-
-      initialData.value = {
-        ...applicationDetails,
-        applicationOfferingStartDate: dateOnlyLongString(
-          applicationDetails.applicationOfferingStartDate,
-        ),
-        applicationOfferingEndDate: dateOnlyLongString(
-          applicationDetails.applicationOfferingEndDate,
-        ),
-        applicationOfferingStudyBreak:
-          applicationDetails.applicationOfferingStudyBreak?.map(
-            (studyBreak) => ({
-              breakStartDate: dateOnlyLongString(studyBreak.breakStartDate),
-              breakEndDate: dateOnlyLongString(studyBreak.breakEndDate),
-            }),
-          ),
-      };
-    });
     const goBackRouteParams = computed(
       () =>
         ({
@@ -75,7 +53,7 @@ export default defineComponent({
         } as RouteLocationRaw),
     );
 
-    return { initialData, goBackRouteParams };
+    return { goBackRouteParams };
   },
-});
+};
 </script>

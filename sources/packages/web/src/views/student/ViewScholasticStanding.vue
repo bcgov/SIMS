@@ -1,37 +1,36 @@
 <template>
-  <full-page-container>
+  <student-page-container>
     <template #header>
       <header-navigator
-        title="Report a change"
-        subTitle="View Application"
+        title="Application details"
+        subTitle="View Submission"
         :routeLocation="goBackRouteParams"
       />
     </template>
     <scholastic-standing-form
-      :readOnly="true"
-      :showFooter="true"
-      :showCompleteInfo="true"
       :scholasticStandingId="scholasticStandingId"
+      :readOnly="true"
       :processing="false"
     />
-  </full-page-container>
+  </student-page-container>
 </template>
 <script lang="ts">
-import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
-import { computed, defineComponent } from "vue";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import { computed } from "vue";
 import { RouteLocationRaw } from "vue-router";
+import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 
-export default defineComponent({
+export default {
+  name: "ViewScholasticStanding",
   components: {
     ScholasticStandingForm,
   },
   props: {
-    scholasticStandingId: {
+    applicationId: {
       type: Number,
       required: true,
     },
-    locationId: {
+    scholasticStandingId: {
       type: Number,
       required: true,
     },
@@ -40,14 +39,12 @@ export default defineComponent({
     const goBackRouteParams = computed(
       () =>
         ({
-          name: InstitutionRoutesConst.ACTIVE_APPLICATIONS_SUMMARY,
-          params: {
-            locationId: props.locationId,
-          },
+          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          params: { id: props.applicationId },
         } as RouteLocationRaw),
     );
 
     return { goBackRouteParams };
   },
-});
+};
 </script>

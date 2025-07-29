@@ -1,42 +1,64 @@
 <template>
   <formio-container
     formName="reportScholasticStandingChange"
-    :formData="data"
+    :formData="formData"
     @submitted="submitted"
   >
     <template #actions="{ submit }">
       <footer-buttons
+        v-if="showFooter"
         :processing="processing"
         @primaryClick="submit"
         primaryLabel="Submit update"
         @secondaryClick="cancel"
         :disablePrimaryButton="readOnly"
-      /> </template
-  ></formio-container>
+      />
+    </template>
+  </formio-container>
 </template>
 
 <script lang="ts">
-import { ref, watch, defineComponent, PropType } from "vue";
+import { ref, defineComponent, PropType, watchEffect } from "vue";
 import {
   ActiveApplicationDataAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
 } from "@/services/http/dto";
 import { FormIOForm } from "@/types";
+import { useFormatters } from "@/composables";
+import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 
-interface ScholasticStanding
-  extends ScholasticStandingSubmittedDetailsAPIOutDTO {
-  readOnly: boolean;
-}
-interface ScholasticStandingBeforeSubmission
-  extends ActiveApplicationDataAPIOutDTO {
-  readOnly: boolean;
-}
+/**
+ * Represents the scholastic standing details.
+ */
+type ScholasticStandingData =
+  | (
+      | ScholasticStandingSubmittedDetailsAPIOutDTO
+      | ActiveApplicationDataAPIOutDTO
+    ) & {
+      showCompleteInfo?: boolean;
+      readOnly: boolean;
+    };
+
 export default defineComponent({
   emits: ["submit", "cancel"],
   props: {
+    scholasticStandingId: {
+      type: Number,
+      required: false,
+    },
+    showFooter: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    showCompleteInfo: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     initialData: {
-      type: Object as PropType<ScholasticStandingSubmittedDetailsAPIOutDTO>,
-      required: true,
+      type: Object as PropType<ActiveApplicationDataAPIOutDTO>,
+      required: false,
     },
     readOnly: {
       type: Boolean,
@@ -50,23 +72,43 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const data = ref(
-      {} as ScholasticStanding | ScholasticStandingBeforeSubmission,
-    );
+    const formData = ref({} as ScholasticStandingData);
+    const { dateOnlyLongString } = useFormatters();
 
-    const setReadOnlyData = () => {
-      data.value = { ...props.initialData, readOnly: props.readOnly };
-    };
+    watchEffect(async () => {
+      if (props.scholasticStandingId) {
+        const applicationDetails =
+          await ScholasticStandingService.shared.getScholasticStanding(
+            props.scholasticStandingId,
+          );
+        formData.value = {
+          ...applicationDetails,
+          applicationOfferingStartDate: dateOnlyLongString(
+            applicationDetails.applicationOfferingStartDate,
+          ),
+          applicationOfferingEndDate: dateOnlyLongString(
+            applicationDetails.applicationOfferingEndDate,
+          ),
+          applicationOfferingStudyBreak:
+            applicationDetails.applicationOfferingStudyBreak?.map(
+              (studyBreak) => ({
+                breakStartDate: dateOnlyLongString(studyBreak.breakStartDate),
+                breakEndDate: dateOnlyLongString(studyBreak.breakEndDate),
+              }),
+            ),
+          showCompleteInfo: props.showCompleteInfo,
+          readOnly: props.readOnly,
+        };
+        return;
+      }
+      formData.value = {
+        ...props.initialData,
+        showCompleteInfo: props.showCompleteInfo,
+        readOnly: props.readOnly,
+      } as ScholasticStandingData;
+    });
 
-    watch(
-      () => [props.initialData, props.readOnly],
-      async () => {
-        setReadOnlyData();
-      },
-      { immediate: true },
-    );
-
-    const submitted = (form: FormIOForm<ScholasticStanding>) => {
+    const submitted = (form: FormIOForm<ScholasticStandingData>) => {
       context.emit("submit", form.data);
     };
 
@@ -74,7 +116,7 @@ export default defineComponent({
       context.emit("cancel");
     };
 
-    return { data, submitted, cancel };
+    return { formData, submitted, cancel };
   },
 });
 </script>
