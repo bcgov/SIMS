@@ -7,6 +7,7 @@ import {
   ApplicationExceptionRequest,
   ApplicationExceptionStatus,
 } from "@sims/sims-db";
+import { ApplicationDataException } from "apps/workers/src/services/application-exception/application-exception.models";
 
 /**
  * Manages student applications exceptions detected upon full-time/part-time application
@@ -92,6 +93,67 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         if (applicationExceptions.indexOf(objectKey) === -1) {
           applicationExceptions.push(objectKey);
         }
+      }
+    }
+  }
+
+  /**
+   * Search entire object properties recursively trying to
+   * find properties with the value defined as "studentApplicationException"
+   * which identifies an application exception to be reviewed.
+   * @param payload object to have the properties checked.
+   */
+  searchExceptionsObjects(payload: unknown): ApplicationDataException[] {
+    const applicationExceptions: ApplicationDataException[] = [];
+    this.searchExceptionsObjectsRecursively(payload, applicationExceptions);
+    return applicationExceptions;
+  }
+
+  /**
+   * Search entire object properties recursively trying to
+   * find properties with the value defined as "studentApplicationException"
+   * which identifies an application exception to be reviewed.
+   * @param payload object to have the properties checked.
+   * @param applicationExceptions keeps the list of all exceptions found.
+   */
+  private searchExceptionsObjectsRecursively(
+    payload: unknown,
+    applicationExceptions: ApplicationDataException[],
+  ) {
+    if (Array.isArray(payload)) {
+      for (const arrayItem of payload) {
+        // If the payload is an array, iterate through each item
+        // looking for some application exception.
+        this.searchExceptionsObjectsRecursively(
+          arrayItem,
+          applicationExceptions,
+        );
+      }
+      return;
+    }
+    // If the payload is an object (because it is not an array), iterate through its properties
+    // looking for some application exception.
+    // Check if it has the property that determine that it is an exception.
+    const applicationDataException = payload as ApplicationDataException;
+    if (applicationDataException.exceptionKey) {
+      applicationExceptions.push(applicationDataException);
+      return;
+    }
+    // If the payload is an object, iterate through its properties
+    // looking for some application exception.
+    for (const objectKey of Object.keys(payload)) {
+      const propertyValue = payload[objectKey];
+      if (!propertyValue) {
+        // No value, continue to the next property.
+        continue;
+      }
+      // If it is an array or an object it must check the children's array or object properties.
+      if (Array.isArray(propertyValue) || typeof propertyValue === "object") {
+        this.searchExceptionsObjectsRecursively(
+          propertyValue,
+          applicationExceptions,
+        );
+        continue;
       }
     }
   }

@@ -139,6 +139,11 @@ export class ApplicationController {
             application.applicationException.exceptionStatus,
         });
       }
+      const exceptionObjects =
+        this.applicationExceptionService.searchExceptionsObjects(
+          application.data,
+        );
+      console.log(exceptionObjects);
       // Check for application exceptions present in the application dynamic data.
       const exceptions = this.applicationExceptionService.searchExceptions(
         application.data,
