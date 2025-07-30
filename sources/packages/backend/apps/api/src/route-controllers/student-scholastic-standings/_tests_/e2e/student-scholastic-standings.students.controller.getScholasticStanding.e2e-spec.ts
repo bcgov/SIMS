@@ -11,7 +11,8 @@ import {
   FakeStudentUsersTypes,
   createTestingAppModule,
   getStudentToken,
-  mockUserLoginInfo,
+  mockJWTUserInfo,
+  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import { TestingModule } from "@nestjs/testing";
@@ -31,24 +32,21 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
     appModule = module;
   });
 
-  it("Should get the student scholastic standing details for the provided scholastic standing id.", async () => {
+  beforeEach(() => {
+    resetMockJWTUserInfo(appModule);
+  });
+
+  it("Should get the student scholastic standing details for the provided scholastic standing id when the scholastic standing id is valid.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
-    // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
-    const application = await saveFakeApplication(
-      db.dataSource,
-      {
-        student,
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      initialValues: {
+        offeringIntensity: OfferingIntensity.fullTime,
       },
-      {
-        initialValues: {
-          offeringIntensity: OfferingIntensity.fullTime,
-        },
-      },
-    );
+    });
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, application.student.user);
     const scholasticStanding = createFakeStudentScholasticStanding(
-      { submittedBy: student.user, application },
+      { submittedBy: application.student.user, application },
       {
         initialValues: {
           unsuccessfulWeeks: 5,
@@ -113,8 +111,8 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
   it("Should return Not Found (404) when scholastic standing is not found.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
-    // Mock user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
     const scholasticStandingId = 999999;
     const endpoint = `/students/scholastic-standing/${scholasticStandingId}`;
     const token = await getStudentToken(
