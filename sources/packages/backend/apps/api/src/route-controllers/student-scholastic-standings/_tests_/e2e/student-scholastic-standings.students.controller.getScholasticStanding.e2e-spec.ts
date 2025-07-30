@@ -4,7 +4,6 @@ import {
   createE2EDataSources,
   createFakeStudentScholasticStanding,
   saveFakeApplication,
-  saveFakeStudent,
 } from "@sims/test-utils";
 import {
   BEARER_AUTH_TYPE,
@@ -110,11 +109,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
 
   it("Should return Not Found (404) when scholastic standing is not found.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
-    // Mock the user received in the token.
-    await mockJWTUserInfo(appModule, student.user);
-    const scholasticStandingId = 999999;
-    const endpoint = `/students/scholastic-standing/${scholasticStandingId}`;
+    const endpoint = "/students/scholastic-standing/9999999";
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
