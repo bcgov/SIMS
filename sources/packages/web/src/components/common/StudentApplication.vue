@@ -8,8 +8,10 @@
     @submitted="submitted"
     @render="formRender"
     @customEvent="customEvent"
+    :isDataReady="isDataReady"
   ></formio>
   <footer-buttons
+    v-if="isDataReady"
     justify="space-between"
     :processing="processing"
     @primaryClick="wizardGoNext"
@@ -121,6 +123,7 @@ export default defineComponent({
     const isLastPage = ref(false);
     const showNav = ref(false);
     const formData = ref({} as StudentApplicationFormData);
+    const isDataReady = ref(false);
     let offeringIntensity: OfferingIntensity;
 
     const wizardPrimaryLabel = computed(() => {
@@ -243,6 +246,7 @@ export default defineComponent({
       formInstance.on("nextPage", prevNextNavigation);
 
       await loadFormDependencies();
+      isDataReady.value = true;
     };
 
     const getOfferingDetails = async (form: FormIOForm, locationId: number) => {
@@ -387,6 +391,7 @@ export default defineComponent({
       isSaveDraftAllowed,
       formData,
       wizardPrimaryLabel,
+      isDataReady,
     };
   },
 });

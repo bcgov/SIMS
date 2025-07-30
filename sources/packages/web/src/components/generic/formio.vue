@@ -1,18 +1,16 @@
 <template>
-  <div class="text-center p-m-4" v-if="!hideSpinner">
-    <span class="label-bold muted-content-strong text-center"> Loading </span>
-    <v-progress-linear
-      indeterminate
-      color="primary"
-      rounded
-      class="mt-3"
-    ></v-progress-linear>
+  <div class="text-center p-m-4" v-show="!isFormReady">
+    <v-skeleton-loader type="image, article"></v-skeleton-loader>
   </div>
-  <div class="ff-form-container" ref="formioContainerRef"></div>
+  <div
+    v-show="isFormReady"
+    class="ff-form-container"
+    ref="formioContainerRef"
+  ></div>
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { Formio } from "@formio/js";
 import { defineComponent } from "vue";
 import ApiClient from "@/services/http/ApiClient";
@@ -57,7 +55,13 @@ export default defineComponent({
     },
     scoped: {
       type: Boolean,
-      default: false,
+      default: true,
+      required: false,
+    },
+    // Provided by the consumer to indicate that the initial data for the form is ready.
+    isDataReady: {
+      type: Boolean,
+      default: true,
       required: false,
     },
   },
@@ -70,8 +74,12 @@ export default defineComponent({
     registerUtilsMethod("mapOfferingIntensity", mapOfferingIntensity);
 
     const formioContainerRef = ref(null);
-    // Wait to show the spinner when there is an API call.
-    const hideSpinner = ref(true);
+    // Indicates if the form is created.
+    const isFormCreated = ref(false);
+    // Unless the form is created and the data is ready, the loader is displayed.
+    const isFormReady = computed(
+      () => isFormCreated.value && props.isDataReady,
+    );
     let form: FormIOForm;
 
     // Update the form submission data and triggers the form redraw.
@@ -105,7 +113,6 @@ export default defineComponent({
       if (cachedFormDefinition) {
         formDefinition = JSON.parse(cachedFormDefinition);
       } else {
-        hideSpinner.value = false;
         // Use SIMS API as a proxy to retrieve the form definition from formio.
         formDefinition = await ApiClient.DynamicForms.getFormDefinition(
           props.formName,
@@ -139,12 +146,12 @@ export default defineComponent({
       form = await Formio.createForm(formioContainerRef.value, formDefinition, {
         fileService: new FormUploadService(),
         readOnly: props.readOnly,
+        submission: {
+          data: props.data ?? {},
+        },
       });
 
       form.nosubmit = true;
-      hideSpinner.value = true;
-      updateFormSubmissionData();
-
       context.emit("loaded", form);
 
       // Triggered when any component in the form is changed.
@@ -166,6 +173,7 @@ export default defineComponent({
       form.on("render", (event: HTMLElement) => {
         context.emit("render", form, event);
       });
+      isFormCreated.value = true;
     });
 
     watch(
@@ -186,7 +194,7 @@ export default defineComponent({
       { deep: true },
     );
 
-    return { formioContainerRef, hideSpinner };
+    return { formioContainerRef, isFormReady };
   },
 });
 </script>
