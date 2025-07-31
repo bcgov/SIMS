@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center p-m-4" v-show="!isFormReady">
+  <div v-show="!isFormReady">
     <slot name="loading"
       ><v-skeleton-loader type="image, article"></v-skeleton-loader></slot
     >"
