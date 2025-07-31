@@ -9,6 +9,7 @@
       :formModel="initialData"
       @submitted="submitted"
       :processing="processing"
+      :is-data-ready="isDataReady"
     />
   </student-page-container>
 </template>
@@ -56,6 +57,7 @@ export default defineComponent({
     const { dateOnlyLongString } = useFormatters();
     const studentStore = useStudentStore();
     const processing = ref(false);
+    const isDataReady = ref(false);
 
     const populateBCSCAddressFields = (data: StudentProfileFormModel) => {
       // BCSC users address fields to StudentProfileFormModel.
@@ -159,6 +161,7 @@ export default defineComponent({
       submitted,
       initialData,
       processing,
+      isDataReady,
     };
   },
 });

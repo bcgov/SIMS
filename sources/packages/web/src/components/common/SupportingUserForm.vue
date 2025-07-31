@@ -81,6 +81,7 @@ export default defineComponent({
     const isLastPage = ref(false);
     const showNav = ref(false);
     const formInitialData = ref({} as Record<string, unknown>);
+    const isDataReady = ref(false);
 
     watchEffect(async () => {
       if (props.supportingUserId) {
@@ -117,6 +118,7 @@ export default defineComponent({
           hasValidSIN: supportingUser.value.personalInfo?.hasValidSIN,
           parentFullName: supportingUser.value.parentFullName,
         };
+        isDataReady.value = true;
       }
     });
 

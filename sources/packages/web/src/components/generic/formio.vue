@@ -1,6 +1,8 @@
 <template>
   <div class="text-center p-m-4" v-show="!isFormReady">
-    <v-skeleton-loader type="image, article"></v-skeleton-loader>
+    <slot name="loading"
+      ><v-skeleton-loader type="image, article"></v-skeleton-loader></slot
+    >"
   </div>
   <div
     v-show="isFormReady"
@@ -58,7 +60,7 @@ export default defineComponent({
       default: true,
       required: false,
     },
-    // Provided by the consumer to indicate that the initial data for the form is ready.
+    // Provided by the consumer to indicate that the initial data to load the form is ready.
     isDataReady: {
       type: Boolean,
       default: true,
@@ -146,12 +148,10 @@ export default defineComponent({
       form = await Formio.createForm(formioContainerRef.value, formDefinition, {
         fileService: new FormUploadService(),
         readOnly: props.readOnly,
-        submission: {
-          data: props.data ?? {},
-        },
       });
 
       form.nosubmit = true;
+      updateFormSubmissionData();
       context.emit("loaded", form);
 
       // Triggered when any component in the form is changed.

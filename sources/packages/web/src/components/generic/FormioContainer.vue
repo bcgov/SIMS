@@ -3,12 +3,15 @@
     :formName="formName"
     :data="formData"
     :readOnly="readOnly"
+    :is-data-ready="isDataReady"
     @loaded="formLoaded"
     @customEvent="formCustomEvent"
     @render="formRender"
     @changed="formChanged"
   ></formio>
-  <slot name="actions" :submit="submit"></slot>
+  <template v-if="isDataReady"
+    ><slot name="actions" :submit="submit"></slot
+  ></template>
 </template>
 
 <script lang="ts">
@@ -30,6 +33,12 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
+    },
+    // Provided by the consumer to indicate that the initial data to load the form is ready.
+    isDataReady: {
+      type: Boolean,
+      default: true,
+      required: false,
     },
   },
   setup(_props, context) {

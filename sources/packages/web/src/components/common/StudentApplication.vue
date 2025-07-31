@@ -8,7 +8,7 @@
     @submitted="submitted"
     @render="formRender"
     @customEvent="customEvent"
-    :isDataReady="isDataReady"
+    :is-data-ready="isDataReady"
   ></formio>
   <footer-buttons
     v-if="isDataReady"
