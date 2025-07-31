@@ -24,7 +24,7 @@ export async function filterObjectProperties(
       try {
         const expression = jsonata(filter[filterKey].toString());
         const result = await expression.evaluate(object);
-        // If the value returned by getJsonPathNodeValue is undefined null will be used as fallback.
+        // If the value returned by expression evaluation is undefined, null will be used as fallback.
         // This method is mostly used to return values to the Workflow and if the property
         // is set as undefined it will prevent the variable from being created on Camunda.
         resultObject[filterKey] = result ?? null;
