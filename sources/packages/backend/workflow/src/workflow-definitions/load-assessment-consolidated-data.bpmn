@@ -91,12 +91,12 @@
           <zeebe:header key="appealsStudentFinancialInformationAppealData" value="appeals.studentFinancialInformationAppeal.submittedData" />
           <zeebe:header key="appealsStudentAdditionalTransportationAppealData" value="appeals.studentAdditionalTransportationAppeal.submittedData" />
           <zeebe:header key="appealsPartnerInformationAndIncomeAppealData" value="appeals.partnerInformationAndIncomeAppeal.submittedData" />
-          <zeebe:header key="appealsStudentDependantsAppealData" value="appeals.studentDependantsAppeal.submittedData.dependants.{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
+          <zeebe:header key="appealsStudentDependantsAppealData" value="appeals.studentDependantsAppeal.submittedData.dependants[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
           <zeebe:header key="appealsStudentHasDependentsAppealData" value="appeals.studentDependantsAppeal.submittedData.hasDependents" />
           <zeebe:header key="appealsRoomAndBoardCostsAppealData" value="appeals.roomAndBoardCostsAppeal.submittedData" />
           <zeebe:header key="offeringCourseLoad" value="offering.courseLoad" />
           <zeebe:header key="offeringWeeks" value="offering.studyBreaks.totalFundedWeeks" />
-          <zeebe:header key="studentDataDependants" value="data.dependants.{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
+          <zeebe:header key="studentDataDependants" value="data.dependants[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
           <zeebe:header key="studentDataGovernmentFundingCosts" value="data.governmentFundingCosts" />
           <zeebe:header key="studentDataNonGovernmentFundingCosts" value="data.nonGovernmentFundingCosts" />
           <zeebe:header key="studentDataParentVoluntaryContributionsCosts" value="data.parentvoluntarycontributionsCosts" />
@@ -137,7 +137,7 @@
           <zeebe:header key="partner1BCEAIncomeAssistanceAmount" value="supportingUsers.Partner1.supportingData.bceaIncomeAssistanceAmount" />
           <zeebe:header key="partner1PartnerCaringForDependant" value="supportingUsers.Partner1.supportingData.partnerCaringForDependant" />
           <zeebe:header key="studentDataExceptionalExpenseAmount" value="data.exceptionalExpenseAmount" />
-          <zeebe:header key="studentDataParents" value="data.parents.{&#10;  &#34;parentIsAbleToReport&#34;: parentIsAbleToReport,&#10;  &#34;currentYearParentIncome&#34;: currentYearParentIncome&#10;}" />
+          <zeebe:header key="studentDataParents" value="data.parents[].{&#10;  &#34;parentIsAbleToReport&#34;: parentIsAbleToReport,&#10;  &#34;currentYearParentIncome&#34;: currentYearParentIncome&#10;}" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>
