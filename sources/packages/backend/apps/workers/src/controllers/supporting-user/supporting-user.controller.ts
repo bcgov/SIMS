@@ -42,7 +42,7 @@ import {
 } from "@sims/services";
 import { SupportingUserType } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
-import * as JSONPath from "jsonpath";
+import * as jsonata from "jsonata";
 
 @Controller()
 export class SupportingUserController {
@@ -163,10 +163,8 @@ export class SupportingUserController {
       // Resolve the full name from the application dynamic data using the optional provided filter.
       let fullName: string;
       if (job.variables.fullNamePropertyFilter) {
-        fullName = JSONPath.value(
-          application.data,
-          job.variables.fullNamePropertyFilter,
-        );
+        const jsonataExpression = jsonata(job.variables.fullNamePropertyFilter);
+        fullName = await jsonataExpression.evaluate(application.data);
         if (!fullName) {
           // If the full name property filter is provided, full name is mandatory to be present.
           const message = `Not able to extract the full name from the application dynamic data using filter '${job.variables.fullNamePropertyFilter}'.`;
@@ -249,7 +247,7 @@ export class SupportingUserController {
         jobLogger.error(message);
         job.error(SUPPORTING_USER_NOT_FOUND, message);
       }
-      const outputVariables = filterObjectProperties(
+      const outputVariables = await filterObjectProperties(
         supportingUser.supportingData,
         job.customHeaders,
       );

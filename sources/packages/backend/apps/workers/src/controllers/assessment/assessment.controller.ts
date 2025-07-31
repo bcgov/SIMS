@@ -170,7 +170,7 @@ export class AssessmentController {
         assessment,
         hasNOAApproval,
       );
-      const outputVariables = filterObjectProperties(
+      const outputVariables = await filterObjectProperties(
         assessmentDTO,
         job.customHeaders,
       );
