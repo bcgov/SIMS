@@ -60,7 +60,7 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
     // Get the current program year.
     currentProgramYear = await db.programYear
       .createQueryBuilder("py")
-      .where("NOW()::date BETWEEN py.startDate AND py.endDate")
+      .where("CURRENT_DATE BETWEEN py.startDate AND py.endDate")
       .getOne();
     currentLegacyProgramYearId = +currentProgramYear.programYear.replace(
       "-",
