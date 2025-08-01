@@ -11,7 +11,7 @@
     :is-data-ready="isDataReady"
   ></formio>
   <footer-buttons
-    v-if="isDataReady"
+    v-if="isDataReady && isFormLoaded"
     justify="space-between"
     :processing="processing"
     @primaryClick="wizardGoNext"
@@ -126,6 +126,7 @@ export default defineComponent({
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const showNav = ref(false);
+    const isFormLoaded = ref(false);
     const additionalFormData = ref(
       {} as { howWillYouBeAttendingTheProgram: OfferingIntensity },
     );
@@ -251,6 +252,7 @@ export default defineComponent({
       formInstance.on("nextPage", prevNextNavigation);
 
       await loadFormDependencies();
+      isFormLoaded.value = true;
     };
 
     const getOfferingDetails = async (form: FormIOForm, locationId: number) => {
@@ -395,6 +397,7 @@ export default defineComponent({
       isSaveDraftAllowed,
       additionalFormData,
       wizardPrimaryLabel,
+      isFormLoaded,
     };
   },
 });

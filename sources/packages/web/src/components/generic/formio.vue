@@ -77,6 +77,7 @@ export default defineComponent({
     let formDefinition: FormIOComponent;
 
     const formioContainerRef = ref(null);
+    const isFormDefinitionLoaded = ref(false);
     // Indicates if the form is created.
     const isFormCreated = ref(false);
     // Unless the form is created and the data is ready, the loader is displayed.
@@ -146,6 +147,7 @@ export default defineComponent({
         };
         createUniqueIDs(formDefinition);
       }
+      isFormDefinitionLoaded.value = true;
     };
 
     const createForm = async () => {
@@ -183,7 +185,11 @@ export default defineComponent({
     };
 
     watchEffect(async () => {
-      if (props.formName && !formDefinition && props.isDataReady) {
+      if (
+        props.formName &&
+        !isFormDefinitionLoaded.value &&
+        props.isDataReady
+      ) {
         await loadFormDefinition(props.formName);
         await createForm();
       }

@@ -9,13 +9,13 @@
     @render="formRender"
     @changed="formChanged"
   ></formio>
-  <template v-if="isDataReady"
+  <template v-if="isDataReady && isFormLoaded"
     ><slot name="actions" :submit="submit"></slot
   ></template>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { FormIOChangeEvent, FormIOForm } from "@/types";
 import { useFormioUtils } from "@/composables";
 export default defineComponent({
@@ -44,9 +44,11 @@ export default defineComponent({
   setup(_props, context) {
     const { checkFormioValidity } = useFormioUtils();
     let formioForm: FormIOForm;
+    const isFormLoaded = ref(false);
 
     const formLoaded = (form: FormIOForm) => {
       formioForm = form;
+      isFormLoaded.value = true;
       context.emit("loaded", form);
     };
 
@@ -68,7 +70,14 @@ export default defineComponent({
       context.emit("customEvent", form, event);
     };
 
-    return { formLoaded, submit, formRender, formChanged, formCustomEvent };
+    return {
+      formLoaded,
+      submit,
+      formRender,
+      formChanged,
+      formCustomEvent,
+      isFormLoaded,
+    };
   },
 });
 </script>
