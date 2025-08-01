@@ -5,6 +5,7 @@
     <formio-container
       :formName="isChangeRequest ? 'studentRequestChange' : 'studentAppeals'"
       :formData="initialData"
+      :is-data-ready="isDataReady"
       @submitted="submitRequest"
     >
       <template #actions="{ submit }">
@@ -83,6 +84,7 @@ export default defineComponent({
     const operation = computed(() =>
       props.isChangeRequest ? "request for change" : "appeal",
     );
+    const isDataReady = ref(false);
 
     watchEffect(async () => {
       if (props.applicationId) {
@@ -95,6 +97,7 @@ export default defineComponent({
             applicationNumber: applicationAppealData.applicationNumber,
             formNames: [],
           };
+          isDataReady.value = true;
         } catch {
           snackBar.error(
             `An unexpected error happened while retrieving the application to submit the ${operation.value}.`,
@@ -158,6 +161,7 @@ export default defineComponent({
       backToRequestForm,
       submitAppeal,
       processing,
+      isDataReady,
     };
   },
 });

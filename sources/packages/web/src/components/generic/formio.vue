@@ -75,8 +75,14 @@ export default defineComponent({
     registerUtilsMethod("currencyFormatter", currencyFormatter);
     registerUtilsMethod("mapOfferingIntensity", mapOfferingIntensity);
     let formDefinition: FormIOComponent;
-
+    // Indicates if the form is being created.
+    let isFormCreationInProgress = false;
+    // If there is a change in initial data during the form creation
+    // the form data cannot be reloaded and this is an indicator to
+    // reload the initial data after the form is created.
+    let mustReloadInitialDataAfterCreation = false;
     const formioContainerRef = ref(null);
+    // Indicates if the form definition is loaded.
     const isFormDefinitionLoaded = ref(false);
     // Indicates if the form is created.
     const isFormCreated = ref(false);
@@ -91,6 +97,13 @@ export default defineComponent({
     // display the correct label associated with the correct value
     // that was loaded into the submission data.
     const updateFormSubmissionData = () => {
+      if (isFormCreationInProgress) {
+        // At this point the form is not available yet to update the data.
+        // Hence, the flag is set to true and the data will be reloaded
+        // after the form is created.
+        mustReloadInitialDataAfterCreation = true;
+        return;
+      }
       if (form && props.data) {
         form.submission = {
           data: props.data,
@@ -151,6 +164,7 @@ export default defineComponent({
     };
 
     const createForm = async () => {
+      isFormCreationInProgress = true;
       form = await Formio.createForm(formioContainerRef.value, formDefinition, {
         fileService: new FormUploadService(),
         readOnly: props.readOnly,
@@ -158,7 +172,13 @@ export default defineComponent({
           data: props.data ?? {},
         },
       });
-
+      isFormCreationInProgress = false;
+      // If the initial data was changed while the form was being created,
+      // reload the initial data.
+      if (mustReloadInitialDataAfterCreation) {
+        mustReloadInitialDataAfterCreation = false;
+        updateFormSubmissionData();
+      }
       form.nosubmit = true;
       context.emit("loaded", form);
 
@@ -185,13 +205,14 @@ export default defineComponent({
     };
 
     watchEffect(async () => {
-      if (
-        props.formName &&
-        !isFormDefinitionLoaded.value &&
-        props.isDataReady
-      ) {
-        await loadFormDefinition(props.formName);
-        await createForm();
+      if (props.formName) {
+        if (!isFormDefinitionLoaded.value) {
+          await loadFormDefinition(props.formName);
+        }
+        // Form definition is expected to be loaded at this point.
+        if (props.isDataReady && !isFormCreated.value) {
+          await createForm();
+        }
       }
     });
 
