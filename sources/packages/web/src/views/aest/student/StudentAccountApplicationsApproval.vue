@@ -35,6 +35,7 @@
     <student-profile-form
       :processing="processing"
       :formModel="initialData"
+      :is-data-ready="isDataReady"
       @loaded="formLoaded"
     />
   </full-page-container>
@@ -96,12 +97,14 @@ export default defineComponent({
     const processing = ref(false);
     const createStudentAccountModal = ref({} as ModalDialog<boolean>);
     const declineStudentAccountModal = ref({} as ModalDialog<boolean>);
+    const isDataReady = ref(false);
 
     const pendingAccountsRoute = {
       name: AESTRoutesConst.STUDENT_ACCOUNT_APPLICATIONS,
     };
 
     const getStudentDetails = async () => {
+      isDataReady.value = false;
       const accountApplication =
         await StudentAccountApplicationService.shared.getStudentAccountApplicationById(
           props.studentAccountApplicationId,
@@ -112,6 +115,7 @@ export default defineComponent({
       studentProfileFormModel.mode =
         StudentProfileFormModes.AESTAccountApproval;
       initialData.value = studentProfileFormModel;
+      isDataReady.value = true;
     };
 
     onMounted(getStudentDetails);
@@ -188,6 +192,7 @@ export default defineComponent({
       declineStudentAccountModal,
       pendingAccountsRoute,
       Role,
+      isDataReady,
     };
   },
 });

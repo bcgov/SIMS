@@ -6,6 +6,7 @@
     <student-profile-form
       :processing="processing"
       :formModel="initialData"
+      :is-data-ready="isDataReady"
       @submitted="submitted"
       @customEvent="showPDApplicationModal"
     />
@@ -48,6 +49,7 @@ export default defineComponent({
     const initialData = ref({} as StudentProfileFormModel);
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
     const processing = ref(false);
+    const isDataReady = ref(false);
 
     const getStudentDetails = async () => {
       const studentInfo = await StudentService.shared.getStudentProfile();
@@ -64,6 +66,7 @@ export default defineComponent({
         ),
       };
       initialData.value = data;
+      isDataReady.value = true;
     };
 
     onMounted(getStudentDetails);
@@ -119,6 +122,7 @@ export default defineComponent({
       pdStatusApplicationModal,
       showPDApplicationModal,
       processing,
+      isDataReady,
     };
   },
 });

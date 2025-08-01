@@ -1,18 +1,18 @@
 <template>
-  <div class="text-center p-m-4" v-if="!hideSpinner">
-    <span class="label-bold muted-content-strong text-center"> Loading </span>
-    <v-progress-linear
-      indeterminate
-      color="primary"
-      rounded
-      class="mt-3"
-    ></v-progress-linear>
+  <div v-show="!isFormReady">
+    <slot name="loading"
+      ><v-skeleton-loader type="image, article"></v-skeleton-loader
+    ></slot>
   </div>
-  <div class="ff-form-container" ref="formioContainerRef"></div>
+  <div
+    v-show="isFormReady"
+    class="ff-form-container"
+    ref="formioContainerRef"
+  ></div>
 </template>
 
 <script lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import { Formio } from "@formio/js";
 import { defineComponent } from "vue";
 import ApiClient from "@/services/http/ApiClient";
@@ -57,7 +57,13 @@ export default defineComponent({
     },
     scoped: {
       type: Boolean,
-      default: false,
+      default: true,
+      required: false,
+    },
+    // Provided by the consumer to indicate that the initial data to load the form is ready.
+    isDataReady: {
+      type: Boolean,
+      default: true,
       required: false,
     },
   },
@@ -68,10 +74,22 @@ export default defineComponent({
     // Register global utils functions.
     registerUtilsMethod("currencyFormatter", currencyFormatter);
     registerUtilsMethod("mapOfferingIntensity", mapOfferingIntensity);
-
+    let formDefinition: FormIOComponent;
+    // Indicates if the form is being created.
+    let isFormCreationInProgress = false;
+    // If there is a change in initial data during the form creation
+    // the form data cannot be reloaded and this is an indicator to
+    // reload the initial data after the form is created.
+    let mustReloadInitialDataAfterCreation = false;
     const formioContainerRef = ref(null);
-    // Wait to show the spinner when there is an API call.
-    const hideSpinner = ref(true);
+    // Indicates if the form definition is loaded.
+    const isFormDefinitionLoaded = ref(false);
+    // Indicates if the form is created.
+    const isFormCreated = ref(false);
+    // Unless the form is created and the data is ready, the loader is displayed.
+    const isFormReady = computed(
+      () => isFormCreated.value && props.isDataReady,
+    );
     let form: FormIOForm;
 
     // Update the form submission data and triggers the form redraw.
@@ -79,6 +97,13 @@ export default defineComponent({
     // display the correct label associated with the correct value
     // that was loaded into the submission data.
     const updateFormSubmissionData = () => {
+      if (isFormCreationInProgress) {
+        // At this point the form is not available yet to update the data.
+        // Hence, the flag is set to true and the data will be reloaded
+        // after the form is created.
+        mustReloadInitialDataAfterCreation = true;
+        return;
+      }
       if (form && props.data) {
         form.submission = {
           data: props.data,
@@ -87,8 +112,8 @@ export default defineComponent({
       }
     };
 
-    onMounted(async () => {
-      const cachedFormName = await createCacheIdentifier(props.formName);
+    const loadFormDefinition = async (formName: string) => {
+      const cachedFormName = await createCacheIdentifier(formName);
       let cachedFormDefinition: string | null = null;
       // Avoid caching during development to allow that the changes
       // on form.io definitions have effect immediately.
@@ -101,11 +126,10 @@ export default defineComponent({
           // in the same way as it is the first time load.
         }
       }
-      let formDefinition: any;
+
       if (cachedFormDefinition) {
         formDefinition = JSON.parse(cachedFormDefinition);
       } else {
-        hideSpinner.value = false;
         // Use SIMS API as a proxy to retrieve the form definition from formio.
         formDefinition = await ApiClient.DynamicForms.getFormDefinition(
           props.formName,
@@ -136,15 +160,26 @@ export default defineComponent({
         };
         createUniqueIDs(formDefinition);
       }
+      isFormDefinitionLoaded.value = true;
+    };
+
+    const createForm = async () => {
+      isFormCreationInProgress = true;
       form = await Formio.createForm(formioContainerRef.value, formDefinition, {
         fileService: new FormUploadService(),
         readOnly: props.readOnly,
+        submission: {
+          data: props.data ?? {},
+        },
       });
-
+      isFormCreationInProgress = false;
+      // If the initial data was changed while the form was being created,
+      // reload the initial data.
+      if (mustReloadInitialDataAfterCreation) {
+        mustReloadInitialDataAfterCreation = false;
+        updateFormSubmissionData();
+      }
       form.nosubmit = true;
-      hideSpinner.value = true;
-      updateFormSubmissionData();
-
       context.emit("loaded", form);
 
       // Triggered when any component in the form is changed.
@@ -166,6 +201,19 @@ export default defineComponent({
       form.on("render", (event: HTMLElement) => {
         context.emit("render", form, event);
       });
+      isFormCreated.value = true;
+    };
+
+    watchEffect(async () => {
+      if (props.formName) {
+        if (!isFormDefinitionLoaded.value) {
+          await loadFormDefinition(props.formName);
+        }
+        // Form definition is expected to be loaded at this point.
+        if (props.isDataReady && !isFormCreated.value) {
+          await createForm();
+        }
+      }
     });
 
     watch(
@@ -186,7 +234,7 @@ export default defineComponent({
       { deep: true },
     );
 
-    return { formioContainerRef, hideSpinner };
+    return { formioContainerRef, isFormReady };
   },
 });
 </script>

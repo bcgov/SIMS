@@ -1,15 +1,17 @@
 <template>
   <formio
     :formName="selectedForm"
-    :data="formData"
+    :data="{ ...initialData, ...additionalFormData }"
     :readOnly="isReadOnly"
     @loaded="formLoaded"
     @changed="formChanged"
     @submitted="submitted"
     @render="formRender"
     @customEvent="customEvent"
+    :is-data-ready="isDataReady"
   ></formio>
   <footer-buttons
+    v-if="isDataReady && isFormLoaded"
     justify="space-between"
     :processing="processing"
     @primaryClick="wizardGoNext"
@@ -101,6 +103,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    isDataReady: {
+      type: Boolean,
+      required: true,
+    },
   },
   setup(props, context) {
     // Component's names on Form.IO definition that will be manipulated.
@@ -120,7 +126,10 @@ export default defineComponent({
     const isFirstPage = ref(true);
     const isLastPage = ref(false);
     const showNav = ref(false);
-    const formData = ref({} as StudentApplicationFormData);
+    const isFormLoaded = ref(false);
+    const additionalFormData = ref(
+      {} as { howWillYouBeAttendingTheProgram: OfferingIntensity },
+    );
     let offeringIntensity: OfferingIntensity;
 
     const wizardPrimaryLabel = computed(() => {
@@ -142,15 +151,15 @@ export default defineComponent({
 
     const loadFormDependencies = async () => {
       if (formInstance && props.initialData) {
-        formData.value = props.initialData;
-        offeringIntensity = formData.value.applicationOfferingIntensityValue;
+        offeringIntensity = props.initialData.applicationOfferingIntensityValue;
         const applicationIntensityComponent = formInstance.getComponent(
           OFFERING_INTENSITY_KEY,
         );
         // Program year forms older than 2025-26 required offering intensity to be injected to the form.
         // Check if the form has the offering intensity component and if so, inject the values.
         if (applicationIntensityComponent) {
-          formData.value.howWillYouBeAttendingTheProgram = offeringIntensity;
+          additionalFormData.value.howWillYouBeAttendingTheProgram =
+            offeringIntensity;
         }
         // When the form is editable, load locations and programs.
         if (!props.isReadOnly) {
@@ -243,6 +252,7 @@ export default defineComponent({
       formInstance.on("nextPage", prevNextNavigation);
 
       await loadFormDependencies();
+      isFormLoaded.value = true;
     };
 
     const getOfferingDetails = async (form: FormIOForm, locationId: number) => {
@@ -385,8 +395,9 @@ export default defineComponent({
       customEvent,
       showNav,
       isSaveDraftAllowed,
-      formData,
+      additionalFormData,
       wizardPrimaryLabel,
+      isFormLoaded,
     };
   },
 });

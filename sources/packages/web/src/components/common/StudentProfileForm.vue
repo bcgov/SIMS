@@ -2,6 +2,7 @@
   <formio-container
     formName="studentProfile"
     :formData="formModel"
+    :is-data-ready="isDataReady"
     @loaded="$emit('loaded', $event)"
     @submitted="$emit('submitted', $event)"
     @customEvent="$emit('customEvent', $event)"
@@ -34,6 +35,10 @@ export default defineComponent({
       type: Boolean,
       required: true,
       default: false,
+    },
+    isDataReady: {
+      type: Boolean,
+      required: true,
     },
   },
   setup(props) {

@@ -53,6 +53,7 @@
       :initialData="initialData"
       :programYearId="applicationDetail.applicationProgramYearID"
       :isReadOnly="true"
+      :is-data-ready="isDataReady"
     />
     <assess-application-change-request-modal
       ref="assessApplicationChangeRequestModal"
@@ -126,6 +127,7 @@ export default defineComponent({
     // Event emitter for application sidebar refresh.
     const { refreshApplicationSidebar } = useEmitterEvents();
     const showApplicationChangeAssessButtons = ref(true);
+    const isDataReady = ref(false);
 
     /**
      * Happens when all the form components are rendered, including lists.
@@ -156,6 +158,7 @@ export default defineComponent({
           applicationDetail.value.applicationOfferingIntensity,
         isReadOnly: true,
       };
+      isDataReady.value = true;
     });
 
     /**
@@ -344,6 +347,7 @@ export default defineComponent({
       assessApplicationChangeRequest,
       assessApplicationChangeRequestModal,
       showApplicationChangeAssessButtons,
+      isDataReady,
     };
   },
 });

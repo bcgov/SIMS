@@ -44,6 +44,7 @@
       :processing="submittingApplication"
       :savingDraft="savingDraft"
       :notDraft="notDraft"
+      :is-data-ready="isDataReady"
     />
   </student-page-container>
   <confirm-modal
@@ -182,6 +183,7 @@ export default defineComponent({
     // automaticDraftSaveInProgress is a boolean that ensures that multiple api calls for save
     // draft are not made while a draft save is in progress.
     let automaticDraftSaveInProgress = false;
+    const isDataReady = ref(false);
 
     const checkProgramYear = async () => {
       // check program year, if not active allow only readonly mode with a snackBar
@@ -263,6 +265,7 @@ export default defineComponent({
         isFulltimeAllowed,
       };
       existingApplication.value = applicationData;
+      isDataReady.value = true;
     });
 
     const callSaveDraft = async () => {
@@ -473,6 +476,7 @@ export default defineComponent({
       isLastPage,
       conditionsAccepted,
       BannerTypes,
+      isDataReady,
     };
   },
 });

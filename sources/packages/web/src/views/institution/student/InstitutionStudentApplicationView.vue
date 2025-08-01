@@ -20,6 +20,7 @@
       :initialData="initialData"
       :programYearId="applicationDetail.applicationProgramYearID"
       :isReadOnly="true"
+      :is-data-ready="isDataReady"
     />
   </full-page-container>
   <router-view />
@@ -50,6 +51,7 @@ export default defineComponent({
     const applicationDetail = ref({} as ApplicationBaseAPIOutDTO);
     const initialData = ref({} as StudentApplicationFormData);
     const selectedForm = ref();
+    const isDataReady = ref(false);
 
     onMounted(async () => {
       applicationDetail.value =
@@ -66,6 +68,7 @@ export default defineComponent({
           applicationDetail.value.applicationOfferingIntensity,
         isReadOnly: true,
       };
+      isDataReady.value = true;
     });
 
     return {
@@ -73,6 +76,7 @@ export default defineComponent({
       initialData,
       selectedForm,
       InstitutionRoutesConst,
+      isDataReady,
     };
   },
 });

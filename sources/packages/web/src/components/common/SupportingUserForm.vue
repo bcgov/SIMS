@@ -8,6 +8,7 @@
         :formName="supportingUser.formName"
         :formData="formInitialData"
         :readOnly="isReadonly"
+        :is-data-ready="isDataReady"
         @loaded="formLoaded"
         @submitted="submitted"
       >
@@ -81,9 +82,11 @@ export default defineComponent({
     const isLastPage = ref(false);
     const showNav = ref(false);
     const formInitialData = ref({} as Record<string, unknown>);
+    const isDataReady = ref(false);
 
     watchEffect(async () => {
       if (props.supportingUserId) {
+        isDataReady.value = false;
         supportingUser.value =
           await SupportingUsersService.shared.getSupportingUserData(
             props.supportingUserId,
@@ -117,6 +120,7 @@ export default defineComponent({
           hasValidSIN: supportingUser.value.personalInfo?.hasValidSIN,
           parentFullName: supportingUser.value.parentFullName,
         };
+        isDataReady.value = true;
       }
     });
 
@@ -165,6 +169,7 @@ export default defineComponent({
       supportingUser,
       BannerTypes,
       formInitialData,
+      isDataReady,
     };
   },
 });
