@@ -8,6 +8,7 @@
         :formName="supportingUser.formName"
         :formData="formInitialData"
         :readOnly="isReadonly"
+        :is-data-ready="isDataReady"
         @loaded="formLoaded"
         @submitted="submitted"
       >
@@ -167,6 +168,7 @@ export default defineComponent({
       supportingUser,
       BannerTypes,
       formInitialData,
+      isDataReady,
     };
   },
 });
