@@ -103,7 +103,7 @@ export default defineComponent({
       let cachedFormDefinition: string | null = null;
       // Avoid caching during development to allow that the changes
       // on form.io definitions have effect immediately.
-      if (!import.meta.env.PROD) {
+      if (!import.meta.env.DEV) {
         try {
           // Try to load the definition from the session storage.
           cachedFormDefinition = sessionStorage.getItem(cachedFormName);
