@@ -20,6 +20,7 @@ import { Queue } from "bull";
 import { VirusScanQueueInDTO } from "@sims/services/queue";
 import { FILE_SAVE_ERROR } from "../../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
+import { createHash } from "crypto";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
@@ -72,6 +73,10 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     newFile.student = { id: studentId } as Student;
     newFile.creator = { id: auditUserId } as User;
     newFile.virusScanStatus = VirusScanStatus.InProgress;
+    // Generate the file hash.
+    newFile.fileHash = createHash("sha256")
+      .update(createFile.fileContent)
+      .digest("hex");
 
     summary.info(`Saving the file ${createFile.fileName} to database.`);
     let savedFile: StudentFile;

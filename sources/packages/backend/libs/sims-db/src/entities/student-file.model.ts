@@ -101,4 +101,13 @@ export class StudentFile extends RecordDataModel {
     nullable: false,
   })
   virusScanStatusUpdatedOn: Date;
+  /**
+   * Hash of the file content (SHA256).
+   */
+  @Column({
+    name: "file_hash",
+    type: "char",
+    nullable: true,
+  })
+  fileHash?: string;
 }
