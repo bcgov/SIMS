@@ -1,8 +1,8 @@
 <template>
   <div v-show="!isFormReady">
     <slot name="loading"
-      ><v-skeleton-loader type="image, article"></v-skeleton-loader></slot
-    >"
+      ><v-skeleton-loader type="image, article"></v-skeleton-loader
+    ></slot>
   </div>
   <div
     v-show="isFormReady"
@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import { Formio } from "@formio/js";
 import { defineComponent } from "vue";
 import ApiClient from "@/services/http/ApiClient";
@@ -103,7 +103,7 @@ export default defineComponent({
       let cachedFormDefinition: string | null = null;
       // Avoid caching during development to allow that the changes
       // on form.io definitions have effect immediately.
-      if (!import.meta.env.DEV) {
+      if (!import.meta.env.PROD) {
         try {
           // Try to load the definition from the session storage.
           cachedFormDefinition = sessionStorage.getItem(cachedFormName);
@@ -182,9 +182,11 @@ export default defineComponent({
       isFormCreated.value = true;
     };
 
-    onMounted(async () => {
-      await loadFormDefinition(props.formName);
-      await createForm();
+    watchEffect(async () => {
+      if (props.formName && !formDefinition && props.isDataReady) {
+        await loadFormDefinition(props.formName);
+        await createForm();
+      }
     });
 
     watch(
