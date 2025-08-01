@@ -65,7 +65,7 @@ export class ObjectStorageService {
     return {
       contentLength: response.ContentLength,
       contentType: response.ContentType,
-      body: response.Body as NodeJS.ReadableStream,
+      body: response.Body,
     };
   }
 }
