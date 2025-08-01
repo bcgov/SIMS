@@ -74,6 +74,7 @@ export default defineComponent({
     // Register global utils functions.
     registerUtilsMethod("currencyFormatter", currencyFormatter);
     registerUtilsMethod("mapOfferingIntensity", mapOfferingIntensity);
+    let formDefinition: FormIOComponent;
 
     const formioContainerRef = ref(null);
     // Indicates if the form is created.
@@ -97,8 +98,8 @@ export default defineComponent({
       }
     };
 
-    onMounted(async () => {
-      const cachedFormName = await createCacheIdentifier(props.formName);
+    const loadFormDefinition = async (formName: string) => {
+      const cachedFormName = await createCacheIdentifier(formName);
       let cachedFormDefinition: string | null = null;
       // Avoid caching during development to allow that the changes
       // on form.io definitions have effect immediately.
@@ -111,7 +112,7 @@ export default defineComponent({
           // in the same way as it is the first time load.
         }
       }
-      let formDefinition: any;
+
       if (cachedFormDefinition) {
         formDefinition = JSON.parse(cachedFormDefinition);
       } else {
@@ -145,13 +146,18 @@ export default defineComponent({
         };
         createUniqueIDs(formDefinition);
       }
+    };
+
+    const createForm = async () => {
       form = await Formio.createForm(formioContainerRef.value, formDefinition, {
         fileService: new FormUploadService(),
         readOnly: props.readOnly,
+        submission: {
+          data: props.data ?? {},
+        },
       });
 
       form.nosubmit = true;
-      updateFormSubmissionData();
       context.emit("loaded", form);
 
       // Triggered when any component in the form is changed.
@@ -174,6 +180,11 @@ export default defineComponent({
         context.emit("render", form, event);
       });
       isFormCreated.value = true;
+    };
+
+    onMounted(async () => {
+      await loadFormDefinition(props.formName);
+      await createForm();
     });
 
     watch(
