@@ -104,6 +104,7 @@ export default defineComponent({
     };
 
     const getStudentDetails = async () => {
+      isDataReady.value = false;
       const accountApplication =
         await StudentAccountApplicationService.shared.getStudentAccountApplicationById(
           props.studentAccountApplicationId,
@@ -114,6 +115,7 @@ export default defineComponent({
       studentProfileFormModel.mode =
         StudentProfileFormModes.AESTAccountApproval;
       initialData.value = studentProfileFormModel;
+      isDataReady.value = true;
     };
 
     onMounted(getStudentDetails);

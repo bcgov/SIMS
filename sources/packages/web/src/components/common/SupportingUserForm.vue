@@ -86,6 +86,7 @@ export default defineComponent({
 
     watchEffect(async () => {
       if (props.supportingUserId) {
+        isDataReady.value = false;
         supportingUser.value =
           await SupportingUsersService.shared.getSupportingUserData(
             props.supportingUserId,

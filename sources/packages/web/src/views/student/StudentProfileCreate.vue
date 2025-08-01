@@ -92,6 +92,7 @@ export default defineComponent({
     };
 
     const getStudentDetails = async () => {
+      isDataReady.value = false;
       const data = {
         mode: StudentProfileFormModes.StudentCreate,
         identityProvider: AuthService.shared.userToken?.identityProvider,
@@ -106,6 +107,7 @@ export default defineComponent({
       }
 
       initialData.value = data;
+      isDataReady.value = true;
     };
 
     onMounted(getStudentDetails);
