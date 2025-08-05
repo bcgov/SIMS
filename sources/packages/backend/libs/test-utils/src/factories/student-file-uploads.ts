@@ -40,6 +40,7 @@ export function createFakeStudentFileUpload(
   studentFile.creator = relations?.creator;
   studentFile.fileOrigin = options?.fileOrigin ?? FileOriginType.Ministry;
   studentFile.virusScanStatus = VirusScanStatus.Pending;
+  studentFile.fileHash = "";
   return studentFile;
 }
 

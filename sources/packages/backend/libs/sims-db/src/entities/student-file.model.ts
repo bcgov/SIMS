@@ -101,4 +101,12 @@ export class StudentFile extends RecordDataModel {
     nullable: false,
   })
   virusScanStatusUpdatedOn: Date;
+  /**
+   * SHA256 hash of the file contents converted to a hexadecimal string.
+   */
+  @Column({
+    name: "file_hash",
+    type: "char",
+  })
+  fileHash: string;
 }
