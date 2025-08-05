@@ -133,6 +133,16 @@ export default defineComponent({
         },
       },
       {
+        title: "Appeals",
+        props: {
+          subtitle: "2025-2026 and later",
+          prependIcon: "mdi-folder-open-outline",
+          to: {
+            name: AESTRoutesConst.STUDENT_APPEALS_PENDING,
+          },
+        },
+      },
+      {
         title: "Change requests",
         props: {
           subtitle: "2025-2026 and later",

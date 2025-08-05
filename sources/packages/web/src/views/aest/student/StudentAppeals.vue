@@ -1,5 +1,5 @@
 <template>
-  <PendingAppealsTable appeals-type="change-requests" />
+  <PendingAppealsTable appeals-type="appeals" />
 </template>
 
 <script lang="ts">
