@@ -107,7 +107,6 @@ export class StudentFile extends RecordDataModel {
   @Column({
     name: "file_hash",
     type: "char",
-    nullable: true,
   })
-  fileHash?: string;
+  fileHash: string;
 }
