@@ -65,6 +65,7 @@ import {
   DataTableSortOrder,
   DEFAULT_PAGE_NUMBER,
   PaginatedResults,
+  PendingStudentRequestsTableHeaders,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -72,35 +73,6 @@ import { StudentAppealPendingSummaryAPIOutDTO } from "@/services/http/dto/Studen
 import { StudentAppealService } from "@/services/StudentAppealService";
 
 const DEFAULT_SORT_FIELD = "submittedDate";
-
-// Table headers for Vuetify data table
-const TABLE_HEADERS = [
-  {
-    title: "Date submitted",
-    key: "submittedDate",
-    sortable: true,
-  },
-  {
-    title: "Given names",
-    key: "firstName",
-    sortable: false,
-  },
-  {
-    title: "Last name",
-    key: "lastName",
-    sortable: true,
-  },
-  {
-    title: "Application #",
-    key: "applicationNumber",
-    sortable: true,
-  },
-  {
-    title: "Action",
-    key: "action",
-    sortable: false,
-  },
-];
 
 export interface PendingAppealsTableProps {
   /**
@@ -146,7 +118,7 @@ export default defineComponent({
         : "Appeals that require ministry review.";
     });
 
-    const tableHeaders = computed(() => TABLE_HEADERS);
+    const tableHeaders = computed(() => PendingStudentRequestsTableHeaders);
 
     const gotToAssessmentsSummary = (
       applicationId: number,
@@ -162,24 +134,14 @@ export default defineComponent({
     };
 
     /**
-     * Filter appeals based on the type.
-     * For change-requests: show appeals submitted before 2025 (legacy change requests)
-     * For appeals: show appeals submitted in 2025 or later (new appeals system)
+     * Create search criteria object that includes appeals type and search text
      */
-    const filterAppealsByType = (
-      appeals: StudentAppealPendingSummaryAPIOutDTO[],
-    ): StudentAppealPendingSummaryAPIOutDTO[] => {
-      return appeals.filter((appeal) => {
-        const submittedYear = new Date(appeal.submittedDate).getFullYear();
-
-        if (props.appealsType === "change-requests") {
-          // Show appeals submitted before 2025 (Pre 2025-2026)
-          return submittedYear < 2025;
-        } else {
-          // Show appeals submitted in 2025 or later (2025-2026 and later)
-          return submittedYear >= 2025;
-        }
-      });
+    const createSearchCriteria = (searchText?: string): string => {
+      const searchObj = {
+        appealsType: props.appealsType,
+        searchText: searchText || "",
+      };
+      return JSON.stringify(searchObj);
     };
 
     const getAppealList = async () => {
@@ -190,17 +152,10 @@ export default defineComponent({
           pageLimit: DEFAULT_PAGE_LIMIT,
           sortField: DEFAULT_SORT_FIELD,
           sortOrder: DataTableSortOrder.ASC,
-          searchCriteria: searchCriteria.value,
+          searchCriteria: createSearchCriteria(searchCriteria.value),
         });
 
-        // Filter the results based on the appeals type
-        const filteredResults = filterAppealsByType(allAppeals.results);
-
-        applicationAppeals.value = {
-          ...allAppeals,
-          results: filteredResults,
-          count: filteredResults.length,
-        };
+        applicationAppeals.value = allAppeals;
       } finally {
         isLoading.value = false;
       }
@@ -221,17 +176,10 @@ export default defineComponent({
           pageLimit: itemsPerPage,
           sortField: sortField,
           sortOrder: sortOrder,
-          searchCriteria: searchCriteria.value,
+          searchCriteria: createSearchCriteria(searchCriteria.value),
         });
 
-        // Filter the results based on the appeals type
-        const filteredResults = filterAppealsByType(allAppeals.results);
-
-        applicationAppeals.value = {
-          ...allAppeals,
-          results: filteredResults,
-          count: filteredResults.length,
-        };
+        applicationAppeals.value = allAppeals;
       } finally {
         isLoading.value = false;
       }

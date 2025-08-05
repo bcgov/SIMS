@@ -508,18 +508,61 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           .getSql()})`,
       );
     if (paginationOptions.searchCriteria) {
-      studentAppealsQuery
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where(getUserFullNameLikeSearch()).orWhere(
-              "application.applicationNumber Ilike :searchCriteria",
-            );
-          }),
-        )
-        .setParameter(
-          "searchCriteria",
-          `%${paginationOptions.searchCriteria.trim()}%`,
+      // Check if searchCriteria contains appeals type filtering
+      let searchText = "";
+      let appealsTypeFilter: string | null = null;
+
+      // Simple check for appeals type parameter
+      if (typeof paginationOptions.searchCriteria === "string") {
+        // Check if it contains appeals type parameter (simple string check)
+        if (paginationOptions.searchCriteria.includes("appealsType")) {
+          // Extract appeals type using simple string operations
+          const appealsTypeMatch = paginationOptions.searchCriteria.match(
+            /"appealsType"\s*:\s*"([^"]+)"/,
+          );
+          const searchTextMatch = paginationOptions.searchCriteria.match(
+            /"searchText"\s*:\s*"([^"]*)"/,
+          );
+
+          if (appealsTypeMatch) {
+            appealsTypeFilter = appealsTypeMatch[1];
+          }
+          if (searchTextMatch) {
+            searchText = searchTextMatch[1];
+          }
+        } else {
+          // If no appeals type found, treat entire string as search text
+          searchText = paginationOptions.searchCriteria;
+        }
+      }
+
+      // Add appeals type filtering based on submission year
+      if (appealsTypeFilter === "change-requests") {
+        // Show appeals submitted before 2025 (legacy change requests)
+        studentAppealsQuery.andWhere(
+          "EXTRACT(YEAR FROM studentAppeal.submittedDate) < :year",
+          { year: 2025 },
         );
+      } else if (appealsTypeFilter === "appeals") {
+        // Show appeals submitted in 2025 or later (new appeals system)
+        studentAppealsQuery.andWhere(
+          "EXTRACT(YEAR FROM studentAppeal.submittedDate) >= :year",
+          { year: 2025 },
+        );
+      }
+
+      // Apply regular search criteria if present
+      if (searchText && searchText.trim()) {
+        studentAppealsQuery
+          .andWhere(
+            new Brackets((qb) => {
+              qb.where(getUserFullNameLikeSearch()).orWhere(
+                "application.applicationNumber Ilike :searchCriteria",
+              );
+            }),
+          )
+          .setParameter("searchCriteria", `%${searchText.trim()}%`);
+      }
     }
 
     studentAppealsQuery
