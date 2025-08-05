@@ -9,4 +9,4 @@ ALTER TABLE
 ALTER COLUMN
   file_hash DROP DEFAULT;
 
-COMMENT ON COLUMN sims.student_files.file_hash IS 'SHA256 hash of the FILE contents converted to a hexadecimal string.';
+COMMENT ON COLUMN sims.student_files.file_hash IS 'SHA256 hash of the file contents converted to a hexadecimal string.';
