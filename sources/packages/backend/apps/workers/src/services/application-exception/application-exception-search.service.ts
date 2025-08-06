@@ -1,7 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
-import { ApplicationException } from "@sims/sims-db";
-import { InjectRepository } from "@nestjs/typeorm";
 import {
   ApplicationDataException,
   ApplicationDataExceptionFile,
@@ -10,23 +7,18 @@ import {
 /**
  * Manages student applications exceptions detected upon full-time/part-time application
  * submission, checking for exceptions already approved for the same student application,
- * avoid the work to analyze the same exception multiple times.
- * An exception should be considered "the same" when its data and files are the same.
+ * avoiding the work to analyze the same exception multiple times.
+ * An exception should be considered "the same" when its data and files did not change.
  */
 @Injectable()
-export class ApplicationExceptionUniquenessService {
-  constructor(
-    @InjectRepository(ApplicationException)
-    private readonly applicationException: Repository<ApplicationException>,
-  ) {}
-
+export class ApplicationExceptionSearchService {
   /**
    * Search entire object properties recursively trying to
-   * find properties with the value defined as "studentApplicationException"
+   * find properties with its key suffixed by  "ApplicationException"
    * which identifies an application exception to be reviewed.
    * @param payload object to have the properties checked.
    */
-  searchExceptionsObjects(payload: unknown): ApplicationDataException[] {
+  search(payload: unknown): ApplicationDataException[] {
     const applicationExceptions: ApplicationDataException[] = [];
     this.searchExceptionsObjectsRecursively(payload, applicationExceptions);
     return applicationExceptions;
@@ -81,6 +73,13 @@ export class ApplicationExceptionUniquenessService {
     }
   }
 
+  /**
+   * Creates the ApplicationDataException object from the dynamic
+   * data that was identified as an application exception.
+   * @param propertyKey
+   * @param applicationData
+   * @returns
+   */
   private createApplicationDataException(
     propertyKey: string,
     applicationData: ApplicationDataException,

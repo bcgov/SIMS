@@ -1,11 +1,16 @@
-export interface ApplicationDataException extends Record<string, unknown> {
+export interface ApplicationDataException {
   key: string;
-  description?: string;
+  description: string;
   hashableContent: unknown;
-  files?: ApplicationDataExceptionFile[];
+  files: ApplicationDataExceptionFile[];
 }
 
 export interface ApplicationDataExceptionFile {
   name: string;
   originalName: string;
+}
+
+export interface ApplicationDataExceptionHashed
+  extends ApplicationDataException {
+  fullHashContent: string;
 }

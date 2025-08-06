@@ -11,8 +11,9 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
+  ApplicationExceptionHashService,
+  ApplicationExceptionSearchService,
   ApplicationExceptionService,
-  ApplicationExceptionUniquenessService,
   ApplicationService,
 } from "../../services";
 import {
@@ -58,7 +59,8 @@ export class ApplicationController {
     private readonly applicationService: ApplicationService,
     private readonly applicationExceptionService: ApplicationExceptionService,
     private readonly notificationActionService: NotificationActionsService,
-    private readonly applicationExceptionUniquenessService: ApplicationExceptionUniquenessService,
+    private readonly applicationExceptionSearchService: ApplicationExceptionSearchService,
+    private readonly applicationExceptionHashService: ApplicationExceptionHashService,
   ) {}
 
   /**
@@ -230,11 +232,14 @@ export class ApplicationController {
         });
       }
       // Check for application exceptions present in the application dynamic data.
-      const exceptions =
-        this.applicationExceptionUniquenessService.searchExceptionsObjects(
-          application.data,
+      const exceptions = this.applicationExceptionSearchService.search(
+        application.data,
+      );
+      const hashedExceptions =
+        await this.applicationExceptionHashService.createHashedApplicationExceptions(
+          exceptions,
         );
-      console.log(inspect(exceptions, { depth: null }));
+      console.log(inspect(hashedExceptions, { depth: null }));
       // if (exceptions.length) {
       //   return await this.dataSource.transaction(async (entityManager) => {
       //     const exceptionPromise =

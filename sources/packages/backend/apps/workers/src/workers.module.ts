@@ -17,7 +17,8 @@ import {
   CRAIncomeVerificationService,
   MSFAANumberService,
   DisbursementScheduleService,
-  ApplicationExceptionUniquenessService,
+  ApplicationExceptionSearchService,
+  ApplicationExceptionHashService,
 } from "./services";
 import { ZeebeHealthIndicator, ZeebeTransportStrategy } from "./zeebe";
 import {
@@ -67,7 +68,8 @@ import { TerminusModule } from "@nestjs/terminus";
     StudentAssessmentService,
     ApplicationService,
     ApplicationExceptionService,
-    ApplicationExceptionUniquenessService,
+    ApplicationExceptionSearchService,
+    ApplicationExceptionHashService,
     SupportingUserService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
