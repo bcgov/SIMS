@@ -12,6 +12,7 @@ import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
   ApplicationExceptionService,
+  ApplicationExceptionUniquenessService,
   ApplicationService,
 } from "../../services";
 import {
@@ -48,6 +49,7 @@ import {
   MustReturnJobActionAcknowledgement,
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";
+import { inspect } from "util";
 
 @Controller()
 export class ApplicationController {
@@ -56,6 +58,7 @@ export class ApplicationController {
     private readonly applicationService: ApplicationService,
     private readonly applicationExceptionService: ApplicationExceptionService,
     private readonly notificationActionService: NotificationActionsService,
+    private readonly applicationExceptionUniquenessService: ApplicationExceptionUniquenessService,
   ) {}
 
   /**
@@ -177,6 +180,93 @@ export class ApplicationController {
         });
       }
       jobLogger.log("Verified application exception. No exceptions created.");
+      return job.complete({
+        applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+      });
+    } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
+  }
+
+  /**
+   * Searches the student application dynamic data recursively trying to
+   * find properties with the value defined as "studentApplicationException"
+   * which identifies an application exception to be reviewed by the Ministry
+   * and saves a notification to be sent to the ministry as a part of the same transaction.
+   * @returns application exceptions status.
+   */
+  @ZeebeWorker(Workers.VerifyUniqueApplicationExceptions, {
+    fetchVariable: [APPLICATION_ID],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
+  })
+  async verifyUniqueApplicationExceptions(
+    job: Readonly<
+      ZeebeJob<
+        ApplicationExceptionsJobInDTO,
+        ICustomHeaders,
+        ApplicationExceptionsJobOutDTO
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
+    try {
+      const application = await this.applicationService.getApplicationById(
+        job.variables.applicationId,
+        { loadDynamicData: true },
+      );
+      if (!application) {
+        const message = "Application id not found.";
+        jobLogger.error(message);
+        return job.error(APPLICATION_NOT_FOUND, message);
+      }
+      if (application.applicationException) {
+        // The exceptions were already processed for this application.
+        jobLogger.log("Exceptions were already processed for the application.");
+        return job.complete({
+          applicationExceptionStatus:
+            application.applicationException.exceptionStatus,
+        });
+      }
+      // Check for application exceptions present in the application dynamic data.
+      const exceptions =
+        this.applicationExceptionUniquenessService.searchExceptionsObjects(
+          application.data,
+        );
+      console.log(inspect(exceptions, { depth: null }));
+      // if (exceptions.length) {
+      //   return await this.dataSource.transaction(async (entityManager) => {
+      //     const exceptionPromise =
+      //       this.applicationExceptionService.createException(
+      //         job.variables.applicationId,
+      //         exceptions,
+      //         entityManager,
+      //       );
+      //     const student = application.student;
+      //     const ministryNotification: ApplicationExceptionRequestNotification =
+      //       {
+      //         givenNames: student.user.firstName,
+      //         lastName: student.user.lastName,
+      //         email: student.user.email,
+      //         birthDate: student.birthDate,
+      //         applicationNumber: application.applicationNumber,
+      //       };
+      //     const applicationExceptionRequestNotificationPromise =
+      //       this.notificationActionService.saveApplicationExceptionRequestNotification(
+      //         ministryNotification,
+      //         entityManager,
+      //       );
+      //     const [createdException] = await Promise.all([
+      //       exceptionPromise,
+      //       applicationExceptionRequestNotificationPromise,
+      //     ]);
+      //     jobLogger.log("Verified and created exception.");
+      //     jobLogger.log("Created notification for the created exception.");
+      //     return job.complete({
+      //       applicationExceptionStatus: createdException.exceptionStatus,
+      //     });
+      //   });
       return job.complete({
         applicationExceptionStatus: ApplicationExceptionStatus.Approved,
       });
