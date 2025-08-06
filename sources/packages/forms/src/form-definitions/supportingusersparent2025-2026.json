@@ -1044,7 +1044,7 @@
                               "input": true
                             },
                             {
-                              "label": "Did you claim this dependant on their {{data.calculatedTaxYear}} Income Tax Return due to a disability?",
+                              "label": "Did you claim this dependant on your {{data.calculatedTaxYear}} Income Tax Return due to a disability?",
                               "optionsLabelPosition": "right",
                               "inline": false,
                               "tableView": false,
