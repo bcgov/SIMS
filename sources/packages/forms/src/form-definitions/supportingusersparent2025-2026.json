@@ -1044,7 +1044,7 @@
                               "input": true
                             },
                             {
-                              "label": "Did you claim this dependant on their 20xx Income Tax Return due to a disability?",
+                              "label": "Did you claim this dependant on their {{data.calculatedTaxYear}} Income Tax Return due to a disability?",
                               "optionsLabelPosition": "right",
                               "inline": false,
                               "tableView": false,
@@ -1064,6 +1064,7 @@
                                 "required": true,
                                 "onlyAvailableItems": true
                               },
+                              "validateWhenHidden": false,
                               "key": "declaredOnTaxes",
                               "type": "radio",
                               "input": true
