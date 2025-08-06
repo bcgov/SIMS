@@ -179,7 +179,7 @@ export default defineComponent({
       });
 
       // When the form submission data is set, the form is rendered again.
-      // To visually hide the form for the rendering to be completed, a delay is set.
+      // To visually hide the form until the rendering to be completed, a delay is set.
       setTimeout(() => {
         isFormCreated.value = true;
         context.emit("loaded", form);
