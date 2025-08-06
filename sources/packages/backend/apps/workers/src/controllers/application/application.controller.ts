@@ -21,6 +21,8 @@ import {
   ApplicationChangeRequestApprovalJobOutDTO,
   ApplicationExceptionsJobInDTO,
   ApplicationExceptionsJobOutDTO,
+  ApplicationUniqueExceptionsJobInDTO,
+  ApplicationUniqueExceptionsJobOutDTO,
   ApplicationUpdateStatusJobHeaderDTO,
   ApplicationUpdateStatusJobInDTO,
 } from "..";
@@ -206,9 +208,9 @@ export class ApplicationController {
   async verifyUniqueApplicationExceptions(
     job: Readonly<
       ZeebeJob<
-        ApplicationExceptionsJobInDTO,
+        ApplicationUniqueExceptionsJobInDTO,
         ICustomHeaders,
-        ApplicationExceptionsJobOutDTO
+        ApplicationUniqueExceptionsJobOutDTO
       >
     >,
   ): Promise<MustReturnJobActionAcknowledgement> {
@@ -235,6 +237,7 @@ export class ApplicationController {
       const exceptions = this.applicationExceptionSearchService.search(
         application.data,
       );
+      // Create a hash for the exceptions to ensure uniqueness.
       const hashedExceptions =
         await this.applicationExceptionHashService.createHashedApplicationExceptions(
           exceptions,
