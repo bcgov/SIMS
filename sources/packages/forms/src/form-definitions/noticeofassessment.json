@@ -477,13 +477,13 @@
                 },
                 {
                   "label": "Table",
-                  "numRows": 9,
                   "cellAlignment": "left",
                   "customClass": "formio-bordered formio-table-last-col-background extra-small pb-5",
                   "hover": true,
                   "condensed": true,
                   "key": "table2",
                   "type": "table",
+                  "numRows": 14,
                   "input": false,
                   "tableView": false,
                   "rows": [
@@ -928,7 +928,7 @@
                             ],
                             "content": "Other allowable costs",
                             "refreshOnChange": false,
-                            "key": "html16",
+                            "key": "html18",
                             "type": "htmlelement",
                             "input": false,
                             "tableView": false,
@@ -970,6 +970,330 @@
                             "hideLabel": true,
                             "disabled": true,
                             "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.otherAllowableCost, '(Not eligible)');",
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "HTML",
+                            "tag": "p",
+                            "className": "grid-row-indentation-first-level",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Child support costs",
+                            "refreshOnChange": false,
+                            "key": "html21",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalChildSpousalSupport, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text22",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalChildSpousalSupport, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text26",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "HTML",
+                            "tag": "p",
+                            "className": "grid-row-indentation-first-level",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Secondary residence allowance",
+                            "refreshOnChange": false,
+                            "key": "html20",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalSecondResidence, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text21",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalSecondResidence, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text25",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "HTML",
+                            "tag": "p",
+                            "className": "grid-row-indentation-first-level",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Additional transportation allowance",
+                            "refreshOnChange": false,
+                            "key": "html19",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.workflowData?.totalAdditionalTransportationAllowance, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text20",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.workflowData?.totalAdditionalTransportationAllowance, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text24",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "HTML",
+                            "tag": "p",
+                            "className": "grid-row-indentation-first-level",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Partner student loan payments",
+                            "refreshOnChange": false,
+                            "key": "html16",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.partnerStudentLoans, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text19",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.partnerStudentLoans, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text23",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "HTML",
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Discretionary costs",
+                            "refreshOnChange": false,
+                            "key": "html17",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.exceptionalCosts, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text17",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.exceptionalCosts, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text18",
+                            "type": "textfield",
+                            "input": true,
                             "isNew": false
                           }
                         ]
@@ -1460,19 +1784,21 @@
                       {
                         "components": [
                           {
-                            "input": true,
-                            "tableView": false,
                             "label": "Text",
-                            "key": "table5Text7",
-                            "persistent": false,
-                            "clearOnHide": false,
-                            "spellcheck": false,
-                            "type": "textfield",
-                            "inputFormat": "html",
-                            "hideLabel": true,
-                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalAssetContribution, '-');",
+                            "applyMaskOn": "change",
                             "customClass": "font-weight-bold",
+                            "hideLabel": true,
+                            "spellcheck": false,
                             "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentAssessedContribution, '-');",
+                            "validateWhenHidden": false,
+                            "key": "table5Text7",
+                            "type": "textfield",
+                            "input": true,
                             "isNew": false
                           }
                         ]

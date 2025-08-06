@@ -48,6 +48,7 @@ export interface AssessmentHistorySummaryAPIOutDTO {
 
 export interface AssessmentNOAAPIOutDTO {
   assessment: Assessment;
+  workflowData: unknown;
   applicationId: number;
   applicationNumber: string;
   applicationCurrentAssessmentId: number;
