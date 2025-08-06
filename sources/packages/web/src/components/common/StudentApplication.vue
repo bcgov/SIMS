@@ -250,9 +250,8 @@ export default defineComponent({
       };
       formInstance.on("prevPage", prevNextNavigation);
       formInstance.on("nextPage", prevNextNavigation);
-
-      await loadFormDependencies();
       isFormLoaded.value = true;
+      await loadFormDependencies();
     };
 
     const getOfferingDetails = async (form: FormIOForm, locationId: number) => {
