@@ -22,3 +22,7 @@ export const MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE = 100000000;
  * Canada country code.
  */
 export const CANADA_COUNTRY_CODE = "CA";
+/**
+ * Formio load data processing view delay.
+ */
+export const FORMIO_LOAD_DATA_PROCESSING_VIEW_DELAY = 200;

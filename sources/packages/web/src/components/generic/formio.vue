@@ -25,6 +25,7 @@ import {
 } from "@/types";
 import { v4 as uuid } from "uuid";
 import { useFormatters, useFormioUtils, useOffering } from "@/composables";
+import { FORMIO_LOAD_DATA_PROCESSING_VIEW_DELAY } from "@/constants/system-constants";
 
 export default defineComponent({
   emits: {
@@ -183,7 +184,7 @@ export default defineComponent({
       setTimeout(() => {
         isFormCreated.value = true;
         context.emit("loaded", form);
-      }, 200);
+      }, FORMIO_LOAD_DATA_PROCESSING_VIEW_DELAY);
     };
 
     watchEffect(async () => {
