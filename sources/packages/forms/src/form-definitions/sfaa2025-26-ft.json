@@ -5498,9 +5498,9 @@
               ]
             },
             {
-              "label": "Will your partner be at home caring for eligible dependents on a full-time basis during your entire study period?",
+              "label": "Will your partner be at home caring for eligible dependants on a full-time basis during your entire study period?",
               "optionsLabelPosition": "right",
-              "tooltip": "Answer 'Yes' to this question if your spouse/common-law partner will be caring for eligible dependent children aged 11 years and/or disabled/infirm dependents 12 years of age or older claimed on your income tax return as of the class start date. \r\n\r\nFor StudentAid BC purposes, eligible dependent children are dependent children for whom the Canada Child Tax Benefit is claimed. Eligible dependent children must meet one of the following criteria:\r\n\r\n- The student and/or spouse/common-law partner must be guardians of the children who must live with the student or spouse/common-law partner at least two full days per week; or\r\n\r\n- The children are the student's foster children and foster-parent income is claimed on application.",
+              "tooltip": "Answer 'Yes' to this question if your spouse/common-law partner will be caring for eligible dependant children aged 11 years and/or disabled/infirm dependants 12 years of age or older claimed on your income tax return as of the class start date. \r\n\r\nFor StudentAid BC purposes, eligible dependant children are dependant children for whom the Canada Child Tax Benefit is claimed. Eligible dependant children must meet one of the following criteria:\r\n\r\n- The student and/or spouse/common-law partner must be guardians of the children who must live with the student or spouse/common-law partner at least two full days per week; or\r\n\r\n- The children are the student's foster children and foster-parent income is claimed on application.",
               "inline": false,
               "tableView": false,
               "values": [
