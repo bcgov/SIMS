@@ -317,8 +317,13 @@ export interface CalculatedAssessmentModel {
   calculatedDataProvincialAssessedNeed: number;
   calculatedDataTotalParentalContribution: number;
   calculatedDataTotalSpouseContribution: number;
+  calculatedDataProvincialFSCExempt: boolean;
+  calculatedDataFederalFSCExempt: boolean;
   calculatedDataTotalFederalFSC: number;
   calculatedDataTotalProvincialFSC: number;
+  calculatedDataTotalFederalContribution: number;
+  calculatedDataTotalProvincialContribution: number;
+  calculatedDataTotalTargetedResources: number;
   calculatedDataTotalEligibleDependants: number;
   calculatedDataTotalScholarshipsBursaries: number;
   calculatedDataExemptScholarshipsBursaries: number;
