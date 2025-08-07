@@ -56,9 +56,8 @@ export class ApplicationExceptionRequest extends RecordDataModel {
    */
   @Column({
     name: "exception_description",
-    nullable: true,
   })
-  exceptionDescription?: string;
+  exceptionDescription: string;
   /**
    * Reference to a previously approved exception request that was considered
    * to have the same content, which includes also associated files.

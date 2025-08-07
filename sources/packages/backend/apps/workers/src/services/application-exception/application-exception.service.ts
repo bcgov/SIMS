@@ -37,9 +37,55 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     newException.application = { id: applicationId } as Application;
     newException.exceptionStatus = ApplicationExceptionStatus.Pending;
     newException.exceptionRequests = exceptionNames.map(
-      (exceptionName) => ({ exceptionName } as ApplicationExceptionRequest),
+      (exceptionName) =>
+        ({
+          exceptionName,
+          exceptionDescription: this.getExceptionDescription(exceptionName),
+        } as ApplicationExceptionRequest),
     );
     return entityManager.getRepository(ApplicationException).save(newException);
+  }
+
+  /**
+   * Get the description for a specific application exception.
+   * Temporary mapping for known exceptions to be used while the new
+   * exception handling process is not available for part-time applications.
+   */
+  private getExceptionDescription(exceptionName: string): string {
+    switch (exceptionName) {
+      case "citizenshipForPermanentResidencyApplicationException":
+        return "Citizenship for permanent residency";
+      case "citizenshipForProtectedPersonsApplicationException":
+        return "Citizenship for protected persons";
+      case "citizenshipForBCResidencyApplicationException":
+        return "Citizenship for B.C. residency";
+      case "dependantsIncomeTaxApplicationException":
+        return "Dependant's income tax";
+      case "dependantsSharedCustodyApplicationException":
+        return "Dependant's shared custody";
+      case "estrangedFromParentsApplicationException":
+        return "Modified Independent";
+      case "parentsResidencyApplicationException":
+        return "Parent residency";
+      case "exceptionalExpensesApplicationException":
+        return "Exceptional expenses";
+      case "rentLivingSituationApplicationException":
+        return "Rent living situation";
+      case "transportationApplicationException":
+        return "Transportation";
+      case "studyEndDateIsPastApplicationException":
+        return "Study end date is past";
+      case "currentYearIncomeApplicationException":
+        return "Current Year Income";
+      case "currentYearPartnerIncomeApplicationException":
+        return "Partner current year income";
+      case "currentYearParentIncomeApplicationException":
+        return "Parent current year income";
+      case "marriedCommonLawDomesticViolenceApplicationException":
+        return "Married/common-law domestic violence";
+      default:
+        return "Unknown exception";
+    }
   }
 
   /**
