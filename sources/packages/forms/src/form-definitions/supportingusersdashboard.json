@@ -39,48 +39,13 @@
                   "value": ""
                 }
               ],
-              "content": "Please provide your financial information to support your spouse/common-law partner's student financial aid application.",
+              "content": "Please provide your financial information to support your dependant or spouse/common-law partner's student financial aid application.",
               "refreshOnChange": false,
               "key": "mainMessage",
               "type": "htmlelement",
               "input": false,
               "tableView": false,
               "hideOnChildrenHidden": false
-            },
-            {
-              "key": "columnsContent",
-              "label": "Content",
-              "input": false,
-              "tag": "p",
-              "attrs": [
-                {
-                  "value": "",
-                  "attr": ""
-                }
-              ],
-              "className": "mb-2",
-              "content": "Before you start your submission, make sure you have the following information ready:",
-              "type": "htmlelement",
-              "hideLabel": true,
-              "tableView": false
-            },
-            {
-              "label": "Content",
-              "tag": "ul",
-              "className": "align-bullets",
-              "attrs": [
-                {
-                  "value": "",
-                  "attr": ""
-                }
-              ],
-              "content": "<li>Your spouse/common-law partner's application number</li>\n<li>Your spouse/common-law partner's last name</li>\n<li>Your spouse/common-law partner's date of birth</li>\n<li>Your previous year's tax return information</li>",
-              "refreshOnChange": false,
-              "key": "columnsContent2",
-              "type": "htmlelement",
-              "input": false,
-              "hideLabel": true,
-              "tableView": false
             },
             {
               "label": "Columns",
@@ -107,7 +72,7 @@
                               "value": ""
                             }
                           ],
-                          "content": "For parents",
+                          "content": "Parents",
                           "refreshOnChange": false,
                           "key": "headerForParents",
                           "type": "htmlelement",
@@ -129,6 +94,41 @@
                           "input": false,
                           "tableView": false,
                           "tag": "p"
+                        },
+                        {
+                          "key": "columnsContent1",
+                          "label": "Content",
+                          "input": false,
+                          "tag": "p",
+                          "attrs": [
+                            {
+                              "value": "",
+                              "attr": ""
+                            }
+                          ],
+                          "className": "mb-2",
+                          "content": "Before you start your submission, make sure you have the following information ready:",
+                          "type": "htmlelement",
+                          "hideLabel": true,
+                          "tableView": false
+                        },
+                        {
+                          "label": "Content",
+                          "tag": "ul",
+                          "className": "align-bullets",
+                          "attrs": [
+                            {
+                              "value": "",
+                              "attr": ""
+                            }
+                          ],
+                          "content": "<li>Your dependant's application number</li>\n<li>Your dependant's last name </li>\n<li>Your full name, as submitted on your dependant's application form</li>\n<li>Your previous year's tax return information</li>\n\n\n\n \n",
+                          "refreshOnChange": false,
+                          "key": "columnsContent3",
+                          "type": "htmlelement",
+                          "input": false,
+                          "hideLabel": true,
+                          "tableView": false
                         },
                         {
                           "label": "Start submission",
@@ -167,14 +167,14 @@
                         {
                           "label": "HTML",
                           "tag": "h2",
-                          "className": "category-header-medium primary-color mb-6",
+                          "className": "category-header-medium primary-color mb-2",
                           "attrs": [
                             {
                               "attr": "",
                               "value": ""
                             }
                           ],
-                          "content": "Spouse/common-law partner information",
+                          "content": "Spouse/common-law partners",
                           "refreshOnChange": false,
                           "key": "headerForParents",
                           "type": "htmlelement",
@@ -195,6 +195,41 @@
                           "key": "parentInformationRequestMessage1",
                           "type": "htmlelement",
                           "input": false,
+                          "tableView": false
+                        },
+                        {
+                          "key": "columnsContent",
+                          "label": "Content",
+                          "input": false,
+                          "tag": "p",
+                          "attrs": [
+                            {
+                              "value": "",
+                              "attr": ""
+                            }
+                          ],
+                          "className": "mb-2",
+                          "content": "Before you start your submission, make sure you have the following information ready:",
+                          "type": "htmlelement",
+                          "hideLabel": true,
+                          "tableView": false
+                        },
+                        {
+                          "label": "Content",
+                          "tag": "ul",
+                          "className": "align-bullets",
+                          "attrs": [
+                            {
+                              "value": "",
+                              "attr": ""
+                            }
+                          ],
+                          "content": "<li>Your spouse/common-law partner's application number</li>\n<li>Your spouse/common-law partner's last name</li>\n<li>Your spouse/common-law partner's date of birth</li>\n<li>Your previous year's tax return information</li>",
+                          "refreshOnChange": false,
+                          "key": "columnsContent2",
+                          "type": "htmlelement",
+                          "input": false,
+                          "hideLabel": true,
                           "tableView": false
                         },
                         {
