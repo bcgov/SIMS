@@ -85,6 +85,7 @@ export default defineComponent({
     const isFormReady = computed(
       () => isFormCreated.value && props.isDataReady,
     );
+    let createFormInProgress = false;
     let form: FormIOForm;
 
     // Update the form submission data and triggers the form redraw.
@@ -152,39 +153,48 @@ export default defineComponent({
     };
 
     const createForm = async () => {
-      form = await Formio.createForm(formioContainerRef.value, formDefinition, {
-        fileService: new FormUploadService(),
-        readOnly: props.readOnly,
-      });
-      updateFormSubmissionData();
-      form.nosubmit = true;
+      try {
+        createFormInProgress = true;
+        form = await Formio.createForm(
+          formioContainerRef.value,
+          formDefinition,
+          {
+            fileService: new FormUploadService(),
+            readOnly: props.readOnly,
+          },
+        );
+        updateFormSubmissionData();
+        form.nosubmit = true;
 
-      // Triggered when any component in the form is changed.
-      form.on("change", (event: FormIOChangeEvent) => {
-        context.emit("changed", form, event);
-      });
+        // Triggered when any component in the form is changed.
+        form.on("change", (event: FormIOChangeEvent) => {
+          context.emit("changed", form, event);
+        });
 
-      form.on("submit", (submission: any) => {
-        context.emit("submitted", submission.data, form);
-      });
+        form.on("submit", (submission: any) => {
+          context.emit("submitted", submission.data, form);
+        });
 
-      form.on("customEvent", (event: FormIOCustomEvent) => {
-        context.emit("customEvent", form, event);
-      });
+        form.on("customEvent", (event: FormIOCustomEvent) => {
+          context.emit("customEvent", form, event);
+        });
 
-      // The form is done rendering and has completed the attach phase.
-      // Happens, for instance, after the form has the 'redraw' method
-      // executed, for instance, after data property is changed.
-      form.on("render", (event: HTMLElement) => {
-        context.emit("render", form, event);
-      });
+        // The form is done rendering and has completed the attach phase.
+        // Happens, for instance, after the form has the 'redraw' method
+        // executed, for instance, after data property is changed.
+        form.on("render", (event: HTMLElement) => {
+          context.emit("render", form, event);
+        });
 
-      // When the form submission data is set, the form is rendered again.
-      // To visually hide the form until the rendering to be completed, a delay is set.
-      setTimeout(() => {
-        isFormCreated.value = true;
-        context.emit("loaded", form);
-      }, FORMIO_LOAD_DATA_PROCESSING_VIEW_DELAY);
+        // When the form submission data is set, the form is rendered again.
+        // To visually hide the form until the rendering to be completed, a delay is set.
+        setTimeout(() => {
+          isFormCreated.value = true;
+          context.emit("loaded", form);
+        }, FORMIO_LOAD_DATA_PROCESSING_VIEW_DELAY);
+      } finally {
+        createFormInProgress = false;
+      }
     };
 
     watchEffect(async () => {
@@ -193,7 +203,11 @@ export default defineComponent({
           await loadFormDefinition(props.formName);
         }
         // Form definition is expected to be loaded at this point.
-        if (props.isDataReady && !isFormCreated.value) {
+        if (
+          props.isDataReady &&
+          !isFormCreated.value &&
+          !createFormInProgress
+        ) {
           await createForm();
         }
       }
