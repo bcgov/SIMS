@@ -508,50 +508,34 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           .getSql()})`,
       );
     if (paginationOptions.searchCriteria) {
-      try {
-        const searchObj = JSON.parse(paginationOptions.searchCriteria);
-        const appealsTypeFilter = searchObj?.appealsType;
-        const searchText = searchObj?.searchText?.trim() || "";
+      const searchObj = JSON.parse(paginationOptions.searchCriteria);
+      const appealsTypeFilter = searchObj?.appealsType;
+      const searchText = searchObj?.searchText?.trim() || "";
 
-        // Filter by year based on appeals type
-        if (appealsTypeFilter === "change-requests") {
-          studentAppealsQuery.andWhere(
-            "EXTRACT(YEAR FROM studentAppeal.submittedDate) < :year",
-            { year: 2025 },
-          );
-        } else if (appealsTypeFilter === "appeals") {
-          studentAppealsQuery.andWhere(
-            "EXTRACT(YEAR FROM studentAppeal.submittedDate) >= :year",
-            { year: 2025 },
-          );
-        }
+      // Filter by year based on appeals type
+      if (appealsTypeFilter === "change-requests") {
+        studentAppealsQuery.andWhere(
+          "EXTRACT(YEAR FROM studentAppeal.submittedDate) < :year",
+          { year: 2025 },
+        );
+      } else if (appealsTypeFilter === "appeals") {
+        studentAppealsQuery.andWhere(
+          "EXTRACT(YEAR FROM studentAppeal.submittedDate) >= :year",
+          { year: 2025 },
+        );
+      }
 
-        // Apply text search if present
-        if (searchText) {
-          studentAppealsQuery
-            .andWhere(
-              new Brackets((qb) => {
-                qb.where(getUserFullNameLikeSearch()).orWhere(
-                  "application.applicationNumber Ilike :searchCriteria",
-                );
-              }),
-            )
-            .setParameter("searchCriteria", `%${searchText}%`);
-        }
-      } catch (error) {
-        // If JSON parsing fails, treat as simple text search
-        const searchText = paginationOptions.searchCriteria.trim();
-        if (searchText) {
-          studentAppealsQuery
-            .andWhere(
-              new Brackets((qb) => {
-                qb.where(getUserFullNameLikeSearch()).orWhere(
-                  "application.applicationNumber Ilike :searchCriteria",
-                );
-              }),
-            )
-            .setParameter("searchCriteria", `%${searchText}%`);
-        }
+      // Apply text search if present
+      if (searchText) {
+        studentAppealsQuery
+          .andWhere(
+            new Brackets((qb) => {
+              qb.where(getUserFullNameLikeSearch()).orWhere(
+                "application.applicationNumber Ilike :searchCriteria",
+              );
+            }),
+          )
+          .setParameter("searchCriteria", `%${searchText}%`);
       }
     }
 
