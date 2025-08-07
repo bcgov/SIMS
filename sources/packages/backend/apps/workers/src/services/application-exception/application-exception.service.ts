@@ -50,6 +50,8 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
    * Get the description for a specific application exception.
    * Temporary mapping for known exceptions to be used while the new
    * exception handling process is not available for part-time applications.
+   * @param exceptionName unique identifier name of the exception.
+   * @returns description of the exception.
    */
   private getExceptionDescription(exceptionName: string): string {
     switch (exceptionName) {

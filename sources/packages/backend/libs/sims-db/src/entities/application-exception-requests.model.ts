@@ -67,10 +67,10 @@ export class ApplicationExceptionRequest extends RecordDataModel {
     nullable: true,
   })
   @JoinColumn({
-    name: "approval_exception_id",
+    name: "approval_exception_request_id",
     referencedColumnName: ColumnNames.ID,
   })
-  approvalException?: ApplicationExceptionRequest;
+  approvalExceptionRequestId?: ApplicationExceptionRequest;
   /**
    * Hash of the application exception data, which also include files
    * names and content hashes.
