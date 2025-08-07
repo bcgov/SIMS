@@ -525,14 +525,6 @@ export const PendingChangeRequestsTableHeaders = [
   { title: "Date submitted", sortable: true, key: "submittedDate" },
   { title: "Given names", sortable: false, key: "firstName" },
   { title: "Last name", sortable: true, key: "lastName" },
-  { title: "Application #", sortable: true, key: "applicationNumber" },
-  { title: "Action", sortable: false, key: "action" },
-];
-
-export const PendingStudentRequestsTableHeaders = [
-  { title: "Date submitted", sortable: true, key: "submittedDate" },
-  { title: "Given names", sortable: false, key: "firstName" },
-  { title: "Last name", sortable: true, key: "lastName" },
-  { title: "Application #", sortable: true, key: "applicationNumber" },
+  { title: "Application", sortable: true, key: "applicationNumber" },
   { title: "Action", sortable: false, key: "action" },
 ];

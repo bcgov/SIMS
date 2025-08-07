@@ -14,7 +14,7 @@
           label="Search name or application #"
           variant="outlined"
           v-model="searchCriteria"
-          @keyup.enter="resetPageAndLoadApplications"
+          @keyup.enter="searchAppeals"
           prepend-inner-icon="mdi-magnify"
           hide-details="auto"
         >
@@ -65,7 +65,8 @@ import {
   DataTableSortOrder,
   DEFAULT_PAGE_NUMBER,
   PaginatedResults,
-  PendingStudentRequestsTableHeaders,
+  PendingChangeRequestsTableHeaders,
+  PageAndSortEvent,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -96,6 +97,10 @@ export default defineComponent({
     const router = useRouter();
     const isLoading = ref(false);
     const searchCriteria = ref();
+    const page = ref(DEFAULT_PAGE_NUMBER);
+    const pageLimit = ref(DEFAULT_PAGE_LIMIT);
+    const sortField = ref(DEFAULT_SORT_FIELD);
+    const sortOrder = ref(DataTableSortOrder.ASC);
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
     const applicationAppeals = ref(
       {} as PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>,
@@ -120,7 +125,7 @@ export default defineComponent({
         : "Appeals that require ministry review.";
     });
 
-    const tableHeaders = computed(() => PendingStudentRequestsTableHeaders);
+    const tableHeaders = computed(() => PendingChangeRequestsTableHeaders);
     const gotToAssessmentsSummary = (
       applicationId: number,
       studentId: number,
@@ -142,61 +147,55 @@ export default defineComponent({
       return JSON.stringify(searchCriteria);
     };
 
-    const buildPaginationOptions = (options: {
-      page?: number;
-      pageLimit?: number;
-      sortField?: string;
-      sortOrder?: DataTableSortOrder;
-    }) => ({
-      page: options.page ?? DEFAULT_PAGE_NUMBER,
-      pageLimit: options.pageLimit ?? DEFAULT_PAGE_LIMIT,
-      sortField: options.sortField ?? DEFAULT_SORT_FIELD,
-      sortOrder: options.sortOrder ?? DataTableSortOrder.ASC,
-      searchCriteria: createSearchCriteria(searchCriteria.value),
-    });
-
     const getAppealList = async () => {
       isLoading.value = true;
       try {
-        const paginationOptions = buildPaginationOptions({});
-        const allAppeals = await StudentAppealService.shared.getPendingAppeals(
-          paginationOptions,
-        );
-
-        applicationAppeals.value = allAppeals;
+        applicationAppeals.value =
+          await StudentAppealService.shared.getPendingAppeals({
+            page: page.value,
+            pageLimit: pageLimit.value,
+            sortField: sortField.value,
+            sortOrder: sortOrder.value,
+            searchCriteria: createSearchCriteria(searchCriteria.value),
+          });
       } finally {
         isLoading.value = false;
       }
+    };
+
+    const pageEvent = async (event: PageAndSortEvent) => {
+      page.value = event?.page;
+      pageLimit.value = event?.rows;
+      await getAppealList();
+    };
+
+    const sortEvent = async (event: PageAndSortEvent) => {
+      page.value = DEFAULT_PAGE_NUMBER;
+      pageLimit.value = DEFAULT_PAGE_LIMIT;
+      sortField.value = event.sortField;
+      sortOrder.value = event.sortOrder;
+      await getAppealList();
+    };
+
+    const searchAppeals = async () => {
+      page.value = DEFAULT_PAGE_NUMBER;
+      pageLimit.value = DEFAULT_PAGE_LIMIT;
+      await getAppealList();
     };
 
     const paginationAndSortEvent = async (options: any) => {
-      isLoading.value = true;
-      try {
-        const { page, itemsPerPage, sortBy } = options;
-        const sortField = sortBy?.length ? sortBy[0].key : DEFAULT_SORT_FIELD;
-        const sortOrder =
-          sortBy?.length && sortBy[0].order === "desc"
+      const { page: currentPage, itemsPerPage, sortBy } = options;
+      page.value = currentPage;
+      pageLimit.value = itemsPerPage;
+
+      if (sortBy?.length) {
+        sortField.value = sortBy[0].key;
+        sortOrder.value =
+          sortBy[0].order === "desc"
             ? DataTableSortOrder.DESC
             : DataTableSortOrder.ASC;
-
-        const paginationOptions = buildPaginationOptions({
-          page,
-          pageLimit: itemsPerPage,
-          sortField,
-          sortOrder,
-        });
-
-        const allAppeals = await StudentAppealService.shared.getPendingAppeals(
-          paginationOptions,
-        );
-
-        applicationAppeals.value = allAppeals;
-      } finally {
-        isLoading.value = false;
       }
-    };
 
-    const resetPageAndLoadApplications = async () => {
       await getAppealList();
     };
 
@@ -213,8 +212,10 @@ export default defineComponent({
       tableHeaders,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
+      pageEvent,
+      sortEvent,
+      searchAppeals,
       paginationAndSortEvent,
-      resetPageAndLoadApplications,
       searchCriteria,
       pageSubTitle,
       pageTitle,
