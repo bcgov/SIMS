@@ -508,42 +508,50 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           .getSql()})`,
       );
     if (paginationOptions.searchCriteria) {
-      let searchText = "";
-      let appealsTypeFilter: string | null = null;
-
-      if (typeof paginationOptions.searchCriteria === "string") {
+      try {
         const searchObj = JSON.parse(paginationOptions.searchCriteria);
-        if (searchObj && typeof searchObj === "object") {
-          appealsTypeFilter = searchObj.appealsType || null;
-          searchText = searchObj.searchText || "";
-        } else {
-          searchText = paginationOptions.searchCriteria;
+        const appealsTypeFilter = searchObj?.appealsType;
+        const searchText = searchObj?.searchText?.trim() || "";
+
+        // Filter by year based on appeals type
+        if (appealsTypeFilter === "change-requests") {
+          studentAppealsQuery.andWhere(
+            "EXTRACT(YEAR FROM studentAppeal.submittedDate) < :year",
+            { year: 2025 },
+          );
+        } else if (appealsTypeFilter === "appeals") {
+          studentAppealsQuery.andWhere(
+            "EXTRACT(YEAR FROM studentAppeal.submittedDate) >= :year",
+            { year: 2025 },
+          );
         }
-      }
 
-      if (appealsTypeFilter === "change-requests") {
-        studentAppealsQuery.andWhere(
-          "EXTRACT(YEAR FROM studentAppeal.submittedDate) < :year",
-          { year: 2025 },
-        );
-      } else if (appealsTypeFilter === "appeals") {
-        studentAppealsQuery.andWhere(
-          "EXTRACT(YEAR FROM studentAppeal.submittedDate) >= :year",
-          { year: 2025 },
-        );
-      }
-
-      // Apply regular search criteria if present
-      if (searchText && searchText.trim()) {
-        studentAppealsQuery
-          .andWhere(
-            new Brackets((qb) => {
-              qb.where(getUserFullNameLikeSearch()).orWhere(
-                "application.applicationNumber Ilike :searchCriteria",
-              );
-            }),
-          )
-          .setParameter("searchCriteria", `%${searchText.trim()}%`);
+        // Apply text search if present
+        if (searchText) {
+          studentAppealsQuery
+            .andWhere(
+              new Brackets((qb) => {
+                qb.where(getUserFullNameLikeSearch()).orWhere(
+                  "application.applicationNumber Ilike :searchCriteria",
+                );
+              }),
+            )
+            .setParameter("searchCriteria", `%${searchText}%`);
+        }
+      } catch (error) {
+        // If JSON parsing fails, treat as simple text search
+        const searchText = paginationOptions.searchCriteria.trim();
+        if (searchText) {
+          studentAppealsQuery
+            .andWhere(
+              new Brackets((qb) => {
+                qb.where(getUserFullNameLikeSearch()).orWhere(
+                  "application.applicationNumber Ilike :searchCriteria",
+                );
+              }),
+            )
+            .setParameter("searchCriteria", `%${searchText}%`);
+        }
       }
     }
 
