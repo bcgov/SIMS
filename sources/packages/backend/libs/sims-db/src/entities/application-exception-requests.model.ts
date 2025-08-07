@@ -43,7 +43,7 @@ export class ApplicationExceptionRequest extends RecordDataModel {
   exceptionName: string;
   /**
    * Index used for exceptions that can happen multiple times, for instance,
-   * dependents lists or parents list.
+   * dependents list or parents list.
    */
   @Column({
     name: "exception_index",
