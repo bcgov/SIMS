@@ -25,6 +25,7 @@ import {
 } from "@/types";
 import { v4 as uuid } from "uuid";
 import { useFormatters, useFormioUtils, useOffering } from "@/composables";
+import { FORMIO_LOAD_DATA_PROCESSING_VIEW_DELAY } from "@/constants/system-constants";
 
 export default defineComponent({
   emits: {
@@ -75,12 +76,6 @@ export default defineComponent({
     registerUtilsMethod("currencyFormatter", currencyFormatter);
     registerUtilsMethod("mapOfferingIntensity", mapOfferingIntensity);
     let formDefinition: FormIOComponent;
-    // Indicates if the form is being created.
-    let isFormCreationInProgress = false;
-    // If there is a change in initial data during the form creation
-    // the form data cannot be reloaded and this is an indicator to
-    // reload the initial data after the form is created.
-    let mustReloadInitialDataAfterCreation = false;
     const formioContainerRef = ref(null);
     // Indicates if the form definition is loaded.
     const isFormDefinitionLoaded = ref(false);
@@ -97,13 +92,6 @@ export default defineComponent({
     // display the correct label associated with the correct value
     // that was loaded into the submission data.
     const updateFormSubmissionData = () => {
-      if (isFormCreationInProgress) {
-        // At this point the form is not available yet to update the data.
-        // Hence, the flag is set to true and the data will be reloaded
-        // after the form is created.
-        mustReloadInitialDataAfterCreation = true;
-        return;
-      }
       if (form && props.data) {
         form.submission = {
           data: props.data,
@@ -164,23 +152,12 @@ export default defineComponent({
     };
 
     const createForm = async () => {
-      isFormCreationInProgress = true;
       form = await Formio.createForm(formioContainerRef.value, formDefinition, {
         fileService: new FormUploadService(),
         readOnly: props.readOnly,
-        submission: {
-          data: props.data ?? {},
-        },
       });
-      isFormCreationInProgress = false;
-      // If the initial data was changed while the form was being created,
-      // reload the initial data.
-      if (mustReloadInitialDataAfterCreation) {
-        mustReloadInitialDataAfterCreation = false;
-        updateFormSubmissionData();
-      }
+      updateFormSubmissionData();
       form.nosubmit = true;
-      context.emit("loaded", form);
 
       // Triggered when any component in the form is changed.
       form.on("change", (event: FormIOChangeEvent) => {
@@ -201,7 +178,13 @@ export default defineComponent({
       form.on("render", (event: HTMLElement) => {
         context.emit("render", form, event);
       });
-      isFormCreated.value = true;
+
+      // When the form submission data is set, the form is rendered again.
+      // To visually hide the form until the rendering to be completed, a delay is set.
+      setTimeout(() => {
+        isFormCreated.value = true;
+        context.emit("loaded", form);
+      }, FORMIO_LOAD_DATA_PROCESSING_VIEW_DELAY);
     };
 
     watchEffect(async () => {
