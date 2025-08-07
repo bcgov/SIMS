@@ -1,9 +1,10 @@
 ALTER TABLE
   sims.application_exception_requests
 ADD
+  -- Keeping the default to 0 to avoid nulls and simplify uniqueness enforcement.
   COLUMN exception_index SMALLINT DEFAULT 0,
 ADD
-  COLUMN exception_description VARCHAR(1000),
+  COLUMN exception_description VARCHAR(500),
 ADD
   COLUMN approval_exception_id INT REFERENCES sims.application_exception_requests(id),
 ADD
@@ -17,9 +18,12 @@ COMMENT ON COLUMN sims.application_exception_requests.approval_exception_id IS '
 
 COMMENT ON COLUMN sims.application_exception_requests.exception_hash IS 'Hash of the application exception data, which also include files names and content hashes.';
 
--- Create unique index on exception_index, application_exception_id, and exception_name
-CREATE UNIQUE INDEX idx_application_exception_requests_unique_combination ON sims.application_exception_requests (
+-- Create unique index on application_exception_id, exception_name, and exception_index.
+CREATE UNIQUE INDEX application_exception_id_exception_name_exception_index_unique ON sims.application_exception_requests (
   application_exception_id,
   exception_name,
   exception_index
 );
+
+-- No need to drop the index in the rollback as the columns will be dropped and the index will be removed automatically.
+COMMENT ON INDEX sims.application_exception_id_exception_name_exception_index_unique IS 'Ensures that for a given application exception request, the combination of exception name and index is unique. This prevents duplicate entries for the same exception type within a single application exception request.';
