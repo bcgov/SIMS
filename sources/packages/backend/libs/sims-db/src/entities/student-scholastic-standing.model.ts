@@ -123,4 +123,31 @@ export class StudentScholasticStanding extends RecordDataModel {
     nullable: false,
   })
   changeType: StudentScholasticStandingChangeType;
+  /**
+   * User who reversed the scholastic standing.
+   */
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({
+    name: "reversal_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  reversalBy?: User;
+  /**
+   * Date and time when the scholastic standing was reversed.
+   */
+  @Column({
+    name: "reversal_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  reversalDate?: Date;
+  /**
+   * Note added by the ministry user during scholastic standing reversal.
+   */
+  @OneToOne(() => Note, { nullable: true })
+  @JoinColumn({
+    name: "reversal_note",
+    referencedColumnName: ColumnNames.ID,
+  })
+  reversalNote?: Note;
 }
