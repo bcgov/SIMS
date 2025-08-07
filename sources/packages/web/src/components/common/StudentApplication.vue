@@ -1,7 +1,7 @@
 <template>
   <formio
     :formName="selectedForm"
-    :data="{ ...initialData, ...additionalFormData }"
+    :data="initialData"
     :readOnly="isReadOnly"
     @loaded="formLoaded"
     @changed="formChanged"
@@ -127,9 +127,6 @@ export default defineComponent({
     const isLastPage = ref(false);
     const showNav = ref(false);
     const isFormLoaded = ref(false);
-    const additionalFormData = ref(
-      {} as { howWillYouBeAttendingTheProgram: OfferingIntensity },
-    );
     let offeringIntensity: OfferingIntensity;
 
     const wizardPrimaryLabel = computed(() => {
@@ -158,8 +155,11 @@ export default defineComponent({
         // Program year forms older than 2025-26 required offering intensity to be injected to the form.
         // Check if the form has the offering intensity component and if so, inject the values.
         if (applicationIntensityComponent) {
-          additionalFormData.value.howWillYouBeAttendingTheProgram =
-            offeringIntensity;
+          formioUtils.setComponentValue(
+            formInstance,
+            OFFERING_INTENSITY_KEY,
+            offeringIntensity,
+          );
         }
         // When the form is editable, load locations and programs.
         if (!props.isReadOnly) {
@@ -250,9 +250,8 @@ export default defineComponent({
       };
       formInstance.on("prevPage", prevNextNavigation);
       formInstance.on("nextPage", prevNextNavigation);
-
-      await loadFormDependencies();
       isFormLoaded.value = true;
+      await loadFormDependencies();
     };
 
     const getOfferingDetails = async (form: FormIOForm, locationId: number) => {
@@ -395,7 +394,6 @@ export default defineComponent({
       customEvent,
       showNav,
       isSaveDraftAllowed,
-      additionalFormData,
       wizardPrimaryLabel,
       isFormLoaded,
     };

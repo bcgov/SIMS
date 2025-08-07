@@ -30,6 +30,8 @@ export function createFakeApplicationExceptionRequest(relations?: {
   }
 
   applicationExceptionRequest.exceptionName = faker.name.firstName();
+  applicationExceptionRequest.exceptionDescription =
+    "Fake application exception description";
   applicationExceptionRequest.creator = relations?.creator;
   return applicationExceptionRequest;
 }
