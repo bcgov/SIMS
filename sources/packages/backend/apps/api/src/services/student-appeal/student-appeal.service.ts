@@ -490,8 +490,14 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     paginationOptions: StudentAppealPaginationOptions,
     status: StudentAppealStatus,
   ): Promise<PaginatedResults<StudentAppeal>> {
-    const { page, pageLimit, sortField, sortOrder, appealType } =
-      paginationOptions;
+    const {
+      page,
+      pageLimit,
+      sortField,
+      sortOrder,
+      appealType,
+      searchCriteria,
+    } = paginationOptions;
     const studentAppealsQuery = this.repo
       .createQueryBuilder("studentAppeal")
       .select([
@@ -513,16 +519,13 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           .getSql()})`,
       );
 
-    // Extract search criteria from the object
-    const {};
-
     // Filter by program year start date based on appeal type
     if (appealType === AppealType.LegacyChangeRequest) {
       studentAppealsQuery.andWhere(
         "programYear.startDate < :programStartDate",
         { programStartDate: PROGRAM_START_DATE_2025_2026 },
       );
-    } else if (requestType === "appeals") {
+    } else if (appealType === AppealType.Appeal) {
       studentAppealsQuery.andWhere(
         "programYear.startDate >= :programStartDate",
         { programStartDate: PROGRAM_START_DATE_2025_2026 },
@@ -530,8 +533,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     }
 
     // Apply text search if present
-    if (search?.trim()) {
-      const trimmedSearchText = search.trim();
+    if (searchCriteria) {
       studentAppealsQuery
         .andWhere(
           new Brackets((qb) => {
@@ -540,18 +542,13 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
             );
           }),
         )
-        .setParameter("searchCriteria", `%${trimmedSearchText}%`);
+        .setParameter("searchCriteria", `%${searchCriteria}%`);
     }
 
     studentAppealsQuery
-      .orderBy(
-        this.transformToEntitySortField(
-          paginationOptions.sortField,
-          paginationOptions.sortOrder,
-        ),
-      )
-      .offset(paginationOptions.page * paginationOptions.pageLimit)
-      .limit(paginationOptions.pageLimit);
+      .orderBy(this.transformToEntitySortField(sortField, sortOrder))
+      .offset(page * pageLimit)
+      .limit(pageLimit);
 
     const [result, count] = await studentAppealsQuery.getManyAndCount();
     return {

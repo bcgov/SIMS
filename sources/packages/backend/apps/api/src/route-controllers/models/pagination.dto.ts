@@ -92,7 +92,7 @@ export class StudentAppealPendingPaginationOptionsAPIInDTO extends PaginationOpt
 
   @IsOptional()
   @IsEnum(AppealType)
-  requestType: AppealType;
+  appealType: AppealType;
 }
 
 export class ApplicationChangeRequestPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {

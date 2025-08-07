@@ -56,10 +56,9 @@ import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
   DataTableSortOrder,
-  DEFAULT_PAGE_NUMBER,
   PaginatedResults,
   PendingChangeRequestsTableHeaders,
-  PageAndSortEvent,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -68,40 +67,30 @@ import { StudentAppealService } from "@/services/StudentAppealService";
 
 const DEFAULT_SORT_FIELD = "submittedDate";
 
-export interface PendingAppealsTableProps {
-  appealsType: "change-requests" | "appeals";
-}
-
 export default defineComponent({
   props: {
     appealsType: {
-      type: String as () => "change-requests" | "appeals",
+      type: String as () => "legacy-change-request" | "appeal",
       required: true,
-      validator: (value: string) =>
-        ["change-requests", "appeals"].includes(value),
     },
   },
   setup(props) {
     const router = useRouter();
-    const isLoading = ref(false);
-    const searchCriteria = ref();
-    const page = ref(DEFAULT_PAGE_NUMBER);
-    const pageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const sortField = ref(DEFAULT_SORT_FIELD);
-    const sortOrder = ref(DataTableSortOrder.ASC);
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
+    const isLoading = ref(false);
+    const searchCriteria = ref("");
     const applicationAppeals = ref(
       {} as PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>,
     );
 
     const pageTitle = computed(() => {
-      return props.appealsType === "change-requests"
+      return props.appealsType === "legacy-change-request"
         ? "Pending change requests"
         : "Pending appeals";
     });
 
     const pageDescription = computed(() => {
-      return props.appealsType === "change-requests"
+      return props.appealsType === "legacy-change-request"
         ? "Change requests that require ministry review."
         : "Appeals that require ministry review.";
     });
@@ -120,63 +109,53 @@ export default defineComponent({
       });
     };
 
-    const getAppealList = async () => {
-      isLoading.value = true;
+    const loadAppeals = async (
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
+      pageLimit = DEFAULT_PAGE_LIMIT,
+      inputSortField?: string,
+      inputSortOrder?: DataTableSortOrder,
+    ) => {
       try {
+        isLoading.value = true;
         applicationAppeals.value =
           await StudentAppealService.shared.getPendingAppeals({
-            page: page.value,
-            pageLimit: pageLimit.value,
-            sortField: sortField.value,
-            sortOrder: sortOrder.value,
+            page,
+            pageLimit,
+            sortField: inputSortField,
+            sortOrder: inputSortOrder,
             searchCriteria: {
-              requestType: props.appealsType,
-              search: searchCriteria.value,
+              appealType: props.appealsType,
+              searchCriteria: searchCriteria.value,
             },
           });
+      } catch (error: unknown) {
+        console.error("Error loading appeals:", error);
+        applicationAppeals.value = { results: [], count: 0 };
       } finally {
         isLoading.value = false;
       }
     };
 
-    const pageEvent = async (event: PageAndSortEvent) => {
-      page.value = event?.page;
-      pageLimit.value = event?.rows;
-      await getAppealList();
-    };
-
-    const sortEvent = async (event: PageAndSortEvent) => {
-      page.value = DEFAULT_PAGE_NUMBER;
-      pageLimit.value = DEFAULT_PAGE_LIMIT;
-      sortField.value = event.sortField;
-      sortOrder.value = event.sortOrder;
-      await getAppealList();
-    };
-
     const searchAppeals = async () => {
-      page.value = DEFAULT_PAGE_NUMBER;
-      pageLimit.value = DEFAULT_PAGE_LIMIT;
-      await getAppealList();
+      await loadAppeals();
     };
 
     const paginationAndSortEvent = async (options: any) => {
       const { page: currentPage, itemsPerPage, sortBy } = options;
-      page.value = currentPage;
-      pageLimit.value = itemsPerPage;
+      const [sortByOptions] = sortBy || [];
 
-      if (sortBy?.length) {
-        sortField.value = sortBy[0].key;
-        sortOrder.value =
-          sortBy[0].order === "desc"
-            ? DataTableSortOrder.DESC
-            : DataTableSortOrder.ASC;
-      }
-
-      await getAppealList();
+      await loadAppeals(
+        currentPage,
+        itemsPerPage,
+        sortByOptions?.key,
+        sortByOptions?.order === "desc"
+          ? DataTableSortOrder.DESC
+          : DataTableSortOrder.ASC,
+      );
     };
 
     onMounted(async () => {
-      await getAppealList();
+      await loadAppeals();
     });
 
     return {
@@ -188,8 +167,6 @@ export default defineComponent({
       tableHeaders,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
-      pageEvent,
-      sortEvent,
       searchAppeals,
       paginationAndSortEvent,
       searchCriteria,

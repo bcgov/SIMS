@@ -65,6 +65,6 @@ export interface PIRPaginationOptions extends BasePaginationOptions {
   intensityFilter?: OfferingIntensity;
 }
 
-export interface StudentAppealPaginationOptions extends BasePaginationOptions {
+export interface StudentAppealPaginationOptions extends PaginationOptions {
   appealType: AppealType;
 }
