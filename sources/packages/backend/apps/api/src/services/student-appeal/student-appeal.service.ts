@@ -508,39 +508,25 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           .getSql()})`,
       );
     if (paginationOptions.searchCriteria) {
-      // Check if searchCriteria contains appeals type filtering
       let searchText = "";
       let appealsTypeFilter: string | null = null;
 
-      // Try to parse search criteria as JSON first
       if (typeof paginationOptions.searchCriteria === "string") {
-        try {
-          // Attempt to parse as JSON object
-          const searchObj = JSON.parse(paginationOptions.searchCriteria);
-
-          if (searchObj && typeof searchObj === "object") {
-            // Extract appeals type and search text from parsed JSON
-            appealsTypeFilter = searchObj.appealsType || null;
-            searchText = searchObj.searchText || "";
-          } else {
-            // If not a valid object, treat entire string as search text
-            searchText = paginationOptions.searchCriteria;
-          }
-        } catch (error) {
-          // If JSON parsing fails, treat entire string as search text
+        const searchObj = JSON.parse(paginationOptions.searchCriteria);
+        if (searchObj && typeof searchObj === "object") {
+          appealsTypeFilter = searchObj.appealsType || null;
+          searchText = searchObj.searchText || "";
+        } else {
           searchText = paginationOptions.searchCriteria;
         }
       }
 
-      // Add appeals type filtering based on submission year
       if (appealsTypeFilter === "change-requests") {
-        // Show appeals submitted before 2025 (legacy change requests)
         studentAppealsQuery.andWhere(
           "EXTRACT(YEAR FROM studentAppeal.submittedDate) < :year",
           { year: 2025 },
         );
       } else if (appealsTypeFilter === "appeals") {
-        // Show appeals submitted in 2025 or later (new appeals system)
         studentAppealsQuery.andWhere(
           "EXTRACT(YEAR FROM studentAppeal.submittedDate) >= :year",
           { year: 2025 },

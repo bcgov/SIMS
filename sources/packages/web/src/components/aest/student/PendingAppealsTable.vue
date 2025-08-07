@@ -74,16 +74,12 @@ import { StudentAppealService } from "@/services/StudentAppealService";
 
 const DEFAULT_SORT_FIELD = "submittedDate";
 
-// Interface for search criteria object
 interface AppealSearchCriteria {
   appealsType: "change-requests" | "appeals";
   searchText: string;
 }
 
 export interface PendingAppealsTableProps {
-  /**
-   * Type of appeals to display: "change-requests" or "appeals"
-   */
   appealsType: "change-requests" | "appeals";
 }
 
@@ -97,10 +93,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // Search criteria structure:
-    // - appealsType: Filters appeals by year ("change-requests" for < 2025, "appeals" for >= 2025)
-    // - searchText: User input for searching by name or application number
-    // The backend expects this as a JSON string and will parse it accordingly
     const router = useRouter();
     const isLoading = ref(false);
     const searchCriteria = ref();
@@ -129,11 +121,6 @@ export default defineComponent({
     });
 
     const tableHeaders = computed(() => PendingStudentRequestsTableHeaders);
-
-    /**
-     * Navigate to assessment summary page for the selected appeal
-     */
-
     const gotToAssessmentsSummary = (
       applicationId: number,
       studentId: number,
@@ -147,11 +134,6 @@ export default defineComponent({
       });
     };
 
-    /**
-     * Create search criteria object that includes appeals type and search text
-     * @param searchText - Optional search text from user input
-     * @returns JSON string containing search criteria
-     */
     const createSearchCriteria = (searchText?: string): string => {
       const searchCriteria: AppealSearchCriteria = {
         appealsType: props.appealsType,
@@ -160,11 +142,6 @@ export default defineComponent({
       return JSON.stringify(searchCriteria);
     };
 
-    /**
-     * Build pagination options with search criteria
-     * @param options - Pagination and sort options
-     * @returns Complete pagination options with search criteria
-     */
     const buildPaginationOptions = (options: {
       page?: number;
       pageLimit?: number;
