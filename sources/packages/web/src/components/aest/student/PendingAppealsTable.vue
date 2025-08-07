@@ -68,11 +68,6 @@ import { StudentAppealService } from "@/services/StudentAppealService";
 
 const DEFAULT_SORT_FIELD = "submittedDate";
 
-interface AppealSearchCriteria {
-  appealsType: "change-requests" | "appeals";
-  searchText: string;
-}
-
 export interface PendingAppealsTableProps {
   appealsType: "change-requests" | "appeals";
 }
@@ -125,14 +120,6 @@ export default defineComponent({
       });
     };
 
-    const createSearchCriteria = (searchText?: string): string => {
-      const searchCriteria: AppealSearchCriteria = {
-        appealsType: props.appealsType,
-        searchText: searchText?.trim() || "",
-      };
-      return JSON.stringify(searchCriteria);
-    };
-
     const getAppealList = async () => {
       isLoading.value = true;
       try {
@@ -142,7 +129,10 @@ export default defineComponent({
             pageLimit: pageLimit.value,
             sortField: sortField.value,
             sortOrder: sortOrder.value,
-            searchCriteria: createSearchCriteria(searchCriteria.value),
+            searchCriteria: {
+              requestType: props.appealsType,
+              search: searchCriteria.value,
+            },
           });
       } finally {
         isLoading.value = false;

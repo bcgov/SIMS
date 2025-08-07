@@ -11,6 +11,7 @@ import {
 import { PAGINATION_SEARCH_MAX_LENGTH } from "../../constants";
 import { FieldSortOrder } from "@sims/utilities";
 import {
+  AppealType,
   CASInvoiceBatchApprovalStatus,
   CASInvoiceStatus,
   OfferingIntensity,
@@ -88,6 +89,10 @@ export class StudentAppealPendingPaginationOptionsAPIInDTO extends PaginationOpt
   @IsOptional()
   @IsIn(["submittedDate", "applicationNumber", "lastName"])
   sortField?: string;
+
+  @IsOptional()
+  @IsEnum(AppealType)
+  requestType: AppealType;
 }
 
 export class ApplicationChangeRequestPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {

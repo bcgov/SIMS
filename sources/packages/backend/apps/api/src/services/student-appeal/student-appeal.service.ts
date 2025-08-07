@@ -13,6 +13,7 @@ import {
   mapFromRawAndEntities,
   getUserFullNameLikeSearch,
   FileOriginType,
+  AppealType,
 } from "@sims/sims-db";
 import {
   PendingAndDeniedAppeals,
@@ -23,14 +24,15 @@ import {
 import { StudentAppealRequestsService } from "../student-appeal-request/student-appeal-request.service";
 import {
   PaginatedResults,
-  PaginationOptions,
   SortPriority,
   OrderByCondition,
+  StudentAppealPaginationOptions,
 } from "../../utilities";
 import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,
+  PROGRAM_START_DATE_2025_2026,
 } from "./constants";
 import {
   NotificationActionsService,
@@ -485,9 +487,11 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * @returns StudentAppeal list.
    */
   async getAppealsByStatus(
-    paginationOptions: PaginationOptions,
+    paginationOptions: StudentAppealPaginationOptions,
     status: StudentAppealStatus,
   ): Promise<PaginatedResults<StudentAppeal>> {
+    const { page, pageLimit, sortField, sortOrder, appealType } =
+      paginationOptions;
     const studentAppealsQuery = this.repo
       .createQueryBuilder("studentAppeal")
       .select([
@@ -502,41 +506,41 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .innerJoin("studentAppeal.application", "application")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
+      .innerJoin("application.programYear", "programYear")
       .where(
         `EXISTS(${this.studentAppealRequestsService
           .appealsByStatusQueryObject(status)
           .getSql()})`,
       );
-    if (paginationOptions.searchCriteria) {
-      const searchObj = JSON.parse(paginationOptions.searchCriteria);
-      const appealsTypeFilter = searchObj?.appealsType;
-      const searchText = searchObj?.searchText?.trim() || "";
 
-      // Filter by year based on appeals type
-      if (appealsTypeFilter === "change-requests") {
-        studentAppealsQuery.andWhere(
-          "EXTRACT(YEAR FROM studentAppeal.submittedDate) < :year",
-          { year: 2025 },
-        );
-      } else if (appealsTypeFilter === "appeals") {
-        studentAppealsQuery.andWhere(
-          "EXTRACT(YEAR FROM studentAppeal.submittedDate) >= :year",
-          { year: 2025 },
-        );
-      }
+    // Extract search criteria from the object
+    const {};
 
-      // Apply text search if present
-      if (searchText) {
-        studentAppealsQuery
-          .andWhere(
-            new Brackets((qb) => {
-              qb.where(getUserFullNameLikeSearch()).orWhere(
-                "application.applicationNumber Ilike :searchCriteria",
-              );
-            }),
-          )
-          .setParameter("searchCriteria", `%${searchText}%`);
-      }
+    // Filter by program year start date based on appeal type
+    if (appealType === AppealType.LegacyChangeRequest) {
+      studentAppealsQuery.andWhere(
+        "programYear.startDate < :programStartDate",
+        { programStartDate: PROGRAM_START_DATE_2025_2026 },
+      );
+    } else if (requestType === "appeals") {
+      studentAppealsQuery.andWhere(
+        "programYear.startDate >= :programStartDate",
+        { programStartDate: PROGRAM_START_DATE_2025_2026 },
+      );
+    }
+
+    // Apply text search if present
+    if (search?.trim()) {
+      const trimmedSearchText = search.trim();
+      studentAppealsQuery
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where(getUserFullNameLikeSearch()).orWhere(
+              "application.applicationNumber Ilike :searchCriteria",
+            );
+          }),
+        )
+        .setParameter("searchCriteria", `%${trimmedSearchText}%`);
     }
 
     studentAppealsQuery

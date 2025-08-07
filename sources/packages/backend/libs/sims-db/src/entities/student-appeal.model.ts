@@ -71,3 +71,8 @@ export class StudentAppeal extends RecordDataModel {
   )
   studentAssessment?: StudentAssessment;
 }
+
+export enum AppealType {
+  LegacyChangeRequest = "legacy-change-request",
+  Appeal = "appeal",
+}

@@ -3,6 +3,7 @@ import {
   CASInvoiceStatus,
   ProgramStatus,
   OfferingIntensity,
+  AppealType,
 } from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
 
@@ -62,4 +63,8 @@ export enum SortPriority {
 export interface PIRPaginationOptions extends BasePaginationOptions {
   search?: string;
   intensityFilter?: OfferingIntensity;
+}
+
+export interface StudentAppealPaginationOptions extends BasePaginationOptions {
+  appealType: AppealType;
 }
