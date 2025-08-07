@@ -74,6 +74,12 @@ import { StudentAppealService } from "@/services/StudentAppealService";
 
 const DEFAULT_SORT_FIELD = "submittedDate";
 
+// Interface for search criteria object
+interface AppealSearchCriteria {
+  appealsType: "change-requests" | "appeals";
+  searchText: string;
+}
+
 export interface PendingAppealsTableProps {
   /**
    * Type of appeals to display: "change-requests" or "appeals"
@@ -91,6 +97,10 @@ export default defineComponent({
     },
   },
   setup(props) {
+    // Search criteria structure:
+    // - appealsType: Filters appeals by year ("change-requests" for < 2025, "appeals" for >= 2025)
+    // - searchText: User input for searching by name or application number
+    // The backend expects this as a JSON string and will parse it accordingly
     const router = useRouter();
     const isLoading = ref(false);
     const searchCriteria = ref();
@@ -120,6 +130,10 @@ export default defineComponent({
 
     const tableHeaders = computed(() => PendingStudentRequestsTableHeaders);
 
+    /**
+     * Navigate to assessment summary page for the selected appeal
+     */
+
     const gotToAssessmentsSummary = (
       applicationId: number,
       studentId: number,
@@ -135,25 +149,42 @@ export default defineComponent({
 
     /**
      * Create search criteria object that includes appeals type and search text
+     * @param searchText - Optional search text from user input
+     * @returns JSON string containing search criteria
      */
     const createSearchCriteria = (searchText?: string): string => {
-      const searchObj = {
+      const searchCriteria: AppealSearchCriteria = {
         appealsType: props.appealsType,
-        searchText: searchText || "",
+        searchText: searchText?.trim() || "",
       };
-      return JSON.stringify(searchObj);
+      return JSON.stringify(searchCriteria);
     };
+
+    /**
+     * Build pagination options with search criteria
+     * @param options - Pagination and sort options
+     * @returns Complete pagination options with search criteria
+     */
+    const buildPaginationOptions = (options: {
+      page?: number;
+      pageLimit?: number;
+      sortField?: string;
+      sortOrder?: DataTableSortOrder;
+    }) => ({
+      page: options.page ?? DEFAULT_PAGE_NUMBER,
+      pageLimit: options.pageLimit ?? DEFAULT_PAGE_LIMIT,
+      sortField: options.sortField ?? DEFAULT_SORT_FIELD,
+      sortOrder: options.sortOrder ?? DataTableSortOrder.ASC,
+      searchCriteria: createSearchCriteria(searchCriteria.value),
+    });
 
     const getAppealList = async () => {
       isLoading.value = true;
       try {
-        const allAppeals = await StudentAppealService.shared.getPendingAppeals({
-          page: DEFAULT_PAGE_NUMBER,
-          pageLimit: DEFAULT_PAGE_LIMIT,
-          sortField: DEFAULT_SORT_FIELD,
-          sortOrder: DataTableSortOrder.ASC,
-          searchCriteria: createSearchCriteria(searchCriteria.value),
-        });
+        const paginationOptions = buildPaginationOptions({});
+        const allAppeals = await StudentAppealService.shared.getPendingAppeals(
+          paginationOptions,
+        );
 
         applicationAppeals.value = allAppeals;
       } finally {
@@ -171,13 +202,16 @@ export default defineComponent({
             ? DataTableSortOrder.DESC
             : DataTableSortOrder.ASC;
 
-        const allAppeals = await StudentAppealService.shared.getPendingAppeals({
-          page: page,
+        const paginationOptions = buildPaginationOptions({
+          page,
           pageLimit: itemsPerPage,
-          sortField: sortField,
-          sortOrder: sortOrder,
-          searchCriteria: createSearchCriteria(searchCriteria.value),
+          sortField,
+          sortOrder,
         });
+
+        const allAppeals = await StudentAppealService.shared.getPendingAppeals(
+          paginationOptions,
+        );
 
         applicationAppeals.value = allAppeals;
       } finally {

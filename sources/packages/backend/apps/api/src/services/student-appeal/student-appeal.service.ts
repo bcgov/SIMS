@@ -512,26 +512,22 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       let searchText = "";
       let appealsTypeFilter: string | null = null;
 
-      // Simple check for appeals type parameter
+      // Try to parse search criteria as JSON first
       if (typeof paginationOptions.searchCriteria === "string") {
-        // Check if it contains appeals type parameter (simple string check)
-        if (paginationOptions.searchCriteria.includes("appealsType")) {
-          // Extract appeals type using simple string operations
-          const appealsTypeMatch = paginationOptions.searchCriteria.match(
-            /"appealsType"\s*:\s*"([^"]+)"/,
-          );
-          const searchTextMatch = paginationOptions.searchCriteria.match(
-            /"searchText"\s*:\s*"([^"]*)"/,
-          );
+        try {
+          // Attempt to parse as JSON object
+          const searchObj = JSON.parse(paginationOptions.searchCriteria);
 
-          if (appealsTypeMatch) {
-            appealsTypeFilter = appealsTypeMatch[1];
+          if (searchObj && typeof searchObj === "object") {
+            // Extract appeals type and search text from parsed JSON
+            appealsTypeFilter = searchObj.appealsType || null;
+            searchText = searchObj.searchText || "";
+          } else {
+            // If not a valid object, treat entire string as search text
+            searchText = paginationOptions.searchCriteria;
           }
-          if (searchTextMatch) {
-            searchText = searchTextMatch[1];
-          }
-        } else {
-          // If no appeals type found, treat entire string as search text
+        } catch (error) {
+          // If JSON parsing fails, treat entire string as search text
           searchText = paginationOptions.searchCriteria;
         }
       }
