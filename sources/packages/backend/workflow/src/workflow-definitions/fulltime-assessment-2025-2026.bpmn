@@ -1712,8 +1712,8 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
     <bpmn:intermediateThrowEvent id="Event_1o1cgxp" name="Assessed Need">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataTotalCosts - calculatedDataTotalProvincialContribution" target="calculatedDataProvincialAssessedNeed" />
-          <zeebe:output source="=calculatedDataTotalCosts - calculatedDataTotalFederalContribution" target="calculatedDataFederalAssessedNeed" />
+          <zeebe:output source="=max(calculatedDataTotalCosts - calculatedDataTotalProvincialContribution,0)" target="calculatedDataProvincialAssessedNeed" />
+          <zeebe:output source="=max(calculatedDataTotalCosts - calculatedDataTotalFederalContribution,0)" target="calculatedDataFederalAssessedNeed" />
           <zeebe:output source="=max(calculatedDataFederalAssessedNeed, calculatedDataProvincialAssessedNeed)" target="calculatedDataTotalAssessedNeed" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
