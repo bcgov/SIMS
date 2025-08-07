@@ -48,9 +48,8 @@ export class ApplicationExceptionRequest extends RecordDataModel {
   @Column({
     name: "exception_index",
     type: "smallint",
-    nullable: true,
   })
-  exceptionIndex?: number;
+  exceptionIndex: number;
   /**
    * Description of the application exception. Critical for exceptions that
    * happens multiple times to allow its individual identification.
