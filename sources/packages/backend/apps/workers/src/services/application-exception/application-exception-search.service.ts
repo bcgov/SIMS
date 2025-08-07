@@ -58,6 +58,7 @@ export class ApplicationExceptionSearchService {
         const exception = this.createApplicationDataException(
           propertyKey,
           propertyValue,
+          applicationExceptions,
         );
         applicationExceptions.push(exception);
         continue;
@@ -76,19 +77,26 @@ export class ApplicationExceptionSearchService {
   /**
    * Creates the ApplicationDataException object from the dynamic
    * data that was identified as an application exception.
-   * @param propertyKey
-   * @param applicationData
+   * @param propertyKey key of the property that identified the exception.
+   * @param applicationExceptions list of all exceptions found so far.
+   * @param exceptionData student application exception data.
    * @returns
    */
   private createApplicationDataException(
     propertyKey: string,
-    applicationData: ApplicationDataException,
+    exceptionDynamicData: unknown,
+    applicationExceptions: ApplicationDataException[],
   ): ApplicationDataException {
-    const files = this.extractFilesFromException(applicationData);
+    const files = this.extractFilesFromException(exceptionDynamicData);
+    // Check if there are other exceptions with the same key to define its index.
+    const existingExceptions = applicationExceptions.filter(
+      (exception) => exception.key === propertyKey,
+    );
     return {
       key: propertyKey,
-      hashableContent: applicationData,
-      description: applicationData["exceptionDescription"] as string,
+      hashableContent: exceptionDynamicData,
+      index: existingExceptions.length,
+      description: exceptionDynamicData["exceptionDescription"] as string,
       files,
     };
   }

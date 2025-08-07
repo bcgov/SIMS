@@ -196,9 +196,12 @@ export class ApplicationController {
 
   /**
    * Searches the student application dynamic data recursively trying to
-   * find properties with the value defined as "studentApplicationException"
-   * which identifies an application exception to be reviewed by the Ministry
+   * find properties with its key suffixed as "ApplicationException",
+   * which identifies an application exception to be reviewed by the Ministry,
    * and saves a notification to be sent to the ministry as a part of the same transaction.
+   * If the application has all its exceptions considered "the same" as some previously
+   * approved, the exception will be created with the "Approved" status, and it will not
+   * require any review by the Ministry, allowing the workflow to continue.
    * @returns application exceptions status.
    */
   @ZeebeWorker(Workers.VerifyUniqueApplicationExceptions, {
@@ -221,7 +224,7 @@ export class ApplicationController {
         { loadDynamicData: true },
       );
       if (!application) {
-        const message = "Application id not found.";
+        const message = "Application ID not found.";
         jobLogger.error(message);
         return job.error(APPLICATION_NOT_FOUND, message);
       }
@@ -237,46 +240,54 @@ export class ApplicationController {
       const exceptions = this.applicationExceptionSearchService.search(
         application.data,
       );
+      jobLogger.log(`Found ${exceptions.length} application exception(s).`);
+      if (!exceptions.length) {
+        // No exceptions found, return the approved status.
+        return job.complete({
+          applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+        });
+      }
+      // Create the application exceptions with the hashed data.
       // Create a hash for the exceptions to ensure uniqueness.
       const hashedExceptions =
         await this.applicationExceptionHashService.createHashedApplicationExceptions(
           exceptions,
         );
+      // TODO: Remove the console.log once the code is tested and verified.
       console.log(inspect(hashedExceptions, { depth: null }));
-      // if (exceptions.length) {
-      //   return await this.dataSource.transaction(async (entityManager) => {
-      //     const exceptionPromise =
-      //       this.applicationExceptionService.createException(
-      //         job.variables.applicationId,
-      //         exceptions,
-      //         entityManager,
-      //       );
-      //     const student = application.student;
-      //     const ministryNotification: ApplicationExceptionRequestNotification =
-      //       {
-      //         givenNames: student.user.firstName,
-      //         lastName: student.user.lastName,
-      //         email: student.user.email,
-      //         birthDate: student.birthDate,
-      //         applicationNumber: application.applicationNumber,
-      //       };
-      //     const applicationExceptionRequestNotificationPromise =
-      //       this.notificationActionService.saveApplicationExceptionRequestNotification(
-      //         ministryNotification,
-      //         entityManager,
-      //       );
-      //     const [createdException] = await Promise.all([
-      //       exceptionPromise,
-      //       applicationExceptionRequestNotificationPromise,
-      //     ]);
-      //     jobLogger.log("Verified and created exception.");
-      //     jobLogger.log("Created notification for the created exception.");
-      //     return job.complete({
-      //       applicationExceptionStatus: createdException.exceptionStatus,
-      //     });
-      //   });
-      return job.complete({
-        applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+      await this.dataSource.transaction(async (entityManager) => {
+        const createdException =
+          await this.applicationExceptionService.createExceptionFromHashedData(
+            job.variables.applicationId,
+            hashedExceptions,
+            entityManager,
+          );
+        jobLogger.log(
+          `Created application exception ID ${createdException.id} with ${createdException.exceptionStatus} status.`,
+        );
+        if (
+          createdException.exceptionStatus ===
+          ApplicationExceptionStatus.Pending
+        ) {
+          const student = application.student;
+          const ministryNotification: ApplicationExceptionRequestNotification =
+            {
+              givenNames: student.user.firstName,
+              lastName: student.user.lastName,
+              email: student.user.email,
+              birthDate: student.birthDate,
+              applicationNumber: application.applicationNumber,
+            };
+          // Save the notification for the Ministry.
+          await this.notificationActionService.saveApplicationExceptionRequestNotification(
+            ministryNotification,
+            entityManager,
+          );
+          jobLogger.log("Created notification for the created exception.");
+        }
+        return job.complete({
+          applicationExceptionStatus: createdException.exceptionStatus,
+        });
       });
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, {

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, IsNull, Not } from "typeorm";
 import {
   RecordDataModelService,
   Application,
@@ -7,6 +7,7 @@ import {
   ApplicationExceptionRequest,
   ApplicationExceptionStatus,
 } from "@sims/sims-db";
+import { ApplicationDataExceptionHashed } from "./application-exception.models";
 
 /**
  * Manages student applications exceptions detected upon full-time/part-time application
@@ -44,6 +45,109 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         } as ApplicationExceptionRequest),
     );
     return entityManager.getRepository(ApplicationException).save(newException);
+  }
+
+  async createExceptionFromHashedData(
+    applicationId: number,
+    exceptionRequests: ApplicationDataExceptionHashed[],
+    entityManager: EntityManager,
+  ): Promise<ApplicationException> {
+    const previouslyApprovedExceptionRequests =
+      await this.getPreviouslyApprovedExceptionRequests(
+        applicationId,
+        entityManager,
+      );
+    const newException = new ApplicationException();
+    newException.application = { id: applicationId } as Application;
+    newException.exceptionRequests = exceptionRequests.map(
+      (exceptionRequest) =>
+        ({
+          exceptionName: exceptionRequest.key,
+          exceptionDescription: exceptionRequest.description,
+          exceptionHash: exceptionRequest.fullHashContent,
+          exceptionIndex: exceptionRequest.index,
+          approvalExceptionRequest: this.getPreviouslyApprovedException(
+            exceptionRequest,
+            previouslyApprovedExceptionRequests,
+          ),
+        } as ApplicationExceptionRequest),
+    );
+    const notAllExceptionsApproved = newException.exceptionRequests.some(
+      (exceptionRequest) => !exceptionRequest.approvalExceptionRequest?.id,
+    );
+    newException.exceptionStatus = notAllExceptionsApproved
+      ? ApplicationExceptionStatus.Pending
+      : ApplicationExceptionStatus.Approved;
+    return entityManager.getRepository(ApplicationException).save(newException);
+  }
+
+  private async getPreviouslyApprovedExceptionRequests(
+    applicationId: number,
+    entityManager: EntityManager,
+  ): Promise<ApplicationExceptionRequest[]> {
+    const application = await entityManager.getRepository(Application).findOne({
+      select: {
+        id: true,
+        parentApplication: {
+          id: true,
+          versions: {
+            id: true,
+            createdAt: true,
+            applicationException: {
+              id: true,
+              exceptionRequests: {
+                id: true,
+                exceptionName: true,
+                exceptionIndex: true,
+                exceptionHash: true,
+              },
+            },
+          },
+        },
+      },
+      relations: {
+        parentApplication: {
+          versions: {
+            applicationException: {
+              exceptionRequests: true,
+            },
+          },
+        },
+      },
+      where: {
+        id: applicationId,
+        parentApplication: {
+          versions: {
+            applicationException: {
+              exceptionStatus: ApplicationExceptionStatus.Approved,
+              exceptionRequests: { id: Not(IsNull()) },
+            },
+          },
+        },
+      },
+      order: {
+        parentApplication: {
+          versions: {
+            createdAt: "ASC",
+          },
+        },
+      },
+    });
+    return application.parentApplication.versions.flatMap(
+      (version) => version.applicationException.exceptionRequests,
+    );
+  }
+
+  private getPreviouslyApprovedException(
+    exceptionRequest: ApplicationDataExceptionHashed,
+    previouslyApprovedExceptionRequests: ApplicationExceptionRequest[],
+  ): ApplicationExceptionRequest | undefined {
+    return previouslyApprovedExceptionRequests.find(
+      (exception) =>
+        exception.exceptionName === exceptionRequest.key &&
+        exception.exceptionIndex === exceptionRequest.index &&
+        exception.exceptionHash === exceptionRequest.fullHashContent,
+    );
   }
 
   /**

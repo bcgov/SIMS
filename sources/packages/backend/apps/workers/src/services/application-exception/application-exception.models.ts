@@ -1,6 +1,7 @@
 export interface ApplicationDataException {
   key: string;
   description: string;
+  index: number;
   hashableContent: unknown;
   files: ApplicationDataExceptionFile[];
 }
