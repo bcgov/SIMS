@@ -83,6 +83,18 @@ export type AssessmentAPIOutDTO = Omit<Assessment, "totalFamilyIncome"> & {
    * the property as number and also as a string, when a mask is required.
    */
   totalFamilyIncome: number | string;
+  /**
+   * Total additional transportation allowance calculated for the assessment.
+   * This is a property calculated by the workflow output and is not part
+   * of the original assessment output.
+   */
+  totalAdditionalTransportationAllowance?: number;
+  /**
+   * Return transportation cost calculated for the assessment.
+   * This is a property calculated by the workflow output and is not part
+   * of the original assessment output.
+   */
+  returnTransportationCost?: number;
 };
 
 export class AssessmentNOAAPIOutDTO {
@@ -93,7 +105,8 @@ export class AssessmentNOAAPIOutDTO {
       "Part-time and full-time will have some common and some specific properties for each payload.",
   })
   assessment: AssessmentAPIOutDTO;
-  workflowData: unknown;
+  totalAdditionalTransportationAllowance?: number;
+  returnTransportationCost?: number;
   applicationId: number;
   applicationNumber: string;
   applicationCurrentAssessmentId: number;

@@ -104,8 +104,14 @@ export class AssessmentControllerService {
     }
 
     return {
-      assessment: assessmentDTO,
-      workflowData: assessment.workflowData,
+      assessment: {
+        ...assessmentDTO,
+        totalAdditionalTransportationAllowance:
+          assessment.workflowData.calculatedData
+            .totalAdditionalTransportationAllowance,
+        returnTransportationCost:
+          assessment.workflowData.calculatedData.returnTransportationCost,
+      },
       applicationId: assessment.application.id,
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationStatus: assessment.application.applicationStatus,
