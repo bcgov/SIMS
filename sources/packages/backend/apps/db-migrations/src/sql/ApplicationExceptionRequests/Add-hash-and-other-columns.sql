@@ -12,7 +12,7 @@ ADD
 
 COMMENT ON COLUMN sims.application_exception_requests.exception_index IS 'Index used for exceptions that can happen multiple times, for instance, dependents lists or parents list.';
 
-COMMENT ON COLUMN sims.application_exception_requests.exception_description IS 'Description of the application exception. Critical for exceptions that happens multiple times to allow its individual identification.';
+COMMENT ON COLUMN sims.application_exception_requests.exception_description IS 'Description of the application exception. Critical for exceptions that happen multiple times to allow its individual identification.';
 
 COMMENT ON COLUMN sims.application_exception_requests.approval_exception_id IS 'Reference to a previously approved exception request that was considered to have the same content, which includes also associated files.';
 
