@@ -63,7 +63,6 @@ export class ApplicationExceptionRequest extends RecordDataModel {
    * to have the same content, which includes also associated files.
    */
   @ManyToOne(() => ApplicationExceptionRequest, {
-    cascade: ["update"],
     nullable: true,
   })
   @JoinColumn({
