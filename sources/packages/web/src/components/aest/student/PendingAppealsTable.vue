@@ -1,59 +1,52 @@
 <template>
-  <full-page-container :full-width="true">
-    <template #header>
-      <header-navigator title="Student requests" :subTitle="pageSubTitle" />
+  <body-header
+    :title="pageTitle"
+    :recordsCount="applicationAppeals.count"
+    :subTitle="pageDescription"
+  >
+    <template #actions>
+      <v-text-field
+        density="compact"
+        label="Search name or application #"
+        variant="outlined"
+        v-model="searchCriteria"
+        @keyup.enter="searchAppeals"
+        prepend-inner-icon="mdi-magnify"
+        hide-details="auto"
+      >
+      </v-text-field>
     </template>
-    <body-header
-      :title="pageTitle"
-      :recordsCount="applicationAppeals.count"
-      :subTitle="pageDescription"
-    >
-      <template #actions>
-        <v-text-field
-          density="compact"
-          label="Search name or application #"
-          variant="outlined"
-          v-model="searchCriteria"
-          @keyup.enter="searchAppeals"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
-        >
-        </v-text-field>
-      </template>
-    </body-header>
-    <content-group>
-      <toggle-content :toggled="!applicationAppeals.count && !isLoading">
-        <v-data-table-server
-          :headers="tableHeaders"
-          :items="applicationAppeals.results"
-          :items-length="applicationAppeals.count"
-          :loading="isLoading"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="PAGINATION_LIST"
-          @update:options="paginationAndSortEvent"
-        >
-          <template v-slot:loading>
-            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-          </template>
-          <template #[`item.submittedDate`]="{ item }">
-            {{ dateOnlyLongString(item.submittedDate) }}
-          </template>
-          <template #[`item.firstName`]="{ item }">
-            {{ emptyStringFiller(item.firstName) }}
-          </template>
-          <template #[`item.action`]="{ item }">
-            <v-btn
-              color="primary"
-              @click="
-                gotToAssessmentsSummary(item.applicationId, item.studentId)
-              "
-              >View</v-btn
-            >
-          </template>
-        </v-data-table-server>
-      </toggle-content>
-    </content-group>
-  </full-page-container>
+  </body-header>
+  <content-group>
+    <toggle-content :toggled="!applicationAppeals.count && !isLoading">
+      <v-data-table-server
+        :headers="tableHeaders"
+        :items="applicationAppeals.results"
+        :items-length="applicationAppeals.count"
+        :loading="isLoading"
+        :items-per-page="DEFAULT_PAGE_LIMIT"
+        :items-per-page-options="PAGINATION_LIST"
+        @update:options="paginationAndSortEvent"
+      >
+        <template v-slot:loading>
+          <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+        </template>
+        <template #[`item.submittedDate`]="{ item }">
+          {{ dateOnlyLongString(item.submittedDate) }}
+        </template>
+        <template #[`item.firstName`]="{ item }">
+          {{ emptyStringFiller(item.firstName) }}
+        </template>
+        <template #[`item.action`]="{ item }">
+          <v-btn
+            color="primary"
+            @click="gotToAssessmentsSummary(item.applicationId, item.studentId)"
+            >View</v-btn
+          >
+        </template>
+      </v-data-table-server>
+    </toggle-content>
+  </content-group>
 </template>
 
 <script lang="ts">
@@ -105,13 +98,6 @@ export default defineComponent({
     const applicationAppeals = ref(
       {} as PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>,
     );
-
-    // Computed properties for dynamic content based on appeals type
-    const pageSubTitle = computed(() => {
-      return props.appealsType === "change-requests"
-        ? "Change Requests (Pre 2025-2026)"
-        : "Appeals (2025-2026 and later)";
-    });
 
     const pageTitle = computed(() => {
       return props.appealsType === "change-requests"
@@ -217,7 +203,6 @@ export default defineComponent({
       searchAppeals,
       paginationAndSortEvent,
       searchCriteria,
-      pageSubTitle,
       pageTitle,
       pageDescription,
     };

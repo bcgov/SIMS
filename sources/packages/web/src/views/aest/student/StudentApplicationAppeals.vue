@@ -1,5 +1,13 @@
 <template>
-  <PendingAppealsTable appeals-type="change-requests" />
+  <full-page-container :full-width="true">
+    <template #header>
+      <header-navigator
+        title="Student requests"
+        subTitle="Change Requests (Pre 2025-2026)"
+      />
+    </template>
+    <PendingAppealsTable appeals-type="change-requests" />
+  </full-page-container>
 </template>
 
 <script lang="ts">
