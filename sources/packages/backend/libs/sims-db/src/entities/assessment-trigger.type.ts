@@ -55,4 +55,8 @@ export enum AssessmentTriggerType {
    * Triggered manually by a ministry user.
    */
   ManualReassessment = "Manual reassessment",
+  /**
+   * Assessment triggered by a scholastic standing reversal.
+   */
+  ScholasticStandingReversal = "Scholastic standing reversal",
 }
