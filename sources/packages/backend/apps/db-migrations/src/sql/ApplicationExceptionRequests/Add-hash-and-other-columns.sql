@@ -13,19 +13,6 @@ COMMENT ON COLUMN sims.application_exception_requests.approval_exception_request
 
 COMMENT ON COLUMN sims.application_exception_requests.exception_hash IS 'Hash of the application exception data, which also include files names and content hashes.';
 
--- Create unique constraint on application_exception_id, exception_name, and exception_description.
-ALTER TABLE
-  sims.application_exception_requests
-ADD
-  CONSTRAINT application_exception_id_exception_name_exception_description_unique UNIQUE (
-    application_exception_id,
-    exception_name,
-    exception_description
-  );
-
--- No need to drop the constraint in the rollback as the columns will be dropped and the constraint will be removed automatically.
-COMMENT ON CONSTRAINT application_exception_id_exception_name_exception_description_unique ON sims.application_exception_requests IS 'Ensures that for a given application exception request, the combination of exception name and description is unique. This prevents duplicate entries for the same exception type within a single application exception request.';
-
 -- Update exception_description based on existing exception_name values
 UPDATE
   sims.application_exception_requests
