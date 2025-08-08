@@ -945,6 +945,7 @@
                           {
                             "label": "Text",
                             "applyMaskOn": "change",
+                            "customClass": "font-weight-bold",
                             "hideLabel": true,
                             "spellcheck": false,
                             "disabled": true,
@@ -966,6 +967,7 @@
                           {
                             "label": "Text",
                             "applyMaskOn": "change",
+                            "customClass": "font-weight-bold",
                             "hideLabel": true,
                             "spellcheck": false,
                             "disabled": true,
