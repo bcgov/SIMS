@@ -42,15 +42,6 @@ export class ApplicationExceptionRequest extends RecordDataModel {
   })
   exceptionName: string;
   /**
-   * Index used for exceptions that can happen multiple times, for instance,
-   * dependents list or parents list.
-   */
-  @Column({
-    name: "exception_index",
-    type: "smallint",
-  })
-  exceptionIndex: number;
-  /**
    * Description of the application exception. Critical for exceptions that
    * happens multiple times to allow its individual identification.
    */

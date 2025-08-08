@@ -498,7 +498,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .innerJoin("studentScholasticStanding.application", "application")
       .innerJoin("application.student", "student")
       .innerJoin("studentScholasticStanding.referenceOffering", "offering")
-      .where("student.id = :studentId", { studentId })
+      // Only consider scholastic standings that were not reversed.
+      .where("studentScholasticStanding.reversalDate IS NULL")
+      .andWhere("student.id = :studentId", { studentId })
       .andWhere("offering.offeringIntensity = :offeringIntensity", {
         offeringIntensity: OfferingIntensity.fullTime,
       })
@@ -620,7 +622,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .addSelect("application.offeringIntensity", "offeringIntensity")
       .innerJoin("studentScholasticStanding.application", "application")
       .innerJoin("application.student", "student")
-      .where("student.id = :studentId", {
+      // Only consider scholastic standings that were not reversed.
+      .where("studentScholasticStanding.reversalDate IS NULL")
+      .andWhere("student.id = :studentId", {
         studentId,
       })
       .groupBy("application.offeringIntensity")
