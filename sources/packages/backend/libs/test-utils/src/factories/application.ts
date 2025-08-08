@@ -386,6 +386,7 @@ export async function saveFakeApplication(
         initialValue: {
           assessmentData:
             options?.currentAssessmentInitialValues?.assessmentData,
+          workflowData: options?.currentAssessmentInitialValues?.workflowData,
         },
         isPIRPending: options?.pirStatus === ProgramInfoStatus.required,
       },
