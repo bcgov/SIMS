@@ -48,8 +48,6 @@ export interface AssessmentHistorySummaryAPIOutDTO {
 
 export interface AssessmentNOAAPIOutDTO {
   assessment: Assessment;
-  totalAdditionalTransportationAllowance?: number;
-  returnTransportationCost?: number;
   applicationId: number;
   applicationNumber: string;
   applicationCurrentAssessmentId: number;

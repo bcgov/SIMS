@@ -105,8 +105,6 @@ export class AssessmentNOAAPIOutDTO {
       "Part-time and full-time will have some common and some specific properties for each payload.",
   })
   assessment: AssessmentAPIOutDTO;
-  totalAdditionalTransportationAllowance?: number;
-  returnTransportationCost?: number;
   applicationId: number;
   applicationNumber: string;
   applicationCurrentAssessmentId: number;
