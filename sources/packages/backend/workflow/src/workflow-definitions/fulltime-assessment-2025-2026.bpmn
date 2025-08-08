@@ -1712,7 +1712,7 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
     <bpmn:intermediateThrowEvent id="Event_1o1cgxp" name="Assessed Need">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=max(calculatedDataTotalCosts - calculatedDataTotalProvincialContribution" target="calculatedDataProvincialAssessedNeed" />
+          <zeebe:output source="=max(calculatedDataTotalCosts - calculatedDataTotalProvincialContribution,0)" target="calculatedDataProvincialAssessedNeed" />
           <zeebe:output source="=max(calculatedDataTotalCosts - calculatedDataTotalFederalContribution,0)" target="calculatedDataFederalAssessedNeed" />
           <zeebe:output source="=max(calculatedDataFederalAssessedNeed, calculatedDataProvincialAssessedNeed)" target="calculatedDataTotalAssessedNeed" />
         </zeebe:ioMapping>
@@ -1804,7 +1804,8 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=min(dmnFullTimeContributionLimits.limitFederalFSCWeeklyAmount, dmnFullTimeContributionLimits.limitFederalLowIncomeWeeklyAmount + (dmnFullTimeContributionLimits.limitOverThresholdFSCProrate * (calculatedDataTotalFamilyIncome-dmnFullTimeIncomeThreshold.calculatedDataFederalFSCIncomeThreshold)))" target="calculatedDataWeeklyFederalFSC" />
-          <zeebe:output source="=min(calculatedDataWeeklyFederalFSC * min(offeringWeeks,dmnFullTimeContributionLimits.limitFederalContributionWeeks), dmnFullTimeContributionLimits.limitFederalFSCMax)" target="calculatedDataTotalFederalFSC" />
+          <zeebe:output source="=min(offeringWeeks,dmnFullTimeContributionLimits.limitFederalContributionWeeks)" target="calculatedDataFederalFSCWeeks" />
+          <zeebe:output source="=min(calculatedDataWeeklyFederalFSC * calculatedDataFederalFSCWeeks, dmnFullTimeContributionLimits.limitFederalFSCMax)" target="calculatedDataTotalFederalFSC" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1u3sz5r</bpmn:incoming>
