@@ -383,11 +383,7 @@ export async function saveFakeApplication(
         applicationEditStatusUpdatedBy: savedUser,
       },
       {
-        initialValue: {
-          assessmentData:
-            options?.currentAssessmentInitialValues?.assessmentData,
-          workflowData: options?.currentAssessmentInitialValues?.workflowData,
-        },
+        initialValue: options?.currentAssessmentInitialValues,
         isPIRPending: options?.pirStatus === ProgramInfoStatus.required,
       },
     );
