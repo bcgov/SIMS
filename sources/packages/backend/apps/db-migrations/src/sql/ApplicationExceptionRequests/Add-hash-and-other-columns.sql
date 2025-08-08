@@ -43,6 +43,6 @@ ALTER TABLE
 ALTER COLUMN
   exception_description DROP DEFAULT;
 
--- Drop the constraint
+-- Drop the constraint.
 ALTER TABLE
   sims.application_exception_requests DROP CONSTRAINT application_exception_request_application_exception_id_exce_key;
