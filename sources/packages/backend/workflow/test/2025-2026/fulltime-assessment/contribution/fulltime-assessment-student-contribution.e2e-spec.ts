@@ -62,7 +62,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
 
   it(
     "Should calculate total fixed student contribution for a single independent student that is not exempt from contribution " +
-      " and has no dependants and $1000 of targeted resources.",
+      "and $1000 of targeted resources.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -117,7 +117,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
 
   it(
     "Should calculate total fixed student contribution (long offering) for a single independent student that is not exempt from contribution " +
-      " and has no dependants and no targeted resources.",
+      " and has no targeted resources.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -140,11 +140,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       ).toBe(false);
       // The federal and provincial fixed student contributions are based on family income and size when the student is not exempt.
       expect(calculatedAssessment.variables.calculatedDataTotalFederalFSC).toBe(
-        2660.841346153845,
+        1845.027389423077,
       );
       expect(
         calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
-      ).toBe(2660.841346153845);
+      ).toBe(2767.275);
       // The total spouse contribution is not calculated for single students.
       expect(
         calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
@@ -160,12 +160,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFederalContribution,
-      ).toBe(2660.841346153845);
+      ).toBe(1845.027389423077);
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalProvincialContribution,
-      ).toBe(2660.841346153845);
+      ).toBe(2767.275);
     },
   );
 
