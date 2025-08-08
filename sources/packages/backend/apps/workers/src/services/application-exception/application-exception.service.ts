@@ -65,7 +65,6 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
           exceptionName: exceptionRequest.key,
           exceptionDescription: exceptionRequest.description,
           exceptionHash: exceptionRequest.fullHashContent,
-          exceptionIndex: exceptionRequest.index,
           approvalExceptionRequest: this.getPreviouslyApprovedException(
             exceptionRequest,
             previouslyApprovedExceptionRequests,
@@ -98,7 +97,6 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
               exceptionRequests: {
                 id: true,
                 exceptionName: true,
-                exceptionIndex: true,
                 exceptionHash: true,
               },
             },
@@ -133,6 +131,10 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         },
       },
     });
+    if (!application?.parentApplication?.versions) {
+      return [];
+    }
+    // Flatten the exception requests from all versions of the parent application.
     return application.parentApplication.versions.flatMap(
       (version) => version.applicationException.exceptionRequests,
     );
@@ -145,7 +147,6 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     return previouslyApprovedExceptionRequests.find(
       (exception) =>
         exception.exceptionName === exceptionRequest.key &&
-        exception.exceptionIndex === exceptionRequest.index &&
         exception.exceptionHash === exceptionRequest.fullHashContent,
     );
   }
