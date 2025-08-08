@@ -186,7 +186,6 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
           },
         },
       );
-
       const [savedRequest1, savedRequest2] =
         await db.applicationExceptionRequest.save([
           exceptionRequest1,
@@ -231,7 +230,6 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
           } as ApplicationData,
         },
       );
-
       const verifyUniqueApplicationExceptionsPayload =
         createFakeVerifyUniqueApplicationExceptionsPayload(
           currentApplication.id,

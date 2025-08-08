@@ -69,7 +69,6 @@ export class ApplicationExceptionSearchService {
           propertyValue,
           applicationExceptions,
         );
-        continue;
       }
     }
   }
@@ -127,25 +126,19 @@ export class ApplicationExceptionSearchService {
     files: ApplicationDataExceptionFile[] = [],
   ): void {
     if (Array.isArray(exceptionData)) {
-      // The file extraction is executed in a more generic way expecting the
-      // file can be at any level or even in an array with a mix of data.
-      // This is done to make the search resilient to possible form.io
-      // components changes.
-      const filesToRemove: number[] = [];
-      exceptionData.forEach((item, index) => {
+      let isFileArray = false;
+      exceptionData.forEach((item) => {
         if (this.isApplicationDataExceptionFile(item)) {
           // If the item is an ApplicationDataExceptionFile, extract its data.
           files.push({ name: item.name, originalName: item.originalName });
-          // Mark the index for removal.
-          filesToRemove.push(index);
-        } else {
-          this.extractFilesFromExceptionRecursively(item, files);
+          isFileArray = true;
         }
       });
-      // Remove the files from the exception data.
-      filesToRemove.reverse().forEach((index) => {
-        exceptionData.splice(index, 1);
-      });
+      if (isFileArray) {
+        // If the array contains files, remove all items from the array.
+        // Only files are expected inside the array.
+        exceptionData.length = 0;
+      }
       return;
     }
     if (typeof exceptionData === "object") {

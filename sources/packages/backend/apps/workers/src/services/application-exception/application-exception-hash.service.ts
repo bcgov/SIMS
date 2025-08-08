@@ -29,11 +29,12 @@ export class ApplicationExceptionHashService {
     filesHashMap: Record<string, string>,
   ): ApplicationDataExceptionHashed {
     // Combine all file hashes in a sorted manner to ensure consistent ordering.
-    const filesHashes = exception.files
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((file) => {
-        return filesHashMap[file.name];
-      });
+    const sortedFiles = exception.files.sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+    const filesHashes = sortedFiles.map((file) => {
+      return filesHashMap[file.name];
+    });
     // Combine the exception data content and its files hashes to create a full hash.
     const fullStringContent =
       JSON.stringify(exception.hashableContent) + filesHashes.join();
