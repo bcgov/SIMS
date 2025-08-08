@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, IsNull, Not } from "typeorm";
+import { DataSource, EntityManager, IsNull } from "typeorm";
 import {
   RecordDataModelService,
   Application,
@@ -8,6 +8,8 @@ import {
   ApplicationExceptionStatus,
 } from "@sims/sims-db";
 import { ApplicationDataExceptionHashed } from "./application-exception.models";
+import { CustomNamedError } from "@sims/utilities";
+import { APPLICATION_EXCEPTION_ALREADY_ASSOCIATED } from "../../constants";
 
 /**
  * Manages student applications exceptions detected upon full-time/part-time application
@@ -47,7 +49,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     return entityManager.getRepository(ApplicationException).save(newException);
   }
 
-  async createExceptionFromHashedData(
+  async saveExceptionFromHashedData(
     applicationId: number,
     exceptionRequests: ApplicationDataExceptionHashed[],
     entityManager: EntityManager,
@@ -58,7 +60,6 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         entityManager,
       );
     const newException = new ApplicationException();
-    newException.application = { id: applicationId } as Application;
     newException.exceptionRequests = exceptionRequests.map(
       (exceptionRequest) =>
         ({
@@ -77,9 +78,32 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     newException.exceptionStatus = notAllExceptionsApproved
       ? ApplicationExceptionStatus.Pending
       : ApplicationExceptionStatus.Approved;
-    return entityManager.getRepository(ApplicationException).save(newException);
+    const savedException = await entityManager
+      .getRepository(ApplicationException)
+      .save(newException);
+    const updateResult = await entityManager
+      .getRepository(Application)
+      .update(
+        { id: applicationId, applicationException: IsNull() },
+        { applicationException: savedException },
+      );
+    if (!updateResult.affected) {
+      throw new CustomNamedError(
+        `Application ID ${applicationId} already has an exception associated with it.`,
+        APPLICATION_EXCEPTION_ALREADY_ASSOCIATED,
+      );
+    }
+    return savedException;
   }
 
+  /**
+   * Get previously approved exception requests for for any version of the application.
+   * The exceptions are ordered by the version creation date, so the first
+   * exception request is the first one ever approved.
+   * @param applicationId application ID to search for previously approved exceptions.
+   * @param entityManager entity manager to execute the query.
+   * @returns list of previously approved exception requests.
+   */
   private async getPreviouslyApprovedExceptionRequests(
     applicationId: number,
     entityManager: EntityManager,
@@ -118,7 +142,6 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
           versions: {
             applicationException: {
               exceptionStatus: ApplicationExceptionStatus.Approved,
-              exceptionRequests: { id: Not(IsNull()) },
             },
           },
         },

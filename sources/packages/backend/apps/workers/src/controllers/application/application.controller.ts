@@ -31,6 +31,7 @@ import {
   ApplicationExceptionStatus,
 } from "@sims/sims-db";
 import {
+  APPLICATION_EXCEPTION_ALREADY_ASSOCIATED,
   APPLICATION_NOT_FOUND,
   APPLICATION_STATUS_NOT_UPDATED,
 } from "../../constants";
@@ -52,7 +53,7 @@ import {
   MustReturnJobActionAcknowledgement,
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";
-import { inspect } from "util";
+import { CustomNamedError } from "@sims/utilities";
 
 @Controller()
 export class ApplicationController {
@@ -253,11 +254,9 @@ export class ApplicationController {
         await this.applicationExceptionHashService.createHashedApplicationExceptions(
           exceptions,
         );
-      // TODO: Remove the console.log once the code is tested and verified.
-      console.log(inspect(hashedExceptions, { depth: null }));
-      await this.dataSource.transaction(async (entityManager) => {
+      return await this.dataSource.transaction(async (entityManager) => {
         const createdException =
-          await this.applicationExceptionService.createExceptionFromHashedData(
+          await this.applicationExceptionService.saveExceptionFromHashedData(
             job.variables.applicationId,
             hashedExceptions,
             entityManager,
@@ -290,6 +289,27 @@ export class ApplicationController {
         });
       });
     } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === APPLICATION_EXCEPTION_ALREADY_ASSOCIATED
+      ) {
+        // If the exception is already associated with the application, return the status.
+        // This scenario can happen if the worker is invoked multiple times
+        // for the same application, and, if the creation of the exception is in progress but
+        // not yet completed, another worker invocation will try to create the same exception,
+        // filing the initial check for the exception existence.
+        // This is required to ensure the idempotency of the worker.
+        jobLogger.log(error.message);
+        // Refresh the application to get the most updated exception status.
+        const application = await this.applicationService.getApplicationById(
+          job.variables.applicationId,
+          { loadDynamicData: false },
+        );
+        return job.complete({
+          applicationExceptionStatus:
+            application.applicationException.exceptionStatus,
+        });
+      }
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,
       });
