@@ -8,7 +8,7 @@ import { YesNoOptions } from "@sims/test-utils";
 import {
   createFakeStudentDependentEligibleForChildcareCost,
   DependentChildCareEligibility,
-} from "workflow/test/test-utils/factories";
+} from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribution.`, () => {
   it(
