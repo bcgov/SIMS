@@ -60,7 +60,7 @@ export class ApplicationExceptionRequest extends RecordDataModel {
     name: "approval_exception_request_id",
     referencedColumnName: ColumnNames.ID,
   })
-  approvalExceptionRequestId?: ApplicationExceptionRequest;
+  approvalExceptionRequest?: ApplicationExceptionRequest;
   /**
    * Hash of the application exception data, which also include files
    * names and content hashes.

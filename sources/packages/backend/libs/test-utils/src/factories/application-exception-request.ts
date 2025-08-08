@@ -11,14 +11,20 @@ import { createFakeApplicationException } from "./application-exception";
  * @param relations dependencies:
  *  - `applicationException`: application exception requested.
  *  - `creator`: student user that created the request.
+ * @param options additional options:
+ *  - `initialData`: initial data to set on the application exception request.
  * @returns a fake application exception request.
  */
-export function createFakeApplicationExceptionRequest(relations?: {
-  applicationException?: ApplicationException;
-  creator?: User;
-}): ApplicationExceptionRequest {
+export function createFakeApplicationExceptionRequest(
+  relations?: {
+    applicationException?: ApplicationException;
+    creator?: User;
+  },
+  options?: {
+    initialData?: Partial<ApplicationExceptionRequest>;
+  },
+): ApplicationExceptionRequest {
   const applicationExceptionRequest = new ApplicationExceptionRequest();
-
   if (relations?.applicationException) {
     applicationExceptionRequest.applicationException =
       relations?.applicationException;
@@ -28,10 +34,13 @@ export function createFakeApplicationExceptionRequest(relations?: {
         creator: relations?.creator,
       });
   }
-
-  applicationExceptionRequest.exceptionName = faker.name.firstName();
+  applicationExceptionRequest.exceptionName =
+    options?.initialData?.exceptionName ?? faker.name.firstName();
   applicationExceptionRequest.exceptionDescription =
+    options?.initialData?.exceptionDescription ??
     "Fake application exception description";
   applicationExceptionRequest.creator = relations?.creator;
+  applicationExceptionRequest.exceptionHash =
+    options?.initialData?.exceptionHash;
   return applicationExceptionRequest;
 }

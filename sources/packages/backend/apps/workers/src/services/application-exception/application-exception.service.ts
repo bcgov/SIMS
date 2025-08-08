@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, IsNull } from "typeorm";
 import {
   RecordDataModelService,
   Application,
@@ -7,6 +7,9 @@ import {
   ApplicationExceptionRequest,
   ApplicationExceptionStatus,
 } from "@sims/sims-db";
+import { ApplicationDataExceptionHashed } from "./application-exception.models";
+import { CustomNamedError } from "@sims/utilities";
+import { APPLICATION_EXCEPTION_ALREADY_ASSOCIATED } from "../../constants";
 
 /**
  * Manages student applications exceptions detected upon full-time/part-time application
@@ -44,6 +47,131 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         } as ApplicationExceptionRequest),
     );
     return entityManager.getRepository(ApplicationException).save(newException);
+  }
+
+  async saveExceptionFromHashedData(
+    applicationId: number,
+    exceptionRequests: ApplicationDataExceptionHashed[],
+    entityManager: EntityManager,
+  ): Promise<ApplicationException> {
+    const previouslyApprovedExceptionRequests =
+      await this.getPreviouslyApprovedExceptionRequests(
+        applicationId,
+        entityManager,
+      );
+    const newException = new ApplicationException();
+    newException.exceptionRequests = exceptionRequests.map(
+      (exceptionRequest) =>
+        ({
+          exceptionName: exceptionRequest.key,
+          exceptionDescription: exceptionRequest.description,
+          exceptionHash: exceptionRequest.fullHashContent,
+          approvalExceptionRequest: this.getPreviouslyApprovedException(
+            exceptionRequest,
+            previouslyApprovedExceptionRequests,
+          ),
+        } as ApplicationExceptionRequest),
+    );
+    const notAllExceptionsApproved = newException.exceptionRequests.some(
+      (exceptionRequest) => !exceptionRequest.approvalExceptionRequest?.id,
+    );
+    newException.exceptionStatus = notAllExceptionsApproved
+      ? ApplicationExceptionStatus.Pending
+      : ApplicationExceptionStatus.Approved;
+    const savedException = await entityManager
+      .getRepository(ApplicationException)
+      .save(newException);
+    const updateResult = await entityManager
+      .getRepository(Application)
+      .update(
+        { id: applicationId, applicationException: IsNull() },
+        { applicationException: savedException },
+      );
+    if (!updateResult.affected) {
+      throw new CustomNamedError(
+        `Application ID ${applicationId} already has an exception associated with it.`,
+        APPLICATION_EXCEPTION_ALREADY_ASSOCIATED,
+      );
+    }
+    return savedException;
+  }
+
+  /**
+   * Get previously approved exception requests for for any version of the application.
+   * The exceptions are ordered by the version creation date, so the first
+   * exception request is the first one ever approved.
+   * @param applicationId application ID to search for previously approved exceptions.
+   * @param entityManager entity manager to execute the query.
+   * @returns list of previously approved exception requests.
+   */
+  private async getPreviouslyApprovedExceptionRequests(
+    applicationId: number,
+    entityManager: EntityManager,
+  ): Promise<ApplicationExceptionRequest[]> {
+    const application = await entityManager.getRepository(Application).findOne({
+      select: {
+        id: true,
+        parentApplication: {
+          id: true,
+          versions: {
+            id: true,
+            createdAt: true,
+            applicationException: {
+              id: true,
+              exceptionRequests: {
+                id: true,
+                exceptionName: true,
+                exceptionHash: true,
+              },
+            },
+          },
+        },
+      },
+      relations: {
+        parentApplication: {
+          versions: {
+            applicationException: {
+              exceptionRequests: true,
+            },
+          },
+        },
+      },
+      where: {
+        id: applicationId,
+        parentApplication: {
+          versions: {
+            applicationException: {
+              exceptionStatus: ApplicationExceptionStatus.Approved,
+            },
+          },
+        },
+      },
+      order: {
+        parentApplication: {
+          versions: {
+            createdAt: "ASC",
+          },
+        },
+      },
+    });
+    if (!application?.parentApplication?.versions) {
+      return [];
+    }
+    // Flatten the exception requests from all versions of the parent application.
+    return application.parentApplication.versions.flatMap(
+      (version) => version.applicationException.exceptionRequests,
+    );
+  }
+
+  private getPreviouslyApprovedException(
+    exceptionRequest: ApplicationDataExceptionHashed,
+    previouslyApprovedExceptionRequests: ApplicationExceptionRequest[],
+  ): ApplicationExceptionRequest | undefined {
+    return previouslyApprovedExceptionRequests.find(
+      (exception) =>
+        exception.exceptionName === exceptionRequest.key &&
+        exception.exceptionHash === exceptionRequest.fullHashContent,
+    );
   }
 
   /**
