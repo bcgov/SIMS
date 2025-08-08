@@ -3,6 +3,7 @@ import { ApplicationData, ApplicationExceptionStatus } from "@sims/sims-db";
 import {
   createE2EDataSources,
   createFakeApplicationException,
+  createFakeApplicationExceptionRequest,
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
@@ -32,66 +33,286 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     applicationController = nestApplication.get(ApplicationController);
   });
 
-  it("Should create and associate application exceptions when there are some exceptions for the application.", async () => {
-    // Arrange
-    const fakeApplication = await saveFakeApplication(
-      db.dataSource,
-      undefined,
-      {
+  it(
+    "Should create and associate an application exception with three exception requests with hashes " +
+      "when there are exceptions for the application.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplication(db.dataSource, undefined, {
         applicationData: {
           workflowName: "",
-          parents: [
+          someExceptionList: [
             {
-              currentYearParentIncomeApplicationException: {
-                exceptionDescription:
-                  "Current Year Parent Income Exception - Parent 1",
+              someApplicationException: {
+                exceptionDescription: "Some Application Exception - 1",
                 decreaseInParentIncomeSupportingDocuments: [
                   {
-                    url: "student/files/UploadFile15Kb-01978925-f0c4-4117-a588-da61c98e8b7d.txt",
-                    name: "UploadFile15Kb-01978925-f0c4-4117-a588-da61c98e8b7d.txt",
-                    originalName: "UploadFile15Kb.txt",
+                    url: "some_url_f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                    name: "some_name_f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                    originalName: "some_original_name_A",
+                  },
+                ],
+              },
+            },
+            {
+              someApplicationException: {
+                exceptionDescription: "Some Application Exception - 2",
+                decreaseInParentIncomeSupportingDocuments: [
+                  {
+                    url: "some_url_6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+                    name: "some_name_6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+                    originalName: "some_original_name_B",
                   },
                 ],
               },
             },
           ],
+          someOtherApplicationException: {
+            exceptionDescription: "Some Other Application Exception",
+            decreaseInParentIncomeSupportingDocuments: [
+              {
+                url: "some_url_8f7e4d2a-1b3c-4a5e-9f8d-7c6b5a4e3d2f",
+                name: "some_name_8f7e4d2a-1b3c-4a5e-9f8d-7c6b5a4e3d2f",
+                originalName: "some_original_name_A",
+              },
+            ],
+          },
         } as ApplicationData,
-      },
-    );
-    const savedApplication = await db.application.save(fakeApplication);
-    const verifyUniqueApplicationExceptionsPayload =
-      createFakeVerifyUniqueApplicationExceptionsPayload(savedApplication.id);
+      });
+      const verifyUniqueApplicationExceptionsPayload =
+        createFakeVerifyUniqueApplicationExceptionsPayload(application.id);
 
-    // Act
-    const result =
-      await applicationController.verifyUniqueApplicationExceptions(
-        createFakeWorkerJob<
-          ApplicationExceptionsJobInDTO,
-          ICustomHeaders,
-          ApplicationExceptionsJobOutDTO
-        >(verifyUniqueApplicationExceptionsPayload),
+      // Act
+      const result =
+        await applicationController.verifyUniqueApplicationExceptions(
+          createFakeWorkerJob<
+            ApplicationExceptionsJobInDTO,
+            ICustomHeaders,
+            ApplicationExceptionsJobOutDTO
+          >(verifyUniqueApplicationExceptionsPayload),
+        );
+
+      // Assert
+      // Validate job result.
+      expect(result).toEqual({
+        resultType: MockedZeebeJobResult.Complete,
+        outputVariables: {
+          applicationExceptionStatus: ApplicationExceptionStatus.Pending,
+        },
+      });
+      // Validate DB changes.
+      const updatedApplication = await db.application.findOne({
+        select: {
+          id: true,
+          applicationException: {
+            id: true,
+            exceptionStatus: true,
+            exceptionRequests: {
+              id: true,
+              exceptionName: true,
+              exceptionDescription: true,
+              exceptionHash: true,
+            },
+          },
+        },
+        relations: { applicationException: { exceptionRequests: true } },
+        where: {
+          id: application.id,
+        },
+      });
+      expect(updatedApplication).toEqual({
+        id: application.id,
+        applicationException: {
+          id: expect.any(Number),
+          exceptionStatus: ApplicationExceptionStatus.Pending,
+          exceptionRequests: [
+            {
+              id: expect.any(Number),
+              exceptionName: "someApplicationException",
+              exceptionDescription: "Some Application Exception - 1",
+              exceptionHash:
+                "99283cd205266dc0c667899fa8ff6edb940598d239d0a2652b05dc01d25a920c",
+            },
+            {
+              id: expect.any(Number),
+              exceptionName: "someApplicationException",
+              exceptionDescription: "Some Application Exception - 2",
+              exceptionHash:
+                "7e286748603937ab6a98c191445132dce68cdfd006ccd1be7ea3574e2f50f5a9",
+            },
+            {
+              id: expect.any(Number),
+              exceptionName: "someOtherApplicationException",
+              exceptionDescription: "Some Other Application Exception",
+              exceptionHash:
+                "10e8f9d54f2ab4332f58ad151a6425b6a15469f51ce57fafc765ede641126b5a",
+            },
+          ],
+        },
+      });
+    },
+  );
+
+  it(
+    "Should create and associate an approved application exception with two exception requests " +
+      "when all application exceptions part of the new submission were previously approved.",
+    async () => {
+      // Arrange
+      // Create two already approved application exceptions.
+      const exception = createFakeApplicationException();
+      exception.exceptionStatus = ApplicationExceptionStatus.Approved;
+      const savedException = await db.applicationException.save(exception);
+      const exceptionRequest1 = createFakeApplicationExceptionRequest(
+        {
+          applicationException: savedException,
+        },
+        {
+          initialData: {
+            exceptionName: "someApplicationException",
+            exceptionHash:
+              "99283cd205266dc0c667899fa8ff6edb940598d239d0a2652b05dc01d25a920c",
+          },
+        },
+      );
+      const exceptionRequest2 = createFakeApplicationExceptionRequest(
+        {
+          applicationException: savedException,
+        },
+        {
+          initialData: {
+            exceptionName: "someOtherApplicationException",
+            exceptionHash:
+              "10e8f9d54f2ab4332f58ad151a6425b6a15469f51ce57fafc765ede641126b5a",
+          },
+        },
       );
 
-    // Assert
-    // Validate job result.
-    expect(result).toEqual({
-      resultType: MockedZeebeJobResult.Complete,
-      outputVariables: {
-        applicationExceptionStatus: ApplicationExceptionStatus.Pending,
-      },
-    });
-    // Validate DB changes.
-    const updatedApplication = await db.application.findOne({
-      select: { applicationException: { exceptionStatus: true } },
-      relations: { applicationException: true },
-      where: {
-        id: savedApplication.id,
-      },
-    });
-    expect(updatedApplication.applicationException.exceptionStatus).toBe(
-      ApplicationExceptionStatus.Pending,
-    );
-  });
+      const [savedRequest1, savedRequest2] =
+        await db.applicationExceptionRequest.save([
+          exceptionRequest1,
+          exceptionRequest2,
+        ]);
+      const previousApplication = await saveFakeApplication(db.dataSource, {
+        applicationException: savedException,
+      });
+      // Most recently application that should have the exception automatically approved.
+      const currentApplication = await saveFakeApplication(
+        db.dataSource,
+        {
+          parentApplication: previousApplication,
+        },
+        {
+          applicationData: {
+            workflowName: "",
+            someOtherApplicationException: {
+              exceptionDescription: "Some Other Application Exception",
+              decreaseInParentIncomeSupportingDocuments: [
+                {
+                  url: "some_url_8f7e4d2a-1b3c-4a5e-9f8d-7c6b5a4e3d2f",
+                  name: "some_name_8f7e4d2a-1b3c-4a5e-9f8d-7c6b5a4e3d2f",
+                  originalName: "some_original_name_A",
+                },
+              ],
+            },
+            someExceptionList: [
+              {
+                someApplicationException: {
+                  exceptionDescription: "Some Application Exception - 1",
+                  decreaseInParentIncomeSupportingDocuments: [
+                    {
+                      url: "some_url_f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                      name: "some_name_f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                      originalName: "some_original_name_A",
+                    },
+                  ],
+                },
+              },
+            ],
+          } as ApplicationData,
+        },
+      );
+
+      const verifyUniqueApplicationExceptionsPayload =
+        createFakeVerifyUniqueApplicationExceptionsPayload(
+          currentApplication.id,
+        );
+
+      // Act
+      const result =
+        await applicationController.verifyUniqueApplicationExceptions(
+          createFakeWorkerJob<
+            ApplicationExceptionsJobInDTO,
+            ICustomHeaders,
+            ApplicationExceptionsJobOutDTO
+          >(verifyUniqueApplicationExceptionsPayload),
+        );
+
+      // Assert
+      // Validate job result.
+      expect(result).toEqual({
+        resultType: MockedZeebeJobResult.Complete,
+        outputVariables: {
+          applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+        },
+      });
+      // Validate DB changes.
+      const updatedApplication = await db.application.findOne({
+        select: {
+          id: true,
+          applicationException: {
+            id: true,
+            exceptionStatus: true,
+            exceptionRequests: {
+              id: true,
+              exceptionName: true,
+              exceptionDescription: true,
+              exceptionHash: true,
+              approvalExceptionRequest: {
+                id: true,
+              },
+            },
+          },
+        },
+        relations: {
+          applicationException: {
+            exceptionRequests: { approvalExceptionRequest: true },
+          },
+        },
+        where: {
+          id: currentApplication.id,
+        },
+      });
+      expect(updatedApplication).toEqual({
+        id: currentApplication.id,
+        applicationException: {
+          id: expect.any(Number),
+          exceptionStatus: ApplicationExceptionStatus.Approved,
+          exceptionRequests: [
+            {
+              id: expect.any(Number),
+              exceptionName: "someApplicationException",
+              exceptionDescription: "Some Application Exception - 1",
+              exceptionHash:
+                "99283cd205266dc0c667899fa8ff6edb940598d239d0a2652b05dc01d25a920c",
+              approvalExceptionRequest: {
+                id: savedRequest1.id,
+              },
+            },
+            {
+              id: expect.any(Number),
+              exceptionName: "someOtherApplicationException",
+              exceptionDescription: "Some Other Application Exception",
+              exceptionHash:
+                "10e8f9d54f2ab4332f58ad151a6425b6a15469f51ce57fafc765ede641126b5a",
+              approvalExceptionRequest: {
+                id: savedRequest2.id,
+              },
+            },
+          ],
+        },
+      });
+    },
+  );
 
   it("Should not create any application exception when there is no application exception in application data.", async () => {
     // Arrange
