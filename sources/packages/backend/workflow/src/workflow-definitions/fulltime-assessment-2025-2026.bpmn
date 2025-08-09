@@ -1757,8 +1757,8 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
     <bpmn:intermediateThrowEvent id="Event_1191le4" name="FSC Exemption">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (studentDataIndigenousStatus = &#34;yes&#34; &#10;  or calculatedDataPDPPDStatus = true &#10;  or studentDataYouthInCare = &#34;yes&#34;)&#10;then true&#10;  else if studentDataDependantStatus = &#34;independant&#34; and (calculatedDataTotalEligibleDependants - calculatedDataDependantPostSecondaryQuantity &#62;0) &#10;  then true&#10;  else false" target="calculatedDataFederalFSCExempt" />
-          <zeebe:output source="=if (studentDataIndigenousStatus = &#34;yes&#34; &#10;  or calculatedDataPDPPDStatus = true &#10;  or studentDataYouthInCare = &#34;yes&#34;)&#10;then true&#10;  else if studentDataDependantStatus = &#34;independant&#34; and (calculatedDataTotalEligibleDependants - calculatedDataDependantPostSecondaryQuantity &#62;0) &#10;  then true&#10;  else false" target="calculatedDataProvincialFSCExempt" />
+          <zeebe:output source="=if (studentDataIndigenousStatus = &#34;yes&#34; &#10;  or calculatedDataPDPPDStatus = true &#10;  or studentDataYouthInCare = &#34;yes&#34;)&#10;  or (calculatedDataTotalEligibleDependants - calculatedDataDependantPostSecondaryQuantity &#62; 0)&#10;then true&#10;else false" target="calculatedDataFederalFSCExempt" />
+          <zeebe:output source="=if (studentDataIndigenousStatus = &#34;yes&#34; &#10;  or calculatedDataPDPPDStatus = true &#10;  or studentDataYouthInCare = &#34;yes&#34;)&#10;  or (calculatedDataTotalEligibleDependants - calculatedDataDependantPostSecondaryQuantity &#62; 0)&#10;then true&#10;else false" target="calculatedDataProvincialFSCExempt" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jtpb8r</bpmn:incoming>

@@ -6,14 +6,14 @@ import {
 } from "../../../test-utils";
 import { YesNoOptions } from "@sims/test-utils";
 import {
-  createFakeStudentDependentEligibleForChildcareCost,
-  DependentChildCareEligibility,
+  createFakeStudentDependentEligible,
+  DependentEligibility,
 } from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribution.`, () => {
   it(
     "Should calculate total fixed student contribution for a single independent student that is not exempt from contribution " +
-      " and has no dependants and no targeted resources.",
+      "and has no dependants and no targeted resources.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -66,7 +66,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
 
   it(
     "Should calculate total fixed student contribution for a single independent student (low income) that is not exempt from contribution " +
-      " and has no dependants and no targeted resources.",
+      "and has no dependants and no targeted resources.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -89,11 +89,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       ).toBe(false);
       // The federal and provincial fixed student contributions are based on family income and size when the student is not exempt.
       expect(calculatedAssessment.variables.calculatedDataTotalFederalFSC).toBe(
-        692.307692307692,
+        692.3076923076923,
       );
       expect(
         calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
-      ).toBe(692.307692307692);
+      ).toBe(692.3076923076923);
       // The total spouse contribution is not calculated for single students.
       expect(
         calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
@@ -109,12 +109,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFederalContribution,
-      ).toBe(692.307692307692);
+      ).toBe(692.3076923076923);
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalProvincialContribution,
-      ).toBe(692.307692307692);
+      ).toBe(692.3076923076923);
     },
   );
 
@@ -175,7 +175,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
 
   it(
     "Should calculate total fixed student contribution (long offering) for a single independent student that is not exempt from contribution " +
-      " and has no targeted resources.",
+      "and has no targeted resources.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -378,9 +378,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentEligibleForChildcareCost(
-        DependentChildCareEligibility.Eligible0To11YearsOld,
-        assessmentConsolidatedData.offeringStudyStartDate,
+      createFakeStudentDependentEligible(
+        DependentEligibility.Eligible0To18YearsOld,
       ),
     ];
 
