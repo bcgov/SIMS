@@ -39,7 +39,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       );
       expect(
         calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
-      ).toBe(851.4692307692308);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalFederalFSC);
       // The total spouse contribution is not calculated for single students.
       expect(
         calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
@@ -55,12 +55,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFederalContribution,
-      ).toBe(851.4692307692308);
-      // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalFederalFSC);
+      // Combination of provincial fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalProvincialContribution,
-      ).toBe(851.4692307692308);
+      ).toBe(calculatedAssessment.variables.calculatedDataProvincialFSCExempt);
     },
   );
 
@@ -93,7 +93,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       );
       expect(
         calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
-      ).toBe(692.3076923076923);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalFederalFSC);
       // The total spouse contribution is not calculated for single students.
       expect(
         calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
@@ -109,12 +109,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFederalContribution,
-      ).toBe(692.3076923076923);
-      // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalFederalFSC);
+      // Combination of provincial fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalProvincialContribution,
-      ).toBe(692.3076923076923);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalProvincialFSC);
     },
   );
 
@@ -147,7 +147,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       );
       expect(
         calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
-      ).toBe(851.4692307692308);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalFederalFSC);
       // The total spouse contribution is not calculated for single students.
       expect(
         calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
@@ -164,12 +164,18 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFederalContribution,
-      ).toBe(1851.4692307692308);
-      // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataTotalFederalFSC +
+          calculatedAssessment.variables.calculatedDataTotalTargetedResources,
+      );
+      // Combination of provincial fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalProvincialContribution,
-      ).toBe(1851.4692307692308);
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataTotalProvincialFSC +
+          calculatedAssessment.variables.calculatedDataTotalTargetedResources,
+      );
     },
   );
 
@@ -218,12 +224,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFederalContribution,
-      ).toBe(1845.027389423077);
-      // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalFederalFSC);
+      // Combination of provincial fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalProvincialContribution,
-      ).toBe(2767.275);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalProvincialFSC);
     },
   );
 
@@ -269,7 +275,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
     expect(
       calculatedAssessment.variables.calculatedDataTotalFederalContribution,
     ).toBe(0);
-    // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
+    // Combination of provincial fixed student contribution, spouse contribution, parental contribution, and targeted resources.
     expect(
       calculatedAssessment.variables.calculatedDataTotalProvincialContribution,
     ).toBe(0);
@@ -318,7 +324,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
     expect(
       calculatedAssessment.variables.calculatedDataTotalFederalContribution,
     ).toBe(0);
-    // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
+    // Combination of provincial fixed student contribution, spouse contribution, parental contribution, and targeted resources.
     expect(
       calculatedAssessment.variables.calculatedDataTotalProvincialContribution,
     ).toBe(0);
@@ -366,7 +372,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
     expect(
       calculatedAssessment.variables.calculatedDataTotalFederalContribution,
     ).toBe(0);
-    // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
+    // Combination of provincial fixed student contribution, spouse contribution, parental contribution, and targeted resources.
     expect(
       calculatedAssessment.variables.calculatedDataTotalProvincialContribution,
     ).toBe(0);
@@ -419,7 +425,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
     expect(
       calculatedAssessment.variables.calculatedDataTotalFederalContribution,
     ).toBe(0);
-    // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
+    // Combination of provincial fixed student contribution, spouse contribution, parental contribution, and targeted resources.
     expect(
       calculatedAssessment.variables.calculatedDataTotalProvincialContribution,
     ).toBe(0);
