@@ -89,8 +89,6 @@ export class StudentAppealPendingPaginationOptionsAPIInDTO extends PaginationOpt
   @IsOptional()
   @IsIn(["submittedDate", "applicationNumber", "lastName"])
   sortField?: string;
-
-  @IsOptional()
   @IsEnum(AppealType)
   appealType: AppealType;
 }

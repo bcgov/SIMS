@@ -32,7 +32,7 @@ import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
   STUDENT_APPEAL_INVALID_OPERATION,
   STUDENT_APPEAL_NOT_FOUND,
-  PROGRAM_START_DATE_2025_2026,
+  PROGRAM_YEAR_2025_26_START_DATE,
 } from "./constants";
 import {
   NotificationActionsService,
@@ -523,12 +523,12 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     if (appealType === AppealType.LegacyChangeRequest) {
       studentAppealsQuery.andWhere(
         "programYear.startDate < :programStartDate",
-        { programStartDate: PROGRAM_START_DATE_2025_2026 },
+        { programStartDate: PROGRAM_YEAR_2025_26_START_DATE },
       );
     } else if (appealType === AppealType.Appeal) {
       studentAppealsQuery.andWhere(
         "programYear.startDate >= :programStartDate",
-        { programStartDate: PROGRAM_START_DATE_2025_2026 },
+        { programStartDate: PROGRAM_YEAR_2025_26_START_DATE },
       );
     }
 
