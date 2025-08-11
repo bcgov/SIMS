@@ -23,6 +23,7 @@ import {
   AssessmentTriggerType,
   DisbursementValueType,
   OfferingIntensity,
+  WorkflowData,
 } from "@sims/sims-db";
 import { TestingModule } from "@nestjs/testing";
 import { getUserFullName } from "../../../../utilities";
@@ -79,6 +80,12 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         {
           initialValue: {
             triggerType: AssessmentTriggerType.RelatedApplicationChanged,
+            workflowData: {
+              calculatedData: {
+                totalAdditionalTransportationAllowance: 100,
+                returnTransportationCost: 200,
+              },
+            } as WorkflowData,
           },
         },
       ),
@@ -118,7 +125,11 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       applicationId: application.id,
       applicationNumber: application.applicationNumber,
       applicationStatus: application.applicationStatus,
-      assessment: assessment.assessmentData,
+      assessment: {
+        ...assessment.assessmentData,
+        totalAdditionalTransportationAllowance: 100,
+        returnTransportationCost: 200,
+      },
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationCurrentAssessmentId: application.currentAssessment.id,
       fullName: getUserFullName(application.student.user),
