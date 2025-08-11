@@ -8,6 +8,10 @@ import {
 } from "./application-exception.models";
 import { hashObjectToHex } from "@sims/utilities";
 
+/**
+ * Process {@see ApplicationDataException} to create a hash
+ * that represents the exception data content and its files.
+ */
 @Injectable()
 export class ApplicationExceptionHashService {
   constructor(
@@ -15,6 +19,11 @@ export class ApplicationExceptionHashService {
     private readonly studentFileRepo: Repository<StudentFile>,
   ) {}
 
+  /**
+   * Creates hashed representations of application exceptions.
+   * @param exceptions application exceptions to hash.
+   * @returns hashed application exceptions.
+   */
   async createHashedApplicationExceptions(
     exceptions: ApplicationDataException[],
   ): Promise<ApplicationDataExceptionHashed[]> {
@@ -24,6 +33,12 @@ export class ApplicationExceptionHashService {
     );
   }
 
+  /**
+   * Hashes the content of an application exception.
+   * @param exception application exception to hash.
+   * @param filesHashMap map of file names to their hash values.
+   * @returns hashed application exception.
+   */
   private hashContent(
     exception: ApplicationDataException,
     filesHashMap: Record<string, string>,
@@ -41,6 +56,11 @@ export class ApplicationExceptionHashService {
     return hashedException;
   }
 
+  /**
+   * Creates a map of file names to their hash values for the given application exceptions.
+   * @param exceptions application exceptions to process.
+   * @returns map of file names to their hash values.
+   */
   private async getFilesHashMapForExceptions(
     exceptions: ApplicationDataException[],
   ): Promise<Record<string, string>> {

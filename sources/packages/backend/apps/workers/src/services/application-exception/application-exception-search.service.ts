@@ -3,18 +3,20 @@ import {
   ApplicationDataException,
   ApplicationDataExceptionFile,
 } from "./application-exception.models";
+import { APPLICATION_DATA_EXCEPTION_SUFFIX } from "../../constants";
 
 /**
- * Manages student applications exceptions detected upon full-time/part-time application
- * submission, checking for exceptions already approved for the same student application,
- * avoiding the work to analyze the same exception multiple times.
- * An exception should be considered "the same" when its data and files did not change.
+ * Manages student applications exceptions detected upon
+ * full-time/part-time application submission.
+ * Searches for application exceptions in the dynamic data
+ * that will be represented, by convention, by properties
+ * with its key suffixed by "ApplicationException".
  */
 @Injectable()
 export class ApplicationExceptionSearchService {
   /**
    * Search entire object properties recursively trying to
-   * find properties with its key suffixed by  "ApplicationException"
+   * find properties with its key suffixed by "ApplicationException"
    * which identifies an application exception to be reviewed.
    * @param payload object to have the properties checked.
    */
@@ -26,7 +28,7 @@ export class ApplicationExceptionSearchService {
 
   /**
    * Search entire object properties recursively trying to
-   * find properties with the value defined as "studentApplicationException"
+   * find properties with its key suffixed by "ApplicationException"
    * which identifies an application exception to be reviewed.
    * @param payload object to have the properties checked.
    * @param applicationExceptions keeps the list of all exceptions found.
@@ -54,11 +56,10 @@ export class ApplicationExceptionSearchService {
         // No value, continue to the next property.
         continue;
       }
-      if (propertyKey.endsWith("ApplicationException")) {
+      if (propertyKey.endsWith(APPLICATION_DATA_EXCEPTION_SUFFIX)) {
         const exception = this.createApplicationDataException(
           propertyKey,
           propertyValue,
-          applicationExceptions,
         );
         applicationExceptions.push(exception);
         continue;
@@ -77,24 +78,17 @@ export class ApplicationExceptionSearchService {
    * Creates the ApplicationDataException object from the dynamic
    * data that was identified as an application exception.
    * @param propertyKey key of the property that identified the exception.
-   * @param applicationExceptions list of all exceptions found so far.
-   * @param exceptionData student application exception data.
+   * @param exceptionDynamicData student application exception data.
    * @returns
    */
   private createApplicationDataException(
     propertyKey: string,
     exceptionDynamicData: unknown,
-    applicationExceptions: ApplicationDataException[],
   ): ApplicationDataException {
     const files = this.extractFilesFromException(exceptionDynamicData);
-    // Check if there are other exceptions with the same key to define its index.
-    const existingExceptions = applicationExceptions.filter(
-      (exception) => exception.key === propertyKey,
-    );
     return {
       key: propertyKey,
       hashableContent: exceptionDynamicData,
-      index: existingExceptions.length,
       description: exceptionDynamicData["exceptionDescription"] as string,
       files,
     };
@@ -104,15 +98,15 @@ export class ApplicationExceptionSearchService {
    * Extract files from the exception data to avoid that changes
    * be detected due to file changes, for instance, changing the order
    * of the files should not trigger a new exception to be approved.
-   * File data like name and content are checked differently.
-   * @param exceptionData dynamic object to have its files extracted.
+   * File data, like name and content, are checked differently.
+   * @param exceptionDynamicData dynamic object to have its files extracted.
    * @returns list of files extracted from the exception data, if any.
    */
   private extractFilesFromException(
-    exceptionData: unknown,
+    exceptionDynamicData: unknown,
   ): ApplicationDataExceptionFile[] {
     const files: ApplicationDataExceptionFile[] = [];
-    this.extractFilesFromExceptionRecursively(exceptionData, files);
+    this.extractFilesFromExceptionRecursively(exceptionDynamicData, files);
     return files;
   }
 
@@ -122,12 +116,12 @@ export class ApplicationExceptionSearchService {
    * @param files list of files extracted from the exception data.
    */
   private extractFilesFromExceptionRecursively(
-    exceptionData: unknown,
+    exceptionDynamicData: unknown,
     files: ApplicationDataExceptionFile[] = [],
   ): void {
-    if (Array.isArray(exceptionData)) {
+    if (Array.isArray(exceptionDynamicData)) {
       let isFileArray = false;
-      exceptionData.forEach((item) => {
+      exceptionDynamicData.forEach((item) => {
         if (this.isApplicationDataExceptionFile(item)) {
           // If the item is an ApplicationDataExceptionFile, extract its data.
           files.push({ name: item.name, originalName: item.originalName });
@@ -135,23 +129,26 @@ export class ApplicationExceptionSearchService {
         }
       });
       if (isFileArray) {
-        // If the array contains files, remove all items from the array.
-        // Only files are expected inside the array.
-        exceptionData.length = 0;
+        // If the array contains files, remove all items from
+        // the array (only files are expected inside the array).
+        exceptionDynamicData.length = 0;
       }
       return;
     }
-    if (typeof exceptionData === "object") {
-      for (const key of Object.keys(exceptionData)) {
-        this.extractFilesFromExceptionRecursively(exceptionData[key], files);
+    if (typeof exceptionDynamicData === "object") {
+      for (const key of Object.keys(exceptionDynamicData)) {
+        this.extractFilesFromExceptionRecursively(
+          exceptionDynamicData[key],
+          files,
+        );
       }
     }
   }
 
   /**
-   * Type guard to check if the dynamic object is an ApplicationDataExceptionFile.
+   * Type guard to check if the dynamic object is an {@see ApplicationDataExceptionFile}.
    * @param dynamicObject object to be checked.
-   * @returns true if the dynamic object is an ApplicationDataExceptionFile, false otherwise.
+   * @returns true if the dynamic object is an {@see ApplicationDataExceptionFile}, false otherwise.
    */
   private isApplicationDataExceptionFile(
     dynamicObject: unknown,

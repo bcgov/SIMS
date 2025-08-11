@@ -206,6 +206,12 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     );
   }
 
+  /**
+   * Get the previously approved exception for a specific exception request.
+   * @param exceptionRequest exception request to search for.
+   * @param previouslyApprovedExceptionRequests list of previously approved exception requests.
+   * @returns previously approved exception request, if found.
+   */
   private getPreviouslyApprovedException(
     exceptionRequest: ApplicationDataExceptionHashed,
     previouslyApprovedExceptionRequests: ApplicationExceptionRequest[],

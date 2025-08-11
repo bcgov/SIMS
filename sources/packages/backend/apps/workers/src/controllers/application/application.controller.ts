@@ -299,7 +299,7 @@ export class ApplicationController {
         // This scenario can happen if the worker is invoked multiple times
         // for the same application, and, if the creation of the exception is in progress but
         // not yet completed, another worker invocation will try to create the same exception,
-        // filing the initial check for the exception existence.
+        // failing the initial check for the exception existence.
         // This is required to ensure the idempotency of the worker.
         jobLogger.log(error.message);
         // Refresh the application to get the most updated exception status.

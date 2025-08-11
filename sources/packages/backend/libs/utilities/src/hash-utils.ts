@@ -2,7 +2,7 @@ import { BinaryLike, createHash } from "crypto";
 
 /**
  * Hashes an object to a hexadecimal string, using SHA-256.
- * @param data data ro be hashed.
+ * @param data data to be hashed.
  * @returns hexadecimal string representation of the hash (64 length string).
  */
 export function hashObjectToHex(data: BinaryLike): string {
