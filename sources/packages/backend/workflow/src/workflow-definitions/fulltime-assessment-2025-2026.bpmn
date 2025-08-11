@@ -1206,7 +1206,7 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
     <bpmn:intermediateThrowEvent id="Event_0fjl0zr" name="BCSL After Top Up">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=(calculatedDataTotalCSG+federalAwardNetCSLFAmount+provincialAwardNetBCSLAmount)" target="calculatedDataPrelimAward" />
+          <zeebe:output source="=sum(calculatedDataTotalCSG,federalAwardNetCSLFAmount,calculatedDataRemainingBCSL1)" target="calculatedDataPrelimAward" />
           <zeebe:output source="=//remaining need and negative amounts will reduce BCSL&#10;calculatedDataProvincialAssessedNeed-calculatedDataPrelimAward" target="provincialAwardUnmetNeedAfterLoanAndCSG" />
           <zeebe:output source="=max(calculatedDataBCTopup-calculatedDataPrelimAward,0)" target="calculatedDataTopup" />
           <zeebe:output source="=min(calculatedDataTopup,provincialAwardUnmetNeedAfterLoanAndCSG)" target="calculatedDataNetTopup" />
