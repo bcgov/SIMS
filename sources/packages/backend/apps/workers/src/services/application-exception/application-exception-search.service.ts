@@ -3,8 +3,8 @@ import {
   ApplicationDataException,
   ApplicationDataExceptionFile,
   EXCEPTION_DESCRIPTION_PROPERTY_KEY,
+  APPLICATION_DATA_EXCEPTION_SUFFIX,
 } from "./application-exception.models";
-import { APPLICATION_DATA_EXCEPTION_SUFFIX } from "../../constants";
 
 /**
  * Manages student applications exceptions detected upon
