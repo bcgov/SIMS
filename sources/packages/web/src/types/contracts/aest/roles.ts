@@ -43,4 +43,5 @@ export enum Role {
   InstitutionDeactivateEducationProgram = "institution-deactivate-education-program",
   StudentReissueMSFAA = "student-reissue-msfaa",
   StudentUpdateDisabilityStatus = "student-update-disability-status",
+  StudentReverseScholasticStanding = "student-reverse-scholastic-standing",
 }
