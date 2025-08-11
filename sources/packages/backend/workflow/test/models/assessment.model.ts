@@ -316,7 +316,9 @@ export interface CalculatedAssessmentModel {
   offeringExceptionalExpenses: number;
   calculatedDataProvincialAssessedNeed: number;
   calculatedDataTotalParentalContribution: number;
-  calculatedDataSpousalContributionExempt: boolean;
+  calculatedDataSpousalContributionExempt?: boolean;
+  calculatedDataSpouseContributionWeeks?: number;
+  calculatedDataRemainingSpouseContributionWeeks?: number;
   calculatedDataTotalSpouseContribution: number;
   calculatedDataProvincialFSCExempt: boolean;
   calculatedDataFederalFSCExempt: boolean;

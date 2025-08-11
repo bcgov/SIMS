@@ -60,7 +60,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       expect(
         calculatedAssessment.variables
           .calculatedDataTotalProvincialContribution,
-      ).toBe(calculatedAssessment.variables.calculatedDataProvincialFSCExempt);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalProvincialFSC);
     },
   );
 
