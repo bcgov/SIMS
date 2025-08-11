@@ -22,12 +22,18 @@ export class ApplicationExceptionHashService {
   /**
    * Creates hashed representations of application exceptions.
    * @param exceptions application exceptions to hash.
+   * @param studentId ID of the student associated with the exceptions.
+   * Used for authorization purposes to ensure the user has access to the files.
    * @returns hashed application exceptions.
    */
   async createHashedApplicationExceptions(
     exceptions: ApplicationDataException[],
+    studentId: number,
   ): Promise<ApplicationDataExceptionHashed[]> {
-    const filesHashMap = await this.getFilesHashMapForExceptions(exceptions);
+    const filesHashMap = await this.getFilesHashMapForExceptions(
+      exceptions,
+      studentId,
+    );
     return exceptions.map((exception) =>
       this.hashContent(exception, filesHashMap),
     );
@@ -65,10 +71,13 @@ export class ApplicationExceptionHashService {
   /**
    * Creates a map of file names to their hash values for the given application exceptions.
    * @param exceptions application exceptions to process.
+   * @param studentId ID of the student associated with the exceptions.
+   * Used for authorization purposes to ensure the user has access to the files.
    * @returns map of file names to their hash values.
    */
   private async getFilesHashMapForExceptions(
     exceptions: ApplicationDataException[],
+    studentId: number,
   ): Promise<Record<string, string>> {
     const filesUniqueNames = exceptions
       .flatMap((exception) => exception.files)
@@ -83,7 +92,10 @@ export class ApplicationExceptionHashService {
         uniqueFileName: true,
         fileHash: true,
       },
-      where: { uniqueFileName: In(filesUniqueNames) },
+      where: {
+        uniqueFileName: In(filesUniqueNames),
+        student: { id: studentId },
+      },
     });
     const filesHashMap: Record<string, string> = {};
     files.forEach((file) => {

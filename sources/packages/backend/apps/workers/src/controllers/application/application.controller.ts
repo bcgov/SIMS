@@ -253,6 +253,7 @@ export class ApplicationController {
       const hashedExceptions =
         await this.applicationExceptionHashService.createHashedApplicationExceptions(
           exceptions,
+          application.student.id,
         );
       return await this.dataSource.transaction(async (entityManager) => {
         const createdException =
