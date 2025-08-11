@@ -22,15 +22,23 @@ import {
 } from "../../application.dto";
 import { createFakeVerifyUniqueApplicationExceptionsPayload } from "./verify-unique-application-exceptions";
 import { ICustomHeaders } from "@camunda8/sdk/dist/zeebe/types";
+import { SystemUsersService } from "@sims/services";
+import MockDate from "mockdate";
 
 describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
   let db: E2EDataSources;
   let applicationController: ApplicationController;
+  let systemUsersService: SystemUsersService;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
     applicationController = nestApplication.get(ApplicationController);
+    systemUsersService = nestApplication.get(SystemUsersService);
+  });
+
+  beforeEach(async () => {
+    MockDate.reset();
   });
 
   it(
@@ -230,6 +238,9 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
           } as ApplicationData,
         },
       );
+      const now = new Date();
+      MockDate.set(now);
+
       const verifyUniqueApplicationExceptionsPayload =
         createFakeVerifyUniqueApplicationExceptionsPayload(
           currentApplication.id,
@@ -257,8 +268,14 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       const updatedApplication = await db.application.findOne({
         select: {
           id: true,
+          updatedAt: true,
+          modifier: { id: true },
           applicationException: {
             id: true,
+            assessedBy: { id: true },
+            assessedDate: true,
+            createdAt: true,
+            creator: { id: true },
             exceptionStatus: true,
             exceptionRequests: {
               id: true,
@@ -268,22 +285,44 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               approvalExceptionRequest: {
                 id: true,
               },
+              creator: { id: true },
+              createdAt: true,
             },
           },
         },
         relations: {
+          modifier: true,
           applicationException: {
-            exceptionRequests: { approvalExceptionRequest: true },
+            creator: true,
+            assessedBy: true,
+            exceptionRequests: {
+              approvalExceptionRequest: true,
+              creator: true,
+            },
           },
         },
         where: {
           id: currentApplication.id,
         },
+        order: {
+          applicationException: {
+            exceptionRequests: {
+              exceptionDescription: "ASC",
+            },
+          },
+        },
+        loadEagerRelations: false,
       });
       expect(updatedApplication).toEqual({
         id: currentApplication.id,
+        updatedAt: now,
+        modifier: systemUsersService.systemUser,
         applicationException: {
           id: expect.any(Number),
+          assessedBy: systemUsersService.systemUser,
+          assessedDate: now,
+          creator: systemUsersService.systemUser,
+          createdAt: now,
           exceptionStatus: ApplicationExceptionStatus.Approved,
           exceptionRequests: [
             {
@@ -295,6 +334,8 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               approvalExceptionRequest: {
                 id: savedRequest1.id,
               },
+              creator: systemUsersService.systemUser,
+              createdAt: now,
             },
             {
               id: expect.any(Number),
@@ -305,6 +346,8 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               approvalExceptionRequest: {
                 id: savedRequest2.id,
               },
+              creator: systemUsersService.systemUser,
+              createdAt: now,
             },
           ],
         },

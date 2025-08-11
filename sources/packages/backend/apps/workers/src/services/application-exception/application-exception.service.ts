@@ -6,10 +6,12 @@ import {
   ApplicationException,
   ApplicationExceptionRequest,
   ApplicationExceptionStatus,
+  NoteType,
 } from "@sims/sims-db";
 import { ApplicationDataExceptionHashed } from "./application-exception.models";
 import { CustomNamedError } from "@sims/utilities";
 import { APPLICATION_EXCEPTION_ALREADY_ASSOCIATED } from "../../constants";
+import { NoteSharedService, SystemUsersService } from "@sims/services";
 
 /**
  * Manages student applications exceptions detected upon full-time/part-time application
@@ -17,7 +19,11 @@ import { APPLICATION_EXCEPTION_ALREADY_ASSOCIATED } from "../../constants";
  */
 @Injectable()
 export class ApplicationExceptionService extends RecordDataModelService<ApplicationException> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    private readonly noteSharedService: NoteSharedService,
+    private readonly systemUsersService: SystemUsersService,
+  ) {
     super(dataSource.getRepository(ApplicationException));
   }
 
@@ -49,8 +55,22 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     return entityManager.getRepository(ApplicationException).save(newException);
   }
 
+  /**
+   * Save application exceptions using the hashed data information to
+   * identify if the exception was already approved for the same application.
+   * In case all the exceptions are already approved, the exceptions associated
+   * with the application will be considered as approved.
+   * @param applicationId application ID.
+   * @param studentId student ID to have the note created.
+   * @param applicationNumber application number to be used in the note description.
+   * @param exceptionRequests list of exception requests with the hashed data.
+   * @param entityManager entity manager to execute the query.
+   * @returns created exception.
+   */
   async saveExceptionFromHashedData(
     applicationId: number,
+    studentId: number,
+    applicationNumber: string,
     exceptionRequests: ApplicationDataExceptionHashed[],
     entityManager: EntityManager,
   ): Promise<ApplicationException> {
@@ -59,7 +79,13 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         applicationId,
         entityManager,
       );
+    const now = new Date();
+    // Create the new exception to be saved.
     const newException = new ApplicationException();
+    newException.exceptionStatus = ApplicationExceptionStatus.Pending;
+    newException.creator = this.systemUsersService.systemUser;
+    newException.createdAt = now;
+    // Create the exceptions requests identifying if the exception was already approved.
     newException.exceptionRequests = exceptionRequests.map(
       (exceptionRequest) =>
         ({
@@ -70,23 +96,40 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
             exceptionRequest,
             previouslyApprovedExceptionRequests,
           ),
+          creator: this.systemUsersService.systemUser,
+          createdAt: now,
         } as ApplicationExceptionRequest),
     );
-    const notAllExceptionsApproved = newException.exceptionRequests.some(
-      (exceptionRequest) => !exceptionRequest.approvalExceptionRequest?.id,
+    // Check if all exceptions were already approved, to set the exception status.
+    const allExceptionsApproved = newException.exceptionRequests.every(
+      (exceptionRequest) => !!exceptionRequest.approvalExceptionRequest?.id,
     );
-    newException.exceptionStatus = notAllExceptionsApproved
-      ? ApplicationExceptionStatus.Pending
-      : ApplicationExceptionStatus.Approved;
+    if (allExceptionsApproved) {
+      newException.exceptionStatus = ApplicationExceptionStatus.Approved;
+      newException.assessedBy = this.systemUsersService.systemUser;
+      newException.assessedDate = now;
+      newException.exceptionNote =
+        await this.noteSharedService.createStudentNote(
+          studentId,
+          NoteType.General,
+          `Application ${applicationNumber} had ${exceptionRequests.length} exceptions automatically approved.`,
+          this.systemUsersService.systemUser.id,
+          entityManager,
+        );
+    }
+    // Save the exception to later update the application, allowing the update to detected concurrency changes.
     const savedException = await entityManager
       .getRepository(ApplicationException)
       .save(newException);
-    const updateResult = await entityManager
-      .getRepository(Application)
-      .update(
-        { id: applicationId, applicationException: IsNull() },
-        { applicationException: savedException },
-      );
+    const updateResult = await entityManager.getRepository(Application).update(
+      { id: applicationId, applicationException: IsNull() },
+      {
+        applicationException: savedException,
+        modifier: this.systemUsersService.systemUser,
+        updatedAt: now,
+      },
+    );
+    // If the application already has an exception associated with it, it will throw an error.
     if (!updateResult.affected) {
       throw new CustomNamedError(
         `Application ID ${applicationId} already has an exception associated with it.`,

@@ -258,6 +258,8 @@ export class ApplicationController {
         const createdException =
           await this.applicationExceptionService.saveExceptionFromHashedData(
             job.variables.applicationId,
+            application.student.id,
+            application.applicationNumber,
             hashedExceptions,
             entityManager,
           );
