@@ -56,7 +56,7 @@ describe("StudentAppealAESTController(e2e)-getAppeals", () => {
     });
     await db.studentAppeal.save(appeal);
 
-    const endpoint = `/aest/appeal/pending?page=0&pageLimit=10&sortField=submittedDate&sortOrder=ASC&searchCriteria=${application.applicationNumber}`;
+    const endpoint = `/aest/appeal/pending?page=0&pageLimit=10&sortField=submittedDate&sortOrder=ASC&appealType=legacy-change-request&searchCriteria=${application.applicationNumber}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert

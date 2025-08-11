@@ -18,6 +18,7 @@ import {
 } from "@sims/sims-db";
 import { Transform } from "class-transformer";
 import { ToBoolean } from "../../utilities/class-transform";
+import { AppealType } from "../../services";
 
 /**
  * Common parameters used when an API result
@@ -88,6 +89,8 @@ export class StudentAppealPendingPaginationOptionsAPIInDTO extends PaginationOpt
   @IsOptional()
   @IsIn(["submittedDate", "applicationNumber", "lastName"])
   sortField?: string;
+  @IsEnum(AppealType)
+  appealType: AppealType;
 }
 
 export class ApplicationChangeRequestPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
