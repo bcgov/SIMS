@@ -62,6 +62,7 @@ import {
   PaginationOptions,
 } from "@/types";
 import { useFormatters } from "@/composables";
+import { useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentAppealPendingSummaryAPIOutDTO } from "@/services/http/dto/StudentAppeal.dto";
 import { StudentAppealService } from "@/services/StudentAppealService";
@@ -76,6 +77,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const { dateOnlyLongString, emptyStringFiller } = useFormatters();
+    const snackBar = useSnackBar();
     const isLoading = ref(false);
     const searchCriteria = ref("");
     const applicationAppeals = ref(
@@ -130,8 +132,7 @@ export default defineComponent({
             },
           });
       } catch (error: unknown) {
-        console.error("Error loading appeals:", error);
-        applicationAppeals.value = { results: [], count: 0 };
+        snackBar.error("Error loading appeals.");
       } finally {
         isLoading.value = false;
       }
