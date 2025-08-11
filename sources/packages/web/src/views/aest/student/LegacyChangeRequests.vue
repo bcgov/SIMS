@@ -6,7 +6,7 @@
         subTitle="Change Requests (Pre 2025-2026)"
       />
     </template>
-    <PendingAppealsTable appeals-type="legacy-change-request" />
+    <pending-appeals-table appeals-type="legacy-change-request" />
   </full-page-container>
 </template>
 

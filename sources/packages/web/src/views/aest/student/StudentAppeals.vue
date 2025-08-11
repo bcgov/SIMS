@@ -6,7 +6,7 @@
         subTitle="Appeals (2025-2026 and later)"
       />
     </template>
-    <PendingAppealsTable appeals-type="appeal" />
+    <pending-appeals-table appeals-type="appeal" />
   </full-page-container>
 </template>
 

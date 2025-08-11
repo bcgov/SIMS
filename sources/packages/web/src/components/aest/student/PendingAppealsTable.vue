@@ -26,7 +26,7 @@
         :loading="isLoading"
         :items-per-page="DEFAULT_PAGE_LIMIT"
         :items-per-page-options="PAGINATION_LIST"
-        @update:options="paginationAndSortEvent"
+        @update:options="pageSortEvent"
       >
         <template v-slot:loading>
           <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
@@ -58,14 +58,13 @@ import {
   DataTableSortOrder,
   PaginatedResults,
   PendingChangeRequestsTableHeaders,
-  DEFAULT_DATATABLE_PAGE_NUMBER,
+  DataTableOptions,
+  PaginationOptions,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentAppealPendingSummaryAPIOutDTO } from "@/services/http/dto/StudentAppeal.dto";
 import { StudentAppealService } from "@/services/StudentAppealService";
-
-const DEFAULT_SORT_FIELD = "submittedDate";
 
 export default defineComponent({
   props: {
@@ -82,6 +81,14 @@ export default defineComponent({
     const applicationAppeals = ref(
       {} as PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>,
     );
+
+    const DEFAULT_SORT_FIELD = "submittedDate";
+    const currentPagination: PaginationOptions = {
+      page: 1,
+      pageLimit: DEFAULT_PAGE_LIMIT,
+      sortField: DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortOrder.DESC,
+    };
 
     const pageTitle = computed(() => {
       return props.appealsType === "legacy-change-request"
@@ -109,20 +116,15 @@ export default defineComponent({
       });
     };
 
-    const loadAppeals = async (
-      page = DEFAULT_DATATABLE_PAGE_NUMBER,
-      pageLimit = DEFAULT_PAGE_LIMIT,
-      inputSortField?: string,
-      inputSortOrder?: DataTableSortOrder,
-    ) => {
+    const loadAppeals = async () => {
       try {
         isLoading.value = true;
         applicationAppeals.value =
           await StudentAppealService.shared.getPendingAppeals({
-            page,
-            pageLimit,
-            sortField: inputSortField,
-            sortOrder: inputSortOrder,
+            page: currentPagination.page,
+            pageLimit: currentPagination.pageLimit,
+            sortField: currentPagination.sortField,
+            sortOrder: currentPagination.sortOrder,
             searchCriteria: {
               appealType: props.appealsType,
               searchCriteria: searchCriteria.value,
@@ -140,18 +142,18 @@ export default defineComponent({
       await loadAppeals();
     };
 
-    const paginationAndSortEvent = async (options: any) => {
-      const { page: currentPage, itemsPerPage, sortBy } = options;
-      const [sortByOptions] = sortBy || [];
-
-      await loadAppeals(
-        currentPage,
-        itemsPerPage,
-        sortByOptions?.key,
-        sortByOptions?.order === "desc"
-          ? DataTableSortOrder.DESC
-          : DataTableSortOrder.ASC,
-      );
+    const pageSortEvent = async (event: DataTableOptions) => {
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
+      if (event.sortBy.length) {
+        const [sortBy] = event.sortBy;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
+      } else {
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortOrder.DESC;
+      }
+      await loadAppeals();
     };
 
     onMounted(async () => {
@@ -168,10 +170,11 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       searchAppeals,
-      paginationAndSortEvent,
+      pageSortEvent,
       searchCriteria,
       pageTitle,
       pageDescription,
+      currentPagination,
     };
   },
 });
