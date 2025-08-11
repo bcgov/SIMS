@@ -46,6 +46,12 @@ export class ApplicationExceptionHashService {
     // Combine all file hashes in a sorted manner to ensure consistent ordering.
     exception.files.sort((a, b) => a.name.localeCompare(b.name));
     const filesHashes = exception.files.map((file) => {
+      const fileHash = filesHashMap[file.name];
+      if (!fileHash) {
+        throw new Error(
+          `File hash not found for file: ${file.name}. Ensure the file exists in the database.`,
+        );
+      }
       return filesHashMap[file.name];
     });
     // Combine the exception data content and its files hashes to create a full hash.

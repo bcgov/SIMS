@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   ApplicationDataException,
   ApplicationDataExceptionFile,
+  EXCEPTION_DESCRIPTION_PROPERTY_KEY,
 } from "./application-exception.models";
 import { APPLICATION_DATA_EXCEPTION_SUFFIX } from "../../constants";
 
@@ -37,6 +38,10 @@ export class ApplicationExceptionSearchService {
     payload: unknown,
     applicationExceptions: ApplicationDataException[],
   ): void {
+    if (payload === undefined || payload === null) {
+      // No payload, nothing to do.
+      return;
+    }
     if (Array.isArray(payload)) {
       for (const arrayItem of payload) {
         // If the payload is an array, iterate through each item
@@ -50,6 +55,9 @@ export class ApplicationExceptionSearchService {
     }
     // If the payload is an object, iterate through its properties
     // looking for some application exception.
+    if (typeof payload !== "object") {
+      return;
+    }
     for (const propertyKey of Object.keys(payload)) {
       const propertyValue = payload[propertyKey];
       if (!propertyValue) {
@@ -86,10 +94,13 @@ export class ApplicationExceptionSearchService {
     exceptionDynamicData: unknown,
   ): ApplicationDataException {
     const files = this.extractFilesFromException(exceptionDynamicData);
+    const description = exceptionDynamicData[
+      EXCEPTION_DESCRIPTION_PROPERTY_KEY
+    ] as string;
     return {
       key: propertyKey,
       hashableContent: exceptionDynamicData,
-      description: exceptionDynamicData["exceptionDescription"] as string,
+      description,
       files,
     };
   }

@@ -1,4 +1,15 @@
 /**
+ * Suffix used to identify properties in dynamic data that represents
+ * an application exception.
+ */
+export const APPLICATION_DATA_EXCEPTION_SUFFIX = "ApplicationException";
+/**
+ * Property key used in the dynamic data inside the exception container
+ * to provide a user-friendly description of the exception.
+ */
+export const EXCEPTION_DESCRIPTION_PROPERTY_KEY = "exceptionDescription";
+
+/**
  * Application exception data structure extracted from the application dynamic data.
  */
 export interface ApplicationDataException {
