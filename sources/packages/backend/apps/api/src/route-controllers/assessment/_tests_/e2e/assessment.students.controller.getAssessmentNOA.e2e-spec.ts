@@ -70,8 +70,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
     );
     const workflowData = {
       calculatedData: {
-        returnTransportationCost: 0,
-        totalAdditionalTransportationAllowance: null,
+        returnTransportationCost: 10,
+        totalAdditionalTransportationAllowance: 20,
       },
     } as WorkflowData;
     // Creates a new application's current assessment.
@@ -128,8 +128,10 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       applicationStatus: application.applicationStatus,
       assessment: {
         ...assessment.assessmentData,
-        totalAdditionalTransportationAllowance: null,
-        returnTransportationCost: 0,
+        totalAdditionalTransportationAllowance:
+          workflowData.calculatedData.totalAdditionalTransportationAllowance,
+        returnTransportationCost:
+          workflowData.calculatedData.returnTransportationCost,
       },
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationCurrentAssessmentId: application.currentAssessment.id,
@@ -206,13 +208,13 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       partnerStudentLoans: 33,
       secondResidenceCost: 7497,
       alimonyOrChildSupport: 44,
-      parentalVoluntaryContribution: 0,
+      parentalVoluntaryContribution: 40,
       parentalDiscretionaryContribution: null,
     } as Assessment;
     const workflowData = {
       calculatedData: {
-        returnTransportationCost: 0,
-        totalAdditionalTransportationAllowance: null,
+        returnTransportationCost: 100,
+        totalAdditionalTransportationAllowance: 120,
       },
     } as WorkflowData;
     // Creates a new application's current assessment.
@@ -270,8 +272,10 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       applicationStatus: application.applicationStatus,
       assessment: {
         ...assessment.assessmentData,
-        totalAdditionalTransportationAllowance: null,
-        returnTransportationCost: 0,
+        totalAdditionalTransportationAllowance:
+          workflowData.calculatedData.totalAdditionalTransportationAllowance,
+        returnTransportationCost:
+          workflowData.calculatedData.returnTransportationCost,
       },
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationCurrentAssessmentId: application.currentAssessment.id,
