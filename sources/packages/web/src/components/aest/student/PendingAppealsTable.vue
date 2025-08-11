@@ -61,8 +61,7 @@ import {
   DataTableOptions,
   PaginationOptions,
 } from "@/types";
-import { useFormatters } from "@/composables";
-import { useSnackBar } from "@/composables";
+import { useFormatters, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentAppealPendingSummaryAPIOutDTO } from "@/services/http/dto/StudentAppeal.dto";
 import { StudentAppealService } from "@/services/StudentAppealService";
@@ -131,7 +130,7 @@ export default defineComponent({
               searchCriteria: searchCriteria.value,
             },
           });
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("Error loading appeals.");
       } finally {
         isLoading.value = false;
