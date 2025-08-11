@@ -80,12 +80,223 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         {
           initialValue: {
             triggerType: AssessmentTriggerType.RelatedApplicationChanged,
-            workflowData: {
-              calculatedData: {
-                totalAdditionalTransportationAllowance: 100,
-                returnTransportationCost: 200,
-              },
-            } as WorkflowData,
+          },
+        },
+      ),
+    );
+    application.currentAssessment = newCurrentAssessment;
+    await db.application.save(application);
+    // Create and save a new disbursement schedule for the new assessment.
+    const newAssessmentDisbursement = createFakeDisbursementSchedule(
+      {
+        studentAssessment: newCurrentAssessment,
+        msfaaNumber,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1250,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGP",
+            1500,
+          ),
+        ],
+      },
+      { initialValues: { coeUpdatedAt: enrolmentDate1 } },
+    );
+    await db.disbursementSchedule.save(newAssessmentDisbursement);
+
+    const assessment = application.currentAssessment;
+
+    const endpoint = `/students/assessment/${newCurrentAssessment.id}/noa`;
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    const expectation = {
+      applicationId: application.id,
+      applicationNumber: application.applicationNumber,
+      applicationStatus: application.applicationStatus,
+      assessment: assessment.assessmentData,
+      noaApprovalStatus: assessment.noaApprovalStatus,
+      applicationCurrentAssessmentId: application.currentAssessment.id,
+      fullName: getUserFullName(application.student.user),
+      programName: assessment.offering.educationProgram.name,
+      locationName: assessment.offering.institutionLocation.name,
+      offeringIntensity: OfferingIntensity.partTime,
+      offeringStudyEndDate: getDateOnlyFullMonthFormat(
+        assessment.offering.studyEndDate,
+      ),
+      offeringStudyStartDate: getDateOnlyFullMonthFormat(
+        assessment.offering.studyStartDate,
+      ),
+      eligibleAmount: 2750,
+      disbursement: {
+        disbursement1COEStatus: newAssessmentDisbursement.coeStatus,
+        disbursement1Date: getDateOnlyFullMonthFormat(
+          newAssessmentDisbursement.disbursementDate,
+        ),
+        disbursement1Id: newAssessmentDisbursement.id,
+        disbursement1MSFAACancelledDate:
+          newAssessmentDisbursement.msfaaNumber?.cancelledDate,
+        disbursement1MSFAADateSigned:
+          newAssessmentDisbursement.msfaaNumber?.dateSigned,
+        disbursement1MSFAAId: newAssessmentDisbursement.msfaaNumber?.id,
+        disbursement1MSFAANumber: msfaaNumber.msfaaNumber,
+        disbursement1Status:
+          newAssessmentDisbursement.disbursementScheduleStatus,
+        disbursement1TuitionRemittance:
+          newAssessmentDisbursement.tuitionRemittanceRequestedAmount,
+        disbursement1cslf: 1250,
+        disbursement1csgp: 1500,
+        disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
+      },
+      offeringName: assessment.offering.name,
+    };
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(expectation);
+  });
+
+  it("Should get the student NOA details for an eligible full-time application when the student tries to access it.", async () => {
+    // Arrange
+    const enrolmentDate1 = addDays(1);
+    // Create the new student to be mocked as the authenticated one.
+    const student = await saveFakeStudent(db.dataSource);
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
+    // MSFAA required for the NOA be returned.
+    const msfaaNumber = createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.Signed,
+      },
+    );
+    await db.msfaaNumber.save(msfaaNumber);
+    // Creates the applications to get the NOA.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        msfaaNumber,
+        student,
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+      },
+    );
+    const assessmentData = {
+      weeks: 21,
+      tuitionCost: 5555,
+      childcareCost: 0,
+      finalAwardTotal: 10920,
+      livingAllowance: 22386,
+      exceptionalCosts: 330,
+      targetedResources: 0,
+      totalAssessedCost: 37422.4,
+      totalFamilyIncome: 444,
+      totalFederalAward: 6300,
+      transportationCost: 1022.4,
+      partnerStudentLoans: 33,
+      secondResidenceCost: 7497,
+      totalAssessmentNeed: 36513.74615384615,
+      booksAndSuppliesCost: 550,
+      totalProvincialAward: 4620,
+      alimonyOrChildSupport: 44,
+      federalAssessmentNeed: 36513.74615384615,
+      exceptionalEducationCost: 5,
+      provincialAssessmentNeed: 36513.74615384615,
+      totalFederalContribution: 908.6538461538462,
+      parentalAssetContribution: null,
+      parentAssessedContribution: null,
+      partnerAssessedContribution: 0,
+      partnerExpectedContribution: 0,
+      totalProvincialContribution: 908.6538461538462,
+      parentalVoluntaryContribution: 0,
+      totalFederalAssessedResources: null,
+      finalFederalAwardNetCSGDAmount: 0,
+      finalFederalAwardNetCSGFAmount: 2544.15,
+      finalFederalAwardNetCSGPAmount: 0,
+      studentTotalFederalContribution: 908.6538461538462,
+      totalProvincialAssessedResources: null,
+      finalProvincialAwardNetBCAGAmount: 617.61,
+      finalProvincialAwardNetBCSLAmount: 4002.39,
+      finalProvincialAwardNetBGPDAmount: 0,
+      finalProvincialAwardNetSBSDAmount: 0,
+      parentalDiscretionaryContribution: null,
+      scholarshipsBursariesContribution: 0,
+      studentExpectedFederalContribution: 908.6538461538462,
+      studentTotalProvincialContribution: 908.6538461538462,
+      studentExpectedProvincialContribution: 908.6538461538462,
+    } as Assessment;
+    const workflowData = {
+      dmnValues: {
+        livingCategory: "SDA",
+        lifetimeMaximumCSLP: null,
+      },
+      studentData: {
+        bcResident: null,
+        citizenship: "canadianCitizen",
+        dependantStatus: "dependant",
+        numberOfParents: 1,
+        taxReturnIncome: 457,
+        livingWithParents: "no",
+        relationshipStatus: "single",
+      },
+      calculatedData: {
+        familySize: 2,
+        pdppdStatus: false,
+        totalBookCost: 550,
+        parentalAssets: 0,
+        totalFederalFSC: 908.6538461538462,
+        partnerStudyWeeks: null,
+        studentTotalIncome: 457,
+        totalChildCareCost: null,
+        totalProvincialFSC: 908.6538461538462,
+        partner1TotalIncome: null,
+        parentalContribution: 88,
+        studentMSOLAllowance: 11823,
+        dependantChildQuantity: null,
+        totalTargetedResources: 0,
+        dependantInfantQuantity: null,
+        totalEligibleDependents: 0,
+        totalNonEducationalCost: null,
+        totalSpouseContribution: null,
+        dependants11YearsOrUnder: null,
+        returnTransportationCost: 0,
+        studentMaritalStatusCode: "SI",
+        parentDiscretionaryIncome: 0,
+        parentalAssetContribution: 0,
+        dependantTotalMSOLAllowance: 0,
+        exemptScholarshipsBursaries: null,
+        dependants12YearsOverOnTaxes: null,
+        dependantPostSecondaryQuantity: null,
+        studentSpouseContributionWeeks: null,
+        totalDaycareCosts12YearsOrOver: null,
+        dependantChildInDaycareQuantity: null,
+        totalDaycareCosts11YearsOrUnder: null,
+        dependantDeclaredOnTaxesQuantity: null,
+        totalAdditionalTransportationAllowance: null,
+      },
+    } as WorkflowData;
+    // Creates a new application's current assessment.
+    const newCurrentAssessment = await db.studentAssessment.save(
+      createFakeStudentAssessment(
+        {
+          auditUser: student.user,
+          application,
+          offering: application.currentAssessment.offering,
+          applicationEditStatusUpdatedBy: student.user,
+        },
+        {
+          initialValue: {
+            triggerType: AssessmentTriggerType.RelatedApplicationChanged,
+            assessmentData,
+            workflowData,
           },
         },
       ),
@@ -127,15 +338,15 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       applicationStatus: application.applicationStatus,
       assessment: {
         ...assessment.assessmentData,
-        totalAdditionalTransportationAllowance: 100,
-        returnTransportationCost: 200,
+        totalAdditionalTransportationAllowance: null,
+        returnTransportationCost: 0,
       },
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationCurrentAssessmentId: application.currentAssessment.id,
       fullName: getUserFullName(application.student.user),
       programName: assessment.offering.educationProgram.name,
       locationName: assessment.offering.institutionLocation.name,
-      offeringIntensity: OfferingIntensity.partTime,
+      offeringIntensity: OfferingIntensity.fullTime,
       offeringStudyEndDate: getDateOnlyFullMonthFormat(
         assessment.offering.studyEndDate,
       ),
