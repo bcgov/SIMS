@@ -23,7 +23,7 @@ import {
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
 import { ScholasticStandingControllerService } from "..";
-import { IUserToken, Role } from "apps/api/src/auth";
+import { IUserToken, Role } from "../../auth";
 
 /**
  * Scholastic standing controller for AEST Client.
