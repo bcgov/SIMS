@@ -103,6 +103,12 @@ export class AssessmentControllerService {
       assessmentDTO.totalFamilyIncome = MASKED_MONEY_AMOUNT;
     }
 
+    // Set the values from the workflow data to the assessment.
+    assessmentDTO.totalAdditionalTransportationAllowance =
+      assessment.workflowData.calculatedData.totalAdditionalTransportationAllowance;
+    assessmentDTO.returnTransportationCost =
+      assessment.workflowData.calculatedData.returnTransportationCost;
+
     return {
       assessment: assessmentDTO,
       applicationId: assessment.application.id,

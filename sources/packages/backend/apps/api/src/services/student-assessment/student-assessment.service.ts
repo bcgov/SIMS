@@ -61,6 +61,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .select([
         "assessment.id",
         "assessment.assessmentData",
+        "assessment.workflowData",
         "assessment.noaApprovalStatus",
         "application.id",
         "application.applicationNumber",
