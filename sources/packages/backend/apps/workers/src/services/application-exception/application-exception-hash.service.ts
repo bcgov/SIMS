@@ -52,7 +52,7 @@ export class ApplicationExceptionHashService {
           `File hash not found for file: ${file.name}. Ensure the file exists in the database.`,
         );
       }
-      return filesHashMap[file.name];
+      return fileHash;
     });
     // Combine the exception data content and its files hashes to create a full hash.
     const fullStringContent =
