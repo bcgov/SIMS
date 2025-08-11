@@ -4,6 +4,7 @@ import {
   ApplicationUniqueExceptionsJobInDTO,
   ApplicationUniqueExceptionsJobOutDTO,
 } from "../../application.dto";
+import { StudentFile } from "@sims/sims-db";
 
 /**
  * Crates a fake verify unique application exceptions payload.
@@ -29,4 +30,21 @@ export function createFakeVerifyUniqueApplicationExceptionsPayload(
   >({
     variables,
   });
+}
+
+/**
+ * Crated the expected exception data file for the application exception request.
+ * @param studentFile student file associated with the exception request.
+ * @returns exception data file object.
+ */
+export function createExceptionDataFile(studentFile: StudentFile): {
+  url: string;
+  name: string;
+  originalName: string;
+} {
+  return {
+    url: `fake-files/${studentFile.uniqueFileName}`,
+    name: studentFile.uniqueFileName,
+    originalName: studentFile.fileName,
+  };
 }

@@ -6,6 +6,8 @@ import {
   createFakeApplicationExceptionRequest,
   E2EDataSources,
   saveFakeApplication,
+  saveFakeStudent,
+  saveFakeStudentFileUpload,
 } from "@sims/test-utils";
 import {
   createFakeWorkerJob,
@@ -20,7 +22,10 @@ import {
   ApplicationExceptionsJobInDTO,
   ApplicationExceptionsJobOutDTO,
 } from "../../application.dto";
-import { createFakeVerifyUniqueApplicationExceptionsPayload } from "./verify-unique-application-exceptions";
+import {
+  createExceptionDataFile,
+  createFakeVerifyUniqueApplicationExceptionsPayload,
+} from "./verify-unique-application-exceptions";
 import { ICustomHeaders } from "@camunda8/sdk/dist/zeebe/types";
 import { SystemUsersService } from "@sims/services";
 import MockDate from "mockdate";
@@ -46,47 +51,64 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       "when there are exceptions for the application.",
     async () => {
       // Arrange
-      const application = await saveFakeApplication(db.dataSource, undefined, {
-        applicationData: {
-          workflowName: "",
-          someExceptionList: [
-            {
-              someApplicationException: {
-                exceptionDescription: "Some Application Exception - 1",
-                decreaseInParentIncomeSupportingDocuments: [
-                  {
-                    url: "some_url_f47ac10b-58cc-4372-a567-0e02b2c3d479",
-                    name: "some_name_f47ac10b-58cc-4372-a567-0e02b2c3d479",
-                    originalName: "some_original_name_A",
-                  },
-                ],
-              },
-            },
-            {
-              someApplicationException: {
-                exceptionDescription: "Some Application Exception - 2",
-                decreaseInParentIncomeSupportingDocuments: [
-                  {
-                    url: "some_url_6ba7b810-9dad-11d1-80b4-00c04fd430c8",
-                    name: "some_name_6ba7b810-9dad-11d1-80b4-00c04fd430c8",
-                    originalName: "some_original_name_B",
-                  },
-                ],
-              },
-            },
-          ],
-          someOtherApplicationException: {
-            exceptionDescription: "Some Other Application Exception",
-            decreaseInParentIncomeSupportingDocuments: [
+      const student = await saveFakeStudent(db.dataSource);
+      const files = await Promise.all([
+        saveFakeStudentFileUpload(
+          db.dataSource,
+          { student },
+          {
+            fileName: "File A",
+            hash: "99283cd205266dc0c667899fa8ff6edb940598d239d0a2652b05dc01d25a920c",
+          },
+        ),
+        saveFakeStudentFileUpload(
+          db.dataSource,
+          { student },
+          {
+            fileName: "File B",
+            hash: "f4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8",
+          },
+        ),
+        saveFakeStudentFileUpload(
+          db.dataSource,
+          { student },
+          {
+            fileName: "File C",
+            hash: "10e8f9d54f2ab4332f58ad151a6425b6a15469f51ce57fafc765ede641126b5a",
+          },
+        ),
+      ]);
+      const [file1, file2, file3] = files.map((file) =>
+        createExceptionDataFile(file),
+      );
+      const application = await saveFakeApplication(
+        db.dataSource,
+        { student },
+        {
+          applicationData: {
+            workflowName: "",
+            someExceptionList: [
               {
-                url: "some_url_8f7e4d2a-1b3c-4a5e-9f8d-7c6b5a4e3d2f",
-                name: "some_name_8f7e4d2a-1b3c-4a5e-9f8d-7c6b5a4e3d2f",
-                originalName: "some_original_name_A",
+                someApplicationException: {
+                  exceptionDescription: "Some Application Exception - 1",
+                  decreaseInParentIncomeSupportingDocuments: [file1],
+                },
+              },
+              {
+                someApplicationException: {
+                  exceptionDescription: "Some Application Exception - 2",
+                  decreaseInParentIncomeSupportingDocuments: [file2],
+                },
               },
             ],
-          },
-        } as ApplicationData,
-      });
+            someOtherApplicationException: {
+              exceptionDescription: "Some Other Application Exception",
+              decreaseInParentIncomeSupportingDocuments: [file3],
+            },
+          } as ApplicationData,
+        },
+      );
+
       const verifyUniqueApplicationExceptionsPayload =
         createFakeVerifyUniqueApplicationExceptionsPayload(application.id);
 
@@ -139,21 +161,21 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               exceptionName: "someApplicationException",
               exceptionDescription: "Some Application Exception - 1",
               exceptionHash:
-                "99283cd205266dc0c667899fa8ff6edb940598d239d0a2652b05dc01d25a920c",
+                "96001142bc2a3cae09072fb3992b611016ae8c3a07c2b0cb78e1f6f2789b6169",
             },
             {
               id: expect.any(Number),
               exceptionName: "someApplicationException",
               exceptionDescription: "Some Application Exception - 2",
               exceptionHash:
-                "7e286748603937ab6a98c191445132dce68cdfd006ccd1be7ea3574e2f50f5a9",
+                "f032fcc52cfa04d24fb5abcd5c208f5b63c1b7893f2beeab1f5704a8eed11f1a",
             },
             {
               id: expect.any(Number),
               exceptionName: "someOtherApplicationException",
               exceptionDescription: "Some Other Application Exception",
               exceptionHash:
-                "10e8f9d54f2ab4332f58ad151a6425b6a15469f51ce57fafc765ede641126b5a",
+                "2fcd1a09f2f7e8e2a5a46880cc97a8c38ef0b7428b8d2ffbf3ed740921fc62cd",
             },
           ],
         },
@@ -178,7 +200,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
           initialData: {
             exceptionName: "someApplicationException",
             exceptionHash:
-              "99283cd205266dc0c667899fa8ff6edb940598d239d0a2652b05dc01d25a920c",
+              "b0e3a8697648475e79c33f61a41cb514715690094ab9acdaae2737c744fc42de",
           },
         },
       );
@@ -190,7 +212,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
           initialData: {
             exceptionName: "someOtherApplicationException",
             exceptionHash:
-              "10e8f9d54f2ab4332f58ad151a6425b6a15469f51ce57fafc765ede641126b5a",
+              "58f52eef5c7049560ef87de8d7a8726c8ac1b8c9c6e4d034168c7a86762c2900",
           },
         },
       );
@@ -203,9 +225,30 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
         applicationException: savedException,
       });
       // Most recently application that should have the exception automatically approved.
+      const student = await saveFakeStudent(db.dataSource);
+      const files = await Promise.all([
+        saveFakeStudentFileUpload(
+          db.dataSource,
+          { student },
+          {
+            fileName: "File A",
+            hash: "99283cd205266dc0c667899fa8ff6edb940598d239d0a2652b05dc01d25a920c",
+          },
+        ),
+        saveFakeStudentFileUpload(
+          db.dataSource,
+          { student },
+          {
+            fileName: "File B",
+            hash: "f4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8",
+          },
+        ),
+      ]);
+      const [file1, file2] = files.map((file) => createExceptionDataFile(file));
       const currentApplication = await saveFakeApplication(
         db.dataSource,
         {
+          student,
           parentApplication: previousApplication,
         },
         {
@@ -213,25 +256,13 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
             workflowName: "",
             someOtherApplicationException: {
               exceptionDescription: "Some Other Application Exception",
-              decreaseInParentIncomeSupportingDocuments: [
-                {
-                  url: "some_url_8f7e4d2a-1b3c-4a5e-9f8d-7c6b5a4e3d2f",
-                  name: "some_name_8f7e4d2a-1b3c-4a5e-9f8d-7c6b5a4e3d2f",
-                  originalName: "some_original_name_A",
-                },
-              ],
+              decreaseInParentIncomeSupportingDocuments: [file1],
             },
             someExceptionList: [
               {
                 someApplicationException: {
                   exceptionDescription: "Some Application Exception - 1",
-                  decreaseInParentIncomeSupportingDocuments: [
-                    {
-                      url: "some_url_f47ac10b-58cc-4372-a567-0e02b2c3d479",
-                      name: "some_name_f47ac10b-58cc-4372-a567-0e02b2c3d479",
-                      originalName: "some_original_name_A",
-                    },
-                  ],
+                  decreaseInParentIncomeSupportingDocuments: [file2],
                 },
               },
             ],
@@ -330,7 +361,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               exceptionName: "someApplicationException",
               exceptionDescription: "Some Application Exception - 1",
               exceptionHash:
-                "99283cd205266dc0c667899fa8ff6edb940598d239d0a2652b05dc01d25a920c",
+                "b0e3a8697648475e79c33f61a41cb514715690094ab9acdaae2737c744fc42de",
               approvalExceptionRequest: {
                 id: savedRequest1.id,
               },
@@ -342,7 +373,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               exceptionName: "someOtherApplicationException",
               exceptionDescription: "Some Other Application Exception",
               exceptionHash:
-                "10e8f9d54f2ab4332f58ad151a6425b6a15469f51ce57fafc765ede641126b5a",
+                "58f52eef5c7049560ef87de8d7a8726c8ac1b8c9c6e4d034168c7a86762c2900",
               approvalExceptionRequest: {
                 id: savedRequest2.id,
               },
