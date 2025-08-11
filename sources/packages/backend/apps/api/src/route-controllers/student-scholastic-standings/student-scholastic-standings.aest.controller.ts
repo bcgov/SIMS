@@ -83,7 +83,7 @@ export class ScholasticStandingAESTController extends BaseController {
   @Roles(Role.StudentReverseScholasticStanding)
   @Patch(":scholasticStandingId/reverse")
   @ApiNotFoundResponse({
-    description: "Scholastic Standing not found.",
+    description: "Scholastic standing not found.",
   })
   async reverseScholasticStanding(
     @Param("scholasticStandingId", ParseIntPipe) scholasticStandingId: number,
