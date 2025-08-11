@@ -20,7 +20,7 @@
   <content-group>
     <toggle-content :toggled="!applicationAppeals.count && !isLoading">
       <v-data-table-server
-        :headers="tableHeaders"
+        :headers="PendingChangeRequestsTableHeaders"
         :items="applicationAppeals.results"
         :items-length="applicationAppeals.count"
         :loading="isLoading"
@@ -102,7 +102,6 @@ export default defineComponent({
         : "Appeals that require ministry review.";
     });
 
-    const tableHeaders = computed(() => PendingChangeRequestsTableHeaders);
     const gotToAssessmentsSummary = (
       applicationId: number,
       studentId: number,
@@ -166,7 +165,7 @@ export default defineComponent({
       dateOnlyLongString,
       emptyStringFiller,
       isLoading,
-      tableHeaders,
+      PendingChangeRequestsTableHeaders,
       DEFAULT_PAGE_LIMIT,
       PAGINATION_LIST,
       searchAppeals,
