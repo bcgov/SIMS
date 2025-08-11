@@ -6,7 +6,7 @@ import {
   ApplicationDataException,
   ApplicationDataExceptionHashed,
 } from "./application-exception.models";
-import { createHash } from "crypto";
+import { hashObjectToHex } from "@sims/utilities";
 
 @Injectable()
 export class ApplicationExceptionHashService {
@@ -37,9 +37,7 @@ export class ApplicationExceptionHashService {
     const fullStringContent =
       JSON.stringify(exception.hashableContent) + filesHashes.join();
     const hashedException = exception as ApplicationDataExceptionHashed;
-    hashedException.fullHashContent = createHash("sha256")
-      .update(fullStringContent)
-      .digest("hex");
+    hashedException.fullHashContent = hashObjectToHex(fullStringContent);
     return hashedException;
   }
 
