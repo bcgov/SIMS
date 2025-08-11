@@ -11,7 +11,6 @@ import {
 import { PAGINATION_SEARCH_MAX_LENGTH } from "../../constants";
 import { FieldSortOrder } from "@sims/utilities";
 import {
-  AppealType,
   CASInvoiceBatchApprovalStatus,
   CASInvoiceStatus,
   OfferingIntensity,
@@ -19,6 +18,7 @@ import {
 } from "@sims/sims-db";
 import { Transform } from "class-transformer";
 import { ToBoolean } from "../../utilities/class-transform";
+import { AppealType } from "../../services";
 
 /**
  * Common parameters used when an API result

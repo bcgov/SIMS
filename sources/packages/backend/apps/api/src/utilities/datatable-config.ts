@@ -3,9 +3,9 @@ import {
   CASInvoiceStatus,
   ProgramStatus,
   OfferingIntensity,
-  AppealType,
 } from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
+import { AppealType } from "../services";
 
 /**
  *  Base Pagination option.

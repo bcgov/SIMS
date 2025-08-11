@@ -13,9 +13,9 @@ import {
   mapFromRawAndEntities,
   getUserFullNameLikeSearch,
   FileOriginType,
-  AppealType,
 } from "@sims/sims-db";
 import {
+  AppealType,
   PendingAndDeniedAppeals,
   StudentAppealRequestApproval,
   StudentAppealRequestModel,

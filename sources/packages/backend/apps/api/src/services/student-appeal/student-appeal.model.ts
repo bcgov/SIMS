@@ -34,3 +34,8 @@ export interface StudentAppealRequestApproval {
   appealStatus: StudentAppealStatus;
   noteDescription: string;
 }
+
+export enum AppealType {
+  LegacyChangeRequest = "legacy-change-request",
+  Appeal = "appeal",
+}
