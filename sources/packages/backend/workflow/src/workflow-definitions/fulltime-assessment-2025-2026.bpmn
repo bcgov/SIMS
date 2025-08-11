@@ -917,7 +917,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_1yndxhv" name="awardEligibilityCSGD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if ((calculatedDataFederalAssessedNeed &#62;= 1) &#10;    and (calculatedDataTotalFamilyIncome &#60;= dmnFullTimeAwardFamilySizeVariables.limitAwardCSGDThresholdIncome) &#10;    and (calculatedDataTotalEligibleDependants &#62;= 1))&#10;then true else false" target="awardEligibilityCSGD" />
+          <zeebe:output source="=if ((calculatedDataFederalAssessedNeed &#62;= 1) &#10;    and (calculatedDataTotalFamilyIncome &#60;= dmnFullTimeAwardFamilySizeVariables.limitAwardCSGDThresholdIncome) &#10;    and (calculatedDataTotalChildcareDependants &#62;= 1))&#10;then true else false" target="awardEligibilityCSGD" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0f51edb</bpmn:incoming>
@@ -1157,7 +1157,7 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=min(dmnFullTimeAwardAllowableLimits.limitAwardCSGDWeeklyRate,&#10;dmnFullTimeAwardAllowableLimits.limitAwardCSGDWeeklyRate - dmnFullTimeAwardFamilySizeVariables.limitAwardCSGDWeeklyPhaseoutSlope * (calculatedDataTotalFamilyIncome - dmnFullTimeAwardFamilySizeVariables.limitAwardCSGDIncomeCap))&#10;" target="federalAwardWeeklyCSGDAmount" />
-          <zeebe:output source="=//federal awards can only be requested in full dollar amounts. Rounding the weekly amount before transforming it to the full amount for the study period&#10;if (federalAwardWeeklyCSGDAmount &#62; 0) &#10;then&#10; round half up(federalAwardWeeklyCSGDAmount * offeringWeeks * calculatedDataTotalEligibleDependants,0)&#10;else 0" target="federalAwardCSGDAmount" />
+          <zeebe:output source="=//federal awards can only be requested in full dollar amounts. Rounding the weekly amount before transforming it to the full amount for the study period&#10;if (federalAwardWeeklyCSGDAmount &#62; 0) &#10;then&#10; round half up(federalAwardWeeklyCSGDAmount * offeringWeeks * calculatedDataTotalChildcareDependants,0)&#10;else 0" target="federalAwardCSGDAmount" />
           <zeebe:output source="=if (awardEligibilityCSGD = true) then&#10;max(dmnFullTimeAwardAllowableLimits.limitAwardCSGDMinAward, federalAwardCSGDAmount) &#10;else 0" target="federalAwardNetCSGDAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
