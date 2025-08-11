@@ -68,7 +68,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
 
   it(
     "Should calculate total fixed student contribution for a married independent student when the student is exempt " +
-      "and the partner is not exempt, is not a full time student, and has not already contributed in the program year.",
+      "and the partner is not exempt, is not a full-time student, and has not already contributed in the program year.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -126,7 +126,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
 
   it(
     "Should calculate total fixed student contribution for a married independent student when the student is exempt " +
-      "and the partner is not exempt, is a full time student (12 wk), and has not already contributed in the program year.",
+      "and the partner is not exempt, is a full-time student (12 week overlap), and has not already contributed.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -141,7 +141,71 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
         YesNoOptions.No;
       assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
       assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
-      assessmentConsolidatedData.programYearTotalFullTimeSpouseContributionWeeks = 12; // Spouse contribution for 12 weeks have been calculated in the program year.
+      assessmentConsolidatedData.studentDataPartnerStudyWeeks = 12;
+
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // The spouse can be exempt from contribution if they are a full-time student at the same time.
+      // Or when they have a disability, or are receiving certain types of income assistance.
+      expect(
+        calculatedAssessment.variables.calculatedDataSpousalContributionExempt,
+      ).toBe(false);
+      // The federal and provincial fixed student contributions are based on family income and size when the student is not exempt.
+      expect(calculatedAssessment.variables.calculatedDataTotalFederalFSC).toBe(
+        0,
+      );
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
+      ).toBe(0);
+      // The spouse contribution weeks is the lower of remaining spouse contribution weeks and offering weeks (less any study overlap weeks).
+      expect(
+        calculatedAssessment.variables.calculatedDataSpouseContributionWeeks,
+      ).toBe(4);
+      // The total spouse contribution is calculated based on the spouse contribution weeks, spouse contribution rate, and family income.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
+      ).toBe(192.4846153846154);
+      // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalFederalContribution,
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataTotalSpouseContribution +
+          calculatedAssessment.variables.calculatedDataTotalFederalFSC,
+      );
+      // Combination of provincial fixed student contribution, spouse contribution, parental contribution, and targeted resources.
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalProvincialContribution,
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataTotalSpouseContribution +
+          calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
+      );
+    },
+  );
+
+  it(
+    "Should calculate total fixed student contribution for a married independent student when the student is exempt " +
+      "and the partner is not exempt, is not a full-time student, and has already contributed in the program year (20 weeks).",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
+      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+      assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+        YesNoOptions.No;
+      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
+      assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
+      assessmentConsolidatedData.programYearTotalFullTimeSpouseContributionWeeks = 20; // Spouse contribution for 20 weeks have been calculated in the program year.
 
       // Act
       const calculatedAssessment =
