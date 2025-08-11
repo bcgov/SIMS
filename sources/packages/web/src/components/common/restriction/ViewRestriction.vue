@@ -175,7 +175,8 @@ export default defineComponent({
         // If no resolution note is present, consider no resolution was provided.
         // For instance, resolved provincial restrictions imported from legacy
         // will not have a resolution associated with it.
-        props.restrictionData.resolutionNote,
+        (props.restrictionData.isActive ||
+          props.restrictionData.resolutionNote),
     );
 
     return {
