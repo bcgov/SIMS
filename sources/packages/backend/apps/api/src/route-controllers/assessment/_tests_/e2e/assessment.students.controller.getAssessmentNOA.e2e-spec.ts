@@ -68,12 +68,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         offeringIntensity: OfferingIntensity.partTime,
       },
     );
-    const workflowData = {
-      calculatedData: {
-        returnTransportationCost: 10,
-        totalAdditionalTransportationAllowance: 20,
-      },
-    } as WorkflowData;
     // Creates a new application's current assessment.
     const newCurrentAssessment = await db.studentAssessment.save(
       createFakeStudentAssessment(
@@ -86,7 +80,12 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         {
           initialValue: {
             triggerType: AssessmentTriggerType.RelatedApplicationChanged,
-            workflowData,
+            workflowData: {
+              calculatedData: {
+                totalAdditionalTransportationAllowance: 100,
+                returnTransportationCost: 200,
+              },
+            } as WorkflowData,
           },
         },
       ),
@@ -128,10 +127,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       applicationStatus: application.applicationStatus,
       assessment: {
         ...assessment.assessmentData,
-        totalAdditionalTransportationAllowance:
-          workflowData.calculatedData.totalAdditionalTransportationAllowance,
-        returnTransportationCost:
-          workflowData.calculatedData.returnTransportationCost,
+        totalAdditionalTransportationAllowance: 100,
+        returnTransportationCost: 200,
       },
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationCurrentAssessmentId: application.currentAssessment.id,
