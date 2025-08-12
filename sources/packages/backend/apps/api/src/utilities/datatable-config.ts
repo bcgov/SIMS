@@ -5,6 +5,7 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
+import { AppealType } from "../services";
 
 /**
  *  Base Pagination option.
@@ -62,4 +63,8 @@ export enum SortPriority {
 export interface PIRPaginationOptions extends BasePaginationOptions {
   search?: string;
   intensityFilter?: OfferingIntensity;
+}
+
+export interface StudentAppealPaginationOptions extends PaginationOptions {
+  appealType: AppealType;
 }

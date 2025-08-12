@@ -286,6 +286,10 @@ interface BaseAssessment {
  * Interface for FullTime assessment payload.
  */
 export interface FullTimeAssessment extends BaseAssessment {
+  parentalVoluntaryContribution: number;
+  exceptionalCosts: number;
+  transportationCost: number;
+  partnerStudentLoans: number;
   federalAssessmentNeed: number;
   provincialAssessmentNeed: number;
   exceptionalEducationCost: number;

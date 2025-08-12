@@ -917,7 +917,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_1yndxhv" name="awardEligibilityCSGD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if ((calculatedDataFederalAssessedNeed &#62;= 1) &#10;    and (calculatedDataTotalFamilyIncome &#60;= dmnFullTimeAwardFamilySizeVariables.limitAwardCSGDThresholdIncome) &#10;    and (calculatedDataTotalEligibleDependants &#62;= 1))&#10;then true else false" target="awardEligibilityCSGD" />
+          <zeebe:output source="=if ((calculatedDataFederalAssessedNeed &#62;= 1) &#10;    and (calculatedDataTotalFamilyIncome &#60;= dmnFullTimeAwardFamilySizeVariables.limitAwardCSGDThresholdIncome) &#10;    and (calculatedDataTotalChildcareDependants &#62;= 1))&#10;then true else false" target="awardEligibilityCSGD" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0f51edb</bpmn:incoming>
@@ -1157,7 +1157,7 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=min(dmnFullTimeAwardAllowableLimits.limitAwardCSGDWeeklyRate,&#10;dmnFullTimeAwardAllowableLimits.limitAwardCSGDWeeklyRate - dmnFullTimeAwardFamilySizeVariables.limitAwardCSGDWeeklyPhaseoutSlope * (calculatedDataTotalFamilyIncome - dmnFullTimeAwardFamilySizeVariables.limitAwardCSGDIncomeCap))&#10;" target="federalAwardWeeklyCSGDAmount" />
-          <zeebe:output source="=//federal awards can only be requested in full dollar amounts. Rounding the weekly amount before transforming it to the full amount for the study period&#10;if (federalAwardWeeklyCSGDAmount &#62; 0) &#10;then&#10; round half up(federalAwardWeeklyCSGDAmount * offeringWeeks * calculatedDataTotalEligibleDependants,0)&#10;else 0" target="federalAwardCSGDAmount" />
+          <zeebe:output source="=//federal awards can only be requested in full dollar amounts. Rounding the weekly amount before transforming it to the full amount for the study period&#10;if (federalAwardWeeklyCSGDAmount &#62; 0) &#10;then&#10; round half up(federalAwardWeeklyCSGDAmount * offeringWeeks * calculatedDataTotalChildcareDependants,0)&#10;else 0" target="federalAwardCSGDAmount" />
           <zeebe:output source="=if (awardEligibilityCSGD = true) then&#10;max(dmnFullTimeAwardAllowableLimits.limitAwardCSGDMinAward, federalAwardCSGDAmount) &#10;else 0" target="federalAwardNetCSGDAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1206,10 +1206,10 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
     <bpmn:intermediateThrowEvent id="Event_0fjl0zr" name="BCSL After Top Up">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=(calculatedDataTotalCSG+federalAwardNetCSLFAmount+provincialAwardNetBCSLAmount)" target="calculatedDataPrelimAward" />
+          <zeebe:output source="=sum(calculatedDataTotalCSG,federalAwardNetCSLFAmount,calculatedDataRemainingBCSL1)" target="calculatedDataPrelimAward" />
           <zeebe:output source="=//remaining need and negative amounts will reduce BCSL&#10;calculatedDataProvincialAssessedNeed-calculatedDataPrelimAward" target="provincialAwardUnmetNeedAfterLoanAndCSG" />
           <zeebe:output source="=max(calculatedDataBCTopup-calculatedDataPrelimAward,0)" target="calculatedDataTopup" />
-          <zeebe:output source="=min(calculatedDataNetTopup,provincialAwardUnmetNeedAfterLoanAndCSG)" target="calculatedDataNetTopup" />
+          <zeebe:output source="=min(calculatedDataTopup,provincialAwardUnmetNeedAfterLoanAndCSG)" target="calculatedDataNetTopup" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1p7o8v2</bpmn:incoming>
@@ -1712,8 +1712,8 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
     <bpmn:intermediateThrowEvent id="Event_1o1cgxp" name="Assessed Need">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataTotalCosts - calculatedDataTotalProvincialContribution" target="calculatedDataProvincialAssessedNeed" />
-          <zeebe:output source="=calculatedDataTotalCosts - calculatedDataTotalFederalContribution" target="calculatedDataFederalAssessedNeed" />
+          <zeebe:output source="=max(calculatedDataTotalCosts - calculatedDataTotalProvincialContribution,0)" target="calculatedDataProvincialAssessedNeed" />
+          <zeebe:output source="=max(calculatedDataTotalCosts - calculatedDataTotalFederalContribution,0)" target="calculatedDataFederalAssessedNeed" />
           <zeebe:output source="=max(calculatedDataFederalAssessedNeed, calculatedDataProvincialAssessedNeed)" target="calculatedDataTotalAssessedNeed" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -1757,8 +1757,8 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
     <bpmn:intermediateThrowEvent id="Event_1191le4" name="FSC Exemption">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (studentDataIndigenousStatus = &#34;yes&#34; &#10;  or calculatedDataPDPPDStatus = true &#10;  or studentDataYouthInCare = &#34;yes&#34;)&#10;then true&#10;  else if studentDataDependantStatus = &#34;independant&#34; and (calculatedDataTotalEligibleDependants - calculatedDataDependantPostSecondaryQuantity &#62;0) &#10;  then true&#10;  else false" target="calculatedDataFederalFSCExempt" />
-          <zeebe:output source="=if (studentDataIndigenousStatus = &#34;yes&#34; &#10;  or calculatedDataPDPPDStatus = true &#10;  or studentDataYouthInCare = &#34;yes&#34;)&#10;then true&#10;  else if studentDataDependantStatus = &#34;independant&#34; and (calculatedDataTotalEligibleDependants - calculatedDataDependantPostSecondaryQuantity &#62;0) &#10;  then true&#10;  else false" target="calculatedDataProvincialFSCExempt" />
+          <zeebe:output source="=if (studentDataIndigenousStatus = &#34;yes&#34; &#10;  or calculatedDataPDPPDStatus = true &#10;  or studentDataYouthInCare = &#34;yes&#34;)&#10;  or (calculatedDataTotalEligibleDependants - calculatedDataDependantPostSecondaryQuantity &#62; 0)&#10;then true&#10;else false" target="calculatedDataFederalFSCExempt" />
+          <zeebe:output source="=if (studentDataIndigenousStatus = &#34;yes&#34; &#10;  or calculatedDataPDPPDStatus = true &#10;  or studentDataYouthInCare = &#34;yes&#34;)&#10;  or (calculatedDataTotalEligibleDependants - calculatedDataDependantPostSecondaryQuantity &#62; 0)&#10;then true&#10;else false" target="calculatedDataProvincialFSCExempt" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jtpb8r</bpmn:incoming>
@@ -1804,7 +1804,8 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=min(dmnFullTimeContributionLimits.limitFederalFSCWeeklyAmount, dmnFullTimeContributionLimits.limitFederalLowIncomeWeeklyAmount + (dmnFullTimeContributionLimits.limitOverThresholdFSCProrate * (calculatedDataTotalFamilyIncome-dmnFullTimeIncomeThreshold.calculatedDataFederalFSCIncomeThreshold)))" target="calculatedDataWeeklyFederalFSC" />
-          <zeebe:output source="=min(calculatedDataWeeklyFederalFSC * offeringWeeks, dmnFullTimeContributionLimits.limitFederalFSCMax)" target="calculatedDataTotalFederalFSC" />
+          <zeebe:output source="=min(offeringWeeks,dmnFullTimeContributionLimits.limitFederalContributionWeeks)" target="calculatedDataFederalFSCWeeks" />
+          <zeebe:output source="=min(calculatedDataWeeklyFederalFSC * calculatedDataFederalFSCWeeks, dmnFullTimeContributionLimits.limitFederalFSCMax)" target="calculatedDataTotalFederalFSC" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1u3sz5r</bpmn:incoming>

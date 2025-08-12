@@ -14,8 +14,10 @@ import {
   createFakeStudentAppealRequest,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
+  ensureProgramYearExists,
 } from "@sims/test-utils";
 import { ApplicationStatus, StudentAppealStatus } from "@sims/sims-db";
+import { AppealType } from "../../../../services";
 
 describe("StudentAppealAESTController(e2e)-getAppeals", () => {
   let app: INestApplication;
@@ -56,7 +58,61 @@ describe("StudentAppealAESTController(e2e)-getAppeals", () => {
     });
     await db.studentAppeal.save(appeal);
 
-    const endpoint = `/aest/appeal/pending?page=0&pageLimit=10&sortField=submittedDate&sortOrder=ASC&searchCriteria=${application.applicationNumber}`;
+    const endpoint = `/aest/appeal/pending?page=0&pageLimit=10&sortField=submittedDate&sortOrder=ASC&appealType=${AppealType.LegacyChangeRequest}&searchCriteria=${application.applicationNumber}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .then((response) => {
+        expect(response.body).toEqual({
+          count: 1,
+          results: [
+            {
+              appealId: appeal.id,
+              applicationId: application.id,
+              applicationNumber: application.applicationNumber,
+              firstName: student.user.firstName,
+              lastName: student.user.lastName,
+              studentId: student.id,
+              submittedDate: appeal.submittedDate.toISOString(),
+            },
+          ],
+        });
+      });
+  });
+
+  it("Should return result count as 1 when there is one pending appeal for student application with appeal type 'appeal'.", async () => {
+    // Arrange
+    // Create student to submit application.
+    const student = await saveFakeStudent(appDataSource);
+
+    // Create a program year with start date >= 2025-08-01 for AppealType.Appeal
+    const savedProgramYear = await ensureProgramYearExists(db, 2025);
+
+    // Create application to request change with the specific program year.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        programYear: savedProgramYear,
+      },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
+    // Create pending student appeal.
+    const appealRequest = createFakeStudentAppealRequest(
+      {},
+      { initialValues: { appealStatus: StudentAppealStatus.Pending } },
+    );
+    const appeal = createFakeStudentAppeal({
+      application,
+      appealRequests: [appealRequest],
+    });
+    await db.studentAppeal.save(appeal);
+
+    const endpoint = `/aest/appeal/pending?page=0&pageLimit=10&sortField=submittedDate&sortOrder=ASC&appealType=${AppealType.Appeal}&searchCriteria=${application.applicationNumber}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert

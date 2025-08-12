@@ -128,7 +128,7 @@ export default defineComponent({
           subtitle: "Pre 2025-2026",
           prependIcon: "mdi-folder-open-outline",
           to: {
-            name: AESTRoutesConst.APPLICATION_APPEALS_PENDING,
+            name: AESTRoutesConst.LEGACY_CHANGE_REQUESTS,
           },
         },
       },
@@ -139,6 +139,15 @@ export default defineComponent({
           prependIcon: "mdi-folder-open-outline",
           to: {
             name: AESTRoutesConst.APPLICATION_CHANGE_REQUESTS_PENDING,
+          },
+        },
+      },
+      {
+        title: "Appeals",
+        props: {
+          prependIcon: "mdi-folder-open-outline",
+          to: {
+            name: AESTRoutesConst.STUDENT_APPEALS,
           },
         },
       },

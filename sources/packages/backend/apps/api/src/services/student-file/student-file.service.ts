@@ -15,12 +15,11 @@ import {
 } from "@sims/sims-db";
 import { CreateFile, FileUploadOptions } from "./student-file.model";
 import { InjectQueue } from "@nestjs/bull";
-import { CustomNamedError, QueueNames } from "@sims/utilities";
+import { CustomNamedError, hashObjectToHex, QueueNames } from "@sims/utilities";
 import { Queue } from "bull";
 import { VirusScanQueueInDTO } from "@sims/services/queue";
 import { FILE_SAVE_ERROR } from "../../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
-import { createHash } from "crypto";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
@@ -74,9 +73,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     newFile.creator = { id: auditUserId } as User;
     newFile.virusScanStatus = VirusScanStatus.InProgress;
     // Generate the file hash.
-    newFile.fileHash = createHash("sha256")
-      .update(createFile.fileContent)
-      .digest("hex");
+    newFile.fileHash = hashObjectToHex(createFile.fileContent);
 
     summary.info(`Saving the file ${createFile.fileName} to database.`);
     let savedFile: StudentFile;
