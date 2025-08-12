@@ -10,7 +10,6 @@ import {
   saveFakeStudentFileUpload,
 } from "@sims/test-utils";
 import {
-  createFakeWorkerJob,
   FAKE_WORKER_JOB_ERROR_CODE_PROPERTY,
   FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY,
   FAKE_WORKER_JOB_RESULT_PROPERTY,
@@ -19,14 +18,9 @@ import {
 import { createTestingAppModule } from "../../../../../test/helpers";
 import { ApplicationController } from "../../application.controller";
 import {
-  ApplicationExceptionsJobInDTO,
-  ApplicationExceptionsJobOutDTO,
-} from "../../application.dto";
-import {
   createExceptionDataFile,
   createFakeVerifyUniqueApplicationExceptionsPayload,
 } from "./verify-unique-application-exceptions";
-import { ICustomHeaders } from "@camunda8/sdk/dist/zeebe/types";
 import { SystemUsersService } from "@sims/services";
 import MockDate from "mockdate";
 
@@ -115,11 +109,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       // Act
       const result =
         await applicationController.verifyUniqueApplicationExceptions(
-          createFakeWorkerJob<
-            ApplicationExceptionsJobInDTO,
-            ICustomHeaders,
-            ApplicationExceptionsJobOutDTO
-          >(verifyUniqueApplicationExceptionsPayload),
+          verifyUniqueApplicationExceptionsPayload,
         );
 
       // Assert
@@ -148,6 +138,13 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
         relations: { applicationException: { exceptionRequests: true } },
         where: {
           id: application.id,
+        },
+        order: {
+          applicationException: {
+            exceptionRequests: {
+              exceptionDescription: "ASC",
+            },
+          },
         },
       });
       expect(updatedApplication).toEqual({
@@ -280,11 +277,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       // Act
       const result =
         await applicationController.verifyUniqueApplicationExceptions(
-          createFakeWorkerJob<
-            ApplicationExceptionsJobInDTO,
-            ICustomHeaders,
-            ApplicationExceptionsJobOutDTO
-          >(verifyUniqueApplicationExceptionsPayload),
+          verifyUniqueApplicationExceptionsPayload,
         );
 
       // Assert
@@ -395,11 +388,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     // Act
     const result =
       await applicationController.verifyUniqueApplicationExceptions(
-        createFakeWorkerJob<
-          ApplicationExceptionsJobInDTO,
-          ICustomHeaders,
-          ApplicationExceptionsJobOutDTO
-        >(verifyUniqueApplicationExceptionsPayload),
+        verifyUniqueApplicationExceptionsPayload,
       );
 
     // Assert
@@ -429,11 +418,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     // Act
     const result =
       await applicationController.verifyUniqueApplicationExceptions(
-        createFakeWorkerJob<
-          ApplicationExceptionsJobInDTO,
-          ICustomHeaders,
-          ApplicationExceptionsJobOutDTO
-        >(verifyUniqueApplicationExceptionsPayload),
+        verifyUniqueApplicationExceptionsPayload,
       );
 
     // Assert
@@ -469,11 +454,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     // Act
     const result =
       await applicationController.verifyUniqueApplicationExceptions(
-        createFakeWorkerJob<
-          ApplicationExceptionsJobInDTO,
-          ICustomHeaders,
-          ApplicationExceptionsJobOutDTO
-        >(verifyUniqueApplicationExceptionsPayload),
+        verifyUniqueApplicationExceptionsPayload,
       );
 
     // Assert
