@@ -3111,15 +3111,14 @@
                       "collapsible": false,
                       "hideLabel": true,
                       "key": "uploadSupportingDocuments",
-                      "customConditional": "show = data['bclivingSituation'];",
                       "type": "panel",
                       "label": "Upload supporting documents",
+                      "breadcrumbClickable": true,
                       "buttonSettings": {
                         "previous": true,
                         "cancel": true,
                         "next": true
                       },
-                      "breadcrumbClickable": true,
                       "scrollToTop": false,
                       "input": false,
                       "tableView": false,
@@ -8627,19 +8626,19 @@
                     },
                     {
                       "title": "Addition Transportation Panel",
+                      "collapsible": false,
+                      "hideLabel": true,
+                      "key": "additionTransportationPanel",
+                      "type": "panel",
+                      "label": "Addition Transportation Panel",
                       "breadcrumbClickable": false,
+                      "allowPrevious": false,
                       "buttonSettings": {
                         "previous": false,
                         "cancel": false,
                         "next": false
                       },
                       "scrollToTop": false,
-                      "collapsible": false,
-                      "hideLabel": true,
-                      "key": "additionTransportationPanel",
-                      "customConditional": "show = (data.transportationcostsituation === 'noLimit' || data.transportationcostsituation === 'special' || data.transportationcostsituation === 'educationPlacement');",
-                      "type": "panel",
-                      "label": "Addition Transportation Panel",
                       "input": false,
                       "tableView": false,
                       "components": [
@@ -8733,6 +8732,7 @@
                           "storage": "url",
                           "dir": "Addition Transportation",
                           "webcam": false,
+                          "capture": false,
                           "fileTypes": [
                             {
                               "label": "",
@@ -8742,16 +8742,16 @@
                           "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
                           "fileMaxSize": "15MB",
                           "multiple": true,
-                          "key": "transportationCostsFile",
-                          "customConditional": "show = (data.transportationcostsituation === 'noLimit' || data.transportationcostsituation === 'special' || data.transportationcostsituation === 'educationPlacement');",
-                          "type": "file",
-                          "url": "student/files",
-                          "input": true,
                           "validate": {
                             "required": true,
                             "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
                             "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
-                          }
+                          },
+                          "validateWhenHidden": false,
+                          "key": "transportationCostsFile",
+                          "type": "file",
+                          "url": "student/files",
+                          "input": true
                         },
                         {
                           "label": "Columns",
@@ -8803,8 +8803,7 @@
                           "input": false,
                           "tableView": false
                         }
-                      ],
-                      "allowPrevious": false
+                      ]
                     }
                   ]
                 }
