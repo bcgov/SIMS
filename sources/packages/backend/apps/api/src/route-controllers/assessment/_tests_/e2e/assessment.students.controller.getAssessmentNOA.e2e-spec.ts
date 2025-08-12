@@ -200,6 +200,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       },
     );
     const assessmentData = {
+      parentAssessedContribution: 70,
       exceptionalCosts: 330,
       transportationCost: 1022.4,
       partnerStudentLoans: 33,
@@ -294,10 +295,10 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         ),
         disbursement1Id: newAssessmentDisbursement.id,
         disbursement1MSFAACancelledDate:
-          newAssessmentDisbursement.msfaaNumber?.cancelledDate,
+          newAssessmentDisbursement.msfaaNumber.cancelledDate,
         disbursement1MSFAADateSigned:
-          newAssessmentDisbursement.msfaaNumber?.dateSigned,
-        disbursement1MSFAAId: newAssessmentDisbursement.msfaaNumber?.id,
+          newAssessmentDisbursement.msfaaNumber.dateSigned,
+        disbursement1MSFAAId: newAssessmentDisbursement.msfaaNumber.id,
         disbursement1MSFAANumber: msfaaNumber.msfaaNumber,
         disbursement1Status:
           newAssessmentDisbursement.disbursementScheduleStatus,
