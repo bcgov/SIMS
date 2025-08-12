@@ -173,7 +173,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       .expect(expectation);
   });
 
-  it("Should get the student NOA details for an eligible full-time application when the student tries to access it.", async () => {
+  it("Should get the student NOA details for a full-time application when the application assessment is created.", async () => {
     // Arrange
     const enrolmentDate1 = addDays(1);
     // Create the new student to be mocked as the authenticated one.
