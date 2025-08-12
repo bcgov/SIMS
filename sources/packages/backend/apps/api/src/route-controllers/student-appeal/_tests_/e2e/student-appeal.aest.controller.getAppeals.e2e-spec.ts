@@ -14,7 +14,7 @@ import {
   createFakeStudentAppealRequest,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
-  createFakeProgramYear,
+  ensureProgramYearExists,
 } from "@sims/test-utils";
 import { ApplicationStatus, StudentAppealStatus } from "@sims/sims-db";
 import { AppealType } from "../../../../services";
@@ -90,8 +90,7 @@ describe("StudentAppealAESTController(e2e)-getAppeals", () => {
     const student = await saveFakeStudent(appDataSource);
 
     // Create a program year with start date >= 2025-08-01 for AppealType.Appeal
-    const programYear = createFakeProgramYear(2025);
-    const savedProgramYear = await db.programYear.save(programYear);
+    const savedProgramYear = await ensureProgramYearExists(db, 2025);
 
     // Create application to request change with the specific program year.
     const application = await saveFakeApplicationDisbursements(
