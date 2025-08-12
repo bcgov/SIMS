@@ -436,7 +436,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     fakeApplication.data = {
       workflowName: "",
       test: {
-        test: "studentApplicationException",
+        someApplicationException: { someExceptionData: "some data" },
       },
     } as ApplicationData;
     const fakeApplicationException = createFakeApplicationException();
