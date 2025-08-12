@@ -58,8 +58,7 @@ export class ApplicationExceptionSearchService {
     if (typeof payload !== "object") {
       return;
     }
-    for (const propertyKey of Object.keys(payload)) {
-      const propertyValue = payload[propertyKey];
+    for (const [propertyKey, propertyValue] of Object.entries(payload)) {
       if (!propertyValue) {
         // No value, continue to the next property.
         continue;
@@ -87,7 +86,7 @@ export class ApplicationExceptionSearchService {
    * data that was identified as an application exception.
    * @param propertyKey key of the property that identified the exception.
    * @param exceptionDynamicData student application exception data.
-   * @returns
+   * @returns the {@see ApplicationDataException} object created.
    */
   private createApplicationDataException(
     propertyKey: string,

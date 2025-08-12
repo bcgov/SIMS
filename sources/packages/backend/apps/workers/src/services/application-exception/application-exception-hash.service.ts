@@ -61,8 +61,9 @@ export class ApplicationExceptionHashService {
       return fileHash;
     });
     // Combine the exception data content and its files hashes to create a full hash.
-    const fullStringContent =
-      JSON.stringify(exception.hashableContent) + filesHashes.join();
+    const fullStringContent = `${JSON.stringify(
+      exception.hashableContent,
+    )}${filesHashes.join()}`;
     const hashedException = exception as ApplicationDataExceptionHashed;
     hashedException.fullHashContent = hashObjectToHex(fullStringContent);
     return hashedException;
