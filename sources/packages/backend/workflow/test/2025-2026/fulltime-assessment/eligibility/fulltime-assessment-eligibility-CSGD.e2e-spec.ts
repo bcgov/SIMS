@@ -5,9 +5,11 @@ import {
 } from "../../../test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
+  DependentChildCareEligibility,
   DependentEligibility,
   createFakeStudentDependentEligible,
-  createFakeStudentDependentNotEligible,
+  createFakeStudentDependentEligibleForChildcareCost,
+  createFakeStudentDependentNotEligibleForChildcareCost,
 } from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD.`, () => {
@@ -18,37 +20,33 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     assessmentConsolidatedData.studentDataTaxReturnIncome = 32999;
     // Creates 4 eligible and 4 not eligible dependents.
     assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible0To11YearsOld,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible0To11YearsOld,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentEligible(
-        DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible12YearsAndOver,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentEligible(
-        DependentEligibility.EligibleOver22YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible12YearsAndOver,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentNotEligible(
-        DependentEligibility.Eligible0To18YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentNotEligibleForChildcareCost(
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentNotEligible(
-        DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentNotEligibleForChildcareCost(
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentNotEligible(
-        DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentNotEligibleForChildcareCost(
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
-      createFakeStudentDependentNotEligible(
-        DependentEligibility.EligibleOver22YearsOld,
-        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      createFakeStudentDependentNotEligibleForChildcareCost(
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
     ];
     // Act
@@ -76,8 +74,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     // Ensures that the income is above the threshold to force it to fail.
     assessmentConsolidatedData.studentDataTaxReturnIncome = 100000;
     assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentEligible(
-        DependentEligibility.EligibleOver22YearsOld,
+      createFakeStudentDependentEligibleForChildcareCost(
+        DependentChildCareEligibility.Eligible0To11YearsOld,
+        assessmentConsolidatedData.offeringStudyStartDate,
       ),
     ];
     // Act
@@ -87,6 +86,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     );
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
+    expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(0);
   });
 
   it("Should determine CSGD as not eligible when financial need is at least $1 and total family income is below the threshold and eligible dependents is 0.", async () => {
@@ -95,9 +95,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     // Ensures that the income is below any threshold to force enforce the "at least one eligible dependants" rule to fail.
     assessmentConsolidatedData.studentDataTaxReturnIncome = 1000;
+    // Eligible dependants for family size include dependants 18-22 attending post-secondary school.
+    // Dependants eligible for CSGD must be either 0-11 years old or 12+ with a disability.
     assessmentConsolidatedData.studentDataDependants = [
-      createFakeStudentDependentNotEligible(
-        DependentEligibility.Eligible0To18YearsOld,
+      createFakeStudentDependentEligible(
+        DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
       ),
     ];
     // Act
