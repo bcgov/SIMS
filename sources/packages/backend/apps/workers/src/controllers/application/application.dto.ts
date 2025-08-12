@@ -33,3 +33,11 @@ export interface ApplicationChangeRequestApprovalJobInDTO {
 export interface ApplicationChangeRequestApprovalJobOutDTO {
   [APPLICATION_EDIT_STATUS]: ApplicationEditStatus;
 }
+
+export interface ApplicationUniqueExceptionsJobInDTO {
+  [APPLICATION_ID]: number;
+}
+
+export interface ApplicationUniqueExceptionsJobOutDTO {
+  [APPLICATION_EXCEPTION_STATUS]: ApplicationExceptionStatus;
+}

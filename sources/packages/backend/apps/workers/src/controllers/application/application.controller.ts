@@ -11,6 +11,8 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
+  ApplicationExceptionHashService,
+  ApplicationExceptionSearchService,
   ApplicationExceptionService,
   ApplicationService,
 } from "../../services";
@@ -19,6 +21,8 @@ import {
   ApplicationChangeRequestApprovalJobOutDTO,
   ApplicationExceptionsJobInDTO,
   ApplicationExceptionsJobOutDTO,
+  ApplicationUniqueExceptionsJobInDTO,
+  ApplicationUniqueExceptionsJobOutDTO,
   ApplicationUpdateStatusJobHeaderDTO,
   ApplicationUpdateStatusJobInDTO,
 } from "..";
@@ -27,6 +31,7 @@ import {
   ApplicationExceptionStatus,
 } from "@sims/sims-db";
 import {
+  APPLICATION_EXCEPTION_ALREADY_ASSOCIATED,
   APPLICATION_NOT_FOUND,
   APPLICATION_STATUS_NOT_UPDATED,
 } from "../../constants";
@@ -48,6 +53,7 @@ import {
   MustReturnJobActionAcknowledgement,
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";
+import { CustomNamedError } from "@sims/utilities";
 
 @Controller()
 export class ApplicationController {
@@ -56,6 +62,8 @@ export class ApplicationController {
     private readonly applicationService: ApplicationService,
     private readonly applicationExceptionService: ApplicationExceptionService,
     private readonly notificationActionService: NotificationActionsService,
+    private readonly applicationExceptionSearchService: ApplicationExceptionSearchService,
+    private readonly applicationExceptionHashService: ApplicationExceptionHashService,
   ) {}
 
   /**
@@ -181,6 +189,130 @@ export class ApplicationController {
         applicationExceptionStatus: ApplicationExceptionStatus.Approved,
       });
     } catch (error: unknown) {
+      return createUnexpectedJobFail(error, job, {
+        logger: jobLogger,
+      });
+    }
+  }
+
+  /**
+   * Searches the student application dynamic data recursively trying to
+   * find properties with its key suffixed as "ApplicationException",
+   * which identifies an application exception to be reviewed by the Ministry,
+   * and saves a notification to be sent to the ministry as a part of the same transaction.
+   * If the application has all its exceptions considered "the same" as some previously
+   * approved, the exception will be created with the "Approved" status, and it will not
+   * require any review by the Ministry, allowing the workflow to continue.
+   * @returns application exceptions status.
+   */
+  @ZeebeWorker(Workers.VerifyUniqueApplicationExceptions, {
+    fetchVariable: [APPLICATION_ID],
+    maxJobsToActivate: MaxJobsToActivate.Normal,
+  })
+  async verifyUniqueApplicationExceptions(
+    job: Readonly<
+      ZeebeJob<
+        ApplicationUniqueExceptionsJobInDTO,
+        ICustomHeaders,
+        ApplicationUniqueExceptionsJobOutDTO
+      >
+    >,
+  ): Promise<MustReturnJobActionAcknowledgement> {
+    const jobLogger = new Logger(job.type);
+    try {
+      const application = await this.applicationService.getApplicationById(
+        job.variables.applicationId,
+        { loadDynamicData: true },
+      );
+      if (!application) {
+        const message = "Application ID not found.";
+        jobLogger.error(message);
+        return job.error(APPLICATION_NOT_FOUND, message);
+      }
+      if (application.applicationException) {
+        // The exceptions were already processed for this application.
+        jobLogger.log("Exceptions were already processed for the application.");
+        return job.complete({
+          applicationExceptionStatus:
+            application.applicationException.exceptionStatus,
+        });
+      }
+      // Check for application exceptions present in the application dynamic data.
+      const exceptions = this.applicationExceptionSearchService.search(
+        application.data,
+      );
+      jobLogger.log(`Found ${exceptions.length} application exception(s).`);
+      if (!exceptions.length) {
+        // No exceptions found, return the approved status.
+        return job.complete({
+          applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+        });
+      }
+      // Create the application exceptions with the hashed data.
+      // Create a hash for the exceptions to ensure uniqueness.
+      const hashedExceptions =
+        await this.applicationExceptionHashService.createHashedApplicationExceptions(
+          exceptions,
+          application.student.id,
+        );
+      return await this.dataSource.transaction(async (entityManager) => {
+        const createdException =
+          await this.applicationExceptionService.saveExceptionFromHashedData(
+            job.variables.applicationId,
+            application.student.id,
+            application.applicationNumber,
+            hashedExceptions,
+            entityManager,
+          );
+        jobLogger.log(
+          `Created application exception ID ${createdException.id} with ${createdException.exceptionStatus} status.`,
+        );
+        if (
+          createdException.exceptionStatus ===
+          ApplicationExceptionStatus.Pending
+        ) {
+          const student = application.student;
+          const ministryNotification: ApplicationExceptionRequestNotification =
+            {
+              givenNames: student.user.firstName,
+              lastName: student.user.lastName,
+              email: student.user.email,
+              birthDate: student.birthDate,
+              applicationNumber: application.applicationNumber,
+            };
+          // Save the notification for the Ministry.
+          await this.notificationActionService.saveApplicationExceptionRequestNotification(
+            ministryNotification,
+            entityManager,
+          );
+          jobLogger.log("Created notification for the created exception.");
+        }
+        return job.complete({
+          applicationExceptionStatus: createdException.exceptionStatus,
+        });
+      });
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === APPLICATION_EXCEPTION_ALREADY_ASSOCIATED
+      ) {
+        // If the exception is already associated with the application, return the status.
+        // This scenario can happen if the worker is invoked multiple times
+        // for the same application, and, if the creation of the exception is in progress but
+        // not yet completed, another worker invocation will try to create the same exception,
+        // failing the initial check for the exception existence.
+        // This is required to ensure the idempotency of the worker.
+        jobLogger.log(error.message);
+        // Refresh the application to get the most updated exception status.
+        const application = await this.applicationService.getApplicationById(
+          job.variables.applicationId,
+          { loadDynamicData: false },
+        );
+        return job.complete({
+          applicationExceptionStatus:
+            application.applicationException.exceptionStatus,
+        });
+      }
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,
       });

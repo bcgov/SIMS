@@ -15,7 +15,10 @@ import { createFakeStudent } from "./student";
  * - `student` related student relation.
  * - `creator` related user relation.
  * @param options related to StudentFile
- * - `fileOrigin` option for specifying the fileOrigin
+ * - `fileName` option for specifying the file name.
+ * - `fileOrigin` option for specifying the file origin.
+ * - `groupName` option for specifying the group name.
+ * - `hash` option for specifying the file hash.
  * @returns created studentFile object.
  */
 export function createFakeStudentFileUpload(
@@ -24,12 +27,14 @@ export function createFakeStudentFileUpload(
     creator?: User;
   },
   options?: {
+    fileName?: string;
     fileOrigin?: FileOriginType;
     groupName?: string;
+    hash?: string;
   },
 ): StudentFile {
   const studentFile = new StudentFile();
-  studentFile.fileName = faker.system.fileName();
+  studentFile.fileName = options?.fileName ?? faker.system.fileName();
   studentFile.uniqueFileName =
     studentFile.fileName +
     faker.datatype.uuid() +
@@ -40,7 +45,7 @@ export function createFakeStudentFileUpload(
   studentFile.creator = relations?.creator;
   studentFile.fileOrigin = options?.fileOrigin ?? FileOriginType.Ministry;
   studentFile.virusScanStatus = VirusScanStatus.Pending;
-  studentFile.fileHash = "";
+  studentFile.fileHash = options?.hash ?? faker.random.alphaNumeric(64);
   return studentFile;
 }
 
@@ -51,13 +56,21 @@ export function createFakeStudentFileUpload(
  * - `student` related student relation.
  * - `creator` related user relation.
  * @param options related to StudentFile
- * - `fileOrigin` option for specifying the fileOrigin
+ * - `fileName` option for specifying the file name.
+ * - `fileOrigin` option for specifying the file origin.
+ * - `groupName` option for specifying the group name.
+ * - `hash` option for specifying the file hash.
  * @returns persisted studentFile.
  */
 export async function saveFakeStudentFileUpload(
   dataSource: DataSource,
   relations?: { student?: Student; creator?: User },
-  options?: { fileOrigin: FileOriginType; groupName?: string },
+  options?: {
+    fileName?: string;
+    fileOrigin?: FileOriginType;
+    groupName?: string;
+    hash?: string;
+  },
 ): Promise<StudentFile> {
   const studentFile = createFakeStudentFileUpload(relations, options);
   const studentFileRepo = dataSource.getRepository(StudentFile);
