@@ -111,8 +111,8 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       newException.exceptionNote =
         await this.noteSharedService.createStudentNote(
           studentId,
-          NoteType.General,
-          `Application ${applicationNumber} had ${exceptionRequests.length} exceptions automatically approved.`,
+          NoteType.Application,
+          `Application ${applicationNumber} had ${exceptionRequests.length} exception(s) automatically approved.`,
           this.systemUsersService.systemUser.id,
           entityManager,
         );
