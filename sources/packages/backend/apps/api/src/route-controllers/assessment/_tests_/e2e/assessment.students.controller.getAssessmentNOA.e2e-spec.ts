@@ -19,6 +19,7 @@ import {
   MSFAAStates,
 } from "@sims/test-utils";
 import {
+  Assessment,
   AssessmentTriggerType,
   DisbursementValueType,
   OfferingIntensity,
@@ -41,7 +42,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get the student NOA details for an eligible application when the student tries to access it.", async () => {
+  it("Should get the student NOA details for an eligible part-time application when the student tries to access it.", async () => {
     // Arrange
     const enrolmentDate1 = addDays(1);
     // Create the new student to be mocked as the authenticated one.
@@ -153,6 +154,151 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         disbursement1MSFAADateSigned:
           newAssessmentDisbursement.msfaaNumber?.dateSigned,
         disbursement1MSFAAId: newAssessmentDisbursement.msfaaNumber?.id,
+        disbursement1MSFAANumber: msfaaNumber.msfaaNumber,
+        disbursement1Status:
+          newAssessmentDisbursement.disbursementScheduleStatus,
+        disbursement1TuitionRemittance:
+          newAssessmentDisbursement.tuitionRemittanceRequestedAmount,
+        disbursement1cslf: 1250,
+        disbursement1csgp: 1500,
+        disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
+      },
+      offeringName: assessment.offering.name,
+    };
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(expectation);
+  });
+
+  it("Should get the student NOA details for a full-time application when the application assessment is created.", async () => {
+    // Arrange
+    const enrolmentDate1 = addDays(1);
+    // Create the new student to be mocked as the authenticated one.
+    const student = await saveFakeStudent(db.dataSource);
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
+    // MSFAA required for the NOA be returned.
+    const msfaaNumber = createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.Signed,
+      },
+    );
+    await db.msfaaNumber.save(msfaaNumber);
+    // Creates the applications to get the NOA.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        msfaaNumber,
+        student,
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+      },
+    );
+    const assessmentData = {
+      parentAssessedContribution: 70,
+      exceptionalCosts: 330,
+      transportationCost: 1022.4,
+      partnerStudentLoans: 33,
+      secondResidenceCost: 7497,
+      alimonyOrChildSupport: 44,
+      parentalVoluntaryContribution: 40,
+      parentalDiscretionaryContribution: null,
+    } as Assessment;
+    const workflowData = {
+      calculatedData: {
+        returnTransportationCost: 100,
+        totalAdditionalTransportationAllowance: 120,
+      },
+    } as WorkflowData;
+    // Creates a new application's current assessment.
+    const newCurrentAssessment = await db.studentAssessment.save(
+      createFakeStudentAssessment(
+        {
+          auditUser: student.user,
+          application,
+          offering: application.currentAssessment.offering,
+          applicationEditStatusUpdatedBy: student.user,
+        },
+        {
+          initialValue: {
+            triggerType: AssessmentTriggerType.RelatedApplicationChanged,
+            assessmentData,
+            workflowData,
+          },
+        },
+      ),
+    );
+    application.currentAssessment = newCurrentAssessment;
+    await db.application.save(application);
+    // Create and save a new disbursement schedule for the new assessment.
+    const newAssessmentDisbursement = createFakeDisbursementSchedule(
+      {
+        studentAssessment: newCurrentAssessment,
+        msfaaNumber,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1250,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGP",
+            1500,
+          ),
+        ],
+      },
+      { initialValues: { coeUpdatedAt: enrolmentDate1 } },
+    );
+    await db.disbursementSchedule.save(newAssessmentDisbursement);
+
+    const assessment = application.currentAssessment;
+
+    const endpoint = `/students/assessment/${newCurrentAssessment.id}/noa`;
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    const expectation = {
+      applicationId: application.id,
+      applicationNumber: application.applicationNumber,
+      applicationStatus: application.applicationStatus,
+      assessment: {
+        ...assessment.assessmentData,
+        totalAdditionalTransportationAllowance:
+          workflowData.calculatedData.totalAdditionalTransportationAllowance,
+        returnTransportationCost:
+          workflowData.calculatedData.returnTransportationCost,
+      },
+      noaApprovalStatus: assessment.noaApprovalStatus,
+      applicationCurrentAssessmentId: application.currentAssessment.id,
+      fullName: getUserFullName(application.student.user),
+      programName: assessment.offering.educationProgram.name,
+      locationName: assessment.offering.institutionLocation.name,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringStudyEndDate: getDateOnlyFullMonthFormat(
+        assessment.offering.studyEndDate,
+      ),
+      offeringStudyStartDate: getDateOnlyFullMonthFormat(
+        assessment.offering.studyStartDate,
+      ),
+      eligibleAmount: 2750,
+      disbursement: {
+        disbursement1COEStatus: newAssessmentDisbursement.coeStatus,
+        disbursement1Date: getDateOnlyFullMonthFormat(
+          newAssessmentDisbursement.disbursementDate,
+        ),
+        disbursement1Id: newAssessmentDisbursement.id,
+        disbursement1MSFAACancelledDate:
+          newAssessmentDisbursement.msfaaNumber.cancelledDate,
+        disbursement1MSFAADateSigned:
+          newAssessmentDisbursement.msfaaNumber.dateSigned,
+        disbursement1MSFAAId: newAssessmentDisbursement.msfaaNumber.id,
         disbursement1MSFAANumber: msfaaNumber.msfaaNumber,
         disbursement1Status:
           newAssessmentDisbursement.disbursementScheduleStatus,
