@@ -1128,7 +1128,7 @@
                   "tableView": false,
                   "validateWhenHidden": false,
                   "key": "studyEndDateIsPastApplicationException",
-                  "customConditional": "show = !data.isProgramSectionReadOnly && !!data.selectedStudyEndDateBeforeSixWeeksFromToday;",
+                  "customConditional": "show = data.studyEndDateBeforeSixWeeksFromToday || data.selectedStudyEndDateBeforeSixWeeksFromToday;",
                   "type": "container",
                   "input": true,
                   "components": [
