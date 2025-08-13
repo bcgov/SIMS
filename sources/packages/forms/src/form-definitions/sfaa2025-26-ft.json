@@ -4024,11 +4024,14 @@
                           "components": [
                             {
                               "label": "Full name",
+                              "applyMaskOn": "change",
                               "customClass": "font-weight-bold",
                               "tableView": true,
+                              "truncateMultipleSpaces": true,
                               "validate": {
                                 "required": true
                               },
+                              "validateWhenHidden": false,
                               "key": "fullName",
                               "type": "textfield",
                               "input": true,
@@ -4176,8 +4179,8 @@
                           "input": true,
                           "components": [
                             {
-                              "label": "Exception Description - Dependant’s income tax",
-                              "calculateValue": "value = \"Dependant's income tax - \" + data.dependants[rowIndex].fullName;",
+                              "label": "Exception Description - Dependant's income tax",
+                              "calculateValue": "value = `Dependant's income tax - ${data.dependants[rowIndex].fullName}`;",
                               "calculateServer": true,
                               "key": "exceptionDescription",
                               "type": "hidden",
@@ -4390,8 +4393,8 @@
                           "input": true,
                           "components": [
                             {
-                              "label": "Exception Description - Dependant’s shared custody",
-                              "calculateValue": "value = \"Dependant's shared custody - \" + data.dependants[rowIndex].fullName;",
+                              "label": "Exception Description - Dependant's shared custody",
+                              "calculateValue": "value = `Dependant's shared custody - ${data.dependants[rowIndex].fullName}`;",
                               "calculateServer": true,
                               "key": "exceptionDescription",
                               "type": "hidden",
@@ -6184,7 +6187,7 @@
                           "components": [
                             {
                               "label": "Exception Description - Parent current year income",
-                              "calculateValue": "value = \"Parent current year income - \" + data.parents[rowIndex].parentFullName;",
+                              "calculateValue": "value = `Parent current year income - ${data.parents[rowIndex].parentFullName}`;",
                               "calculateServer": true,
                               "key": "exceptionDescription",
                               "type": "hidden",
