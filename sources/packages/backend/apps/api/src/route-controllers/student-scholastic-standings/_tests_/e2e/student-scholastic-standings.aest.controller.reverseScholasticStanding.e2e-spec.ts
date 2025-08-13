@@ -132,7 +132,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
   it(
     `Should reverse an active scholastic standing change and create a re-assessment of trigger type ${AssessmentTriggerType.ScholasticStandingReversal}` +
       " with the offering from most recent assessment before the scholastic standing change" +
-      ` and set the archive status to false and create a student note` +
+      " and set the archive status to false and create a student note" +
       ` when the scholastic standing change type is ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}` +
       ` and the current assessment trigger type is ${AssessmentTriggerType.ScholasticStandingChange}.`,
     async () => {
@@ -274,7 +274,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
   it(
     `Should reverse an active scholastic standing change and create a re-assessment of trigger type ${AssessmentTriggerType.ScholasticStandingReversal}` +
       " with the offering from most recent assessment before the scholastic standing change using the current offering version" +
-      ` and set the archive status to false and create a student note` +
+      " and set the archive status to false and create a student note" +
       ` when the scholastic standing change type is ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}` +
       ` and the current assessment trigger type is ${AssessmentTriggerType.ScholasticStandingChange}` +
       " and the offering from most recent assessment before the scholastic standing had a change that is approved.",
@@ -423,7 +423,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
   it(
     `Should reverse an active scholastic standing change and create a re-assessment of trigger type ${AssessmentTriggerType.ScholasticStandingReversal}` +
       " with the offering from most recent assessment before the scholastic standing change using the current offering version" +
-      ` and set the archive status to false and create a student note` +
+      " and set the archive status to false and create a student note" +
       ` when the scholastic standing change type is ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}` +
       ` and the current assessment trigger type is ${AssessmentTriggerType.ScholasticStandingChange}` +
       " and the offering from most recent assessment before the scholastic standing had a change that is under review.",
@@ -573,7 +573,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
     `Should reverse an active scholastic standing change and create a re-assessment of trigger type ${AssessmentTriggerType.ScholasticStandingReversal}` +
       " with the offering from most recent assessment before the scholastic standing change" +
       " and with appeal from current assessment" +
-      ` and set the archive status to false and create a student note` +
+      " and set the archive status to false and create a student note" +
       ` when the scholastic standing change type is ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}` +
       ` and the current assessment trigger type is ${AssessmentTriggerType.ScholasticStandingChange}.`,
     async () => {

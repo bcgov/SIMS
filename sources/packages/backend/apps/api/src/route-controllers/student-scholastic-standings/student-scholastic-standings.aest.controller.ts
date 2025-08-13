@@ -8,7 +8,11 @@ import {
   Patch,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -33,6 +37,7 @@ import {
   SCHOLASTIC_STANDING_REVERSAL_NOT_ALLOWED,
   SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED,
 } from "../../constants";
+import { AssessmentTriggerType } from "@sims/sims-db";
 
 /**
  * Scholastic standing controller for AEST Client.
@@ -94,6 +99,12 @@ export class ScholasticStandingAESTController extends BaseController {
   @Patch(":scholasticStandingId/reverse")
   @ApiNotFoundResponse({
     description: "Scholastic standing not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Scholastic standing is already reversed" +
+      ` or scholastic standing reversal is not allowed as the current assessment trigger type is not ${AssessmentTriggerType.ScholasticStandingChange}` +
+      " or scholastic standing reversal is not updated.",
   })
   async reverseScholasticStanding(
     @Param("scholasticStandingId", ParseIntPipe) scholasticStandingId: number,
