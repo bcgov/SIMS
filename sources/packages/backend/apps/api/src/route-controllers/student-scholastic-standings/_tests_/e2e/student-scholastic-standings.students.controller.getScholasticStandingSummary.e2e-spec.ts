@@ -85,7 +85,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
 
   it(
     "Should get scholastic standing summary for a student excluding the details from reversed scholastic standing(s)" +
-      " when a student has one ore more reversed scholastic standings.",
+      " when a student has one or more reversed scholastic standings.",
     async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource, undefined, {

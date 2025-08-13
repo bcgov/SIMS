@@ -18,6 +18,7 @@ import {
   SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED,
 } from "../../constants";
 import { DataSource, IsNull, Repository } from "typeorm";
+
 /**
  * Service to handle scholastic standing reversal operations.
  */
@@ -174,7 +175,7 @@ export class ScholasticStandingReversalService {
           { id: scholasticStandingId, reversalDate: IsNull() },
           { reversalDate: now, reversalBy: auditUser, reversalNote: note },
         );
-      if (updateResult.affected !== 1) {
+      if (!updateResult.affected) {
         throw new CustomNamedError(
           `Scholastic standing reversal is not updated for scholastic standing ${scholasticStandingId}.`,
           SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED,
