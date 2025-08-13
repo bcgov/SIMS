@@ -74,7 +74,8 @@ export function createFakeEducationProgramOffering(
       totalFundedWeeks: 16,
       totalDays: 210, // 30 offering weeks * 7 days,
     } as StudyBreaksAndWeeks);
-  offering.offeringStatus = OfferingStatus.Approved;
+  offering.offeringStatus =
+    options?.initialValues?.offeringStatus ?? OfferingStatus.Approved;
   offering.parentOffering = options?.initialValues?.parentOffering ?? offering;
   offering.precedingOffering =
     options?.initialValues?.precedingOffering ?? offering;
