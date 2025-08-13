@@ -77,8 +77,7 @@ export function createFakeEducationProgramOffering(
   offering.offeringStatus =
     options?.initialValues?.offeringStatus ?? OfferingStatus.Approved;
   offering.parentOffering = options?.initialValues?.parentOffering ?? offering;
-  offering.precedingOffering =
-    options?.initialValues?.precedingOffering ?? offering;
+  offering.precedingOffering = options?.initialValues?.precedingOffering;
   return offering;
 }
 
@@ -121,6 +120,7 @@ export async function addOfferingVersion(
         offeringStatus: versionOfferingStatus,
         precedingOffering: offering,
         parentOffering: offering.parentOffering,
+        name: offering.name,
       },
     },
   );
