@@ -103,7 +103,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
       );
       expect(reversedScholasticStanding).toEqual({
         id: scholasticStanding.id,
-        reversalDate: now.toISOString(),
+        reversalDate: now,
         reversalBy: { id: ministryUser.id },
         reversalNote: {
           id: expect.any(Number),
@@ -217,7 +217,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
       );
       expect(reversedScholasticStanding).toEqual({
         id: scholasticStanding.id,
-        reversalDate: now.toISOString(),
+        reversalDate: now,
         reversalBy: { id: ministryUser.id },
         reversalNote: {
           id: expect.any(Number),

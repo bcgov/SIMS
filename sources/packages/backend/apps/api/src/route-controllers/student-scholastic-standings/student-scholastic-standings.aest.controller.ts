@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { UserGroups } from "../../auth/user-groups.enum";
@@ -23,7 +25,14 @@ import {
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
 import { ScholasticStandingControllerService } from "..";
+import { ScholasticStandingReversalService } from "../../services";
 import { IUserToken, Role } from "../../auth";
+import { CustomNamedError } from "@sims/utilities";
+import {
+  SCHOLASTIC_STANDING_NOT_FOUND,
+  SCHOLASTIC_STANDING_REVERSAL_NOT_ALLOWED,
+  SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED,
+} from "../../constants";
 
 /**
  * Scholastic standing controller for AEST Client.
@@ -35,6 +44,7 @@ import { IUserToken, Role } from "../../auth";
 export class ScholasticStandingAESTController extends BaseController {
   constructor(
     private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
+    private readonly scholasticStandingReversalService: ScholasticStandingReversalService,
   ) {
     super();
   }
@@ -90,6 +100,25 @@ export class ScholasticStandingAESTController extends BaseController {
     @Body() payload: ReverseScholasticStandingAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    //TODO: Implement the logic to reverse the scholastic standing.
+    try {
+      await this.scholasticStandingReversalService.reverseScholasticStanding(
+        scholasticStandingId,
+        payload.note,
+        userToken.userId,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case SCHOLASTIC_STANDING_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case SCHOLASTIC_STANDING_REVERSAL_NOT_ALLOWED:
+          case SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED:
+            throw new UnprocessableEntityException(error.message);
+          default:
+            throw error;
+        }
+      }
+      throw error;
+    }
   }
 }
