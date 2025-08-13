@@ -40,6 +40,7 @@ import { ApplicationExceptionService } from "@/services/ApplicationExceptionServ
 import { ApplicationExceptionStatus, FormIOForm, Role } from "@/types";
 import {
   ApplicationExceptionAPIOutDTO,
+  ApplicationExceptionRequestAPIOutDTO,
   DetailedApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
@@ -73,15 +74,12 @@ type ApplicationExceptionFormModel = Omit<
    */
   exceptionStatusClass: string;
   /**
-   * Simplification of the property exceptionRequests
-   * for easy consumption inside form.io definition.
-   */
-  exceptionNames: string[];
-  /**
    * ShowStaffApproval will decide if the staff approval section should
    * be hidden or not.
    */
   showStaffApproval: boolean;
+
+  previouslyApprovedExceptionRequests: ApplicationExceptionRequestAPIOutDTO[];
 };
 
 export default defineComponent({
@@ -145,10 +143,14 @@ export default defineComponent({
         exceptionStatusClass: mapRequestAssessmentChipStatus(
           applicationException.exceptionStatus,
         ),
-        exceptionStatusOnLoad: applicationException.exceptionStatus,
-        exceptionNames: applicationException.exceptionRequests.map(
-          (exception) => exception.exceptionName,
+        exceptionRequests: applicationException.exceptionRequests.filter(
+          (request) => !request.previouslyApprovedOn,
         ),
+        previouslyApprovedExceptionRequests:
+          applicationException.exceptionRequests.filter(
+            (request) => !!request.previouslyApprovedOn,
+          ),
+        exceptionStatusOnLoad: applicationException.exceptionStatus,
         showStaffApproval: props.showStaffApproval,
       };
       submittedDate.value = dateOnlyLongString(

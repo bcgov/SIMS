@@ -59,7 +59,7 @@
               "value": ""
             }
           ],
-          "content": "Requests ({{ data.exceptionNames.length }})",
+          "content": "Requests ({{ data.exceptionRequests.length }})",
           "refreshOnChange": true,
           "customClass": "category-header-medium primary-color",
           "key": "html3",
@@ -68,419 +68,42 @@
           "tableView": false
         },
         {
-          "label": "Citizenship for permanent residency",
-          "key": "citizenshipForPermanentResidencyApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "input": false,
+          "label": "Requests to be approved",
+          "disableAddingRemovingRows": true,
+          "reorder": false,
+          "addAnotherPosition": "bottom",
+          "layoutFixed": false,
+          "enableRowGroups": false,
+          "initEmpty": false,
+          "customClass": "borderless-datagrid",
+          "hideLabel": true,
           "tableView": false,
-          "components": [
+          "defaultValue": [
             {
-              "label": "HTML",
-              "tag": "strong",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Citizenship for permanent residency",
-              "refreshOnChange": false,
-              "key": "html6",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
+              "exceptionDescription": ""
             }
-          ]
-        },
-        {
-          "label": "Citizenship for protected persons",
-          "key": "citizenshipForProtectedPersonsApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "input": false,
-          "tableView": false,
+          ],
+          "persistent": false,
+          "redrawOn": "data",
+          "validateWhenHidden": false,
+          "key": "exceptionRequests",
+          "type": "datagrid",
+          "input": true,
           "components": [
             {
-              "label": "HTML",
-              "tag": "strong",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Citizenship for protected persons",
-              "refreshOnChange": false,
-              "key": "html7",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            }
-          ]
-        },
-        {
-          "label": "Citizenship for B.C. residency",
-          "key": "citizenshipForBCResidencyApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "tag": "strong",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Citizenship for B.C. residency",
-              "refreshOnChange": false,
-              "key": "html8",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            }
-          ]
-        },
-        {
-          "label": "Dependant's income tax",
-          "key": "dependantsIncomeTaxApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "tag": "strong",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Dependant's income tax",
-              "refreshOnChange": false,
-              "key": "html9",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            }
-          ]
-        },
-        {
-          "label": "Dependant’s shared custody",
-          "key": "dependantsSharedCustodyApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "tag": "strong",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Dependant's shared custody",
-              "refreshOnChange": false,
-              "key": "html10",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            }
-          ]
-        },
-        {
-          "label": "Modified Independent",
-          "key": "estrangedFromParentsApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "tag": "strong",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Modified Independent",
-              "refreshOnChange": false,
-              "key": "html11",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            }
-          ]
-        },
-        {
-          "label": "Parent residency",
-          "key": "parentsResidencyApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "tag": "strong",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Parent residency",
-              "refreshOnChange": false,
-              "key": "html12",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            }
-          ]
-        },
-        {
-          "label": "Exceptional expenses",
-          "key": "exceptionalExpensesApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "tag": "strong",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Exceptional expenses",
-              "refreshOnChange": false,
-              "key": "html13",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            }
-          ]
-        },
-        {
-          "label": "Rent living situation",
-          "key": "rentLivingSituationApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "tag": "strong",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Rent living situation",
-              "refreshOnChange": false,
-              "key": "html14",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            }
-          ]
-        },
-        {
-          "label": "Transportation",
-          "key": "transportationApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "HTML",
-              "tag": "strong",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Transportation",
-              "refreshOnChange": false,
-              "key": "html15",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            }
-          ]
-        },
-        {
-          "clearOnHide": false,
-          "key": "studyEndDateIsPastApplicationException",
-          "input": false,
-          "components": [
-            {
-              "key": "studyEndDatePastApplicationExceptionContent",
-              "label": "Content",
-              "input": false,
-              "tag": "strong",
-              "attrs": [
-                {
-                  "value": "",
-                  "attr": ""
-                }
-              ],
-              "content": "Study end date is past",
-              "type": "htmlelement",
+              "label": "Exception description",
+              "applyMaskOn": "change",
               "hideLabel": true,
-              "lockKey": true,
-              "tableView": false
+              "spellcheck": false,
+              "disabled": true,
+              "tableView": false,
+              "persistent": false,
+              "validateWhenHidden": false,
+              "key": "exceptionDescription",
+              "type": "textfield",
+              "input": true
             }
-          ],
-          "tableView": false,
-          "type": "well",
-          "hideLabel": true,
-          "lockKey": true,
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "label": ""
-        },
-        {
-          "clearOnHide": false,
-          "key": "currentYearIncomeApplicationException",
-          "input": false,
-          "components": [
-            {
-              "key": "currentYearIncomeApplicationExceptionContent",
-              "label": "Content",
-              "input": false,
-              "tag": "strong",
-              "attrs": [
-                {
-                  "value": "",
-                  "attr": ""
-                }
-              ],
-              "content": "Current Year Income",
-              "type": "htmlelement",
-              "isNew": false,
-              "tableView": false
-            }
-          ],
-          "tableView": false,
-          "type": "well",
-          "hideLabel": true,
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "lockKey": true,
-          "label": ""
-        },
-        {
-          "label": "Current Year Partner Income Exception",
-          "key": "currentYearPartnerIncomeApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "clearOnHide": false,
-          "input": false,
-          "components": [
-            {
-              "key": "currentYearPartnerIncomeApplicationExceptionCurrentYearPartnerIncome",
-              "label": "Current Year Partner Income",
-              "input": false,
-              "tag": "strong",
-              "attrs": [
-                {
-                  "value": "",
-                  "attr": ""
-                }
-              ],
-              "className": "font-bold",
-              "content": "Partner current year income",
-              "type": "htmlelement",
-              "hideLabel": true,
-              "isNew": false,
-              "tableView": false
-            }
-          ],
-          "tableView": false,
-          "hideLabel": true,
-          "lockKey": true
-        },
-        {
-          "label": "Current Year Parent Income Exception",
-          "key": "currentYearParentIncomeApplicationException",
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "type": "well",
-          "clearOnHide": false,
-          "input": false,
-          "components": [
-            {
-              "label": "Current Year Parent Income",
-              "tag": "strong",
-              "className": "font-bold",
-              "attrs": [
-                {
-                  "value": "",
-                  "attr": ""
-                }
-              ],
-              "content": "Parent current year income",
-              "refreshOnChange": false,
-              "key": "currentYearParentIncomeApplicationExceptionLabel",
-              "type": "htmlelement",
-              "input": false,
-              "hideLabel": true,
-              "isNew": false,
-              "tableView": false
-            }
-          ],
-          "tableView": false,
-          "hideLabel": true,
-          "lockKey": true
-        },
-        {
-          "clearOnHide": false,
-          "key": "marriedCommonLawDomesticViolenceApplicationException",
-          "input": false,
-          "components": [
-            {
-              "key": "marriedCommonLawDomesticViolence",
-              "label": "Married/common-law domestic violence",
-              "input": false,
-              "tag": "strong",
-              "attrs": [
-                {
-                  "value": "",
-                  "attr": ""
-                }
-              ],
-              "className": "font-bold",
-              "content": "Married/common-law domestic violence",
-              "type": "htmlelement",
-              "hideLabel": true,
-              "lockKey": true,
-              "isNew": false,
-              "tableView": false
-            }
-          ],
-          "tableView": false,
-          "type": "well",
-          "hideLabel": true,
-          "lockKey": true,
-          "customConditional": "show = data.exceptionNames.indexOf(component.key) !== -1;",
-          "isNew": false,
-          "label": ""
+          ]
         }
       ]
     },
@@ -612,28 +235,79 @@
       ]
     },
     {
+      "title": "Previously Approved Exceptions Panel",
+      "collapsible": false,
+      "hideLabel": true,
+      "key": "panel",
+      "type": "panel",
+      "label": "Panel",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "Previously Approved Exceptions",
+          "tag": "h3",
+          "className": "category-header-medium primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Previously Approved Exceptions",
+          "refreshOnChange": false,
+          "key": "html6",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "Previously approved exceptions",
+          "disableAddingRemovingRows": true,
+          "reorder": false,
+          "addAnotherPosition": "bottom",
+          "layoutFixed": false,
+          "enableRowGroups": false,
+          "initEmpty": false,
+          "customClass": "borderless-datagrid",
+          "hideLabel": true,
+          "tableView": false,
+          "defaultValue": [
+            {}
+          ],
+          "persistent": false,
+          "redrawOn": "data",
+          "validateWhenHidden": false,
+          "key": "previouslyApprovedExceptionRequests",
+          "type": "datagrid",
+          "input": true,
+          "components": [
+            {
+              "label": "Exception description",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "{{ row.exceptionDescription }} approved on {{ utils.custom.getISODateHourMinuteString(row.previouslyApprovedOn) }}",
+              "refreshOnChange": false,
+              "key": "html",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false
+            }
+          ]
+        }
+      ]
+    },
+    {
       "input": true,
       "tableView": true,
       "key": "showStaffApproval",
       "label": "showStaffApproval",
       "type": "hidden",
       "customDefaultValue": "value = true"
-    },
-    {
-      "label": "applicationId",
-      "persistent": "client-only",
-      "key": "applicationId",
-      "type": "hidden",
-      "input": true,
-      "tableView": false
-    },
-    {
-      "label": "applicationStatus",
-      "persistent": "client-only",
-      "key": "applicationStatus",
-      "type": "hidden",
-      "input": true,
-      "tableView": false
     }
   ]
 }
