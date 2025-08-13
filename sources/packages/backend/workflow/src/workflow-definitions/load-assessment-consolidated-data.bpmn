@@ -116,14 +116,14 @@
           <zeebe:header key="studentDataPartTimeAwardTypesToBeConsidered" value="data.partTimeAwardTypesToBeConsidered" />
           <zeebe:header key="studentDataAdditionalTransportRequested" value="data.additionalTransportRequested" />
           <zeebe:header key="studentDataAdditionalTransportListedDriver" value="data.additionalTransportListedDriver" />
-          <zeebe:header key="studentDataAdditionalTransportOwner" value="data.additionalTransportOwner" />
+          <zeebe:header key="studentDataAdditionalTransportOwner" value="data.additionalTransportOwner ?? data.transportationApplicationException.additionalTransportOwner" />
           <zeebe:header key="studentDataAdditionalTransportKm" value="data.additionalTransportKm ?? data.transportationApplicationException.additionalTransportKm" />
           <zeebe:header key="studentDataAdditionalTransportWeeks" value="data.additionalTransportWeeks ?? data.transportationApplicationException.additionalTransportWeeks" />
-          <zeebe:header key="studentDataAdditionalTransportPlacement" value="data.additionalTransportPlacement" />
+          <zeebe:header key="studentDataAdditionalTransportPlacement" value="data.additionalTransportPlacement ?? data.transportationApplicationException.additionalTransportPlacement" />
           <zeebe:header key="applicationStatus" value="applicationStatus" />
           <zeebe:header key="applicationEditStatus" value="applicationEditStatus" />
           <zeebe:header key="applicationHasNOAApproval" value="hasNOAApproval" />
-          <zeebe:header key="studentDataCurrentYearIncome" value="data.currentYearIncome" />
+          <zeebe:header key="studentDataCurrentYearIncome" value="data.currentYearIncome ?? data.currentYearIncomeApplicationException.currentYearIncome" />
           <zeebe:header key="studentDataReturnTripHomeCost" value="data.returnTripHomeCost" />
           <zeebe:header key="studentDataIncomeAssistanceAmount" value="data.incomeAssistanceAmount" />
           <zeebe:header key="studentDataPartnerHasEmploymentInsuranceBenefits" value="data.partnerHasEmploymentInsuranceBenefits" />
