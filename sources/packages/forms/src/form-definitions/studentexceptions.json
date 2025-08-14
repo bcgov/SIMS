@@ -41,6 +41,7 @@
       "tableView": false
     },
     {
+      "title": "Requests",
       "collapsible": false,
       "hideLabel": true,
       "key": "panel1",
@@ -59,7 +60,7 @@
               "value": ""
             }
           ],
-          "content": "Requests ({{ data.exceptionRequests.length }})",
+          "content": "Requests to be Assesed ({{ data.requestedForApproval.length }})",
           "refreshOnChange": true,
           "customClass": "category-header-medium primary-color",
           "key": "html3",
@@ -79,29 +80,116 @@
           "hideLabel": true,
           "tableView": false,
           "defaultValue": [
-            {
-              "exceptionDescription": ""
-            }
+            {}
           ],
           "persistent": false,
           "redrawOn": "data",
           "validateWhenHidden": false,
-          "key": "exceptionRequests",
+          "key": "requestedForApproval",
           "type": "datagrid",
           "input": true,
           "components": [
             {
-              "label": "Exception description",
-              "applyMaskOn": "change",
-              "hideLabel": true,
-              "spellcheck": false,
-              "disabled": true,
+              "input": false,
+              "key": "well",
               "tableView": false,
-              "persistent": false,
-              "validateWhenHidden": false,
-              "key": "exceptionDescription",
-              "type": "textfield",
-              "input": true
+              "label": "",
+              "type": "well",
+              "components": [
+                {
+                  "label": "Exception description",
+                  "tag": "strong",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "{{ row }}",
+                  "refreshOnChange": false,
+                  "key": "html",
+                  "type": "htmlelement",
+                  "input": false,
+                  "tableView": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Previously Approved Exceptions",
+      "collapsible": false,
+      "hideLabel": true,
+      "key": "panel",
+      "type": "panel",
+      "label": "Panel",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "Previously Approved Exceptions",
+          "tag": "h3",
+          "className": "category-header-medium primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Previously Approved Requests ({{ data.previouslyApprovedRequests.length }})",
+          "refreshOnChange": false,
+          "key": "html6",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "Previously approved exceptions",
+          "disableAddingRemovingRows": true,
+          "reorder": false,
+          "addAnotherPosition": "bottom",
+          "layoutFixed": false,
+          "enableRowGroups": false,
+          "initEmpty": false,
+          "customClass": "borderless-datagrid",
+          "hideLabel": true,
+          "tableView": false,
+          "defaultValue": [
+            {}
+          ],
+          "persistent": false,
+          "redrawOn": "data",
+          "validateWhenHidden": false,
+          "key": "previouslyApprovedRequests",
+          "type": "datagrid",
+          "input": true,
+          "components": [
+            {
+              "input": false,
+              "key": "well",
+              "tableView": false,
+              "label": "",
+              "type": "well",
+              "components": [
+                {
+                  "label": "Exception description",
+                  "tag": "strong",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "{{ row }}",
+                  "refreshOnChange": false,
+                  "key": "html",
+                  "type": "htmlelement",
+                  "input": false,
+                  "tableView": false
+                }
+              ]
             }
           ]
         }
@@ -231,73 +319,6 @@
           "input": false,
           "tableView": false,
           "tag": "p"
-        }
-      ]
-    },
-    {
-      "title": "Previously Approved Exceptions Panel",
-      "collapsible": false,
-      "hideLabel": true,
-      "key": "panel",
-      "type": "panel",
-      "label": "Panel",
-      "input": false,
-      "tableView": false,
-      "components": [
-        {
-          "label": "Previously Approved Exceptions",
-          "tag": "h3",
-          "className": "category-header-medium primary-color",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
-          "content": "Previously Approved Exceptions",
-          "refreshOnChange": false,
-          "key": "html6",
-          "type": "htmlelement",
-          "input": false,
-          "tableView": false
-        },
-        {
-          "label": "Previously approved exceptions",
-          "disableAddingRemovingRows": true,
-          "reorder": false,
-          "addAnotherPosition": "bottom",
-          "layoutFixed": false,
-          "enableRowGroups": false,
-          "initEmpty": false,
-          "customClass": "borderless-datagrid",
-          "hideLabel": true,
-          "tableView": false,
-          "defaultValue": [
-            {}
-          ],
-          "persistent": false,
-          "redrawOn": "data",
-          "validateWhenHidden": false,
-          "key": "previouslyApprovedExceptionRequests",
-          "type": "datagrid",
-          "input": true,
-          "components": [
-            {
-              "label": "Exception description",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "{{ row.exceptionDescription }} approved on {{ utils.custom.getISODateHourMinuteString(row.previouslyApprovedOn) }}",
-              "refreshOnChange": false,
-              "key": "html",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            }
-          ]
         }
       ]
     },

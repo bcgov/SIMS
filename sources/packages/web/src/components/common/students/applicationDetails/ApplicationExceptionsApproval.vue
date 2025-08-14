@@ -40,7 +40,6 @@ import { ApplicationExceptionService } from "@/services/ApplicationExceptionServ
 import { ApplicationExceptionStatus, FormIOForm, Role } from "@/types";
 import {
   ApplicationExceptionAPIOutDTO,
-  ApplicationExceptionRequestAPIOutDTO,
   DetailedApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
@@ -78,8 +77,14 @@ type ApplicationExceptionFormModel = Omit<
    * be hidden or not.
    */
   showStaffApproval: boolean;
-
-  previouslyApprovedExceptionRequests: ApplicationExceptionRequestAPIOutDTO[];
+  /**
+   * Description of exceptions that were requested to be approved.
+   */
+  requestedForApproval: string[];
+  /**
+   * Description of the previously approved exceptions.
+   */
+  previouslyApprovedRequests: string[];
 };
 
 export default defineComponent({
@@ -137,25 +142,34 @@ export default defineComponent({
           props.studentId,
           props.applicationId,
         );
+      debugger;
+      console.log(applicationException.exceptionRequests);
+      const previouslyApprovedRequests = applicationException.exceptionRequests
+        .filter((request) => !!request.previouslyApprovedOn)
+        .map(
+          (request) =>
+            `${request.exceptionDescription} on (${dateOnlyLongString(
+              request.previouslyApprovedOn,
+            )})`,
+        );
+      console.log(previouslyApprovedRequests);
       applicationExceptions.value = {
         ...applicationException,
         assessedDate: dateOnlyLongString(applicationException.assessedDate),
         exceptionStatusClass: mapRequestAssessmentChipStatus(
           applicationException.exceptionStatus,
         ),
-        exceptionRequests: applicationException.exceptionRequests.filter(
-          (request) => !request.previouslyApprovedOn,
-        ),
-        previouslyApprovedExceptionRequests:
-          applicationException.exceptionRequests.filter(
-            (request) => !!request.previouslyApprovedOn,
-          ),
+        requestedForApproval: applicationException.exceptionRequests
+          .filter((request) => !request.previouslyApprovedOn)
+          .map((request) => request.exceptionDescription),
+        previouslyApprovedRequests,
         exceptionStatusOnLoad: applicationException.exceptionStatus,
         showStaffApproval: props.showStaffApproval,
       };
       submittedDate.value = dateOnlyLongString(
         applicationException.submittedDate,
       );
+      console.log(applicationExceptions.value);
       readOnly.value =
         applicationException.exceptionStatus !==
           ApplicationExceptionStatus.Pending || props.readOnlyForm;
