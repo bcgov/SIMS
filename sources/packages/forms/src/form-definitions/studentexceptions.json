@@ -60,7 +60,7 @@
               "value": ""
             }
           ],
-          "content": "Requests to be Assesed ({{ data.requestedForApproval.length }})",
+          "content": "Requests to be Reviewed ({{ data.requestedForApproval.length }})",
           "refreshOnChange": true,
           "customClass": "category-header-medium primary-color",
           "key": "html3",

@@ -159,7 +159,7 @@ export default defineComponent({
         .filter((request) => !!request.previouslyApprovedOn)
         .map(
           (request) =>
-            `${request.exceptionDescription} on (${dateOnlyLongString(
+            `${request.exceptionDescription} (approved on ${dateOnlyLongString(
               request.previouslyApprovedOn,
             )})`,
         );
