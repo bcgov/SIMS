@@ -17,7 +17,7 @@
           "value": ""
         }
       ],
-      "content": "<span class=\"category-header-large primary-color mr-2\" role=\"heading\" aria-level=\"2\">Student exception requests</span> \n<span class=\"fa fa-circle formio-status-chip {{ data.exceptionStatusClass }} mt-2\">\n  {{ data.exceptionStatusOnLoad }}\n</span>",
+      "content": "<span class=\"category-header-large primary-color mr-2\" role=\"heading\" aria-level=\"2\">Student exception requests</span> \n<span class=\"fa fa-circle formio-status-chip {{ data.exceptionStatusClass }}\">\n  {{ data.exceptionStatusOnLoad }}\n</span>",
       "refreshOnChange": true,
       "key": "html4",
       "type": "htmlelement",
@@ -75,7 +75,7 @@
           "addAnotherPosition": "bottom",
           "layoutFixed": false,
           "enableRowGroups": false,
-          "initEmpty": false,
+          "initEmpty": true,
           "customClass": "borderless-datagrid",
           "hideLabel": true,
           "tableView": false,
@@ -152,7 +152,7 @@
           "addAnotherPosition": "bottom",
           "layoutFixed": false,
           "enableRowGroups": false,
-          "initEmpty": false,
+          "initEmpty": true,
           "customClass": "borderless-datagrid",
           "hideLabel": true,
           "tableView": false,

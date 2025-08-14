@@ -39,7 +39,6 @@ import { RouteLocationRaw, useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
 import { ApplicationExceptionStatus, FormIOForm, Role } from "@/types";
 import {
-  ApplicationExceptionAPIOutDTO,
   DetailedApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
@@ -51,10 +50,11 @@ import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeader
 /**
  * Model to be used to populate the form.io.
  */
-type ApplicationExceptionFormModel = Omit<
-  ApplicationExceptionAPIOutDTO,
-  "assessedDate"
-> & {
+interface ApplicationExceptionFormModel {
+  /**
+   * Current exception status.
+   */
+  exceptionStatus: ApplicationExceptionStatus;
   /**
    * Exception status at the moment that the data was loaded.
    * used mainly when the form is being edited and change the
@@ -63,11 +63,17 @@ type ApplicationExceptionFormModel = Omit<
    */
   exceptionStatusOnLoad: ApplicationExceptionStatus;
   /**
-   * Hides the assessedDate defined as a Date property
-   * allowing the conversion to the correct string format
-   * to be displayed in the UI.
+   * Formatted date when the exception was approved.
    */
   assessedDate: string;
+  /**
+   * User that approved the exception.
+   */
+  assessedByUserName: string;
+  /**
+   * Assessment notes.
+   */
+  noteDescription: string;
   /**
    * CSS class to be applied to the status chip.
    */
@@ -85,7 +91,7 @@ type ApplicationExceptionFormModel = Omit<
    * Description of the previously approved exceptions.
    */
   previouslyApprovedRequests: string[];
-};
+}
 
 export default defineComponent({
   emits: {
@@ -142,8 +148,13 @@ export default defineComponent({
           props.studentId,
           props.applicationId,
         );
-      debugger;
-      console.log(applicationException.exceptionRequests);
+      // Description of exceptions that were submitted for
+      // the first time to be assessed.
+      const requestedForApproval = applicationException.exceptionRequests
+        .filter((request) => !request.previouslyApprovedOn)
+        .map((request) => request.exceptionDescription);
+      // Descriptions of exceptions that were submitted and
+      // approved in some of the previous application versions.
       const previouslyApprovedRequests = applicationException.exceptionRequests
         .filter((request) => !!request.previouslyApprovedOn)
         .map(
@@ -152,24 +163,22 @@ export default defineComponent({
               request.previouslyApprovedOn,
             )})`,
         );
-      console.log(previouslyApprovedRequests);
       applicationExceptions.value = {
-        ...applicationException,
+        assessedByUserName: applicationException.assessedByUserName,
         assessedDate: dateOnlyLongString(applicationException.assessedDate),
+        noteDescription: applicationException.noteDescription,
         exceptionStatusClass: mapRequestAssessmentChipStatus(
           applicationException.exceptionStatus,
         ),
-        requestedForApproval: applicationException.exceptionRequests
-          .filter((request) => !request.previouslyApprovedOn)
-          .map((request) => request.exceptionDescription),
+        requestedForApproval,
         previouslyApprovedRequests,
         exceptionStatusOnLoad: applicationException.exceptionStatus,
+        exceptionStatus: applicationException.exceptionStatus,
         showStaffApproval: props.showStaffApproval,
       };
       submittedDate.value = dateOnlyLongString(
         applicationException.submittedDate,
       );
-      console.log(applicationExceptions.value);
       readOnly.value =
         applicationException.exceptionStatus !==
           ApplicationExceptionStatus.Pending || props.readOnlyForm;
