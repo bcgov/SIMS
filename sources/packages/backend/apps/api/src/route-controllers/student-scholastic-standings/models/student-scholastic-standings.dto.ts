@@ -1,9 +1,12 @@
 import { IntersectionType } from "@nestjs/swagger";
 import { JsonMaxSize } from "../../../utilities/class-validation";
-import { IsNotEmptyObject } from "class-validator";
+import { IsNotEmpty, IsNotEmptyObject, MaxLength } from "class-validator";
 import { ActiveApplicationDataAPIOutDTO } from "../../../route-controllers/institution-locations/models/application.dto";
 import { JSON_10KB } from "../../../constants";
-import { StudentScholasticStandingChangeType } from "@sims/sims-db";
+import {
+  NOTE_DESCRIPTION_MAX_LENGTH,
+  StudentScholasticStandingChangeType,
+} from "@sims/sims-db";
 
 /**
  * The API will also allow other properties that are not added below.
@@ -73,4 +76,13 @@ export interface ApplicationBulkWithdrawalValidationResultAPIOutDTO {
 class ValidationResultAPIOutDTO {
   typeCode: string;
   message: string;
+}
+
+/**
+ * Payload for reversing a scholastic standing.
+ */
+export class ReverseScholasticStandingAPIInDTO {
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  note: string;
 }

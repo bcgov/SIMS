@@ -1,15 +1,43 @@
-import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Patch,
+  UnprocessableEntityException,
+} from "@nestjs/common";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import {
+  ReverseScholasticStandingAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
 import { ScholasticStandingControllerService } from "..";
+import { ScholasticStandingReversalService } from "../../services";
+import { IUserToken, Role } from "../../auth";
+import { CustomNamedError } from "@sims/utilities";
+import {
+  SCHOLASTIC_STANDING_NOT_FOUND,
+  SCHOLASTIC_STANDING_REVERSAL_NOT_ALLOWED,
+  SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED,
+} from "../../constants";
+import { AssessmentTriggerType } from "@sims/sims-db";
 
 /**
  * Scholastic standing controller for AEST Client.
@@ -21,6 +49,7 @@ import { ScholasticStandingControllerService } from "..";
 export class ScholasticStandingAESTController extends BaseController {
   constructor(
     private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
+    private readonly scholasticStandingReversalService: ScholasticStandingReversalService,
   ) {
     super();
   }
@@ -55,5 +84,52 @@ export class ScholasticStandingAESTController extends BaseController {
     return this.scholasticStandingControllerService.getScholasticStandingSummary(
       studentId,
     );
+  }
+
+  /**
+   * Reverse a scholastic standing and create a note for the reversal.
+   * Based on the scholastic standing type, there will be additional steps as part of the reversal process.
+   * For all the scholastic standing types which creates re-assessment, a new re-assessment will be created
+   * during the reversal process to reverse the study period changes.
+   * For all the scholastic standing types which archives the application, the archiving will be reversed.
+   * @param scholasticStandingId scholastic standing id to reverse.
+   * @param payload payload for the scholastic standing reversal.
+   */
+  @Roles(Role.StudentReverseScholasticStanding)
+  @Patch(":scholasticStandingId/reverse")
+  @ApiNotFoundResponse({
+    description: "Scholastic standing not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Scholastic standing is already reversed" +
+      ` or scholastic standing reversal is not allowed as the current assessment trigger type is not ${AssessmentTriggerType.ScholasticStandingChange}` +
+      " or scholastic standing reversal is not updated.",
+  })
+  async reverseScholasticStanding(
+    @Param("scholasticStandingId", ParseIntPipe) scholasticStandingId: number,
+    @Body() payload: ReverseScholasticStandingAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    try {
+      await this.scholasticStandingReversalService.reverseScholasticStanding(
+        scholasticStandingId,
+        payload.note,
+        userToken.userId,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case SCHOLASTIC_STANDING_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case SCHOLASTIC_STANDING_REVERSAL_NOT_ALLOWED:
+          case SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED:
+            throw new UnprocessableEntityException(error.message);
+          default:
+            throw error;
+        }
+      }
+      throw error;
+    }
   }
 }

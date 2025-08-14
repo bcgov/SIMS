@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -320,6 +321,19 @@ export class EducationProgramOffering extends RecordDataModel {
     nullable: true,
   })
   maximumOnlineDuration?: number;
+
+  /**
+   * Offering versions that were created from this offering
+   * if the offering is the parent offering.
+   */
+  @OneToMany(
+    () => EducationProgramOffering,
+    (versionOffering) => versionOffering.parentOffering,
+    {
+      nullable: false,
+    },
+  )
+  versions: EducationProgramOffering[];
 }
 
 /**
