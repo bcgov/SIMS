@@ -620,7 +620,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         },
       );
       // If offeringIntensity is specified, return only the sum for that intensity.
-      const result = await queryBuilder.getRawOne<ScholasticStandingSummary>();
+      const result = await queryBuilder
+        .groupBy("application.offeringIntensity")
+        .getRawOne<ScholasticStandingSummary>();
       // If fullTime, add SFAS weeks.
       if (offeringIntensity === OfferingIntensity.fullTime) {
         const sfasUnsuccessfulCompletionWeeks =
