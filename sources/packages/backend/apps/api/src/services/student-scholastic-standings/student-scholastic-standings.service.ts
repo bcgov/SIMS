@@ -377,10 +377,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       }
       const {
         fullTimeUnsuccessfulCompletionWeeks: totalExistingUnsuccessfulWeeks,
-      } = await this.getScholasticStandingSummary(
-        studentId,
-        OfferingIntensity.fullTime,
-      );
+      } = await this.getScholasticStandingSummary(studentId);
       // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
       if (
         totalExistingUnsuccessfulWeeks +
@@ -595,9 +592,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    */
   async getScholasticStandingSummary(
     studentId: number,
-    offeringIntensity?: OfferingIntensity,
   ): Promise<ScholasticStandingSummaryDetails> {
-    const queryBuilder = this.repo
+    const scholasticStandingSummary = await this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select(
         "SUM(studentScholasticStanding.unsuccessfulWeeks)::int",
@@ -610,55 +606,26 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .where("studentScholasticStanding.reversalDate IS NULL")
       .andWhere("student.id = :studentId", {
         studentId,
-      });
-
-    if (offeringIntensity) {
-      queryBuilder.andWhere(
-        "application.offeringIntensity = :offeringIntensity",
-        {
-          offeringIntensity,
-        },
+      })
+      .groupBy("application.offeringIntensity")
+      .getRawMany<ScholasticStandingSummary>();
+    const sfasUnsuccessfulCompletionWeeks =
+      await this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
+        studentId,
       );
-      // If offeringIntensity is specified, return only the sum for that intensity.
-      const result = await queryBuilder
-        .groupBy("application.offeringIntensity")
-        .getRawOne<ScholasticStandingSummary>();
-      // If fullTime, add SFAS weeks.
-      if (offeringIntensity === OfferingIntensity.fullTime) {
-        const sfasUnsuccessfulCompletionWeeks =
-          await this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
-            studentId,
-          );
-        return {
-          fullTimeUnsuccessfulCompletionWeeks:
-            sfasUnsuccessfulCompletionWeeks +
-            (result?.totalUnsuccessfulWeeks ?? 0),
-        };
-      }
-    } else {
-      // If no offeringIntensity, return the summary for both intensities.
-      const scholasticStandingSummary = await queryBuilder
-        .groupBy("application.offeringIntensity")
-        .getRawMany<ScholasticStandingSummary>();
 
-      const sfasUnsuccessfulCompletionWeeks =
-        await this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
-          studentId,
-        );
-
-      const scholasticStandingSummaryPartTime = scholasticStandingSummary.find(
-        (summary) => summary.offeringIntensity === OfferingIntensity.partTime,
-      );
-      const scholasticStandingSummaryFullTime = scholasticStandingSummary.find(
-        (summary) => summary.offeringIntensity === OfferingIntensity.fullTime,
-      );
-      return {
-        partTimeUnsuccessfulCompletionWeeks:
-          scholasticStandingSummaryPartTime?.totalUnsuccessfulWeeks ?? 0,
-        fullTimeUnsuccessfulCompletionWeeks:
-          sfasUnsuccessfulCompletionWeeks +
-          (scholasticStandingSummaryFullTime?.totalUnsuccessfulWeeks ?? 0),
-      };
-    }
+    const scholasticStandingSummaryPartTime = scholasticStandingSummary.find(
+      (summary) => summary.offeringIntensity === OfferingIntensity.partTime,
+    );
+    const scholasticStandingSummaryFullTime = scholasticStandingSummary.find(
+      (summary) => summary.offeringIntensity === OfferingIntensity.fullTime,
+    );
+    return {
+      partTimeUnsuccessfulCompletionWeeks:
+        scholasticStandingSummaryPartTime?.totalUnsuccessfulWeeks ?? 0,
+      fullTimeUnsuccessfulCompletionWeeks:
+        sfasUnsuccessfulCompletionWeeks +
+        (scholasticStandingSummaryFullTime?.totalUnsuccessfulWeeks ?? 0),
+    };
   }
 }
