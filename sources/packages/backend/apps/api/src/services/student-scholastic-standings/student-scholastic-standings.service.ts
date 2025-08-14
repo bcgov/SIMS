@@ -593,7 +593,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   async getScholasticStandingSummary(
     studentId: number,
   ): Promise<ScholasticStandingSummaryDetails> {
-    const scholasticStandingSummary = await this.repo
+    const scholasticStandingSummaryPromise = this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select(
         "SUM(studentScholasticStanding.unsuccessfulWeeks)::int",
@@ -609,11 +609,15 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       })
       .groupBy("application.offeringIntensity")
       .getRawMany<ScholasticStandingSummary>();
-    const sfasUnsuccessfulCompletionWeeks =
-      await this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
+    const sfasUnsuccessfulCompletionWeeksPromise =
+      this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
         studentId,
       );
-
+    const [scholasticStandingSummary, sfasUnsuccessfulCompletionWeeks] =
+      await Promise.all([
+        scholasticStandingSummaryPromise,
+        sfasUnsuccessfulCompletionWeeksPromise,
+      ]);
     const scholasticStandingSummaryPartTime = scholasticStandingSummary.find(
       (summary) => summary.offeringIntensity === OfferingIntensity.partTime,
     );
