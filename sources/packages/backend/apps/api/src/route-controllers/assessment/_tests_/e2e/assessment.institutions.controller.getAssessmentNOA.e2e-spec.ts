@@ -111,6 +111,8 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         assessment: {
           ...assessment.assessmentData,
           totalFamilyIncome: "XXXXX",
+          studentDataDependantstatus: "dependant",
+          calculatedDataFamilySize: 2,
         },
         disbursement: {
           disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
@@ -222,6 +224,8 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         assessment: {
           ...assessment.assessmentData,
           totalFamilyIncome: "XXXXX",
+          studentDataDependantstatus: "dependant",
+          calculatedDataFamilySize: 2,
         },
         disbursement: {
           disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
