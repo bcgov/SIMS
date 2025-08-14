@@ -70,15 +70,11 @@ export default defineComponent({
   },
   setup(props, context) {
     const { registerUtilsMethod, createCacheIdentifier } = useFormioUtils();
-    const { currencyFormatter, getISODateHourMinuteString } = useFormatters();
+    const { currencyFormatter } = useFormatters();
     const { mapOfferingIntensity } = useOffering();
     // Register global utils functions.
     registerUtilsMethod("currencyFormatter", currencyFormatter);
     registerUtilsMethod("mapOfferingIntensity", mapOfferingIntensity);
-    registerUtilsMethod(
-      "getISODateHourMinuteString",
-      getISODateHourMinuteString,
-    );
     let formDefinition: FormIOComponent;
     const formioContainerRef = ref(null);
     // Indicates if the form definition is loaded.
