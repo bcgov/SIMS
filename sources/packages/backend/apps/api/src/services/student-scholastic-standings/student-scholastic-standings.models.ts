@@ -25,5 +25,5 @@ export interface ScholasticStandingSummary {
 
 export interface ScholasticStandingSummaryDetails {
   fullTimeUnsuccessfulCompletionWeeks: number;
-  partTimeUnsuccessfulCompletionWeeks: number;
+  partTimeUnsuccessfulCompletionWeeks?: number;
 }

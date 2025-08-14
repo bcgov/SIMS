@@ -27,6 +27,7 @@ import {
 import {
   NotificationActionsService,
   RestrictionCode,
+  SFASIndividualService,
   StudentRestrictionSharedService,
 } from "@sims/services";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
@@ -61,6 +62,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
+    private readonly sfasIndividualService: SFASIndividualService,
   ) {
     super(dataSource.getRepository(StudentScholasticStanding));
     this.offeringRepo = dataSource.getRepository(EducationProgramOffering);
@@ -373,8 +375,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
         throw new Error("Number of unsuccessful weeks is empty.");
       }
-      const totalExistingUnsuccessfulWeeks =
-        await this.getTotalFullTimeUnsuccessfulWeeks(studentId);
+      const {
+        fullTimeUnsuccessfulCompletionWeeks: totalExistingUnsuccessfulWeeks,
+      } = await this.getScholasticStandingSummary(
+        studentId,
+        OfferingIntensity.fullTime,
+      );
       // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
       if (
         totalExistingUnsuccessfulWeeks +
@@ -485,30 +491,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * Get the sum of unsuccessfulWeeks for all existing scholastic standing for the
-   * requested student.
-   * @param studentId student id.
-   * @returns sum of unsuccessfulWeeks for all existing scholastic standing for the
-   * requested student.
-   */
-  async getTotalFullTimeUnsuccessfulWeeks(studentId: number): Promise<number> {
-    const query = await this.repo
-      .createQueryBuilder("studentScholasticStanding")
-      .select("SUM(studentScholasticStanding.unsuccessfulWeeks)")
-      .innerJoin("studentScholasticStanding.application", "application")
-      .innerJoin("application.student", "student")
-      .innerJoin("studentScholasticStanding.referenceOffering", "offering")
-      // Only consider scholastic standings that were not reversed.
-      .where("studentScholasticStanding.reversalDate IS NULL")
-      .andWhere("student.id = :studentId", { studentId })
-      .andWhere("offering.offeringIntensity = :offeringIntensity", {
-        offeringIntensity: OfferingIntensity.fullTime,
-      })
-      .getRawOne();
-    return +(query?.sum ?? 0);
-  }
-
-  /**
    * Get unsuccessful scholastic standing of a student application.
    * @param applicationId application id.
    * @param studentId student id.
@@ -608,12 +590,14 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   /**
    * Get scholastic standing unsuccessful completion weeks summary details.
    * @param studentId student id to retrieve the scholastic standing summary details.
+   * @param offeringIntensity optional filter by offering intensity.
    * @return student scholastic standing unsuccessful completion weeks summary details.
    */
   async getScholasticStandingSummary(
     studentId: number,
+    offeringIntensity?: OfferingIntensity,
   ): Promise<ScholasticStandingSummaryDetails> {
-    const scholasticStandingSummary = await this.repo
+    const queryBuilder = this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select(
         "SUM(studentScholasticStanding.unsuccessfulWeeks)::int",
@@ -626,21 +610,53 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .where("studentScholasticStanding.reversalDate IS NULL")
       .andWhere("student.id = :studentId", {
         studentId,
-      })
-      .groupBy("application.offeringIntensity")
-      .getRawMany<ScholasticStandingSummary>();
+      });
 
-    const scholasticStandingSummaryPartTime = scholasticStandingSummary.find(
-      (summary) => summary.offeringIntensity === OfferingIntensity.partTime,
-    );
-    const scholasticStandingSummaryFullTime = scholasticStandingSummary.find(
-      (summary) => summary.offeringIntensity === OfferingIntensity.fullTime,
-    );
-    return {
-      partTimeUnsuccessfulCompletionWeeks:
-        scholasticStandingSummaryPartTime?.totalUnsuccessfulWeeks ?? 0,
-      fullTimeUnsuccessfulCompletionWeeks:
-        scholasticStandingSummaryFullTime?.totalUnsuccessfulWeeks ?? 0,
-    };
+    if (offeringIntensity) {
+      queryBuilder.andWhere(
+        "application.offeringIntensity = :offeringIntensity",
+        {
+          offeringIntensity,
+        },
+      );
+      // If offeringIntensity is specified, return only the sum for that intensity.
+      const result = await queryBuilder.getRawOne<ScholasticStandingSummary>();
+      // If fullTime, add SFAS weeks.
+      if (offeringIntensity === OfferingIntensity.fullTime) {
+        const sfasUnsuccessfulCompletionWeeks =
+          await this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
+            studentId,
+          );
+        return {
+          fullTimeUnsuccessfulCompletionWeeks:
+            sfasUnsuccessfulCompletionWeeks +
+            (result?.totalUnsuccessfulWeeks ?? 0),
+        };
+      }
+    } else {
+      // If no offeringIntensity, return the summary for both intensities.
+      const scholasticStandingSummary = await queryBuilder
+        .groupBy("application.offeringIntensity")
+        .getRawMany<ScholasticStandingSummary>();
+
+      const sfasUnsuccessfulCompletionWeeks =
+        await this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
+          studentId,
+        );
+
+      const scholasticStandingSummaryPartTime = scholasticStandingSummary.find(
+        (summary) => summary.offeringIntensity === OfferingIntensity.partTime,
+      );
+      const scholasticStandingSummaryFullTime = scholasticStandingSummary.find(
+        (summary) => summary.offeringIntensity === OfferingIntensity.fullTime,
+      );
+      return {
+        partTimeUnsuccessfulCompletionWeeks:
+          scholasticStandingSummaryPartTime?.totalUnsuccessfulWeeks ?? 0,
+        fullTimeUnsuccessfulCompletionWeeks:
+          sfasUnsuccessfulCompletionWeeks +
+          (scholasticStandingSummaryFullTime?.totalUnsuccessfulWeeks ?? 0),
+      };
+    }
   }
 }
