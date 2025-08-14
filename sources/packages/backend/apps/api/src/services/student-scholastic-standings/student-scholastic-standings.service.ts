@@ -587,7 +587,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   /**
    * Get scholastic standing unsuccessful completion weeks summary details.
    * @param studentId student id to retrieve the scholastic standing summary details.
-   * @param offeringIntensity optional filter by offering intensity.
    * @return student scholastic standing unsuccessful completion weeks summary details.
    */
   async getScholasticStandingSummary(
