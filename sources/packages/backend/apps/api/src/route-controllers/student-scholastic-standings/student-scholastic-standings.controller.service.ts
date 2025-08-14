@@ -7,7 +7,6 @@ import {
   ApplicationWithdrawalTextValidationResult,
   StudentScholasticStandingsService,
   StudentService,
-  ScholasticStandingSummaryDetails,
 } from "../../services";
 import { SFASIndividualService } from "@sims/services";
 import {
@@ -84,12 +83,10 @@ export class ScholasticStandingControllerService {
       await this.studentScholasticStandingsService.getScholasticStandingSummary(
         studentId,
       );
-    const partTimeLifetimeUnsuccessfulCompletionWeeks = (
-      scholasticStandingSummary as ScholasticStandingSummaryDetails
-    ).partTimeUnsuccessfulCompletionWeeks;
-    const fullTimeLifetimeUnsuccessfulCompletionWeeks = (
-      scholasticStandingSummary as ScholasticStandingSummaryDetails
-    ).fullTimeUnsuccessfulCompletionWeeks;
+    const partTimeLifetimeUnsuccessfulCompletionWeeks =
+      scholasticStandingSummary.partTimeUnsuccessfulCompletionWeeks;
+    const fullTimeLifetimeUnsuccessfulCompletionWeeks =
+      scholasticStandingSummary.fullTimeUnsuccessfulCompletionWeeks;
     return {
       fullTimeLifetimeUnsuccessfulCompletionWeeks,
       partTimeLifetimeUnsuccessfulCompletionWeeks,
