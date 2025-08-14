@@ -408,7 +408,7 @@
               "value": ""
             }
           ],
-          "content": "Your application was subject to federal and provincial assessment calculations based on Canada Student Financial Assistance Program and StudentAid BC policies. Your assessment is based on total family income as reflected in the previous year’s tax return (including spouse/common-law partner, if applicable), or as reported on your application if no tax return was available.",
+          "content": "Your application was subject to federal and provincial assessment calculations based on Canada Student Financial Assistance Program and StudentAid BC policies. Your assessment is based on total family income as reflected in the previous year's tax return (including spouse/common-law partner, if applicable), or as reported on your application if no tax return was available.",
           "refreshOnChange": false,
           "key": "html134",
           "type": "htmlelement",
@@ -427,6 +427,70 @@
           "content": "Total income used for assessment purposes: <span class=\"label-bold\">{{ utils.custom.currencyFormatter(data.assessment?.totalFamilyIncome) }}</span>",
           "refreshOnChange": true,
           "key": "html7",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Student status: <span class=\"label-bold\">{{ data.assessment?.studentDataDependantstatus === 'independant' ? 'Independant' : (data.assessment?.studentDataDependantstatus === 'dependant' ? 'Dependant' : 'Not applicable') }}</span>",
+          "refreshOnChange": true,
+          "key": "htmlStudentStatus",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Family size: <span class=\"label-bold\">{{ data.assessment?.calculatedDataFamilySize || 'Not applicable' }}</span>",
+          "refreshOnChange": true,
+          "key": "htmlFamilySize",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Number of eligible dependants: <span class=\"label-bold\">{{ data.assessment?.calculatedDataTotalEligibleDependants || 'Not applicable' }}</span>",
+          "refreshOnChange": true,
+          "key": "htmlEligibleDependants",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Living allowance category: <span class=\"label-bold\">{{ data.assessment?.calculatedDataLivingCategory === 'M' ? 'Married' : (data.assessment?.calculatedDataLivingCategory === 'SP' ? 'Single parent' : (data.assessment?.calculatedDataLivingCategory === 'SIA' ? 'Single away from home or Single at home paying rent' : (data.assessment?.calculatedDataLivingCategory === 'SIH' ? 'Single living at home' : (data.assessment?.calculatedDataLivingCategory === 'SDA' ? 'Single away from home or Single at home paying rent' : (data.assessment?.calculatedDataLivingCategory === 'SDH' ? 'Single living at home' : 'Not applicable'))))) }}</span>",
+          "refreshOnChange": true,
+          "key": "htmlLivingCategory",
           "type": "htmlelement",
           "input": false,
           "tableView": false

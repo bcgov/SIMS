@@ -154,6 +154,12 @@ export interface BaseAssessment {
   totalProvincialAward: number;
   totalFamilyIncome: number;
   totalAssessmentNeed: number;
+  studentDataDependantstatus?: string;
+  calculatedDataFamilySize?: number;
+  calculatedDataTotalEligibleDependants?: number;
+  calculatedDataLivingCategory?: string;
+  totalAdditionalTransportationAllowance?: number;
+  returnTransportationCost?: number;
 }
 
 /**

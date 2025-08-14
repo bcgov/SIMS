@@ -109,6 +109,16 @@ export class AssessmentControllerService {
     assessmentDTO.returnTransportationCost =
       assessment.workflowData.calculatedData.returnTransportationCost;
 
+    // Set the additional calculated data fields for NOA funding tab
+    assessmentDTO.studentDataDependantstatus =
+      assessment.workflowData.studentData.dependantStatus;
+    assessmentDTO.calculatedDataFamilySize =
+      assessment.workflowData.calculatedData.familySize;
+    assessmentDTO.calculatedDataTotalEligibleDependants =
+      assessment.workflowData.calculatedData.totalEligibleDependents;
+    assessmentDTO.calculatedDataLivingCategory =
+      assessment.workflowData.dmnValues?.livingCategory;
+
     return {
       assessment: assessmentDTO,
       applicationId: assessment.application.id,
