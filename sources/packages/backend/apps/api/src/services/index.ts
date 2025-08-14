@@ -33,6 +33,7 @@ export * from "./student-appeal/student-appeal.service";
 export * from "./student-appeal-request/student-appeal-request.service";
 export * from "./student-scholastic-standings/student-scholastic-standings.service";
 export * from "./student-scholastic-standings/student-scholastic-standings.models";
+export * from "./student-scholastic-standings/scholastic-standing-reversal.service";
 export * from "./application-exception/application-exception.service";
 export * from "./disbursement-receipt/disbursement-receipt.service";
 export * from "./student-account-applications/student-account-applications.service";

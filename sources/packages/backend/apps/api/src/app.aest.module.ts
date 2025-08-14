@@ -38,6 +38,7 @@ import {
   CASInvoiceBatchReportService,
   CASInvoiceService,
   ApplicationChangeRequestService,
+  ScholasticStandingReversalService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -178,6 +179,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     RestrictionControllerService,
     ApplicationExceptionService,
     StudentScholasticStandingsService,
+    ScholasticStandingReversalService,
     ScholasticStandingControllerService,
     SINValidationService,
     InstitutionUserAuthService,
