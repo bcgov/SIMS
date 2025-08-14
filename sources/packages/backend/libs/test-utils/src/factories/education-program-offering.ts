@@ -13,6 +13,7 @@ import {
   StudyBreaksAndWeeks,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
+import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
 
 export function createFakeEducationProgramOffering(
   relations: {
@@ -73,7 +74,57 @@ export function createFakeEducationProgramOffering(
       totalFundedWeeks: 16,
       totalDays: 210, // 30 offering weeks * 7 days,
     } as StudyBreaksAndWeeks);
-  offering.offeringStatus = OfferingStatus.Approved;
-  offering.parentOffering = offering;
+  offering.offeringStatus =
+    options?.initialValues?.offeringStatus ?? OfferingStatus.Approved;
+  offering.parentOffering = options?.initialValues?.parentOffering ?? offering;
+  offering.precedingOffering = options?.initialValues?.precedingOffering;
   return offering;
+}
+
+/**
+ * Adds a new version for the given offering.
+ * @param db E2E data sources.
+ * @param offering offering to add a version for.
+ * @param options add version options.
+ * - `offeringStatus` offering status.
+ * - `versionOfferingStatus` version offering status.
+ * @returns offering and version offering.
+ */
+export async function addOfferingVersion(
+  db: E2EDataSources,
+  offering: EducationProgramOffering,
+  options?: {
+    offeringStatus?: OfferingStatus;
+    versionOfferingStatus?: OfferingStatus;
+  },
+): Promise<{
+  offering: EducationProgramOffering;
+  versionOffering: EducationProgramOffering;
+}> {
+  const offeringStatus =
+    options?.offeringStatus ?? OfferingStatus.ChangeOverwritten;
+  const versionOfferingStatus =
+    options?.versionOfferingStatus ?? OfferingStatus.Approved;
+  if (!offering.id) {
+    await db.educationProgramOffering.save(offering);
+  }
+  const versionOffering = createFakeEducationProgramOffering(
+    {
+      auditUser: offering.creator,
+      program: offering.educationProgram,
+      institution: offering.institutionLocation.institution,
+      institutionLocation: offering.institutionLocation,
+    },
+    {
+      initialValues: {
+        offeringStatus: versionOfferingStatus,
+        precedingOffering: offering,
+        parentOffering: offering.parentOffering,
+        name: offering.name,
+      },
+    },
+  );
+  offering.offeringStatus = offeringStatus;
+  await db.educationProgramOffering.save([offering, versionOffering]);
+  return { offering, versionOffering };
 }

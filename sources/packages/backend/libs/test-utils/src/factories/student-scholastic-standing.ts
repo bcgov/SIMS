@@ -36,6 +36,8 @@ export function createFakeStudentScholasticStanding(
   scholasticStanding.unsuccessfulWeeks =
     options?.initialValues?.unsuccessfulWeeks;
   scholasticStanding.changeType =
+    options?.initialValues?.changeType ??
     StudentScholasticStandingChangeType.StudentDidNotCompleteProgram;
+  scholasticStanding.reversalDate = options?.initialValues?.reversalDate;
   return scholasticStanding;
 }

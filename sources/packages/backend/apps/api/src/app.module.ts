@@ -36,7 +36,7 @@ import { AccessLoggerMiddleware } from "./middlewares";
 import { TerminusModule } from "@nestjs/terminus";
 import { DynamicFormConfigurationModule } from "./dynamic-form-configuration.module";
 import { json } from "express";
-import { JSON_200KB } from "./constants";
+import { JSON_300KB } from "./constants";
 
 @Module({
   imports: [
@@ -99,7 +99,7 @@ export class AppModule implements NestModule {
     consumer.apply(AccessLoggerMiddleware).exclude("health").forRoutes("*");
     // Allow the configuration of the body parser for individual routes.
     consumer
-      .apply(json({ limit: JSON_200KB }))
+      .apply(json({ limit: JSON_300KB }))
       .forRoutes(DynamicFormAESTController);
     // Apply the body parser global configuration after the specific ones to allow the proper evaluation of the routes.
     consumer.apply(json()).forRoutes("*");
