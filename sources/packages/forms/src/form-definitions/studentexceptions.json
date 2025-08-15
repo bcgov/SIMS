@@ -33,7 +33,7 @@
           "value": ""
         }
       ],
-      "content": "View the exception request and any supporting documentation on the student application. When the review is complete, come back to this page to approve or deny the request.",
+      "content": "View requested and previously approved exceptions below.",
       "refreshOnChange": false,
       "key": "html2",
       "type": "htmlelement",
