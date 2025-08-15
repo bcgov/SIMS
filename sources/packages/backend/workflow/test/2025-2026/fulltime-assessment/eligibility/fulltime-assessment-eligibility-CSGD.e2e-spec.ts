@@ -11,6 +11,7 @@ import {
   createFakeStudentDependentEligibleForChildcareCost,
   createFakeStudentDependentNotEligible,
 } from "../../../test-utils/factories";
+import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD.`, () => {
   it("Should determine CSGD as eligible when financial need is at least $1 and total family income is under the threshold and there is at least 1 eligible dependent.", async () => {
@@ -18,6 +19,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataTaxReturnIncome = 32999;
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     // Creates 4 eligible childcare (CSGD) dependants, 2 family-size eligible dependants, 1 fully ineligible dependant.
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligibleForChildcareCost(
@@ -101,6 +103,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     assessmentConsolidatedData.studentDataTaxReturnIncome = 1000;
     // Eligible dependants for family size include dependants 18-22 attending post-secondary school.
     // Dependants eligible for CSGD must be either 0-11 years old or 12+ with a disability.
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
