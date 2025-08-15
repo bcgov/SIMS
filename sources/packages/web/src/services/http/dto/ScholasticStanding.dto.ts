@@ -1,3 +1,4 @@
+import { AssessmentTriggerType } from "@/types";
 import { ValidationResultAPIOutDTO } from "./Common.dto";
 import { ActiveApplicationDataAPIOutDTO } from "./InstitutionLocation.dto";
 
@@ -31,7 +32,10 @@ export interface ScholasticStandingDataAPIInDTO {
  */
 export interface ScholasticStandingSubmittedDetailsAPIOutDTO
   extends ScholasticStandingDataAPIInDTO,
-    ActiveApplicationDataAPIOutDTO {}
+    ActiveApplicationDataAPIOutDTO {
+  currentAssessmentTriggerType: AssessmentTriggerType;
+  reversalDate?: Date;
+}
 
 /**
  * Represents the scholastic standing summary details.
@@ -53,4 +57,11 @@ export interface ApplicationBulkWithdrawalValidationResultAPIOutDTO {
   errors: string[];
   infos: ValidationResultAPIOutDTO[];
   warnings: ValidationResultAPIOutDTO[];
+}
+
+/**
+ * Payload for reversing a scholastic standing.
+ */
+export interface ReverseScholasticStandingAPIInDTO {
+  note: string;
 }

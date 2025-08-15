@@ -1,5 +1,6 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
+  ReverseScholasticStandingAPIInDTO,
   ScholasticStandingDataAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
   ScholasticStandingSummaryDetailsAPIOutDTO,
@@ -84,6 +85,25 @@ export class ScholasticStandingApi extends HttpBaseClient {
       `scholastic-standing/application-bulk-withdrawal?validation-only=${validationOnly}`,
       formData,
       requestConfig,
+    );
+  }
+
+  /**
+   * Reverse a scholastic standing and create a note for the reversal.
+   * Based on the scholastic standing type, there will be additional steps as part of the reversal process.
+   * For all the scholastic standing types which creates re-assessment, a new re-assessment will be created
+   * during the reversal process to reverse the study period changes.
+   * For all the scholastic standing types which archives the application, the archiving will be reversed.
+   * @param scholasticStandingId scholastic standing id to reverse.
+   * @param payload payload for the scholastic standing reversal.
+   */
+  async reverseScholasticStanding(
+    scholasticStandingId: number,
+    payload: ReverseScholasticStandingAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`scholastic-standing/${scholasticStandingId}/reverse`),
+      { data: payload },
     );
   }
 }
