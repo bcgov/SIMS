@@ -24,7 +24,12 @@ import {
   FormIOForm,
 } from "@/types";
 import { v4 as uuid } from "uuid";
-import { useFormatters, useFormioUtils, useOffering } from "@/composables";
+import {
+  useFormatters,
+  useFormioUtils,
+  useOffering,
+  useAssessment,
+} from "@/composables";
 import { FORMIO_LOAD_DATA_PROCESSING_VIEW_DELAY } from "@/constants/system-constants";
 
 export default defineComponent({
@@ -72,9 +77,12 @@ export default defineComponent({
     const { registerUtilsMethod, createCacheIdentifier } = useFormioUtils();
     const { currencyFormatter } = useFormatters();
     const { mapOfferingIntensity } = useOffering();
+    const { mapLivingCategory, mapStudentStatus } = useAssessment();
     // Register global utils functions.
     registerUtilsMethod("currencyFormatter", currencyFormatter);
     registerUtilsMethod("mapOfferingIntensity", mapOfferingIntensity);
+    registerUtilsMethod("mapLivingCategory", mapLivingCategory);
+    registerUtilsMethod("mapStudentStatus", mapStudentStatus);
     let formDefinition: FormIOComponent;
     const formioContainerRef = ref(null);
     // Indicates if the form definition is loaded.

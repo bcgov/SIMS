@@ -109,7 +109,7 @@ export class AssessmentControllerService {
     assessmentDTO.returnTransportationCost =
       assessment.workflowData.calculatedData.returnTransportationCost;
 
-    // Set the additional calculated data fields for NOA funding tab
+    // Set the additional calculated data fields for NOA funding tab.
     assessmentDTO.studentDataDependantstatus =
       assessment.workflowData.studentData.dependantStatus;
     assessmentDTO.calculatedDataFamilySize =

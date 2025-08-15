@@ -125,11 +125,67 @@ export function useAssessment() {
     };
   };
 
+  /**
+   * Map living category codes to their display names.
+   * @param livingCategoryCode living category code
+   * @param placeholder placeholder text
+   * @returns display name or placeholder
+   */
+  const mapLivingCategory = (
+    livingCategoryCode: string | undefined,
+    placeholder = "Not applicable",
+  ): string | undefined => {
+    if (!livingCategoryCode) {
+      return placeholder;
+    }
+    switch (livingCategoryCode) {
+      case "M":
+        return "Married";
+      case "SP":
+        return "Single parent";
+      case "SIA":
+        return "Single away from home or Single at home paying rent";
+      case "SIH":
+        return "Single living at home";
+      case "SDA":
+        return "Single away from home or Single at home paying rent";
+      case "SDH":
+        return "Single living at home";
+      default:
+        return livingCategoryCode;
+    }
+  };
+
+  /**
+   * Map student dependent status codes to their display names.
+   * @param studentStatusCode student dependent status code
+   * @param placeholder placeholder text
+   * @returns display name or placeholder
+   */
+  const mapStudentStatus = (
+    studentStatusCode: string | undefined,
+    placeholder = "Not applicable",
+  ): string | undefined => {
+    if (!studentStatusCode) {
+      return placeholder;
+    }
+    switch (studentStatusCode) {
+      case "independant":
+        return "Independent";
+      case "dependant":
+        return "Dependant";
+      default:
+        return studentStatusCode;
+    }
+  };
+
   return {
     mapRequestAssessmentChipStatus,
     mapRequestAssessmentChipStatusLabel,
     mapAssessmentHistoryChipStatus,
     mapAssessmentDetailHeader,
     mapAssessmentHistoryChipLabel,
+    mapLivingCategory,
+    mapStudentStatus,
   };
 }

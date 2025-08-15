@@ -417,7 +417,7 @@
         },
         {
           "label": "HTML",
-          "tag": "p",
+          "tag": "span",
           "attrs": [
             {
               "attr": "",
@@ -433,14 +433,14 @@
         },
         {
           "label": "HTML",
-          "tag": "p",
+          "tag": "span",
           "attrs": [
             {
               "attr": "",
               "value": ""
             }
           ],
-          "content": "Student status: <span class=\"label-bold\">{{ data.assessment?.studentDataDependantstatus === 'independant' ? 'Independant' : (data.assessment?.studentDataDependantstatus === 'dependant' ? 'Dependant' : 'Not applicable') }}</span>",
+          "content": "Student status: <span class=\"label-bold\">{{ utils.custom.mapStudentStatus(data.assessment?.studentDataDependantstatus) }}</span>",
           "refreshOnChange": true,
           "key": "htmlStudentStatus",
           "type": "htmlelement",
@@ -449,7 +449,7 @@
         },
         {
           "label": "HTML",
-          "tag": "p",
+          "tag": "span",
           "attrs": [
             {
               "attr": "",
@@ -465,7 +465,7 @@
         },
         {
           "label": "HTML",
-          "tag": "p",
+          "tag": "span",
           "attrs": [
             {
               "attr": "",
@@ -488,7 +488,7 @@
               "value": ""
             }
           ],
-          "content": "Living allowance category: <span class=\"label-bold\">{{ data.assessment?.calculatedDataLivingCategory === 'M' ? 'Married' : (data.assessment?.calculatedDataLivingCategory === 'SP' ? 'Single parent' : (data.assessment?.calculatedDataLivingCategory === 'SIA' ? 'Single away from home or Single at home paying rent' : (data.assessment?.calculatedDataLivingCategory === 'SIH' ? 'Single living at home' : (data.assessment?.calculatedDataLivingCategory === 'SDA' ? 'Single away from home or Single at home paying rent' : (data.assessment?.calculatedDataLivingCategory === 'SDH' ? 'Single living at home' : 'Not applicable'))))) }}</span>",
+          "content": "Living allowance category: <span class=\"label-bold\">{{ utils.custom.mapLivingCategory(data.assessment?.calculatedDataLivingCategory) }}</span>",
           "refreshOnChange": true,
           "key": "htmlLivingCategory",
           "type": "htmlelement",

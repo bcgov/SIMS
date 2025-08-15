@@ -158,8 +158,6 @@ export interface BaseAssessment {
   calculatedDataFamilySize?: number;
   calculatedDataTotalEligibleDependants?: number;
   calculatedDataLivingCategory?: string;
-  totalAdditionalTransportationAllowance?: number;
-  returnTransportationCost?: number;
 }
 
 /**
