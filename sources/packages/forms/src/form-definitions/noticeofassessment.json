@@ -456,7 +456,7 @@
               "value": ""
             }
           ],
-          "content": "Family size: <span class=\"label-bold\">{{ data.assessment?.calculatedDataFamilySize || 'Not applicable' }}</span>",
+          "content": "Family size: <span class=\"label-bold\">{{ data.assessment?.calculatedDataFamilySize ?? 'Not applicable' }}</span>",
           "refreshOnChange": true,
           "key": "htmlFamilySize",
           "type": "htmlelement",
@@ -472,7 +472,7 @@
               "value": ""
             }
           ],
-          "content": "Number of eligible dependants: <span class=\"label-bold\">{{ data.assessment?.calculatedDataTotalEligibleDependants || 'Not applicable' }}</span>",
+          "content": "Number of eligible dependants: <span class=\"label-bold\">{{ data.assessment?.calculatedDataTotalEligibleDependants ?? 'Not applicable' }}</span>",
           "refreshOnChange": true,
           "key": "htmlEligibleDependants",
           "type": "htmlelement",
