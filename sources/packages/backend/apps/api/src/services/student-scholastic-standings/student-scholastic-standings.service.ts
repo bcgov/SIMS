@@ -27,6 +27,7 @@ import {
 import {
   NotificationActionsService,
   RestrictionCode,
+  SFASIndividualService,
   StudentRestrictionSharedService,
 } from "@sims/services";
 import { EducationProgramOfferingService } from "../education-program-offering/education-program-offering.service";
@@ -61,6 +62,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
+    private readonly sfasIndividualService: SFASIndividualService,
   ) {
     super(dataSource.getRepository(StudentScholasticStanding));
     this.offeringRepo = dataSource.getRepository(EducationProgramOffering);
@@ -373,8 +375,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       if (!scholasticStandingData.numberOfUnsuccessfulWeeks) {
         throw new Error("Number of unsuccessful weeks is empty.");
       }
-      const totalExistingUnsuccessfulWeeks =
-        await this.getTotalFullTimeUnsuccessfulWeeks(studentId);
+      const {
+        fullTimeUnsuccessfulCompletionWeeks: totalExistingUnsuccessfulWeeks,
+      } = await this.getScholasticStandingSummary(studentId);
       // When total number of unsuccessful weeks hits minimum 68, add SSR restriction.
       if (
         totalExistingUnsuccessfulWeeks +
@@ -485,30 +488,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * Get the sum of unsuccessfulWeeks for all existing scholastic standing for the
-   * requested student.
-   * @param studentId student id.
-   * @returns sum of unsuccessfulWeeks for all existing scholastic standing for the
-   * requested student.
-   */
-  async getTotalFullTimeUnsuccessfulWeeks(studentId: number): Promise<number> {
-    const query = await this.repo
-      .createQueryBuilder("studentScholasticStanding")
-      .select("SUM(studentScholasticStanding.unsuccessfulWeeks)")
-      .innerJoin("studentScholasticStanding.application", "application")
-      .innerJoin("application.student", "student")
-      .innerJoin("studentScholasticStanding.referenceOffering", "offering")
-      // Only consider scholastic standings that were not reversed.
-      .where("studentScholasticStanding.reversalDate IS NULL")
-      .andWhere("student.id = :studentId", { studentId })
-      .andWhere("offering.offeringIntensity = :offeringIntensity", {
-        offeringIntensity: OfferingIntensity.fullTime,
-      })
-      .getRawOne();
-    return +(query?.sum ?? 0);
-  }
-
-  /**
    * Get unsuccessful scholastic standing of a student application.
    * @param applicationId application id.
    * @param studentId student id.
@@ -613,7 +592,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   async getScholasticStandingSummary(
     studentId: number,
   ): Promise<ScholasticStandingSummaryDetails> {
-    const scholasticStandingSummary = await this.repo
+    const scholasticStandingSummaryPromise = this.repo
       .createQueryBuilder("studentScholasticStanding")
       .select(
         "SUM(studentScholasticStanding.unsuccessfulWeeks)::int",
@@ -629,7 +608,15 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       })
       .groupBy("application.offeringIntensity")
       .getRawMany<ScholasticStandingSummary>();
-
+    const sfasUnsuccessfulCompletionWeeksPromise =
+      this.sfasIndividualService.getSFASTotalUnsuccessfulCompletionWeeks(
+        studentId,
+      );
+    const [scholasticStandingSummary, sfasUnsuccessfulCompletionWeeks] =
+      await Promise.all([
+        scholasticStandingSummaryPromise,
+        sfasUnsuccessfulCompletionWeeksPromise,
+      ]);
     const scholasticStandingSummaryPartTime = scholasticStandingSummary.find(
       (summary) => summary.offeringIntensity === OfferingIntensity.partTime,
     );
@@ -640,7 +627,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       partTimeUnsuccessfulCompletionWeeks:
         scholasticStandingSummaryPartTime?.totalUnsuccessfulWeeks ?? 0,
       fullTimeUnsuccessfulCompletionWeeks:
-        scholasticStandingSummaryFullTime?.totalUnsuccessfulWeeks ?? 0,
+        sfasUnsuccessfulCompletionWeeks +
+        (scholasticStandingSummaryFullTime?.totalUnsuccessfulWeeks ?? 0),
     };
   }
 }
