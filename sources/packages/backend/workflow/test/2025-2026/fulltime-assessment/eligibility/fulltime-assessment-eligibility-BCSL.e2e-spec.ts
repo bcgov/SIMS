@@ -32,13 +32,16 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     // Ensures that the income is high enough to eliminate any provincial need.
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 150000;
+    assessmentConsolidatedData.studentDataTaxReturnIncome = 500000;
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
+    expect(
+      calculatedAssessment.variables.calculatedDataProvincialAssessedNeed,
+    ).toBeLessThan(1);
     expect(calculatedAssessment.variables.awardEligibilityBCSL).toBe(false);
     expect(
       calculatedAssessment.variables.finalProvincialAwardNetBCSLAmount,
