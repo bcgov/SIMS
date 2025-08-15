@@ -332,7 +332,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataExemptScholarshipsBursaries: number;
   calculatedDataDependants11YearsOrUnder: number;
   calculatedDataDependants12YearsOverOnTaxes: number;
-  calculatedDataTotalEligibleDependentsForChildCare: number;
+  calculatedDataTotalChildcareDependants: number;
   calculatedDataTotalRoomAndBoardAmount: number;
   calculatedDataFamilySize: number;
   totalFederalContribution: number;

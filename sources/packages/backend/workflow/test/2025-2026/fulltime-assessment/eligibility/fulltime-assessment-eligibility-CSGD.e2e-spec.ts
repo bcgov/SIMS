@@ -63,8 +63,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     // Family size is calculated as the number of eligible dependants (6) plus the student.
     expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(7);
     expect(
-      calculatedAssessment.variables
-        .calculatedDataTotalEligibleDependentsForChildCare,
+      calculatedAssessment.variables.calculatedDataTotalChildcareDependants,
     ).toBe(4);
     expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
     expect(
