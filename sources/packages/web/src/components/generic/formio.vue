@@ -77,12 +77,12 @@ export default defineComponent({
     const { registerUtilsMethod, createCacheIdentifier } = useFormioUtils();
     const { currencyFormatter } = useFormatters();
     const { mapOfferingIntensity } = useOffering();
-    const { mapLivingCategory, mapStudentStatus } = useAssessment();
+    const { mapLivingCategory, mapStudentDependantStatus } = useAssessment();
     // Register global utils functions.
     registerUtilsMethod("currencyFormatter", currencyFormatter);
     registerUtilsMethod("mapOfferingIntensity", mapOfferingIntensity);
     registerUtilsMethod("mapLivingCategory", mapLivingCategory);
-    registerUtilsMethod("mapStudentStatus", mapStudentStatus);
+    registerUtilsMethod("mapStudentDependantStatus", mapStudentDependantStatus);
     let formDefinition: FormIOComponent;
     const formioContainerRef = ref(null);
     // Indicates if the form definition is loaded.

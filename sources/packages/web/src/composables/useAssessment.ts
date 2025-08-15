@@ -162,7 +162,7 @@ export function useAssessment() {
    * @param placeholder placeholder text
    * @returns display name or placeholder
    */
-  const mapStudentStatus = (
+  const mapStudentDependantStatus = (
     studentStatusCode: string | undefined,
     placeholder = "Not applicable",
   ): string | undefined => {
@@ -186,6 +186,6 @@ export function useAssessment() {
     mapAssessmentDetailHeader,
     mapAssessmentHistoryChipLabel,
     mapLivingCategory,
-    mapStudentStatus,
+    mapStudentDependantStatus,
   };
 }

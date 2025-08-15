@@ -440,7 +440,7 @@
               "value": ""
             }
           ],
-          "content": "Student status: <span class=\"label-bold\">{{ utils.custom.mapStudentStatus(data.assessment?.studentDataDependantstatus) }}</span>",
+          "content": "Student status: <span class=\"label-bold\">{{ utils.custom.mapStudentDependantStatus(data.assessment?.studentDataDependantstatus) }}</span>",
           "refreshOnChange": true,
           "key": "htmlStudentStatus",
           "type": "htmlelement",
