@@ -6,13 +6,21 @@
     >
       <template #content>
         <error-summary :errors="reverseScholasticStandingForm.errors" />
-        <p class="pt-1 brand-gray-text">
-          Triggering reassessment will not change student's application inputs
-          currently on file. This will rerun the student's assessment,
-          potentially requiring a school to reconfirm enrolment, and potentially
-          new eCert requests to be issued. For more information, please consult
-          the SIMS Operations Manual.
-        </p>
+        <div class="pt-2">
+          <p>
+            <span class="font-bold">Attention:</span> You are about to reverse a
+            scholastic standing event associated with this application. Please
+            be advised that this action is final and cannot be undone.
+          </p>
+          <p>
+            <span class="font-bold">Important Reminder:</span> If a pending
+            disbursement was previously canceled as a result of the scholastic
+            standing reporting, a new Confirmation of Enrollment must be
+            submitted before the funds can be released. Additionally, please
+            ensure that any related restrictions on the student's account are
+            reviewed and manually reversed, if applicable.
+          </p>
+        </div>
         <v-textarea
           label="Notes"
           variant="outlined"

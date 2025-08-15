@@ -4,7 +4,7 @@
       <header-navigator
         title="Assessments"
         subTitle="View Submission"
-        :routeLocation="goBackRouteParams"
+        :routeLocation="goToAssessmentSummary"
       >
         <template #buttons>
           <check-permission-role :role="Role.StudentReverseScholasticStanding">
@@ -33,7 +33,7 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { computed, ref } from "vue";
-import { RouteLocationRaw } from "vue-router";
+import { RouteLocationRaw, useRouter } from "vue-router";
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import ReverseScholasticStandingModal from "@/components/aest/students/modals/ReverseScholasticStandingModal.vue";
@@ -64,11 +64,12 @@ export default {
     },
   },
   setup(props) {
+    const router = useRouter();
     const snackBar = useSnackBar();
     const reverseScholasticStandingModal = ref(
       {} as ModalDialog<ReverseScholasticStandingAPIInDTO | false>,
     );
-    const goBackRouteParams = computed(
+    const goToAssessmentSummary = computed(
       () =>
         ({
           name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
@@ -86,10 +87,11 @@ export default {
             props.scholasticStandingId,
             payload,
           );
-          snackBar.success("Reassessment triggered successfully.");
+          snackBar.success("Scholastic standing reversed successfully.");
+          router.push(goToAssessmentSummary.value);
         } catch {
           snackBar.error(
-            "Unexpected error while triggering manual reassessment.",
+            "Unexpected error while reversing the scholastic standing.",
           );
           reverseScholasticStandingModal.value.loading = false;
         }
@@ -97,7 +99,7 @@ export default {
     };
 
     return {
-      goBackRouteParams,
+      goToAssessmentSummary,
       Role,
       reverseScholasticStandingModal,
       showReverseScholasticStandingModal,

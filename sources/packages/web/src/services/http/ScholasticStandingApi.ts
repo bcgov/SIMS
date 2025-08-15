@@ -103,7 +103,7 @@ export class ScholasticStandingApi extends HttpBaseClient {
   ): Promise<void> {
     await this.patchCall(
       this.addClientRoot(`scholastic-standing/${scholasticStandingId}/reverse`),
-      { data: payload },
+      payload,
     );
   }
 }
