@@ -8,6 +8,11 @@ export const APPLICATION_DATA_EXCEPTION_SUFFIX = "ApplicationException";
  * to provide a user-friendly description of the exception.
  */
 export const EXCEPTION_DESCRIPTION_PROPERTY_KEY = "exceptionDescription";
+/**
+ * Prefix used to identify part-time application exceptions for 2025-26 in flight submitted
+ * applications, allowing both exceptions strategies to coexist.
+ */
+export const EXCEPTION_PART_TIME_PROPERTY_KEY_PREFIX = "_";
 
 /**
  * Application exception data structure extracted from the application dynamic data.
