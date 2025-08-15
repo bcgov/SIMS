@@ -303,6 +303,15 @@
           "tableView": false
         },
         {
+          "label": "Application Exceptions Strategy",
+          "calculateValue": "value = \"verify-unique-application-exceptions\";",
+          "calculateServer": true,
+          "key": "applicationExceptionsStrategy",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
           "input": true,
           "tableView": true,
           "key": "maxIncome",
@@ -1125,6 +1134,37 @@
                   "lockKey": true,
                   "customConditional": "show = data.studyEndDateBeforeSixWeeksFromToday || data.selectedStudyEndDateBeforeSixWeeksFromToday;",
                   "calculateServer": true
+                },
+                {
+                  "label": "studyEndDateIsPastApplicationException  (part-time unique exceptions)",
+                  "tableView": false,
+                  "validateWhenHidden": false,
+                  "key": "_studyEndDateIsPastApplicationException",
+                  "customConditional": "show = data.studyEndDateBeforeSixWeeksFromToday || data.selectedStudyEndDateBeforeSixWeeksFromToday;",
+                  "type": "container",
+                  "input": true,
+                  "components": [
+                    {
+                      "label": "Exception Description - Study end date is past",
+                      "defaultValue": "exceptionDescription",
+                      "calculateValue": "value = \"Study end date is past\";",
+                      "calculateServer": true,
+                      "key": "exceptionDescription",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "Submission Date (forces the exception to be detected as changed for every submission)",
+                      "defaultValue": "submissionDate",
+                      "calculateValue": "// Saves the date the form was submitted.\n// Forces the exception to be detected as changed for every submission.\nvalue = new Date().toUTCString();",
+                      "calculateServer": true,
+                      "key": "submissionDate",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    }
+                  ]
                 }
               ]
             }
@@ -1930,6 +1970,35 @@
                   "tableView": false,
                   "components": [
                     {
+                      "label": "citizenshipForProtectedPersonsApplicationException (part-time unique exceptions)",
+                      "tableView": false,
+                      "validateWhenHidden": false,
+                      "key": "_citizenshipForProtectedPersonsApplicationException",
+                      "type": "container",
+                      "input": true,
+                      "components": [
+                        {
+                          "label": "Exception Description - Citizenship for protected persons",
+                          "defaultValue": "Exception Description - Citizenship for protected persons",
+                          "calculateValue": "value = \"Citizenship for protected persons\";",
+                          "calculateServer": true,
+                          "key": "exceptionDescription",
+                          "type": "hidden",
+                          "input": true,
+                          "tableView": false
+                        },
+                        {
+                          "label": "citizenshipVerification",
+                          "calculateValue": "value = data[component.key];",
+                          "calculateServer": true,
+                          "key": "citizenshipVerification",
+                          "type": "hidden",
+                          "input": true,
+                          "tableView": false
+                        }
+                      ]
+                    },
+                    {
                       "label": "Application Exception - Citizenship for protected persons",
                       "calculateValue": "value = \"studentApplicationException\";",
                       "calculateServer": true,
@@ -2160,6 +2229,35 @@
               "input": false,
               "tableView": false,
               "components": [
+                {
+                  "label": "marriedCommonLawDomesticViolenceApplicationException  (part-time unique exceptions)",
+                  "tableView": false,
+                  "validateWhenHidden": false,
+                  "key": "_marriedCommonLawDomesticViolenceApplicationException",
+                  "type": "container",
+                  "input": true,
+                  "components": [
+                    {
+                      "label": "Exception Description - Married/common-law domestic violence",
+                      "calculateValue": "value = \"Married/common-law domestic violence\";",
+                      "calculateServer": true,
+                      "key": "exceptionDescription",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false,
+                      "lockKey": true
+                    },
+                    {
+                      "label": "marriedCommonLawDomesticViolenceExceptionDocuments",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "marriedCommonLawDomesticViolenceExceptionDocuments",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    }
+                  ]
+                },
                 {
                   "label": "Application Exception - Married/Common-law domestic violence",
                   "calculateValue": "value = \"studentApplicationException\";",
@@ -2688,6 +2786,53 @@
               "input": false,
               "tableView": false,
               "components": [
+                {
+                  "label": "citizenshipForBCResidencyApplicationException (part-time unique exceptions)",
+                  "tableView": false,
+                  "validateWhenHidden": false,
+                  "key": "_citizenshipForBCResidencyApplicationException",
+                  "type": "container",
+                  "input": true,
+                  "components": [
+                    {
+                      "label": "Exception Description - Married/common-law domestic violence",
+                      "calculateValue": "value = \"Married/common-law domestic violence\";",
+                      "calculateServer": true,
+                      "key": "exceptionDescription",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false,
+                      "lockKey": true
+                    },
+                    {
+                      "label": "bclivingSituation",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "bclivingSituation",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "otherLivingSituation",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "bclivingSituation1",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "otherLivingSituationDocs",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "otherLivingSituationDocs",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    }
+                  ]
+                },
                 {
                   "label": "Application Exception - Citizenship for B.C. residency",
                   "calculateValue": "value = \"studentApplicationException\";",
