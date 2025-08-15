@@ -71,20 +71,22 @@ describe("ApplicationExceptionAESTController(e2e)-getExceptionById", () => {
     );
     const [firstExceptionRequest] =
       application.applicationException.exceptionRequests;
-
-    const now = new Date();
+    // Create the an approved exception to be associated to the exception created
+    // by the method saveFakeApplicationWithApplicationException.
     const approvedException = createFakeApplicationException();
     approvedException.exceptionStatus = ApplicationExceptionStatus.Approved;
     approvedException.application = application;
-    approvedException.assessedDate = now;
+    approvedException.assessedDate = new Date();
     approvedException.exceptionRequests = [
       createFakeApplicationExceptionRequest({
         applicationException: approvedException,
       }),
     ];
     await db.applicationException.save(approvedException);
-    firstExceptionRequest.approvalExceptionRequest =
-      approvedException.exceptionRequests[0];
+    const [approvedExceptionRequest] = approvedException.exceptionRequests;
+    // Associate the approved exception request with the first exception request
+    // allow its assessed date to be returned.
+    firstExceptionRequest.approvalExceptionRequest = approvedExceptionRequest;
     await db.applicationExceptionRequest.save(firstExceptionRequest);
 
     const endpoint = `/aest/application-exception/${application.applicationException.id}`;
@@ -109,7 +111,7 @@ describe("ApplicationExceptionAESTController(e2e)-getExceptionById", () => {
           {
             exceptionName: firstExceptionRequest.exceptionName,
             exceptionDescription: firstExceptionRequest.exceptionDescription,
-            previouslyApprovedOn: now.toISOString(),
+            previouslyApprovedOn: approvedException.assessedDate.toISOString(),
           },
         ],
       });
