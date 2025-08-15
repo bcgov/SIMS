@@ -28,6 +28,8 @@ describe("ApplicationExceptionAESTController(e2e)-getExceptionById", () => {
       undefined,
       { applicationExceptionStatus: ApplicationExceptionStatus.Approved },
     );
+    const [firstExceptionRequest] =
+      application.applicationException.exceptionRequests;
     const endpoint = `/aest/application-exception/${application.applicationException.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -48,9 +50,8 @@ describe("ApplicationExceptionAESTController(e2e)-getExceptionById", () => {
           application.applicationException.assessedDate.toISOString(),
         exceptionRequests: [
           {
-            exceptionName:
-              application.applicationException.exceptionRequests[0]
-                .exceptionName,
+            exceptionName: firstExceptionRequest.exceptionName,
+            exceptionDescription: firstExceptionRequest.exceptionDescription,
           },
         ],
       });
