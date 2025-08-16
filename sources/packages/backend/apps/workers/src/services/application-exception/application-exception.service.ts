@@ -112,7 +112,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         await this.noteSharedService.createStudentNote(
           studentId,
           NoteType.Application,
-          `Application ${applicationNumber} had ${exceptionRequests.length} exception(s) automatically approved.`,
+          `Application ${applicationNumber} had ${exceptionRequests.length} previously reviewed exception(s) automatically approved.`,
           this.systemUsersService.systemUser.id,
           entityManager,
         );

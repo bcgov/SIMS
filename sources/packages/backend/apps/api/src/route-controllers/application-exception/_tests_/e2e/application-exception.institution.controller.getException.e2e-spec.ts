@@ -69,6 +69,7 @@ describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
           exceptionRequests: applicationException.exceptionRequests.map(
             (request) => ({
               exceptionName: request.exceptionName,
+              exceptionDescription: request.exceptionDescription,
             }),
           ),
         });

@@ -61,10 +61,22 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         "exception.assessedDate",
         "exceptionNote.description",
         "exceptionRequest.exceptionName",
+        "exceptionRequest.exceptionDescription",
+        "approvalExceptionRequest.id",
+        "approvalApplicationException.id",
+        "approvalApplicationException.assessedDate",
         "assessedBy.firstName",
         "assessedBy.lastName",
       ])
       .innerJoin("exception.exceptionRequests", "exceptionRequest")
+      .leftJoin(
+        "exceptionRequest.approvalExceptionRequest",
+        "approvalExceptionRequest",
+      )
+      .leftJoin(
+        "approvalExceptionRequest.applicationException",
+        "approvalApplicationException",
+      )
       .leftJoin("exception.exceptionNote", "exceptionNote")
       .leftJoin("exception.assessedBy", "assessedBy")
       .where("exception.id = :exceptionId", { exceptionId });

@@ -19,6 +19,8 @@ export class UpdateApplicationExceptionAPIInDTO {
 
 export interface ApplicationExceptionRequestAPIOutDTO {
   exceptionName: string;
+  exceptionDescription: string;
+  previouslyApprovedOn?: Date;
 }
 
 export interface ApplicationExceptionAPIOutDTO {

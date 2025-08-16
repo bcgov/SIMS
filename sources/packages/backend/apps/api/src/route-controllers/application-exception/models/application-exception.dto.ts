@@ -43,6 +43,8 @@ export class UpdateApplicationExceptionAPIInDTO {
 
 export class ApplicationExceptionRequestAPIOutDTO {
   exceptionName: string;
+  exceptionDescription: string;
+  previouslyApprovedOn?: Date;
 }
 
 export class ApplicationExceptionAPIOutDTO {

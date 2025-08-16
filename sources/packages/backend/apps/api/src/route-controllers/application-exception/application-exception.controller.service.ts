@@ -48,6 +48,10 @@ export class ApplicationExceptionControllerService {
       exceptionRequests: applicationException.exceptionRequests.map(
         (request) => ({
           exceptionName: request.exceptionName,
+          exceptionDescription: request.exceptionDescription,
+          previouslyApprovedOn:
+            request.approvalExceptionRequest?.applicationException
+              ?.assessedDate,
         }),
       ),
     };

@@ -1141,6 +1141,16 @@
                       "type": "hidden",
                       "input": true,
                       "tableView": false
+                    },
+                    {
+                      "label": "Submission Date (forces the exception to be detected as changed for every submission)",
+                      "defaultValue": "submissionDate",
+                      "calculateValue": "// Saves the date the form was submitted.\n// Forces the exception to be detected as changed for every submission.\nvalue = new Date().toUTCString();",
+                      "calculateServer": true,
+                      "key": "submissionDate",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
                     }
                   ]
                 }
