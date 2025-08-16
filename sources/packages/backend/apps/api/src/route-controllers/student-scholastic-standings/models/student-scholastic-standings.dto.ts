@@ -4,6 +4,7 @@ import { IsNotEmpty, IsNotEmptyObject, MaxLength } from "class-validator";
 import { ActiveApplicationDataAPIOutDTO } from "../../../route-controllers/institution-locations/models/application.dto";
 import { JSON_10KB } from "../../../constants";
 import {
+  AssessmentTriggerType,
   NOTE_DESCRIPTION_MAX_LENGTH,
   StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
@@ -42,7 +43,10 @@ export class ScholasticStandingAPIInDTO {
 export class ScholasticStandingSubmittedDetailsAPIOutDTO extends IntersectionType(
   ScholasticStandingData,
   ActiveApplicationDataAPIOutDTO,
-) {}
+) {
+  currentAssessmentTriggerType: AssessmentTriggerType;
+  reversalDate?: Date;
+}
 
 /**
  * Represents the scholastic standing unsuccessful completion weeks.

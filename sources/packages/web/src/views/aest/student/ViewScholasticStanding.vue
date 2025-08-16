@@ -4,8 +4,21 @@
       <header-navigator
         title="Assessments"
         subTitle="View Submission"
-        :routeLocation="goBackRouteParams"
-      />
+        :routeLocation="goToAssessmentSummary"
+      >
+        <template #buttons>
+          <check-permission-role :role="Role.StudentReverseScholasticStanding">
+            <template #="{ notAllowed }">
+              <v-btn
+                color="primary"
+                @click="showReverseScholasticStandingModal"
+                :disabled="notAllowed"
+                >Reverse</v-btn
+              >
+            </template>
+          </check-permission-role>
+        </template></header-navigator
+      >
     </template>
     <scholastic-standing-form
       :scholasticStandingId="scholasticStandingId"
@@ -14,18 +27,27 @@
       :showCompleteInfo="true"
       :processing="false"
     />
+    <reverse-scholastic-standing-modal ref="reverseScholasticStandingModal" />
   </full-page-container>
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { computed } from "vue";
-import { RouteLocationRaw } from "vue-router";
+import { computed, ref } from "vue";
+import { RouteLocationRaw, useRouter } from "vue-router";
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import ReverseScholasticStandingModal from "@/components/aest/students/modals/ReverseScholasticStandingModal.vue";
+import { Role } from "@/types";
+import { ModalDialog, useSnackBar } from "@/composables";
+import { ReverseScholasticStandingAPIInDTO } from "@/services/http/dto";
+import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 
 export default {
   name: "ViewScholasticStanding",
   components: {
     ScholasticStandingForm,
+    CheckPermissionRole,
+    ReverseScholasticStandingModal,
   },
   props: {
     studentId: {
@@ -42,7 +64,12 @@ export default {
     },
   },
   setup(props) {
-    const goBackRouteParams = computed(
+    const router = useRouter();
+    const snackBar = useSnackBar();
+    const reverseScholasticStandingModal = ref(
+      {} as ModalDialog<ReverseScholasticStandingAPIInDTO | false>,
+    );
+    const goToAssessmentSummary = computed(
       () =>
         ({
           name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
@@ -52,8 +79,31 @@ export default {
           },
         } as RouteLocationRaw),
     );
+    const showReverseScholasticStandingModal = async () => {
+      const payload = await reverseScholasticStandingModal.value.showModal();
+      if (payload) {
+        try {
+          await ScholasticStandingService.shared.reverseScholasticStanding(
+            props.scholasticStandingId,
+            payload,
+          );
+          snackBar.success("Scholastic standing reversed successfully.");
+          router.push(goToAssessmentSummary.value);
+        } catch {
+          snackBar.error(
+            "Unexpected error while reversing the scholastic standing.",
+          );
+          reverseScholasticStandingModal.value.loading = false;
+        }
+      }
+    };
 
-    return { goBackRouteParams };
+    return {
+      goToAssessmentSummary,
+      Role,
+      reverseScholasticStandingModal,
+      showReverseScholasticStandingModal,
+    };
   },
 };
 </script>

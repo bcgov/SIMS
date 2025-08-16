@@ -15,7 +15,7 @@ import {
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import { TestingModule } from "@nestjs/testing";
-import { OfferingIntensity } from "@sims/sims-db";
+import { AssessmentTriggerType, OfferingIntensity } from "@sims/sims-db";
 import { deliveryMethod } from "../../../../utilities";
 
 describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStanding.", () => {
@@ -104,6 +104,8 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
           application.currentAssessment.offering.mandatoryFees,
         applicationOfferingExceptionalExpenses:
           application.currentAssessment.offering.exceptionalExpenses,
+        currentAssessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+        reversalDate: null,
       });
   });
 

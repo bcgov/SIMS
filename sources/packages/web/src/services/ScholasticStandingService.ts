@@ -2,6 +2,7 @@ import { DATE_ONLY_ISO_FORMAT, useFormatters } from "@/composables";
 import ApiClient from "@/services/http/ApiClient";
 import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
+  ReverseScholasticStandingAPIInDTO,
   ScholasticStandingDataAPIInDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
   ScholasticStandingSummaryDetailsAPIOutDTO,
@@ -136,6 +137,25 @@ export class ScholasticStandingService {
       }
       throw error;
     }
+  }
+
+  /**
+   * Reverse a scholastic standing and create a note for the reversal.
+   * Based on the scholastic standing type, there will be additional steps as part of the reversal process.
+   * For all the scholastic standing types which creates re-assessment, a new re-assessment will be created
+   * during the reversal process to reverse the study period changes.
+   * For all the scholastic standing types which archives the application, the archiving will be reversed.
+   * @param scholasticStandingId scholastic standing id to reverse.
+   * @param payload payload for the scholastic standing reversal.
+   */
+  async reverseScholasticStanding(
+    scholasticStandingId: number,
+    payload: ReverseScholasticStandingAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.ScholasticStandingApi.reverseScholasticStanding(
+      scholasticStandingId,
+      payload,
+    );
   }
 
   /**

@@ -536,6 +536,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .select([
         "studentScholasticStanding.id",
         "studentScholasticStanding.submittedData",
+        "studentScholasticStanding.reversalDate",
         "application.applicationStatus",
         "application.applicationNumber",
         "offering.offeringIntensity",
@@ -544,6 +545,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         "institutionLocation.name",
         "student.id",
         "application.id",
+        "currentAssessment.id",
+        "currentAssessment.triggerType",
         "user.firstName",
         "user.lastName",
         "offering.name",
@@ -563,6 +566,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .innerJoin("offering.institutionLocation", "institutionLocation")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("studentScholasticStanding.application", "application")
+      .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
       .where("studentScholasticStanding.id = :scholasticStandingId", {
