@@ -4,10 +4,12 @@ import {
   RestrictionCode,
   createE2EDataSources,
   createFakeInstitutionLocation,
+  createFakeSFASIndividual,
   createFakeStudentAppeal,
   createFakeStudentRestriction,
   getProviderInstanceForModule,
   saveFakeApplication,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import {
   BEARER_AUTH_TYPE,
@@ -1006,6 +1008,61 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
               totalDays: unsuccessfulWeeks * 7,
             } as StudyBreaksAndWeeks,
           },
+        },
+      );
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED);
+      const studentRestrictions = await getActiveStudentRestrictions(
+        application.student.id,
+      );
+      expect(studentRestrictions).toEqual([
+        {
+          id: expect.any(Number),
+          restriction: {
+            id: ssrRestriction.id,
+            restrictionCode: RestrictionCode.SSR,
+          },
+        },
+      ]);
+    });
+
+    it(`Should create an ${RestrictionCode.SSR} restriction when the student equals or exceeds ${SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS} weeks.`, async () => {
+      // Arrange
+      const unsuccessfulWeeks =
+        SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS - 1;
+      const student = await saveFakeStudent(db.dataSource);
+      const legacyProfile = createFakeSFASIndividual({
+        initialValues: {
+          student,
+          unsuccessfulCompletion: unsuccessfulWeeks,
+        },
+      });
+      await db.sfasIndividual.save(legacyProfile);
+      mockFormioDryRun({
+        studentScholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        numberOfUnsuccessfulWeeks: 1,
+      });
+      // Create a fake application with the same student.
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+          student,
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
         },
       );
       // Institution token.
