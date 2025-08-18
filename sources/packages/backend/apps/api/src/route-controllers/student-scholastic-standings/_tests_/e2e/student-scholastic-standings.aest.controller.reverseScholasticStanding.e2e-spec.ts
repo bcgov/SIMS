@@ -1074,68 +1074,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
 
   it("Should throw forbidden error when ministry user does not have the required permission(s) to reverse a scholastic standing.", async () => {
     // Arrange
-    // Define the actual study period dates.
-    const studyStartDate = getISODateOnlyString(new Date());
-    const studyEndDate = getISODateOnlyString(addDays(60));
-    // Create an application with a completed status to have a scholastic standing associated with it.
-    const application = await saveFakeApplication(db.dataSource, undefined, {
-      applicationStatus: ApplicationStatus.Completed,
-      offeringInitialValues: { studyStartDate, studyEndDate },
-    });
-    const offeringBeforeWithdrawal = application.currentAssessment.offering;
-
-    // Create an offering for withdrawal.
-    const withdrawalDate = getISODateOnlyString(addDays(-10, studyEndDate));
-    const withdrawalOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: sharedUser,
-      },
-      { initialValues: { studyStartDate, studyEndDate: withdrawalDate } },
-    );
-    await db.educationProgramOffering.save(withdrawalOffering);
-    // Create a student appeal with approved appeal request.
-    const approvedAppealRequest = createFakeStudentAppealRequest();
-    const studentAppeal = createFakeStudentAppeal({
-      application,
-      appealRequests: [approvedAppealRequest],
-    });
-    await db.studentAppeal.save(studentAppeal);
-    // Create a new assessment using the withdrawal offering.
-    const scholasticStandingAssessment = createFakeStudentAssessment(
-      {
-        auditUser: sharedUser,
-        application,
-        offering: withdrawalOffering,
-        studentAppeal,
-      },
-      {
-        initialValue: {
-          triggerType: AssessmentTriggerType.ScholasticStandingChange,
-        },
-      },
-    );
-    application.currentAssessment = scholasticStandingAssessment;
-    application.isArchived = true;
-    await db.application.save(application);
-    // Create a scholastic standing with the change type 'Student withdrew from program' which is already reversed.
-    const scholasticStanding = createFakeStudentScholasticStanding(
-      {
-        submittedBy: sharedUser,
-        application,
-      },
-      {
-        initialValues: {
-          changeType:
-            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-          referenceOffering: offeringBeforeWithdrawal,
-          reversalDate: new Date(),
-          reversalBy: sharedUser,
-        },
-      },
-    );
-    await db.studentScholasticStanding.save(scholasticStanding);
-
-    const endpoint = `/aest/scholastic-standing/${scholasticStanding.id}/reverse`;
+    const endpoint = "/aest/scholastic-standing/99999/reverse";
     const token = await getAESTToken(AESTGroups.Operations);
 
     // Act/Assert
