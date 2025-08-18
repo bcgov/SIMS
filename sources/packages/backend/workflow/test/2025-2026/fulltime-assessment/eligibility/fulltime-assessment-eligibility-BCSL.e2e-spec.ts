@@ -9,6 +9,7 @@ import {
   createFakeStudentDependentEligible,
   createFakeStudentDependentNotEligible,
 } from "../../../test-utils/factories";
+import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL.`, () => {
   it("Should determine BCSL as eligible when provincial need is at least $1.", async () => {
@@ -53,8 +54,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    // Eligible dependants  include dependants 18-22 attending post-secondary school, 0-18 years old and >22 if declared on taxes.
-    // Dependants eligible for CSGD must be either 0-11 years old or 12+ with a disability.
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
+    // Eligible dependants include dependants 18-22 attending post-secondary school, 0-18 years old and >22 if declared on taxes.
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
@@ -72,12 +73,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
     expect(calculatedAssessment.variables.awardEligibilityBCTopUp).toBe(true);
   });
 
-  it("Should determine BC(SL) Top Up as eligible when eligible dependants is 0.", async () => {
+  it("Should determine BC(SL) Top Up as not eligible when eligible dependants is 0.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    // Eligible dependants  include dependants 18-22 attending post-secondary school, 0-18 years old and >22 if declared on taxes.
-    // Dependants eligible for CSGD must be either 0-11 years old or 12+ with a disability.
+    assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
+    // Eligible dependants include dependants 18-22 attending post-secondary school, 0-18 years old and >22 if declared on taxes.
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentNotEligible(
         DependentEligibility.EligibleOver22YearsOld,
