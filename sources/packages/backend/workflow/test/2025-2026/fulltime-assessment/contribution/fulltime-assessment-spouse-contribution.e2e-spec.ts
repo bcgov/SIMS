@@ -394,7 +394,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
     assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
       YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
-
     assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
 
     // Act
@@ -507,7 +506,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
     ).toBe(0);
   });
 
-  it("Should calculate $0 fixed student contribution for a married independent student when both are exempt (FT Student for >= offering weeks).", async () => {
+  it("Should calculate $0 fixed student contribution for a married independent student when both are exempt (Spouse FT Student Weeks > Offering Weeks).", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -521,6 +520,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
       YesNoOptions.No;
     assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
     assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
+    // The spouse is a full-time student for more weeks than the student's offering weeks (16).
     assessmentConsolidatedData.studentDataPartnerStudyWeeks = 20;
 
     // Act
