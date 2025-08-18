@@ -876,4 +876,278 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
       });
     },
   );
+
+  it(
+    `Should throw unprocessable entity error when scholastic standing reversal is requested for a scholastic standing change type ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}` +
+      ` and the current assessment trigger type is ${AssessmentTriggerType.ManualReassessment} which is not among the allowed trigger types for scholastic standing reversal.`,
+    async () => {
+      // Arrange
+      // Define the actual study period dates.
+      const studyStartDate = getISODateOnlyString(new Date());
+      const studyEndDate = getISODateOnlyString(addDays(60));
+      // Create an application with a completed status to have a scholastic standing associated with it.
+      const application = await saveFakeApplication(db.dataSource, undefined, {
+        applicationStatus: ApplicationStatus.Completed,
+        offeringInitialValues: { studyStartDate, studyEndDate },
+      });
+      const offeringBeforeWithdrawal = application.currentAssessment.offering;
+
+      // Create an offering for withdrawal.
+      const withdrawalDate = getISODateOnlyString(addDays(-10, studyEndDate));
+      const withdrawalOffering = createFakeEducationProgramOffering(
+        {
+          auditUser: sharedUser,
+        },
+        { initialValues: { studyStartDate, studyEndDate: withdrawalDate } },
+      );
+      await db.educationProgramOffering.save(withdrawalOffering);
+      // Create a student appeal with approved appeal request.
+      const approvedAppealRequest = createFakeStudentAppealRequest();
+      const studentAppeal = createFakeStudentAppeal({
+        application,
+        appealRequests: [approvedAppealRequest],
+      });
+      await db.studentAppeal.save(studentAppeal);
+      // Create a new assessment using the withdrawal offering.
+      const scholasticStandingAssessment = createFakeStudentAssessment(
+        {
+          auditUser: sharedUser,
+          application,
+          offering: withdrawalOffering,
+          studentAppeal,
+        },
+        {
+          initialValue: {
+            triggerType: AssessmentTriggerType.ScholasticStandingChange,
+          },
+        },
+      );
+      application.currentAssessment = scholasticStandingAssessment;
+      application.isArchived = true;
+      await db.application.save(application);
+      // Create a scholastic standing with the change type 'Student withdrew from program'.
+      const scholasticStanding = createFakeStudentScholasticStanding(
+        {
+          submittedBy: sharedUser,
+          application,
+        },
+        {
+          initialValues: {
+            changeType:
+              StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+            referenceOffering: offeringBeforeWithdrawal,
+          },
+        },
+      );
+      await db.studentScholasticStanding.save(scholasticStanding);
+      // Create a new  re-assessment with trigger type which is not allowed for scholastic standing reversal.
+      const assessmentWithReversalNotAllowed = createFakeStudentAssessment(
+        {
+          auditUser: sharedUser,
+          application,
+          offering: withdrawalOffering,
+          studentAppeal,
+        },
+        {
+          initialValue: {
+            triggerType: AssessmentTriggerType.ManualReassessment,
+          },
+        },
+      );
+      application.currentAssessment = assessmentWithReversalNotAllowed;
+      await db.application.save(application);
+
+      const endpoint = `/aest/scholastic-standing/${scholasticStanding.id}/reverse`;
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          message:
+            "Scholastic standing reversal is not allowed for change type Student withdrew from program as the current assessment trigger type is not among allowed trigger types Scholastic standing change, Related application changed Manual reassessment but Manual reassessment.",
+          error: "Unprocessable Entity",
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        });
+    },
+  );
+
+  it("Should throw unprocessable entity error when scholastic standing is already reversed.", async () => {
+    // Arrange
+    // Define the actual study period dates.
+    const studyStartDate = getISODateOnlyString(new Date());
+    const studyEndDate = getISODateOnlyString(addDays(60));
+    // Create an application with a completed status to have a scholastic standing associated with it.
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationStatus: ApplicationStatus.Completed,
+      offeringInitialValues: { studyStartDate, studyEndDate },
+    });
+    const offeringBeforeWithdrawal = application.currentAssessment.offering;
+
+    // Create an offering for withdrawal.
+    const withdrawalDate = getISODateOnlyString(addDays(-10, studyEndDate));
+    const withdrawalOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: sharedUser,
+      },
+      { initialValues: { studyStartDate, studyEndDate: withdrawalDate } },
+    );
+    await db.educationProgramOffering.save(withdrawalOffering);
+    // Create a student appeal with approved appeal request.
+    const approvedAppealRequest = createFakeStudentAppealRequest();
+    const studentAppeal = createFakeStudentAppeal({
+      application,
+      appealRequests: [approvedAppealRequest],
+    });
+    await db.studentAppeal.save(studentAppeal);
+    // Create a new assessment using the withdrawal offering.
+    const scholasticStandingAssessment = createFakeStudentAssessment(
+      {
+        auditUser: sharedUser,
+        application,
+        offering: withdrawalOffering,
+        studentAppeal,
+      },
+      {
+        initialValue: {
+          triggerType: AssessmentTriggerType.ScholasticStandingChange,
+        },
+      },
+    );
+    application.currentAssessment = scholasticStandingAssessment;
+    application.isArchived = true;
+    await db.application.save(application);
+    // Create a scholastic standing with the change type 'Student withdrew from program' which is already reversed.
+    const scholasticStanding = createFakeStudentScholasticStanding(
+      {
+        submittedBy: sharedUser,
+        application,
+      },
+      {
+        initialValues: {
+          changeType:
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+          referenceOffering: offeringBeforeWithdrawal,
+          reversalDate: new Date(),
+          reversalBy: sharedUser,
+        },
+      },
+    );
+    await db.studentScholasticStanding.save(scholasticStanding);
+
+    const endpoint = `/aest/scholastic-standing/${scholasticStanding.id}/reverse`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: `Scholastic standing ${scholasticStanding.id} is already reversed.`,
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it("Should throw not found error when scholastic standing is not found.", async () => {
+    // Arrange
+    const endpoint = "/aest/scholastic-standing/99999/reverse";
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        message: "Scholastic standing 99999 not found.",
+        error: "Not Found",
+        statusCode: HttpStatus.NOT_FOUND,
+      });
+  });
+
+  it("Should throw forbidden error when ministry user does not have the required permission(s) to reverse a scholastic standing.", async () => {
+    // Arrange
+    // Define the actual study period dates.
+    const studyStartDate = getISODateOnlyString(new Date());
+    const studyEndDate = getISODateOnlyString(addDays(60));
+    // Create an application with a completed status to have a scholastic standing associated with it.
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationStatus: ApplicationStatus.Completed,
+      offeringInitialValues: { studyStartDate, studyEndDate },
+    });
+    const offeringBeforeWithdrawal = application.currentAssessment.offering;
+
+    // Create an offering for withdrawal.
+    const withdrawalDate = getISODateOnlyString(addDays(-10, studyEndDate));
+    const withdrawalOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: sharedUser,
+      },
+      { initialValues: { studyStartDate, studyEndDate: withdrawalDate } },
+    );
+    await db.educationProgramOffering.save(withdrawalOffering);
+    // Create a student appeal with approved appeal request.
+    const approvedAppealRequest = createFakeStudentAppealRequest();
+    const studentAppeal = createFakeStudentAppeal({
+      application,
+      appealRequests: [approvedAppealRequest],
+    });
+    await db.studentAppeal.save(studentAppeal);
+    // Create a new assessment using the withdrawal offering.
+    const scholasticStandingAssessment = createFakeStudentAssessment(
+      {
+        auditUser: sharedUser,
+        application,
+        offering: withdrawalOffering,
+        studentAppeal,
+      },
+      {
+        initialValue: {
+          triggerType: AssessmentTriggerType.ScholasticStandingChange,
+        },
+      },
+    );
+    application.currentAssessment = scholasticStandingAssessment;
+    application.isArchived = true;
+    await db.application.save(application);
+    // Create a scholastic standing with the change type 'Student withdrew from program' which is already reversed.
+    const scholasticStanding = createFakeStudentScholasticStanding(
+      {
+        submittedBy: sharedUser,
+        application,
+      },
+      {
+        initialValues: {
+          changeType:
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+          referenceOffering: offeringBeforeWithdrawal,
+          reversalDate: new Date(),
+          reversalBy: sharedUser,
+        },
+      },
+    );
+    await db.studentScholasticStanding.save(scholasticStanding);
+
+    const endpoint = `/aest/scholastic-standing/${scholasticStanding.id}/reverse`;
+    const token = await getAESTToken(AESTGroups.Operations);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message: "Forbidden resource",
+        error: "Forbidden",
+        statusCode: HttpStatus.FORBIDDEN,
+      });
+  });
 });
