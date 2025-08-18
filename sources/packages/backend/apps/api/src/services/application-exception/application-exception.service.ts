@@ -79,7 +79,8 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       )
       .leftJoin("exception.exceptionNote", "exceptionNote")
       .leftJoin("exception.assessedBy", "assessedBy")
-      .where("exception.id = :exceptionId", { exceptionId });
+      .where("exception.id = :exceptionId", { exceptionId })
+      .orderBy("exceptionRequest.exceptionDescription", "ASC");
 
     if (options?.studentId || options?.applicationId) {
       exception.innerJoin("exception.application", "application");
