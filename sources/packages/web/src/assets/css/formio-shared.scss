@@ -454,9 +454,8 @@
 
 /* form.io status chip */
 .formio-status-chip {
-  border-width: 1px;
-  padding-left: 15px;
-  padding-right: 10px;
+  border-width: 2px;
+  padding: 8px;
   position: absolute;
   border-radius: 30px;
   border-style: solid;
@@ -847,4 +846,12 @@ td .formio-custom-tooltip:hover .tooltip-text {
 */
 .formio-component-weight-bold > div:first-child {
   font-weight: $font-weight-bold;
+}
+
+.borderless-datagrid.formio-component-datagrid .datagrid-table,
+.borderless-datagrid.formio-component-datagrid .datagrid-table td,
+.borderless-datagrid.formio-component-datagrid .datagrid-table th {
+  border: none !important;
+  border-color: transparent !important;
+  padding: 5px 0px 5px 0px;
 }
