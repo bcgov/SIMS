@@ -95,6 +95,24 @@ export type AssessmentAPIOutDTO = Omit<Assessment, "totalFamilyIncome"> & {
    * of the original assessment output.
    */
   returnTransportationCost?: number;
+  /**
+   * Student dependent status from workflow data.
+   * Values: "independant" or "dependant"
+   */
+  studentDataDependantstatus?: string;
+  /**
+   * Family size calculated by the workflow.
+   */
+  calculatedDataFamilySize?: number;
+  /**
+   * Total number of eligible dependants calculated by the workflow.
+   */
+  calculatedDataTotalEligibleDependants?: number;
+  /**
+   * Living allowance category calculated by the workflow.
+   * Values: "M", "SP", "SIA", "SIH", "SDA", "SDH"
+   */
+  calculatedDataLivingCategory?: string;
 };
 
 export class AssessmentNOAAPIOutDTO {

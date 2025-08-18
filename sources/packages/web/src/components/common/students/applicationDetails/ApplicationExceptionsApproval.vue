@@ -16,6 +16,7 @@
       :formData="applicationExceptions"
       :readOnly="readOnlyForm"
       @submitted="$emit('submitted', $event)"
+      :is-data-ready="isDataReady"
     >
       <template #actions="{ submit }" v-if="!readOnly">
         <check-permission-role :role="Role.StudentApproveDeclineExceptions">
@@ -34,16 +35,15 @@
   </full-page-container>
 </template>
 <script lang="ts">
-import { ref, onMounted, defineComponent, PropType } from "vue";
+import { ref, defineComponent, PropType, watchEffect } from "vue";
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
 import { ApplicationExceptionStatus, FormIOForm, Role } from "@/types";
 import {
-  ApplicationExceptionAPIOutDTO,
   DetailedApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
-import { useAssessment, useFormatters } from "@/composables";
+import { useAssessment, useFormatters, useSnackBar } from "@/composables";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
@@ -51,10 +51,11 @@ import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeader
 /**
  * Model to be used to populate the form.io.
  */
-type ApplicationExceptionFormModel = Omit<
-  ApplicationExceptionAPIOutDTO,
-  "assessedDate"
-> & {
+interface ApplicationExceptionFormModel {
+  /**
+   * Current exception status.
+   */
+  exceptionStatus: ApplicationExceptionStatus;
   /**
    * Exception status at the moment that the data was loaded.
    * used mainly when the form is being edited and change the
@@ -63,26 +64,35 @@ type ApplicationExceptionFormModel = Omit<
    */
   exceptionStatusOnLoad: ApplicationExceptionStatus;
   /**
-   * Hides the assessedDate defined as a Date property
-   * allowing the conversion to the correct string format
-   * to be displayed in the UI.
+   * Formatted date when the exception was approved.
    */
   assessedDate: string;
+  /**
+   * User that approved the exception.
+   */
+  assessedByUserName: string;
+  /**
+   * Assessment notes.
+   */
+  noteDescription: string;
   /**
    * CSS class to be applied to the status chip.
    */
   exceptionStatusClass: string;
   /**
-   * Simplification of the property exceptionRequests
-   * for easy consumption inside form.io definition.
-   */
-  exceptionNames: string[];
-  /**
    * ShowStaffApproval will decide if the staff approval section should
    * be hidden or not.
    */
   showStaffApproval: boolean;
-};
+  /**
+   * Description of exceptions that were requested to be approved.
+   */
+  requestedForApproval: string[];
+  /**
+   * Description of the previously approved exceptions.
+   */
+  previouslyApprovedRequests: string[];
+}
 
 export default defineComponent({
   emits: {
@@ -125,38 +135,67 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const snackBar = useSnackBar();
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
     const { mapRequestAssessmentChipStatus } = useAssessment();
     const applicationExceptions = ref({} as ApplicationExceptionFormModel);
     const submittedDate = ref("");
     const readOnly = ref(true);
+    const isDataReady = ref(false);
 
-    onMounted(async () => {
-      const applicationException =
-        await ApplicationExceptionService.shared.getExceptionDetails<DetailedApplicationExceptionAPIOutDTO>(
-          props.exceptionId,
-          props.studentId,
-          props.applicationId,
+    watchEffect(async () => {
+      try {
+        isDataReady.value = false;
+        const applicationException =
+          await ApplicationExceptionService.shared.getExceptionDetails<DetailedApplicationExceptionAPIOutDTO>(
+            props.exceptionId,
+            props.studentId,
+            props.applicationId,
+          );
+        // Description of exceptions that were submitted for
+        // the first time to be assessed.
+        const requestedForApproval = applicationException.exceptionRequests
+          .filter((request) => !request.previouslyApprovedOn)
+          .map((request) => request.exceptionDescription);
+        // Descriptions of exceptions that were submitted and
+        // approved in some of the previous application versions.
+        const previouslyApprovedRequests =
+          applicationException.exceptionRequests
+            .filter((request) => !!request.previouslyApprovedOn)
+            .map(
+              (request) =>
+                `${
+                  request.exceptionDescription
+                } (approved on ${dateOnlyLongString(
+                  request.previouslyApprovedOn,
+                )})`,
+            );
+        applicationExceptions.value = {
+          assessedByUserName: applicationException.assessedByUserName,
+          assessedDate: dateOnlyLongString(applicationException.assessedDate),
+          noteDescription: applicationException.noteDescription,
+          exceptionStatusClass: mapRequestAssessmentChipStatus(
+            applicationException.exceptionStatus,
+          ),
+          requestedForApproval,
+          previouslyApprovedRequests,
+          exceptionStatusOnLoad: applicationException.exceptionStatus,
+          exceptionStatus: applicationException.exceptionStatus,
+          showStaffApproval: props.showStaffApproval,
+        };
+        submittedDate.value = dateOnlyLongString(
+          applicationException.submittedDate,
         );
-      applicationExceptions.value = {
-        ...applicationException,
-        assessedDate: dateOnlyLongString(applicationException.assessedDate),
-        exceptionStatusClass: mapRequestAssessmentChipStatus(
-          applicationException.exceptionStatus,
-        ),
-        exceptionStatusOnLoad: applicationException.exceptionStatus,
-        exceptionNames: applicationException.exceptionRequests.map(
-          (exception) => exception.exceptionName,
-        ),
-        showStaffApproval: props.showStaffApproval,
-      };
-      submittedDate.value = dateOnlyLongString(
-        applicationException.submittedDate,
-      );
-      readOnly.value =
-        applicationException.exceptionStatus !==
-          ApplicationExceptionStatus.Pending || props.readOnlyForm;
+        readOnly.value =
+          applicationException.exceptionStatus !==
+            ApplicationExceptionStatus.Pending || props.readOnlyForm;
+        isDataReady.value = true;
+      } catch {
+        snackBar.error(
+          "Unexpected error while loading the student application exceptions.",
+        );
+      }
     });
 
     const gotToAssessmentsSummary = () => {
@@ -169,6 +208,7 @@ export default defineComponent({
       submittedDate,
       readOnly,
       Role,
+      isDataReady,
     };
   },
 });

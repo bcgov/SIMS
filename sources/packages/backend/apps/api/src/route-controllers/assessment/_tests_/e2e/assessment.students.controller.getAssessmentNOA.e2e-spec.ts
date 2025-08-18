@@ -84,6 +84,14 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
               calculatedData: {
                 totalAdditionalTransportationAllowance: 100,
                 returnTransportationCost: 200,
+                familySize: 2,
+                totalEligibleDependents: 1,
+              },
+              studentData: {
+                dependantStatus: "dependant",
+              },
+              dmnValues: {
+                livingCategory: "M",
               },
             } as WorkflowData,
           },
@@ -129,6 +137,10 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         ...assessment.assessmentData,
         totalAdditionalTransportationAllowance: 100,
         returnTransportationCost: 200,
+        studentDataDependantstatus: "dependant",
+        calculatedDataFamilySize: 2,
+        calculatedDataTotalEligibleDependants: 1,
+        calculatedDataLivingCategory: "M",
       },
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationCurrentAssessmentId: application.currentAssessment.id,
@@ -213,6 +225,14 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       calculatedData: {
         returnTransportationCost: 100,
         totalAdditionalTransportationAllowance: 120,
+        familySize: 2,
+        totalEligibleDependents: 1,
+      },
+      studentData: {
+        dependantStatus: "dependant",
+      },
+      dmnValues: {
+        livingCategory: "M",
       },
     } as WorkflowData;
     // Creates a new application's current assessment.
@@ -274,6 +294,10 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           workflowData.calculatedData.totalAdditionalTransportationAllowance,
         returnTransportationCost:
           workflowData.calculatedData.returnTransportationCost,
+        studentDataDependantstatus: "dependant",
+        calculatedDataFamilySize: 2,
+        calculatedDataTotalEligibleDependants: 1,
+        calculatedDataLivingCategory: "M",
       },
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationCurrentAssessmentId: application.currentAssessment.id,
@@ -392,7 +416,11 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       applicationId: application.id,
       applicationNumber: application.applicationNumber,
       applicationStatus: application.applicationStatus,
-      assessment: assessment.assessmentData,
+      assessment: {
+        ...assessment.assessmentData,
+        studentDataDependantstatus: "dependant",
+        calculatedDataFamilySize: 2,
+      },
       noaApprovalStatus: assessment.noaApprovalStatus,
       applicationCurrentAssessmentId: application.currentAssessment.id,
       fullName: getUserFullName(application.student.user),
