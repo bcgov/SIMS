@@ -2,6 +2,7 @@
   <formio-container
     formName="reportScholasticStandingChange"
     :formData="formData"
+    :is-data-ready="isDataReady || isParentDataReady"
     @submitted="submitted"
   >
     <template #actions="{ submit }">
@@ -40,7 +41,7 @@ type ScholasticStandingData =
     };
 
 export default defineComponent({
-  emits: ["submit", "cancel"],
+  emits: ["submit", "cancel", "dataLoaded"],
   props: {
     scholasticStandingId: {
       type: Number,
@@ -70,13 +71,22 @@ export default defineComponent({
       required: true,
       default: false,
     },
+    // This indicator is used to determine if the parent data is ready
+    // when the initial data is provided by the parent component.
+    isParentDataReady: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props, context) {
     const formData = ref({} as ScholasticStandingData);
     const { dateOnlyLongString } = useFormatters();
+    const isDataReady = ref(false);
 
     watchEffect(async () => {
       if (props.scholasticStandingId) {
+        isDataReady.value = false;
         const applicationDetails =
           await ScholasticStandingService.shared.getScholasticStanding(
             props.scholasticStandingId,
@@ -99,6 +109,8 @@ export default defineComponent({
           showCompleteInfo: props.showCompleteInfo,
           readOnly: props.readOnly,
         };
+        isDataReady.value = true;
+        context.emit("dataLoaded", applicationDetails);
         return;
       }
       formData.value = {
@@ -116,7 +128,7 @@ export default defineComponent({
       context.emit("cancel");
     };
 
-    return { formData, submitted, cancel };
+    return { formData, submitted, cancel, isDataReady };
   },
 });
 </script>

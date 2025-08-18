@@ -13,6 +13,7 @@
       :showCompleteInfo="true"
       :processing="processing"
       :readOnly="isReadOnlyUser(locationId)"
+      :is-parent-data-ready="isDataReady"
       @submit="submit"
       @cancel="goBack"
     />
@@ -58,7 +59,9 @@ export default defineComponent({
     const initialData = ref({} as ActiveApplicationDataAPIOutDTO);
     const snackBar = useSnackBar();
     const processing = ref(false);
+    const isDataReady = ref(false);
     const loadInitialData = async () => {
+      isDataReady.value = false;
       const applicationDetails =
         await InstitutionService.shared.getActiveApplication(
           props.applicationId,
@@ -82,6 +85,7 @@ export default defineComponent({
             }),
           ),
       };
+      isDataReady.value = true;
     };
 
     onMounted(async () => {
@@ -140,6 +144,7 @@ export default defineComponent({
       processing,
       goBack,
       isReadOnlyUser,
+      isDataReady,
     };
   },
 });
