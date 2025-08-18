@@ -66,6 +66,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
       assessmentConsolidatedData,
     );
     // Assert
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalEligibleDependants,
+    ).toBe(1);
     expect(calculatedAssessment.variables.awardEligibilityBCTopUp).toBe(true);
   });
 
@@ -87,6 +90,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
       assessmentConsolidatedData,
     );
     // Assert
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalEligibleDependants,
+    ).toBe(0);
     expect(calculatedAssessment.variables.awardEligibilityBCTopUp).toBe(false);
   });
 
