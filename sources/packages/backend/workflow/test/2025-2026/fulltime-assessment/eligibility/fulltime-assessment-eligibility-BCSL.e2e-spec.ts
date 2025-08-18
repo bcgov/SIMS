@@ -7,6 +7,7 @@ import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   DependentEligibility,
   createFakeStudentDependentEligible,
+  createFakeStudentDependentNotEligible,
 } from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL.`, () => {
@@ -48,17 +49,15 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
     ).toBe(0);
   });
 
-  it("Should determine CSGD as not eligible when financial need is at least $1 and total family income is below the threshold and eligible dependents is 0.", async () => {
+  it("Should determine BC(SL) Top Up as eligible when eligible dependants is greater than 0.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    // Ensures that the income is below any threshold to force enforce the "at least one eligible dependants" rule to fail.
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 1000;
-    // Eligible dependants for family size include dependants 18-22 attending post-secondary school.
+    // Eligible dependants  include dependants 18-22 attending post-secondary school, 0-18 years old and >22 if declared on taxes.
     // Dependants eligible for CSGD must be either 0-11 years old or 12+ with a disability.
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
-        DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
+        DependentEligibility.Eligible0To18YearsOld,
       ),
     ];
     // Act
@@ -67,7 +66,28 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
       assessmentConsolidatedData,
     );
     // Assert
-    expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(false);
+    expect(calculatedAssessment.variables.awardEligibilityBCTopUp).toBe(true);
+  });
+
+  it("Should determine BC(SL) Top Up as eligible when eligible dependants is 0.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    // Eligible dependants  include dependants 18-22 attending post-secondary school, 0-18 years old and >22 if declared on taxes.
+    // Dependants eligible for CSGD must be either 0-11 years old or 12+ with a disability.
+    assessmentConsolidatedData.studentDataDependants = [
+      createFakeStudentDependentNotEligible(
+        DependentEligibility.EligibleOver22YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
+      ),
+    ];
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    expect(calculatedAssessment.variables.awardEligibilityBCTopUp).toBe(false);
   });
 
   afterAll(async () => {
