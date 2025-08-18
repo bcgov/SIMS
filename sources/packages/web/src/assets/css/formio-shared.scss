@@ -852,5 +852,6 @@ td .formio-custom-tooltip:hover .tooltip-text {
 .borderless-datagrid.formio-component-datagrid .datagrid-table td,
 .borderless-datagrid.formio-component-datagrid .datagrid-table th {
   border: none !important;
+  border-color: transparent !important;
   padding: 5px 0px 5px 0px;
 }
