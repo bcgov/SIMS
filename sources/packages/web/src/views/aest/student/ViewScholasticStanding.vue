@@ -50,6 +50,14 @@ import {
 } from "@/services/http/dto";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 
+/**
+ * List of current assessment trigger types that allow scholastic standing reversal.
+ */
+const SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES = [
+  AssessmentTriggerType.ScholasticStandingChange,
+  AssessmentTriggerType.RelatedApplicationChanged,
+];
+
 export default {
   name: "ViewScholasticStanding",
   components: {
@@ -87,8 +95,9 @@ export default {
     const showScholasticStandingReversalAction = computed(
       () =>
         !scholasticStandingDetails.value.reversalDate &&
-        (scholasticStandingDetails.value.currentAssessmentTriggerType ===
-          AssessmentTriggerType.ScholasticStandingChange ||
+        (SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES.includes(
+          scholasticStandingDetails.value.currentAssessmentTriggerType,
+        ) ||
           scholasticStandingDetails.value.scholasticStandingChangeType ===
             StudentScholasticStandingChangeType.StudentDidNotCompleteProgram),
     );

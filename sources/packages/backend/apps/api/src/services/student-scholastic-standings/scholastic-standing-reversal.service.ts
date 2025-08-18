@@ -18,6 +18,7 @@ import {
   SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED,
 } from "../../constants";
 import { DataSource, IsNull, Repository } from "typeorm";
+import { SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES } from "../../utilities";
 
 /**
  * Service to handle scholastic standing reversal operations.
@@ -122,11 +123,17 @@ export class ScholasticStandingReversalService {
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram;
     if (
       isReAssessmentAndArchiveUpdateRequired &&
-      currentAssessment.triggerType !==
-        AssessmentTriggerType.ScholasticStandingChange
+      !SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES.includes(
+        currentAssessment.triggerType,
+      )
     ) {
       throw new CustomNamedError(
-        `Scholastic standing reversal is not allowed for change type ${scholasticStanding.changeType} as the current assessment trigger type is not ${AssessmentTriggerType.ScholasticStandingChange} but ${currentAssessment.triggerType}.`,
+        `Scholastic standing reversal is not allowed for change type ${
+          scholasticStanding.changeType
+        } as the current assessment trigger type is not among allowed trigger types ${SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES.join(
+          ", ",
+        )} ${currentAssessment.triggerType}` +
+          ` but ${currentAssessment.triggerType}.`,
         SCHOLASTIC_STANDING_REVERSAL_NOT_ALLOWED,
       );
     }

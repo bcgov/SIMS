@@ -1,4 +1,5 @@
 import { RestrictionCode } from "@sims/services";
+import { AssessmentTriggerType } from "@sims/sims-db";
 
 export const PIR_DENIED_REASON_OTHER_ID = 1;
 /**
@@ -127,3 +128,11 @@ export const OFFERING_MINIMUM_ONLINE_DURATION_PERCENTAGE = 1;
  * Maximum percentage of an offering duration that should be online.
  */
 export const OFFERING_MAXIMUM_ONLINE_DURATION_PERCENTAGE = 99;
+
+/**
+ * List of current assessment trigger types that allow scholastic standing reversal.
+ */
+export const SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES = [
+  AssessmentTriggerType.ScholasticStandingChange,
+  AssessmentTriggerType.RelatedApplicationChanged,
+];

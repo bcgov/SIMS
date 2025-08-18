@@ -37,7 +37,7 @@ import {
   SCHOLASTIC_STANDING_REVERSAL_NOT_ALLOWED,
   SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED,
 } from "../../constants";
-import { AssessmentTriggerType } from "@sims/sims-db";
+import { SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES } from "../../utilities";
 
 /**
  * Scholastic standing controller for AEST Client.
@@ -103,7 +103,9 @@ export class ScholasticStandingAESTController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "Scholastic standing is already reversed" +
-      ` or scholastic standing reversal is not allowed as the current assessment trigger type is not ${AssessmentTriggerType.ScholasticStandingChange}` +
+      ` or scholastic standing reversal is not allowed as the current assessment trigger type is not among the allowed trigger types ${SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES.join(
+        ", ",
+      )}` +
       " or scholastic standing reversal is not updated.",
   })
   async reverseScholasticStanding(
