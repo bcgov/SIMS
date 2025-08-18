@@ -506,7 +506,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
     ).toBe(0);
   });
 
-  it("Should calculate $0 fixed student contribution for a married independent student when both are exempt (Spouse FT Student Weeks > Offering Weeks).", async () => {
+  it("Should calculate $0 fixed student contribution for a married independent student when both are exempt (Partner FT Study Weeks more than Offering Weeks).", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
