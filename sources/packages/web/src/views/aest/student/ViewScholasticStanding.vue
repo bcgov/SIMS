@@ -86,7 +86,7 @@ export default {
       {} as ScholasticStandingSubmittedDetailsAPIOutDTO,
     );
     const reverseScholasticStandingModal = ref(
-      {} as ModalDialog<ReverseScholasticStandingAPIInDTO | false>,
+      {} as ModalDialog<ReverseScholasticStandingAPIInDTO>,
     );
     // Show the reversal action button if the scholastic standing is not already reversed
     // and if the scholastic standing change type requires re-assessment (any change type except unsuccessful completion)
@@ -112,22 +112,29 @@ export default {
         } as RouteLocationRaw),
     );
     const showReverseScholasticStandingModal = async () => {
-      const payload = await reverseScholasticStandingModal.value.showModal();
-      if (payload) {
-        try {
-          await ScholasticStandingService.shared.reverseScholasticStanding(
-            props.scholasticStandingId,
-            payload,
-          );
-          snackBar.success("Scholastic standing reversed successfully.");
-          await router.push(goToAssessmentSummary.value);
-        } catch {
-          snackBar.error(
-            "Unexpected error while reversing the scholastic standing.",
-          );
-          reverseScholasticStandingModal.value.loading = false;
-        }
+      await reverseScholasticStandingModal.value.showModal(
+        undefined,
+        reverseScholasticStanding,
+      );
+    };
+
+    const reverseScholasticStanding = async (
+      payload: ReverseScholasticStandingAPIInDTO,
+    ): Promise<boolean> => {
+      try {
+        await ScholasticStandingService.shared.reverseScholasticStanding(
+          props.scholasticStandingId,
+          payload,
+        );
+        snackBar.success("Scholastic standing reversed successfully.");
+        await router.push(goToAssessmentSummary.value);
+        return true;
+      } catch {
+        snackBar.error(
+          "Unexpected error while reversing the scholastic standing.",
+        );
       }
+      return false;
     };
 
     const dataLoaded = (data: ScholasticStandingSubmittedDetailsAPIOutDTO) => {
