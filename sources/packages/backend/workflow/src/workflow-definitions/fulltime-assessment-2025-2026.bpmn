@@ -890,7 +890,7 @@ dmnFullTimeIncomeThreshold</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_0agg2gq" name="BC Top Up Eligibility">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if calculatedDataTotalEligibleDependants &#62;0&#10;then true&#10;else false" target="awardEligiblityBCTopUp" />
+          <zeebe:output source="=if calculatedDataTotalEligibleDependants &#62;0&#10;then true&#10;else false" target="awardEligibilityBCTopUp" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_06x3mce</bpmn:incoming>
@@ -1126,7 +1126,7 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
     <bpmn:intermediateThrowEvent id="Event_0tml7mg" name="Calculate Max Potential BCSL">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (awardEligibilityBCSL = true) &#10;then&#10;  if (awardEligiblityBCTopUp = true) then (dmnFullTimeAwardAllowableLimits.limitAwardBCSLRateWithDependents * offeringWeeks)&#10;   else  (dmnFullTimeAwardAllowableLimits.limitAwardBCSLRateWithoutDependents * offeringWeeks)&#10;else &#10;  0" target="calculatedDataPotentialBCSL" />
+          <zeebe:output source="=if (awardEligibilityBCSL = true) &#10;then&#10;  if (awardEligibilityBCTopUp = true) then (dmnFullTimeAwardAllowableLimits.limitAwardBCSLRateWithDependents * offeringWeeks)&#10;   else  (dmnFullTimeAwardAllowableLimits.limitAwardBCSLRateWithoutDependents * offeringWeeks)&#10;else &#10;  0" target="calculatedDataPotentialBCSL" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_16npkhr</bpmn:incoming>
@@ -1188,7 +1188,7 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
     <bpmn:intermediateThrowEvent id="Event_15gw653" name="Calculate Max BC Top-Up">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if(awardEligiblityBCTopUp = true)&#10;  then&#10;  dmnFullTimeAwardAllowableLimits.limitAwardWeeklyMaximumTopup * offeringWeeks&#10;else&#10;  0" target="calculatedDataBCTopup" />
+          <zeebe:output source="=if(awardEligibilityBCTopUp = true)&#10;  then&#10;  dmnFullTimeAwardAllowableLimits.limitAwardWeeklyMaximumTopup * offeringWeeks&#10;else&#10;  0" target="calculatedDataBCTopup" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_18b447c</bpmn:incoming>
@@ -1262,7 +1262,7 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
     <bpmn:sequenceFlow id="Flow_1y66wfs" sourceRef="Event_0k61284" targetRef="Event_02b62pr" />
     <bpmn:sequenceFlow id="Flow_1bp8xjk" sourceRef="Event_0wsaq9c" targetRef="Event_1b397cd" />
     <bpmn:sequenceFlow id="Flow_15cawt4" name="No" sourceRef="Gateway_1ou1gl5" targetRef="Event_00nf274">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=awardEligiblityBCTopUp = false</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=awardEligibilityBCTopUp = false</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1bwo33x" sourceRef="Event_00nf274" targetRef="Gateway_14udst9" />
     <bpmn:sequenceFlow id="Flow_1papkhu" sourceRef="Event_0fjl0zr" targetRef="Gateway_14udst9" />
@@ -1279,7 +1279,7 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
     <bpmn:sequenceFlow id="Flow_0tsq896" sourceRef="Event_0j44ttl" targetRef="Event_0wsaq9c" />
     <bpmn:sequenceFlow id="Flow_002wks7" sourceRef="Event_02b62pr" targetRef="Gateway_1ou1gl5" />
     <bpmn:sequenceFlow id="Flow_1p7o8v2" name="Yes" sourceRef="Gateway_1ou1gl5" targetRef="Event_0fjl0zr">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=awardEligiblityBCTopUp = true</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=awardEligibilityBCTopUp = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0b8daly" sourceRef="Event_07f5bxc" targetRef="Event_0o9cj80" />
     <bpmn:sequenceFlow id="Flow_18b447c" sourceRef="Event_07ht20d" targetRef="Event_15gw653" />
@@ -3718,7 +3718,7 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
         <di:waypoint x="11380" y="3375" />
         <di:waypoint x="11452" y="3375" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="11412" y="3358" width="17" height="14" />
+          <dc:Bounds x="11412" y="3358" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0b8daly_di" bpmnElement="Flow_0b8daly">
