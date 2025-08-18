@@ -6,7 +6,7 @@
         subTitle="View Submission"
         :routeLocation="goToAssessmentSummary"
       >
-        <template #buttons>
+        <template #buttons v-if="showScholasticStandingReversalAction">
           <check-permission-role :role="Role.StudentReverseScholasticStanding">
             <template #="{ notAllowed }">
               <v-btn
@@ -26,6 +26,7 @@
       :showFooter="true"
       :showCompleteInfo="true"
       :processing="false"
+      @data-loaded="dataLoaded"
     />
     <reverse-scholastic-standing-modal ref="reverseScholasticStandingModal" />
   </full-page-container>
@@ -37,9 +38,16 @@ import { RouteLocationRaw, useRouter } from "vue-router";
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import ReverseScholasticStandingModal from "@/components/aest/students/modals/ReverseScholasticStandingModal.vue";
-import { Role } from "@/types";
+import {
+  AssessmentTriggerType,
+  Role,
+  StudentScholasticStandingChangeType,
+} from "@/types";
 import { ModalDialog, useSnackBar } from "@/composables";
-import { ReverseScholasticStandingAPIInDTO } from "@/services/http/dto";
+import {
+  ReverseScholasticStandingAPIInDTO,
+  ScholasticStandingSubmittedDetailsAPIOutDTO,
+} from "@/services/http/dto";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
 
 export default {
@@ -66,8 +74,23 @@ export default {
   setup(props) {
     const router = useRouter();
     const snackBar = useSnackBar();
+    const scholasticStandingDetails = ref(
+      {} as ScholasticStandingSubmittedDetailsAPIOutDTO,
+    );
     const reverseScholasticStandingModal = ref(
       {} as ModalDialog<ReverseScholasticStandingAPIInDTO | false>,
+    );
+    // Show the reversal action button if the scholastic standing is not already reversed
+    // and if the scholastic standing change type requires re-assessment (any change type except unsuccessful completion)
+    // then check the current assessment trigger type
+    // to determine if the reversal action is applicable.
+    const showScholasticStandingReversalAction = computed(
+      () =>
+        !scholasticStandingDetails.value.reversalDate &&
+        (scholasticStandingDetails.value.currentAssessmentTriggerType ===
+          AssessmentTriggerType.ScholasticStandingChange ||
+          scholasticStandingDetails.value.scholasticStandingChangeType ===
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram),
     );
     const goToAssessmentSummary = computed(
       () =>
@@ -88,7 +111,7 @@ export default {
             payload,
           );
           snackBar.success("Scholastic standing reversed successfully.");
-          router.push(goToAssessmentSummary.value);
+          await router.push(goToAssessmentSummary.value);
         } catch {
           snackBar.error(
             "Unexpected error while reversing the scholastic standing.",
@@ -98,11 +121,17 @@ export default {
       }
     };
 
+    const dataLoaded = (data: ScholasticStandingSubmittedDetailsAPIOutDTO) => {
+      scholasticStandingDetails.value = data;
+    };
+
     return {
       goToAssessmentSummary,
       Role,
       reverseScholasticStandingModal,
       showReverseScholasticStandingModal,
+      dataLoaded,
+      showScholasticStandingReversalAction,
     };
   },
 };
