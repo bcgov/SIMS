@@ -146,7 +146,7 @@ export function convertToASCII(rawContent?: string): Buffer | null {
           content[index] = 121; // Replace with y.
           break;
         default:
-          content[index] = 63; // Replace with ? by default.
+          content[index] = UNEXPECTED_CHAR; // Replace with ? by default.
           break;
       }
     }
