@@ -1157,6 +1157,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.submittedDate",
         "offerings.precedingOffering",
         "educationProgram.id",
+        "educationProgram.name",
         "institutionLocation.name",
         "institution.legalOperatingName",
         "institution.operatingName",
