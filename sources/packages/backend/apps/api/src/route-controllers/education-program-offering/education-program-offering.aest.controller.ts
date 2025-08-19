@@ -87,7 +87,6 @@ export class EducationProgramOfferingAESTController extends BaseController {
    */
   @Get("change-requests")
   async getOfferingChangeRequests(): Promise<OfferingChangeRequestAPIOutDTO[]> {
-    throw new NotFoundException("Offering not found.");
     const offerings =
       await this.programOfferingService.getOfferingChangeRequests();
 
