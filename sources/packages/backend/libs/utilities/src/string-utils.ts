@@ -1,6 +1,10 @@
 import { FILE_DEFAULT_ENCODING, UTF8_BYTE_ORDER_MARK } from "@sims/utilities";
 
 const REPLACE_LINE_BREAK_REGEX = /\r?\n|\r/g;
+export const NON_PRINTABLE_CHARACTERS_LIMIT = 31;
+export const CARRIAGE_RETURN = 13;
+export const LINE_FEED = 10;
+export const UNEXPECTED_CHAR = 63;
 
 /**
  * Replace the line breaks in the given text.
@@ -49,8 +53,12 @@ export function convertToASCII(rawContent?: string): Buffer | null {
   });
   const content = Buffer.from(rawContent, FILE_DEFAULT_ENCODING);
   for (const [index, char] of content.entries()) {
-    if (char < 32 && char !== 10 && char !== 13) {
-      content[index] = 63; // Replace with ? for control characters.
+    if (
+      char <= NONPRINTABLE_CHARACTERS_LIMIT &&
+      char !== LINE_FEED &&
+      char !== CARRIAGE_RETURN
+    ) {
+      content[index] = UNEXPECTED_CHAR; // Replace with ? for control characters.
     }
     if (char > 127) {
       // If extended ascii.

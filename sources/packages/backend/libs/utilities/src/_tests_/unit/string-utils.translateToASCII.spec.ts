@@ -1,4 +1,10 @@
-import { convertToASCIIString } from "@sims/utilities/string-utils";
+import {
+  CARRIAGE_RETURN,
+  convertToASCIIString,
+  LINE_FEED,
+  NON_PRINTABLE_CHARACTERS_LIMIT,
+  UNEXPECTED_CHAR,
+} from "@sims/utilities/string-utils";
 
 describe("StringUtils-convertToASCII", () => {
   it("Should replace the special characters when equivalent ones are present.", () => {
@@ -37,18 +43,22 @@ describe("StringUtils-convertToASCII", () => {
     expect(translatedData).toBeNull();
   });
 
-  it("Should replace ASCII control characters (0-31) with '?'", () => {
-    // Arrange: create a string with characters from char code 0 to 31
+  it("Should replace ASCII control characters (0-31) with '?' when they are not line feed or carriage return.", () => {
+    // Arrange
     let controlChars = "";
-    for (let i = 0; i <= 31; i++) {
-      if (i !== 10 && i !== 13) {
-        // Exclude line feed (LF) and carriage return (CR) characters
+    for (let i = 0; i <= NON_PRINTABLE_CHARACTERS_LIMIT; i++) {
+      if (i !== LINE_FEED && i !== CARRIAGE_RETURN) {
+        // Exclude line feed (LF) and carriage return (CR) characters.
         controlChars += String.fromCharCode(i);
       }
     }
+
     // Act
     const translatedData = convertToASCIIString(controlChars);
-    // Assert: all should be replaced by '?'
-    expect(translatedData).toBe("?".repeat(controlChars.length));
+
+    // Assert
+    expect(translatedData).toBe(
+      String.fromCharCode(UNEXPECTED_CHAR).repeat(controlChars.length),
+    );
   });
 });
