@@ -1125,21 +1125,10 @@
                   "tableView": false
                 },
                 {
-                  "input": true,
-                  "tableView": false,
-                  "key": "studyEndDateIsPastApplicationException",
-                  "label": "Application Exception - Study end date is past",
-                  "type": "hidden",
-                  "calculateValue": "value = \"studentApplicationException\";",
-                  "lockKey": true,
-                  "customConditional": "show = data.studyEndDateBeforeSixWeeksFromToday || data.selectedStudyEndDateBeforeSixWeeksFromToday;",
-                  "calculateServer": true
-                },
-                {
                   "label": "studyEndDateIsPastApplicationException  (part-time unique exceptions)",
                   "tableView": false,
                   "validateWhenHidden": false,
-                  "key": "_studyEndDateIsPastApplicationException",
+                  "key": "studyEndDateIsPastApplicationException",
                   "customConditional": "show = data.studyEndDateBeforeSixWeeksFromToday || data.selectedStudyEndDateBeforeSixWeeksFromToday;",
                   "type": "container",
                   "input": true,
