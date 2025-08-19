@@ -1,10 +1,9 @@
-import {
-  CARRIAGE_RETURN,
-  convertToASCIIString,
-  LINE_FEED,
-  NON_PRINTABLE_CHARACTERS_LIMIT,
-  UNEXPECTED_CHAR,
-} from "@sims/utilities/string-utils";
+import { convertToASCIIString } from "@sims/utilities/string-utils";
+
+const NON_PRINTABLE_CHARACTERS_LIMIT = 31;
+const CARRIAGE_RETURN = 13;
+const LINE_FEED = 10;
+const UNEXPECTED_CHAR = 63;
 
 describe("StringUtils-convertToASCII", () => {
   it("Should replace the special characters when equivalent ones are present.", () => {

@@ -1,10 +1,10 @@
 import { FILE_DEFAULT_ENCODING, UTF8_BYTE_ORDER_MARK } from "@sims/utilities";
 
 const REPLACE_LINE_BREAK_REGEX = /\r?\n|\r/g;
-export const NON_PRINTABLE_CHARACTERS_LIMIT = 31;
-export const CARRIAGE_RETURN = 13;
-export const LINE_FEED = 10;
-export const UNEXPECTED_CHAR = 63;
+const NON_PRINTABLE_CHARACTERS_LIMIT = 31;
+const CARRIAGE_RETURN = 13;
+const LINE_FEED = 10;
+const UNEXPECTED_CHAR = 63;
 
 /**
  * Replace the line breaks in the given text.
