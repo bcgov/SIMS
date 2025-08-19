@@ -19,7 +19,6 @@ import {
   combineDecimalPlaces,
   getStudentDisabilityStatusCode,
   getTotalYearsOfStudy,
-  replaceLineBreaks,
 } from "@sims/utilities";
 import { YNFlag } from "@sims/integrations/models";
 
@@ -64,9 +63,6 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
         ierRecord.studentMaritalStatusCode;
       ierFileDetail.addressInfo = ierRecord.addressInfo;
       ierFileDetail.programName = ierRecord.programName;
-      ierFileDetail.programDescription = replaceLineBreaks(
-        ierRecord.programDescription,
-      );
       ierFileDetail.credentialType = ierRecord.credentialType;
       ierFileDetail.fieldOfStudyCode = ierRecord.fieldOfStudyCode;
       ierFileDetail.levelOfStudyCode = this.getLevelOfStudyCode(
