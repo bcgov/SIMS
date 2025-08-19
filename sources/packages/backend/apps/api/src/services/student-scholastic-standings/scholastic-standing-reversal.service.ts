@@ -6,6 +6,7 @@ import {
   AssessmentTriggerType,
   NoteType,
   OfferingStatus,
+  OfferingTypes,
   StudentAssessment,
   StudentScholasticStanding,
   StudentScholasticStandingChangeType,
@@ -72,12 +73,13 @@ export class ScholasticStandingReversalService {
         .leftJoin(
           "parentOffering.versions",
           "offeringVersion",
-          "offeringVersion.offeringStatus IN (:...currentOfferingStatuses)",
+          "offeringVersion.offeringStatus IN (:...currentOfferingStatuses) AND offeringVersion.offeringType <> :scholasticStandingOfferingType",
           {
             currentOfferingStatuses: [
               OfferingStatus.Approved,
               OfferingStatus.ChangeUnderReview,
             ],
+            scholasticStandingOfferingType: OfferingTypes.ScholasticStanding,
           },
         )
         .where("scholasticStanding.id = :scholasticStandingId", {
