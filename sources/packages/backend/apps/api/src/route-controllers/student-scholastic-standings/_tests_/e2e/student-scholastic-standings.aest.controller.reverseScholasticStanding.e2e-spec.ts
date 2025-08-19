@@ -25,6 +25,7 @@ import {
   AssessmentTriggerType,
   NoteType,
   OfferingStatus,
+  OfferingTypes,
   StudentScholasticStandingChangeType,
   User,
 } from "@sims/sims-db";
@@ -153,7 +154,14 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
         {
           auditUser: sharedUser,
         },
-        { initialValues: { studyStartDate, studyEndDate: withdrawalDate } },
+        {
+          initialValues: {
+            studyStartDate,
+            studyEndDate: withdrawalDate,
+            parentOffering: offeringBeforeWithdrawal.parentOffering,
+            offeringType: OfferingTypes.ScholasticStanding,
+          },
+        },
       );
       await db.educationProgramOffering.save(withdrawalOffering);
       // Create a new assessment using the withdrawal offering.
@@ -295,7 +303,14 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
         {
           auditUser: sharedUser,
         },
-        { initialValues: { studyStartDate, studyEndDate: withdrawalDate } },
+        {
+          initialValues: {
+            studyStartDate,
+            studyEndDate: withdrawalDate,
+            parentOffering: offeringBeforeWithdrawal.parentOffering,
+            offeringType: OfferingTypes.ScholasticStanding,
+          },
+        },
       );
       await db.educationProgramOffering.save(withdrawalOffering);
       // Create a new assessment using the withdrawal offering.
@@ -453,7 +468,14 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
         {
           auditUser: sharedUser,
         },
-        { initialValues: { studyStartDate, studyEndDate: withdrawalDate } },
+        {
+          initialValues: {
+            studyStartDate,
+            studyEndDate: withdrawalDate,
+            parentOffering: offeringBeforeWithdrawal.parentOffering,
+            offeringType: OfferingTypes.ScholasticStanding,
+          },
+        },
       );
       await db.educationProgramOffering.save(withdrawalOffering);
       // Create a new assessment using the withdrawal offering.
@@ -602,7 +624,14 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
         {
           auditUser: sharedUser,
         },
-        { initialValues: { studyStartDate, studyEndDate: withdrawalDate } },
+        {
+          initialValues: {
+            studyStartDate,
+            studyEndDate: withdrawalDate,
+            parentOffering: offeringBeforeWithdrawal.parentOffering,
+            offeringType: OfferingTypes.ScholasticStanding,
+          },
+        },
       );
       await db.educationProgramOffering.save(withdrawalOffering);
       // Create a new assessment using the withdrawal offering.
@@ -751,7 +780,14 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
         {
           auditUser: sharedUser,
         },
-        { initialValues: { studyStartDate, studyEndDate: withdrawalDate } },
+        {
+          initialValues: {
+            studyStartDate,
+            studyEndDate: withdrawalDate,
+            parentOffering: offeringBeforeWithdrawal.parentOffering,
+            offeringType: OfferingTypes.ScholasticStanding,
+          },
+        },
       );
       await db.educationProgramOffering.save(withdrawalOffering);
       // Create a student appeal with approved appeal request.
@@ -898,7 +934,14 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
         {
           auditUser: sharedUser,
         },
-        { initialValues: { studyStartDate, studyEndDate: withdrawalDate } },
+        {
+          initialValues: {
+            studyStartDate,
+            studyEndDate: withdrawalDate,
+            parentOffering: offeringBeforeWithdrawal.parentOffering,
+            offeringType: OfferingTypes.ScholasticStanding,
+          },
+        },
       );
       await db.educationProgramOffering.save(withdrawalOffering);
       // Create a student appeal with approved appeal request.
@@ -993,7 +1036,14 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
       {
         auditUser: sharedUser,
       },
-      { initialValues: { studyStartDate, studyEndDate: withdrawalDate } },
+      {
+        initialValues: {
+          studyStartDate,
+          studyEndDate: withdrawalDate,
+          parentOffering: offeringBeforeWithdrawal.parentOffering,
+          offeringType: OfferingTypes.ScholasticStanding,
+        },
+      },
     );
     await db.educationProgramOffering.save(withdrawalOffering);
     // Create a student appeal with approved appeal request.
