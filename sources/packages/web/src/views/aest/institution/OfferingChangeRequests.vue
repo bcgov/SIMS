@@ -13,42 +13,28 @@
     />
     <content-group>
       <toggle-content :toggled="!offeringChangeRequests.length">
-        <DataTable
-          :value="offeringChangeRequests"
-          class="p-m-4"
-          :paginator="true"
-          :rows="pageLimit"
-          :rowsPerPageOptions="PAGINATION_LIST"
+        <v-data-table
+          :headers="PendingOfferingChangeRequestsHeaders"
+          :items="offeringChangeRequests"
+          :items-per-page="pageLimit"
+          :items-per-page-options="paginationOptions"
         >
-          <Column
-            field="submittedDate"
-            :sortable="true"
-            header="Date submitted"
-          >
-            <template #body="slotProps">
-              <span>
-                {{ dateOnlyLongString(slotProps.data.submittedDate) }}
-              </span>
-            </template>
-          </Column>
-          <Column field="institutionName" header="Institution Name"> </Column>
-          <Column field="locationName" header="Location Name"></Column>
-          <Column field="offeringName" header="Study period name"></Column>
-          <Column header="Action">
-            <template #body="slotProps">
-              <v-btn
-                color="primary"
-                @click="
-                  viewOfferingChangeRequest(
-                    slotProps.data.offeringId,
-                    slotProps.data.programId,
-                  )
-                "
-                >View request</v-btn
-              >
-            </template>
-          </Column>
-        </DataTable>
+          <template #[`item.submittedDate`]="{ item }">
+            <span>
+              {{ dateOnlyLongString(item.submittedDate) }}
+            </span>
+          </template>
+          <template #[`item.actions`]="{ item }">
+            <v-btn
+              color="primary"
+              @click="
+                viewOfferingChangeRequest(item.offeringId, item.programId)
+              "
+            >
+              View request
+            </v-btn>
+          </template>
+        </v-data-table>
       </toggle-content>
     </content-group>
   </full-page-container>
@@ -61,6 +47,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   PAGINATION_LIST,
   DEFAULT_PAGE_NUMBER,
+  PendingOfferingChangeRequestsHeaders,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
@@ -74,6 +61,11 @@ export default defineComponent({
     const searchCriteria = ref();
     const { dateOnlyLongString } = useFormatters();
     const offeringChangeRequests = ref([] as OfferingChangeRequestAPIOutDTO[]);
+
+    const paginationOptions = PAGINATION_LIST.map((option) => ({
+      value: option,
+      title: option.toString(),
+    }));
 
     onMounted(async () => {
       offeringChangeRequests.value =
@@ -94,8 +86,9 @@ export default defineComponent({
       page,
       pageLimit,
       searchCriteria,
+      PendingOfferingChangeRequestsHeaders,
+      paginationOptions,
       offeringChangeRequests,
-      PAGINATION_LIST,
       dateOnlyLongString,
       viewOfferingChangeRequest,
     };

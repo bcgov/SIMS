@@ -16,6 +16,7 @@ export interface OfferingAssessmentAPIInDTO {
 export interface OfferingChangeRequestAPIOutDTO {
   offeringId: number;
   programId: number;
+  programName: string;
   offeringName: string;
   institutionName: string;
   locationName: string;
