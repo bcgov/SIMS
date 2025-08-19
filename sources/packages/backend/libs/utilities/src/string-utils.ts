@@ -54,7 +54,7 @@ export function convertToASCII(rawContent?: string): Buffer | null {
   const content = Buffer.from(rawContent, FILE_DEFAULT_ENCODING);
   for (const [index, char] of content.entries()) {
     if (
-      char <= NONPRINTABLE_CHARACTERS_LIMIT &&
+      char <= NON_PRINTABLE_CHARACTERS_LIMIT &&
       char !== LINE_FEED &&
       char !== CARRIAGE_RETURN
     ) {
