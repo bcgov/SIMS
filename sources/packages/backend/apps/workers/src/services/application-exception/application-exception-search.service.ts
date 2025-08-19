@@ -4,7 +4,6 @@ import {
   ApplicationDataExceptionFile,
   EXCEPTION_DESCRIPTION_PROPERTY_KEY,
   APPLICATION_DATA_EXCEPTION_SUFFIX,
-  EXCEPTION_PART_TIME_PROPERTY_KEY_PREFIX,
 } from "./application-exception.models";
 
 /**
@@ -64,11 +63,7 @@ export class ApplicationExceptionSearchService {
         // No value, continue to the next property.
         continue;
       }
-      if (
-        propertyKey.endsWith(APPLICATION_DATA_EXCEPTION_SUFFIX) &&
-        // TODO: remove once 2025-26 is deactivated. Temporary condition to exclude exceptions from 2025-26 in flight program year.
-        typeof propertyValue === "object"
-      ) {
+      if (propertyKey.endsWith(APPLICATION_DATA_EXCEPTION_SUFFIX)) {
         const exception = this.createApplicationDataException(
           propertyKey,
           propertyValue,
@@ -102,23 +97,11 @@ export class ApplicationExceptionSearchService {
       EXCEPTION_DESCRIPTION_PROPERTY_KEY
     ] as string;
     return {
-      key: this.adjustPropertyKey(propertyKey),
+      key: propertyKey,
       hashableContent: exceptionDynamicData,
       description,
       files,
     };
-  }
-
-  /**
-   * Adjusts the property key to remove the part-time prefix if present.
-   * @param propertyKey the original property key.
-   * @returns the adjusted property key.
-   */
-  private adjustPropertyKey(propertyKey: string): string {
-    // TODO: remove once 2025-26 is deactivated. Temporary condition to exclude exceptions from 2025-26 in flight program year.
-    return propertyKey.startsWith(EXCEPTION_PART_TIME_PROPERTY_KEY_PREFIX)
-      ? propertyKey.substring(EXCEPTION_PART_TIME_PROPERTY_KEY_PREFIX.length)
-      : propertyKey;
   }
 
   /**
