@@ -1973,7 +1973,7 @@
                       "label": "citizenshipForProtectedPersonsApplicationException (part-time unique exceptions)",
                       "tableView": false,
                       "validateWhenHidden": false,
-                      "key": "_citizenshipForProtectedPersonsApplicationException",
+                      "key": "citizenshipForProtectedPersonsApplicationException",
                       "type": "container",
                       "input": true,
                       "components": [
@@ -1997,15 +1997,6 @@
                           "tableView": false
                         }
                       ]
-                    },
-                    {
-                      "label": "Application Exception - Citizenship for protected persons",
-                      "calculateValue": "value = \"studentApplicationException\";",
-                      "calculateServer": true,
-                      "key": "citizenshipForProtectedPersonsApplicationException",
-                      "type": "hidden",
-                      "input": true,
-                      "tableView": false
                     },
                     {
                       "label": "HTML",
@@ -2233,7 +2224,7 @@
                   "label": "marriedCommonLawDomesticViolenceApplicationException  (part-time unique exceptions)",
                   "tableView": false,
                   "validateWhenHidden": false,
-                  "key": "_marriedCommonLawDomesticViolenceApplicationException",
+                  "key": "marriedCommonLawDomesticViolenceApplicationException",
                   "type": "container",
                   "input": true,
                   "components": [
@@ -2257,16 +2248,6 @@
                       "tableView": false
                     }
                   ]
-                },
-                {
-                  "label": "Application Exception - Married/Common-law domestic violence",
-                  "calculateValue": "value = \"studentApplicationException\";",
-                  "calculateServer": true,
-                  "key": "marriedCommonLawDomesticViolenceApplicationException",
-                  "type": "hidden",
-                  "input": true,
-                  "tableView": false,
-                  "lockKey": true
                 },
                 {
                   "title": "Upload supporting documents",
@@ -2790,7 +2771,7 @@
                   "label": "citizenshipForBCResidencyApplicationException (part-time unique exceptions)",
                   "tableView": false,
                   "validateWhenHidden": false,
-                  "key": "_citizenshipForBCResidencyApplicationException",
+                  "key": "citizenshipForBCResidencyApplicationException",
                   "type": "container",
                   "input": true,
                   "components": [
@@ -2832,15 +2813,6 @@
                       "tableView": false
                     }
                   ]
-                },
-                {
-                  "label": "Application Exception - Citizenship for B.C. residency",
-                  "calculateValue": "value = \"studentApplicationException\";",
-                  "calculateServer": true,
-                  "key": "citizenshipForBCResidencyApplicationException",
-                  "type": "hidden",
-                  "input": true,
-                  "tableView": false
                 },
                 {
                   "label": "HTML",
@@ -3760,13 +3732,32 @@
                       "tableView": false,
                       "components": [
                         {
-                          "label": "Application Exception - Dependant’s income tax",
-                          "calculateValue": "value = \"studentApplicationException\";",
-                          "calculateServer": true,
+                          "label": "dependantsIncomeTaxApplicationException",
+                          "tableView": false,
+                          "validateWhenHidden": false,
                           "key": "dependantsIncomeTaxApplicationException",
-                          "type": "hidden",
+                          "type": "container",
                           "input": true,
-                          "tableView": false
+                          "components": [
+                            {
+                              "label": "Exception Description - Dependant's income tax",
+                              "calculateValue": "value = `Dependant's income tax - ${data.dependants[rowIndex].fullName}`;",
+                              "calculateServer": true,
+                              "key": "exceptionDescription",
+                              "type": "hidden",
+                              "input": true,
+                              "tableView": false
+                            },
+                            {
+                              "label": "pdDependentUpload",
+                              "calculateValue": "value = data[component.key];",
+                              "calculateServer": true,
+                              "key": "pdDependentUpload",
+                              "type": "hidden",
+                              "input": true,
+                              "tableView": false
+                            }
+                          ]
                         },
                         {
                           "label": "HTML",
@@ -3967,13 +3958,32 @@
                       "allowPrevious": false,
                       "components": [
                         {
-                          "label": "Application Exception - Dependant’s shared custody",
-                          "calculateValue": "value = \"studentApplicationException\";",
-                          "calculateServer": true,
+                          "label": "dependantsSharedCustodyApplicationException",
+                          "tableView": false,
+                          "validateWhenHidden": false,
                           "key": "dependantsSharedCustodyApplicationException",
-                          "type": "hidden",
+                          "type": "container",
                           "input": true,
-                          "tableView": false
+                          "components": [
+                            {
+                              "label": "Exception Description - Dependant's shared custody",
+                              "calculateValue": "value = `Dependant's shared custody - ${data.dependants[rowIndex].fullName}`;",
+                              "calculateServer": true,
+                              "key": "exceptionDescription",
+                              "type": "hidden",
+                              "input": true,
+                              "tableView": false
+                            },
+                            {
+                              "label": "dependantCustodyFileUpload",
+                              "calculateValue": "value = data[component.key];",
+                              "calculateServer": true,
+                              "key": "dependantCustodyFileUpload",
+                              "type": "hidden",
+                              "input": true,
+                              "tableView": false
+                            }
+                          ]
                         },
                         {
                           "label": "HTML",
@@ -4734,6 +4744,62 @@
               "tableView": false,
               "components": [
                 {
+                  "label": "currentYearPartnerIncomeApplicationException",
+                  "tableView": false,
+                  "validateWhenHidden": false,
+                  "key": "currentYearPartnerIncomeApplicationException",
+                  "type": "container",
+                  "input": true,
+                  "components": [
+                    {
+                      "label": "Exception Description - Partner current year income",
+                      "calculateValue": "value = \"Partner current year income\";",
+                      "calculateServer": true,
+                      "key": "exceptionDescription",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false,
+                      "lockKey": true
+                    },
+                    {
+                      "label": "currentYearPartnerIncome",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "currentYearPartnerIncome",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "reasonsignificantdecreaseInPartnerIncome",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "reasonsignificantdecreaseInPartnerIncome",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "otherExceptionalPartnerCircumstance",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "otherExceptionalPartnerCircumstance",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "decreaseInPartnerIncomeSupportingDocuments",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "decreaseInPartnerIncomeSupportingDocuments",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    }
+                  ]
+                },
+                {
                   "key": "partnerIncomePanelPanelContent",
                   "label": "Current year income blurb",
                   "input": false,
@@ -4999,16 +5065,6 @@
                   ],
                   "type": "columns",
                   "hideLabel": true
-                },
-                {
-                  "input": true,
-                  "tableView": false,
-                  "key": "currentYearPartnerIncomeApplicationException",
-                  "label": "Application Exception - Current Year Partner Income",
-                  "type": "hidden",
-                  "lockKey": true,
-                  "calculateValue": "value = \"studentApplicationException\";",
-                  "calculateServer": true
                 }
               ]
             }
@@ -5432,14 +5488,60 @@
               "tableView": false,
               "components": [
                 {
-                  "input": true,
+                  "label": "currentYearIncomeApplicationException",
                   "tableView": false,
+                  "validateWhenHidden": false,
                   "key": "currentYearIncomeApplicationException",
-                  "label": "Application Exception - Current Year Income",
-                  "type": "hidden",
-                  "calculateValue": "value = \"studentApplicationException\";",
-                  "calculateServer": true,
-                  "lockKey": true
+                  "type": "container",
+                  "input": true,
+                  "components": [
+                    {
+                      "label": "Exception Description - Current Year Income",
+                      "calculateValue": "value = \"Current Year Income\";",
+                      "calculateServer": true,
+                      "key": "exceptionDescription",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false,
+                      "lockKey": true
+                    },
+                    {
+                      "label": "currentYearIncome",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "currentYearIncome",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "reasonsignificantdecreaseInIncome",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "reasonsignificantdecreaseInIncome",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "otherExceptionalCircumstance",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "otherExceptionalCircumstance",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "decreaseInIncomeSupportingDocuments",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "decreaseInIncomeSupportingDocuments",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    }
+                  ]
                 },
                 {
                   "label": "HTML",
@@ -5935,13 +6037,78 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "Application Exception - Transportation",
-                  "calculateValue": "value = \"studentApplicationException\";",
-                  "calculateServer": true,
+                  "label": "transportationApplicationException",
+                  "tableView": false,
+                  "validateWhenHidden": false,
                   "key": "transportationApplicationException",
-                  "type": "hidden",
+                  "type": "container",
                   "input": true,
-                  "tableView": false
+                  "components": [
+                    {
+                      "label": "Exception Description - Transportation",
+                      "calculateValue": "value = \"Transportation\";",
+                      "calculateServer": true,
+                      "key": "exceptionDescription",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false,
+                      "lockKey": true
+                    },
+                    {
+                      "label": "additionalTransportOwner",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "additionalTransportOwner",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "transportationcostsituation",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "transportationcostsituation",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "additionalTransportKm",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "additionalTransportKm",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "additionalTransportWeeks",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "additionalTransportWeeks",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "additionalTransportPlacement",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "additionalTransportPlacement",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
+                      "label": "transportationCostsFile",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "transportationCostsFile",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    }
+                  ]
                 },
                 {
                   "label": "Are you the owner of the vehicle?",
