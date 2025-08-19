@@ -41,7 +41,10 @@ describe("StringUtils-convertToASCII", () => {
     // Arrange: create a string with characters from char code 0 to 31
     let controlChars = "";
     for (let i = 0; i <= 31; i++) {
-      controlChars += String.fromCharCode(i);
+      if (i !== 10 && i !== 13) {
+        // Exclude line feed (LF) and carriage return (CR) characters
+        controlChars += String.fromCharCode(i);
+      }
     }
     // Act
     const translatedData = convertToASCIIString(controlChars);

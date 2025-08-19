@@ -49,7 +49,7 @@ export function convertToASCII(rawContent?: string): Buffer | null {
   });
   const content = Buffer.from(rawContent, FILE_DEFAULT_ENCODING);
   for (const [index, char] of content.entries()) {
-    if (char < 32) {
+    if (char < 32 && char !== 10 && char !== 13) {
       content[index] = 63; // Replace with ? for control characters.
     }
     if (char > 127) {
