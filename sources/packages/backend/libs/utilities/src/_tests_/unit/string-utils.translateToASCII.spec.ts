@@ -49,6 +49,6 @@ describe("StringUtils-convertToASCII", () => {
     // Act
     const translatedData = convertToASCIIString(controlChars);
     // Assert: all should be replaced by '?'
-    expect(translatedData).toBe("?".repeat(32));
+    expect(translatedData).toBe("?".repeat(controlChars.length));
   });
 });
