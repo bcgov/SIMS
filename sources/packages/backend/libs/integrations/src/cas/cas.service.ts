@@ -112,7 +112,9 @@ export class CASService {
     sin: string,
     lastName: string,
   ): Promise<CASSupplierResponse> {
-    const convertedLastName = convertToASCIIString(lastName).toUpperCase();
+    const convertedLastName = encodeURIComponent(
+      convertToASCIIString(lastName).toUpperCase(),
+    );
     const url = `${this.casIntegrationConfig.baseUrl}/cfs/supplier/${convertedLastName}/lastname/${sin}/sin`;
     let response: { data: CASSupplierResponse };
     try {
