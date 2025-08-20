@@ -31,7 +31,7 @@ describe("CASService-getSupplierInfoFromCAS", () => {
 
     // Assert
     expect(httpService.axiosRef.get).toHaveBeenCalledWith(
-      "cas-url/cfs/supplier/LAST NAME WITH SPECIAL CHARACTERS: AEIOU-AEIOU/lastname/dummy_sin_value/sin",
+      "cas-url/cfs/supplier/LAST%20NAME%20WITH%20SPECIAL%20CHARACTERS%3A%20AEIOU-AEIOU/lastname/dummy_sin_value/sin",
       DEFAULT_CAS_AXIOS_AUTH_HEADER,
     );
   });
