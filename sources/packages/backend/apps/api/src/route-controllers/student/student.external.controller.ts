@@ -21,6 +21,7 @@ import {
 } from "./models/student-external-search.dto";
 import { StudentExternalControllerService } from "./student.external.controller.service";
 import { SFASApplication } from "@sims/sims-db";
+import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 
 /**
  * Student controller for external client.
@@ -90,10 +91,20 @@ export class StudentExternalController extends BaseController {
         studentApplications,
         legacyApplications,
       );
+    // Log found student and SFAS individual IDs.
+    if (student) {
+      this.logger.log(`Found SIMS student with ID: ${student.id}`);
+    }
+    if (sfasIndividual) {
+      this.logger.log(`Found SFAS individual with ID: ${sfasIndividual.id}`);
+    }
 
     return {
       ...studentDetails,
       applications,
     };
   }
+
+  @InjectLogger()
+  logger: LoggerService;
 }
