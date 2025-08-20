@@ -1,5 +1,10 @@
 import { convertToASCIIString } from "@sims/utilities/string-utils";
 
+const NON_PRINTABLE_CHARACTERS_LIMIT = 31;
+const CARRIAGE_RETURN = 13;
+const LINE_FEED = 10;
+const UNEXPECTED_CHAR = 63;
+
 describe("StringUtils-convertToASCII", () => {
   it("Should replace the special characters when equivalent ones are present.", () => {
     // Arrange
@@ -35,5 +40,24 @@ describe("StringUtils-convertToASCII", () => {
 
     // Assert
     expect(translatedData).toBeNull();
+  });
+
+  it("Should replace ASCII control characters (0-31) with '?' when they are not line feed or carriage return.", () => {
+    // Arrange
+    let controlChars = "";
+    for (let i = 0; i <= NON_PRINTABLE_CHARACTERS_LIMIT; i++) {
+      if (i !== LINE_FEED && i !== CARRIAGE_RETURN) {
+        // Exclude line feed (LF) and carriage return (CR) characters.
+        controlChars += String.fromCharCode(i);
+      }
+    }
+
+    // Act
+    const translatedData = convertToASCIIString(controlChars);
+
+    // Assert
+    expect(translatedData).toBe(
+      String.fromCharCode(UNEXPECTED_CHAR).repeat(controlChars.length),
+    );
   });
 });

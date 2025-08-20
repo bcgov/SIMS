@@ -12,43 +12,35 @@
       subTitle="Offering change requests that require ministry review."
     />
     <content-group>
-      <toggle-content :toggled="!offeringChangeRequests.length">
-        <DataTable
-          :value="offeringChangeRequests"
-          class="p-m-4"
-          :paginator="true"
-          :rows="pageLimit"
-          :rowsPerPageOptions="PAGINATION_LIST"
+      <toggle-content
+        :toggled="
+          !offeringChangeRequests.length && !offeringChangeRequestsLoading
+        "
+        message="No offering change requests found."
+      >
+        <v-data-table
+          :headers="PendingOfferingChangeRequestsHeaders"
+          :items="offeringChangeRequests"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :loading="offeringChangeRequestsLoading"
         >
-          <Column
-            field="submittedDate"
-            :sortable="true"
-            header="Date submitted"
-          >
-            <template #body="slotProps">
-              <span>
-                {{ dateOnlyLongString(slotProps.data.submittedDate) }}
-              </span>
-            </template>
-          </Column>
-          <Column field="institutionName" header="Institution Name"> </Column>
-          <Column field="locationName" header="Location Name"></Column>
-          <Column field="offeringName" header="Study period name"></Column>
-          <Column header="Action">
-            <template #body="slotProps">
-              <v-btn
-                color="primary"
-                @click="
-                  viewOfferingChangeRequest(
-                    slotProps.data.offeringId,
-                    slotProps.data.programId,
-                  )
-                "
-                >View request</v-btn
-              >
-            </template>
-          </Column>
-        </DataTable>
+          <template #[`item.submittedDate`]="{ item }">
+            <span>
+              {{ dateOnlyLongString(item.submittedDate) }}
+            </span>
+          </template>
+          <template #[`item.actions`]="{ item }">
+            <v-btn
+              color="primary"
+              @click="
+                viewOfferingChangeRequest(item.offeringId, item.programId)
+              "
+            >
+              View request
+            </v-btn>
+          </template>
+        </v-data-table>
       </toggle-content>
     </content-group>
   </full-page-container>
@@ -59,25 +51,34 @@ import { useRouter } from "vue-router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import {
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
-  DEFAULT_PAGE_NUMBER,
+  ITEMS_PER_PAGE,
+  PendingOfferingChangeRequestsHeaders,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { useFormatters } from "@/composables";
+import { useFormatters, useSnackBar } from "@/composables";
 import { OfferingChangeRequestAPIOutDTO } from "@/services/http/dto/EducationProgramOffering.dto";
 
 export default defineComponent({
   setup() {
+    const snackBar = useSnackBar();
     const router = useRouter();
-    const page = ref(DEFAULT_PAGE_NUMBER);
-    const pageLimit = ref(DEFAULT_PAGE_LIMIT);
     const searchCriteria = ref();
+    const offeringChangeRequestsLoading = ref(false);
     const { dateOnlyLongString } = useFormatters();
     const offeringChangeRequests = ref([] as OfferingChangeRequestAPIOutDTO[]);
 
     onMounted(async () => {
-      offeringChangeRequests.value =
-        await EducationProgramOfferingService.shared.getOfferingChangeRequests();
+      offeringChangeRequestsLoading.value = true;
+      try {
+        offeringChangeRequests.value =
+          await EducationProgramOfferingService.shared.getOfferingChangeRequests();
+      } catch {
+        snackBar.error(
+          "An unexpected error happened while loading the offering change requests.",
+        );
+      } finally {
+        offeringChangeRequestsLoading.value = false;
+      }
     });
 
     const viewOfferingChangeRequest = (
@@ -91,11 +92,12 @@ export default defineComponent({
     };
 
     return {
-      page,
-      pageLimit,
+      DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
+      offeringChangeRequestsLoading,
       searchCriteria,
+      PendingOfferingChangeRequestsHeaders,
       offeringChangeRequests,
-      PAGINATION_LIST,
       dateOnlyLongString,
       viewOfferingChangeRequest,
     };
