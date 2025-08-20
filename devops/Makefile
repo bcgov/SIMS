@@ -59,9 +59,6 @@ export QUEUE_CONSUMERS_CPU_REQUEST := $(or ${QUEUE_CONSUMERS_CPU_REQUEST}, 200m)
 export QUEUE_CONSUMERS_MEMORY_REQUEST := $(or ${QUEUE_CONSUMERS_MEMORY_REQUEST}, 768Mi)
 export QUEUE_CONSUMERS_MEMORY_LIMIT := $(or ${QUEUE_CONSUMERS_MEMORY_LIMIT}, 1024Mi)
 export QUEUE_CONSUMERS_REPLICAS := $(or ${QUEUE_CONSUMERS_REPLICAS}, 2)
-export HAMONGO_DB_CPU_REQUEST := $(or ${HAMONGO_DB_CPU_REQUEST}, 250m)
-export HAMONGO_DB_MEMORY_REQUEST := $(or ${HAMONGO_DB_MEMORY_REQUEST}, 512Mi)
-export HAMONGO_DB_MEMORY_LIMIT := $(or ${HAMONGO_DB_MEMORY_LIMIT}, 2Gi)
 
 export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.
@@ -159,7 +156,6 @@ oc-create-qa-api-db: | print-status create-qa-api-db
 
 #Build and deploy forms.
 oc-build-forms: | print-status build-forms
-oc-deploy-ha-mongo: | print-status deploy-ha-mongo
 oc-deploy-forms: | print-status deploy-forms
 
 print-status:
@@ -538,19 +534,6 @@ deploy-web:
 	-p REPLICAS=$(WEB_REPLICAS) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(WEB))
-
-deploy-ha-mongo:
-	test -n "$(NAMESPACE)"
-	test -n "$(HAMONGO_DB_CPU_REQUEST)"
-	test -n "$(HAMONGO_DB_MEMORY_REQUEST)"
-	test -n "${HAMONGO_DB_MEMORY_LIMIT}"
-	test -n "$(VOLUME_CAPACITY)"
-	@oc -n $(NAMESPACE) process -f openshift/database/mongo-ha.yml \
-	-p CPU_REQUEST=$(HAMONGO_DB_CPU_REQUEST) \
-	-p MEMORY_REQUEST=$(HAMONGO_DB_MEMORY_REQUEST) \
-	-p MEMORY_LIMIT=$(HAMONGO_DB_MEMORY_LIMIT) \
-	-p VOLUME_CAPACITY=$(VOLUME_CAPACITY) \
-	| oc -n $(NAMESPACE) apply -f -
 
 build-forms:
 	test -n "$(BUILD_NAMESPACE)"
