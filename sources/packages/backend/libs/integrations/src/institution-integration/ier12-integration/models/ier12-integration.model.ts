@@ -69,7 +69,6 @@ export interface IER12Record {
   totalAssessmentNeed: number;
   addressInfo: IERAddressInfo;
   programName: string;
-  programDescription: string;
   credentialType: string;
   fieldOfStudyCode: number;
   currentProgramYear: number;

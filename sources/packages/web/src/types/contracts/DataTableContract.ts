@@ -528,3 +528,12 @@ export const PendingChangeRequestsTableHeaders = [
   { title: "Application", sortable: true, key: "applicationNumber" },
   { title: "Action", sortable: false, key: "action" },
 ];
+
+export const PendingOfferingChangeRequestsHeaders = [
+  { title: "Date Submitted", sortable: true, key: "submittedDate" },
+  { title: "Institution Name", sortable: true, key: "institutionName" },
+  { title: "Location Name", sortable: true, key: "locationName" },
+  { title: "Program Name", sortable: true, key: "programName" },
+  { title: "Offering Name", sortable: true, key: "offeringName" },
+  { title: "Action", sortable: false, key: "actions" },
+];

@@ -241,7 +241,6 @@ export class IER12ProcessingService {
         studentDependantStatus: workflowData.studentData.dependantStatus,
         addressInfo,
         programName: educationProgram.name,
-        programDescription: educationProgram.description,
         credentialType: educationProgram.credentialType,
         fieldOfStudyCode: educationProgram.fieldOfStudyCode,
         currentProgramYear: offering.yearOfStudy,

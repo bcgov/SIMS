@@ -199,6 +199,7 @@ export class OfferingAssessmentAPIInDTO {
 export class OfferingChangeRequestAPIOutDTO {
   offeringId: number;
   programId: number;
+  programName: string;
   offeringName: string;
   institutionName: string;
   locationName: string;

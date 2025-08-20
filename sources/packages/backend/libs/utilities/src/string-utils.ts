@@ -1,23 +1,9 @@
 import { FILE_DEFAULT_ENCODING, UTF8_BYTE_ORDER_MARK } from "@sims/utilities";
 
-const REPLACE_LINE_BREAK_REGEX = /\r?\n|\r/g;
-
-/**
- * Replace the line breaks in the given text.
- * @param data data to replace the line break.
- * @param options replace options:
- * - `replaceText`: text to replace the line break.
- * @returns line break replaced string.
- */
-export function replaceLineBreaks(
-  data?: string,
-  options?: { replaceText?: string },
-): string {
-  if (!data) {
-    return data;
-  }
-  return data.replace(REPLACE_LINE_BREAK_REGEX, options?.replaceText ?? "");
-}
+const NON_PRINTABLE_CHARACTERS_LIMIT = 31;
+const CARRIAGE_RETURN = 13;
+const LINE_FEED = 10;
+const UNEXPECTED_CHAR = 63;
 
 /**
  * List of characters to be translated before the content is converted to an
@@ -49,6 +35,13 @@ export function convertToASCII(rawContent?: string): Buffer | null {
   });
   const content = Buffer.from(rawContent, FILE_DEFAULT_ENCODING);
   for (const [index, char] of content.entries()) {
+    if (
+      char <= NON_PRINTABLE_CHARACTERS_LIMIT &&
+      char !== LINE_FEED &&
+      char !== CARRIAGE_RETURN
+    ) {
+      content[index] = UNEXPECTED_CHAR; // Replace with ? for control characters.
+    }
     if (char > 127) {
       // If extended ascii.
       switch (char) {
@@ -135,7 +128,7 @@ export function convertToASCII(rawContent?: string): Buffer | null {
           content[index] = 121; // Replace with y.
           break;
         default:
-          content[index] = 63; // Replace with ? by default.
+          content[index] = UNEXPECTED_CHAR; // Replace with ? by default.
           break;
       }
     }

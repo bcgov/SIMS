@@ -132,7 +132,6 @@ export type IER12Disbursement = Pick<
 export type IER12Program = Pick<
   EducationProgram,
   | "name"
-  | "description"
   | "credentialType"
   | "fieldOfStudyCode"
   | "cipCode"

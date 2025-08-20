@@ -84,7 +84,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           educationProgram: {
             id: true,
             name: true,
-            description: true,
             credentialType: true,
             fieldOfStudyCode: true,
             cipCode: true,

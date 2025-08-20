@@ -93,6 +93,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
     return offerings.map((offering) => ({
       offeringId: offering.id,
       programId: offering.educationProgram.id,
+      programName: offering.educationProgram.name,
       offeringName: offering.name,
       submittedDate: offering.submittedDate,
       locationName: offering.institutionLocation.name,

@@ -333,6 +333,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataDependants11YearsOrUnder: number;
   calculatedDataDependants12YearsOverOnTaxes: number;
   calculatedDataTotalEligibleDependentsForChildCare: number;
+  calculatedDataTotalChildcareDependants: number;
   calculatedDataTotalRoomAndBoardAmount: number;
   calculatedDataFamilySize: number;
   totalFederalContribution: number;
@@ -365,8 +366,6 @@ export interface CalculatedAssessmentModel {
   awardEligibilityBCAG: boolean;
   // SBSD
   awardEligibilitySBSD: boolean;
-  // CSLP
-  awardEligibilityCSLP: boolean;
 
   // Full time.
   // CSGP
@@ -399,9 +398,20 @@ export interface CalculatedAssessmentModel {
   programYearTotalSBSD: number;
   federalAwardNetSBSDAmount: number;
   provincialAwardNetSBSDAmount: number;
+  // Loans
+  awardEligibilityBCSL: boolean;
+  finalProvincialAwardNetBCSLAmount: number;
+  awardEligibilityBCTopUp: boolean;
+  awardEligibilityCSLF: boolean;
+  federalAwardNetCSLFAmount: number;
+  // Calculated Data / Intermediate Award Variables
+  calculatedDataPotentialBCSL: number;
+  calculatedDataBCTopup: number;
+  calculatedDataPotentialCSLF: number;
 
   // Part time.
   // CSLP
+  awardEligibilityCSLP: boolean;
   federalAwardNetCSLPAmount: number;
   limitAwardCSLPRemaining: number;
   latestCSLPBalance: number;

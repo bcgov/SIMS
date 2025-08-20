@@ -11,6 +11,7 @@ import {
 import { SFASIndividualService } from "@sims/services";
 import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
+  ScholasticStandingData,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
@@ -60,10 +61,13 @@ export class ScholasticStandingControllerService {
 
     const application = scholasticStanding.application;
     const offering = scholasticStanding.referenceOffering;
-
+    const scholasticStandingData: ScholasticStandingData =
+      scholasticStanding.submittedData;
     return {
-      ...scholasticStanding.submittedData,
+      ...scholasticStandingData,
       ...transformToActiveApplicationDataAPIOutDTO(application, offering),
+      currentAssessmentTriggerType: application.currentAssessment.triggerType,
+      reversalDate: scholasticStanding.reversalDate,
     };
   }
 

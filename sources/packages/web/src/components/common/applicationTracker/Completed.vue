@@ -106,7 +106,10 @@
     content="Your institution reported an unsuccessful completion of studies for your application. Please contact the Financial Aid Officer from your institution if you require more information. You can find additional information on Account Activity page."
   >
     <template #actions>
-      <v-btn color="primary" @click="goToStudentAccountActivity"
+      <v-btn
+        color="primary"
+        @click="goToStudentAccountActivity"
+        :disabled="!areApplicationActionsAllowed"
         >View page</v-btn
       >
     </template>

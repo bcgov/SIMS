@@ -38,7 +38,6 @@ export class IER12FileDetail implements IER12FileLine {
   applicationDisabilityStatusFlag: YNFlag;
   addressInfo: IERAddressInfo;
   programName: string;
-  programDescription: string;
   credentialType: string;
   fieldOfStudyCode: number;
   // Analysis pending for the field.
@@ -174,8 +173,7 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendStringWithFiller(this.addressInfo.city, 25);
     record.appendOptionalStringWithFiller(this.addressInfo.provinceState, 4);
     record.appendStringWithFiller(this.addressInfo.postalCode, 16);
-    record.appendStringWithFiller(this.programName, 25);
-    record.appendStringWithFiller(this.programDescription, 50);
+    record.appendStringWithFiller(this.programName, 75);
     record.appendStringWithFiller(this.credentialType, 25);
     record.appendNumberWithFiller(this.fieldOfStudyCode, 4);
     record.appendOptionalStringWithFiller(this.areaOfStudyCode, 4);
