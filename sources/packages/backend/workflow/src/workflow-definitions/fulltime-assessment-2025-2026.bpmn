@@ -2247,8 +2247,8 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
     <bpmn:intermediateThrowEvent id="Event_03czdun" name="Total MSOL Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataDependantMSOLAllowance * calculatedDataTotalEligibleDependants *offeringWeeks" target="calculatedDataDependantTotalMSOLAllowance" />
-          <zeebe:output source="=calculatedDataStudentMSOLAllowance * offeringWeeks" target="calculatedDataStudentTotalMSOLAllowance" />
+          <zeebe:output source="=if studentDataRelationshipStatus = &#34;married&#34; &#10; and calculatedDataPartnerStudyWeeks &#62;=12 &#10;then&#10;  (calculatedDataDependantMSOLAllowance * calculatedDataTotalEligibleDependants *offeringWeeks) / 2&#10;else&#10;  calculatedDataDependantMSOLAllowance * calculatedDataTotalEligibleDependants *offeringWeeks" target="calculatedDataDependantTotalMSOLAllowance" />
+          <zeebe:output source="=if studentDataRelationshipStatus = &#34;married&#34; &#10; and calculatedDataPartnerStudyWeeks &#62;=12 &#10;then&#10;  (calculatedDataStudentMSOLAllowance * offeringWeeks) / 2&#10;else&#10;  calculatedDataStudentMSOLAllowance * offeringWeeks" target="calculatedDataStudentTotalMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1mukp8v</bpmn:incoming>
