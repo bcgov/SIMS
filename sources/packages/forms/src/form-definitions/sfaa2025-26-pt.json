@@ -3723,7 +3723,6 @@
                         {
                           "label": "dependantsIncomeTaxApplicationException",
                           "tableView": false,
-                          "redrawOn": "data",
                           "validateWhenHidden": false,
                           "key": "dependantsIncomeTaxApplicationException",
                           "type": "container",
@@ -3731,6 +3730,7 @@
                           "components": [
                             {
                               "label": "Exception Description - Dependant's income tax",
+                              "customDefaultValue": "value = \"Dependant's income tax\";",
                               "calculateValue": "value = `Dependant's income tax - ${data.dependants[rowIndex].fullName}`;",
                               "calculateServer": true,
                               "key": "exceptionDescription",
@@ -3957,6 +3957,7 @@
                           "components": [
                             {
                               "label": "Exception Description - Dependant's shared custody",
+                              "customDefaultValue": "value = \"Dependant's shared custody\";",
                               "calculateValue": "value = `Dependant's shared custody - ${data.dependants[rowIndex].fullName}`;",
                               "calculateServer": true,
                               "key": "exceptionDescription",
