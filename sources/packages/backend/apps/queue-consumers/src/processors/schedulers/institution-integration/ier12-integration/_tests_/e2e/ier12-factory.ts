@@ -328,7 +328,6 @@ async function updateIER12ProgramFromTestInput(
 ): Promise<void> {
   const programUpdate = {
     name: testInputProgram.name,
-    description: testInputProgram.description,
     credentialType: testInputProgram.credentialType,
     fieldOfStudyCode: testInputProgram.fieldOfStudyCode,
     cipCode: testInputProgram.cipCode,

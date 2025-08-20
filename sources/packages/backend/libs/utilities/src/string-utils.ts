@@ -1,27 +1,9 @@
 import { FILE_DEFAULT_ENCODING, UTF8_BYTE_ORDER_MARK } from "@sims/utilities";
 
-const REPLACE_LINE_BREAK_REGEX = /\r?\n|\r/g;
 const NON_PRINTABLE_CHARACTERS_LIMIT = 31;
 const CARRIAGE_RETURN = 13;
 const LINE_FEED = 10;
 const UNEXPECTED_CHAR = 63;
-
-/**
- * Replace the line breaks in the given text.
- * @param data data to replace the line break.
- * @param options replace options:
- * - `replaceText`: text to replace the line break.
- * @returns line break replaced string.
- */
-export function replaceLineBreaks(
-  data?: string,
-  options?: { replaceText?: string },
-): string {
-  if (!data) {
-    return data;
-  }
-  return data.replace(REPLACE_LINE_BREAK_REGEX, options?.replaceText ?? "");
-}
 
 /**
  * List of characters to be translated before the content is converted to an
