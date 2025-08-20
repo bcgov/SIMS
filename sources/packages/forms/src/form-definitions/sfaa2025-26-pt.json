@@ -3723,6 +3723,7 @@
                         {
                           "label": "dependantsIncomeTaxApplicationException",
                           "tableView": false,
+                          "redrawOn": "data",
                           "validateWhenHidden": false,
                           "key": "dependantsIncomeTaxApplicationException",
                           "type": "container",
