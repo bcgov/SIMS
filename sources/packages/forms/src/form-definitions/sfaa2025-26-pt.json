@@ -3740,7 +3740,8 @@
                             },
                             {
                               "label": "pdDependentUpload",
-                              "calculateValue": "value = data[component.key];",
+                              "customDefaultValue": "value = [];",
+                              "calculateValue": "value = data.dependants[rowIndex][component.key];",
                               "calculateServer": true,
                               "key": "pdDependentUpload",
                               "type": "hidden",
@@ -3967,7 +3968,8 @@
                             },
                             {
                               "label": "dependantCustodyFileUpload",
-                              "calculateValue": "value = data[component.key];",
+                              "customDefaultValue": "value = [];",
+                              "calculateValue": "value = data.dependants[rowIndex][component.key];",
                               "calculateServer": true,
                               "key": "dependantCustodyFileUpload",
                               "type": "hidden",
