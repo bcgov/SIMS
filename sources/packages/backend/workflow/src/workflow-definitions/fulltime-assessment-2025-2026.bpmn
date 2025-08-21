@@ -325,13 +325,13 @@ dmnFullTimeIncomeThreshold</bpmn:text>
         <bpmn:flowNodeRef>Gateway_1mpwnv1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1ty6u6b</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1nwlf2f</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1q23mfd</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1lefe0h</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1sfnf3d</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1q1jh85</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0yseqgo</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1tsivxc</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_03czdun</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1q23mfd</bpmn:flowNodeRef>
         <bpmn:childLaneSet id="LaneSet_0v6vyq5">
           <bpmn:lane id="Lane_0l32w49" name="Assessed Need and Eligility">
             <bpmn:flowNodeRef>Event_1ki3afc</bpmn:flowNodeRef>
@@ -428,13 +428,13 @@ dmnFullTimeIncomeThreshold</bpmn:text>
             <bpmn:flowNodeRef>Gateway_1mpwnv1</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Activity_1ty6u6b</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1nwlf2f</bpmn:flowNodeRef>
-            <bpmn:flowNodeRef>Activity_1q23mfd</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1lefe0h</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Gateway_1sfnf3d</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1q1jh85</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_0yseqgo</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_1tsivxc</bpmn:flowNodeRef>
             <bpmn:flowNodeRef>Event_03czdun</bpmn:flowNodeRef>
+            <bpmn:flowNodeRef>Activity_1q23mfd</bpmn:flowNodeRef>
           </bpmn:lane>
           <bpmn:lane id="Lane_0r9twzh" name="Award Calculation">
             <bpmn:flowNodeRef>Event_1xrobzd</bpmn:flowNodeRef>
@@ -2165,8 +2165,8 @@ There is also a per application limit based on the number of weeks in the offeri
         <zeebe:calledDecision decisionId="dmnFullTimeMSOLAllowance" resultVariable="dmnFullTimeStudentMSOLAllowance" />
         <zeebe:ioMapping>
           <zeebe:input source="=&#34;student&#34;" target="lookupType" />
-          <zeebe:output source="=get value(dmnFullTimeStudentMSOLAllowance, &#10;  institutionLocationProvince)" target="calculatedDataStudentMSOLAllowance" />
-          <zeebe:output source="=if&#10;  institutionLocationProvince = null&#10;then&#10;  &#34;BC&#34;&#10;else&#10;  institutionLocationProvince" target="institutionLocationProvince" />
+          <zeebe:output source="=if offeringDelivered = &#34;online&#34;&#10;  or offeringDelivered = &#34;blended&#34;&#10;  or (studentDataLivingWithPartner = &#34;no&#34; &#10;  and studentDataRelationshipStatus = &#34;married&#34;) &#10;then&#10;  &#34;BC&#34;&#10;else&#10;  institutionLocationProvince" target="calculatedMSOLProvince" />
+          <zeebe:output source="=get value(dmnFullTimeStudentMSOLAllowance, &#10;  calculatedMSOLProvince)" target="calculatedDataStudentMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1fd7dws</bpmn:incoming>
@@ -2177,18 +2177,6 @@ There is also a per application limit based on the number of weeks in the offeri
       <bpmn:incoming>Flow_0snldy8</bpmn:incoming>
       <bpmn:outgoing>Flow_1mukp8v</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:businessRuleTask id="Activity_1q23mfd" name="Dependant MSOL Allowance">
-      <bpmn:extensionElements>
-        <zeebe:calledDecision decisionId="dmnFullTimeMSOLAllowance" resultVariable="dmnFullTimeDependantMSOLAllowance" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=&#34;dependant&#34;" target="lookupType" />
-          <zeebe:output source="=get value(dmnFullTimeDependantMSOLAllowance, institutionLocationProvince)" target="calculatedDataDependantMSOLAllowance" />
-          <zeebe:output source="=if&#10;  institutionLocationProvince = null&#10;then&#10;  &#34;BC&#34;&#10;else&#10;  institutionLocationProvince" target="institutionLocationProvince" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1m3vlcp</bpmn:incoming>
-      <bpmn:outgoing>Flow_0snldy8</bpmn:outgoing>
-    </bpmn:businessRuleTask>
     <bpmn:sequenceFlow id="Flow_1m3vlcp" sourceRef="Gateway_1mpwnv1" targetRef="Activity_1q23mfd" />
     <bpmn:sequenceFlow id="Flow_1fd7dws" sourceRef="Gateway_1mpwnv1" targetRef="Activity_1ty6u6b" />
     <bpmn:sequenceFlow id="Flow_0gv4hzw" sourceRef="Activity_1ty6u6b" targetRef="Gateway_1nwlf2f" />
@@ -2247,13 +2235,28 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
     <bpmn:intermediateThrowEvent id="Event_03czdun" name="Total MSOL Allowance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=calculatedDataDependantMSOLAllowance * calculatedDataTotalEligibleDependants *offeringWeeks" target="calculatedDataDependantTotalMSOLAllowance" />
-          <zeebe:output source="=calculatedDataStudentMSOLAllowance * offeringWeeks" target="calculatedDataStudentTotalMSOLAllowance" />
+          <zeebe:output source="=if studentDataRelationshipStatus = &#34;married&#34; &#10; and calculatedDataPartnerStudyWeeks &#62;=12 &#10;then&#10;  (calculatedDataDependantMSOLAllowance * calculatedDataTotalEligibleDependants *offeringWeeks) / 2&#10;else&#10;  calculatedDataDependantMSOLAllowance * calculatedDataTotalEligibleDependants *offeringWeeks" target="calculatedDataDependantTotalMSOLAllowance" />
+          <zeebe:output source="=if studentDataRelationshipStatus = &#34;married&#34; &#10; and calculatedDataPartnerStudyWeeks &#62;=12 &#10;then&#10;  (calculatedDataStudentMSOLAllowance * offeringWeeks) / 2&#10;else&#10;  calculatedDataStudentMSOLAllowance * offeringWeeks" target="calculatedDataStudentTotalMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1mukp8v</bpmn:incoming>
       <bpmn:outgoing>Flow_1s3jb8o</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
+    <bpmn:businessRuleTask id="Activity_1q23mfd" name="Dependant MSOL Allowance">
+      <bpmn:documentation>If the applicant’s spouse or common-law partner will also be a full-time student for at least 12 weeks during the pplicant’s study period, the sum of the student living allowance and dependent’s living allowance will be divided in half.
+
+If distance education/blended learning program or if married and claiming separate residence use B.C. to calculate MSOL even if school is out of province.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="dmnFullTimeMSOLAllowance" resultVariable="dmnFullTimeDependantMSOLAllowance" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;dependant&#34;" target="lookupType" />
+          <zeebe:output source="=if offeringDelivered = &#34;online&#34;&#10;  or offeringDelivered = &#34;blended&#34;&#10;  or (studentDataLivingWithPartner = &#34;no&#34; &#10;  and studentDataRelationshipStatus = &#34;married&#34;) &#10;then&#10;  &#34;BC&#34;&#10;else&#10;  institutionLocationProvince" target="calculatedMSOLProvince" />
+          <zeebe:output source="=get value(dmnFullTimeDependantMSOLAllowance, calculatedMSOLProvince)" target="calculatedDataDependantMSOLAllowance" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1m3vlcp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0snldy8</bpmn:outgoing>
+    </bpmn:businessRuleTask>
     <bpmn:association id="Association_1o4g869" associationDirection="None" sourceRef="TextAnnotation_10pqvkj" targetRef="Activity_05w97d8" />
     <bpmn:association id="Association_0yc2t6b" sourceRef="Event_0hxxmu9" targetRef="TextAnnotation_1myp6tg" />
   </bpmn:process>
@@ -3206,10 +3209,6 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
       <bpmndi:BPMNShape id="Gateway_0yjtag2_di" bpmnElement="Gateway_1nwlf2f">
         <dc:Bounds x="3285" y="1396" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_16c8sg9" bpmnElement="Activity_1q23mfd">
-        <dc:Bounds x="3160" y="1494" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1lefe0h_di" bpmnElement="Gateway_1lefe0h" isMarkerVisible="true">
         <dc:Bounds x="3475" y="1396" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -3239,6 +3238,10 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
         <bpmndi:BPMNLabel>
           <dc:Bounds x="3352" y="1446" width="58" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_16c8sg9" bpmnElement="Activity_1q23mfd">
+        <dc:Bounds x="3160" y="1501" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1ynr3u7_di" bpmnElement="Flow_1ynr3u7">
         <di:waypoint x="7225" y="1308" />
@@ -4202,8 +4205,8 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1m3vlcp_di" bpmnElement="Flow_1m3vlcp">
         <di:waypoint x="3120" y="1446" />
-        <di:waypoint x="3120" y="1534" />
-        <di:waypoint x="3160" y="1534" />
+        <di:waypoint x="3120" y="1541" />
+        <di:waypoint x="3160" y="1541" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1fd7dws_di" bpmnElement="Flow_1fd7dws">
         <di:waypoint x="3145" y="1421" />
@@ -4214,8 +4217,8 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
         <di:waypoint x="3285" y="1421" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0snldy8_di" bpmnElement="Flow_0snldy8">
-        <di:waypoint x="3260" y="1534" />
-        <di:waypoint x="3310" y="1534" />
+        <di:waypoint x="3260" y="1541" />
+        <di:waypoint x="3310" y="1541" />
         <di:waypoint x="3310" y="1446" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mukp8v_di" bpmnElement="Flow_1mukp8v">
