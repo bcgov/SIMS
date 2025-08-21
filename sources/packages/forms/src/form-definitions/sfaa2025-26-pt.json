@@ -2787,7 +2787,7 @@
                       "label": "otherLivingSituation",
                       "calculateValue": "value = data[component.key];",
                       "calculateServer": true,
-                      "key": "bclivingSituation1",
+                      "key": "otherLivingSituation",
                       "type": "hidden",
                       "input": true,
                       "tableView": false
