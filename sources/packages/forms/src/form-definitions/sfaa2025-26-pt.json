@@ -1125,7 +1125,7 @@
                   "tableView": false
                 },
                 {
-                  "label": "studyEndDateIsPastApplicationException  (part-time unique exceptions)",
+                  "label": "studyEndDateIsPastApplicationException",
                   "tableView": false,
                   "validateWhenHidden": false,
                   "key": "studyEndDateIsPastApplicationException",
@@ -1959,7 +1959,7 @@
                   "tableView": false,
                   "components": [
                     {
-                      "label": "citizenshipForProtectedPersonsApplicationException (part-time unique exceptions)",
+                      "label": "citizenshipForProtectedPersonsApplicationException",
                       "tableView": false,
                       "validateWhenHidden": false,
                       "key": "citizenshipForProtectedPersonsApplicationException",
@@ -2210,7 +2210,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "marriedCommonLawDomesticViolenceApplicationException  (part-time unique exceptions)",
+                  "label": "marriedCommonLawDomesticViolenceApplicationException",
                   "tableView": false,
                   "validateWhenHidden": false,
                   "key": "marriedCommonLawDomesticViolenceApplicationException",
@@ -2757,7 +2757,7 @@
               "tableView": false,
               "components": [
                 {
-                  "label": "citizenshipForBCResidencyApplicationException (part-time unique exceptions)",
+                  "label": "citizenshipForBCResidencyApplicationException",
                   "tableView": false,
                   "validateWhenHidden": false,
                   "key": "citizenshipForBCResidencyApplicationException",
