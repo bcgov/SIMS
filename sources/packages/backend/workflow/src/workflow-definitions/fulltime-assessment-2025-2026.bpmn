@@ -2165,8 +2165,8 @@ There is also a per application limit based on the number of weeks in the offeri
         <zeebe:calledDecision decisionId="dmnFullTimeMSOLAllowance" resultVariable="dmnFullTimeStudentMSOLAllowance" />
         <zeebe:ioMapping>
           <zeebe:input source="=&#34;student&#34;" target="lookupType" />
-          <zeebe:output source="=if offeringDelivered = &#34;online&#34;&#10;  or offeringDelivered = &#34;blended&#34;&#10;  or (studentDataLivingWithPartner = &#34;no&#34; &#10;  and studentDataRelationshipStatus = &#34;married&#34;) &#10;then&#10;  &#34;BC&#34;&#10;else&#10;  institutionLocationProvince" target="institutionLocationProvince" />
-          <zeebe:output source="=get value(dmnFullTimeStudentMSOLAllowance, &#10;  institutionLocationProvince)" target="calculatedDataStudentMSOLAllowance" />
+          <zeebe:output source="=if offeringDelivered = &#34;online&#34;&#10;  or offeringDelivered = &#34;blended&#34;&#10;  or (studentDataLivingWithPartner = &#34;no&#34; &#10;  and studentDataRelationshipStatus = &#34;married&#34;) &#10;then&#10;  &#34;BC&#34;&#10;else&#10;  institutionLocationProvince" target="calculatedMSOLProvince" />
+          <zeebe:output source="=get value(dmnFullTimeStudentMSOLAllowance, &#10;  calculatedMSOLProvince)" target="calculatedDataStudentMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1fd7dws</bpmn:incoming>
@@ -2243,12 +2243,15 @@ If the appeal was submitted, the calculated amount will be the</bpmn:documentati
       <bpmn:outgoing>Flow_1s3jb8o</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:businessRuleTask id="Activity_1q23mfd" name="Dependant MSOL Allowance">
+      <bpmn:documentation>If the applicant’s spouse or common-law partner will also be a full-time student for at least 12 weeks during the pplicant’s study period, the sum of the student living allowance and dependent’s living allowance will be divided in half.
+
+If distance education/blended learning program or if married and claiming separate residence use B.C. to calculate MSOL even if school is out of province.</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:calledDecision decisionId="dmnFullTimeMSOLAllowance" resultVariable="dmnFullTimeDependantMSOLAllowance" />
         <zeebe:ioMapping>
           <zeebe:input source="=&#34;dependant&#34;" target="lookupType" />
-          <zeebe:output source="=if offeringDelivered = &#34;online&#34;&#10;  or offeringDelivered = &#34;blended&#34;&#10;  or (studentDataLivingWithPartner = &#34;no&#34; &#10;  and studentDataRelationshipStatus = &#34;married&#34;) &#10;then&#10;  &#34;BC&#34;&#10;else&#10;  institutionLocationProvince" target="institutionLocationProvince" />
-          <zeebe:output source="=get value(dmnFullTimeDependantMSOLAllowance, institutionLocationProvince)" target="calculatedDataDependantMSOLAllowance" />
+          <zeebe:output source="=if offeringDelivered = &#34;online&#34;&#10;  or offeringDelivered = &#34;blended&#34;&#10;  or (studentDataLivingWithPartner = &#34;no&#34; &#10;  and studentDataRelationshipStatus = &#34;married&#34;) &#10;then&#10;  &#34;BC&#34;&#10;else&#10;  institutionLocationProvince" target="calculatedMSOLProvince" />
+          <zeebe:output source="=get value(dmnFullTimeDependantMSOLAllowance, calculatedMSOLProvince)" target="calculatedDataDependantMSOLAllowance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1m3vlcp</bpmn:incoming>
