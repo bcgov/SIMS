@@ -3722,33 +3722,12 @@
                       "components": [
                         {
                           "label": "dependantsIncomeTaxApplicationException",
-                          "tableView": false,
-                          "validateWhenHidden": false,
+                          "calculateValue": "value = {\n exceptionDescription: `Dependant's income tax - ${data.dependants[rowIndex].fullName}`,\n pdDependentUpload: data.dependants[rowIndex][\"pdDependentUpload\"]\n}",
+                          "calculateServer": true,
                           "key": "dependantsIncomeTaxApplicationException",
-                          "type": "container",
+                          "type": "hidden",
                           "input": true,
-                          "components": [
-                            {
-                              "label": "Exception Description - Dependant's income tax",
-                              "customDefaultValue": "value = \"Dependant's income tax\";",
-                              "calculateValue": "value = `Dependant's income tax - ${data.dependants[rowIndex].fullName}`;",
-                              "calculateServer": true,
-                              "key": "exceptionDescription",
-                              "type": "hidden",
-                              "input": true,
-                              "tableView": false
-                            },
-                            {
-                              "label": "pdDependentUpload",
-                              "customDefaultValue": "value = [];",
-                              "calculateValue": "value = data.dependants[rowIndex][component.key];",
-                              "calculateServer": true,
-                              "key": "pdDependentUpload",
-                              "type": "hidden",
-                              "input": true,
-                              "tableView": false
-                            }
-                          ]
+                          "tableView": false
                         },
                         {
                           "label": "HTML",
@@ -3950,33 +3929,13 @@
                       "components": [
                         {
                           "label": "dependantsSharedCustodyApplicationException",
-                          "tableView": false,
-                          "validateWhenHidden": false,
+                          "customDefaultValue": "value = [];",
+                          "calculateValue": "value = {\r\n  exceptionDescription: `Dependant's shared custody - ${data.dependants[rowIndex].fullName}`,\r\n  dependantCustodyFileUpload: data.dependants[rowIndex][\"dependantCustodyFileUpload\"]\r\n}",
+                          "calculateServer": true,
                           "key": "dependantsSharedCustodyApplicationException",
-                          "type": "container",
+                          "type": "hidden",
                           "input": true,
-                          "components": [
-                            {
-                              "label": "Exception Description - Dependant's shared custody",
-                              "customDefaultValue": "value = \"Dependant's shared custody\";",
-                              "calculateValue": "value = `Dependant's shared custody - ${data.dependants[rowIndex].fullName}`;",
-                              "calculateServer": true,
-                              "key": "exceptionDescription",
-                              "type": "hidden",
-                              "input": true,
-                              "tableView": false
-                            },
-                            {
-                              "label": "dependantCustodyFileUpload",
-                              "customDefaultValue": "value = [];",
-                              "calculateValue": "value = data.dependants[rowIndex][component.key];",
-                              "calculateServer": true,
-                              "key": "dependantCustodyFileUpload",
-                              "type": "hidden",
-                              "input": true,
-                              "tableView": false
-                            }
-                          ]
+                          "tableView": false
                         },
                         {
                           "label": "HTML",
