@@ -26,6 +26,7 @@ export enum Role {
   StudentAddNewSIN = "student-add-new-sin",
   StudentCreateNote = "student-create-note",
   StudentConfirmEnrolment = "student-confirm-enrolment",
+  StudentCancelDisbursementSchedule = "student-cancel-disbursement-schedule",
   StudentAddOverawardManual = "student-add-overaward-manual",
   InstitutionEditProfile = "institution-edit-profile",
   InstitutionApproveDeclineProgram = "institution-approve-decline-program",

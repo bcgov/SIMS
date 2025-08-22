@@ -178,4 +178,22 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     orderByCondition[dbColumnName] = sortOrder;
     return orderByCondition;
   }
+
+  async getDisbursementById(
+    disbursementId: number,
+  ): Promise<DisbursementSchedule> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        disbursementScheduleStatus: true,
+        disbursementReceipts: {
+          id: true,
+        },
+      },
+      relations: {
+        disbursementReceipts: true,
+      },
+      where: { id: disbursementId },
+    });
+  }
 }

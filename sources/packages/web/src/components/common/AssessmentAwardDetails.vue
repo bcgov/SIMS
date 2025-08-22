@@ -58,6 +58,7 @@
               "
               @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
+            <cancel-disbursement-schedule v-if="canCancelFirstDisbursement" />
           </div>
           <div
             class="my-3"
@@ -198,6 +199,7 @@
               "
               @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
+            <cancel-disbursement-schedule v-if="canCancelSecondDisbursement" />
           </div>
           <div
             class="my-3"
@@ -298,6 +300,8 @@ import { PropType, computed, defineComponent } from "vue";
 import AwardTable from "@/components/common/AwardTable.vue";
 import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
 import ConfirmEnrolment from "@/components/common/ConfirmEnrolment.vue";
+import CancelDisbursementSchedule from "@/components/common/CancelDisbursementSchedule.vue";
+
 import { useFormatters } from "@/composables";
 
 export default defineComponent({
@@ -308,6 +312,7 @@ export default defineComponent({
   },
   components: {
     AwardTable,
+    CancelDisbursementSchedule,
     ConfirmEnrolment,
     StatusInfoEnrolment,
   },
@@ -350,6 +355,19 @@ export default defineComponent({
         propName.startsWith(identifier),
       );
     };
+    const receivedDisbursementReceipt = (
+      disbursement: "first" | "second",
+      finalAward?: DynamicAwardValue,
+    ) => {
+      if (!finalAward) {
+        return false;
+      }
+      const identifier =
+        disbursement === "first"
+          ? "receivedDisbursementReceipt1"
+          : "receivedDisbursementReceipt2";
+      return !!finalAward[identifier];
+    };
     const isFirstDisbursementCompleted = computed<boolean>(
       () =>
         props.assessmentAwardData.estimatedAward?.disbursement1COEStatus ===
@@ -387,6 +405,26 @@ export default defineComponent({
       return undefined;
     };
 
+    const canCancelFirstDisbursement = computed<boolean>(
+      () =>
+        props.assessmentAwardData.estimatedAward["disbursement1Status"] ===
+          DisbursementScheduleStatus.Sent &&
+        !receivedDisbursementReceipt(
+          "first",
+          props.assessmentAwardData.finalAward,
+        ),
+    );
+
+    const canCancelSecondDisbursement = computed<boolean>(
+      () =>
+        props.assessmentAwardData.estimatedAward["disbursement2Status"] ===
+          DisbursementScheduleStatus.Sent &&
+        !receivedDisbursementReceipt(
+          "second",
+          props.assessmentAwardData.finalAward,
+        ),
+    );
+
     return {
       dateOnlyLongString,
       AESTRoutesConst,
@@ -399,6 +437,8 @@ export default defineComponent({
       StatusInfo,
       OfferingIntensity,
       DisbursementScheduleStatus,
+      canCancelFirstDisbursement,
+      canCancelSecondDisbursement,
     };
   },
 });

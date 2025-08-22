@@ -87,6 +87,7 @@ import {
   CASInvoiceAESTController,
   ApplicationChangeRequestAESTController,
   DynamicFormAESTController,
+  DisbursementScheduleAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -106,6 +107,7 @@ import {
   MSFAANumberSharedService,
   AssessmentSequentialProcessingService,
   CASSupplierSharedService,
+  DisbursementScheduleSharedService,
 } from "@sims/services";
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 
@@ -140,6 +142,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ApplicationRestrictionBypassAESTController,
     ApplicationChangeRequestAESTController,
     DynamicFormAESTController,
+    DisbursementScheduleAESTController,
   ],
   providers: [
     ApplicationExceptionControllerService,
@@ -214,6 +217,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     CASInvoiceService,
     CASInvoiceBatchReportService,
     ApplicationChangeRequestService,
+    DisbursementScheduleSharedService,
   ],
 })
 export class AppAESTModule {}
