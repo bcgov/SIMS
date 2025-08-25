@@ -18,6 +18,6 @@
     "webpack-glob-entries": "^1.0.1"
   },
   "dependencies": {
-    "@types/k6": "^1.1.1"
+    "@types/k6": "^1.2.0"
   }
 }
