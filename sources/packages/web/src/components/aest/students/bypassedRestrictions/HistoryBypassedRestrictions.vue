@@ -131,13 +131,6 @@ export default defineComponent({
       bypasses: [],
     } as ApplicationRestrictionBypassHistoryAPIOutDTO);
 
-    // Adding watch effect instead of onMounted because
-    // applicationId may not be not available on load.
-    watchEffect(
-      async () =>
-        props.applicationId && (await reloadBypassedRestrictionsHistory()),
-    );
-
     const getRemoveBypassLabel = (isBypassActive: boolean): string => {
       return isBypassActive ? "Remove Bypass" : "Bypass Removed";
     };
@@ -183,6 +176,13 @@ export default defineComponent({
           props.applicationId,
         );
     };
+
+    // Adding watch effect instead of onMounted because
+    // applicationId may not be not available on load.
+    watchEffect(
+      async () =>
+        props.applicationId && (await reloadBypassedRestrictionsHistory()),
+    );
 
     return {
       DEFAULT_PAGE_LIMIT,
