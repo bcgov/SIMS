@@ -37,7 +37,6 @@ import {
   IsMaxCostValue,
   AllowIf,
   IsNumberGreaterThan,
-  IsSpecificValue,
 } from "../../utilities/class-validation";
 import { Type } from "class-transformer";
 import { ProgramAllowsOfferingIntensity } from "./custom-validators/program-allows-offering-intensity";
@@ -613,9 +612,12 @@ export class OfferingValidationModel {
     (offering: OfferingValidationModel) =>
       offering.isAviationOffering === AviationYesNoOptions.Yes,
   )
-  @IsSpecificValue(
-    userFriendlyNames.privatePilotTraining,
-    AviationCredentialForOfferingOptions.PrivatePilotTraining,
+  @IsIn(
+    [
+      AviationCredentialForOfferingOptions.CommercialPilotTraining,
+      AviationCredentialForOfferingOptions.InstructorsRating,
+      AviationCredentialForOfferingOptions.Endorsements,
+    ],
     {
       context: ValidationContext.CreateWarning(
         OfferingValidationWarnings.AviationCredIsPrivatePilotTraining,
