@@ -395,6 +395,7 @@ export class ConfirmationOfEnrollmentService {
           .update(Application)
           .set({
             applicationStatus: ApplicationStatus.Completed,
+            applicationStatusUpdatedOn: coeConfirmationDate,
             modifier: auditUser,
             updatedAt: coeConfirmationDate,
           })
