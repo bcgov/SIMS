@@ -89,15 +89,8 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
 
-    // Get the application before confirmation to compare timestamps
-    const applicationBeforeConfirmation = await db.application.findOne({
-      select: {
-        id: true,
-        applicationStatus: true,
-        applicationStatusUpdatedOn: true,
-      },
-      where: { id: application.id },
-    });
+    // Set timestamps for comparison.
+    const referenceDateBeforeConfirmation = new Date();
 
     // Act
     await request(app.getHttpServer())
@@ -121,9 +114,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     expect(updatedApplication.applicationStatusUpdatedOn).toBeDefined();
     expect(
       updatedApplication.applicationStatusUpdatedOn.getTime(),
-    ).toBeGreaterThan(
-      applicationBeforeConfirmation.applicationStatusUpdatedOn.getTime(),
-    );
+    ).toBeGreaterThan(referenceDateBeforeConfirmation.getTime());
   });
 
   it("Should not allow NOA approval for old application assessments when the application has multiple assessments.", async () => {
