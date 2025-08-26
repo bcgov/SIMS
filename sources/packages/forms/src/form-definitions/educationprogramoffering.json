@@ -603,6 +603,136 @@
               "label": "Panel"
             },
             {
+              "label": "Is this an aviation offering?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "validateWhenHidden": false,
+              "key": "isAviationOffering",
+              "tags": [
+                "execute-validation"
+              ],
+              "type": "radio",
+              "input": true
+            },
+            {
+              "label": "HTML",
+              "tag": "p",
+              "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong class=\"ml-2\">This study period can’t contain an aviation component</strong>\n<br>\n<span>Your program must be approved as an aviation program first.</span>",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "programNotAviation",
+              "customConditional": "show = data.validationWarnings.indexOf(component.key) !== -1;",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false
+            },
+            {
+              "label": "What aviation credential is this offering for?",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Commerical Pilot Training",
+                  "value": "commercialPilotTraining",
+                  "shortcut": ""
+                },
+                {
+                  "label": "Instructor's Rating",
+                  "value": "instructorsRating",
+                  "shortcut": ""
+                },
+                {
+                  "label": "Endorsements",
+                  "value": "endorsements",
+                  "shortcut": ""
+                },
+                {
+                  "label": "Private Pilot Training",
+                  "value": "privatePilotTraining",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "validateWhenHidden": false,
+              "key": "aviationCredentialForOffering",
+              "tags": [
+                "execute-validation"
+              ],
+              "conditional": {
+                "show": true,
+                "when": "isAviationOffering",
+                "eq": "yes"
+              },
+              "type": "radio",
+              "input": true
+            },
+            {
+              "label": "HTML",
+              "tag": "p",
+              "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong class=\"ml-2\">This aviation credential is not supported by the program</strong>\n<br>\n<span>Your program must be approved for the credential in order to be included in the offering.</span>",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "matchProgramAviationCredential",
+              "customConditional": "show = data.validationWarnings.indexOf(component.key) !== -1;",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false
+            },
+            {
+              "label": "HTML",
+              "tag": "p",
+              "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong class=\"ml-2\">This study period is ineligible for StudentAid BC funding</strong>\n<br>\n<span>This aviation credential is not eligible for funding.</span>",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "aviationCredIsPrivatePilotTraining",
+              "customConditional": "show = data.validationWarnings.indexOf(component.key) !== -1;",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false
+            },
+            {
               "label": "Does this contain a work-integrated learning component?",
               "optionsLabelPosition": "right",
               "inline": false,
@@ -1227,6 +1357,27 @@
                   "refreshOnChange": true,
                   "customClass": "banner-warning ",
                   "key": "invalidFundedStudyPeriodLength",
+                  "customConditional": "show = data.validationWarnings.indexOf(component.key) !== -1;",
+                  "type": "htmlelement",
+                  "input": false,
+                  "tableView": false,
+                  "lockKey": true,
+                  "hideLabel": true
+                },
+                {
+                  "label": "Invalid funded study period length popup",
+                  "tag": "p",
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "<strong class=\"ml-2\">This study period is ineligible for StudentAid BC funding</strong>\n<br>\n<span>The dates you have entered will create an offering with more funded weeks than allowed based on the aviation credential selected.</span>",
+                  "refreshOnChange": true,
+                  "customClass": "banner-warning ",
+                  "key": "invalidFundedWeeksForAviationOfferingCredentials",
                   "customConditional": "show = data.validationWarnings.indexOf(component.key) !== -1;",
                   "type": "htmlelement",
                   "input": false,
