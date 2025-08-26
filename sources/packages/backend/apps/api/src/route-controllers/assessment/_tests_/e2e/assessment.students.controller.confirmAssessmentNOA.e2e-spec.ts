@@ -80,6 +80,52 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     });
   });
 
+  it("Should update applicationStatusUpdatedOn when confirming NOA approval.", async () => {
+    // Arrange
+    const { currentAssessmentId, application } =
+      await createApplicationAndAssessments();
+    const currentEndpoint = `/students/assessment/${currentAssessmentId}/confirm-assessment`;
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Get the application before confirmation to compare timestamps
+    const applicationBeforeConfirmation = await db.application.findOne({
+      select: {
+        id: true,
+        applicationStatus: true,
+        applicationStatusUpdatedOn: true,
+      },
+      where: { id: application.id },
+    });
+
+    // Act
+    await request(app.getHttpServer())
+      .patch(currentEndpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // Assert
+    const updatedApplication = await db.application.findOne({
+      select: {
+        id: true,
+        applicationStatus: true,
+        applicationStatusUpdatedOn: true,
+      },
+      where: { id: application.id },
+    });
+
+    expect(updatedApplication.applicationStatus).toBe(
+      ApplicationStatus.Enrolment,
+    );
+    expect(updatedApplication.applicationStatusUpdatedOn).toBeDefined();
+    expect(
+      updatedApplication.applicationStatusUpdatedOn.getTime(),
+    ).toBeGreaterThan(
+      applicationBeforeConfirmation.applicationStatusUpdatedOn.getTime(),
+    );
+  });
+
   it("Should not allow NOA approval for old application assessments when the application has multiple assessments.", async () => {
     // Arrange
     const { oldAssessmentId } = await createApplicationAndAssessments();
