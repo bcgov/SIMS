@@ -15,6 +15,7 @@ import {
   ApplicationEditStatus,
   ApplicationStatus,
   OfferingIntensity,
+  ProgramInfoStatus,
 } from "@sims/sims-db";
 
 /**
@@ -46,6 +47,7 @@ export function createFakeAssessmentConsolidatedData(
     institutionType: InstitutionTypes.BCPublic,
     programLength: ProgramLengthOptions.SixtyWeeksToTwoYears,
     programCredentialType: CredentialType.UnderGraduateDegree,
+    programInfoStatus: ProgramInfoStatus.notRequired,
     offeringDelivered: OfferingDeliveryOptions.Onsite,
     offeringProgramRelatedCosts: 5000,
     offeringActualTuitionCosts: 20000,
@@ -84,6 +86,7 @@ export function createFakePartTimeAssessmentConsolidatedData(
     programLocation: Provinces.BritishColumbia,
     institutionLocationProvince: Provinces.BritishColumbia,
     institutionType: InstitutionTypes.BCPublic,
+    programInfoStatus: ProgramInfoStatus.notRequired,
     programLength: ProgramLengthOptions.SixtyWeeksToTwoYears,
     programCredentialType: CredentialType.UnderGraduateDegree,
     offeringDelivered: OfferingDeliveryOptions.Onsite,
