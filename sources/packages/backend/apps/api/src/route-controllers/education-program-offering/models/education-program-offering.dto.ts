@@ -12,7 +12,7 @@ import {
   OnlineInstructionModeOptions,
   OfferingYesNoOptions,
   AviationYesNoOptions,
-  AviationCredentialForOfferingOptions,
+  AviationCredentialTypeOptions,
 } from "../../../services";
 
 export class StudyBreakAPIOutDTO {
@@ -81,7 +81,7 @@ export class EducationProgramOfferingAPIInDTO {
   @Allow()
   isAviationOffering: AviationYesNoOptions;
   @Allow()
-  aviationCredentialForOffering?: AviationCredentialForOfferingOptions;
+  aviationCredentialType?: AviationCredentialTypeOptions;
   @Allow()
   offeringWILComponentType?: string;
   @Allow()
@@ -124,6 +124,8 @@ export class EducationProgramOfferingAPIOutDTO {
   lacksStudyBreaks: boolean;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;
+  isAviationOffering: AviationYesNoOptions;
+  aviationCredentialType?: AviationCredentialTypeOptions;
   hasOfferingWILComponent: string;
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;

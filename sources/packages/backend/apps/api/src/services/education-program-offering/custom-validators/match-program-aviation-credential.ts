@@ -1,6 +1,6 @@
 import {
+  AviationCredentialTypeOptions,
   OfferingValidationModel,
-  AviationCredentialForOfferingOptions,
 } from "../education-program-offering-validation.models";
 import {
   ValidationArguments,
@@ -19,14 +19,14 @@ class MatchProgramAviationCredentialConstraint
   implements ValidatorConstraintInterface
 {
   validate(
-    aviationCredentialForOffering: AviationCredentialForOfferingOptions,
+    aviationCredentialType: AviationCredentialTypeOptions,
     args: ValidationArguments,
   ): boolean {
     const offeringModel = args.object as OfferingValidationModel;
     if (
-      (offeringModel.programContext
-        .credentialTypesAviation as unknown as AviationCredentialForOfferingOptions) ===
-      aviationCredentialForOffering
+      offeringModel.programContext.credentialTypesAviation[
+        aviationCredentialType
+      ]
     ) {
       return true;
     }
@@ -35,7 +35,7 @@ class MatchProgramAviationCredentialConstraint
 
   defaultMessage(args: ValidationArguments) {
     const [propertyDisplayName] = args.constraints;
-    return `${propertyDisplayName} must match the offering aviation credential.`;
+    return `${propertyDisplayName} the offering aviation credential.`;
   }
 }
 

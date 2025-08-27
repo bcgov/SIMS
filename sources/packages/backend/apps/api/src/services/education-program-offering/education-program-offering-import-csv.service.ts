@@ -62,7 +62,7 @@ export class EducationProgramOfferingImportCSVService {
     return csvModels.map((csvModel) => ({
       // Bulk upload will not have aviation offering.
       isAviationOffering: AviationYesNoOptions.No,
-      aviationCredentialForOffering: null,
+      aviationCredentialType: null,
       offeringName: csvModel.offeringName,
       yearOfStudy: csvModel.yearOfStudy,
       offeringIntensity: csvModel.offeringIntensity,

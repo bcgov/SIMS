@@ -682,7 +682,7 @@
                 "onlyAvailableItems": true
               },
               "validateWhenHidden": false,
-              "key": "aviationCredentialForOffering",
+              "key": "aviationCredentialType",
               "tags": [
                 "execute-validation"
               ],

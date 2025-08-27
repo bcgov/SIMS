@@ -6,7 +6,7 @@ import {
   ValidationArguments,
 } from "class-validator";
 import {
-  AviationCredentialForOfferingOptions,
+  AviationCredentialTypeOptions,
   AviationYesNoOptions,
   MaximumFundedWeeksForAviationOfferingCredentials,
   OfferingValidationModel,
@@ -34,14 +34,14 @@ class HasValidFundedWeeksForAviationOfferingCredentialsConstraint
       studyBreaks,
       args,
     );
-    switch (offeringModel.aviationCredentialForOffering) {
-      case AviationCredentialForOfferingOptions.CommercialPilotTraining:
+    switch (offeringModel.aviationCredentialType) {
+      case AviationCredentialTypeOptions.CommercialPilotTraining:
         return (
           calculatedStudyBreaksAndWeeks.totalFundedWeeks <=
           MaximumFundedWeeksForAviationOfferingCredentials.CommercialPilotTraining
         );
-      case AviationCredentialForOfferingOptions.InstructorsRating:
-      case AviationCredentialForOfferingOptions.Endorsements:
+      case AviationCredentialTypeOptions.InstructorsRating:
+      case AviationCredentialTypeOptions.Endorsements:
         return (
           calculatedStudyBreaksAndWeeks.totalFundedWeeks <=
           MaximumFundedWeeksForAviationOfferingCredentials.InstructorsRatingAndEndorsements

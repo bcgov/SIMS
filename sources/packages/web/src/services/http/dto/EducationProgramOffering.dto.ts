@@ -81,7 +81,7 @@ export class EducationProgramOfferingAPIInDTO {
   @Expose()
   isAviationOffering: AviationYesNoOptions;
   @Expose()
-  aviationCredentialForOffering?: AviationCredentialForOfferingOptions;
+  aviationCredentialType?: AviationCredentialTypeOptions;
   @Expose()
   offeringWILComponentType?: string;
   @Expose()
@@ -129,7 +129,7 @@ export enum AviationYesNoOptions {
 /**
  * Aviation credential options for offerings.
  */
-export enum AviationCredentialForOfferingOptions {
+export enum AviationCredentialTypeOptions {
   CommercialPilotTraining = "commercialPilotTraining",
   InstructorsRating = "instructorsRating",
   Endorsements = "endorsements",
@@ -164,7 +164,7 @@ export interface EducationProgramOfferingAPIOutDTO {
   precedingOfferingId?: number;
   offeringType: OfferingTypes;
   isAviationOffering: AviationYesNoOptions;
-  aviationCredentialForOffering?: AviationCredentialForOfferingOptions;
+  aviationCredentialType?: AviationCredentialTypeOptions;
   offeringWILComponentType?: string;
   studyBreaks: StudyBreakAPIOutDTO[];
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;

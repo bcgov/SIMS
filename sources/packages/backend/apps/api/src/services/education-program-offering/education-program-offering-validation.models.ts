@@ -78,7 +78,7 @@ const userFriendlyNames = {
   yearOfStudy: "Year of study",
   showYearOfStudy: "Show year of study",
   isAviationOffering: "Aviation Offering",
-  aviationCredentialForOffering: "Aviation credential for offering",
+  aviationCredentialType: "Aviation credential for offering",
   matchProgramAviationCredential: "Program aviation credential must match",
   privatePilotTraining: "Private Pilot Training",
   hasOfferingWILComponent: "WIL Component",
@@ -259,7 +259,7 @@ export enum MaximumFundedWeeksForAviationOfferingCredentials {
   InstructorsRatingAndEndorsements = 13,
 }
 
-export enum AviationCredentialForOfferingOptions {
+export enum AviationCredentialTypeOptions {
   CommercialPilotTraining = "commercialPilotTraining",
   InstructorsRating = "instructorsRating",
   Endorsements = "endorsements",
@@ -602,10 +602,10 @@ export class OfferingValidationModel {
   /**
    * Indicates the aviation credential for the offering.
    */
-  @IsEnum(AviationCredentialForOfferingOptions, {
+  @IsEnum(AviationCredentialTypeOptions, {
     message: getEnumFormatMessage(
-      userFriendlyNames.aviationCredentialForOffering,
-      AviationCredentialForOfferingOptions,
+      userFriendlyNames.aviationCredentialType,
+      AviationCredentialTypeOptions,
     ),
   })
   @ValidateIf(
@@ -614,9 +614,9 @@ export class OfferingValidationModel {
   )
   @IsIn(
     [
-      AviationCredentialForOfferingOptions.CommercialPilotTraining,
-      AviationCredentialForOfferingOptions.InstructorsRating,
-      AviationCredentialForOfferingOptions.Endorsements,
+      AviationCredentialTypeOptions.CommercialPilotTraining,
+      AviationCredentialTypeOptions.InstructorsRating,
+      AviationCredentialTypeOptions.Endorsements,
     ],
     {
       context: ValidationContext.CreateWarning(
@@ -632,7 +632,7 @@ export class OfferingValidationModel {
       ),
     },
   )
-  aviationCredentialForOffering?: AviationCredentialForOfferingOptions;
+  aviationCredentialType?: AviationCredentialTypeOptions;
   /**
    * Indicates if the offering has a WIL(work-integrated learning).
    */

@@ -14,6 +14,10 @@ import { InstitutionLocation } from "./institution-location.model";
 import { OfferingTypes, User, OfferingStatus, Note } from ".";
 import { OfferingIntensity } from "./offering-intensity.type";
 import { numericTransformer } from "@sims/sims-db/transformers/numeric.transformer";
+import {
+  AviationYesNoOptions,
+  AviationCredentialTypeOptions,
+} from "apps/api/src/services";
 
 /**
  * Max value the offering name can have. By DB definition it is defined as
@@ -157,6 +161,24 @@ export class EducationProgramOffering extends RecordDataModel {
     name: "year_of_study",
   })
   yearOfStudy: number;
+
+  /**
+   * Indicates if the offering is an aviation offering.
+   */
+  @Column({
+    name: "is_aviation_offering",
+    nullable: false,
+  })
+  isAviationOffering: AviationYesNoOptions;
+
+  /**
+   * Indicates the aviation credential type for the aviation offering.
+   */
+  @Column({
+    name: "aviation_credential_type",
+    nullable: true,
+  })
+  aviationCredentialType: AviationCredentialTypeOptions;
 
   /**
    * Determines if the offering has WIL component.
