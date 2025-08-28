@@ -301,6 +301,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalChildCareCost: number;
   calculatedDataChildSpousalSupport: number;
   calculatedDataTotalChildSpousalSupport: number;
+  calculatedMSOLProvince: Provinces;
   calculatedDataTotalMSOLAllowance: number;
   calculatedDataTotalCosts: number;
   calculatedDataTotalFamilyIncome: number;

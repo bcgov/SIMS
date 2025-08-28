@@ -31,12 +31,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
     fromStatus: ApplicationStatus,
     toStatus: ApplicationStatus,
   ): Promise<UpdateResult> {
+    const now = new Date();
     return this.repo.update(
       {
         id: applicationId,
         applicationStatus: In([fromStatus, toStatus]),
       },
-      { applicationStatus: toStatus },
+      {
+        applicationStatus: toStatus,
+        applicationStatusUpdatedOn: now,
+        modifier: this.systemUsersService.systemUser,
+        updatedAt: now,
+      },
     );
   }
 
