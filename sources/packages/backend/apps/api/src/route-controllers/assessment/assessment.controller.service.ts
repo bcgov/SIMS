@@ -322,7 +322,8 @@ export class AssessmentControllerService {
     // Populate the hasDisbursementReceipts flags for each disbursement schedule.
     assessment.disbursementSchedules.forEach((_, index) => {
       const hasReceipt = disbursementReceipts.some(
-        (receipt) => receipt.disbursementSchedule.id === assessment.id,
+        (receipt) =>
+          receipt.disbursementSchedule.studentAssessment.id === assessment.id,
       );
       finalAward[`receivedDisbursementReceipt${++index}`] = hasReceipt;
     });
