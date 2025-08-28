@@ -1,8 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { EducationProgram, OfferingTypes } from "@sims/sims-db";
-import { EducationProgramService, InstitutionLocationService } from "..";
 import {
   AviationYesNoOptions,
+  EducationProgram,
+  OfferingTypes,
+} from "@sims/sims-db";
+import { EducationProgramService, InstitutionLocationService } from "..";
+import {
   OfferingValidationModel,
   OfferingYesNoOptions,
 } from "./education-program-offering-validation.models";

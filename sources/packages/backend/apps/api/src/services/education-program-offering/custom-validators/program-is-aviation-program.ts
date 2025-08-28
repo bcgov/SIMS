@@ -1,7 +1,5 @@
-import {
-  OfferingValidationModel,
-  AviationYesNoOptions,
-} from "../education-program-offering-validation.models";
+import { AviationYesNoOptions } from "@sims/sims-db";
+import { OfferingValidationModel } from "../education-program-offering-validation.models";
 import {
   ValidationArguments,
   ValidationOptions,

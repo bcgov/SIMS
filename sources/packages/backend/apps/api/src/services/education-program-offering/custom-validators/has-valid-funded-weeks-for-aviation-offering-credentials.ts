@@ -6,13 +6,15 @@ import {
   ValidationArguments,
 } from "class-validator";
 import {
-  AviationCredentialTypeOptions,
-  AviationYesNoOptions,
   MaximumFundedWeeksForAviationOfferingCredentials,
   OfferingValidationModel,
   StudyBreak,
 } from "../education-program-offering-validation.models";
 import { OfferingCalculationValidationBaseConstraint } from "./offering-calculation-validation-base-constraint";
+import {
+  AviationCredentialTypeOptions,
+  AviationYesNoOptions,
+} from "@sims/sims-db";
 
 /**
  * For an offering that contains study breaks and is an aviation offering,
