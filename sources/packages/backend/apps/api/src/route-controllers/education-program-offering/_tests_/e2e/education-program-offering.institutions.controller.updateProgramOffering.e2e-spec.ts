@@ -1,5 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
+  AviationYesNoOptions,
   Institution,
   InstitutionLocation,
   OfferingIntensity,
@@ -504,6 +505,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       yearOfStudy: 1,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
+      isAviationOffering: AviationYesNoOptions.No,
       hasOfferingWILComponent: "no",
       studyStartDate: "2023-09-01",
       studyEndDate: "2024-06-30",
@@ -652,6 +654,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         yearOfStudy: 1,
         offeringIntensity: OfferingIntensity.fullTime,
         offeringDelivered: OfferingDeliveryOptions.Onsite,
+        isAviationOffering: AviationYesNoOptions.No,
         hasOfferingWILComponent: "no",
         studyStartDate: "2023-09-01",
         studyEndDate: "2024-06-30",
@@ -697,6 +700,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         offeringType: payload.offeringType,
         offeringIntensity: payload.offeringIntensity,
         yearOfStudy: payload.yearOfStudy,
+        isAviationOffering: payload.isAviationOffering,
+        aviationCredentialType: null,
         hasOfferingWILComponent: payload.hasOfferingWILComponent,
         offeringWILType: null,
         studyBreaks: {
@@ -767,6 +772,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         studyStartDate: "2023-09-01",
         studyEndDate: "2023-09-02",
         lacksStudyBreaks: true,
+        isAviationOffering: AviationYesNoOptions.No,
         studyBreaks: [],
         offeringType: OfferingTypes.Public,
         offeringDeclaration: true,
@@ -803,6 +809,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         offeringType: payload.offeringType,
         offeringIntensity: payload.offeringIntensity,
         yearOfStudy: payload.yearOfStudy,
+        isAviationOffering: payload.isAviationOffering,
+        aviationCredentialType: null,
         hasOfferingWILComponent: payload.hasOfferingWILComponent,
         offeringWILType: null,
         studyBreaks: {
@@ -858,6 +866,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       yearOfStudy: 1,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
+      isAviationOffering: AviationYesNoOptions.No,
       hasOfferingWILComponent: "no",
       studyStartDate: "2023-09-01",
       studyEndDate: "2024-06-30",
