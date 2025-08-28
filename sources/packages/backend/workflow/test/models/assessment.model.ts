@@ -2,7 +2,6 @@ import {
   ApplicationEditStatus,
   AssessmentTriggerType,
   OfferingIntensity,
-  ProgramInfoStatus,
 } from "@sims/sims-db";
 import {
   Provinces,
@@ -113,7 +112,6 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   institutionType: InstitutionTypes;
   programLength: ProgramLengthOptions;
   programCredentialType: CredentialType;
-  programInfoStatus: ProgramInfoStatus;
   offeringDelivered: OfferingDeliveryOptions;
   offeringProgramRelatedCosts: number;
   offeringActualTuitionCosts: number;

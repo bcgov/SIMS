@@ -8,13 +8,16 @@ import { WorkerMockedData } from "..";
  * - `programInfoStatus` program info status expected to be returned.
  * @returns mock for 'Program info required' task.
  */
-export function createProgramInfoRequestTaskMock(options: {
+export function createProgramInfoRequiredTaskMock(options?: {
   programInfoStatus: ProgramInfoStatus;
 }): WorkerMockedData {
   return {
     serviceTaskId: WorkflowServiceTasks.ProgramInfoRequired,
     options: {
-      jobCompleteMock: { programInfoStatus: options.programInfoStatus },
+      jobCompleteMock: {
+        programInfoStatus:
+          options?.programInfoStatus ?? ProgramInfoStatus.completed,
+      },
     },
   };
 }
