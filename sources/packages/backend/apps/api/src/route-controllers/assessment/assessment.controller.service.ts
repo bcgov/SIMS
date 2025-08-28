@@ -313,7 +313,7 @@ export class AssessmentControllerService {
     // but specific BC grants. Receipts should be used as a source of the information for full-time application.
     // Part-time receipts will not contain all the awards value hence the e-Cert effective
     // values are used instead to provide the best information as possible, but the existence of the part-time
-    // receipts are useful, for instance, to determine if a student disbursed can be cancelled.
+    // receipts are useful, for instance, to determine if a student disbursement can be cancelled.
     const disbursementReceipts =
       await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
         assessment.id,
@@ -321,14 +321,10 @@ export class AssessmentControllerService {
       );
     // Populate the hasDisbursementReceipts flags for each disbursement schedule.
     assessment.disbursementSchedules.forEach((_, index) => {
-      const hasDisbursementReceiptsValueKey = this.createReceiptFullIdentifier(
-        "receivedDisbursementReceipt",
-        `${++index}`,
-      );
       const hasReceipt = disbursementReceipts.some(
         (receipt) => receipt.disbursementSchedule.id === assessment.id,
       );
-      finalAward[hasDisbursementReceiptsValueKey] = hasReceipt;
+      finalAward[`ReceivedDisbursementReceipt${++index}`] = hasReceipt;
     });
 
     if (assessment.offering.offeringIntensity === OfferingIntensity.fullTime) {

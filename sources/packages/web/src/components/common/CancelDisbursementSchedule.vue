@@ -85,12 +85,12 @@ export default defineComponent({
           userNoteModalResult.showParameter,
           { note: userNoteModalResult.note },
         );
-        snackBar.success("e-Cert cancelled.");
+        snackBar.success("eCert cancelled.");
         emit("disbursementScheduleCancelled");
         return true;
       } catch {
         snackBar.error(
-          "An unexpected error happened while cancelling the e-Cert.",
+          "An unexpected error happened while cancelling the eCert.",
         );
       }
       return false;

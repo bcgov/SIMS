@@ -63,6 +63,7 @@
               :disbursement-id="
                 assessmentAwardData.estimatedAward.disbursement1Id as number
               "
+              @disbursement-schedule-cancelled="disbursementScheduleCancelled"
             />
           </div>
           <div
@@ -239,6 +240,7 @@
               :disbursement-id="
                 assessmentAwardData.estimatedAward.disbursement2Id as number
               "
+              @disbursement-schedule-cancelled="disbursementScheduleCancelled"
             />
           </div>
           <div
@@ -396,7 +398,7 @@ export default defineComponent({
      * @param disbursement indicates the "first" or "second" disbursement.
      * @param finalAward dynamic final award object.
      */
-    const hasDisbursementReceipt = (
+    const hasDisbursementAwards = (
       disbursement: "first" | "second",
       finalAward?: DynamicAwardValue,
     ) => {
@@ -411,17 +413,27 @@ export default defineComponent({
         propName.startsWith(identifier),
       );
     };
+    /**
+     * Indicates if a receipt was received for a disbursement.
+     * Final awards can be rendered from a receipt or directly from the
+     * awards for part-time where the receipts are incomplete or may never be
+     * received. This checks the flags that indicates if a receipt was ever received,
+     * not if the final awards can be rendered.
+     * @param disbursement first or second disbursement.
+     * @param finalAward dynamic object with the flag to be checked.
+     * @returns true if a receipt was received, otherwise, false.
+     */
     const receivedDisbursementReceipt = (
       disbursement: "first" | "second",
       finalAward?: DynamicAwardValue,
-    ) => {
+    ): boolean => {
       if (!finalAward) {
         return false;
       }
       const identifier =
         disbursement === "first"
-          ? "receivedDisbursementReceipt1"
-          : "receivedDisbursementReceipt2";
+          ? "ReceivedDisbursementReceipt1"
+          : "ReceivedDisbursementReceipt2";
       return !!finalAward[identifier];
     };
     const isFirstDisbursementCompleted = computed<boolean>(
@@ -438,10 +450,10 @@ export default defineComponent({
         COEStatus.completed,
     );
     const showFirstFinalAward = computed<boolean>(() =>
-      hasDisbursementReceipt("first", props.assessmentAwardData.finalAward),
+      hasDisbursementAwards("first", props.assessmentAwardData.finalAward),
     );
     const showSecondFinalAward = computed<boolean>(() =>
-      hasDisbursementReceipt("second", props.assessmentAwardData.finalAward),
+      hasDisbursementAwards("second", props.assessmentAwardData.finalAward),
     );
     const getFinalAwardNotAvailableMessage = (
       coeStatus: COEStatus,
@@ -481,6 +493,11 @@ export default defineComponent({
         ),
     );
 
+    const disbursementScheduleCancelled = () => {
+      // TODO: To be implemented to refresh data.
+      console.log("Disbursement schedule cancelled, data will be refreshed.");
+    };
+
     return {
       dateOnlyLongString,
       AESTRoutesConst,
@@ -495,6 +512,7 @@ export default defineComponent({
       DisbursementScheduleStatus,
       canCancelFirstDisbursement,
       canCancelSecondDisbursement,
+      disbursementScheduleCancelled,
     };
   },
 });
