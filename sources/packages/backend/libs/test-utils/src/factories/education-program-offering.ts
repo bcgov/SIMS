@@ -11,6 +11,8 @@ import {
   OfferingStatus,
   Institution,
   StudyBreaksAndWeeks,
+  AviationYesNoOptions,
+  AviationCredentialTypeOptions,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
@@ -59,6 +61,11 @@ export function createFakeEducationProgramOffering(
     options?.initialValues?.offeringType ?? OfferingTypes.Public;
   offering.yearOfStudy = 1;
   offering.courseLoad = 45;
+  offering.isAviationOffering =
+    options?.initialValues?.isAviationOffering ?? AviationYesNoOptions.No;
+  offering.aviationCredentialType =
+    options?.initialValues?.aviationCredentialType ??
+    AviationCredentialTypeOptions.Endorsements;
   offering.hasOfferingWILComponent =
     options?.initialValues?.hasOfferingWILComponent ?? "no";
   offering.offeringWILType = options?.initialValues?.offeringWILType;
