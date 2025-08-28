@@ -2,25 +2,42 @@
   <check-permission-role :role="Role.StudentCancelDisbursementSchedule">
     <template #="{ notAllowed }">
       <v-btn
-        class="d-block"
         variant="text"
         color="primary"
         @click="cancelDisbursementSchedule"
         :disabled="notAllowed"
         ><span class="text-decoration-underline font-bold"
-          >Cancel certificate</span
+          >Cancel eCert</span
         ></v-btn
       >
     </template>
   </check-permission-role>
   <user-note-confirm-modal
-    title="Confirm cancellation"
+    title="Cancel eCert"
     ref="confirmCancellationModal"
-    okLabel="Cancel e-Cert now"
+    okLabel="Confirm"
     cancelLabel="Cancel"
   >
     <template #content>
-      <p>Are you sure you would like to have the e-Cert cancelled?</p>
+      <p>
+        You are requesting the cancellation of an eCert. This action should be
+        communicated to the NSLSC prior to proceeding.
+      </p>
+      <p>Note:</p>
+      <ul>
+        <li>
+          Cancelling the eCert does not stop any future pending disbursements.
+        </li>
+        <li>It does not trigger a reassessment of the application.</li>
+        <li>
+          Please ensure all necessary changes are made before initiating a
+          reassessment to generate new disbursements.
+        </li>
+        <li>
+          Any overawards created or deducted as a result of this eCert will also
+          be reversed as part of this action.
+        </li>
+      </ul>
     </template>
     ></user-note-confirm-modal
   >

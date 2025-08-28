@@ -144,6 +144,24 @@
               )
             }}
           </p>
+          <div
+            v-if="
+              assessmentAwardData.estimatedAward.disbursement1Status ===
+              DisbursementScheduleStatus.Rejected
+            "
+            class="mt-3"
+          >
+            <status-info-disbursement-cancellation
+              v-if="
+                assessmentAwardData.estimatedAward.disbursement1Status ===
+                DisbursementScheduleStatus.Rejected
+              "
+              :cancellation-date="
+                assessmentAwardData.estimatedAward
+                  .disbursement1DisbursementScheduleStatusUpdatedOn as Date
+              "
+            />
+          </div>
         </content-group>
       </v-col>
     </v-row>
@@ -203,6 +221,18 @@
                 assessmentAwardData.estimatedAward.disbursement2Id as number
               "
               @confirmEnrolment="$emit('confirmEnrolment', $event)"
+            />
+          </div>
+          <div class="my-3">
+            <status-info-disbursement-cancellation
+              v-if="
+                assessmentAwardData.estimatedAward.disbursement2Status ===
+                DisbursementScheduleStatus.Rejected
+              "
+              :cancellation-date="
+                assessmentAwardData.estimatedAward
+                  .disbursement2DisbursementScheduleStatusUpdatedOn as Date
+              "
             />
             <cancel-disbursement-schedule
               v-if="canCancelSecondDisbursement"
@@ -292,6 +322,20 @@
               )
             }}
           </p>
+          <div
+            v-if="
+              assessmentAwardData.estimatedAward.disbursement2Status ===
+              DisbursementScheduleStatus.Rejected
+            "
+            class="mt-3"
+          >
+            <status-info-disbursement-cancellation
+              :cancellation-date="
+                assessmentAwardData.estimatedAward
+                  .disbursement1DisbursementScheduleStatusUpdatedOn as Date
+              "
+            />
+          </div>
         </content-group>
       </v-col>
     </v-row>
@@ -311,6 +355,7 @@ import AwardTable from "@/components/common/AwardTable.vue";
 import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
 import ConfirmEnrolment from "@/components/common/ConfirmEnrolment.vue";
 import CancelDisbursementSchedule from "@/components/common/CancelDisbursementSchedule.vue";
+import StatusInfoDisbursementCancellation from "@/components/common/StatusInfoDisbursementCancellation.vue";
 
 import { useFormatters } from "@/composables";
 
@@ -322,9 +367,10 @@ export default defineComponent({
   },
   components: {
     AwardTable,
-    CancelDisbursementSchedule,
     ConfirmEnrolment,
     StatusInfoEnrolment,
+    CancelDisbursementSchedule,
+    StatusInfoDisbursementCancellation,
   },
   props: {
     assessmentAwardData: {

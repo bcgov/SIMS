@@ -49,6 +49,14 @@ import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
  * Final award value dynamic identifier prefix.
  */
 const DISBURSEMENT_RECEIPT_PREFIX = "disbursementReceipt";
+/**
+ * Indicates which disbursement schedule statuses have
+ * the potential to generate a receipt.
+ */
+const HAS_POTENTIAL_RECEIPT_STATUSES = [
+  DisbursementScheduleStatus.Sent,
+  DisbursementScheduleStatus.Rejected,
+];
 
 @Injectable()
 export class AssessmentControllerService {
@@ -193,6 +201,9 @@ export class AssessmentControllerService {
       disbursementDetails[`${disbursementIdentifier}EnrolmentDate`] =
         schedule.coeUpdatedAt;
       disbursementDetails[`${disbursementIdentifier}Id`] = schedule.id;
+      disbursementDetails[
+        `${disbursementIdentifier}DisbursementScheduleStatusUpdatedOn`
+      ] = schedule.disbursementScheduleStatusUpdatedOn;
       if (includeDateSent) {
         disbursementDetails[`${disbursementIdentifier}DateSent`] =
           schedule.dateSent;
@@ -290,8 +301,9 @@ export class AssessmentControllerService {
   ): Promise<DynamicAwardValue | undefined> {
     const [firstDisbursement] = assessment.disbursementSchedules;
     if (
-      firstDisbursement.disbursementScheduleStatus !==
-      DisbursementScheduleStatus.Sent
+      !HAS_POTENTIAL_RECEIPT_STATUSES.includes(
+        firstDisbursement.disbursementScheduleStatus,
+      )
     ) {
       // If a e-Cert was never generated no additional processing is needed.
       return undefined;
@@ -327,8 +339,9 @@ export class AssessmentControllerService {
       }
       for (const schedule of assessment.disbursementSchedules) {
         if (
-          schedule.disbursementScheduleStatus !==
-          DisbursementScheduleStatus.Sent
+          !HAS_POTENTIAL_RECEIPT_STATUSES.includes(
+            schedule.disbursementScheduleStatus,
+          )
         ) {
           break;
         }
@@ -346,7 +359,9 @@ export class AssessmentControllerService {
     let index = 1;
     for (const schedule of assessment.disbursementSchedules) {
       if (
-        schedule.disbursementScheduleStatus !== DisbursementScheduleStatus.Sent
+        !HAS_POTENTIAL_RECEIPT_STATUSES.includes(
+          schedule.disbursementScheduleStatus,
+        )
       ) {
         break;
       }
