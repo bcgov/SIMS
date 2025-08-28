@@ -3512,13 +3512,12 @@
                       "input": true
                     },
                     {
-                      "label": "Upload supporting documents",
                       "title": "Upload supporting documents",
                       "collapsible": false,
                       "hideLabel": true,
                       "key": "uploadSupportingDocuments1",
-                      "customConditional": "show = data['bcParentLivingSituation'];",
                       "type": "panel",
+                      "label": "Upload supporting documents",
                       "input": false,
                       "tableView": false,
                       "components": [

@@ -1,5 +1,9 @@
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
-import { ApplicationStatus, AssessmentTriggerType } from "@sims/sims-db";
+import {
+  ApplicationStatus,
+  AssessmentTriggerType,
+  ProgramInfoStatus,
+} from "@sims/sims-db";
 import { AssessmentConsolidatedData } from "../../models";
 import {
   createFakeConsolidatedFulltimeData,
@@ -23,6 +27,8 @@ import {
   createLoadAssessmentDataTaskMock,
   createVerifyAssessmentCalculationOrderTaskMock,
   createIdentifiableParentTaskMock,
+  createProgramInfoRequiredTaskMock,
+  createProgramInfoNotRequiredTaskMock,
 } from "../../test-utils/mock";
 import {
   DEFAULT_ASSESSMENT_GATEWAY,
@@ -56,6 +62,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
 
     const workersMockedData = createWorkersMockedData([
       createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createProgramInfoNotRequiredTaskMock(),
       createVerifyApplicationExceptionsTaskMock(),
       createIncomeRequestTaskMock({
         incomeVerificationId: incomeVerificationId++,
@@ -108,6 +115,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
 
     const workersMockedData = createWorkersMockedData([
       createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createProgramInfoNotRequiredTaskMock(),
       createVerifyApplicationExceptionsTaskMock(),
       createIncomeRequestTaskMock({
         incomeVerificationId: incomeVerificationId++,
@@ -162,6 +170,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
 
     const workersMockedData = createWorkersMockedData([
       createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createProgramInfoNotRequiredTaskMock(),
       createVerifyApplicationExceptionsTaskMock(),
       createIncomeRequestTaskMock({
         incomeVerificationId: incomeVerificationId++,
@@ -231,6 +240,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         assessmentConsolidatedData: dataPreAssessment,
         subprocess: WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
       }),
+      createProgramInfoNotRequiredTaskMock(),
       createVerifyApplicationExceptionsTaskMock(),
       createIdentifiableParentTaskMock({
         createdSupportingUserId: parent1SupportingUserId,
@@ -340,6 +350,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         assessmentConsolidatedData: dataPreAssessment,
         subprocess: WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
       }),
+      createProgramInfoNotRequiredTaskMock(),
       createVerifyApplicationExceptionsTaskMock(),
       createIdentifiableParentTaskMock({
         createdSupportingUserId: parent1SupportingUserId,
@@ -400,6 +411,56 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       MultiInstanceProcesses.parent2CreateIdentifiableParent,
       MultiInstanceProcesses.parent2RetrieveInformation,
       MultiInstanceProcesses.parent2IncomeVerification,
+    );
+  });
+
+  it("Should end the workflow immediately without verifying exceptions when the PIR is declined.", async () => {
+    // Arrange
+
+    // Assessment consolidated mocked data.
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createFakeSingleIndependentStudentData(),
+      // Application with PIR required.
+      studentDataSelectedOffering: null,
+      applicationStatus: ApplicationStatus.InProgress,
+    };
+
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      // PIR declined.
+      createProgramInfoRequiredTaskMock({
+        programInfoStatus: ProgramInfoStatus.declined,
+      }),
+    ]);
+
+    const currentAssessmentId = assessmentId++;
+
+    // Act
+    const assessmentGatewayResponse =
+      await zeebeClientProvider.createProcessInstanceWithResult({
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
+        variables: {
+          [ASSESSMENT_ID]: currentAssessmentId,
+          ...workersMockedData,
+        },
+        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+      });
+
+    // Assert
+    expectToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.AssociateWorkflowInstance,
+      WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
+      WorkflowServiceTasks.ProgramInfoRequired,
+      WorkflowServiceTasks.PIRWorkflowWrapUpTask,
+    );
+
+    expectNotToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.ProgramInfoNotRequired,
+      WorkflowServiceTasks.VerifyApplicationExceptions,
     );
   });
 
