@@ -22,7 +22,7 @@ class MatchProgramAviationCredentialConstraint
   ): boolean {
     const offeringModel = args.object as OfferingValidationModel;
     if (
-      offeringModel.programContext.credentialTypesAviation[
+      offeringModel.programContext.credentialTypesAviation?.[
         aviationCredentialType
       ]
     ) {
