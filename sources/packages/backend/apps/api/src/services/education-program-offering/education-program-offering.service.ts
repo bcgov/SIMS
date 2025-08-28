@@ -873,6 +873,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.lacksStudyBreaks",
         "offering.offeringIntensity",
         "offering.yearOfStudy",
+        "offering.isAviationOffering",
+        "offering.aviationCredentialType",
         "offering.hasOfferingWILComponent",
         "offering.offeringWILType",
         "offering.studyBreaks",
