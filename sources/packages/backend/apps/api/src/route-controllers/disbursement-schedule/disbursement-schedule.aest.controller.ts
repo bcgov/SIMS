@@ -20,7 +20,7 @@ import { AuthorizedParties, IUserToken, Role, UserGroups } from "../../auth";
 import { DisbursementScheduleSharedService } from "@sims/services";
 import { DisbursementScheduleService } from "../../services";
 import { DisbursementScheduleStatus } from "@sims/sims-db";
-import { CancelDisbursementScheduleAPIInDTO } from "apps/api/src/route-controllers/disbursement-schedule/models/disbursement-schedule.dto";
+import { CancelDisbursementScheduleAPIInDTO } from "../../route-controllers";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)

@@ -13,53 +13,75 @@
       >
     </template>
   </check-permission-role>
-  <confirm-modal
-    title="Confirm enrolment"
-    ref="confirmEnrolmentModal"
-    okLabel="Confirm enrolment now"
+  <user-note-confirm-modal
+    title="Confirm cancellation"
+    ref="confirmCancellationModal"
+    okLabel="Cancel e-Cert now"
     cancelLabel="Cancel"
-    ><template #content
-      ><span class="font-bold"
-        >Are you sure you want to confirm enrolment for this application?</span
-      >
-      <p class="mt-5">
-        Confirming enrolment verifies this applicant is attending your
-        institution and will allow funding to be disbursed.
-      </p>
-    </template></confirm-modal
+  >
+    <template #content>
+      <p>Are you sure you would like to have the e-Cert cancelled?</p>
+    </template>
+    ></user-note-confirm-modal
   >
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { Role } from "@/types";
-import { ModalDialog } from "@/composables";
-import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
+import { ModalDialog, useSnackBar } from "@/composables";
+import UserNoteConfirmModal, {
+  UserNoteModal,
+} from "@/components/common/modals/UserNoteConfirmModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { DisbursementScheduleService } from "@/services/DisbursementScheduleService";
 
 export default defineComponent({
   emits: {
-    confirmEnrolment: (disbursementId: number) => {
-      return !!disbursementId;
-    },
+    disbursementScheduleCancelled: null,
   },
-  components: { ConfirmModal, CheckPermissionRole },
+  components: { UserNoteConfirmModal, CheckPermissionRole },
   props: {
     disbursementId: {
       type: Number,
       required: false,
     },
   },
-  setup() {
-    const confirmEnrolmentModal = ref({} as ModalDialog<boolean>);
+  setup(props, { emit }) {
+    const snackBar = useSnackBar();
+    const confirmCancellationModal = ref(
+      {} as ModalDialog<UserNoteModal<number>>,
+    );
 
-    const cancelDisbursementSchedule = () => {
-      console.log("Cancel");
+    const cancelDisbursementSchedule = async () => {
+      await confirmCancellationModal.value.showModal(
+        props.disbursementId,
+        cancelDisbursement,
+      );
+    };
+
+    const cancelDisbursement = async (
+      userNoteModalResult: UserNoteModal<number>,
+    ): Promise<boolean> => {
+      try {
+        await DisbursementScheduleService.shared.cancelDisbursementSchedule(
+          userNoteModalResult.showParameter,
+          { note: userNoteModalResult.note },
+        );
+        snackBar.success("e-Cert cancelled.");
+        emit("disbursementScheduleCancelled");
+        return true;
+      } catch {
+        snackBar.error(
+          "An unexpected error happened while cancelling the e-Cert.",
+        );
+      }
+      return false;
     };
 
     return {
       cancelDisbursementSchedule,
-      confirmEnrolmentModal,
+      confirmCancellationModal,
       Role,
     };
   },

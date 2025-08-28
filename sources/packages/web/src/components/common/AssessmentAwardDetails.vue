@@ -58,7 +58,12 @@
               "
               @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
-            <cancel-disbursement-schedule v-if="canCancelFirstDisbursement" />
+            <cancel-disbursement-schedule
+              v-if="canCancelFirstDisbursement"
+              :disbursement-id="
+                assessmentAwardData.estimatedAward.disbursement1Id as number
+              "
+            />
           </div>
           <div
             class="my-3"
@@ -199,7 +204,12 @@
               "
               @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
-            <cancel-disbursement-schedule v-if="canCancelSecondDisbursement" />
+            <cancel-disbursement-schedule
+              v-if="canCancelSecondDisbursement"
+              :disbursement-id="
+                assessmentAwardData.estimatedAward.disbursement2Id as number
+              "
+            />
           </div>
           <div
             class="my-3"
