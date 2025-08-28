@@ -1167,6 +1167,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         offeringType: payload.offeringType,
         offeringIntensity: payload.offeringIntensity,
         yearOfStudy: payload.yearOfStudy,
+        isAviationOffering: payload.isAviationOffering,
+        aviationCredentialType: null,
         hasOfferingWILComponent: payload.hasOfferingWILComponent,
         offeringWILType: null,
         studyBreaks: {
