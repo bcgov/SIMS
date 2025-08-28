@@ -432,8 +432,8 @@ export default defineComponent({
       }
       const identifier =
         disbursement === "first"
-          ? "ReceivedDisbursementReceipt1"
-          : "ReceivedDisbursementReceipt2";
+          ? "receivedDisbursementReceipt1"
+          : "receivedDisbursementReceipt2";
       return !!finalAward[identifier];
     };
     const isFirstDisbursementCompleted = computed<boolean>(

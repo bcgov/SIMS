@@ -324,7 +324,7 @@ export class AssessmentControllerService {
       const hasReceipt = disbursementReceipts.some(
         (receipt) => receipt.disbursementSchedule.id === assessment.id,
       );
-      finalAward[`ReceivedDisbursementReceipt${++index}`] = hasReceipt;
+      finalAward[`receivedDisbursementReceipt${++index}`] = hasReceipt;
     });
 
     if (assessment.offering.offeringIntensity === OfferingIntensity.fullTime) {
