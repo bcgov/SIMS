@@ -49,4 +49,9 @@ export enum RestrictionCode {
    * Bankruptcy has been filed and there is a hold on federal and BC funding.
    */
   RB = "RB",
+  /**
+   * Application processing hold restriction to prevent application completion while
+   * potential partial match exists.
+   */
+  HOLD = "HOLD",
 }

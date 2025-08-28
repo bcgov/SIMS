@@ -17,6 +17,7 @@ import {
   SFASRestriction,
   CASSupplier,
   SupplierStatus,
+  Restriction,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, UpdateResult } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
@@ -40,6 +41,7 @@ import {
   NoteSharedService,
   NotificationActionsService,
   SystemUsersService,
+  RestrictionCode,
 } from "@sims/services";
 
 @Injectable()
@@ -186,6 +188,7 @@ export class StudentService extends RecordDataModelService<Student> {
     student.user = user;
     student.sinConsent = studentInfo.sinConsent;
     let sfasIndividual: SFASIndividual;
+    let shouldAddHoldRestriction = false;
     try {
       // Get PD status from SFAS integration data.
       sfasIndividual = await this.sfasIndividualService.getIndividualStudent(
@@ -205,7 +208,7 @@ export class StudentService extends RecordDataModelService<Student> {
         );
       } else {
         // If sfasIndividual wasn't found, check for a partial match
-        await this.checkLegacyIndividualPartialMatch(
+        shouldAddHoldRestriction = await this.checkLegacyIndividualPartialMatch(
           user,
           student,
           studentSIN,
@@ -271,6 +274,32 @@ export class StudentService extends RecordDataModelService<Student> {
         id: studentAccountApplicationId,
       } as StudentAccountApplication;
       await entityManager.getRepository(StudentUser).save(studentUser);
+
+      // Add hold restriction if a partial match was found and the account is not bridge matched
+      if (shouldAddHoldRestriction && !sfasIndividual && !existingStudent) {
+        const holdNote = await this.noteSharedService.createStudentNote(
+          savedStudent.id,
+          NoteType.Restriction,
+          "Restriction added to prevent application completion while potential partial match exists",
+          this.systemUsersService.systemUser.id,
+          entityManager,
+        );
+
+        const holdRestriction = new StudentRestriction();
+        holdRestriction.student = { id: savedStudent.id } as Student;
+        holdRestriction.restriction = await entityManager
+          .getRepository(Restriction)
+          .findOne({ where: { restrictionCode: RestrictionCode.HOLD } });
+        holdRestriction.creator = {
+          id: this.systemUsersService.systemUser.id,
+        } as User;
+        holdRestriction.restrictionNote = holdNote;
+        holdRestriction.isActive = true;
+
+        await entityManager
+          .getRepository(StudentRestriction)
+          .save(holdRestriction);
+      }
 
       // Returns the newly created student.
       return savedStudent;
@@ -348,6 +377,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param studentSIN sin to be matched against.
    * @param auditUserId audit user for the notification.
    * @param externalEntityManager entityManager to be used to perform the query and if needed, save the notification.
+   * @returns true if a partial match was found and a hold restriction should be added, false otherwise.
    */
   private async checkLegacyIndividualPartialMatch(
     user: User,
@@ -355,7 +385,7 @@ export class StudentService extends RecordDataModelService<Student> {
     studentSIN: string,
     auditUserId: number,
     externalEntityManager: EntityManager,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const partialMatch: SFASIndividual =
       await this.sfasIndividualService.getIndividualStudentPartialMatch(
         user.lastName,
@@ -394,7 +424,9 @@ export class StudentService extends RecordDataModelService<Student> {
         auditUserId,
         externalEntityManager,
       );
+      return true; // Indicates that a hold restriction should be added
     }
+    return false; // No partial match found
   }
 
   /**
