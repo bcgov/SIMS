@@ -14,10 +14,6 @@ import { InstitutionLocation } from "./institution-location.model";
 import { OfferingTypes, User, OfferingStatus, Note } from ".";
 import { OfferingIntensity } from "./offering-intensity.type";
 import { numericTransformer } from "@sims/sims-db/transformers/numeric.transformer";
-import {
-  AviationYesNoOptions,
-  AviationCredentialTypeOptions,
-} from "apps/api/src/services";
 
 /**
  * Max value the offering name can have. By DB definition it is defined as
@@ -378,4 +374,22 @@ export interface StudyBreaksAndWeeks {
   totalDays: number;
   totalFundedWeeks: number;
   unfundedStudyPeriodDays: number;
+}
+
+/**
+ * Aviation Yes/No options.
+ */
+export enum AviationYesNoOptions {
+  Yes = "yes",
+  No = "no",
+}
+
+/**
+ * Aviation Credential Type options.
+ */
+export enum AviationCredentialTypeOptions {
+  CommercialPilotTraining = "commercialPilotTraining",
+  InstructorsRating = "instructorsRating",
+  Endorsements = "endorsements",
+  PrivatePilotTraining = "privatePilotTraining",
 }

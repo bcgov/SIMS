@@ -4,6 +4,8 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
   OFFERING_NAME_MAX_LENGTH,
+  AviationCredentialTypeOptions,
+  AviationYesNoOptions,
 } from "@sims/sims-db";
 import { Allow, IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 import { Type } from "class-transformer";
@@ -11,8 +13,6 @@ import {
   OfferingDeliveryOptions,
   OnlineInstructionModeOptions,
   OfferingYesNoOptions,
-  AviationYesNoOptions,
-  AviationCredentialTypeOptions,
 } from "../../../services";
 
 export class StudyBreakAPIOutDTO {

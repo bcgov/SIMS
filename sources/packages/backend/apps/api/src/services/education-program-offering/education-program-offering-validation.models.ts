@@ -23,6 +23,8 @@ import {
   OFFERING_WIL_TYPE_MAX_LENGTH,
   StudyBreaksAndWeeks,
   InstitutionType,
+  AviationYesNoOptions,
+  AviationCredentialTypeOptions,
 } from "@sims/sims-db";
 import {
   IsPeriodStartDate,
@@ -246,24 +248,9 @@ export enum OfferingDeliveryOptions {
   Blended = "blended",
 }
 
-/**
- * Aviation Yes/No options.
- */
-export enum AviationYesNoOptions {
-  Yes = "yes",
-  No = "no",
-}
-
 export enum MaximumFundedWeeksForAviationOfferingCredentials {
   CommercialPilotTraining = 17,
   InstructorsRatingAndEndorsements = 13,
-}
-
-export enum AviationCredentialTypeOptions {
-  CommercialPilotTraining = "commercialPilotTraining",
-  InstructorsRating = "instructorsRating",
-  Endorsements = "endorsements",
-  PrivatePilotTraining = "privatePilotTraining",
 }
 
 /**

@@ -1,7 +1,5 @@
-import {
-  AviationCredentialTypeOptions,
-  OfferingValidationModel,
-} from "../education-program-offering-validation.models";
+import { AviationCredentialTypeOptions } from "@sims/sims-db";
+import { OfferingValidationModel } from "../education-program-offering-validation.models";
 import {
   ValidationArguments,
   ValidationOptions,
