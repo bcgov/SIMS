@@ -21,11 +21,13 @@ class MatchProgramAviationCredentialConstraint
     args: ValidationArguments,
   ): boolean {
     const offeringModel = args.object as OfferingValidationModel;
-    if (
-      offeringModel.programContext.credentialTypesAviation?.[
-        aviationCredentialType
-      ]
-    ) {
+    // Ensure credentialTypesAviation is an object with boolean values keyed by AviationCredentialTypeOptions.
+    type CredentialTypesAviation = {
+      [key in AviationCredentialTypeOptions]?: boolean;
+    };
+    const credentialTypesAviation = offeringModel.programContext
+      .credentialTypesAviation as CredentialTypesAviation;
+    if (credentialTypesAviation[aviationCredentialType]) {
       return true;
     }
     return false;

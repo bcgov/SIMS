@@ -280,6 +280,12 @@ enum InstitutionContextConditions {
   BCPrivateOrPublicWithDeliveryOptionBlended = "BCPrivateOrPublicWithDeliveryOptionBlended",
 }
 
+const aviationCredentialTypesEligibleForFunding = [
+  AviationCredentialTypeOptions.CommercialPilotTraining,
+  AviationCredentialTypeOptions.InstructorsRating,
+  AviationCredentialTypeOptions.Endorsements,
+];
+
 /**
  * Offering study breaks.
  */
@@ -599,18 +605,11 @@ export class OfferingValidationModel {
     (offering: OfferingValidationModel) =>
       offering.isAviationOffering === AviationYesNoOptions.Yes,
   )
-  @IsIn(
-    [
-      AviationCredentialTypeOptions.CommercialPilotTraining,
-      AviationCredentialTypeOptions.InstructorsRating,
-      AviationCredentialTypeOptions.Endorsements,
-    ],
-    {
-      context: ValidationContext.CreateWarning(
-        OfferingValidationWarnings.AviationCredIsPrivatePilotTraining,
-      ),
-    },
-  )
+  @IsIn(aviationCredentialTypesEligibleForFunding, {
+    context: ValidationContext.CreateWarning(
+      OfferingValidationWarnings.AviationCredIsPrivatePilotTraining,
+    ),
+  })
   @MatchProgramAviationCredential(
     userFriendlyNames.matchProgramAviationCredential,
     {
