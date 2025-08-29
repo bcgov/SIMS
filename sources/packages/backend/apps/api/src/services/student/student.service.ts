@@ -17,7 +17,6 @@ import {
   SFASRestriction,
   CASSupplier,
   SupplierStatus,
-  Restriction,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, UpdateResult } from "typeorm";
 import { LoggerService, InjectLogger } from "@sims/utilities/logger";
@@ -37,12 +36,13 @@ import {
   STUDENT_SIN_CONSENT_NOT_CHECKED,
 } from "../../constants";
 import {
-  DisbursementOverawardService,
   NoteSharedService,
   NotificationActionsService,
   SystemUsersService,
   RestrictionCode,
+  StudentRestrictionSharedService,
 } from "@sims/services";
+import { StudentRestrictionService } from "../restriction/student-restriction.service";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -50,9 +50,10 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly dataSource: DataSource,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly sfasIndividualService: SFASIndividualService,
-    private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly noteSharedService: NoteSharedService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super(dataSource.getRepository(Student));
     this.logger.log("[Created]");
@@ -397,16 +398,12 @@ export class StudentService extends RecordDataModelService<Student> {
       );
 
       // Check if the student already has an active HOLD restriction
-      const hasHoldRestriction = await externalEntityManager
-        .getRepository(StudentRestriction)
-        .findOne({
-          select: { id: true },
-          where: {
-            student: { id: student.id },
-            restriction: { restrictionCode: RestrictionCode.HOLD },
-            isActive: true,
-          },
-        });
+      const hasHoldRestriction =
+        await this.studentRestrictionService.hasAnyActiveRestriction(
+          student.id,
+          [RestrictionCode.HOLD],
+          externalEntityManager,
+        );
 
       // If the student does not have an active HOLD restriction, add one
       if (!hasHoldRestriction) {
@@ -414,21 +411,18 @@ export class StudentService extends RecordDataModelService<Student> {
           student.id,
           NoteType.Restriction,
           "Restriction added to prevent application completion while potential partial match exists",
-          this.systemUsersService.systemUser.id,
+          auditUserId,
           externalEntityManager,
         );
 
-        const holdRestriction = new StudentRestriction();
-        holdRestriction.student = { id: student.id } as Student;
-        holdRestriction.restriction = await externalEntityManager
-          .getRepository(Restriction)
-          .findOne({
-            select: { id: true },
-            where: { restrictionCode: RestrictionCode.HOLD },
-          });
-        holdRestriction.creator = {
-          id: this.systemUsersService.systemUser.id,
-        } as User;
+        const holdRestriction =
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            student.id,
+            RestrictionCode.HOLD,
+            auditUserId,
+            undefined, // applicationId is null for this case
+            externalEntityManager,
+          );
         holdRestriction.restrictionNote = holdNote;
         holdRestriction.isActive = true;
 
