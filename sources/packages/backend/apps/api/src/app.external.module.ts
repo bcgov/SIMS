@@ -4,11 +4,17 @@ import {
   StudentExternalControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
-import { StudentInformationService, StudentService } from "./services";
+import {
+  StudentInformationService,
+  StudentRestrictionService,
+  StudentService,
+} from "./services";
 import {
   DisbursementOverawardService,
   NoteSharedService,
+  RestrictionSharedService,
   SFASIndividualService,
+  StudentRestrictionSharedService,
 } from "@sims/services";
 
 @Module({
@@ -21,6 +27,9 @@ import {
     NoteSharedService,
     StudentInformationService,
     StudentExternalControllerService,
+    StudentRestrictionSharedService,
+    StudentRestrictionService,
+    RestrictionSharedService,
   ],
 })
 export class AppExternalModule {}

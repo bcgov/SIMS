@@ -36,11 +36,13 @@ import {
   STUDENT_SIN_CONSENT_NOT_CHECKED,
 } from "../../constants";
 import {
-  DisbursementOverawardService,
   NoteSharedService,
   NotificationActionsService,
   SystemUsersService,
+  RestrictionCode,
+  StudentRestrictionSharedService,
 } from "@sims/services";
+import { StudentRestrictionService } from "../restriction/student-restriction.service";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -48,9 +50,10 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly dataSource: DataSource,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly sfasIndividualService: SFASIndividualService,
-    private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly noteSharedService: NoteSharedService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super(dataSource.getRepository(Student));
     this.logger.log("[Created]");
@@ -203,15 +206,6 @@ export class StudentService extends RecordDataModelService<Student> {
           sfasIndividual.ppdStatusDate,
           student.disabilityStatus,
         );
-      } else {
-        // If sfasIndividual wasn't found, check for a partial match
-        await this.checkLegacyIndividualPartialMatch(
-          user,
-          student,
-          studentSIN,
-          auditUserId,
-          externalEntityManager,
-        );
       }
     } catch (error) {
       this.logger.error("Unable to get SFAS information of student.");
@@ -260,6 +254,15 @@ export class StudentService extends RecordDataModelService<Student> {
           this.systemUsersService.systemUser.id,
           entityManager,
         );
+      } else {
+        // If sfasIndividual wasn't found, check for a partial match
+        await this.checkLegacyIndividualPartialMatch(
+          user,
+          student,
+          studentSIN,
+          auditUserId,
+          entityManager,
+        );
       }
 
       // Create the new entry in the student/user history/audit.
@@ -271,7 +274,6 @@ export class StudentService extends RecordDataModelService<Student> {
         id: studentAccountApplicationId,
       } as StudentAccountApplication;
       await entityManager.getRepository(StudentUser).save(studentUser);
-
       // Returns the newly created student.
       return savedStudent;
     });
@@ -394,6 +396,40 @@ export class StudentService extends RecordDataModelService<Student> {
         auditUserId,
         externalEntityManager,
       );
+
+      // Check if the student already has an active HOLD restriction
+      const hasHoldRestriction =
+        await this.studentRestrictionService.hasAnyActiveRestriction(
+          student.id,
+          [RestrictionCode.HOLD],
+          externalEntityManager,
+        );
+
+      // If the student does not have an active HOLD restriction, add one
+      if (!hasHoldRestriction) {
+        const holdNote = await this.noteSharedService.createStudentNote(
+          student.id,
+          NoteType.Restriction,
+          "Restriction added to prevent application completion while potential partial match exists",
+          auditUserId,
+          externalEntityManager,
+        );
+
+        const holdRestriction =
+          await this.studentRestrictionSharedService.createRestrictionToSave(
+            student.id,
+            RestrictionCode.HOLD,
+            auditUserId,
+            undefined, // applicationId is undefined for this case
+            externalEntityManager,
+          );
+        holdRestriction.restrictionNote = holdNote;
+        holdRestriction.isActive = true;
+
+        await externalEntityManager
+          .getRepository(StudentRestriction)
+          .save(holdRestriction);
+      }
     }
   }
 

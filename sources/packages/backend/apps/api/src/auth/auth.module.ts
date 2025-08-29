@@ -11,6 +11,7 @@ import {
   DesignationAgreementLocationService,
   InstitutionService,
   BCeIDService,
+  StudentRestrictionService,
 } from "../services";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
@@ -32,6 +33,8 @@ import { SFASIndividualService } from "@sims/services/sfas";
 import {
   DisbursementOverawardService,
   NoteSharedService,
+  StudentRestrictionSharedService,
+  RestrictionSharedService,
 } from "@sims/services";
 import { KeycloakService } from "@sims/auth/services";
 import { KeycloakConfig } from "@sims/auth/config";
@@ -56,6 +59,9 @@ const jwtModule = JwtModule.register({
     NoteSharedService,
     InstitutionService,
     BCeIDService,
+    RestrictionSharedService,
+    StudentRestrictionService,
+    StudentRestrictionSharedService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

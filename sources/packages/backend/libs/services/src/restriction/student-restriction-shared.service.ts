@@ -189,7 +189,7 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
     studentId: number,
     restrictionCode: RestrictionCode,
     auditUserId: number,
-    applicationId: number,
+    applicationId?: number,
     entityManager?: EntityManager,
   ): Promise<StudentRestriction> {
     const restriction =
@@ -207,7 +207,9 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
       id: restriction.id,
     } as Restriction;
     studentRestriction.student = { id: studentId } as Student;
-    studentRestriction.application = { id: applicationId } as Application;
+    studentRestriction.application = applicationId
+      ? ({ id: applicationId } as Application)
+      : undefined;
     studentRestriction.creator = { id: auditUserId } as User;
     return studentRestriction;
   }
