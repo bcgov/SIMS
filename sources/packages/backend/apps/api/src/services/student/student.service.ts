@@ -420,7 +420,7 @@ export class StudentService extends RecordDataModelService<Student> {
             student.id,
             RestrictionCode.HOLD,
             auditUserId,
-            undefined, // applicationId is null for this case
+            undefined, // applicationId is undefined for this case
             externalEntityManager,
           );
         holdRestriction.restrictionNote = holdNote;
