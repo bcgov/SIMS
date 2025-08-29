@@ -718,7 +718,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param sabcCodes SABC codes.
    * @returns all education programs by the SABC code for the provided institution.
    */
-  async getProgramsBySABCCodes(institutionId: number, sabcCodes: string[]) {
+  async getProgramsBySABCCodes(
+    institutionId: number,
+    sabcCodes: string[],
+  ): Promise<EducationProgram[]> {
     return this.repo.find({
       select: {
         id: true,
@@ -728,6 +731,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         hasWILComponent: true,
         deliveredOnSite: true,
         deliveredOnline: true,
+        isAviationProgram: true,
+        credentialTypesAviation: true,
       },
       where: {
         sabcCode: In(sabcCodes),

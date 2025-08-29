@@ -350,6 +350,8 @@ export class EducationProgramOfferingControllerService {
       lacksStudyBreaks: offering.lacksStudyBreaks,
       offeringIntensity: offering.offeringIntensity,
       yearOfStudy: offering.yearOfStudy,
+      isAviationOffering: offering.isAviationOffering,
+      aviationCredentialType: offering.aviationCredentialType,
       hasOfferingWILComponent: offering.hasOfferingWILComponent,
       offeringWILComponentType: offering.offeringWILType,
       studyBreaks: offering.studyBreaks?.studyBreaks,

@@ -23,6 +23,8 @@ import {
   OFFERING_WIL_TYPE_MAX_LENGTH,
   StudyBreaksAndWeeks,
   InstitutionType,
+  AviationYesNoOptions,
+  AviationCredentialTypeOptions,
 } from "@sims/sims-db";
 import {
   IsPeriodStartDate,
@@ -44,7 +46,9 @@ import { ProgramAllowsOfferingDelivery } from "./custom-validators/program-allow
 import { ProgramAllowsOfferingWIL } from "./custom-validators/program-allows-offering-wil";
 import { StudyBreaksCombinedMustNotExceedsThreshold } from "./custom-validators/study-break-has-valid-consecutive-threshold";
 import { HasValidOfferingPeriodForFundedWeeks } from "./custom-validators/has-valid-offering-period-for-funded-weeks";
-
+import { ProgramIsAviationProgram } from "./custom-validators/program-is-aviation-program";
+import { HasValidFundedWeeksForAviationOfferingCredentials } from "./custom-validators/has-valid-funded-weeks-for-aviation-offering-credentials";
+import { MatchProgramAviationCredential } from "./custom-validators/match-program-aviation-credential";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -75,6 +79,10 @@ const userFriendlyNames = {
   offeringIntensity: "Offering intensity",
   yearOfStudy: "Year of study",
   showYearOfStudy: "Show year of study",
+  isAviationOffering: "Aviation Offering",
+  aviationCredentialType: "Aviation credential for offering",
+  matchProgramAviationCredential: "Program aviation credential must match",
+  privatePilotTraining: "Private Pilot Training",
   hasOfferingWILComponent: "WIL Component",
   offeringWILComponentType: "WIL Component Type",
   offeringDeclaration: "Consent",
@@ -176,6 +184,8 @@ export type EducationProgramForOfferingValidationContext = Pick<
   | "hasWILComponent"
   | "deliveredOnSite"
   | "deliveredOnline"
+  | "isAviationProgram"
+  | "credentialTypesAviation"
 >;
 
 /**
@@ -214,6 +224,10 @@ export enum OfferingValidationWarnings {
   InvalidStudyDatesPeriodLength = "invalidStudyDatesPeriodLength",
   InvalidFundedStudyPeriodLength = "invalidFundedStudyPeriodLength",
   OfferingCostExceedMaximum = "offeringCostExceedMaximum",
+  ProgramNotAviation = "programNotAviation",
+  MatchProgramAviationCredential = "matchProgramAviationCredential",
+  AviationCredIsPrivatePilotTraining = "aviationCredIsPrivatePilotTraining",
+  InvalidFundedWeeksForAviationOfferingCredentials = "invalidFundedWeeksForAviationOfferingCredentials",
 }
 
 /**
@@ -232,6 +246,11 @@ export enum OfferingDeliveryOptions {
   Onsite = "onsite",
   Online = "online",
   Blended = "blended",
+}
+
+export enum MaximumFundedWeeksForAviationOfferingCredentials {
+  CommercialPilotTraining = 17,
+  InstructorsRatingAndEndorsements = 13,
 }
 
 /**
@@ -260,6 +279,12 @@ enum InstitutionContextConditions {
   AllowOnlineDeliveryInputs = "AllowOnlineDeliveryInputs",
   BCPrivateOrPublicWithDeliveryOptionBlended = "BCPrivateOrPublicWithDeliveryOptionBlended",
 }
+
+const aviationCredentialTypesEligibleForFunding = [
+  AviationCredentialTypeOptions.CommercialPilotTraining,
+  AviationCredentialTypeOptions.InstructorsRating,
+  AviationCredentialTypeOptions.Endorsements,
+];
 
 /**
  * Offering study breaks.
@@ -552,6 +577,49 @@ export class OfferingValidationModel {
   })
   yearOfStudy: number;
   /**
+   * Indicates if the offering is an aviation offering.
+   */
+  @IsEnum(AviationYesNoOptions, {
+    message: getEnumFormatMessage(
+      userFriendlyNames.isAviationOffering,
+      AviationYesNoOptions,
+    ),
+  })
+  @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
+  @ProgramIsAviationProgram(userFriendlyNames.isAviationOffering, {
+    context: ValidationContext.CreateWarning(
+      OfferingValidationWarnings.ProgramNotAviation,
+    ),
+  })
+  isAviationOffering: AviationYesNoOptions;
+  /**
+   * Indicates the aviation credential for the offering.
+   */
+  @IsEnum(AviationCredentialTypeOptions, {
+    message: getEnumFormatMessage(
+      userFriendlyNames.aviationCredentialType,
+      AviationCredentialTypeOptions,
+    ),
+  })
+  @ValidateIf(
+    (offering: OfferingValidationModel) =>
+      offering.isAviationOffering === AviationYesNoOptions.Yes,
+  )
+  @IsIn(aviationCredentialTypesEligibleForFunding, {
+    context: ValidationContext.CreateWarning(
+      OfferingValidationWarnings.AviationCredIsPrivatePilotTraining,
+    ),
+  })
+  @MatchProgramAviationCredential(
+    userFriendlyNames.matchProgramAviationCredential,
+    {
+      context: ValidationContext.CreateWarning(
+        OfferingValidationWarnings.MatchProgramAviationCredential,
+      ),
+    },
+  )
+  aviationCredentialType?: AviationCredentialTypeOptions;
+  /**
    * Indicates if the offering has a WIL(work-integrated learning).
    */
   @IsEnum(OfferingYesNoOptions, {
@@ -657,6 +725,15 @@ export class OfferingValidationModel {
     {
       context: ValidationContext.CreateWarning(
         OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
+      ),
+    },
+  )
+  @HasValidFundedWeeksForAviationOfferingCredentials(
+    studyStartDateProperty,
+    studyEndDateProperty,
+    {
+      context: ValidationContext.CreateWarning(
+        OfferingValidationWarnings.InvalidFundedWeeksForAviationOfferingCredentials,
       ),
     },
   )

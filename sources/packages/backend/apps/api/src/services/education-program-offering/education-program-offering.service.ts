@@ -439,6 +439,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.offeringIntensity",
         "offerings.yearOfStudy",
         "parentOffering.id",
+        "offerings.isAviationOffering",
+        "offerings.aviationCredentialType",
         "offerings.hasOfferingWILComponent",
         "offerings.offeringWILType",
         "offerings.studyBreaks",
@@ -608,6 +610,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     programOffering.offeringIntensity =
       educationProgramOffering.offeringIntensity;
     programOffering.yearOfStudy = educationProgramOffering.yearOfStudy;
+    programOffering.isAviationOffering =
+      educationProgramOffering.isAviationOffering;
+    programOffering.aviationCredentialType =
+      educationProgramOffering.aviationCredentialType;
     programOffering.hasOfferingWILComponent =
       educationProgramOffering.hasOfferingWILComponent;
     programOffering.offeringWILType =
@@ -867,6 +873,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offering.lacksStudyBreaks",
         "offering.offeringIntensity",
         "offering.yearOfStudy",
+        "offering.isAviationOffering",
+        "offering.aviationCredentialType",
         "offering.hasOfferingWILComponent",
         "offering.offeringWILType",
         "offering.studyBreaks",
