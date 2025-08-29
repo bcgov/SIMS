@@ -45,6 +45,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
   it("Should get the student NOA details for an eligible part-time application when the student tries to access it.", async () => {
     // Arrange
     const enrolmentDate1 = addDays(1);
+    const statusUpdatedOn = addDays(2);
     // Create the new student to be mocked as the authenticated one.
     const student = await saveFakeStudent(db.dataSource);
     // Mock user services to return the saved student.
@@ -118,7 +119,12 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           ),
         ],
       },
-      { initialValues: { coeUpdatedAt: enrolmentDate1 } },
+      {
+        initialValues: {
+          coeUpdatedAt: enrolmentDate1,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn,
+        },
+      },
     );
     await db.disbursementSchedule.save(newAssessmentDisbursement);
 
@@ -161,6 +167,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           newAssessmentDisbursement.disbursementDate,
         ),
         disbursement1Id: newAssessmentDisbursement.id,
+        disbursement1DisbursementScheduleStatusUpdatedOn:
+          statusUpdatedOn.toISOString(),
         disbursement1MSFAACancelledDate:
           newAssessmentDisbursement.msfaaNumber?.cancelledDate,
         disbursement1MSFAADateSigned:
@@ -188,6 +196,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
   it("Should get the student NOA details for a full-time application when the application assessment is created.", async () => {
     // Arrange
     const enrolmentDate1 = addDays(1);
+    const statusUpdatedOn = addDays(2);
     // Create the new student to be mocked as the authenticated one.
     const student = await saveFakeStudent(db.dataSource);
     // Mock user services to return the saved student.
@@ -273,7 +282,12 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           ),
         ],
       },
-      { initialValues: { coeUpdatedAt: enrolmentDate1 } },
+      {
+        initialValues: {
+          coeUpdatedAt: enrolmentDate1,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn,
+        },
+      },
     );
     await db.disbursementSchedule.save(newAssessmentDisbursement);
 
@@ -318,6 +332,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           newAssessmentDisbursement.disbursementDate,
         ),
         disbursement1Id: newAssessmentDisbursement.id,
+        disbursement1DisbursementScheduleStatusUpdatedOn:
+          statusUpdatedOn.toISOString(),
         disbursement1MSFAACancelledDate:
           newAssessmentDisbursement.msfaaNumber.cancelledDate,
         disbursement1MSFAADateSigned:
@@ -345,6 +361,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
   it("Should exclude BC Total Grant from eligible amount calculation when getting NOA details", async () => {
     // Arrange
     const enrolmentDate1 = addDays(1);
+    const statusUpdatedOn = addDays(2);
     const student = await saveFakeStudent(db.dataSource);
     await mockUserLoginInfo(appModule, student);
 
@@ -400,7 +417,10 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
       },
       {
         offeringIntensity: OfferingIntensity.fullTime,
-        firstDisbursementInitialValues: { coeUpdatedAt: enrolmentDate1 },
+        firstDisbursementInitialValues: {
+          coeUpdatedAt: enrolmentDate1,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn,
+        },
       },
     );
 
@@ -441,6 +461,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           disbursement.disbursementDate,
         ),
         disbursement1Id: disbursement.id,
+        disbursement1DisbursementScheduleStatusUpdatedOn:
+          statusUpdatedOn.toISOString(),
         disbursement1MSFAACancelledDate:
           disbursement.msfaaNumber?.cancelledDate,
         disbursement1MSFAADateSigned: disbursement.msfaaNumber?.dateSigned,
