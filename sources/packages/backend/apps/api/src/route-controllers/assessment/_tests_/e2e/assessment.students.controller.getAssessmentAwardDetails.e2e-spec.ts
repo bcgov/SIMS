@@ -168,6 +168,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         },
         finalAward: {
           disbursementReceipt1Received: false,
+          disbursementReceipt1HasAwards: true,
           disbursementReceipt1cslp: 110,
           disbursementReceipt1csgp: 220,
           disbursementReceipt1cspt: 330,
@@ -359,8 +360,9 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement2EnrolmentDate: enrolmentDate2.toISOString(),
         },
         finalAward: {
-          // First disbursement schedule receipt dynamic properties.
           disbursementReceipt1Received: true,
+          disbursementReceipt2Received: true,
+          // First disbursement schedule receipt dynamic properties.
           disbursementReceipt1HasAwards: true,
           disbursementReceipt1cslp: 110,
           disbursementReceipt1csgp: 220,
@@ -369,7 +371,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursementReceipt1bcag: 550,
           disbursementReceipt1sbsd: 660,
           // Second disbursement schedule receipt dynamic properties.
-          disbursementReceipt2Received: true,
           disbursementReceipt2HasAwards: true,
           disbursementReceipt2cslp: 9990,
           disbursementReceipt2csgp: 1010,
@@ -634,6 +635,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursementReceipt1Received: true,
           disbursementReceipt2Received: true,
           // First disbursement schedule receipt dynamic properties.
+          disbursementReceipt1HasAwards: true,
           disbursementReceipt1cslf: 1000,
           disbursementReceipt1csgp: 10001,
           disbursementReceipt1csgd: 1002,
@@ -644,6 +646,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursementReceipt1bgpd: 1007,
           disbursementReceipt1sbsd: 1008,
           // Second disbursement schedule receipt dynamic properties.
+          disbursementReceipt2HasAwards: true,
           disbursementReceipt2cslf: 10010,
           disbursementReceipt2csgp: 10011,
           disbursementReceipt2csgd: 10012,
@@ -746,6 +749,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         },
         finalAward: {
           disbursementReceipt1Received: true,
+          disbursementReceipt1HasAwards: true,
           disbursementReceipt1cslf: 1,
           disbursementReceipt1csgp: 2,
           disbursementReceipt1bcsl: 3,
