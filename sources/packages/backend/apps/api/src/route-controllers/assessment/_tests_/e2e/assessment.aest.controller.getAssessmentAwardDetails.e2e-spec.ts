@@ -179,8 +179,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1DateSent: dateSent1.toISOString(),
           disbursement1DocumentNumber: firstSchedule.documentNumber,
           disbursement1Id: firstSchedule.id,
-          disbursement1DisbursementScheduleStatusUpdatedOn:
-            dateSent1.toISOString(),
+          disbursement1StatusUpdatedOn: dateSent1.toISOString(),
           disbursement1cslf: 1,
           disbursement1csgp: 2,
           disbursement1csgd: 3,
@@ -205,8 +204,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement2DateSent: dateSent2.toISOString(),
           disbursement2DocumentNumber: secondSchedule.documentNumber,
           disbursement2Id: secondSchedule.id,
-          disbursement2DisbursementScheduleStatusUpdatedOn:
-            dateSent2.toISOString(),
+          disbursement2StatusUpdatedOn: dateSent2.toISOString(),
           disbursement2cslf: 100,
           disbursement2csgp: 200,
           disbursement2csgd: 300,
@@ -219,9 +217,10 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement2EnrolmentDate: enrolmentDate2.toISOString(),
         },
         finalAward: {
-          receivedDisbursementReceipt1: true,
-          receivedDisbursementReceipt2: true,
+          disbursementReceipt1Received: true,
+          disbursementReceipt2Received: true,
           // First disbursement schedule receipt dynamic properties.
+          disbursementReceipt1HasAwards: true,
           disbursementReceipt1cslf: 1,
           disbursementReceipt1csgp: 2,
           disbursementReceipt1csgd: 3,
@@ -232,6 +231,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursementReceipt1bgpd: 8,
           disbursementReceipt1sbsd: 9,
           // Second disbursement schedule receipt dynamic properties.
+          disbursementReceipt2HasAwards: true,
           disbursementReceipt2cslf: 100,
           disbursementReceipt2csgp: 200,
           disbursementReceipt2csgd: 300,
@@ -398,8 +398,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1DateSent: dateSent1.toISOString(),
           disbursement1DocumentNumber: firstSchedule.documentNumber,
           disbursement1Id: firstSchedule.id,
-          disbursement1DisbursementScheduleStatusUpdatedOn:
-            dateSent1.toISOString(),
+          disbursement1StatusUpdatedOn: dateSent1.toISOString(),
           disbursement1cslp: 111,
           disbursement1csgp: 222,
           disbursement1cspt: 333,
@@ -421,8 +420,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement2DateSent: dateSent2.toISOString(),
           disbursement2DocumentNumber: secondSchedule.documentNumber,
           disbursement2Id: secondSchedule.id,
-          disbursement2DisbursementScheduleStatusUpdatedOn:
-            dateSent2.toISOString(),
+          disbursement2StatusUpdatedOn: dateSent2.toISOString(),
           disbursement2cslp: 9999,
           disbursement2csgp: 1010,
           disbursement2cspt: 1111,
@@ -432,9 +430,10 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursement2EnrolmentDate: enrolmentDate2.toISOString(),
         },
         finalAward: {
-          receivedDisbursementReceipt1: true,
-          receivedDisbursementReceipt2: true,
+          disbursementReceipt1Received: true,
+          disbursementReceipt2Received: true,
           // First disbursement schedule receipt dynamic properties.
+          disbursementReceipt1HasAwards: true,
           disbursementReceipt1cslp: 110,
           disbursementReceipt1csgp: 220,
           disbursementReceipt1cspt: 330,
@@ -442,6 +441,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           disbursementReceipt1bcag: 550,
           disbursementReceipt1sbsd: 660,
           // Second disbursement schedule receipt dynamic properties.
+          disbursementReceipt2HasAwards: true,
           disbursementReceipt2cslp: 9990,
           disbursementReceipt2csgp: 1010,
           disbursementReceipt2cspt: 1110,

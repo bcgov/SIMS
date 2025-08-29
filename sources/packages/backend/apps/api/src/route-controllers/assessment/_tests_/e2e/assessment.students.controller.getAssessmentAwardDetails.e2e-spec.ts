@@ -58,8 +58,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
 
   it("Should get the student assessment summary containing loan and all grants values from e-Cert effective amount for a part-time application with a single disbursement.", async () => {
     // Arrange
-    const dateStatusUpdatedOn = new Date();
     const enrolmentDate1 = addDays(1);
+    const statusUpdatedOn = new Date();
     // First disbursement values.
     const firstDisbursementValues = [
       createFakeDisbursementValue(
@@ -116,7 +116,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           // Adding date sent to ensure that will not be returned by the API (students should not receive it).
           dateSent: new Date(),
           coeUpdatedAt: enrolmentDate1,
-          disbursementScheduleStatusUpdatedOn: dateStatusUpdatedOn,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn,
         },
         secondDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
@@ -158,8 +158,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
           disbursement1TuitionRemittance: 0,
           disbursement1Id: firstSchedule.id,
-          disbursement1DisbursementScheduleStatusUpdatedOn:
-            dateStatusUpdatedOn.toISOString(),
+          disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
           disbursement1cslp: 111,
           disbursement1csgp: 222,
           disbursement1cspt: 333,
@@ -168,7 +167,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1sbsd: 666,
         },
         finalAward: {
-          receivedDisbursementReceipt1: false,
+          disbursementReceipt1Received: false,
           disbursementReceipt1cslp: 110,
           disbursementReceipt1csgp: 220,
           disbursementReceipt1cspt: 330,
@@ -330,8 +329,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
           disbursement1TuitionRemittance: 0,
           disbursement1Id: firstSchedule.id,
-          disbursement1DisbursementScheduleStatusUpdatedOn:
-            statusUpdatedOn1.toISOString(),
+          disbursement1StatusUpdatedOn: statusUpdatedOn1.toISOString(),
           disbursement1cslp: 111,
           disbursement1csgp: 222,
           disbursement1cspt: 333,
@@ -351,8 +349,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement2MSFAADateSigned: sharedMSFAANumber.dateSigned,
           disbursement2TuitionRemittance: 9876,
           disbursement2Id: secondSchedule.id,
-          disbursement2DisbursementScheduleStatusUpdatedOn:
-            statusUpdatedOn2.toISOString(),
+          disbursement2StatusUpdatedOn: statusUpdatedOn2.toISOString(),
           disbursement2cslp: 9999,
           disbursement2csgp: 1010,
           disbursement2cspt: 1111,
@@ -362,9 +359,9 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement2EnrolmentDate: enrolmentDate2.toISOString(),
         },
         finalAward: {
-          receivedDisbursementReceipt1: true,
-          receivedDisbursementReceipt2: true,
           // First disbursement schedule receipt dynamic properties.
+          disbursementReceipt1Received: true,
+          disbursementReceipt1HasAwards: true,
           disbursementReceipt1cslp: 110,
           disbursementReceipt1csgp: 220,
           disbursementReceipt1cspt: 330,
@@ -372,6 +369,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursementReceipt1bcag: 550,
           disbursementReceipt1sbsd: 660,
           // Second disbursement schedule receipt dynamic properties.
+          disbursementReceipt2Received: true,
+          disbursementReceipt2HasAwards: true,
           disbursementReceipt2cslp: 9990,
           disbursementReceipt2csgp: 1010,
           disbursementReceipt2cspt: 1110,
@@ -443,8 +442,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
           disbursement1TuitionRemittance: 0,
           disbursement1Id: firstSchedule.id,
-          disbursement1DisbursementScheduleStatusUpdatedOn:
-            statusUpdatedOn.toISOString(),
+          disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
           disbursement1cslp: 111,
           disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
         },
@@ -597,8 +595,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
           disbursement1TuitionRemittance: 1099,
           disbursement1Id: firstSchedule.id,
-          disbursement1DisbursementScheduleStatusUpdatedOn:
-            statusUpdatedOn1.toISOString(),
+          disbursement1StatusUpdatedOn: statusUpdatedOn1.toISOString(),
           disbursement1cslf: 1000,
           disbursement1csgp: 10001,
           disbursement1csgd: 1002,
@@ -621,8 +618,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement2MSFAADateSigned: sharedMSFAANumber.dateSigned,
           disbursement2TuitionRemittance: 0,
           disbursement2Id: secondSchedule.id,
-          disbursement2DisbursementScheduleStatusUpdatedOn:
-            statusUpdatedOn2.toISOString(),
+          disbursement2StatusUpdatedOn: statusUpdatedOn2.toISOString(),
           disbursement2cslf: 10010,
           disbursement2csgp: 10011,
           disbursement2csgd: 10012,
@@ -635,8 +631,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement2EnrolmentDate: enrolmentDate2.toISOString(),
         },
         finalAward: {
-          receivedDisbursementReceipt1: true,
-          receivedDisbursementReceipt2: true,
+          disbursementReceipt1Received: true,
+          disbursementReceipt2Received: true,
           // First disbursement schedule receipt dynamic properties.
           disbursementReceipt1cslf: 1000,
           disbursementReceipt1csgp: 10001,
@@ -663,8 +659,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
 
   it("Should get the student assessment summary containing federal, provincial loan, all federal grants and no provincial grants values for a full-time application when the BCSG does not match.", async () => {
     // Arrange
-    const statusUpdatedOn = new Date();
     const enrolmentDate1 = addDays(1);
+    const statusUpdatedOn = new Date();
     // First disbursement values.
     const firstDisbursementValues = [
       createFakeDisbursementValue(DisbursementValueType.CanadaLoan, "CSLF", 1),
@@ -740,8 +736,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
           disbursement1TuitionRemittance: 0,
           disbursement1Id: firstSchedule.id,
-          disbursement1DisbursementScheduleStatusUpdatedOn:
-            statusUpdatedOn.toISOString(),
+          disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
           disbursement1cslf: 1,
           disbursement1csgp: 2,
           disbursement1bcsl: 3,
@@ -750,7 +745,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
         },
         finalAward: {
-          receivedDisbursementReceipt1: true,
+          disbursementReceipt1Received: true,
           disbursementReceipt1cslf: 1,
           disbursementReceipt1csgp: 2,
           disbursementReceipt1bcsl: 3,

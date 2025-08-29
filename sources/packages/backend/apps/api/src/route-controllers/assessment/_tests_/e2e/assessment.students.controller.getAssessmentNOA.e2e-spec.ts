@@ -167,8 +167,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           newAssessmentDisbursement.disbursementDate,
         ),
         disbursement1Id: newAssessmentDisbursement.id,
-        disbursement1DisbursementScheduleStatusUpdatedOn:
-          statusUpdatedOn.toISOString(),
+        disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
         disbursement1MSFAACancelledDate:
           newAssessmentDisbursement.msfaaNumber?.cancelledDate,
         disbursement1MSFAADateSigned:
@@ -332,8 +331,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           newAssessmentDisbursement.disbursementDate,
         ),
         disbursement1Id: newAssessmentDisbursement.id,
-        disbursement1DisbursementScheduleStatusUpdatedOn:
-          statusUpdatedOn.toISOString(),
+        disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
         disbursement1MSFAACancelledDate:
           newAssessmentDisbursement.msfaaNumber.cancelledDate,
         disbursement1MSFAADateSigned:
@@ -461,8 +459,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
           disbursement.disbursementDate,
         ),
         disbursement1Id: disbursement.id,
-        disbursement1DisbursementScheduleStatusUpdatedOn:
-          statusUpdatedOn.toISOString(),
+        disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
         disbursement1MSFAACancelledDate:
           disbursement.msfaaNumber?.cancelledDate,
         disbursement1MSFAADateSigned: disbursement.msfaaNumber?.dateSigned,

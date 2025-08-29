@@ -127,8 +127,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             firstDisbursementSchedule.disbursementDate,
           ),
           disbursement1Id: firstDisbursementSchedule.id,
-          disbursement1DisbursementScheduleStatusUpdatedOn:
-            statusUpdatedOn1.toISOString(),
+          disbursement1StatusUpdatedOn: statusUpdatedOn1.toISOString(),
           disbursement1MSFAACancelledDate:
             firstDisbursementSchedule.msfaaNumber?.cancelledDate,
           disbursement1MSFAADateSigned:
@@ -146,8 +145,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             secondDisbursementSchedule.disbursementDate,
           ),
           disbursement2Id: secondDisbursementSchedule.id,
-          disbursement2DisbursementScheduleStatusUpdatedOn:
-            statusUpdatedOn2.toISOString(),
+          disbursement2StatusUpdatedOn: statusUpdatedOn2.toISOString(),
           disbursement2MSFAACancelledDate:
             secondDisbursementSchedule.msfaaNumber?.cancelledDate,
           disbursement2MSFAADateSigned:
@@ -251,8 +249,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             firstDisbursementSchedule.disbursementDate,
           ),
           disbursement1Id: firstDisbursementSchedule.id,
-          disbursement1DisbursementScheduleStatusUpdatedOn:
-            statusUpdatedOn1.toISOString(),
+          disbursement1StatusUpdatedOn: statusUpdatedOn1.toISOString(),
           disbursement1MSFAACancelledDate:
             firstDisbursementSchedule.msfaaNumber?.cancelledDate,
           disbursement1MSFAADateSigned:
@@ -270,8 +267,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             secondDisbursementSchedule.disbursementDate,
           ),
           disbursement2Id: secondDisbursementSchedule.id,
-          disbursement2DisbursementScheduleStatusUpdatedOn:
-            statusUpdatedOn2.toISOString(),
+          disbursement2StatusUpdatedOn: statusUpdatedOn2.toISOString(),
           disbursement2MSFAACancelledDate:
             secondDisbursementSchedule.msfaaNumber?.cancelledDate,
           disbursement2MSFAADateSigned:

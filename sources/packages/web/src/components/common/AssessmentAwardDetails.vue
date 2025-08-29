@@ -159,7 +159,7 @@
               "
               :cancellation-date="
                 assessmentAwardData.estimatedAward
-                  .disbursement1DisbursementScheduleStatusUpdatedOn as Date
+                  .disbursement1StatusUpdatedOn as Date
               "
             />
           </div>
@@ -232,7 +232,7 @@
               "
               :cancellation-date="
                 assessmentAwardData.estimatedAward
-                  .disbursement2DisbursementScheduleStatusUpdatedOn as Date
+                  .disbursement2StatusUpdatedOn as Date
               "
             />
             <cancel-disbursement-schedule
@@ -334,7 +334,7 @@
             <status-info-disbursement-cancellation
               :cancellation-date="
                 assessmentAwardData.estimatedAward
-                  .disbursement1DisbursementScheduleStatusUpdatedOn as Date
+                  .disbursement1StatusUpdatedOn as Date
               "
             />
           </div>
@@ -393,8 +393,8 @@ export default defineComponent({
   setup(props) {
     const { dateOnlyLongString } = useFormatters();
     /**
-     * Checks of the dynamic object with the final awards contains at least one property
-     * related to first or second disbursements.
+     * Checks if the dynamic object with the final awards contains a flag that
+     * indicates that awards values were added.
      * @param disbursement indicates the "first" or "second" disbursement.
      * @param finalAward dynamic final award object.
      */
@@ -405,13 +405,11 @@ export default defineComponent({
       if (!finalAward) {
         return false;
       }
-      const identifier =
+      const hasAwardsIdentifier =
         disbursement === "first"
-          ? "disbursementReceipt1"
-          : "disbursementReceipt2";
-      return Object.keys(finalAward).some((propName) =>
-        propName.startsWith(identifier),
-      );
+          ? "disbursementReceipt1HasAwards"
+          : "disbursementReceipt2HasAwards";
+      return !!finalAward[hasAwardsIdentifier];
     };
     /**
      * Indicates if a receipt was received for a disbursement.
@@ -432,8 +430,8 @@ export default defineComponent({
       }
       const identifier =
         disbursement === "first"
-          ? "receivedDisbursementReceipt1"
-          : "receivedDisbursementReceipt2";
+          ? "disbursementReceipt1Received"
+          : "disbursementReceipt2Received";
       return !!finalAward[identifier];
     };
     const isFirstDisbursementCompleted = computed<boolean>(

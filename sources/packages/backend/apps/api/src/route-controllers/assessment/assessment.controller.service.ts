@@ -201,9 +201,8 @@ export class AssessmentControllerService {
       disbursementDetails[`${disbursementIdentifier}EnrolmentDate`] =
         schedule.coeUpdatedAt;
       disbursementDetails[`${disbursementIdentifier}Id`] = schedule.id;
-      disbursementDetails[
-        `${disbursementIdentifier}DisbursementScheduleStatusUpdatedOn`
-      ] = schedule.disbursementScheduleStatusUpdatedOn;
+      disbursementDetails[`${disbursementIdentifier}StatusUpdatedOn`] =
+        schedule.disbursementScheduleStatusUpdatedOn;
       if (includeDateSent) {
         disbursementDetails[`${disbursementIdentifier}DateSent`] =
           schedule.dateSent;
@@ -319,19 +318,20 @@ export class AssessmentControllerService {
         assessment.id,
         options,
       );
-    // Populate the hasDisbursementReceipts flags for each disbursement schedule.
+    // Populate the disbursementReceipt[n]Received flags for each disbursement schedule.
     assessment.disbursementSchedules.forEach((_, index) => {
       const hasReceipt = disbursementReceipts.some(
         (receipt) =>
           receipt.disbursementSchedule.studentAssessment.id === assessment.id,
       );
-      finalAward[`receivedDisbursementReceipt${++index}`] = hasReceipt;
+      this.setReceiptReceivedFlag(finalAward, index + 1, hasReceipt);
     });
 
     if (assessment.offering.offeringIntensity === OfferingIntensity.fullTime) {
       let index = 1;
       if (!disbursementReceipts.length) {
         // If the receipts are not available no additional processing is needed.
+        this.setHasAwardsFlag(finalAward, index, false);
         return finalAward;
       }
       for (const schedule of assessment.disbursementSchedules) {
@@ -342,12 +342,14 @@ export class AssessmentControllerService {
         ) {
           break;
         }
+        this.setHasAwardsFlag(finalAward, index, true);
         const awards = this.populateDisbursementReceiptAwardValues(
           disbursementReceipts,
           schedule,
-          `${DISBURSEMENT_RECEIPT_PREFIX}${index++}`,
+          `${DISBURSEMENT_RECEIPT_PREFIX}${index}`,
         );
         finalAward = { ...finalAward, ...awards };
+        index++;
       }
       return finalAward;
     }
@@ -362,13 +364,51 @@ export class AssessmentControllerService {
       ) {
         break;
       }
+      this.setHasAwardsFlag(finalAward, index, true);
       const awards = this.populateDisbursementECertAwardValues(
         schedule.disbursementValues,
-        `${DISBURSEMENT_RECEIPT_PREFIX}${index++}`,
+        `${DISBURSEMENT_RECEIPT_PREFIX}${index}`,
       );
       finalAward = { ...finalAward, ...awards };
+      index++;
     }
     return finalAward;
+  }
+
+  /**
+   * Creates the  receipt received flag that indicates if a receipt was received
+   * for a specific disbursement schedule.
+   * This flag will be true if any receipt (Federal or Provincial) was received.
+   * @param finalAwards dynamic award values to have the flag set.
+   * @param index disbursement schedule index.
+   * @param flag indicates if awards were added to the final award.
+   */
+  private setReceiptReceivedFlag(
+    finalAwards: DynamicAwardValue,
+    index: number,
+    flag: boolean,
+  ): void {
+    const identifier = `${DISBURSEMENT_RECEIPT_PREFIX}${index}Received`;
+    finalAwards[identifier] = flag;
+  }
+
+  /**
+   * Creates the has awards flag for a specific disbursement schedule
+   * to indicate if awards were added.
+   * For a full-time assessment, this flag will be set to true if any awards
+   * were found in the disbursement receipts.
+   * For a part-time application it will be awarded based on the e-Cert values.
+   * @param finalAwards dynamic award values to have the flag set.
+   * @param index disbursement schedule index.
+   * @param flag indicates if awards were added to the final award.
+   */
+  private setHasAwardsFlag(
+    finalAwards: DynamicAwardValue,
+    index: number,
+    flag: boolean,
+  ): void {
+    const identifier = `${DISBURSEMENT_RECEIPT_PREFIX}${index}HasAwards`;
+    finalAwards[identifier] = flag;
   }
 
   /**
