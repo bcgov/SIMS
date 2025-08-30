@@ -2,8 +2,9 @@
   <check-permission-role :role="Role.StudentCancelDisbursementSchedule">
     <template #="{ notAllowed }">
       <v-btn
-        variant="text"
+        variant="outlined"
         color="primary"
+        prependIcon="mdi-close-circle-outline"
         @click="cancelDisbursementSchedule"
         :disabled="notAllowed"
         ><span class="text-decoration-underline font-bold"

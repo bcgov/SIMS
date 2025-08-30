@@ -319,10 +319,9 @@ export class AssessmentControllerService {
         options,
       );
     // Populate the disbursementReceipt[n]Received flags for each disbursement schedule.
-    assessment.disbursementSchedules.forEach((_, index) => {
+    assessment.disbursementSchedules.forEach((schedule, index) => {
       const hasReceipt = disbursementReceipts.some(
-        (receipt) =>
-          receipt.disbursementSchedule.studentAssessment.id === assessment.id,
+        (receipt) => receipt.disbursementSchedule.id === schedule.id,
       );
       this.setReceiptReceivedFlag(finalAward, index + 1, hasReceipt);
     });
@@ -342,11 +341,10 @@ export class AssessmentControllerService {
         ) {
           break;
         }
-        this.setHasAwardsFlag(finalAward, index, true);
         const awards = this.populateDisbursementReceiptAwardValues(
           disbursementReceipts,
           schedule,
-          `${DISBURSEMENT_RECEIPT_PREFIX}${index}`,
+          index,
         );
         finalAward = { ...finalAward, ...awards };
         index++;
@@ -412,7 +410,7 @@ export class AssessmentControllerService {
   }
 
   /**
-   * Populate final awards values from disbursements receipts.
+   * Populate final awards values from disbursements receipts for full-time.
    * @param disbursementReceipts disbursement receipts.
    * @param disbursementSchedule disbursement schedules.
    * @param identifier identifier which is used to create dynamic data by appending award code to it.
@@ -421,9 +419,15 @@ export class AssessmentControllerService {
   private populateDisbursementReceiptAwardValues(
     disbursementReceipts: DisbursementReceipt[],
     disbursementSchedule: DisbursementSchedule,
-    identifier: string,
+    index: number,
   ): DynamicAwardValue {
+    const identifier = `${DISBURSEMENT_RECEIPT_PREFIX}${index}`;
     const finalAward: DynamicAwardValue = {};
+    // Check if a receipt was received for the disbursement schedule.
+    const hasReceipt = disbursementReceipts.some(
+      (receipt) => receipt.disbursementSchedule.id === disbursementSchedule.id,
+    );
+    this.setHasAwardsFlag(finalAward, index, hasReceipt);
     // Add all estimated awards to the list of receipts returned.
     // Ensure that every estimated disbursement will be part of the summary.
     disbursementSchedule.disbursementValues.forEach((award) => {

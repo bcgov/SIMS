@@ -58,13 +58,6 @@
               "
               @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
-            <cancel-disbursement-schedule
-              v-if="canCancelFirstDisbursement"
-              :disbursement-id="
-                assessmentAwardData.estimatedAward.disbursement1Id as number
-              "
-              @disbursement-schedule-cancelled="disbursementScheduleCancelled"
-            />
           </div>
           <div
             class="my-3"
@@ -98,23 +91,6 @@
               :offeringIntensity="assessmentAwardData.offeringIntensity"
               identifier="disbursementReceipt1"
             />
-            <content-group-info v-if="allowFinalAwardExtendedInformation">
-              <div>
-                <span class="label-bold">Date eCert sent: </span>
-                <span>{{
-                  dateOnlyLongString(
-                    assessmentAwardData.estimatedAward
-                      .disbursement1DateSent as Date,
-                  )
-                }}</span>
-              </div>
-              <div>
-                <span class="label-bold">Certificate number: </span>
-                <span>{{
-                  assessmentAwardData.estimatedAward.disbursement1DocumentNumber
-                }}</span>
-              </div>
-            </content-group-info>
             <!-- Part-time final awards are retrieved from e-Cert generated values and requires further explanation.  -->
             <p
               v-if="
@@ -145,13 +121,36 @@
               )
             }}
           </p>
-          <div
+          <content-group-info
             v-if="
-              assessmentAwardData.estimatedAward.disbursement1Status ===
-              DisbursementScheduleStatus.Rejected
+              allowFinalAwardExtendedInformation &&
+              !!assessmentAwardData.estimatedAward.disbursement1DateSent
             "
-            class="mt-3"
           >
+            <div>
+              <span class="label-bold">Date eCert sent: </span>
+              <span>{{
+                dateOnlyLongString(
+                  assessmentAwardData.estimatedAward
+                    .disbursement1DateSent as Date,
+                )
+              }}</span>
+            </div>
+            <div>
+              <span class="label-bold">Certificate number: </span>
+              <span>{{
+                assessmentAwardData.estimatedAward.disbursement1DocumentNumber
+              }}</span>
+            </div>
+          </content-group-info>
+          <div class="mt-3">
+            <cancel-disbursement-schedule
+              v-if="canCancelFirstDisbursement"
+              :disbursement-id="
+                assessmentAwardData.estimatedAward.disbursement1Id as number
+              "
+              @disbursement-schedule-cancelled="disbursementScheduleCancelled"
+            />
             <status-info-disbursement-cancellation
               v-if="
                 assessmentAwardData.estimatedAward.disbursement1Status ===
@@ -235,13 +234,6 @@
                   .disbursement2StatusUpdatedOn as Date
               "
             />
-            <cancel-disbursement-schedule
-              v-if="canCancelSecondDisbursement"
-              :disbursement-id="
-                assessmentAwardData.estimatedAward.disbursement2Id as number
-              "
-              @disbursement-schedule-cancelled="disbursementScheduleCancelled"
-            />
           </div>
           <div
             class="my-3"
@@ -277,23 +269,6 @@
               :offeringIntensity="assessmentAwardData.offeringIntensity"
               identifier="disbursementReceipt2"
             />
-            <content-group-info v-if="allowFinalAwardExtendedInformation">
-              <div>
-                <span class="label-bold">Date eCert sent: </span>
-                <span>{{
-                  dateOnlyLongString(
-                    assessmentAwardData.estimatedAward
-                      .disbursement2DateSent as Date,
-                  )
-                }}</span>
-              </div>
-              <div>
-                <span class="label-bold">Certificate number: </span>
-                <span>{{
-                  assessmentAwardData.estimatedAward.disbursement2DocumentNumber
-                }}</span>
-              </div>
-            </content-group-info>
             <!-- Part-time final awards are retrieved from e-Cert generated values and requires further explanation.  -->
             <p
               v-if="
@@ -324,14 +299,41 @@
               )
             }}
           </p>
-          <div
+          <content-group-info
             v-if="
-              assessmentAwardData.estimatedAward.disbursement2Status ===
-              DisbursementScheduleStatus.Rejected
+              allowFinalAwardExtendedInformation &&
+              !!assessmentAwardData.estimatedAward.disbursement2DateSent
             "
-            class="mt-3"
           >
+            <div>
+              <span class="label-bold">Date eCert sent: </span>
+              <span>{{
+                dateOnlyLongString(
+                  assessmentAwardData.estimatedAward
+                    .disbursement2DateSent as Date,
+                )
+              }}</span>
+            </div>
+            <div>
+              <span class="label-bold">Certificate number: </span>
+              <span>{{
+                assessmentAwardData.estimatedAward.disbursement2DocumentNumber
+              }}</span>
+            </div>
+          </content-group-info>
+          <div class="mt-3">
+            <cancel-disbursement-schedule
+              v-if="canCancelSecondDisbursement"
+              :disbursement-id="
+                assessmentAwardData.estimatedAward.disbursement2Id as number
+              "
+              @disbursement-schedule-cancelled="disbursementScheduleCancelled"
+            />
             <status-info-disbursement-cancellation
+              v-if="
+                assessmentAwardData.estimatedAward.disbursement2Status ===
+                DisbursementScheduleStatus.Rejected
+              "
               :cancellation-date="
                 assessmentAwardData.estimatedAward
                   .disbursement1StatusUpdatedOn as Date
@@ -383,6 +385,11 @@ export default defineComponent({
     allowConfirmEnrolment: {
       type: Boolean,
       required: false,
+    },
+    allowDisbursementCancellation: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     allowFinalAwardExtendedInformation: {
       type: Boolean,
@@ -471,15 +478,18 @@ export default defineComponent({
       return undefined;
     };
 
-    const canCancelFirstDisbursement = computed<boolean>(
-      () =>
+    const canCancelFirstDisbursement = computed<boolean>(() => {
+      debugger;
+      return (
+        props.allowDisbursementCancellation &&
         props.assessmentAwardData.estimatedAward["disbursement1Status"] ===
           DisbursementScheduleStatus.Sent &&
         !receivedDisbursementReceipt(
           "first",
           props.assessmentAwardData.finalAward,
-        ),
-    );
+        )
+      );
+    });
 
     const canCancelSecondDisbursement = computed<boolean>(
       () =>

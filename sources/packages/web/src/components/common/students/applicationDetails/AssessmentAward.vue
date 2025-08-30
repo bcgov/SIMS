@@ -14,10 +14,11 @@
     </template>
   </body-header>
   <assessment-award-details
-    :assessmentAwardData="assessmentAwardData"
-    :allowConfirmEnrolment="allowConfirmEnrolment"
+    :assessment-award-data="assessmentAwardData"
+    :allow-confirm-enrolment="allowConfirmEnrolment"
+    :allow-disbursement-cancellation="allowDisbursementCancellation"
     :allow-final-award-extended-information="allowFinalAwardExtendedInformation"
-    @confirmEnrolment="$emit('confirmEnrolment', $event)"
+    @confirm-enrolment="$emit('confirmEnrolment', $event)"
   />
 </template>
 <script lang="ts">
@@ -45,6 +46,11 @@ export default defineComponent({
       required: true,
     },
     allowConfirmEnrolment: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    allowDisbursementCancellation: {
       type: Boolean,
       required: false,
       default: false,
