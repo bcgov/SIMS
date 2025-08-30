@@ -98,3 +98,5 @@ export * from "./dynamic-form-configuration/dynamic-form-configuration.controlle
 export * from "./application-change-request/models/application-change-request.dto";
 export * from "./application-change-request/application-change-request.aest.controller";
 export * from "./supporting-user/supporting-user.students.controller";
+export * from "./disbursement-schedule/disbursement-schedule.aest.controller";
+export * from "./disbursement-schedule/models/disbursement-schedule.dto";

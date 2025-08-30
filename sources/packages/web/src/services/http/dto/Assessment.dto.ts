@@ -82,7 +82,10 @@ export interface AssessmentNOAAPIOutDTO {
  *    disbursementReceipt2sbsd: 1008,
  *   }
  */
-export type DynamicAwardValue = Record<string, string | number | Date>;
+export type DynamicAwardValue = Record<
+  string,
+  string | number | Date | boolean
+>;
 
 export interface AwardDetailsAPIOutDTO {
   applicationNumber: string;

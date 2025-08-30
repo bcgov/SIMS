@@ -91,23 +91,6 @@
               :offeringIntensity="assessmentAwardData.offeringIntensity"
               identifier="disbursementReceipt1"
             />
-            <content-group-info v-if="allowFinalAwardExtendedInformation">
-              <div>
-                <span class="label-bold">Date eCert sent: </span>
-                <span>{{
-                  dateOnlyLongString(
-                    assessmentAwardData.estimatedAward
-                      .disbursement1DateSent as Date,
-                  )
-                }}</span>
-              </div>
-              <div>
-                <span class="label-bold">Certificate number: </span>
-                <span>{{
-                  assessmentAwardData.estimatedAward.disbursement1DocumentNumber
-                }}</span>
-              </div>
-            </content-group-info>
             <!-- Part-time final awards are retrieved from e-Cert generated values and requires further explanation.  -->
             <p
               v-if="
@@ -138,6 +121,47 @@
               )
             }}
           </p>
+          <content-group-info
+            v-if="
+              allowFinalAwardExtendedInformation &&
+              !!assessmentAwardData.estimatedAward.disbursement1DateSent
+            "
+          >
+            <div>
+              <span class="label-bold">Date eCert sent: </span>
+              <span>{{
+                dateOnlyLongString(
+                  assessmentAwardData.estimatedAward
+                    .disbursement1DateSent as Date,
+                )
+              }}</span>
+            </div>
+            <div>
+              <span class="label-bold">Certificate number: </span>
+              <span>{{
+                assessmentAwardData.estimatedAward.disbursement1DocumentNumber
+              }}</span>
+            </div>
+          </content-group-info>
+          <div class="mt-3">
+            <cancel-disbursement-schedule
+              v-if="canCancelFirstDisbursement"
+              :disbursement-id="
+                assessmentAwardData.estimatedAward.disbursement1Id as number
+              "
+              @disbursement-schedule-cancelled="disbursementScheduleCancelled"
+            />
+            <status-info-disbursement-cancellation
+              v-if="
+                assessmentAwardData.estimatedAward.disbursement1Status ===
+                DisbursementScheduleStatus.Rejected
+              "
+              :cancellation-date="
+                assessmentAwardData.estimatedAward
+                  .disbursement1StatusUpdatedOn as Date
+              "
+            />
+          </div>
         </content-group>
       </v-col>
     </v-row>
@@ -199,6 +223,18 @@
               @confirmEnrolment="$emit('confirmEnrolment', $event)"
             />
           </div>
+          <div class="my-3">
+            <status-info-disbursement-cancellation
+              v-if="
+                assessmentAwardData.estimatedAward.disbursement2Status ===
+                DisbursementScheduleStatus.Rejected
+              "
+              :cancellation-date="
+                assessmentAwardData.estimatedAward
+                  .disbursement2StatusUpdatedOn as Date
+              "
+            />
+          </div>
           <div
             class="my-3"
             v-if="
@@ -233,23 +269,6 @@
               :offeringIntensity="assessmentAwardData.offeringIntensity"
               identifier="disbursementReceipt2"
             />
-            <content-group-info v-if="allowFinalAwardExtendedInformation">
-              <div>
-                <span class="label-bold">Date eCert sent: </span>
-                <span>{{
-                  dateOnlyLongString(
-                    assessmentAwardData.estimatedAward
-                      .disbursement2DateSent as Date,
-                  )
-                }}</span>
-              </div>
-              <div>
-                <span class="label-bold">Certificate number: </span>
-                <span>{{
-                  assessmentAwardData.estimatedAward.disbursement2DocumentNumber
-                }}</span>
-              </div>
-            </content-group-info>
             <!-- Part-time final awards are retrieved from e-Cert generated values and requires further explanation.  -->
             <p
               v-if="
@@ -280,6 +299,47 @@
               )
             }}
           </p>
+          <content-group-info
+            v-if="
+              allowFinalAwardExtendedInformation &&
+              !!assessmentAwardData.estimatedAward.disbursement2DateSent
+            "
+          >
+            <div>
+              <span class="label-bold">Date eCert sent: </span>
+              <span>{{
+                dateOnlyLongString(
+                  assessmentAwardData.estimatedAward
+                    .disbursement2DateSent as Date,
+                )
+              }}</span>
+            </div>
+            <div>
+              <span class="label-bold">Certificate number: </span>
+              <span>{{
+                assessmentAwardData.estimatedAward.disbursement2DocumentNumber
+              }}</span>
+            </div>
+          </content-group-info>
+          <div class="mt-3">
+            <cancel-disbursement-schedule
+              v-if="canCancelSecondDisbursement"
+              :disbursement-id="
+                assessmentAwardData.estimatedAward.disbursement2Id as number
+              "
+              @disbursement-schedule-cancelled="disbursementScheduleCancelled"
+            />
+            <status-info-disbursement-cancellation
+              v-if="
+                assessmentAwardData.estimatedAward.disbursement2Status ===
+                DisbursementScheduleStatus.Rejected
+              "
+              :cancellation-date="
+                assessmentAwardData.estimatedAward
+                  .disbursement1StatusUpdatedOn as Date
+              "
+            />
+          </div>
         </content-group>
       </v-col>
     </v-row>
@@ -298,6 +358,9 @@ import { PropType, computed, defineComponent } from "vue";
 import AwardTable from "@/components/common/AwardTable.vue";
 import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
 import ConfirmEnrolment from "@/components/common/ConfirmEnrolment.vue";
+import CancelDisbursementSchedule from "@/components/common/CancelDisbursementSchedule.vue";
+import StatusInfoDisbursementCancellation from "@/components/common/StatusInfoDisbursementCancellation.vue";
+
 import { useFormatters } from "@/composables";
 
 export default defineComponent({
@@ -310,6 +373,8 @@ export default defineComponent({
     AwardTable,
     ConfirmEnrolment,
     StatusInfoEnrolment,
+    CancelDisbursementSchedule,
+    StatusInfoDisbursementCancellation,
   },
   props: {
     assessmentAwardData: {
@@ -321,6 +386,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
     },
+    allowDisbursementCancellation: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     allowFinalAwardExtendedInformation: {
       type: Boolean,
       required: false,
@@ -330,25 +400,46 @@ export default defineComponent({
   setup(props) {
     const { dateOnlyLongString } = useFormatters();
     /**
-     * Checks of the dynamic object with the final awards contains at least one property
-     * related to first or second disbursements.
+     * Checks if the dynamic object with the final awards contains a flag that
+     * indicates that awards values were added.
      * @param disbursement indicates the "first" or "second" disbursement.
      * @param finalAward dynamic final award object.
      */
-    const hasDisbursementReceipt = (
+    const hasDisbursementAwards = (
       disbursement: "first" | "second",
       finalAward?: DynamicAwardValue,
     ) => {
       if (!finalAward) {
         return false;
       }
+      const hasAwardsIdentifier =
+        disbursement === "first"
+          ? "disbursementReceipt1HasAwards"
+          : "disbursementReceipt2HasAwards";
+      return !!finalAward[hasAwardsIdentifier];
+    };
+    /**
+     * Indicates if a receipt was received for a disbursement.
+     * Final awards can be rendered from a receipt or directly from the
+     * awards for part-time where the receipts are incomplete or may never be
+     * received. This checks the flags that indicates if a receipt was ever received,
+     * not if the final awards can be rendered.
+     * @param disbursement first or second disbursement.
+     * @param finalAward dynamic object with the flag to be checked.
+     * @returns true if a receipt was received, otherwise, false.
+     */
+    const receivedDisbursementReceipt = (
+      disbursement: "first" | "second",
+      finalAward?: DynamicAwardValue,
+    ): boolean => {
+      if (!finalAward) {
+        return false;
+      }
       const identifier =
         disbursement === "first"
-          ? "disbursementReceipt1"
-          : "disbursementReceipt2";
-      return Object.keys(finalAward).some((propName) =>
-        propName.startsWith(identifier),
-      );
+          ? "disbursementReceipt1Received"
+          : "disbursementReceipt2Received";
+      return !!finalAward[identifier];
     };
     const isFirstDisbursementCompleted = computed<boolean>(
       () =>
@@ -364,10 +455,10 @@ export default defineComponent({
         COEStatus.completed,
     );
     const showFirstFinalAward = computed<boolean>(() =>
-      hasDisbursementReceipt("first", props.assessmentAwardData.finalAward),
+      hasDisbursementAwards("first", props.assessmentAwardData.finalAward),
     );
     const showSecondFinalAward = computed<boolean>(() =>
-      hasDisbursementReceipt("second", props.assessmentAwardData.finalAward),
+      hasDisbursementAwards("second", props.assessmentAwardData.finalAward),
     );
     const getFinalAwardNotAvailableMessage = (
       coeStatus: COEStatus,
@@ -387,6 +478,34 @@ export default defineComponent({
       return undefined;
     };
 
+    const canCancelFirstDisbursement = computed<boolean>(() => {
+      debugger;
+      return (
+        props.allowDisbursementCancellation &&
+        props.assessmentAwardData.estimatedAward["disbursement1Status"] ===
+          DisbursementScheduleStatus.Sent &&
+        !receivedDisbursementReceipt(
+          "first",
+          props.assessmentAwardData.finalAward,
+        )
+      );
+    });
+
+    const canCancelSecondDisbursement = computed<boolean>(
+      () =>
+        props.assessmentAwardData.estimatedAward["disbursement2Status"] ===
+          DisbursementScheduleStatus.Sent &&
+        !receivedDisbursementReceipt(
+          "second",
+          props.assessmentAwardData.finalAward,
+        ),
+    );
+
+    const disbursementScheduleCancelled = () => {
+      // TODO: To be implemented to refresh data.
+      console.log("Disbursement schedule cancelled, data will be refreshed.");
+    };
+
     return {
       dateOnlyLongString,
       AESTRoutesConst,
@@ -399,6 +518,9 @@ export default defineComponent({
       StatusInfo,
       OfferingIntensity,
       DisbursementScheduleStatus,
+      canCancelFirstDisbursement,
+      canCancelSecondDisbursement,
+      disbursementScheduleCancelled,
     };
   },
 });

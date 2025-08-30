@@ -59,5 +59,7 @@ export function createFakeDisbursementSchedule(
   schedule.hasEstimatedAwards =
     options?.initialValues?.hasEstimatedAwards ??
     relations?.disbursementValues?.length > 0;
+  schedule.disbursementScheduleStatusUpdatedOn =
+    options?.initialValues?.disbursementScheduleStatusUpdatedOn;
   return schedule;
 }
