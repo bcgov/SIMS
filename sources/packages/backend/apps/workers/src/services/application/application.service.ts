@@ -86,6 +86,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         id: true,
         applicationNumber: true,
         applicationEditStatus: true,
+        submittedDate: true,
         pirStatus: true,
         student: {
           id: true,
@@ -102,10 +103,15 @@ export class ApplicationService extends RecordDataModelService<Application> {
           id: true,
           exceptionStatus: true,
         },
+        currentAssessment: {
+          id: true,
+          offering: { id: true, studyEndDate: true },
+        },
       },
       relations: {
         applicationException: true,
         student: { user: true },
+        currentAssessment: { offering: true },
       },
       where: {
         id: applicationId,

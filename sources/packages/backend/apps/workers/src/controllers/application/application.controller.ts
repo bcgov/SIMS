@@ -11,6 +11,7 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
+  ApplicationDataException,
   ApplicationExceptionHashService,
   ApplicationExceptionSearchService,
   ApplicationExceptionService,
@@ -237,8 +238,9 @@ export class ApplicationController {
             application.applicationException.exceptionStatus,
         });
       }
+      let exceptions: ApplicationDataException[] = [];
       // Check for application exceptions present in the application dynamic data.
-      const exceptions = this.applicationExceptionSearchService.search(
+      exceptions = this.applicationExceptionSearchService.search(
         application.data,
       );
       jobLogger.log(`Found ${exceptions.length} application exception(s).`);
