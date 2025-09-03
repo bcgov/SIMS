@@ -56,7 +56,9 @@ import { DisbursementScheduleService } from "@/services/DisbursementScheduleServ
 
 export default defineComponent({
   emits: {
-    disbursementScheduleCancelled: null,
+    disbursementCancelled: (disbursementId: number) => {
+      return !!disbursementId;
+    },
   },
   components: { UserNoteConfirmModal, CheckPermissionRole },
   props: {
@@ -87,7 +89,7 @@ export default defineComponent({
           { note: userNoteModalResult.note },
         );
         snackBar.success("eCert cancelled.");
-        emit("disbursementScheduleCancelled");
+        emit("disbursementCancelled", userNoteModalResult.showParameter);
         return true;
       } catch {
         snackBar.error(

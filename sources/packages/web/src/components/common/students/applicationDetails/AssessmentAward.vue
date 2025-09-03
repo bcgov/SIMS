@@ -19,6 +19,7 @@
     :allow-disbursement-cancellation="allowDisbursementCancellation"
     :allow-final-award-extended-information="allowFinalAwardExtendedInformation"
     @confirm-enrolment="$emit('confirmEnrolment', $event)"
+    @disbursement-cancelled="$emit('disbursementCancelled', $event)"
   />
 </template>
 <script lang="ts">
@@ -31,6 +32,9 @@ import AssessmentAwardDetails from "@/components/common/AssessmentAwardDetails.v
 export default defineComponent({
   emits: {
     confirmEnrolment: (disbursementId: number) => {
+      return !!disbursementId;
+    },
+    disbursementCancelled: (disbursementId: number) => {
       return !!disbursementId;
     },
   },

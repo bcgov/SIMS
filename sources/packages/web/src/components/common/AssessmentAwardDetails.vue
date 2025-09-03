@@ -147,9 +147,9 @@
             <cancel-disbursement-schedule
               v-if="canCancelFirstDisbursement"
               :disbursement-id="
-                assessmentAwardData.estimatedAward.disbursement1Id as number
-              "
-              @disbursement-schedule-cancelled="disbursementScheduleCancelled"
+            assessmentAwardData.estimatedAward.disbursement1Id as number
+            "
+              @disbursement-cancelled="$emit('disbursementCancelled', $event)"
             />
             <status-info-disbursement-cancellation
               v-if="
@@ -327,7 +327,7 @@
               :disbursement-id="
                 assessmentAwardData.estimatedAward.disbursement2Id as number
               "
-              @disbursement-schedule-cancelled="disbursementScheduleCancelled"
+              @disbursement-cancelled="$emit('disbursementCancelled', $event)"
             />
             <status-info-disbursement-cancellation
               v-if="
@@ -366,6 +366,9 @@ import { useFormatters } from "@/composables";
 export default defineComponent({
   emits: {
     confirmEnrolment: (disbursementId: number) => {
+      return !!disbursementId;
+    },
+    disbursementCancelled: (disbursementId: number) => {
       return !!disbursementId;
     },
   },
@@ -472,10 +475,6 @@ export default defineComponent({
         !props.assessmentAwardData.finalAward?.disbursementReceipt2Received,
     );
 
-    const disbursementScheduleCancelled = () => {
-      // TODO: To be implemented to refresh data.
-    };
-
     return {
       dateOnlyLongString,
       AESTRoutesConst,
@@ -490,7 +489,6 @@ export default defineComponent({
       DisbursementScheduleStatus,
       canCancelFirstDisbursement,
       canCancelSecondDisbursement,
-      disbursementScheduleCancelled,
     };
   },
 });

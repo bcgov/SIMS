@@ -19,7 +19,7 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 
 /**
  *  Processes the E-Cert cancellation response file(s).
@@ -30,6 +30,7 @@ export class ECertCancellationResponseProcessingService {
   private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(
     configService: ConfigService,
+    private readonly dataSource: DataSource,
     private readonly integrationService: ECertCancellationResponseIntegrationService,
     private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
     private readonly systemUsersService: SystemUsersService,
@@ -196,21 +197,24 @@ export class ECertCancellationResponseProcessingService {
     }
     const auditUser = this.systemUsersService.systemUser;
     try {
-      const overawardIds =
-        await this.disbursementScheduleSharedService.rejectDisbursement(
-          disbursementSchedule.id,
-          auditUser.id,
-          disbursementSchedule.studentAssessment.offering.offeringIntensity ===
-            OfferingIntensity.fullTime,
-        );
-      processSummary.info(
-        `E-Cert with document number ${documentNumber} has been cancelled.`,
-      );
-      if (overawardIds && overawardIds.length) {
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
+        const overawardIds =
+          await this.disbursementScheduleSharedService.rejectDisbursement(
+            disbursementSchedule.id,
+            auditUser.id,
+            disbursementSchedule.studentAssessment.offering
+              .offeringIntensity === OfferingIntensity.fullTime,
+            transactionalEntityManager,
+          );
         processSummary.info(
-          `Reversal overaward(s) created: ${overawardIds.join(", ")}.`,
+          `E-Cert with document number ${documentNumber} has been cancelled.`,
         );
-      }
+        if (overawardIds && overawardIds.length) {
+          processSummary.info(
+            `Reversal overaward(s) created: ${overawardIds.join(", ")}.`,
+          );
+        }
+      });
     } catch (error: unknown) {
       // If any other error occurs, log error without aborting the process, allowing other records to be processed.
       processSummary.error(

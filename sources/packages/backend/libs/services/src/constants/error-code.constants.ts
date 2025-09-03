@@ -48,5 +48,19 @@ export const FILE_PARSING_ERROR = "FILE_PARSING_ERROR";
 export const DATABASE_TRANSACTION_CANCELLATION =
   "DATABASE_TRANSACTION_CANCELLATION";
 
+/**
+ * Disbursement was found, but an attempt to update the record schedule was not successful.
+ */
 export const DISBURSEMENT_SCHEDULE_NOT_UPDATED =
   "DISBURSEMENT_SCHEDULE_NOT_UPDATED";
+/**
+ * Disbursement schedule not found.
+ */
+export const DISBURSEMENT_SCHEDULE_NOT_FOUND =
+  "DISBURSEMENT_SCHEDULE_NOT_FOUND";
+/**
+ * Disbursement schedule is not in the correct state to be updated, which
+ * indicates that any of the conditions to perform the update are not met.
+ */
+export const DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED =
+  "DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED";

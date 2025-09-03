@@ -1,5 +1,17 @@
-import { Body, Controller, Param, ParseIntPipe, Patch } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  Body,
+  Controller,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Patch,
+  UnprocessableEntityException,
+} from "@nestjs/common";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import {
   AllowAuthorizedParty,
@@ -10,17 +22,37 @@ import {
 import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties, IUserToken, Role, UserGroups } from "../../auth";
 import { CancelDisbursementScheduleAPIInDTO } from "../../route-controllers";
+import { DisbursementScheduleService } from "../../services";
+import { CustomNamedError } from "@sims/utilities";
+import {
+  DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
+  DISBURSEMENT_SCHEDULE_NOT_FOUND,
+  DISBURSEMENT_SCHEDULE_NOT_UPDATED,
+} from "@sims/services/constants";
+import { DisbursementScheduleStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("disbursement-schedule")
 @ApiTags(`${ClientTypeBaseRoute.AEST}-disbursement-schedule`)
 export class DisbursementScheduleAESTController extends BaseController {
+  constructor(
+    private readonly disbursementScheduleService: DisbursementScheduleService,
+  ) {
+    super();
+  }
+
   /**
    * Cancels a disbursement schedule.
    * @param disbursementScheduleId disbursement schedule ID.
    * @param payload payload with the cancellation info.
    */
+  @ApiNotFoundResponse({ description: "Disbursement schedule not found." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      `Disbursement schedule expected to be '${DisbursementScheduleStatus.Sent}' to allow it to be rejected or ` +
+      "disbursement schedule has receipts associated with it and cannot be rejected.",
+  })
   @Roles(Role.StudentCancelDisbursementSchedule)
   @Patch(":disbursementScheduleId/cancel")
   async cancelDisbursementSchedule(
@@ -29,6 +61,23 @@ export class DisbursementScheduleAESTController extends BaseController {
     @Body() payload: CancelDisbursementScheduleAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    // TODO: To be implemented.
+    try {
+      await this.disbursementScheduleService.rejectDisbursement(
+        disbursementScheduleId,
+        payload.note,
+        userToken.userId,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case DISBURSEMENT_SCHEDULE_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case DISBURSEMENT_SCHEDULE_NOT_UPDATED:
+          case DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED:
+            throw new UnprocessableEntityException(error.message);
+        }
+      }
+      throw error;
+    }
   }
 }

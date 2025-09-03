@@ -80,14 +80,11 @@ export default defineComponent({
       required: false,
       default: true,
     },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
   },
   setup() {
     const { checkNotesLengthRule } = useRules();
     const {
+      loading,
       showDialog,
       resolvePromise: internalResolvePromise,
       showModal,
@@ -126,6 +123,7 @@ export default defineComponent({
       showDialog,
       showModal,
       resolvePromise,
+      loading,
     };
   },
 });
