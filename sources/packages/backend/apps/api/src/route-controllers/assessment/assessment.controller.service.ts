@@ -50,8 +50,10 @@ import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
  */
 const DISBURSEMENT_RECEIPT_PREFIX = "disbursementReceipt";
 /**
- * Indicates which disbursement schedule statuses have
- * the potential to generate a receipt.
+ * Indicates which disbursement schedule statuses are expected to have receipts generated.
+ * When 'Sent' and later 'Rejected', the receipt should not be received in a usual situation.
+ * Either way, both status are considered as subjected to check for receipts since an
+ * e-Cert was produced.
  */
 const HAS_POTENTIAL_RECEIPT_STATUSES = [
   DisbursementScheduleStatus.Sent,
