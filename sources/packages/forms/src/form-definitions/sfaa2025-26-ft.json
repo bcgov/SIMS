@@ -7748,6 +7748,7 @@
             {
               "title": "Merit-based scholarships panel",
               "collapsible": false,
+              "hideLabel": true,
               "key": "meritBasedScholarshipsPanel",
               "conditional": {
                 "show": true,
