@@ -4,7 +4,7 @@
       <v-btn
         variant="outlined"
         color="primary"
-        prependIcon="mdi-close-circle-outline"
+        prepend-icon="fa:fa fa-xmark"
         @click="cancelDisbursementSchedule"
         :disabled="notAllowed"
         ><span class="text-decoration-underline font-bold"
