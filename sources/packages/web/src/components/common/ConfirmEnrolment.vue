@@ -3,8 +3,9 @@
     <template #="{ notAllowed }">
       <v-btn
         v-if="isConfirmCOEEnabled"
-        variant="text"
+        variant="outlined"
         color="primary"
+        prepend-icon="fa:fa fa-check"
         @click="submitConfirmEnrolment"
         :disabled="notAllowed"
         ><span class="text-decoration-underline font-bold"
