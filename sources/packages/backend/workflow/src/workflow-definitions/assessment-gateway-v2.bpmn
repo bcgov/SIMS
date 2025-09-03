@@ -419,6 +419,9 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:serviceTask id="verify-application-exceptions-task" name="Verify Application Exceptions">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="=if(is defined(applicationExceptionsStrategy)) then&#10;  applicationExceptionsStrategy&#10;else&#10;  &#34;verify-application-exceptions&#34;" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="programInfoProcessStatus" value="completed" />
+        </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>verify-application-exceptions-retry-timer-flow</bpmn:incoming>
       <bpmn:incoming>Flow_1daizvx</bpmn:incoming>
@@ -932,12 +935,12 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="170" y="80" width="4618" height="1530" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_0lvs868_di" bpmnElement="Lane_0lvs868" isHorizontal="true">
-        <dc:Bounds x="200" y="80" width="4588" height="1070" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1bfd2e9_di" bpmnElement="Lane_1bfd2e9" isHorizontal="true">
         <dc:Bounds x="200" y="1150" width="4588" height="460" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0lvs868_di" bpmnElement="Lane_0lvs868" isHorizontal="true">
+        <dc:Bounds x="200" y="80" width="4588" height="1070" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1b54j4j_di" bpmnElement="verify-assessment-calculation-timer">
@@ -1146,48 +1149,6 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="1587" y="440" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1rt1s2i_di" bpmnElement="parents-verification-has-dependant-gateway" isMarkerVisible="true">
-        <dc:Bounds x="1955" y="940" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0cru9d8" bpmnElement="Gateway_0ny5tkb" isMarkerVisible="true">
-        <dc:Bounds x="2715" y="940" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1f1vf25_di" bpmnElement="update-application-status-to-in-progress-task">
-        <dc:Bounds x="850" y="302" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0wavgao_di" bpmnElement="Gateway_0wavgao" isMarkerVisible="true">
-        <dc:Bounds x="745" y="317" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="727" y="284" width="85" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1c05kxg_di" bpmnElement="assessment-process-type-gateway" isMarkerVisible="true">
-        <dc:Bounds x="625" y="317" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="548" y="314" width="83" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0yu5184_di" bpmnElement="load-assessment-data-submit-or-reassessment-subprocess">
-        <dc:Bounds x="440" y="302" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_11aa2j4_di" bpmnElement="associate-workflow-instance-task">
-        <dc:Bounds x="290" y="303" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="assessment-start-event">
-        <dc:Bounds x="222" y="325" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1aawyrx_di" bpmnElement="Gateway_1aawyrx" isMarkerVisible="true">
-        <dc:Bounds x="1125" y="317" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1l72rhw" bpmnElement="pir-workflow-wrap-up-task" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="1100" y="440" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1mj2hkh_di" bpmnElement="Event_1mj2hkh" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="1132" y="572" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1r28emd_di" bpmnElement="identifiable-parents-creation" isExpanded="true">
         <dc:Bounds x="2060" y="790" width="580" height="200" />
       </bpmndi:BPMNShape>
@@ -1224,9 +1185,51 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="2535" y="890" />
         <di:waypoint x="2577" y="890" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Gateway_1rt1s2i_di" bpmnElement="parents-verification-has-dependant-gateway" isMarkerVisible="true">
+        <dc:Bounds x="1955" y="940" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0cru9d8" bpmnElement="Gateway_0ny5tkb" isMarkerVisible="true">
+        <dc:Bounds x="2715" y="940" width="50" height="50" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_069nn9n_di" bpmnElement="Activity_069nn9n" isExpanded="false">
         <dc:Bounds x="980" y="302" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1f1vf25_di" bpmnElement="update-application-status-to-in-progress-task">
+        <dc:Bounds x="850" y="302" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0wavgao_di" bpmnElement="Gateway_0wavgao" isMarkerVisible="true">
+        <dc:Bounds x="745" y="317" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="727" y="284" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1c05kxg_di" bpmnElement="assessment-process-type-gateway" isMarkerVisible="true">
+        <dc:Bounds x="625" y="317" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="548" y="314" width="83" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yu5184_di" bpmnElement="load-assessment-data-submit-or-reassessment-subprocess">
+        <dc:Bounds x="440" y="302" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11aa2j4_di" bpmnElement="associate-workflow-instance-task">
+        <dc:Bounds x="290" y="303" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="assessment-start-event">
+        <dc:Bounds x="222" y="325" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1aawyrx_di" bpmnElement="Gateway_1aawyrx" isMarkerVisible="true">
+        <dc:Bounds x="1125" y="317" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1l72rhw" bpmnElement="pir-workflow-wrap-up-task" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1100" y="440" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1mj2hkh_di" bpmnElement="Event_1mj2hkh" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="1132" y="572" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0bza37i_di" bpmnElement="Flow_0bza37i">
         <di:waypoint x="2695" y="1480" />
@@ -1697,22 +1700,6 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="1150" y="520" />
         <di:waypoint x="1150" y="572" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">
-        <di:waypoint x="3200" y="871" />
-        <di:waypoint x="3273" y="920" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
-        <di:waypoint x="2460" y="1374" />
-        <di:waypoint x="2428" y="1383" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
-        <di:waypoint x="3320" y="536" />
-        <di:waypoint x="3260" y="564" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
-        <di:waypoint x="3320" y="647" />
-        <di:waypoint x="3219" y="694" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0vf0jbr" bpmnElement="Group_19tqt3y">
         <dc:Bounds x="1930" y="250" width="730" height="170" />
         <bpmndi:BPMNLabel>
@@ -1753,12 +1740,34 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="3260" y="920" width="481" height="70" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">
+        <di:waypoint x="3200" y="871" />
+        <di:waypoint x="3273" y="920" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
+        <di:waypoint x="2460" y="1374" />
+        <di:waypoint x="2428" y="1383" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
+        <di:waypoint x="3320" y="536" />
+        <di:waypoint x="3260" y="564" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
+        <di:waypoint x="3320" y="647" />
+        <di:waypoint x="3219" y="694" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1tu9mrb">
     <bpmndi:BPMNPlane id="BPMNPlane_0svvxba" bpmnElement="Activity_069nn9n">
+      <bpmndi:BPMNShape id="BPMNShape_00rld4c" bpmnElement="Gateway_1bhx82g" isMarkerVisible="true">
+        <dc:Bounds x="755" y="227" width="50" height="50" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_037fhl9" bpmnElement="Gateway_1hpk9e2" isMarkerVisible="true">
         <dc:Bounds x="683" y="157" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xk3f7n_di" bpmnElement="Event_1xk3f7n">
+        <dc:Bounds x="852" y="234" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0uzu9fw_di" bpmnElement="Event_0uzu9fw">
         <dc:Bounds x="180" y="234" width="36" height="36" />
@@ -1785,18 +1794,12 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmndi:BPMNShape id="BPMNShape_1xsiyu9" bpmnElement="needs-pir-gateway" isMarkerVisible="true">
         <dc:Bounds x="262" y="227" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1haczuv" bpmnElement="program-info-request-timer">
-        <dc:Bounds x="450" y="80" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_06pkco6" bpmnElement="program-info-not-required-task">
         <dc:Bounds x="457" y="300" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_00rld4c" bpmnElement="Gateway_1bhx82g" isMarkerVisible="true">
-        <dc:Bounds x="755" y="227" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1xk3f7n_di" bpmnElement="Event_1xk3f7n">
-        <dc:Bounds x="852" y="234" width="36" height="36" />
+      <bpmndi:BPMNShape id="BPMNShape_1haczuv" bpmnElement="program-info-request-timer">
+        <dc:Bounds x="450" y="80" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_11z8qib" bpmnElement="Flow_16gxaj4">
         <di:waypoint x="733" y="182" />

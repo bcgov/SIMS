@@ -379,6 +379,37 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     },
   );
 
+  it("Should create study end date is past application exception when application submitted date is after six weeks before the study end date.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(db.dataSource);
+    const verifyUniqueApplicationExceptionsPayload =
+      createFakeVerifyUniqueApplicationExceptionsPayload(savedApplication.id);
+
+    // Act
+    const result =
+      await applicationController.verifyUniqueApplicationExceptions(
+        verifyUniqueApplicationExceptionsPayload,
+      );
+
+    // Assert
+    // Validate job result.
+    expect(result).toEqual({
+      resultType: MockedZeebeJobResult.Complete,
+      outputVariables: {
+        applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+      },
+    });
+    // Validate DB changes.
+    const updatedApplication = await db.application.findOne({
+      select: { applicationException: { exceptionStatus: true } },
+      relations: { applicationException: true },
+      where: {
+        id: savedApplication.id,
+      },
+    });
+    expect(updatedApplication.applicationException).toBeNull();
+  });
+
   it("Should not create any application exception when there is no application exception in application data.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);

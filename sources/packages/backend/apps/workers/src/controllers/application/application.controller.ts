@@ -22,6 +22,7 @@ import {
   ApplicationChangeRequestApprovalJobOutDTO,
   ApplicationExceptionsJobInDTO,
   ApplicationExceptionsJobOutDTO,
+  ApplicationUniqueExceptionsJobHeaderDTO,
   ApplicationUniqueExceptionsJobInDTO,
   ApplicationUniqueExceptionsJobOutDTO,
   ApplicationUpdateStatusJobHeaderDTO,
@@ -214,7 +215,7 @@ export class ApplicationController {
     job: Readonly<
       ZeebeJob<
         ApplicationUniqueExceptionsJobInDTO,
-        ICustomHeaders,
+        ApplicationUniqueExceptionsJobHeaderDTO,
         ApplicationUniqueExceptionsJobOutDTO
       >
     >,
@@ -243,6 +244,9 @@ export class ApplicationController {
       exceptions = this.applicationExceptionSearchService.search(
         application.data,
       );
+      if (job.customHeaders.programInfoProcessStatus === "completed") {
+        // Add funding after end date exception.
+      }
       jobLogger.log(`Found ${exceptions.length} application exception(s).`);
       if (!exceptions.length) {
         // No exceptions found, return the approved status.

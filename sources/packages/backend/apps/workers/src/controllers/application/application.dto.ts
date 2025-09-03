@@ -41,3 +41,7 @@ export interface ApplicationUniqueExceptionsJobInDTO {
 export interface ApplicationUniqueExceptionsJobOutDTO {
   [APPLICATION_EXCEPTION_STATUS]: ApplicationExceptionStatus;
 }
+
+export interface ApplicationUniqueExceptionsJobHeaderDTO {
+  programInfoProcessStatus?: "completed";
+}
