@@ -7818,6 +7818,7 @@
             {
               "title": "BC disability income assistance panel",
               "collapsible": false,
+              "hideLabel": true,
               "key": "bcDisabilityIncomeAssistancePanel",
               "conditional": {
                 "show": true,
