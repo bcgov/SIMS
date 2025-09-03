@@ -616,7 +616,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   ): number {
     let studentDebit = totalStudentDebit;
     for (const award of awards) {
-      if (award.valueAmount >= totalStudentDebit) {
+      if (award.valueAmount >= studentDebit) {
         // Current disbursement value is enough to pay the debit.
         // For instance:
         // - Award: $1000
