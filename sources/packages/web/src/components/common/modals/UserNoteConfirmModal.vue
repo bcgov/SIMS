@@ -109,7 +109,6 @@ export default defineComponent({
         // Keeps the form open to allow the user to fix the validation.
         return;
       }
-      debugger;
       const resolved = await internalResolvePromise({
         showParameter: showParameter.value,
         note: note.value,
