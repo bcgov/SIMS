@@ -5,7 +5,7 @@ export class DisbursementScheduleService {
   // Share Instance
   private static instance: DisbursementScheduleService;
 
-  public static get shared(): DisbursementScheduleService {
+  static get shared(): DisbursementScheduleService {
     return this.instance || (this.instance = new this());
   }
 

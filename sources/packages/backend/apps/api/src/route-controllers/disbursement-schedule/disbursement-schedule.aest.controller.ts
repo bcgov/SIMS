@@ -30,10 +30,5 @@ export class DisbursementScheduleAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     // TODO: To be implemented.
-    console.log(
-      "Cancelling disbursement schedule:",
-      disbursementScheduleId,
-      payload,
-    );
   }
 }

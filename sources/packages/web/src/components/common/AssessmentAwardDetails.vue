@@ -418,29 +418,6 @@ export default defineComponent({
           : "disbursementReceipt2HasAwards";
       return !!finalAward[hasAwardsIdentifier];
     };
-    /**
-     * Indicates if a receipt was received for a disbursement.
-     * Final awards can be rendered from a receipt or directly from the
-     * awards for part-time where the receipts are incomplete or may never be
-     * received. This checks the flags that indicates if a receipt was ever received,
-     * not if the final awards can be rendered.
-     * @param disbursement first or second disbursement.
-     * @param finalAward dynamic object with the flag to be checked.
-     * @returns true if a receipt was received, otherwise, false.
-     */
-    const receivedDisbursementReceipt = (
-      disbursement: "first" | "second",
-      finalAward?: DynamicAwardValue,
-    ): boolean => {
-      if (!finalAward) {
-        return false;
-      }
-      const identifier =
-        disbursement === "first"
-          ? "disbursementReceipt1Received"
-          : "disbursementReceipt2Received";
-      return !!finalAward[identifier];
-    };
     const isFirstDisbursementCompleted = computed<boolean>(
       () =>
         props.assessmentAwardData.estimatedAward?.disbursement1COEStatus ===
@@ -479,31 +456,24 @@ export default defineComponent({
     };
 
     const canCancelFirstDisbursement = computed<boolean>(() => {
-      debugger;
       return (
         props.allowDisbursementCancellation &&
-        props.assessmentAwardData.estimatedAward["disbursement1Status"] ===
+        props.assessmentAwardData.estimatedAward.disbursement1Status ===
           DisbursementScheduleStatus.Sent &&
-        !receivedDisbursementReceipt(
-          "first",
-          props.assessmentAwardData.finalAward,
-        )
+        !props.assessmentAwardData.finalAward?.disbursementReceipt1Received
       );
     });
 
     const canCancelSecondDisbursement = computed<boolean>(
       () =>
-        props.assessmentAwardData.estimatedAward["disbursement2Status"] ===
+        props.allowDisbursementCancellation &&
+        props.assessmentAwardData.estimatedAward.disbursement2Status ===
           DisbursementScheduleStatus.Sent &&
-        !receivedDisbursementReceipt(
-          "second",
-          props.assessmentAwardData.finalAward,
-        ),
+        !props.assessmentAwardData.finalAward?.disbursementReceipt2Received,
     );
 
     const disbursementScheduleCancelled = () => {
       // TODO: To be implemented to refresh data.
-      console.log("Disbursement schedule cancelled, data will be refreshed.");
     };
 
     return {
