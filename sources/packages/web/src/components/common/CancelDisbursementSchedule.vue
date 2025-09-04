@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { Role } from "@/types";
+import { ApiProcessError, Role } from "@/types";
 import { ModalDialog, useSnackBar } from "@/composables";
 import UserNoteConfirmModal, {
   UserNoteModal,
@@ -91,7 +91,11 @@ export default defineComponent({
         snackBar.success("eCert cancelled.");
         emit("disbursementCancelled", userNoteModalResult.showParameter);
         return true;
-      } catch {
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          snackBar.error(error.message);
+          return false;
+        }
         snackBar.error(
           "An unexpected error happened while cancelling the eCert.",
         );

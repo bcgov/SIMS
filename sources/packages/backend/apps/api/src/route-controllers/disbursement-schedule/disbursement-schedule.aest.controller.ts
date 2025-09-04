@@ -19,7 +19,7 @@ import {
   Roles,
   UserToken,
 } from "../../auth/decorators";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties, IUserToken, Role, UserGroups } from "../../auth";
 import { CancelDisbursementScheduleAPIInDTO } from "../../route-controllers";
 import { DisbursementScheduleService } from "../../services";
@@ -74,7 +74,9 @@ export class DisbursementScheduleAESTController extends BaseController {
             throw new NotFoundException(error.message);
           case DISBURSEMENT_SCHEDULE_NOT_UPDATED:
           case DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED:
-            throw new UnprocessableEntityException(error.message);
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
         }
       }
       throw error;
