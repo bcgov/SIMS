@@ -434,14 +434,14 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       );
 
     // Assert
-    // Validate job result.
+    // Validate job result expecting the application exception status as pending.
     expect(result).toEqual({
       resultType: MockedZeebeJobResult.Complete,
       outputVariables: {
         applicationExceptionStatus: ApplicationExceptionStatus.Pending,
       },
     });
-    // Validate DB changes.
+    // Validate DB changes expecting the study end date is past application exception.
     const updatedApplication = await db.application.findOne({
       select: {
         id: true,
@@ -529,7 +529,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     });
   });
 
-  it("Should return error when the application does not have an offering.", async () => {
+  it("Should return error when the application is not associated with an offering.", async () => {
     // Arrange
     // Create an application without offering.
     const savedApplication = await saveFakeApplication(

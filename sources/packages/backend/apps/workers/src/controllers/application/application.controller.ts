@@ -250,8 +250,11 @@ export class ApplicationController {
         application.data,
       );
       // From the version of workflow when the program info request is expected to be completed
-      // before the application exceptions, the offering details must be validated to check
-      // if the study end date based exception needs to be created.
+      // before the application exceptions, the offering should be present and validated.
+      // This validation is conditionally done to support the backward compatibility as the older versions of the
+      // assessment gateway workflow(V2) instances can still invoke the worker.
+      // TODO: Remove the header 'programInfoProcessStatus' in workflow and worker and also remove this validation
+      // when there are no more pending workflow instances from a older deployed version.
       if (job.customHeaders.programInfoProcessStatus === "completed") {
         if (!application.currentAssessment.offering) {
           const message = `Application ${application.id} is not associated with an offering.`;
