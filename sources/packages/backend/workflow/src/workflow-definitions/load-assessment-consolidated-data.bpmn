@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.37.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.38.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
   <bpmn:process id="load-assessment-consolidated-data" name="Load Assessment Consolidated Data" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:extensionElements />
@@ -60,7 +60,7 @@
           <zeebe:header key="parent1Contributions" value="supportingUsers.Parent1.supportingData.parentalContributions" />
           <zeebe:header key="parent1CppEmployment" value="supportingUsers.Parent1.supportingData.cppLine30800" />
           <zeebe:header key="parent1CppSelfemploymentOther" value="supportingUsers.Parent1.supportingData.cppLine31000" />
-          <zeebe:header key="parent1DependentTable" value="supportingUsers.Parent1.supportingData.parentDependentTable" />
+          <zeebe:header key="parent1DependentTable" value="supportingUsers.Parent1.supportingData.parentDependentTable[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
           <zeebe:header key="parent1Ei" value="supportingUsers.Parent1.supportingData.eiLine31200" />
           <zeebe:header key="parent1NetAssests" value="supportingUsers.Parent1.supportingData.foreignAssets" />
           <zeebe:header key="parent1Tax" value="supportingUsers.Parent1.supportingData.totalIncomeTaxLine43500" />
@@ -69,7 +69,7 @@
           <zeebe:header key="parent2Contributions" value="supportingUsers.Parent2.supportingData.parentalContributions" />
           <zeebe:header key="parent2CppEmployment" value="supportingUsers.Parent2.supportingData.cppLine30800" />
           <zeebe:header key="parent2CppSelfemploymentOther" value="supportingUsers.Parent2.supportingData.cppLine31000" />
-          <zeebe:header key="parent2DependentTable" value="supportingUsers.Parent2.supportingData.parentDependentTable" />
+          <zeebe:header key="parent2DependentTable" value="supportingUsers.Parent2.supportingData.parentDependentTable[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
           <zeebe:header key="parent2Ei" value="supportingUsers.Parent2.supportingData.eiLine31200" />
           <zeebe:header key="parent2NetAssests" value="supportingUsers.Parent2.supportingData.foreignAssets" />
           <zeebe:header key="parent2Tax" value="supportingUsers.Parent2.supportingData.totalIncomeTaxLine43500" />
