@@ -2775,10 +2775,10 @@
                       "tableView": false
                     },
                     {
-                      "label": "modifiedIndependentParentSituation",
+                      "label": "parentSituation",
                       "calculateValue": "value = data[component.key];",
                       "calculateServer": true,
-                      "key": "hidden",
+                      "key": "parentSituation",
                       "type": "hidden",
                       "input": true,
                       "tableView": false
