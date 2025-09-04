@@ -151,7 +151,7 @@ describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", (
       });
   });
 
-  it("Should throw an UnprocessableEntityException when trying to cancel a disbursement that has was already rejected.", async () => {
+  it("Should throw an UnprocessableEntityException when trying to cancel a disbursement that has already been rejected.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       db.dataSource,
@@ -181,7 +181,7 @@ describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", (
       });
   });
 
-  it("Should throw a NotFoundException when trying to cancel a disbursement that does not exists.", async () => {
+  it("Should throw a NotFoundException when trying to cancel a disbursement that does not exist.", async () => {
     // Arrange
     const payload = { note: "Some random note." };
     const endpoint = `/aest/disbursement-schedule/999999/cancel`;

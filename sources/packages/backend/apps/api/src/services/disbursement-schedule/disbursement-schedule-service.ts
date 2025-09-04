@@ -190,6 +190,12 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     return orderByCondition;
   }
 
+  /**
+   * Reject a disbursement schedule which is sent to ESDC when no receipts were received.
+   * @param disbursementScheduleId disbursement schedule id.
+   * @param note note description to explain the rejection.
+   * @param auditUserId audit user id.
+   */
   async rejectDisbursement(
     disbursementScheduleId: number,
     note: string,
@@ -225,6 +231,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
           id: disbursementScheduleId,
         },
       });
+      // Validations.
       if (!disbursementSchedule) {
         throw new CustomNamedError(
           `Disbursement schedule not found.`,

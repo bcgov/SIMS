@@ -705,7 +705,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param auditUserId audit user id.
    * @param reverseOverawards flag to reverse overawards.
    * @param entityManager entity manager to execute in transaction. Allow it to be controlled
-   * externally, which enables the consumer to execute more operation, for instance,
+   * externally, which enables the consumer to execute more operations, for instance,
    * saving a note or generating a notification.
    * @returns array of created reversal overaward ids or void if no overawards were reversed.
    */
