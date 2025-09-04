@@ -15,6 +15,7 @@ import {
 } from "@sims/test-utils";
 import { DisbursementScheduleStatus, User } from "@sims/sims-db";
 import MockDate from "mockdate";
+import { DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED } from "@sims/services/constants";
 
 describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", () => {
   let app: INestApplication;
@@ -146,8 +147,7 @@ describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", (
       .expect({
         message:
           "Disbursement schedule has receipts associated with it and cannot be rejected.",
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        errorType: DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
       });
   });
 
@@ -175,9 +175,9 @@ describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", (
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        message: `Disbursement schedule expected to be '${DisbursementScheduleStatus.Sent}' to allow it to be rejected.`,
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message:
+          "Disbursement schedule expected to be 'Sent' to allow it to be rejected.",
+        errorType: DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
       });
   });
 
