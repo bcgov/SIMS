@@ -26,7 +26,7 @@ import {
 import { UserGroups } from "../../auth/user-groups.enum";
 import { IUserToken } from "../../auth/userToken.interface";
 import { EducationProgramOfferingService } from "../../services";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   OfferingAssessmentAPIInDTO,
@@ -42,6 +42,7 @@ import {
 } from "../models/pagination.dto";
 import { CustomNamedError } from "@sims/utilities";
 import { Role } from "../../auth/roles.enum";
+import { OFFERING_SAVE_UNIQUE_ERROR } from "apps/api/src/constants";
 
 /**
  * Institution location controller for institutions Client.
@@ -199,6 +200,11 @@ export class EducationProgramOfferingAESTController extends BaseController {
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
+        if (error.name === OFFERING_SAVE_UNIQUE_ERROR) {
+          throw new UnprocessableEntityException(
+            new ApiProcessError(error.message, OFFERING_SAVE_UNIQUE_ERROR),
+          );
+        }
         throw new UnprocessableEntityException(error.message);
       }
       throw error;

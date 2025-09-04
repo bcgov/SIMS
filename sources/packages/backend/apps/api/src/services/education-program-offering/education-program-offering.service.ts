@@ -1360,7 +1360,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       // Save the requested and preceding offering.
       await transactionalEntityManager
         .getRepository(EducationProgramOffering)
-        .save([requestedOffering, precedingOffering]);
+        .save([precedingOffering, requestedOffering]);
 
       // Save applications with new current assessment or set application status as cancelled on approval.
       if (applications?.length > 0) {

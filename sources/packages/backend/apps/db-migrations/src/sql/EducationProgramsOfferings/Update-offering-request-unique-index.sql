@@ -11,7 +11,6 @@ CREATE UNIQUE INDEX loc_id_prog_id_offer_name_study_dts_year_study_index ON sims
   offering_name,
   study_start_date,
   study_end_date,
-  offering_status,
   year_of_study
 )
 WHERE
