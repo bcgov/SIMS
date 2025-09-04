@@ -29,6 +29,7 @@ import {
   ApplicationUpdateStatusJobInDTO,
 } from "..";
 import {
+  Application,
   ApplicationEditStatus,
   ApplicationExceptionStatus,
 } from "@sims/sims-db";
@@ -42,7 +43,11 @@ import {
   APPLICATION_ID,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
-import { Workers } from "@sims/services/constants";
+import {
+  APPLICATION_SUBMISSION_DEADLINE_WEEKS,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+  Workers,
+} from "@sims/services/constants";
 import { createUnexpectedJobFail } from "../../utilities";
 import {
   ApplicationExceptionRequestNotification,
@@ -55,7 +60,7 @@ import {
   MustReturnJobActionAcknowledgement,
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, isLessThanGivenWeeks } from "@sims/utilities";
 
 @Controller()
 export class ApplicationController {
@@ -244,8 +249,17 @@ export class ApplicationController {
       exceptions = this.applicationExceptionSearchService.search(
         application.data,
       );
+      // From the version of workflow when the program info request is expected to be completed
+      // before the application exceptions, the offering details must be validated to check
+      // if the study end date based exception needs to be created.
       if (job.customHeaders.programInfoProcessStatus === "completed") {
+        if (!application.currentAssessment.offering) {
+          const message = `Application ${application.id} is not associated with an offering.`;
+          jobLogger.error(message);
+          return job.error(INVALID_OPERATION_IN_THE_CURRENT_STATUS, message);
+        }
         // Add funding after end date exception.
+        this.addStudyEndDateIsPastApplicationException(application, exceptions);
       }
       jobLogger.log(`Found ${exceptions.length} application exception(s).`);
       if (!exceptions.length) {
@@ -397,5 +411,39 @@ export class ApplicationController {
         logger: jobLogger,
       });
     }
+  }
+
+  /**
+   * Adds study end date is past application exception if the funding was applied after the deadline.
+   * @param application application.
+   * @param exceptions exceptions.
+   */
+  private addStudyEndDateIsPastApplicationException(
+    application: Application,
+    exceptions: ApplicationDataException[],
+  ): void {
+    const studyEndDate = application.currentAssessment.offering.studyEndDate;
+    const isFundingAppliedAfterDeadline = isLessThanGivenWeeks(
+      studyEndDate,
+      APPLICATION_SUBMISSION_DEADLINE_WEEKS,
+      { referenceDate: studyEndDate },
+    );
+    if (!isFundingAppliedAfterDeadline) {
+      // If the funding was applied before the deadline, do not add the exception.
+      return;
+    }
+    // Add the study end date is past exception otherwise.
+    const exceptionKey = "studyEndDateIsPastApplicationException";
+    const exceptionDescription = "Study end date is past";
+    const studyEndDateIsPastApplicationException: ApplicationDataException = {
+      key: exceptionKey,
+      hashableContent: {
+        submissionDate: new Date(),
+        exceptionDescription,
+      },
+      description: exceptionDescription,
+      files: [],
+    };
+    exceptions.push(studyEndDateIsPastApplicationException);
   }
 }
