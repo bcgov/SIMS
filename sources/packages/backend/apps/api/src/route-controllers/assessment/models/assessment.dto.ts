@@ -32,7 +32,10 @@ import { IsNotEmpty, MaxLength } from "class-validator";
  *    disbursementReceipt2sbsd: 1008,
  *   }
  */
-export type DynamicAwardValue = Record<string, string | number | Date>;
+export type DynamicAwardValue = Record<
+  string,
+  string | number | Date | boolean
+>;
 
 export enum RequestAssessmentTypeAPIOutDTO {
   StudentException = "Student exceptions",

@@ -2775,6 +2775,15 @@
                       "tableView": false
                     },
                     {
+                      "label": "parentSituation",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "parentSituation",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
                       "label": "HTML",
                       "tag": "h3",
                       "className": "category-header-medium primary-color",
@@ -7748,6 +7757,7 @@
             {
               "title": "Merit-based scholarships panel",
               "collapsible": false,
+              "hideLabel": true,
               "key": "meritBasedScholarshipsPanel",
               "conditional": {
                 "show": true,
@@ -7817,6 +7827,7 @@
             {
               "title": "BC disability income assistance panel",
               "collapsible": false,
+              "hideLabel": true,
               "key": "bcDisabilityIncomeAssistancePanel",
               "conditional": {
                 "show": true,

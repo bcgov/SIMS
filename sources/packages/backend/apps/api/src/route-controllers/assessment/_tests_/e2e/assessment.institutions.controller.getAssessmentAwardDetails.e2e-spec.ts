@@ -62,6 +62,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
   it("Should get the student award details for an eligible application when an eligible public institution user tries to access it.", async () => {
     // Arrange
     const enrolmentDate1 = addDays(1);
+    const statusUpdatedOn = new Date();
     // Student has an application to the institution with award details.
     const student = await saveFakeStudent(db.dataSource);
 
@@ -85,6 +86,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
         firstDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
           coeUpdatedAt: enrolmentDate1,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn,
         },
       },
     );
@@ -115,7 +117,10 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
     });
     await db.disbursementReceiptValue.save(disbursementReceiptsValues);
 
-    const finalAwards = {};
+    const finalAwards = {
+      disbursementReceipt1Received: true,
+      disbursementReceipt1HasAwards: true,
+    };
 
     disbursementReceiptsValues.forEach((disbursementReceiptsValue) => {
       finalAwards[
@@ -163,6 +168,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
           disbursement1Id: firstDisbursementSchedule.id,
           disbursement1DocumentNumber: firstDisbursementSchedule.documentNumber,
           disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
+          disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
           ...awards,
         },
         finalAward: finalAwards,
