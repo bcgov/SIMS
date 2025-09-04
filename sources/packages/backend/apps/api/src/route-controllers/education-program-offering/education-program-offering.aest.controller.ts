@@ -42,7 +42,7 @@ import {
 } from "../models/pagination.dto";
 import { CustomNamedError } from "@sims/utilities";
 import { Role } from "../../auth/roles.enum";
-import { OFFERING_SAVE_UNIQUE_ERROR } from "apps/api/src/constants";
+import { OFFERING_SAVE_UNIQUE_ERROR } from "../../constants";
 
 /**
  * Institution location controller for institutions Client.
