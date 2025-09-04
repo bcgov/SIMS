@@ -227,8 +227,8 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       });
       if (!disbursementSchedule) {
         throw new CustomNamedError(
-          DISBURSEMENT_SCHEDULE_NOT_FOUND,
           `Disbursement schedule not found.`,
+          DISBURSEMENT_SCHEDULE_NOT_FOUND,
         );
       }
       if (
@@ -236,14 +236,14 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         DisbursementScheduleStatus.Sent
       ) {
         throw new CustomNamedError(
-          DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
           `Disbursement schedule expected to be '${DisbursementScheduleStatus.Sent}' to allow it to be rejected.`,
+          DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
         );
       }
       if (disbursementSchedule.disbursementReceipts.length) {
         throw new CustomNamedError(
-          DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
           `Disbursement schedule has receipts associated with it and cannot be rejected.`,
+          DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
         );
       }
       // Save disbursement rejection and student note.
