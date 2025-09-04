@@ -426,7 +426,7 @@ export class ApplicationController {
     const isFundingAppliedAfterDeadline = isLessThanGivenWeeks(
       studyEndDate,
       APPLICATION_SUBMISSION_DEADLINE_WEEKS,
-      { referenceDate: studyEndDate },
+      { referenceDate: application.submittedDate },
     );
     if (!isFundingAppliedAfterDeadline) {
       // If the funding was applied before the deadline, do not add the exception.

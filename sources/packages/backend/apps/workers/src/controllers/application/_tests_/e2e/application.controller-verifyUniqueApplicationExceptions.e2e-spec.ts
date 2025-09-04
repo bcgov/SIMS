@@ -1,9 +1,14 @@
 import { APPLICATION_NOT_FOUND } from "@sims/services/constants";
-import { ApplicationData, ApplicationExceptionStatus } from "@sims/sims-db";
+import {
+  ApplicationData,
+  ApplicationExceptionStatus,
+  EducationProgramOffering,
+} from "@sims/sims-db";
 import {
   createE2EDataSources,
   createFakeApplicationException,
   createFakeApplicationExceptionRequest,
+  createFakeEducationProgramOffering,
   E2EDataSources,
   saveFakeApplication,
   saveFakeStudent,
@@ -23,17 +28,32 @@ import {
 } from "./verify-unique-application-exceptions";
 import { SystemUsersService } from "@sims/services";
 import MockDate from "mockdate";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
   let db: E2EDataSources;
   let applicationController: ApplicationController;
   let systemUsersService: SystemUsersService;
+  // Offering with end date more than required weeks from now to apply within deadline.
+  let sharedOffering: EducationProgramOffering;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
     applicationController = nestApplication.get(ApplicationController);
     systemUsersService = nestApplication.get(SystemUsersService);
+    sharedOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: systemUsersService.systemUser,
+      },
+      {
+        initialValues: {
+          studyStartDate: getISODateOnlyString(new Date()),
+          studyEndDate: getISODateOnlyString(addDays(45)),
+        },
+      },
+    );
+    await db.educationProgramOffering.save(sharedOffering);
   });
 
   beforeEach(async () => {
@@ -77,7 +97,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       );
       const application = await saveFakeApplication(
         db.dataSource,
-        { student },
+        { student, offering: sharedOffering },
         {
           applicationData: {
             workflowName: "",
@@ -220,6 +240,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
         ]);
       const previousApplication = await saveFakeApplication(db.dataSource, {
         applicationException: savedException,
+        offering: sharedOffering,
       });
       // Most recently application that should have the exception automatically approved.
       const student = await saveFakeStudent(db.dataSource);
@@ -247,6 +268,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
         {
           student,
           parentApplication: previousApplication,
+          offering: sharedOffering,
         },
         {
           applicationData: {
@@ -381,7 +403,9 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
 
   it("Should create study end date is past application exception when application submitted date is after six weeks before the study end date.", async () => {
     // Arrange
-    const savedApplication = await saveFakeApplication(db.dataSource);
+    const savedApplication = await saveFakeApplication(db.dataSource, {
+      offering: sharedOffering,
+    });
     const verifyUniqueApplicationExceptionsPayload =
       createFakeVerifyUniqueApplicationExceptionsPayload(savedApplication.id);
 
@@ -412,7 +436,9 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
 
   it("Should not create any application exception when there is no application exception in application data.", async () => {
     // Arrange
-    const savedApplication = await saveFakeApplication(db.dataSource);
+    const savedApplication = await saveFakeApplication(db.dataSource, {
+      offering: sharedOffering,
+    });
     const verifyUniqueApplicationExceptionsPayload =
       createFakeVerifyUniqueApplicationExceptionsPayload(savedApplication.id);
 
@@ -463,7 +489,9 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
 
   it("Should not create an application exception when there is already one for the application.", async () => {
     // Arrange
-    const fakeApplication = await saveFakeApplication(db.dataSource);
+    const fakeApplication = await saveFakeApplication(db.dataSource, {
+      offering: sharedOffering,
+    });
     fakeApplication.data = {
       workflowName: "",
       test: {
