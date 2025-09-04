@@ -9,11 +9,11 @@
         <error-summary :errors="modalNotesForm.errors" />
         <slot name="content">{{ text }}</slot>
         <v-textarea
-          label="Notes"
+          :label="notesLabel"
           variant="outlined"
           hide-details="auto"
           v-model="note"
-          :rules="[checkNotesLengthRule]"
+          :rules="[(v) => checkNotesLengthRule(v, notesLabel)]"
           required
         />
       </template>
@@ -79,6 +79,11 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: true,
+    },
+    notesLabel: {
+      type: String,
+      required: true,
+      default: "Notes",
     },
   },
   setup() {

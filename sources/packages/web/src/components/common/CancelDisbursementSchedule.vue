@@ -15,6 +15,7 @@
   </check-permission-role>
   <user-note-confirm-modal
     title="Cancel eCert"
+    notes-label="Cancellation reason"
     ref="confirmCancellationModal"
     okLabel="Confirm"
     cancelLabel="Cancel"
@@ -88,7 +89,7 @@ export default defineComponent({
           userNoteModalResult.showParameter,
           { note: userNoteModalResult.note },
         );
-        snackBar.success("eCert cancelled.");
+        snackBar.success("The disbursement has been successfully cancelled.");
         emit("disbursementCancelled", userNoteModalResult.showParameter);
         return true;
       } catch (error: unknown) {
