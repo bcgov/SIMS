@@ -1,8 +1,13 @@
-import { APPLICATION_NOT_FOUND } from "@sims/services/constants";
+import {
+  APPLICATION_NOT_FOUND,
+  APPLICATION_SUBMISSION_DEADLINE_WEEKS,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+} from "@sims/services/constants";
 import {
   ApplicationData,
   ApplicationExceptionStatus,
   EducationProgramOffering,
+  ProgramInfoStatus,
 } from "@sims/sims-db";
 import {
   createE2EDataSources,
@@ -49,7 +54,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       {
         initialValues: {
           studyStartDate: getISODateOnlyString(new Date()),
-          studyEndDate: getISODateOnlyString(addDays(45)),
+          studyEndDate: getISODateOnlyString(addDays(43)),
         },
       },
     );
@@ -401,10 +406,23 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     },
   );
 
-  it("Should create study end date is past application exception when application submitted date is after six weeks before the study end date.", async () => {
+  it(`Should create study end date is past application exception when study end date is less than ${APPLICATION_SUBMISSION_DEADLINE_WEEKS} weeks from the application submission date.`, async () => {
     // Arrange
+    // Offering with end date less than required weeks from now to apply exceeding the deadline.
+    const offeringPastDeadline = createFakeEducationProgramOffering(
+      {
+        auditUser: systemUsersService.systemUser,
+      },
+      {
+        initialValues: {
+          studyStartDate: getISODateOnlyString(new Date()),
+          studyEndDate: getISODateOnlyString(addDays(41)),
+        },
+      },
+    );
+    await db.educationProgramOffering.save(offeringPastDeadline);
     const savedApplication = await saveFakeApplication(db.dataSource, {
-      offering: sharedOffering,
+      offering: offeringPastDeadline,
     });
     const verifyUniqueApplicationExceptionsPayload =
       createFakeVerifyUniqueApplicationExceptionsPayload(savedApplication.id);
@@ -420,18 +438,42 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     expect(result).toEqual({
       resultType: MockedZeebeJobResult.Complete,
       outputVariables: {
-        applicationExceptionStatus: ApplicationExceptionStatus.Approved,
+        applicationExceptionStatus: ApplicationExceptionStatus.Pending,
       },
     });
     // Validate DB changes.
     const updatedApplication = await db.application.findOne({
-      select: { applicationException: { exceptionStatus: true } },
-      relations: { applicationException: true },
+      select: {
+        id: true,
+        applicationException: {
+          id: true,
+          exceptionStatus: true,
+          exceptionRequests: {
+            id: true,
+            exceptionName: true,
+            exceptionDescription: true,
+          },
+        },
+      },
+      relations: { applicationException: { exceptionRequests: true } },
       where: {
         id: savedApplication.id,
       },
     });
-    expect(updatedApplication.applicationException).toBeNull();
+    expect(updatedApplication).toEqual({
+      id: savedApplication.id,
+      applicationException: {
+        id: expect.any(Number),
+        exceptionStatus: ApplicationExceptionStatus.Pending,
+        exceptionRequests: [
+          {
+            id: expect.any(Number),
+            exceptionName: "studyEndDateIsPastApplicationException",
+            exceptionDescription: "Study end date is past",
+          },
+        ],
+      },
+    });
   });
 
   it("Should not create any application exception when there is no application exception in application data.", async () => {
@@ -484,6 +526,33 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]: "Application ID not found.",
       [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]: APPLICATION_NOT_FOUND,
+    });
+  });
+
+  it("Should return error when the application does not have an offering.", async () => {
+    // Arrange
+    // Create an application without offering.
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      undefined,
+      { pirStatus: ProgramInfoStatus.required },
+    );
+    const verifyUniqueApplicationExceptionsPayload =
+      createFakeVerifyUniqueApplicationExceptionsPayload(savedApplication.id);
+
+    // Act
+    const result =
+      await applicationController.verifyUniqueApplicationExceptions(
+        verifyUniqueApplicationExceptionsPayload,
+      );
+
+    // Assert
+    // Validate job result.
+    expect(result).toEqual({
+      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
+      [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]: `Application ${savedApplication.id} is not associated with an offering.`,
+      [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]:
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
     });
   });
 
