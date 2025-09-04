@@ -2775,6 +2775,15 @@
                       "tableView": false
                     },
                     {
+                      "label": "modifiedIndependentParentSituation",
+                      "calculateValue": "value = data[component.key];",
+                      "calculateServer": true,
+                      "key": "hidden",
+                      "type": "hidden",
+                      "input": true,
+                      "tableView": false
+                    },
+                    {
                       "label": "HTML",
                       "tag": "h3",
                       "className": "category-header-medium primary-color",
