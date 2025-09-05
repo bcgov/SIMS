@@ -234,7 +234,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       // Validations.
       if (!disbursementSchedule) {
         throw new CustomNamedError(
-          `Disbursement schedule not found.`,
+          `Disbursement schedule ID ${disbursementScheduleId} not found.`,
           DISBURSEMENT_SCHEDULE_NOT_FOUND,
         );
       }
@@ -243,13 +243,13 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         DisbursementScheduleStatus.Sent
       ) {
         throw new CustomNamedError(
-          `Disbursement schedule expected to be '${DisbursementScheduleStatus.Sent}' to allow it to be rejected.`,
+          "Disbursement schedule expected to be '${DisbursementScheduleStatus.Sent}' to allow it to be rejected.",
           DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
         );
       }
       if (disbursementSchedule.disbursementReceipts.length) {
         throw new CustomNamedError(
-          `Disbursement schedule has receipts associated with it and cannot be rejected.`,
+          "Disbursement schedule has receipts associated with it and cannot be rejected.",
           DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
         );
       }
