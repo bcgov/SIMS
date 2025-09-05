@@ -8,6 +8,7 @@ services:
         limits:
           memory: 512M
     container_name: api-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    restart: unless-stopped
     build:
       context: ./packages/backend
       dockerfile: ./apps/api/Dockerfile.dev
@@ -78,7 +79,6 @@ services:
       - ./packages/backend/apps/api/src:/app/src
     networks:
       - local-network
-    restart: always
     depends_on:
       - postgres
       - redis
@@ -91,6 +91,7 @@ services:
         limits:
           memory: 512M
     container_name: workers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    restart: unless-stopped
     build:
       context: ./packages/backend
       dockerfile: ./apps/workers/Dockerfile.dev
@@ -118,7 +119,6 @@ services:
       - ./packages/backend/apps/workers/src:/app/src
     networks:
       - local-network
-    restart: always
     depends_on:
       - postgres
       - redis
@@ -131,6 +131,7 @@ services:
         limits:
           memory: 768M
     container_name: queue-consumers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    restart: unless-stopped
     build:
       context: ./packages/backend
       dockerfile: ./apps/queue-consumers/Dockerfile.dev
@@ -192,7 +193,6 @@ services:
       - ./packages/backend/apps/queue-consumers/src:/app/src
     networks:
       - local-network
-    restart: always
     depends_on:
       - postgres
       - redis
@@ -202,6 +202,7 @@ services:
   load-test-gateway:
     image: load-test-gateway-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: load-test-gateway-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    restart: unless-stopped
     build:
       context: ./packages/backend
       dockerfile: ./apps/load-test-gateway/Dockerfile.dev
@@ -223,17 +224,16 @@ services:
       - ./packages/backend/apps/load-test-gateway/src:/app/src
     networks:
       - local-network
-    restart: always
     depends_on:
       - postgres
   # - Load test gateway
   # - ClamAV
   clamav:
     container_name: clamav
+    restart: unless-stopped
     build:
       context: ./packages/
       dockerfile: clam-av/Dockerfile.dev
-    restart: always
     stdin_open: true
     environment:
       - CLAMAV_NO_CLAMD="false"
@@ -256,6 +256,7 @@ services:
   web:
     image: web-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: web-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    restart: unless-stopped
     build:
       context: ./packages/web
       dockerfile: Dockerfile.dev
@@ -267,7 +268,6 @@ services:
       - ./packages/web/src:/app/src
     networks:
       - local-network
-    restart: always
     depends_on:
       - api
   # - Web
@@ -275,6 +275,7 @@ services:
   postgres:
     image: postgres-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: db-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    restart: unless-stopped
     build:
       context: ./.docker/postgres
     environment:
@@ -295,6 +296,7 @@ services:
   redis:
     image: redis-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: local-redis-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    restart: unless-stopped
     build:
       context: ./.docker/redis
     ports:
@@ -315,6 +317,7 @@ services:
         limits:
           memory: 512M
     container_name: db-migrations-repl-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    restart: unless-stopped
     build:
       context: ./packages/backend
       dockerfile: ./apps/db-migrations/Dockerfile.dev
@@ -328,7 +331,6 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     networks:
       - local-network
-    restart: always
     depends_on:
       - postgres
   # - DB Migrations REPL
@@ -336,7 +338,7 @@ services:
   # Networks
 networks:
   local-network:
-    driver: bridge
+    external: true
 # - Networks
 # Volumes
 volumes:

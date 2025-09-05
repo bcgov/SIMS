@@ -67,7 +67,7 @@ export CRA_RESPONSE_FOLDER := $(or $(CRA_RESPONSE_FOLDER), CRA-Response)
 export CRA_PROGRAM_AREA_CODE := $(or $(CRA_PROGRAM_AREA_CODE), )
 export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
 # Versions used by camunda-docker compose-core.yml during the make camunda.
-# Versions upgraded following the conbination available on https://github.com/camunda/camunda-platform/blob/main/.env
+# Versions upgraded following the combination available on https://github.com/camunda/camunda-platform/blob/main/.env
 export CAMUNDA_CONNECTORS_VERSION := $(or $(CAMUNDA_CONNECTORS_VERSION), 8.6.9)
 export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.6.12)
 export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 8.17.1)
@@ -93,7 +93,7 @@ export APP_ENV := $(or $(APP_ENV), local)
 export ALLOW_BETA_USERS_ONLY := $(or $(ALLOW_BETA_USERS_ONLY), false)
 
 # Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers),
-# and also Form.io server, and Camunda releated services.
+# and also Form.io server, and Camunda related services.
 # Use make deploy-camunda-definitions to deploy all workflow definitions.
 # Use make deploy-form-definitions to deploy all form.io definitions.
 local-all: | print-status forms camunda local-build-run
@@ -139,23 +139,33 @@ print-status:
 ## Local Build/Run
 #################################################################
 
+# Ensure the local-network exists
+create-docker-local-network:
+	@echo "+\n++ Make: Ensure local-network exists ...\n+"
+	@if [ -z "$$(docker network ls --filter name=^local-network$$ --format '{{.Name}}')" ]; then \
+		echo "Network 'local-network' not found. Creating..."; \
+		docker network create --driver bridge local-network; \
+	else \
+		echo "Network 'local-network' already exists."; \
+	fi
+
 # Build locally
-local-build:
+local-build: create-docker-local-network
 	@echo "+\n++ Make: Building locally ...\n+"
 	@docker compose -f docker-compose.yml build
 
 # Run locally
-local-run:
+local-run: create-docker-local-network
 	@echo "+\n++ Make: Run locally ...\n+"
 	@docker compose -f docker-compose.yml up
 
 # Build and run locally
-local-build-run:
+local-build-run: create-docker-local-network
 	@echo "+\n++ Make: Build / Run locally ...\n+"
 	@docker compose -f docker-compose.yml up --build
 
 # Stop locally
-local-stop:
+local-stop: 
 	@echo "+\n++ Make: Stop local app ...\n+"
 	@docker compose -f docker-compose.yml down
 
@@ -165,27 +175,27 @@ local-clean:
 	@docker compose -f docker-compose.yml down -v
 
 # Local DB
-postgres:
+postgres: create-docker-local-network
 	@echo "+\n++ Make: Run local db.\n+"
 	@docker compose -f docker-compose.yml up -d postgres
 
 # Local Queue
-redis:
+redis: create-docker-local-network
 	@echo "+\n++ Make: Run local queue.\n+"
-	@docker compose -f docker-compose.yml up redis
+	@docker compose -f docker-compose.yml up -d redis
 
 # Local API only
-api:
+api: create-docker-local-network
 	@echo "+\n++ Make: Building and running API only"
 	@docker compose -f docker-compose.yml up --build -d api
 
 # Local Web (nginx)
-web:
+web: create-docker-local-network
 	@echo "+\n++ Make: Run local web (nginx).\n+"
 	@docker compose -f docker-compose.yml up --build -d web
 
 # Build and run Camunda locally.
-camunda:
+camunda: create-docker-local-network
 	@echo "Create Camunda locally (Zeebe, Operate, Tasklist, and Elasticsearch)..."
 	@echo "- Use user and password as 'demo' to login to Operate."
 	@echo "- Use Zeebe address env variable as 'ZEEBE_ADDRESS=localhost:26500' to connect to the local environment."
@@ -197,12 +207,12 @@ camunda-stop:
 	@echo "Stopping Camunda locally..."
 	@docker compose -f camunda-docker-compose-core.yml down
 
-# Deploy Camunda defitions locally
+# Deploy Camunda definitions locally
 deploy-camunda-definitions:
 	@cd ./packages/backend && npm i && npm run deploy:camunda:definitions
 
 # Build and deploy forms locally.
-forms:
+forms: create-docker-local-network
 	@echo "Build, deploy forms and deploy form-definitions locally... \n+"
 	@echo "Login to http://localhost:3001 \n+"
 	@echo "Default user/password as admin@example.com/CHANGEME \n+"
@@ -218,31 +228,31 @@ forms-stop:
 	@docker compose -f forms-docker-compose.yml down
 
 # Runs queue consumer application
-queue-consumers:
+queue-consumers: create-docker-local-network
 	@echo "+\n++ Make: Queue only"
 	@docker compose -f docker-compose.yml build queue-consumers
 	@docker compose -f docker-compose.yml up -d queue-consumers
 
 # Runs clamav
-clamav:
+clamav: create-docker-local-network
 	@echo "+\n++ Make: ClamAV only"
 	@docker compose -f docker-compose.yml build clamav
 	@docker compose -f docker-compose.yml up -d clamav
 
 # Runs load test gateway application
-load-test-gateway:
+load-test-gateway: create-docker-local-network
 	@echo "+\n++ Make: Load test gateway only"
 	@docker compose -f docker-compose.yml build load-test-gateway
 	@docker compose -f docker-compose.yml up -d load-test-gateway
 
 # Runs workers application
-workers:
+workers: create-docker-local-network
 	@echo "+\n++ Make: Camunda workers only"
 	@docker compose -f docker-compose.yml build workers
 	@docker compose -f docker-compose.yml up -d workers
 
 # Runs db-migrations in REPL mode
-db-migrations-repl:
+db-migrations-repl: create-docker-local-network
 	@echo "+\n++ Make: Database migrations REPL"
 	@docker compose -f docker-compose.yml build db-migrations-repl
 	@docker compose -f docker-compose.yml up -d db-migrations-repl
