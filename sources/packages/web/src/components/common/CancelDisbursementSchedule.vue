@@ -57,9 +57,7 @@ import { DisbursementScheduleService } from "@/services/DisbursementScheduleServ
 
 export default defineComponent({
   emits: {
-    disbursementCancelled: (disbursementId: number) => {
-      return !!disbursementId;
-    },
+    disbursementCancelled: null,
   },
   components: { UserNoteConfirmModal, CheckPermissionRole },
   props: {
@@ -90,7 +88,7 @@ export default defineComponent({
           { note: userNoteModalResult.note },
         );
         snackBar.success("The disbursement has been successfully cancelled.");
-        emit("disbursementCancelled", userNoteModalResult.showParameter);
+        emit("disbursementCancelled");
         return true;
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {

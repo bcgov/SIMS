@@ -149,7 +149,7 @@
               :disbursement-id="
             assessmentAwardData.estimatedAward.disbursement1Id as number
             "
-              @disbursement-cancelled="$emit('disbursementCancelled', $event)"
+              @disbursement-cancelled="$emit('disbursementCancelled')"
             />
             <status-info-disbursement-cancellation
               v-if="
@@ -327,7 +327,7 @@
               :disbursement-id="
                 assessmentAwardData.estimatedAward.disbursement2Id as number
               "
-              @disbursement-cancelled="$emit('disbursementCancelled', $event)"
+              @disbursement-cancelled="$emit('disbursementCancelled')"
             />
             <status-info-disbursement-cancellation
               v-if="
@@ -368,9 +368,7 @@ export default defineComponent({
     confirmEnrolment: (disbursementId: number) => {
       return !!disbursementId;
     },
-    disbursementCancelled: (disbursementId: number) => {
-      return !!disbursementId;
-    },
+    disbursementCancelled: null,
   },
   components: {
     AwardTable,
