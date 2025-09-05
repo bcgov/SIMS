@@ -82,7 +82,6 @@ export default defineComponent({
     },
     notesLabel: {
       type: String,
-      required: true,
       default: "Notes",
     },
   },
