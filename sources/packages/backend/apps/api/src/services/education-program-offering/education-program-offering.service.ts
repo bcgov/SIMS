@@ -1333,42 +1333,53 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       precedingOffering.offeringStatus = OfferingStatus.Approved;
     }
 
-    await this.dataSource.transaction(async (transactionalEntityManager) => {
-      // Create the note for assessment.
-      const note = new Note();
-      note.description = assessmentNotes;
-      note.noteType = NoteType.Program;
-      note.creator = auditUser;
-      note.createdAt = currentDate;
-      const noteEntity = await transactionalEntityManager
-        .getRepository(Note)
-        .save(note);
-
-      // Update note.
-      requestedOffering.offeringNote = noteEntity;
-
-      // Update institution note.
-      await transactionalEntityManager
-        .getRepository(Institution)
-        .createQueryBuilder()
-        .relation(Institution, "notes")
-        .of({
-          id: requestedOffering.institutionLocation.institution.id,
-        } as Institution)
-        .add(noteEntity);
-
-      // Save the requested and preceding offering.
-      await transactionalEntityManager
-        .getRepository(EducationProgramOffering)
-        .save([requestedOffering, precedingOffering]);
-
-      // Save applications with new current assessment or set application status as cancelled on approval.
-      if (applications?.length > 0) {
+    try {
+      await this.dataSource.transaction(async (transactionalEntityManager) => {
+        // Create the note for assessment.
+        const note = new Note();
+        note.description = assessmentNotes;
+        note.noteType = NoteType.Program;
+        note.creator = auditUser;
+        note.createdAt = currentDate;
+        const noteEntity = await transactionalEntityManager
+          .getRepository(Note)
+          .save(note);
+        // Update note.
+        requestedOffering.offeringNote = noteEntity;
+        // Update institution note.
         await transactionalEntityManager
-          .getRepository(Application)
-          .save(applications);
+          .getRepository(Institution)
+          .createQueryBuilder()
+          .relation(Institution, "notes")
+          .of({
+            id: requestedOffering.institutionLocation.institution.id,
+          } as Institution)
+          .add(noteEntity);
+        // Save the requested and preceding offering.
+        await transactionalEntityManager
+          .getRepository(EducationProgramOffering)
+          .save([precedingOffering, requestedOffering]);
+        // Save applications with new current assessment or set application status as cancelled on approval.
+        if (applications?.length > 0) {
+          await transactionalEntityManager
+            .getRepository(Application)
+            .save(applications);
+        }
+      });
+    } catch (error: unknown) {
+      if (
+        isDatabaseConstraintError(
+          error,
+          DatabaseConstraintNames.LocationIDProgramIDOfferingNameStudyDatesYearOfStudyIndex,
+        )
+      ) {
+        throw new CustomNamedError(
+          "Duplication error. An offering with the same name, year of study, start date and end date was found.",
+          OFFERING_SAVE_UNIQUE_ERROR,
+        );
       }
-    });
+      throw error;
+    }
   }
 
   /**
