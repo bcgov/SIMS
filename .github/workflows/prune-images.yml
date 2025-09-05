@@ -61,7 +61,7 @@ jobs:
           echo "OC CLI Version: $(oc version)"
 
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Login to OpenShift
         run: |

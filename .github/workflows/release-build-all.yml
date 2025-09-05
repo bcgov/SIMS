@@ -47,7 +47,7 @@ jobs:
           result-encoding: string
       # Checkout the code to apply the tag.
       - name: Checkout the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.ref_name }}
       # Create tag.
@@ -78,7 +78,7 @@ jobs:
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
@@ -107,7 +107,7 @@ jobs:
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
@@ -136,7 +136,7 @@ jobs:
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
@@ -165,7 +165,7 @@ jobs:
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
@@ -194,7 +194,7 @@ jobs:
           echo BRANCH: ${{ needs.createTag.outputs.newTag }}
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift

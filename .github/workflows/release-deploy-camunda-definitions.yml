@@ -48,7 +48,7 @@ jobs:
           echo ZEEBE_ADDRESS: $ZEEBE_ADDRESS
           echo RESOURCES_FOLDER: $RESOURCES_FOLDER
       - name: Checkout Target Branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ inputs.gitRef }}
       - name: Setup Nodejs
