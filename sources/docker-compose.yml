@@ -336,7 +336,7 @@ services:
   # Networks
 networks:
   local-network:
-    driver: bridge
+    external: true
 # - Networks
 # Volumes
 volumes:

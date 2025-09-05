@@ -39,7 +39,7 @@ services:
 # Networks
 networks:
   local-network:
-    driver: bridge
+    external: true
 
 volumes:
   mdb-data:

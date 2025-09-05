@@ -139,23 +139,33 @@ print-status:
 ## Local Build/Run
 #################################################################
 
+# Ensure the local-network exists
+create-docker-local-network:
+	@echo "+\n++ Make: Ensure local-network exists ...\n+"
+	@if [ -z "$$(docker network ls --filter name=^local-network$$ --format '{{.Name}}')" ]; then \
+		echo "Network 'local-network' not found. Creating..."; \
+		docker network create --driver bridge local-network; \
+	else \
+		echo "Network 'local-network' already exists."; \
+	fi
+
 # Build locally
-local-build:
+local-build: create-docker-local-network
 	@echo "+\n++ Make: Building locally ...\n+"
 	@docker compose -f docker-compose.yml build
 
 # Run locally
-local-run:
+local-run: create-docker-local-network
 	@echo "+\n++ Make: Run locally ...\n+"
 	@docker compose -f docker-compose.yml up
 
 # Build and run locally
-local-build-run:
+local-build-run: create-docker-local-network
 	@echo "+\n++ Make: Build / Run locally ...\n+"
 	@docker compose -f docker-compose.yml up --build
 
 # Stop locally
-local-stop:
+local-stop: 
 	@echo "+\n++ Make: Stop local app ...\n+"
 	@docker compose -f docker-compose.yml down
 
@@ -165,27 +175,27 @@ local-clean:
 	@docker compose -f docker-compose.yml down -v
 
 # Local DB
-postgres:
+postgres: create-docker-local-network
 	@echo "+\n++ Make: Run local db.\n+"
 	@docker compose -f docker-compose.yml up -d postgres
 
 # Local Queue
-redis:
+redis: create-docker-local-network
 	@echo "+\n++ Make: Run local queue.\n+"
-	@docker compose -f docker-compose.yml up redis
+	@docker compose -f docker-compose.yml up -d redis
 
 # Local API only
-api:
+api: create-docker-local-network
 	@echo "+\n++ Make: Building and running API only"
 	@docker compose -f docker-compose.yml up --build -d api
 
 # Local Web (nginx)
-web:
+web: create-docker-local-network
 	@echo "+\n++ Make: Run local web (nginx).\n+"
 	@docker compose -f docker-compose.yml up --build -d web
 
 # Build and run Camunda locally.
-camunda:
+camunda: create-docker-local-network
 	@echo "Create Camunda locally (Zeebe, Operate, Tasklist, and Elasticsearch)..."
 	@echo "- Use user and password as 'demo' to login to Operate."
 	@echo "- Use Zeebe address env variable as 'ZEEBE_ADDRESS=localhost:26500' to connect to the local environment."
@@ -202,7 +212,7 @@ deploy-camunda-definitions:
 	@cd ./packages/backend && npm i && npm run deploy:camunda:definitions
 
 # Build and deploy forms locally.
-forms:
+forms: create-docker-local-network
 	@echo "Build, deploy forms and deploy form-definitions locally... \n+"
 	@echo "Login to http://localhost:3001 \n+"
 	@echo "Default user/password as admin@example.com/CHANGEME \n+"
@@ -218,31 +228,31 @@ forms-stop:
 	@docker compose -f forms-docker-compose.yml down
 
 # Runs queue consumer application
-queue-consumers:
+queue-consumers: create-docker-local-network
 	@echo "+\n++ Make: Queue only"
 	@docker compose -f docker-compose.yml build queue-consumers
 	@docker compose -f docker-compose.yml up -d queue-consumers
 
 # Runs clamav
-clamav:
+clamav: create-docker-local-network
 	@echo "+\n++ Make: ClamAV only"
 	@docker compose -f docker-compose.yml build clamav
 	@docker compose -f docker-compose.yml up -d clamav
 
 # Runs load test gateway application
-load-test-gateway:
+load-test-gateway: create-docker-local-network
 	@echo "+\n++ Make: Load test gateway only"
 	@docker compose -f docker-compose.yml build load-test-gateway
 	@docker compose -f docker-compose.yml up -d load-test-gateway
 
 # Runs workers application
-workers:
+workers: create-docker-local-network
 	@echo "+\n++ Make: Camunda workers only"
 	@docker compose -f docker-compose.yml build workers
 	@docker compose -f docker-compose.yml up -d workers
 
 # Runs db-migrations in REPL mode
-db-migrations-repl:
+db-migrations-repl: create-docker-local-network
 	@echo "+\n++ Make: Database migrations REPL"
 	@docker compose -f docker-compose.yml build db-migrations-repl
 	@docker compose -f docker-compose.yml up -d db-migrations-repl
