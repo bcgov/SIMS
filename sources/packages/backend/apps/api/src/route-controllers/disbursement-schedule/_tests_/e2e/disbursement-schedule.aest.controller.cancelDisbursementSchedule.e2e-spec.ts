@@ -13,7 +13,7 @@ import {
   saveFakeApplicationDisbursements,
   saveFakeDisbursementReceiptsFromDisbursementSchedule,
 } from "@sims/test-utils";
-import { DisbursementScheduleStatus, User } from "@sims/sims-db";
+import { DisbursementScheduleStatus, NoteType, User } from "@sims/sims-db";
 import MockDate from "mockdate";
 import { DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED } from "@sims/services/constants";
 
@@ -93,6 +93,7 @@ describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", (
         notes: {
           id: true,
           description: true,
+          noteType: true,
           creator: { id: true },
         },
       },
@@ -110,6 +111,7 @@ describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", (
         {
           id: expect.any(Number),
           description: payload.note,
+          noteType: NoteType.Application,
           creator: ministryUser,
         },
       ],
