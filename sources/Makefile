@@ -67,7 +67,7 @@ export CRA_RESPONSE_FOLDER := $(or $(CRA_RESPONSE_FOLDER), CRA-Response)
 export CRA_PROGRAM_AREA_CODE := $(or $(CRA_PROGRAM_AREA_CODE), )
 export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
 # Versions used by camunda-docker compose-core.yml during the make camunda.
-# Versions upgraded following the conbination available on https://github.com/camunda/camunda-platform/blob/main/.env
+# Versions upgraded following the combination available on https://github.com/camunda/camunda-platform/blob/main/.env
 export CAMUNDA_CONNECTORS_VERSION := $(or $(CAMUNDA_CONNECTORS_VERSION), 8.6.9)
 export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.6.12)
 export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 8.17.1)
@@ -93,7 +93,7 @@ export APP_ENV := $(or $(APP_ENV), local)
 export ALLOW_BETA_USERS_ONLY := $(or $(ALLOW_BETA_USERS_ONLY), false)
 
 # Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers),
-# and also Form.io server, and Camunda releated services.
+# and also Form.io server, and Camunda related services.
 # Use make deploy-camunda-definitions to deploy all workflow definitions.
 # Use make deploy-form-definitions to deploy all form.io definitions.
 local-all: | print-status forms camunda local-build-run
@@ -207,7 +207,7 @@ camunda-stop:
 	@echo "Stopping Camunda locally..."
 	@docker compose -f camunda-docker-compose-core.yml down
 
-# Deploy Camunda defitions locally
+# Deploy Camunda definitions locally
 deploy-camunda-definitions:
 	@cd ./packages/backend && npm i && npm run deploy:camunda:definitions
 
