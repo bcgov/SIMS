@@ -15,8 +15,8 @@ export function useRules() {
     return "SIN is required.";
   };
 
-  const checkNotesLengthRule = (notes: string) => {
-    return checkLengthRule(notes, NOTES_MAX_CHARACTERS, "Note");
+  const checkNotesLengthRule = (notes: string, fieldName = "Note") => {
+    return checkLengthRule(notes, NOTES_MAX_CHARACTERS, fieldName);
   };
 
   const checkGivenNameLengthRule = (givenName: string) => {

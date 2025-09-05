@@ -704,47 +704,41 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param disbursementScheduleId disbursement schedule id.
    * @param auditUserId audit user id.
    * @param reverseOverawards flag to reverse overawards.
+   * @param entityManager entity manager to execute in transaction. Allow it to be controlled
+   * externally, which enables the consumer to execute more operations, for instance,
+   * saving a note or generating a notification.
    * @returns array of created reversal overaward ids or void if no overawards were reversed.
    */
   async rejectDisbursement(
     disbursementScheduleId: number,
     auditUserId: number,
     reverseOverawards: boolean,
+    entityManager: EntityManager,
   ): Promise<number[] | void> {
-    if (reverseOverawards) {
-      return this.dataSource.transaction(async (transactionalEntityManager) => {
-        // Reverse the deducted overawards if present only for Full-time.
-        const overawardIds = await this.reverseDisbursementDeductedOverawards(
-          disbursementScheduleId,
-          auditUserId,
-          transactionalEntityManager,
-        );
-        const result = await this.updateDisbursementScheduleStatus(
-          disbursementScheduleId,
-          DisbursementScheduleStatus.Rejected,
-          auditUserId,
-          {
-            entityManager: transactionalEntityManager,
-            fromStatus: DisbursementScheduleStatus.Sent,
-          },
-        );
-
-        if (result.affected !== 1) {
-          throw new CustomNamedError(
-            `Failed to update disbursement schedule ${disbursementScheduleId} status to ${DisbursementScheduleStatus.Rejected}.`,
-            DISBURSEMENT_SCHEDULE_NOT_UPDATED,
-          );
-        }
-        return overawardIds;
-      });
-    }
-    // For Part-time, just update the disbursement schedule status.
-    await this.updateDisbursementScheduleStatus(
+    // For full-time and part-time, update the disbursement schedule status.
+    const result = await this.updateDisbursementScheduleStatus(
       disbursementScheduleId,
       DisbursementScheduleStatus.Rejected,
       auditUserId,
-      { fromStatus: DisbursementScheduleStatus.Sent },
+      {
+        entityManager,
+        fromStatus: DisbursementScheduleStatus.Sent,
+      },
     );
+    if (result.affected !== 1) {
+      throw new CustomNamedError(
+        `Failed to update disbursement schedule ${disbursementScheduleId} status to ${DisbursementScheduleStatus.Rejected}.`,
+        DISBURSEMENT_SCHEDULE_NOT_UPDATED,
+      );
+    }
+    if (reverseOverawards) {
+      // Reverse the deducted overawards if present, only for full-time.
+      return this.reverseDisbursementDeductedOverawards(
+        disbursementScheduleId,
+        auditUserId,
+        entityManager,
+      );
+    }
   }
 
   /**

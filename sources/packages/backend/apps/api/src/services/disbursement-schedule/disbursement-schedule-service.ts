@@ -4,18 +4,27 @@ import {
   PaginatedResults,
   OrderByCondition,
 } from "../../utilities";
-import { FieldSortOrder } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import { DataSource, Brackets } from "typeorm";
 import {
   RecordDataModelService,
   ApplicationStatus,
   DisbursementSchedule,
   getUserFullNameLikeSearch,
+  OfferingIntensity,
+  NoteType,
+  DisbursementScheduleStatus,
 } from "@sims/sims-db";
 import {
   ConfirmationOfEnrollmentService,
+  DisbursementScheduleSharedService,
   EnrollmentPeriod,
+  NoteSharedService,
 } from "@sims/services";
+import {
+  DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
+  DISBURSEMENT_SCHEDULE_NOT_FOUND,
+} from "@sims/services/constants";
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -23,8 +32,10 @@ import {
 @Injectable()
 export class DisbursementScheduleService extends RecordDataModelService<DisbursementSchedule> {
   constructor(
-    dataSource: DataSource,
+    private readonly dataSource: DataSource,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
+    private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
+    private readonly noteSharedService: NoteSharedService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
@@ -177,5 +188,90 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       coeSortOptions[sortField] || "disbursementSchedule.coeStatus";
     orderByCondition[dbColumnName] = sortOrder;
     return orderByCondition;
+  }
+
+  /**
+   * Reject a disbursement schedule which is sent to ESDC when no receipts were received.
+   * @param disbursementScheduleId disbursement schedule id.
+   * @param note note description to explain the rejection.
+   * @param auditUserId audit user id.
+   */
+  async rejectDisbursement(
+    disbursementScheduleId: number,
+    note: string,
+    auditUserId: number,
+  ): Promise<void> {
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const disbursementScheduleRepo =
+        transactionalEntityManager.getRepository(DisbursementSchedule);
+      const disbursementSchedule = await disbursementScheduleRepo.findOne({
+        select: {
+          id: true,
+          studentAssessment: {
+            id: true,
+            offering: { id: true, offeringIntensity: true },
+            application: {
+              id: true,
+              student: { id: true },
+            },
+          },
+          disbursementScheduleStatus: true,
+          disbursementReceipts: { id: true },
+        },
+        relations: {
+          studentAssessment: {
+            offering: true,
+            application: {
+              student: true,
+            },
+          },
+          disbursementReceipts: true,
+        },
+        where: {
+          id: disbursementScheduleId,
+        },
+      });
+      // Validations.
+      if (!disbursementSchedule) {
+        throw new CustomNamedError(
+          `Disbursement schedule ID ${disbursementScheduleId} not found.`,
+          DISBURSEMENT_SCHEDULE_NOT_FOUND,
+        );
+      }
+      if (
+        disbursementSchedule.disbursementScheduleStatus !==
+        DisbursementScheduleStatus.Sent
+      ) {
+        throw new CustomNamedError(
+          `Disbursement schedule expected to be '${DisbursementScheduleStatus.Sent}' to allow it to be rejected.`,
+          DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
+        );
+      }
+      if (disbursementSchedule.disbursementReceipts.length) {
+        throw new CustomNamedError(
+          "Disbursement schedule has receipts associated with it and cannot be rejected.",
+          DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
+        );
+      }
+      // Save disbursement rejection and student note.
+      const isFulltime =
+        disbursementSchedule.studentAssessment.offering.offeringIntensity ===
+        OfferingIntensity.fullTime;
+      const rejectDisbursementPromise =
+        this.disbursementScheduleSharedService.rejectDisbursement(
+          disbursementScheduleId,
+          auditUserId,
+          isFulltime,
+          transactionalEntityManager,
+        );
+      const createStudentNotePromise = this.noteSharedService.createStudentNote(
+        disbursementSchedule.studentAssessment.application.student.id,
+        NoteType.Application,
+        note,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      await Promise.all([rejectDisbursementPromise, createStudentNotePromise]);
+    });
   }
 }

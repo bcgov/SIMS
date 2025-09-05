@@ -40,7 +40,7 @@ export function createFakeDisbursementReceipt(relations: {
     max: 99999,
   });
   receipt.studentSIN =
-    student.sinValidation.sin ??
+    student?.sinValidation?.sin ??
     faker.datatype.number({ min: 100000000, max: 899999999 }).toString();
   receipt.disbursementSchedule = relations.disbursementSchedule;
   receipt.fundingType = RECEIPT_FUNDING_TYPE_FEDERAL;

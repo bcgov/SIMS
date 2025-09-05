@@ -67,6 +67,7 @@ import {
   RestrictionSharedService,
   ConfirmationOfEnrollmentService,
   AssessmentSequentialProcessingService,
+  DisbursementScheduleSharedService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -152,6 +153,7 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     InstitutionUserAuthService,
     UserService,
     SupportingUserControllerService,
+    DisbursementScheduleSharedService,
   ],
 })
 export class AppStudentsModule {}

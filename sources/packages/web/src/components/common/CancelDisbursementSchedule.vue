@@ -15,6 +15,7 @@
   </check-permission-role>
   <user-note-confirm-modal
     title="Cancel eCert"
+    notes-label="Cancellation reason"
     ref="confirmCancellationModal"
     okLabel="Confirm"
     cancelLabel="Cancel"
@@ -46,7 +47,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { Role } from "@/types";
+import { ApiProcessError, Role } from "@/types";
 import { ModalDialog, useSnackBar } from "@/composables";
 import UserNoteConfirmModal, {
   UserNoteModal,
@@ -56,7 +57,7 @@ import { DisbursementScheduleService } from "@/services/DisbursementScheduleServ
 
 export default defineComponent({
   emits: {
-    disbursementScheduleCancelled: null,
+    disbursementCancelled: null,
   },
   components: { UserNoteConfirmModal, CheckPermissionRole },
   props: {
@@ -86,10 +87,14 @@ export default defineComponent({
           userNoteModalResult.showParameter,
           { note: userNoteModalResult.note },
         );
-        snackBar.success("eCert cancelled.");
-        emit("disbursementScheduleCancelled");
+        snackBar.success("The disbursement has been successfully cancelled.");
+        emit("disbursementCancelled");
         return true;
-      } catch {
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          snackBar.error(error.message);
+          return false;
+        }
         snackBar.error(
           "An unexpected error happened while cancelling the eCert.",
         );

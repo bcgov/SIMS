@@ -9,11 +9,11 @@
         <error-summary :errors="modalNotesForm.errors" />
         <slot name="content">{{ text }}</slot>
         <v-textarea
-          label="Notes"
+          :label="notesLabel"
           variant="outlined"
           hide-details="auto"
           v-model="note"
-          :rules="[checkNotesLengthRule]"
+          :rules="[(v) => checkNotesLengthRule(v, notesLabel)]"
           required
         />
       </template>
@@ -80,14 +80,15 @@ export default defineComponent({
       required: false,
       default: true,
     },
-    loading: {
-      type: Boolean,
-      default: false,
+    notesLabel: {
+      type: String,
+      default: "Notes",
     },
   },
   setup() {
     const { checkNotesLengthRule } = useRules();
     const {
+      loading,
       showDialog,
       resolvePromise: internalResolvePromise,
       showModal,
@@ -126,6 +127,7 @@ export default defineComponent({
       showDialog,
       showModal,
       resolvePromise,
+      loading,
     };
   },
 });

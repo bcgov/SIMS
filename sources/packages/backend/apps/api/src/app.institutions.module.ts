@@ -89,6 +89,7 @@ import {
   RestrictionSharedService,
   AssessmentSequentialProcessingService,
   ReportService,
+  DisbursementScheduleSharedService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -190,6 +191,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ReportService,
     CRAIncomeVerificationService,
     SupportingUserService,
+    DisbursementScheduleSharedService,
   ],
 })
 export class AppInstitutionsModule {}

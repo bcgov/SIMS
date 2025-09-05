@@ -18,12 +18,13 @@
       :allow-disbursement-cancellation="true"
       :allow-final-award-extended-information="true"
       @confirm-enrolment="confirmEnrolment"
+      @disbursement-cancelled="loadAssessmentAwardValues"
     />
   </full-page-container>
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { ref, onMounted, defineComponent, computed } from "vue";
+import { ref, defineComponent, computed, watchEffect } from "vue";
 import { useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
@@ -60,7 +61,7 @@ export default defineComponent({
         );
     };
 
-    onMounted(loadAssessmentAwardValues);
+    watchEffect(loadAssessmentAwardValues);
 
     const noticeOfAssessmentRoute = computed(() => ({
       name: AESTRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
@@ -95,6 +96,7 @@ export default defineComponent({
       noticeOfAssessmentRoute,
       assessmentAwardData,
       confirmEnrolment,
+      loadAssessmentAwardValues,
     };
   },
 });
