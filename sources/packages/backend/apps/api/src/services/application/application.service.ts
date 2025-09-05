@@ -2386,8 +2386,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     sourceApplicationData: ApplicationData,
     targetApplicationData: ApplicationData,
   ): void {
+    // Using the program persistent properties from target application data
+    // to get the most recent list of properties from the form definition.
     const programPersistentProperties =
-      sourceApplicationData.programPersistentProperties;
+      targetApplicationData.programPersistentProperties;
     // Throw error if program persistent properties are not defined.
     // This will prevent the incomplete data from being saved.
     if (!programPersistentProperties?.length) {

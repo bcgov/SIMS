@@ -405,6 +405,7 @@ export function getFiscalYear(date: Date): number {
   }
   return referenceYear;
 }
+
 /**
  * Checks if the date provided is less than given number of weeks from current date
  * or a reference date.

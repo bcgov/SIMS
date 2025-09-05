@@ -1274,7 +1274,7 @@
         },
         {
           "label": "Program persistent properties",
-          "calculateValue": "value = [\r\n  \"selectedLocation\",\r\n  \"mySchoolIsNotListed\",\r\n  \"selectedProgram\",\r\n  \"myProgramNotListed\",\r\n  \"programName\",\r\n  \"programDescription\",\r\n  \"studystartDate\",\r\n  \"studyendDate\",\r\n  \"selectedOffering\",\r\n  \"myStudyPeriodIsntListed\",\r\n  \"studyEndDateIsPastApplicationException\",\r\n  \"studentNumber\",\r\n];",
+          "calculateValue": "value = [\r\n  \"selectedLocation\",\r\n  \"mySchoolIsNotListed\",\r\n  \"selectedProgram\",\r\n  \"myProgramNotListed\",\r\n  \"programName\",\r\n  \"programDescription\",\r\n  \"studystartDate\",\r\n  \"studyendDate\",\r\n  \"selectedOffering\",\r\n  \"myStudyPeriodIsntListed\",\r\n  \"studentNumber\",\r\n];",
           "calculateServer": true,
           "key": "programPersistentProperties",
           "type": "hidden",
