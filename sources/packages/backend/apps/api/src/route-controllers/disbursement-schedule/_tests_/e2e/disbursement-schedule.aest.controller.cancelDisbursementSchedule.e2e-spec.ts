@@ -196,7 +196,7 @@ describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", (
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
-        message: "Disbursement schedule not found.",
+        message: "Disbursement schedule ID 999999 not found.",
         error: "Not Found",
         statusCode: HttpStatus.NOT_FOUND,
       });

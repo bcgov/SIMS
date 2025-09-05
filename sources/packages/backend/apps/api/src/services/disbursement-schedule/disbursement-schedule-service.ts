@@ -243,7 +243,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         DisbursementScheduleStatus.Sent
       ) {
         throw new CustomNamedError(
-          "Disbursement schedule expected to be '${DisbursementScheduleStatus.Sent}' to allow it to be rejected.",
+          `Disbursement schedule expected to be '${DisbursementScheduleStatus.Sent}' to allow it to be rejected.`,
           DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
         );
       }
