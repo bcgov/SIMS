@@ -1,9 +1,19 @@
-import { APPLICATION_NOT_FOUND } from "@sims/services/constants";
-import { ApplicationData, ApplicationExceptionStatus } from "@sims/sims-db";
+import {
+  APPLICATION_NOT_FOUND,
+  APPLICATION_SUBMISSION_DEADLINE_WEEKS,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+} from "@sims/services/constants";
+import {
+  ApplicationData,
+  ApplicationExceptionStatus,
+  EducationProgramOffering,
+  ProgramInfoStatus,
+} from "@sims/sims-db";
 import {
   createE2EDataSources,
   createFakeApplicationException,
   createFakeApplicationExceptionRequest,
+  createFakeEducationProgramOffering,
   E2EDataSources,
   saveFakeApplication,
   saveFakeStudent,
@@ -23,17 +33,32 @@ import {
 } from "./verify-unique-application-exceptions";
 import { SystemUsersService } from "@sims/services";
 import MockDate from "mockdate";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
   let db: E2EDataSources;
   let applicationController: ApplicationController;
   let systemUsersService: SystemUsersService;
+  // Offering with end date more than required weeks from now to apply within deadline.
+  let sharedOffering: EducationProgramOffering;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
     applicationController = nestApplication.get(ApplicationController);
     systemUsersService = nestApplication.get(SystemUsersService);
+    sharedOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: systemUsersService.systemUser,
+      },
+      {
+        initialValues: {
+          studyStartDate: getISODateOnlyString(new Date()),
+          studyEndDate: getISODateOnlyString(addDays(43)),
+        },
+      },
+    );
+    await db.educationProgramOffering.save(sharedOffering);
   });
 
   beforeEach(async () => {
@@ -77,7 +102,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       );
       const application = await saveFakeApplication(
         db.dataSource,
-        { student },
+        { student, offering: sharedOffering },
         {
           applicationData: {
             workflowName: "",
@@ -220,6 +245,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
         ]);
       const previousApplication = await saveFakeApplication(db.dataSource, {
         applicationException: savedException,
+        offering: sharedOffering,
       });
       // Most recently application that should have the exception automatically approved.
       const student = await saveFakeStudent(db.dataSource);
@@ -247,6 +273,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
         {
           student,
           parentApplication: previousApplication,
+          offering: sharedOffering,
         },
         {
           applicationData: {
@@ -379,9 +406,81 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     },
   );
 
+  it(`Should create study end date is past application exception when study end date is less than ${APPLICATION_SUBMISSION_DEADLINE_WEEKS} weeks from the application submission date.`, async () => {
+    // Arrange
+    // Offering with end date less than required weeks from now to apply exceeding the deadline.
+    const offeringPastDeadline = createFakeEducationProgramOffering(
+      {
+        auditUser: systemUsersService.systemUser,
+      },
+      {
+        initialValues: {
+          studyStartDate: getISODateOnlyString(new Date()),
+          studyEndDate: getISODateOnlyString(addDays(41)),
+        },
+      },
+    );
+    await db.educationProgramOffering.save(offeringPastDeadline);
+    const savedApplication = await saveFakeApplication(db.dataSource, {
+      offering: offeringPastDeadline,
+    });
+    const verifyUniqueApplicationExceptionsPayload =
+      createFakeVerifyUniqueApplicationExceptionsPayload(savedApplication.id);
+
+    // Act
+    const result =
+      await applicationController.verifyUniqueApplicationExceptions(
+        verifyUniqueApplicationExceptionsPayload,
+      );
+
+    // Assert
+    // Validate job result expecting the application exception status as pending.
+    expect(result).toEqual({
+      resultType: MockedZeebeJobResult.Complete,
+      outputVariables: {
+        applicationExceptionStatus: ApplicationExceptionStatus.Pending,
+      },
+    });
+    // Validate DB changes expecting the study end date is past application exception.
+    const updatedApplication = await db.application.findOne({
+      select: {
+        id: true,
+        applicationException: {
+          id: true,
+          exceptionStatus: true,
+          exceptionRequests: {
+            id: true,
+            exceptionName: true,
+            exceptionDescription: true,
+          },
+        },
+      },
+      relations: { applicationException: { exceptionRequests: true } },
+      where: {
+        id: savedApplication.id,
+      },
+    });
+    expect(updatedApplication).toEqual({
+      id: savedApplication.id,
+      applicationException: {
+        id: expect.any(Number),
+        exceptionStatus: ApplicationExceptionStatus.Pending,
+        exceptionRequests: [
+          {
+            id: expect.any(Number),
+            exceptionName: "studyEndDateIsPastApplicationException",
+            exceptionDescription: "Study end date is past",
+          },
+        ],
+      },
+    });
+  });
+
   it("Should not create any application exception when there is no application exception in application data.", async () => {
     // Arrange
-    const savedApplication = await saveFakeApplication(db.dataSource);
+    const savedApplication = await saveFakeApplication(db.dataSource, {
+      offering: sharedOffering,
+    });
     const verifyUniqueApplicationExceptionsPayload =
       createFakeVerifyUniqueApplicationExceptionsPayload(savedApplication.id);
 
@@ -430,9 +529,38 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     });
   });
 
+  it("Should return error when the application is not associated with an offering.", async () => {
+    // Arrange
+    // Create an application without offering.
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      undefined,
+      { pirStatus: ProgramInfoStatus.required },
+    );
+    const verifyUniqueApplicationExceptionsPayload =
+      createFakeVerifyUniqueApplicationExceptionsPayload(savedApplication.id);
+
+    // Act
+    const result =
+      await applicationController.verifyUniqueApplicationExceptions(
+        verifyUniqueApplicationExceptionsPayload,
+      );
+
+    // Assert
+    // Validate job result.
+    expect(result).toEqual({
+      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
+      [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]: `Application ${savedApplication.id} is not associated with an offering.`,
+      [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]:
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+    });
+  });
+
   it("Should not create an application exception when there is already one for the application.", async () => {
     // Arrange
-    const fakeApplication = await saveFakeApplication(db.dataSource);
+    const fakeApplication = await saveFakeApplication(db.dataSource, {
+      offering: sharedOffering,
+    });
     fakeApplication.data = {
       workflowName: "",
       test: {

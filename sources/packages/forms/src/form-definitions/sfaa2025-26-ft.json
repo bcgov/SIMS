@@ -1122,37 +1122,6 @@
                   "input": false,
                   "hideLabel": true,
                   "tableView": false
-                },
-                {
-                  "label": "studyEndDateIsPastApplicationException",
-                  "tableView": false,
-                  "validateWhenHidden": false,
-                  "key": "studyEndDateIsPastApplicationException",
-                  "customConditional": "show = data.studyEndDateBeforeSixWeeksFromToday || data.selectedStudyEndDateBeforeSixWeeksFromToday;",
-                  "type": "container",
-                  "input": true,
-                  "components": [
-                    {
-                      "label": "Exception Description - Study end date is past",
-                      "defaultValue": "exceptionDescription",
-                      "calculateValue": "value = \"Study end date is past\";",
-                      "calculateServer": true,
-                      "key": "exceptionDescription",
-                      "type": "hidden",
-                      "input": true,
-                      "tableView": false
-                    },
-                    {
-                      "label": "Submission Date (forces the exception to be detected as changed for every submission)",
-                      "defaultValue": "submissionDate",
-                      "calculateValue": "// Saves the date the form was submitted.\n// Forces the exception to be detected as changed for every submission.\nvalue = new Date().toUTCString();",
-                      "calculateServer": true,
-                      "key": "submissionDate",
-                      "type": "hidden",
-                      "input": true,
-                      "tableView": false
-                    }
-                  ]
                 }
               ]
             }
@@ -1305,7 +1274,7 @@
         },
         {
           "label": "Program persistent properties",
-          "calculateValue": "value = [\r\n  \"selectedLocation\",\r\n  \"mySchoolIsNotListed\",\r\n  \"selectedProgram\",\r\n  \"myProgramNotListed\",\r\n  \"programName\",\r\n  \"programDescription\",\r\n  \"studystartDate\",\r\n  \"studyendDate\",\r\n  \"selectedOffering\",\r\n  \"myStudyPeriodIsntListed\",\r\n  \"studyEndDateIsPastApplicationException\",\r\n  \"studentNumber\",\r\n];",
+          "calculateValue": "value = [\r\n  \"selectedLocation\",\r\n  \"mySchoolIsNotListed\",\r\n  \"selectedProgram\",\r\n  \"myProgramNotListed\",\r\n  \"programName\",\r\n  \"programDescription\",\r\n  \"studystartDate\",\r\n  \"studyendDate\",\r\n  \"selectedOffering\",\r\n  \"myStudyPeriodIsntListed\",\r\n  \"studentNumber\",\r\n];",
           "calculateServer": true,
           "key": "programPersistentProperties",
           "type": "hidden",

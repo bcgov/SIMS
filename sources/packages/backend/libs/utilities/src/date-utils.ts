@@ -405,3 +405,21 @@ export function getFiscalYear(date: Date): number {
   }
   return referenceYear;
 }
+
+/**
+ * Checks if the date provided is less than given number of weeks from current date
+ * or a reference date.
+ * @param date date provided.
+ * @param weeks given number of weeks.
+ * @param options options.
+ * - `referenceDate` alternative date to compare.
+ * @returns flag indicating if the date is before given number of weeks.
+ */
+export function isLessThanGivenWeeks(
+  date: string | Date,
+  weeks: number,
+  options?: { referenceDate?: string | Date },
+): boolean {
+  const referenceDate = options?.referenceDate ?? new Date();
+  return dayjs(date).isBefore(dayjs(referenceDate).add(weeks, "week"));
+}

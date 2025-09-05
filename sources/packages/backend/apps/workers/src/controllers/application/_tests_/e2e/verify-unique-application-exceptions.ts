@@ -1,6 +1,7 @@
-import { ICustomHeaders, ZeebeJob } from "@camunda8/sdk/dist/zeebe/types";
+import { ZeebeJob } from "@camunda8/sdk/dist/zeebe/types";
 import { createFakeWorkerJob } from "../../../../../test/utils/worker-job-mock";
 import {
+  ApplicationUniqueExceptionsJobHeaderDTO,
   ApplicationUniqueExceptionsJobInDTO,
   ApplicationUniqueExceptionsJobOutDTO,
 } from "../../application.dto";
@@ -16,7 +17,7 @@ export function createFakeVerifyUniqueApplicationExceptionsPayload(
 ): Readonly<
   ZeebeJob<
     ApplicationUniqueExceptionsJobInDTO,
-    ICustomHeaders,
+    ApplicationUniqueExceptionsJobHeaderDTO,
     ApplicationUniqueExceptionsJobOutDTO
   >
 > {
@@ -25,10 +26,11 @@ export function createFakeVerifyUniqueApplicationExceptionsPayload(
   };
   return createFakeWorkerJob<
     ApplicationUniqueExceptionsJobInDTO,
-    ICustomHeaders,
+    ApplicationUniqueExceptionsJobHeaderDTO,
     ApplicationUniqueExceptionsJobOutDTO
   >({
     variables,
+    customHeaders: { programInfoProcessStatus: "completed" },
   });
 }
 
