@@ -57,6 +57,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
   it("Should get the student noa details for an eligible full time application when an eligible public institution user tries to access it.", async () => {
     // Arrange
     const [enrolmentDate1, enrolmentDate2] = [addDays(1), addDays(30)];
+    const [statusUpdatedOn1, statusUpdatedOn2] = [addDays(2), addDays(31)];
     // Student has an application to the institution eligible for NOA.
     const student = await saveFakeStudent(db.dataSource);
 
@@ -78,8 +79,14 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       {
         offeringIntensity: OfferingIntensity.fullTime,
         createSecondDisbursement: true,
-        firstDisbursementInitialValues: { coeUpdatedAt: enrolmentDate1 },
-        secondDisbursementInitialValues: { coeUpdatedAt: enrolmentDate2 },
+        firstDisbursementInitialValues: {
+          coeUpdatedAt: enrolmentDate1,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn1,
+        },
+        secondDisbursementInitialValues: {
+          coeUpdatedAt: enrolmentDate2,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn2,
+        },
       },
     );
     const assessment = application.currentAssessment;
@@ -120,6 +127,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             firstDisbursementSchedule.disbursementDate,
           ),
           disbursement1Id: firstDisbursementSchedule.id,
+          disbursement1StatusUpdatedOn: statusUpdatedOn1.toISOString(),
           disbursement1MSFAACancelledDate:
             firstDisbursementSchedule.msfaaNumber?.cancelledDate,
           disbursement1MSFAADateSigned:
@@ -137,6 +145,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             secondDisbursementSchedule.disbursementDate,
           ),
           disbursement2Id: secondDisbursementSchedule.id,
+          disbursement2StatusUpdatedOn: statusUpdatedOn2.toISOString(),
           disbursement2MSFAACancelledDate:
             secondDisbursementSchedule.msfaaNumber?.cancelledDate,
           disbursement2MSFAADateSigned:
@@ -170,6 +179,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
   it("Should get the student noa details for an eligible part time application when an eligible public institution user tries to access it.", async () => {
     // Arrange
     const [enrolmentDate1, enrolmentDate2] = [addDays(1), addDays(30)];
+    const [statusUpdatedOn1, statusUpdatedOn2] = [addDays(2), addDays(31)];
     // Student has an application to the institution eligible for NOA.
     const student = await saveFakeStudent(db.dataSource);
 
@@ -191,8 +201,14 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       {
         offeringIntensity: OfferingIntensity.partTime,
         createSecondDisbursement: true,
-        firstDisbursementInitialValues: { coeUpdatedAt: enrolmentDate1 },
-        secondDisbursementInitialValues: { coeUpdatedAt: enrolmentDate2 },
+        firstDisbursementInitialValues: {
+          coeUpdatedAt: enrolmentDate1,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn1,
+        },
+        secondDisbursementInitialValues: {
+          coeUpdatedAt: enrolmentDate2,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn2,
+        },
       },
     );
     const assessment = application.currentAssessment;
@@ -233,6 +249,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             firstDisbursementSchedule.disbursementDate,
           ),
           disbursement1Id: firstDisbursementSchedule.id,
+          disbursement1StatusUpdatedOn: statusUpdatedOn1.toISOString(),
           disbursement1MSFAACancelledDate:
             firstDisbursementSchedule.msfaaNumber?.cancelledDate,
           disbursement1MSFAADateSigned:
@@ -250,6 +267,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
             secondDisbursementSchedule.disbursementDate,
           ),
           disbursement2Id: secondDisbursementSchedule.id,
+          disbursement2StatusUpdatedOn: statusUpdatedOn2.toISOString(),
           disbursement2MSFAACancelledDate:
             secondDisbursementSchedule.msfaaNumber?.cancelledDate,
           disbursement2MSFAADateSigned:

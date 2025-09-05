@@ -49,6 +49,16 @@ import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
  * Final award value dynamic identifier prefix.
  */
 const DISBURSEMENT_RECEIPT_PREFIX = "disbursementReceipt";
+/**
+ * Indicates which disbursement schedule statuses are expected to have receipts generated.
+ * When 'Sent' and later 'Rejected', the receipt should not be received in a usual situation.
+ * Either way, both status are considered as subjected to check for receipts since an
+ * e-Cert was produced.
+ */
+const HAS_POTENTIAL_RECEIPT_STATUSES = [
+  DisbursementScheduleStatus.Sent,
+  DisbursementScheduleStatus.Rejected,
+];
 
 @Injectable()
 export class AssessmentControllerService {
@@ -193,6 +203,8 @@ export class AssessmentControllerService {
       disbursementDetails[`${disbursementIdentifier}EnrolmentDate`] =
         schedule.coeUpdatedAt;
       disbursementDetails[`${disbursementIdentifier}Id`] = schedule.id;
+      disbursementDetails[`${disbursementIdentifier}StatusUpdatedOn`] =
+        schedule.disbursementScheduleStatusUpdatedOn;
       if (includeDateSent) {
         disbursementDetails[`${disbursementIdentifier}DateSent`] =
           schedule.dateSent;
@@ -290,39 +302,54 @@ export class AssessmentControllerService {
   ): Promise<DynamicAwardValue | undefined> {
     const [firstDisbursement] = assessment.disbursementSchedules;
     if (
-      firstDisbursement.disbursementScheduleStatus !==
-      DisbursementScheduleStatus.Sent
+      !HAS_POTENTIAL_RECEIPT_STATUSES.includes(
+        firstDisbursement.disbursementScheduleStatus,
+      )
     ) {
       // If a e-Cert was never generated no additional processing is needed.
       return undefined;
     }
-    let finalAward: DynamicAwardValue = undefined;
+    let finalAward: DynamicAwardValue = {};
+    // Full-time receipts are expected to contains all information about awards disbursed to students
+    // but specific BC grants. Receipts should be used as a source of the information for full-time application.
+    // Part-time receipts will not contain all the awards value hence the e-Cert effective
+    // values are used instead to provide the best information as possible, but the existence of the part-time
+    // receipts are useful, for instance, to determine if a student disbursement can be cancelled.
+    const disbursementReceipts =
+      await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
+        assessment.id,
+        options,
+      );
+    // Populate the disbursementReceipt[n]Received flags for each disbursement schedule.
+    assessment.disbursementSchedules.forEach((schedule, index) => {
+      const hasReceipt = disbursementReceipts.some(
+        (receipt) => receipt.disbursementSchedule.id === schedule.id,
+      );
+      this.setReceiptReceivedFlag(finalAward, index + 1, hasReceipt);
+    });
+
     if (assessment.offering.offeringIntensity === OfferingIntensity.fullTime) {
-      // Full-time receipts are expected to contains all information about awards disbursed to students
-      // but specific BC grants. Receipts should be used as a source of the information for full-time application.
-      const disbursementReceipts =
-        await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
-          assessment.id,
-          options,
-        );
+      let index = 1;
       if (!disbursementReceipts.length) {
         // If the receipts are not available no additional processing is needed.
+        this.setHasAwardsFlag(finalAward, index, false);
         return finalAward;
       }
-      let index = 1;
       for (const schedule of assessment.disbursementSchedules) {
         if (
-          schedule.disbursementScheduleStatus !==
-          DisbursementScheduleStatus.Sent
+          !HAS_POTENTIAL_RECEIPT_STATUSES.includes(
+            schedule.disbursementScheduleStatus,
+          )
         ) {
           break;
         }
         const awards = this.populateDisbursementReceiptAwardValues(
           disbursementReceipts,
           schedule,
-          `${DISBURSEMENT_RECEIPT_PREFIX}${index++}`,
+          index,
         );
         finalAward = { ...finalAward, ...awards };
+        index++;
       }
       return finalAward;
     }
@@ -331,21 +358,61 @@ export class AssessmentControllerService {
     let index = 1;
     for (const schedule of assessment.disbursementSchedules) {
       if (
-        schedule.disbursementScheduleStatus !== DisbursementScheduleStatus.Sent
+        !HAS_POTENTIAL_RECEIPT_STATUSES.includes(
+          schedule.disbursementScheduleStatus,
+        )
       ) {
         break;
       }
+      this.setHasAwardsFlag(finalAward, index, true);
       const awards = this.populateDisbursementECertAwardValues(
         schedule.disbursementValues,
-        `${DISBURSEMENT_RECEIPT_PREFIX}${index++}`,
+        `${DISBURSEMENT_RECEIPT_PREFIX}${index}`,
       );
       finalAward = { ...finalAward, ...awards };
+      index++;
     }
     return finalAward;
   }
 
   /**
-   * Populate final awards values from disbursements receipts.
+   * Creates the  receipt received flag that indicates if a receipt was received
+   * for a specific disbursement schedule.
+   * This flag will be true if any receipt (Federal or Provincial) was received.
+   * @param finalAwards dynamic award values to have the flag set.
+   * @param index disbursement schedule index.
+   * @param flag indicates if awards were added to the final award.
+   */
+  private setReceiptReceivedFlag(
+    finalAwards: DynamicAwardValue,
+    index: number,
+    flag: boolean,
+  ): void {
+    const identifier = `${DISBURSEMENT_RECEIPT_PREFIX}${index}Received`;
+    finalAwards[identifier] = flag;
+  }
+
+  /**
+   * Creates the has awards flag for a specific disbursement schedule
+   * to indicate if awards were added.
+   * For a full-time assessment, this flag will be set to true if any awards
+   * were found in the disbursement receipts.
+   * For a part-time application it will be awarded based on the e-Cert values.
+   * @param finalAwards dynamic award values to have the flag set.
+   * @param index disbursement schedule index.
+   * @param flag indicates if awards were added to the final award.
+   */
+  private setHasAwardsFlag(
+    finalAwards: DynamicAwardValue,
+    index: number,
+    flag: boolean,
+  ): void {
+    const identifier = `${DISBURSEMENT_RECEIPT_PREFIX}${index}HasAwards`;
+    finalAwards[identifier] = flag;
+  }
+
+  /**
+   * Populate final awards values from disbursements receipts for full-time.
    * @param disbursementReceipts disbursement receipts.
    * @param disbursementSchedule disbursement schedules.
    * @param identifier identifier which is used to create dynamic data by appending award code to it.
@@ -354,9 +421,15 @@ export class AssessmentControllerService {
   private populateDisbursementReceiptAwardValues(
     disbursementReceipts: DisbursementReceipt[],
     disbursementSchedule: DisbursementSchedule,
-    identifier: string,
+    index: number,
   ): DynamicAwardValue {
+    const identifier = `${DISBURSEMENT_RECEIPT_PREFIX}${index}`;
     const finalAward: DynamicAwardValue = {};
+    // Check if a receipt was received for the disbursement schedule.
+    const hasReceipt = disbursementReceipts.some(
+      (receipt) => receipt.disbursementSchedule.id === disbursementSchedule.id,
+    );
+    this.setHasAwardsFlag(finalAward, index, hasReceipt);
     // Add all estimated awards to the list of receipts returned.
     // Ensure that every estimated disbursement will be part of the summary.
     disbursementSchedule.disbursementValues.forEach((award) => {
