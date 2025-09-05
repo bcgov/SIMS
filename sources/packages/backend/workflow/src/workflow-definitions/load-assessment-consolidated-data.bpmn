@@ -9,38 +9,37 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="load-assessment-consolidated-data" />
         <zeebe:taskHeaders>
-          <zeebe:header key="assessmentTriggerType" value="triggerType" />
-          <zeebe:header key="studentDataIsYourPartnerAbleToReport" value="data.isYourPartnerAbleToReport" />
-          <zeebe:header key="studentDataParentValidSinNumber" value="data.parentValidSinNumber" />
-          <zeebe:header key="studentDataNumberOfParents" value="data.numberOfParents" />
-          <zeebe:header key="studentDataDependantstatus" value="data.dependantstatus" />
-          <zeebe:header key="programYearStartDate" value="programYear.startDate" />
-          <zeebe:header key="studentDataRelationshipStatus" value="data.relationshipStatus" />
-          <zeebe:header key="studentDataTaxReturnIncome" value="data.taxReturnIncome" />
-          <zeebe:header key="studentDataSelectedProgram" value="data.selectedProgram" />
-          <zeebe:header key="studentDataSelectedOffering" value="data.selectedOffering" />
-          <zeebe:header key="studentDataSelectedLocation" value="data.selectedLocation" />
-          <zeebe:header key="partner1TotalIncome" value="supportingUsers.Partner1.supportingData.totalIncome" />
-          <zeebe:header key="applicationId" value="applicationId" />
-          <zeebe:header key="studentDataEstimatedSpouseIncome" value="data.estimatedSpouseIncome" />
-          <zeebe:header key="studentDataCurrentYearPartnerIncome" value="data.currentYearPartnerIncome ?? data.currentYearPartnerIncomeApplicationException.currentYearPartnerIncome" />
-          <zeebe:header key="studentDataStudentParentsTotalIncome" value="data.studentParentsTotalIncome" />
-          <zeebe:header key="studentDataWhenDidYouGraduateOrLeaveHighSchool" value="data.whenDidYouGraduateOrLeaveHighSchool" />
-          <zeebe:header key="studentDataLivingAtHome" value="data.livingAtHome" />
-          <zeebe:header key="studentDataSelfContainedSuite" value="data.selfContainedSuite" />
-          <zeebe:header key="studentDataLivingAtHomeRent" value="data.livingAtHomeRent" />
-          <zeebe:header key="studentDataIndigenousStatus" value="data.indigenousStatus" />
-          <zeebe:header key="studentDataHasDependents" value="data.hasDependents" />
-          <zeebe:header key="studentDataDaycareCosts12YearsOrOver" value="data.daycareCosts12YearsOrOver" />
-          <zeebe:header key="studentDataDaycareCosts11YearsOrUnder" value="data.daycareCosts11YearsOrUnder" />
-          <zeebe:header key="studentDataChildSupportAndOrSpousalSupport" value="data.childsupportCosts" />
-          <zeebe:header key="studentDataVoluntaryContributions" value="data.parentvoluntarycontributionsCosts" />
-          <zeebe:header key="studentDataScholarshipAmount" value="data.scholarshipsreceviedCosts" />
-          <zeebe:header key="studentDataYouthInCare" value="data.youthInCare" />
-          <zeebe:header key="studentDataApplicationPDPPDStatus" value="data.applicationPDPPDStatus" />
-          <zeebe:header key="studentDataCitizenship" value="data.citizenship" />
-          <zeebe:header key="studentDataBCResident" value="data.bcResident" />
-          <zeebe:header key="programYear" value="programYear.programYear" />
+          <zeebe:header key="assessmentTriggerType" value="$.triggerType" />
+          <zeebe:header key="studentDataIsYourPartnerAbleToReport" value="$.data.isYourPartnerAbleToReport" />
+          <zeebe:header key="studentDataParentValidSinNumber" value="$.data.parentValidSinNumber" />
+          <zeebe:header key="studentDataNumberOfParents" value="$.data.numberOfParents" />
+          <zeebe:header key="studentDataDependantstatus" value="$.data.dependantstatus" />
+          <zeebe:header key="programYearStartDate" value="$.programYear.startDate" />
+          <zeebe:header key="studentDataRelationshipStatus" value="$.data.relationshipStatus" />
+          <zeebe:header key="studentDataTaxReturnIncome" value="$.data.taxReturnIncome" />
+          <zeebe:header key="studentDataSelectedProgram" value="$.data.selectedProgram" />
+          <zeebe:header key="studentDataSelectedOffering" value="$.data.selectedOffering" />
+          <zeebe:header key="studentDataSelectedLocation" value="$.data.selectedLocation" />
+          <zeebe:header key="partner1TotalIncome" value="$.supportingUsers.Partner1.supportingData.totalIncome" />
+          <zeebe:header key="applicationId" value="$.applicationId" />
+          <zeebe:header key="studentDataEstimatedSpouseIncome" value="$.data.estimatedSpouseIncome" />
+          <zeebe:header key="studentDataCurrentYearPartnerIncome" value="$.data.currentYearPartnerIncome" />
+          <zeebe:header key="studentDataStudentParentsTotalIncome" value="$.data.studentParentsTotalIncome" />
+          <zeebe:header key="studentDataWhenDidYouGraduateOrLeaveHighSchool" value="$.data.whenDidYouGraduateOrLeaveHighSchool" />
+          <zeebe:header key="studentDataLivingathomeRent" value="$.data.livingathomeRent" />
+          <zeebe:header key="studentDataIndigenousStatus" value="$.data.indigenousStatus" />
+          <zeebe:header key="studentDataHasDependents" value="$.data.hasDependents" />
+          <zeebe:header key="studentDataLivingWithParents" value="$.data.livingWithParents" />
+          <zeebe:header key="studentDataDaycareCosts12YearsOrOver" value="$.data.daycareCosts12YearsOrOver" />
+          <zeebe:header key="studentDataDaycareCosts11YearsOrUnder" value="$.data.daycareCosts11YearsOrUnder" />
+          <zeebe:header key="studentDataChildSupportAndOrSpousalSupport" value="$.data.childsupportCosts" />
+          <zeebe:header key="studentDataVoluntaryContributions" value="$.data.parentvoluntarycontributionsCosts" />
+          <zeebe:header key="studentDataScholarshipAmount" value="$.data.scholarshipsreceviedCosts" />
+          <zeebe:header key="studentDataYouthInCare" value="$.data.youthInCare" />
+          <zeebe:header key="studentDataApplicationPDPPDStatus" value="$.data.applicationPDPPDStatus" />
+          <zeebe:header key="studentDataCitizenship" value="$.data.citizenship" />
+          <zeebe:header key="studentDataBCResident" value="$.data.bcResident" />
+          <zeebe:header key="programYear" value="$.programYear.programYear" />
           <zeebe:header key="programLocation" value="BC" />
           <zeebe:header key="institutionLocationProvince" value="location.institutionLocationProvince" />
           <zeebe:header key="institutionType" value="institution.institutionType" />
