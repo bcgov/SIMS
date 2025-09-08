@@ -432,11 +432,17 @@ export default defineComponent({
         props.assessmentAwardData.estimatedAward?.disbursement2COEStatus ===
         COEStatus.completed,
     );
-    const showFirstFinalAward = computed<boolean>(() =>
-      hasDisbursementAwards("first", props.assessmentAwardData.finalAward),
+    const showFirstFinalAward = computed<boolean>(
+      () =>
+        props.assessmentAwardData.estimatedAward.disbursement1Status ===
+          DisbursementScheduleStatus.Sent &&
+        hasDisbursementAwards("first", props.assessmentAwardData.finalAward),
     );
-    const showSecondFinalAward = computed<boolean>(() =>
-      hasDisbursementAwards("second", props.assessmentAwardData.finalAward),
+    const showSecondFinalAward = computed<boolean>(
+      () =>
+        props.assessmentAwardData.estimatedAward.disbursement2Status ===
+          DisbursementScheduleStatus.Sent &&
+        hasDisbursementAwards("second", props.assessmentAwardData.finalAward),
     );
     const getFinalAwardNotAvailableMessage = (
       coeStatus: COEStatus,
