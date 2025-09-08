@@ -109,6 +109,7 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     const result = {} as ProgramInfoRequestAPIOutDTO;
     result.institutionLocationName = application.location.name;
     result.applicationNumber = application.applicationNumber;
+    result.applicationSubmittedDate = application.submittedDate;
     result.studentFullName = getUserFullName(application.student.user);
     result.pirStatus = application.pirStatus;
     // Student application dynamic data.
