@@ -15,8 +15,12 @@ CREATE UNIQUE INDEX loc_id_prog_id_offer_name_study_dts_year_study_index ON sims
 )
 WHERE
   (
-    offering_status IN ('Approved', 'Creation pending', 'Change under review')
+    offering_status IN (
+      'Approved',
+      'Creation pending',
+      'Change under review'
+    )
   )
   AND offering_type IN ('Public', 'Private');
 
-COMMENT ON INDEX sims.loc_id_prog_id_offer_name_study_dts_year_study_index IS 'Ensures offering in "Approved", "Creation pending" or "Change under review" statuses does not have the same name, study start/end dates and year of study.Applied only to "Public" and "Private" offering types.'
+COMMENT ON INDEX sims.loc_id_prog_id_offer_name_study_dts_year_study_index IS 'Ensures offering in "Approved", "Creation pending" or "Change under review" statuses does not have the same name, study start/end dates and year of study. Applied only to "Public" and "Private" offering types.'
