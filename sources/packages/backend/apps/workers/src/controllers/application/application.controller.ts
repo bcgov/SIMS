@@ -22,7 +22,6 @@ import {
   ApplicationChangeRequestApprovalJobOutDTO,
   ApplicationExceptionsJobInDTO,
   ApplicationExceptionsJobOutDTO,
-  ApplicationUniqueExceptionsJobHeaderDTO,
   ApplicationUniqueExceptionsJobInDTO,
   ApplicationUniqueExceptionsJobOutDTO,
   ApplicationUpdateStatusJobHeaderDTO,
@@ -45,7 +44,7 @@ import {
 import { MaxJobsToActivate } from "../../types";
 import {
   APPLICATION_SUBMISSION_DEADLINE_WEEKS,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+  INVALID_OPERATION_IN_THE_CURRENT_STATE,
   Workers,
 } from "@sims/services/constants";
 import { createUnexpectedJobFail } from "../../utilities";
@@ -220,7 +219,7 @@ export class ApplicationController {
     job: Readonly<
       ZeebeJob<
         ApplicationUniqueExceptionsJobInDTO,
-        ApplicationUniqueExceptionsJobHeaderDTO,
+        ICustomHeaders,
         ApplicationUniqueExceptionsJobOutDTO
       >
     >,
@@ -249,21 +248,16 @@ export class ApplicationController {
       exceptions = this.applicationExceptionSearchService.search(
         application.data,
       );
-      // From the version of workflow when the program info request is expected to be completed
-      // before the application exceptions, the offering should be present and validated.
-      // This validation is conditionally done to support the backward compatibility as the older versions of the
-      // assessment gateway workflow(V2) instances can still invoke the worker.
-      // TODO: Remove the header 'programInfoProcessStatus' in workflow and worker and also remove this validation
-      // when there are no more pending workflow instances from a older deployed version.
-      if (job.customHeaders.programInfoProcessStatus === "completed") {
-        if (!application.currentAssessment.offering) {
-          const message = `Application ${application.id} is not associated with an offering.`;
-          jobLogger.error(message);
-          return job.error(INVALID_OPERATION_IN_THE_CURRENT_STATUS, message);
-        }
-        // Add funding after end date exception.
-        this.addStudyEndDateIsPastApplicationException(application, exceptions);
+      // Program info request is expected to be completed
+      // before the application exceptions, hence the offering should be present and validated.
+      if (!application.currentAssessment.offering) {
+        const message = `Application ${application.id} is not associated with an offering.`;
+        jobLogger.error(message);
+        return job.error(INVALID_OPERATION_IN_THE_CURRENT_STATE, message);
       }
+      // Add funding after end date exception.
+      this.addStudyEndDateIsPastApplicationException(application, exceptions);
+
       jobLogger.log(`Found ${exceptions.length} application exception(s).`);
       if (!exceptions.length) {
         // No exceptions found, return the approved status.

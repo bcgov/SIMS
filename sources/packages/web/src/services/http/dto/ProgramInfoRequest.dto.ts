@@ -36,6 +36,7 @@ export interface ProgramInfoRequestAPIOutDTO {
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
   isReadOnlyUser?: boolean;
+  applicationSubmittedDate: Date;
 }
 
 export interface PIRDeniedReasonAPIOutDTO {

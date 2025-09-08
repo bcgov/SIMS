@@ -850,7 +850,7 @@
                           "attr": ""
                         }
                       ],
-                      "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The dates you have entered are no longer eligible for funding. To receive funding for this study period, you will need to seek approval from StudentAid BC. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
+                      "content": "<span class=\"font-bold ml-2\">Study period may no longer be eligible for funding</span>\r\n<br>\r\n<span>As it is now past the deadline for submitting your application, it will need to be reviewed and approved by StudentAid BC to proceed. You can still proceed with submitting your application, but please note that a <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a> may be required. If your institution enters study period dates that differ from what you have entered here, you may be eligible for funding. Please follow up with your institution to confirm you have entered the correct dates before submitting an appeal.</span>",
                       "refreshOnChange": false,
                       "customClass": "banner-warning",
                       "key": "customProgramAndOfferingStudyenddatewarning",
@@ -1113,7 +1113,7 @@
                       "attr": ""
                     }
                   ],
-                  "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The dates you have entered are no longer eligible for funding. To receive funding for this study period, you will need to seek approval from StudentAid BC. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
+                  "content": "<span class=\"font-bold ml-2\">Study period may no longer be eligible for funding</span>\r\n<br>\r\n<span>As it is now past the deadline for submitting your application, it will need to be reviewed and approved by StudentAid BC to proceed. You can still proceed with submitting your application, but please note that a <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a> may be required.</span>",
                   "refreshOnChange": false,
                   "customClass": "banner-warning",
                   "key": "programStudyperiodwarning",
@@ -1234,24 +1234,24 @@
           "lockKey": true
         },
         {
+          "label": "Study end date before six weeks from today",
+          "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on calculating selectedStudyEndDateBeforeSixWeeksFromToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\n// If program/study period not listed is selected, validate the study end date to be after given days before six weeks from today.\r\nvalue = !!data.studyendDate && utils.custom.isLessThanGivenWeeks(data.studyendDate, 6);",
+          "calculateServer": true,
+          "key": "studyEndDateBeforeSixWeeksFromToday",
+          "type": "hidden",
           "input": true,
           "tableView": false,
-          "key": "studyEndDateBeforeSixWeeksFromToday",
-          "label": "Study end date before six weeks from today",
-          "type": "hidden",
-          "lockKey": true,
-          "calculateServer": true,
-          "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on calculating selectedStudyEndDateBeforeSixWeeksFromToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\n// If program/study period not listed is selected, validate the study end date to be after given days before six weeks from today.\r\nvalue = !!data.studyendDate && moment(data.studyendDate).isBefore(moment().add(6, 'week'));"
+          "lockKey": true
         },
         {
+          "label": "Selected study end date before six weeks from today",
+          "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on calculating studyEndDateBeforeSixWeeksFromToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\n// If a study period is selected, validate its study end date to be before six weeks from today.\r\nvalue =\r\n  !!data.selectedOfferingEndDate && utils.custom.isLessThanGivenWeeks(data.selectedOfferingEndDate, 6);",
+          "calculateServer": true,
+          "key": "selectedStudyEndDateBeforeSixWeeksFromToday",
+          "type": "hidden",
           "input": true,
           "tableView": false,
-          "key": "selectedStudyEndDateBeforeSixWeeksFromToday",
-          "label": "Selected study end date before six weeks from today",
-          "type": "hidden",
-          "lockKey": true,
-          "calculateServer": true,
-          "calculateValue": "/**\r\n * Validates if the date provided is before six weeks from today.\r\n *\r\n * The same validation exists on calculating studyEndDateBeforeSixWeeksFromToday,\r\n * other student application forms, program information request form\r\n * and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n *\r\n */\r\n\r\n// If a study period is selected, validate its study end date to be before six weeks from today.\r\nvalue =\r\n  !!data.selectedOfferingEndDate && moment(data.selectedOfferingEndDate).isBefore(moment().add(6, 'week'));"
+          "lockKey": true
         },
         {
           "input": true,

@@ -35,6 +35,7 @@ export class ProgramInfoRequestAPIOutDTO {
   courseDetails?: CourseDetailsAPIOutDTO[];
   pirDenyReasonId?: number;
   otherReasonDesc?: string;
+  applicationSubmittedDate: Date;
 }
 
 export class CourseDetailsAPIOutDTO {

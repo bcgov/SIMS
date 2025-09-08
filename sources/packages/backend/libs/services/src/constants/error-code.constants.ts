@@ -36,6 +36,8 @@ export const UNEXPECTED_ERROR_DOWNLOADING_FILE =
 export const ECE_DISBURSEMENT_DATA_NOT_VALID =
   "ECE_DISBURSEMENT_DATA_NOT_VALID";
 export const FILE_PARSING_ERROR = "FILE_PARSING_ERROR";
+export const INVALID_OPERATION_IN_THE_CURRENT_STATE =
+  "INVALID_OPERATION_IN_THE_CURRENT_STATE";
 
 /**
  * Used to cancel a database transaction started using the method as below.

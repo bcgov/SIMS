@@ -419,9 +419,6 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:serviceTask id="verify-application-exceptions-task" name="Verify Application Exceptions">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="=if(is defined(applicationExceptionsStrategy)) then&#10;  applicationExceptionsStrategy&#10;else&#10;  &#34;verify-application-exceptions&#34;" />
-        <zeebe:taskHeaders>
-          <zeebe:header key="programInfoProcessStatus" value="completed" />
-        </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>verify-application-exceptions-retry-timer-flow</bpmn:incoming>
       <bpmn:incoming>Flow_1daizvx</bpmn:incoming>

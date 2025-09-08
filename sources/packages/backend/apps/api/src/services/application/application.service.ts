@@ -821,6 +821,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.data",
         "application.pirDeniedOtherDesc",
         "application.offeringIntensity",
+        "application.submittedDate",
         "location.name",
         "student.id",
         "student.birthDate",
