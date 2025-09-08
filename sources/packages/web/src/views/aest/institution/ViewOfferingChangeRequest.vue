@@ -65,6 +65,7 @@ import {
   ProgramOfferingHeader,
   OfferingRelationType,
   Role,
+  ApiProcessError,
 } from "@/types";
 import {
   EducationProgramOfferingAPIOutDTO,
@@ -143,7 +144,11 @@ export default defineComponent({
               ? "Offering change request has been approved and reassessments have been created for impacted applications."
               : "Offering change request has been declined.";
           snackBar.success(snackbarMessage);
-        } catch {
+        } catch (error: unknown) {
+          if (error instanceof ApiProcessError) {
+            snackBar.error(error.message);
+            return;
+          }
           snackBar.error(
             "Unexpected error while submitting offering change request.",
           );
