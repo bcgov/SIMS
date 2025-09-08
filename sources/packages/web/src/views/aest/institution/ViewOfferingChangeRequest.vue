@@ -146,7 +146,7 @@ export default defineComponent({
           snackBar.success(snackbarMessage);
         } catch (error: unknown) {
           if (error instanceof ApiProcessError) {
-            snackBar.warn(error.message);
+            snackBar.error(error.message);
             return;
           }
           snackBar.error(
