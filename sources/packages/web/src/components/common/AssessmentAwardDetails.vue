@@ -448,9 +448,6 @@ export default defineComponent({
       coeStatus: COEStatus,
       disbursementStatus: DisbursementScheduleStatus,
     ): string | undefined => {
-      if (disbursementStatus === DisbursementScheduleStatus.Rejected) {
-        return undefined;
-      }
       if (coeStatus === COEStatus.declined) {
         return "The final award is no longer applicable due to a change. Any scheduled disbursements will be cancelled.";
       }
