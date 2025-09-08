@@ -1,7 +1,7 @@
 import {
   APPLICATION_NOT_FOUND,
   APPLICATION_SUBMISSION_DEADLINE_WEEKS,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+  INVALID_OPERATION_IN_THE_CURRENT_STATE,
 } from "@sims/services/constants";
 import {
   ApplicationData,
@@ -552,7 +552,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]: `Application ${savedApplication.id} is not associated with an offering.`,
       [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]:
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+        INVALID_OPERATION_IN_THE_CURRENT_STATE,
     });
   });
 

@@ -44,7 +44,7 @@ import {
 import { MaxJobsToActivate } from "../../types";
 import {
   APPLICATION_SUBMISSION_DEADLINE_WEEKS,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+  INVALID_OPERATION_IN_THE_CURRENT_STATE,
   Workers,
 } from "@sims/services/constants";
 import { createUnexpectedJobFail } from "../../utilities";
@@ -253,7 +253,7 @@ export class ApplicationController {
       if (!application.currentAssessment.offering) {
         const message = `Application ${application.id} is not associated with an offering.`;
         jobLogger.error(message);
-        return job.error(INVALID_OPERATION_IN_THE_CURRENT_STATUS, message);
+        return job.error(INVALID_OPERATION_IN_THE_CURRENT_STATE, message);
       }
       // Add funding after end date exception.
       this.addStudyEndDateIsPastApplicationException(application, exceptions);
