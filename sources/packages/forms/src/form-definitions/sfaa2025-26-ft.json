@@ -850,7 +850,7 @@
                           "attr": ""
                         }
                       ],
-                      "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The dates you have entered are no longer eligible for funding. To receive funding for this study period, you will need to seek approval from StudentAid BC. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
+                      "content": "<span class=\"font-bold ml-2\">Study period may no longer be eligible for funding</span>\r\n<br>\r\n<span>As it is now past the deadline for submitting your application, it will need to be reviewed and approved by StudentAid BC to proceed. You can still proceed with submitting your application, but please note that a <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a> may be required. If your institution enters study period dates that differ from what you have entered here, you may be eligible for funding. Please follow up with your institution to confirm you have entered the correct dates before submitting an appeal.</span>",
                       "refreshOnChange": false,
                       "customClass": "banner-warning",
                       "key": "customProgramAndOfferingStudyenddatewarning",
@@ -1113,7 +1113,7 @@
                       "attr": ""
                     }
                   ],
-                  "content": "<span class=\"font-bold ml-2\">Study period not eligible for funding</span>\n<br>\n<span>The dates you have entered are no longer eligible for funding. To receive funding for this study period, you will need to seek approval from StudentAid BC. Once you have submitted your application, please use the following link for information on the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a>.</span>",
+                  "content": "<span class=\"font-bold ml-2\">Study period may no longer be eligible for funding</span>\r\n<br>\r\n<span>As it is now past the deadline for submitting your application, it will need to be reviewed and approved by StudentAid BC to proceed. You can still proceed with submitting your application, but please note that a <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appeal_fundingafterenddate.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">funding after end date appeal</a> may be required.</span>",
                   "refreshOnChange": false,
                   "customClass": "banner-warning",
                   "key": "programStudyperiodwarning",
