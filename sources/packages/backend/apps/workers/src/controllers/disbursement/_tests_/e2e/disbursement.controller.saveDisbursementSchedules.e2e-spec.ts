@@ -515,14 +515,14 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     expect(secondDisbursement.hasEstimatedAwards).toBe(true);
   });
 
-  it.only(
-    "Should calculate the disbursed amount subtracted for all the awards which were paid to student in any of the previous assessments" +
+  it(
+    "Should calculate the disbursed amount subtracted based on the awards which were paid to student in any of the previous assessments" +
       " for the same application when a student application generates two disbursements and the first disbursement awards were paid in previous assessment(s)" +
-      " and the application is currently re-assessed and the application is part-time.",
+      " but the second disbursement awards were not paid and the application is currently re-assessed and the application is part-time.",
     async () => {
       // Arrange
 
-      // Save the application with the original assessment and 2 disbursements where first disbursement was already sent
+      // Save the application with the original assessment and two disbursements where first disbursement was already sent
       // and second disbursement was not sent.
       const savedApplication = await saveFakeApplicationDisbursements(
         db.dataSource,
@@ -649,7 +649,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
         MockedZeebeJobResult.Complete,
       );
 
-      // Assert disbursement already paid subtracted.
+      // Assert that disbursement awards already paid is subtracted and the awards not paid are not subtracted.
       const createdDisbursements = await db.disbursementSchedule.find({
         select: {
           id: true,
@@ -666,8 +666,57 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
         where: {
           studentAssessment: { id: reassessment.id },
         },
+        order: { id: "ASC", disbursementValues: { id: "ASC" } },
       });
-      console.log(createdDisbursements);
+      expect(createdDisbursements).toEqual([
+        {
+          id: expect.any(Number),
+          disbursementValues: [
+            {
+              id: expect.any(Number),
+              valueType: DisbursementValueType.CanadaLoan,
+              valueAmount: 1201,
+              disbursedAmountSubtracted: 1201,
+            },
+            {
+              id: expect.any(Number),
+              valueType: DisbursementValueType.CanadaGrant,
+              valueAmount: 801,
+              disbursedAmountSubtracted: 801,
+            },
+            {
+              id: expect.any(Number),
+              valueType: DisbursementValueType.BCGrant,
+              valueAmount: 400,
+              disbursedAmountSubtracted: 400,
+            },
+          ],
+        },
+        // Second disbursement was never paid and hence the disbursed amount subtracted should be zero.
+        {
+          id: expect.any(Number),
+          disbursementValues: [
+            {
+              id: expect.any(Number),
+              valueType: DisbursementValueType.CanadaLoan,
+              valueAmount: 1200,
+              disbursedAmountSubtracted: 0,
+            },
+            {
+              id: expect.any(Number),
+              valueType: DisbursementValueType.CanadaGrant,
+              valueAmount: 800,
+              disbursedAmountSubtracted: 0,
+            },
+            {
+              id: expect.any(Number),
+              valueType: DisbursementValueType.BCGrant,
+              valueAmount: 400,
+              disbursedAmountSubtracted: 0,
+            },
+          ],
+        },
+      ]);
     },
   );
 
