@@ -11,8 +11,6 @@
         <zeebe:taskHeaders>
           <zeebe:header key="assessmentTriggerType" value="triggerType" />
           <zeebe:header key="studentDataIsYourPartnerAbleToReport" value="data.isYourPartnerAbleToReport" />
-          <zeebe:header key="studentDataParentValidSinNumber" value="data.parentValidSinNumber" />
-          <zeebe:header key="studentDataNumberOfParents" value="data.numberOfParents" />
           <zeebe:header key="studentDataDependantstatus" value="data.dependantstatus" />
           <zeebe:header key="programYearStartDate" value="programYear.startDate" />
           <zeebe:header key="studentDataRelationshipStatus" value="data.relationshipStatus" />
