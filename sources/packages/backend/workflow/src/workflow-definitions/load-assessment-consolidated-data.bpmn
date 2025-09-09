@@ -22,7 +22,6 @@
           <zeebe:header key="applicationId" value="applicationId" />
           <zeebe:header key="studentDataEstimatedSpouseIncome" value="data.estimatedSpouseIncome" />
           <zeebe:header key="studentDataCurrentYearPartnerIncome" value="data.currentYearPartnerIncome ?? data.currentYearPartnerIncomeApplicationException.currentYearPartnerIncome" />
-          <zeebe:header key="studentDataStudentParentsTotalIncome" value="data.studentParentsTotalIncome" />
           <zeebe:header key="studentDataWhenDidYouGraduateOrLeaveHighSchool" value="data.whenDidYouGraduateOrLeaveHighSchool" />
           <zeebe:header key="studentDataLivingAtHome" value="data.livingAtHome" />
           <zeebe:header key="studentDataSelfContainedSuite" value="data.selfContainedSuite" />
@@ -100,12 +99,6 @@
           <zeebe:header key="studentDataPartnerStudyWeeks" value="data.partnerStudyWeeks" />
           <zeebe:header key="studentDataPartnerEmploymentInsurance" value="data.partnerEmploymentInsurance" />
           <zeebe:header key="studentDataPartnerFedralProvincialPDReceiptCost" value="data.partnerFedralProvincialPDReceiptCost" />
-          <zeebe:header key="studentDataStudentParentNetAssests" value="data.studentParentsNetAssests" />
-          <zeebe:header key="studentDataStudentParentNetContribution" value="data.studentParentsNetContribution" />
-          <zeebe:header key="studentDataStudentParentsTotalIncomeTaxLine43500" value="data.studentParentsTotalIncomeTaxLine43500" />
-          <zeebe:header key="studentDataStudentParentsCppLine30800" value="data.studentParentsCppLine30800" />
-          <zeebe:header key="studentDataStudentParentsCppLine31000" value="data.studentParentsCppLine31000" />
-          <zeebe:header key="studentDataStudentParentsEiLine31200" value="data.studentParentsEiLine31200" />
           <zeebe:header key="studentDataPartnerTotalIncomeAssistance" value="data.partnertotalincomeAssistance" />
           <zeebe:header key="studentDataPartnerTotalStudentLoan" value="data.partnerStudentLoanCosts" />
           <zeebe:header key="studentDataPartnerChildSupportCosts" value="data.partnerchildsupportCosts" />
