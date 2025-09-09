@@ -178,6 +178,28 @@
           "collapsed": true
         },
         {
+          "title": "Code SSRN - Poor scholastic standing",
+          "customClass": "collapsible",
+          "collapsible": true,
+          "key": "codeSsrnPoorScholasticStanding2",
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "html": "<p>A restriction has been placed on your account due to repeated withdrawals or unsuccessful completion of studies. Because you appealed for further funding or had your eligibility for funding reinstated following two withdrawals or 68 weeks of unsuccessful study, and you subsequently withdrew or were unsuccessful completing studies, you are no longer eligible for StudentAid BC funding, nor in-study payment-free status. If you require additional information, please contact the financial assistance office of your post-secondary institution, or StudentAid BC at 1-800-561-1818 (within North America), 1-778-309-4621 (outside North America), or by email at StudentAidBC@gov.bc.ca.</p>\n",
+              "label": "Content",
+              "refreshOnChange": false,
+              "key": "content58",
+              "type": "content",
+              "input": false,
+              "tableView": false
+            }
+          ],
+          "collapsed": true
+        },
+        {
           "title": "Code STRS - Transfer pending",
           "customClass": "collapsible",
           "collapsible": true,
@@ -299,6 +321,28 @@
           "components": [
             {
               "html": "<p>Our records indicate you are delinquent on your British Columbia student loan payments which disqualifies you for further funding through StudentAid BC. For information regarding your delinquency status, please contact your lender.<br />\nTo be considered for further funding through StudentAid BC, please contact StudentAid BC at 1-800-561-1818 (within North America) 1-778-309-4621 (outside North America).</p>\n",
+              "label": "Content",
+              "refreshOnChange": false,
+              "key": "content55",
+              "type": "content",
+              "input": false,
+              "tableView": false
+            }
+          ],
+          "collapsed": true
+        },
+        {
+          "title": "Code Z1 - Grant Overaward",
+          "customClass": "collapsible",
+          "collapsible": true,
+          "key": "codeZ1Overaward",
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "html": "<p>Due to an outstanding grant overaward from a previous student assistance application, you may not eligible for StudentAid BC funding at this time. This grant overaward must be repaid in full before further provincial funding can be considered. To arrange payment of your grant overaward, please contact Revenue Services of British Columbia at 1-866-361-5050 or (250) 387-6093. Once this overaward has been repaid in full, please contact StudentAidBC.</p>\n",
               "label": "Content",
               "refreshOnChange": false,
               "key": "content55",
@@ -1311,28 +1355,6 @@
               "label": "Content",
               "refreshOnChange": false,
               "key": "content43",
-              "type": "content",
-              "input": false,
-              "tableView": false
-            }
-          ],
-          "collapsed": true
-        },
-        {
-          "title": "Code Z1 - Overaward",
-          "customClass": "collapsible",
-          "collapsible": true,
-          "key": "codeZ1Overaward",
-          "type": "panel",
-          "label": "Panel",
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "html": "<p>A restriction has been placed on your file by officials of the Canada Student Financial Assistance Program which disqualifies you from receiving further funding through StudentAid BC. For information regarding this restriction and possible resolution you will need to contact the Canada Student Financial Assistance Program at 1-888-815-4514 and ask to be transferred to the Case Review Unit.</p>\n",
-              "label": "Content",
-              "refreshOnChange": false,
-              "key": "content44",
               "type": "content",
               "input": false,
               "tableView": false
