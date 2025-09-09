@@ -107,7 +107,6 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataSelfContainedSuite: YesNoOptions;
   studentDataYouthInCare: YesNoOptions | "preferNotToAnswer";
   studentTaxYear: number;
-  programLocation: Provinces;
   institutionLocationProvince: Provinces;
   institutionType: InstitutionTypes;
   programLength: ProgramLengthOptions;
