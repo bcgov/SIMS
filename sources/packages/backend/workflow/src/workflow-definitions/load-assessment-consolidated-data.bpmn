@@ -60,7 +60,7 @@
           <zeebe:header key="parent1Contributions" value="supportingUsers.Parent1.supportingData.parentalContributions" />
           <zeebe:header key="parent1CppEmployment" value="supportingUsers.Parent1.supportingData.cppLine30800" />
           <zeebe:header key="parent1CppSelfemploymentOther" value="supportingUsers.Parent1.supportingData.cppLine31000" />
-          <zeebe:header key="parent1DependentTable" value="supportingUsers.Parent1.supportingData.parentDependentTable" />
+          <zeebe:header key="parent1DependentTable" value="supportingUsers.Parent1.supportingData.parentDependentTable[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
           <zeebe:header key="parent1Ei" value="supportingUsers.Parent1.supportingData.eiLine31200" />
           <zeebe:header key="parent1NetAssests" value="supportingUsers.Parent1.supportingData.foreignAssets" />
           <zeebe:header key="parent1Tax" value="supportingUsers.Parent1.supportingData.totalIncomeTaxLine43500" />
@@ -69,7 +69,7 @@
           <zeebe:header key="parent2Contributions" value="supportingUsers.Parent2.supportingData.parentalContributions" />
           <zeebe:header key="parent2CppEmployment" value="supportingUsers.Parent2.supportingData.cppLine30800" />
           <zeebe:header key="parent2CppSelfemploymentOther" value="supportingUsers.Parent2.supportingData.cppLine31000" />
-          <zeebe:header key="parent2DependentTable" value="supportingUsers.Parent2.supportingData.parentDependentTable" />
+          <zeebe:header key="parent2DependentTable" value="supportingUsers.Parent2.supportingData.parentDependentTable[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
           <zeebe:header key="parent2Ei" value="supportingUsers.Parent2.supportingData.eiLine31200" />
           <zeebe:header key="parent2NetAssests" value="supportingUsers.Parent2.supportingData.foreignAssets" />
           <zeebe:header key="parent2Tax" value="supportingUsers.Parent2.supportingData.totalIncomeTaxLine43500" />
