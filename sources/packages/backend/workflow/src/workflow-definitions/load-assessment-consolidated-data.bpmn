@@ -100,7 +100,6 @@
           <zeebe:header key="studentDataPartnerStudyWeeks" value="data.partnerStudyWeeks" />
           <zeebe:header key="studentDataPartnerEmploymentInsurance" value="data.partnerEmploymentInsurance" />
           <zeebe:header key="studentDataPartnerFedralProvincialPDReceiptCost" value="data.partnerFedralProvincialPDReceiptCost" />
-          <zeebe:header key="studentDataParentDependentTable" value="data.parentDependentTable" />
           <zeebe:header key="studentDataStudentParentNetAssests" value="data.studentParentsNetAssests" />
           <zeebe:header key="studentDataStudentParentNetContribution" value="data.studentParentsNetContribution" />
           <zeebe:header key="studentDataStudentParentsTotalIncomeTaxLine43500" value="data.studentParentsTotalIncomeTaxLine43500" />

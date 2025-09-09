@@ -135,7 +135,6 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     studentDataPartnerFedralProvincialPDReceiptCost: null,
     studentDataPartnerChildSupportCosts: null,
     studentDataPartnerBCEAIncomeAssistanceAmount: null,
-    studentDataParentDependentTable: null,
     studentDataStudentParentNetAssests: null,
     studentDataPartnerCaringForDependant: null,
     studentDataStudentParentNetContribution: null,
