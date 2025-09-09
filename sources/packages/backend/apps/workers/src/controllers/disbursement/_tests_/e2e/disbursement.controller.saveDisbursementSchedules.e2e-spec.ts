@@ -515,6 +515,162 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     expect(secondDisbursement.hasEstimatedAwards).toBe(true);
   });
 
+  it.only(
+    "Should calculate the disbursed amount subtracted for all the awards which were paid to student in any of the previous assessments" +
+      " for the same application when a student application generates two disbursements and the first disbursement awards were paid in previous assessment(s)" +
+      " and the application is currently re-assessed and the application is part-time.",
+    async () => {
+      // Arrange
+
+      // Save the application with the original assessment and 2 disbursements where first disbursement was already sent
+      // and second disbursement was not sent.
+      const savedApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              1201,
+              { effectiveAmount: 1201 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGP",
+              801,
+              { effectiveAmount: 801 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              400,
+              { effectiveAmount: 400 },
+            ),
+          ],
+          secondDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              1200,
+              { effectiveAmount: 1200 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGP",
+              800,
+              { effectiveAmount: 800 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              400,
+              { effectiveAmount: 400 },
+            ),
+          ],
+        },
+        {
+          createSecondDisbursement: true,
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          secondDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+      // Create the reassessment.
+      savedApplication.currentAssessment = createFakeStudentAssessment(
+        {
+          auditUser: savedApplication.student.user,
+          application: savedApplication,
+          offering: savedApplication.currentAssessment.offering,
+        },
+        {
+          initialValue: {
+            triggerType: AssessmentTriggerType.ManualReassessment,
+          },
+        },
+      );
+      await db.application.save(savedApplication);
+      const reassessment = savedApplication.currentAssessment;
+      // Schedules to be saved to the reassessment.
+      const saveDisbursementSchedulesPayload =
+        createFakeSaveDisbursementSchedulesPayload({
+          assessmentId: reassessment.id,
+          createSecondDisbursement: true,
+          firstDisbursementAwards: [
+            {
+              valueCode: "CSLP",
+              valueType: DisbursementValueType.CanadaLoan,
+              valueAmount: 1201,
+            },
+            {
+              valueCode: "CSGP",
+              valueType: DisbursementValueType.CanadaGrant,
+              valueAmount: 801,
+            },
+            {
+              valueCode: "BCAG",
+              valueType: DisbursementValueType.BCGrant,
+              valueAmount: 400,
+            },
+          ],
+          secondDisbursementAwards: [
+            {
+              valueCode: "CSLP",
+              valueType: DisbursementValueType.CanadaLoan,
+              valueAmount: 1200,
+            },
+            {
+              valueCode: "CSGP",
+              valueType: DisbursementValueType.CanadaGrant,
+              valueAmount: 800,
+            },
+            {
+              valueCode: "BCAG",
+              valueType: DisbursementValueType.BCGrant,
+              valueAmount: 400,
+            },
+          ],
+        });
+
+      // Act
+      const saveResult = await disbursementController.saveDisbursementSchedules(
+        saveDisbursementSchedulesPayload,
+      );
+
+      // Asserts
+      expect(saveResult).toHaveProperty(
+        FAKE_WORKER_JOB_RESULT_PROPERTY,
+        MockedZeebeJobResult.Complete,
+      );
+
+      // Assert disbursement already paid subtracted.
+      const createdDisbursements = await db.disbursementSchedule.find({
+        select: {
+          id: true,
+          disbursementValues: {
+            id: true,
+            valueType: true,
+            valueAmount: true,
+            disbursedAmountSubtracted: true,
+          },
+        },
+        relations: {
+          disbursementValues: true,
+        },
+        where: {
+          studentAssessment: { id: reassessment.id },
+        },
+      });
+      console.log(createdDisbursements);
+    },
+  );
+
   function assertAwardDeduction(
     createdDisbursement: DisbursementSchedule,
     valueType: DisbursementValueType,
