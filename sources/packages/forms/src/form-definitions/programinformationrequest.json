@@ -555,7 +555,7 @@
     {
       "label": "Study end date before six weeks from application submission",
       "persistent": "client-only",
-      "calculateValue": "/**\r\n * Validates if the date provided is before today.\r\n *\r\n * The same validation exists on all the student application\r\n * forms and also on the server side.\r\n *\r\n * When there is an update to this logic make sure to update in all the above.\r\n */\r\n\r\nfunction isGivenDateBeforeToday(givenDate) {\r\n  return moment\r\n    .utc(givenDate)\r\n    .isBefore(moment.utc(new Date()).format(\"YYYY-MM-DD\"), \"day\");\r\n}\r\n\r\nvalue =\r\n  !!data.selectedOfferingEndDate &&\r\n  !!data.applicationSubmittedDate &&\r\n  utils.custom.isLessThanGivenWeeks(data.selectedOfferingEndDate, 6, {referenceDate: data.applicationSubmittedDate});\r\n",
+      "calculateValue": "/**\r\n * Checks if the study end date of the offering selected to complete PIR\r\n * is less than six weeks from application submission date.\r\n * \r\n */\r\n\r\nvalue =\r\n  !!data.selectedOfferingEndDate &&\r\n  !!data.applicationSubmittedDate &&\r\n  utils.custom.isLessThanGivenWeeks(data.selectedOfferingEndDate, 6, {referenceDate: data.applicationSubmittedDate});\r\n",
       "key": "studyEndDateBeforeSixWeeksFromApplicationSubmission",
       "type": "hidden",
       "input": true,
