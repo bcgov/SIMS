@@ -6,6 +6,16 @@ import { AppConfigService } from "@/services/AppConfigService";
 const UTILS_COMMON_OBJECT_NAME = "custom";
 
 /**
+ * Hidden components and containers are not visible
+ * but they have their _visible property as true.
+ * Containers are visible if at least one of their children is visible.
+ */
+const NON_VISIBLE_COMPONENT_TYPES = [
+  FromIOComponentTypes.Hidden,
+  FromIOComponentTypes.Container,
+];
+
+/**
  * Properties that are not required to be saved.
  */
 const NON_REQUIRED_FORM_PROPERTIES = [
@@ -338,8 +348,7 @@ export function useFormioUtils() {
         component,
         (component) =>
           component._visible === true &&
-          // Hidden components are not visible but they have their _visible property as true.
-          component.type !== FromIOComponentTypes.Hidden,
+          !NON_VISIBLE_COMPONENT_TYPES.includes(component.type),
         { stopOnFirstMatch: true },
       );
       if (!visibleChildren.length) {
