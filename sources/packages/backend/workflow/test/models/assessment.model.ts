@@ -100,7 +100,6 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   programYearStartDate: string;
   studentDataRelationshipStatus: RelationshipStatusType;
   studentDataTaxReturnIncome: number;
-  studentDataWhenDidYouGraduateOrLeaveHighSchool: string;
   studentDataIndigenousStatus: YesNoOptions;
   studentDataHasDependents: YesNoOptions;
   studentDataLivingAtHome: YesNoOptions;

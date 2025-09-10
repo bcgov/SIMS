@@ -27,8 +27,6 @@
           <zeebe:header key="programCredentialType" value="program.programCredentialType" />
           <zeebe:header key="offeringIntensity" value="offering.offeringIntensity" />
           <zeebe:header key="offeringDelivered" value="offering.offeringDelivered" />
-          <zeebe:header key="offeringBreakEndDate" value="offering.breakEndDate" />
-          <zeebe:header key="offeringBreakStartDate" value="offering.breakStartDate" />
           <zeebe:header key="offeringStudyEndDate" value="offering.studyEndDate" />
           <zeebe:header key="offeringStudyStartDate" value="offering.studyStartDate" />
           <zeebe:header key="offeringProgramRelatedCosts" value="offering.programRelatedCosts" />
@@ -41,7 +39,6 @@
           <zeebe:header key="studentDataRelationshipStatus" value="data.relationshipStatus" />
           <zeebe:header key="studentDataTaxReturnIncome" value="data.taxReturnIncome" />
           <zeebe:header key="studentDataCurrentYearPartnerIncome" value="data.currentYearPartnerIncome ?? data.currentYearPartnerIncomeApplicationException.currentYearPartnerIncome" />
-          <zeebe:header key="studentDataWhenDidYouGraduateOrLeaveHighSchool" value="data.whenDidYouGraduateOrLeaveHighSchool" />
           <zeebe:header key="studentDataLivingAtHome" value="data.livingAtHome" />
           <zeebe:header key="studentDataSelfContainedSuite" value="data.selfContainedSuite" />
           <zeebe:header key="studentDataLivingAtHomeRent" value="data.livingAtHomeRent" />
