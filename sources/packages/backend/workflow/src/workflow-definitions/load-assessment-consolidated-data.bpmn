@@ -62,8 +62,6 @@
           <zeebe:header key="studentDataNonGovernmentFundingCosts" value="data.nonGovernmentFundingCosts" />
           <zeebe:header key="studentDataParentVoluntaryContributionsCosts" value="data.parentvoluntarycontributionsCosts" />
           <zeebe:header key="studentDataPartTimeAwardTypesToBeConsidered" value="data.partTimeAwardTypesToBeConsidered" />
-          <zeebe:header key="parent1SupportingUserId" value="supportingUsers.Parent1.id" />
-          <zeebe:header key="parent2SupportingUserId" value="supportingUsers.Parent2.id" />
           <zeebe:header key="parent1TotalIncome" value="supportingUsers.Parent1.supportingData.totalIncome" />
           <zeebe:header key="parent2TotalIncome" value="supportingUsers.Parent2.supportingData.totalIncome" />
           <zeebe:header key="parent1CRAReportedIncome" value="supportingUsers.Parent1.craReportedIncome" />
