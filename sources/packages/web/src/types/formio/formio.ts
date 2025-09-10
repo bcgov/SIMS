@@ -97,6 +97,7 @@ export enum FromIOComponentTypes {
   EditGrid = "editgrid",
   Radio = "radio",
   Calendar = "calendar",
+  Container = "container",
 }
 
 export interface FormIOComponentInternal {
