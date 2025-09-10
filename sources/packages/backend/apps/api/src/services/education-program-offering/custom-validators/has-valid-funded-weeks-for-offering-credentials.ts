@@ -6,7 +6,6 @@ import {
   ValidationArguments,
 } from "class-validator";
 import {
-  AviationCredentialTypeOptions,
   OfferingValidationModel,
   OfferingYesNoOptions,
   StudyBreak,
@@ -14,23 +13,12 @@ import {
 import { OfferingCalculationValidationBaseConstraint } from "./offering-calculation-validation-base-constraint";
 
 /**
- * Maximum allowed funded weeks for each aviation credential type
- * that should be enforced when calculating the funded weeks.
- */
-const MAX_FUNDED_WEEKS = {
-  [AviationCredentialTypeOptions.CommercialPilotTraining]: 17,
-  [AviationCredentialTypeOptions.InstructorsRating]: 13,
-  [AviationCredentialTypeOptions.Endorsements]: 13,
-};
-
-/**
- * For an offering that contains study breaks and is an aviation offering,
- * execute the calculation of the funded study period to validate if it matches
- * the maximum allowed study period amount of funded weeks for the selected
- * aviation offering credential.
+ * For an offering that contains study breaks, execute the calculation
+ * of the funded study period to validate if it matches the maximum allowed
+ * study period amount of funded weeks for the selected offering credential.
  */
 @ValidatorConstraint()
-class HasValidFundedWeeksForAviationOfferingCredentialsConstraint
+class HasValidFundedWeeksForOfferingCredentialsConstraint
   extends OfferingCalculationValidationBaseConstraint
   implements ValidatorConstraintInterface
 {
@@ -43,8 +31,10 @@ class HasValidFundedWeeksForAviationOfferingCredentialsConstraint
       studyBreaks,
       args,
     );
-    const maxAllowedFundedWeeks =
-      MAX_FUNDED_WEEKS[offeringModel.aviationCredentialType];
+    const [getFundedWeeks] = args.constraints;
+    const maxAllowedFundedWeeks = getFundedWeeks(
+      offeringModel.aviationCredentialType,
+    );
     if (!maxAllowedFundedWeeks) {
       return true;
     }
@@ -59,28 +49,29 @@ class HasValidFundedWeeksForAviationOfferingCredentialsConstraint
 }
 
 /**
- * For an offering that contains study breaks and is an aviation offering,
- * execute the calculation of the funded study period to validate if it matches
- * the maximum allowed study period amount of funded weeks for the selected
- * aviation offering credential.
+ * For an offering that contains study breaks, execute the calculation
+ * of the funded study period to validate if it matches the maximum allowed
+ * study period amount of funded weeks for the selected offering credential.
  * @param startPeriodProperty property of the model that identifies the offering start date.
  * @param endPeriodProperty property of the model that identifies the offering end date.
+ * @param getFundedWeeks function that returns the number of funded weeks for the selected offering credential.
  * @param validationOptions validations options.
  * @returns true if the funded weeks for the selected aviation credential are within maximum limits, otherwise false.
  */
-export function HasValidFundedWeeksForAviationOfferingCredentials(
+export function HasValidFundedWeeksForOfferingCredentials(
   startPeriodProperty: (targetObject: unknown) => Date | string,
   endPeriodProperty: (targetObject: unknown) => Date | string,
+  getFundedWeeks: (targetObject: unknown) => number,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
     registerDecorator({
-      name: "HasValidFundedWeeksForAviationOfferingCredentials",
+      name: "HasValidFundedWeeksForOfferingCredentials",
       target: object.constructor,
       propertyName,
       options: validationOptions,
-      constraints: [startPeriodProperty, endPeriodProperty],
-      validator: HasValidFundedWeeksForAviationOfferingCredentialsConstraint,
+      constraints: [startPeriodProperty, endPeriodProperty, getFundedWeeks],
+      validator: HasValidFundedWeeksForOfferingCredentialsConstraint,
     });
   };
 }
