@@ -707,7 +707,7 @@
               "content": "<strong class=\"ml-2\">This aviation credential is not supported by the program</strong>\n<br>\n<span>Your program must be approved for the credential in order to be included in the offering.</span>",
               "refreshOnChange": false,
               "customClass": "banner-warning",
-              "key": "matchProgramAviationCredential",
+              "key": "programAviationCredentialMismatch",
               "customConditional": "show = data.validationWarnings.indexOf(component.key) !== -1;",
               "type": "htmlelement",
               "input": false,

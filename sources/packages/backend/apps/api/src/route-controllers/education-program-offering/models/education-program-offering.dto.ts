@@ -4,15 +4,13 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
   OFFERING_NAME_MAX_LENGTH,
-  AviationCredentialTypeOptions,
-  AviationYesNoOptions,
 } from "@sims/sims-db";
 import { Allow, IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 import { Type } from "class-transformer";
 import {
   OfferingDeliveryOptions,
-  OnlineInstructionModeOptions,
   OfferingYesNoOptions,
+  OnlineInstructionModeOptions,
 } from "../../../services";
 
 export class StudyBreakAPIOutDTO {
@@ -79,9 +77,9 @@ export class EducationProgramOfferingAPIInDTO {
   @Allow()
   offeringType: OfferingTypes;
   @Allow()
-  isAviationOffering: AviationYesNoOptions;
+  isAviationOffering: OfferingYesNoOptions;
   @Allow()
-  aviationCredentialType?: AviationCredentialTypeOptions;
+  aviationCredentialType?: string;
   @Allow()
   offeringWILComponentType?: string;
   @Allow()
@@ -124,8 +122,8 @@ export class EducationProgramOfferingAPIOutDTO {
   lacksStudyBreaks: boolean;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;
-  isAviationOffering: AviationYesNoOptions;
-  aviationCredentialType?: AviationCredentialTypeOptions;
+  isAviationOffering: string;
+  aviationCredentialType?: string;
   hasOfferingWILComponent: string;
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;

@@ -1,14 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import {
-  AviationYesNoOptions,
+  OfferingYesNoOptions,
   EducationProgram,
   OfferingTypes,
 } from "@sims/sims-db";
 import { EducationProgramService, InstitutionLocationService } from "..";
-import {
-  OfferingValidationModel,
-  OfferingYesNoOptions,
-} from "./education-program-offering-validation.models";
+import { OfferingValidationModel } from "./education-program-offering-validation.models";
 import {
   CSVHeaders,
   OfferingCSVModel,
@@ -64,7 +61,7 @@ export class EducationProgramOfferingImportCSVService {
     ]);
     return csvModels.map((csvModel) => ({
       // Bulk upload will not have aviation offering.
-      isAviationOffering: AviationYesNoOptions.No,
+      isAviationOffering: OfferingYesNoOptions.No,
       aviationCredentialType: null,
       offeringName: csvModel.offeringName,
       yearOfStudy: csvModel.yearOfStudy,

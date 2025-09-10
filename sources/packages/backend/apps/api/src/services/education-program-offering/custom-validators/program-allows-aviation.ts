@@ -1,5 +1,7 @@
-import { AviationYesNoOptions } from "@sims/sims-db";
-import { OfferingValidationModel } from "../education-program-offering-validation.models";
+import {
+  OfferingValidationModel,
+  OfferingYesNoOptions,
+} from "../education-program-offering-validation.models";
 import {
   ValidationArguments,
   ValidationOptions,
@@ -12,20 +14,18 @@ import {
  * Executes a validation to ensure that the education program is an aviation program.
  */
 @ValidatorConstraint()
-class ProgramIsAviationProgramConstraint
-  implements ValidatorConstraintInterface
-{
+class ProgramAllowsAviationConstraint implements ValidatorConstraintInterface {
   validate(
-    isAviationOffering: AviationYesNoOptions,
+    isAviationOffering: OfferingYesNoOptions,
     args: ValidationArguments,
   ): boolean {
     const offeringModel = args.object as OfferingValidationModel;
-    if (isAviationOffering === AviationYesNoOptions.No) {
+    if (isAviationOffering === OfferingYesNoOptions.No) {
       return true;
     }
     if (
-      isAviationOffering === AviationYesNoOptions.Yes &&
-      offeringModel.programContext.isAviationProgram === AviationYesNoOptions.No
+      isAviationOffering === OfferingYesNoOptions.Yes &&
+      offeringModel.programContext.isAviationProgram === OfferingYesNoOptions.No
     ) {
       return false;
     }
@@ -35,7 +35,7 @@ class ProgramIsAviationProgramConstraint
   defaultMessage(args: ValidationArguments) {
     const [propertyDisplayName] = args.constraints;
     return `${propertyDisplayName ?? args.property} is defined as ${
-      AviationYesNoOptions.Yes
+      OfferingYesNoOptions.Yes
     } but the program is not an aviation program.`;
   }
 }
@@ -48,18 +48,18 @@ class ProgramIsAviationProgramConstraint
  * @returns true if the education program is an aviation program,
  * otherwise, false.
  */
-export function ProgramIsAviationProgram(
+export function ProgramAllowsAviation(
   propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
     registerDecorator({
-      name: "ProgramIsAviationProgram",
+      name: "ProgramAllowsAviation",
       target: object.constructor,
       propertyName,
       options: validationOptions,
       constraints: [propertyDisplayName],
-      validator: ProgramIsAviationProgramConstraint,
+      validator: ProgramAllowsAviationConstraint,
     });
   };
 }

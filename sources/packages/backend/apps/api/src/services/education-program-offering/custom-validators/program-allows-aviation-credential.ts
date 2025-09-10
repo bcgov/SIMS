@@ -1,4 +1,3 @@
-import { AviationCredentialTypeOptions } from "@sims/sims-db";
 import { OfferingValidationModel } from "../education-program-offering-validation.models";
 import {
   ValidationArguments,
@@ -13,29 +12,19 @@ import {
  * aviation credential as the offering.
  */
 @ValidatorConstraint()
-class MatchProgramAviationCredentialConstraint
+class ProgramAviationCredentialMismatchConstraint
   implements ValidatorConstraintInterface
 {
-  validate(
-    aviationCredentialType: AviationCredentialTypeOptions,
-    args: ValidationArguments,
-  ): boolean {
+  validate(aviationCredentialType: string, args: ValidationArguments): boolean {
     const offeringModel = args.object as OfferingValidationModel;
-    // Ensure credentialTypesAviation is an object with boolean values keyed by AviationCredentialTypeOptions.
-    type CredentialTypesAviation = {
-      [key in AviationCredentialTypeOptions]?: boolean;
-    };
-    const credentialTypesAviation = offeringModel.programContext
-      .credentialTypesAviation as CredentialTypesAviation;
-    if (credentialTypesAviation[aviationCredentialType]) {
-      return true;
-    }
-    return false;
+    const credentialTypesAviation =
+      offeringModel.programContext.credentialTypesAviation;
+    return !!credentialTypesAviation?.[aviationCredentialType];
   }
 
   defaultMessage(args: ValidationArguments) {
     const [propertyDisplayName] = args.constraints;
-    return `${propertyDisplayName} the offering aviation credential.`;
+    return `${propertyDisplayName} for the program does not match the offering aviation credential.`;
   }
 }
 
@@ -45,21 +34,21 @@ class MatchProgramAviationCredentialConstraint
  * @param propertyDisplayName user-friendly property name to be added to the
  * validation message.
  * @param validationOptions validation options.
- * @returns true if the education program is an aviation program,
- * otherwise, false.
+ * @returns true if the education program and offering have the same aviation
+ * credential, otherwise, false.
  */
-export function MatchProgramAviationCredential(
+export function ProgramAviationCredentialMismatch(
   propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
     registerDecorator({
-      name: "MatchProgramAviationCredential",
+      name: "ProgramAviationCredentialMismatch",
       target: object.constructor,
       propertyName,
       options: validationOptions,
       constraints: [propertyDisplayName],
-      validator: MatchProgramAviationCredentialConstraint,
+      validator: ProgramAviationCredentialMismatchConstraint,
     });
   };
 }

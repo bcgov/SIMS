@@ -163,9 +163,8 @@ export class EducationProgramOffering extends RecordDataModel {
    */
   @Column({
     name: "is_aviation_offering",
-    nullable: false,
   })
-  isAviationOffering: AviationYesNoOptions;
+  isAviationOffering: string;
 
   /**
    * Indicates the aviation credential type for the aviation offering.
@@ -174,7 +173,7 @@ export class EducationProgramOffering extends RecordDataModel {
     name: "aviation_credential_type",
     nullable: true,
   })
-  aviationCredentialType: AviationCredentialTypeOptions;
+  aviationCredentialType?: string;
 
   /**
    * Determines if the offering has WIL component.
@@ -374,22 +373,4 @@ export interface StudyBreaksAndWeeks {
   totalDays: number;
   totalFundedWeeks: number;
   unfundedStudyPeriodDays: number;
-}
-
-/**
- * Aviation Yes/No options.
- */
-export enum AviationYesNoOptions {
-  Yes = "yes",
-  No = "no",
-}
-
-/**
- * Aviation Credential Type options.
- */
-export enum AviationCredentialTypeOptions {
-  CommercialPilotTraining = "commercialPilotTraining",
-  InstructorsRating = "instructorsRating",
-  Endorsements = "endorsements",
-  PrivatePilotTraining = "privatePilotTraining",
 }

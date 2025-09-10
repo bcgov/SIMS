@@ -79,9 +79,9 @@ export class EducationProgramOfferingAPIInDTO {
   @Expose()
   offeringType: OfferingTypes;
   @Expose()
-  isAviationOffering: AviationYesNoOptions;
+  isAviationOffering: OfferingYesNoOptions;
   @Expose()
-  aviationCredentialType?: AviationCredentialTypeOptions;
+  aviationCredentialType?: string;
   @Expose()
   offeringWILComponentType?: string;
   @Expose()
@@ -119,24 +119,6 @@ export enum OfferingYesNoOptions {
 }
 
 /**
- * Aviation Yes/No options.
- */
-export enum AviationYesNoOptions {
-  Yes = "yes",
-  No = "no",
-}
-
-/**
- * Aviation credential options for offerings.
- */
-export enum AviationCredentialTypeOptions {
-  CommercialPilotTraining = "commercialPilotTraining",
-  InstructorsRating = "instructorsRating",
-  Endorsements = "endorsements",
-  PrivatePilotTraining = "privatePilotTraining",
-}
-
-/**
  * Offering online instruction modes.
  */
 export enum OnlineInstructionModeOptions {
@@ -163,8 +145,8 @@ export interface EducationProgramOfferingAPIOutDTO {
   offeringStatus: OfferingStatus;
   precedingOfferingId?: number;
   offeringType: OfferingTypes;
-  isAviationOffering: AviationYesNoOptions;
-  aviationCredentialType?: AviationCredentialTypeOptions;
+  isAviationOffering: OfferingYesNoOptions;
+  aviationCredentialType?: string;
   offeringWILComponentType?: string;
   studyBreaks: StudyBreakAPIOutDTO[];
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;

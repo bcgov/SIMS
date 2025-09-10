@@ -6,15 +6,22 @@ import {
   ValidationArguments,
 } from "class-validator";
 import {
-  MaximumFundedWeeksForAviationOfferingCredentials,
+  AviationCredentialTypeOptions,
   OfferingValidationModel,
+  OfferingYesNoOptions,
   StudyBreak,
 } from "../education-program-offering-validation.models";
 import { OfferingCalculationValidationBaseConstraint } from "./offering-calculation-validation-base-constraint";
-import {
-  AviationCredentialTypeOptions,
-  AviationYesNoOptions,
-} from "@sims/sims-db";
+
+/**
+ * Maximum allowed funded weeks for each aviation credential type
+ * that should be enforced when calculating the funded weeks.
+ */
+const MAX_FUNDED_WEEKS = {
+  [AviationCredentialTypeOptions.CommercialPilotTraining]: 17,
+  [AviationCredentialTypeOptions.InstructorsRating]: 13,
+  [AviationCredentialTypeOptions.Endorsements]: 13,
+};
 
 /**
  * For an offering that contains study breaks and is an aviation offering,
@@ -29,28 +36,21 @@ class HasValidFundedWeeksForAviationOfferingCredentialsConstraint
 {
   validate(studyBreaks: StudyBreak[], args: ValidationArguments): boolean {
     const offeringModel = args.object as OfferingValidationModel;
-    if (offeringModel.isAviationOffering === AviationYesNoOptions.No) {
+    if (offeringModel.isAviationOffering === OfferingYesNoOptions.No) {
       return true;
     }
     const calculatedStudyBreaksAndWeeks = this.getCalculatedStudyBreaks(
       studyBreaks,
       args,
     );
-    switch (offeringModel.aviationCredentialType) {
-      case AviationCredentialTypeOptions.CommercialPilotTraining:
-        return (
-          calculatedStudyBreaksAndWeeks.totalFundedWeeks <=
-          MaximumFundedWeeksForAviationOfferingCredentials.CommercialPilotTraining
-        );
-      case AviationCredentialTypeOptions.InstructorsRating:
-      case AviationCredentialTypeOptions.Endorsements:
-        return (
-          calculatedStudyBreaksAndWeeks.totalFundedWeeks <=
-          MaximumFundedWeeksForAviationOfferingCredentials.InstructorsRatingAndEndorsements
-        );
-      default:
-        return true;
+    const maxAllowedFundedWeeks =
+      MAX_FUNDED_WEEKS[offeringModel.aviationCredentialType];
+    if (!maxAllowedFundedWeeks) {
+      return true;
     }
+    return (
+      calculatedStudyBreaksAndWeeks.totalFundedWeeks <= maxAllowedFundedWeeks
+    );
   }
 
   defaultMessage() {

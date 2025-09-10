@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
-  AviationYesNoOptions,
+  OfferingYesNoOptions,
   Institution,
   InstitutionLocation,
   OfferingIntensity,
@@ -36,10 +36,7 @@ import {
   StudyBreakAPIOutDTO,
   StudyBreaksAndWeeksOutDTO,
 } from "../../models/education-program-offering.dto";
-import {
-  OfferingYesNoOptions,
-  OnlineInstructionModeOptions,
-} from "../../../../services";
+import { OnlineInstructionModeOptions } from "../../../../services";
 import { getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
 
@@ -129,7 +126,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       yearOfStudy: 1,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
-      isAviationOffering: AviationYesNoOptions.No,
+      isAviationOffering: OfferingYesNoOptions.No,
       hasOfferingWILComponent: OfferingYesNoOptions.No,
       studyStartDate: "2023-09-01",
       studyEndDate: "2024-06-30",
@@ -178,7 +175,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       yearOfStudy: 1,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
-      isAviationOffering: AviationYesNoOptions.No,
+      isAviationOffering: OfferingYesNoOptions.No,
       hasOfferingWILComponent: "no",
       studyStartDate: "2023-09-01",
       studyEndDate: "2024-06-30",
@@ -297,7 +294,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         yearOfStudy: 1,
         offeringIntensity: OfferingIntensity.fullTime,
         offeringDelivered: OfferingDeliveryOptions.Online,
-        isAviationOffering: AviationYesNoOptions.No,
+        isAviationOffering: OfferingYesNoOptions.No,
         hasOfferingWILComponent: OfferingYesNoOptions.No,
         studyStartDate: "2023-09-01",
         studyEndDate: "2024-06-30",
@@ -415,7 +412,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         yearOfStudy: 1,
         offeringIntensity: OfferingIntensity.fullTime,
         offeringDelivered: OfferingDeliveryOptions.Onsite,
-        isAviationOffering: AviationYesNoOptions.No,
+        isAviationOffering: OfferingYesNoOptions.No,
         hasOfferingWILComponent: OfferingYesNoOptions.No,
         studyStartDate: "2023-09-01",
         studyEndDate: "2024-06-30",
@@ -480,7 +477,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       yearOfStudy: 1,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Online,
-      isAviationOffering: AviationYesNoOptions.No,
+      isAviationOffering: OfferingYesNoOptions.No,
       hasOfferingWILComponent: OfferingYesNoOptions.No,
       studyStartDate: "2023-09-01",
       studyEndDate: "2024-06-30",
@@ -602,7 +599,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         yearOfStudy: 1,
         offeringIntensity: OfferingIntensity.fullTime,
         offeringDelivered: OfferingDeliveryOptions.Blended,
-        isAviationOffering: AviationYesNoOptions.No,
+        isAviationOffering: OfferingYesNoOptions.No,
         hasOfferingWILComponent: OfferingYesNoOptions.No,
         studyStartDate: "2023-09-01",
         studyEndDate: "2024-06-30",
@@ -726,7 +723,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       studyStartDate: "2023-09-01",
       studyEndDate: "2024-06-30",
       lacksStudyBreaks: false,
-      isAviationOffering: AviationYesNoOptions.No,
+      isAviationOffering: OfferingYesNoOptions.No,
       studyBreaks: [
         {
           breakStartDate: studyBreak.breakStartDate,
@@ -787,7 +784,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       yearOfStudy: 1,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Online,
-      isAviationOffering: AviationYesNoOptions.No,
+      isAviationOffering: OfferingYesNoOptions.No,
       hasOfferingWILComponent: "no",
       studyStartDate: "2023-09-01",
       studyEndDate: "2024-06-30",
@@ -925,7 +922,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       yearOfStudy: 1,
       offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
-      isAviationOffering: AviationYesNoOptions.No,
+      isAviationOffering: OfferingYesNoOptions.No,
       hasOfferingWILComponent: "no",
       studyStartDate: "2023-09-01",
       studyEndDate: "2024-06-30",
@@ -993,7 +990,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         yearOfStudy: savedEducationProgramOffering.yearOfStudy,
         offeringIntensity: OfferingIntensity.fullTime,
         offeringDelivered: OfferingDeliveryOptions.Onsite,
-        isAviationOffering: AviationYesNoOptions.No,
+        isAviationOffering: OfferingYesNoOptions.No,
         hasOfferingWILComponent: "no",
         studyStartDate: savedEducationProgramOffering.studyStartDate,
         studyEndDate: savedEducationProgramOffering.studyEndDate,
