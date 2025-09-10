@@ -2,6 +2,7 @@ ALTER TABLE
   sims.education_programs_offerings
 ADD
   COLUMN is_aviation_offering VARCHAR(50) NOT NULL DEFAULT 'no',
+ADD
   COLUMN aviation_credential_type VARCHAR(50);
 
 COMMENT ON COLUMN sims.education_programs_offerings.is_aviation_offering IS 'Indicates if the offering is an aviation offering.';
