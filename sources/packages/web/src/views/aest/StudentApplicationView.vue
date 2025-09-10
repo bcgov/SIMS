@@ -81,7 +81,6 @@ import {
   ChangeTypes,
   FormIOComponent,
   FormIOForm,
-  FromIOComponentTypes,
   Role,
   StudentApplicationFormData,
 } from "@/types";
@@ -115,7 +114,7 @@ export default defineComponent({
   },
   setup(props) {
     const { emptyStringFiller } = useFormatters();
-    const { searchByKey } = useFormioUtils();
+    const { searchByKey, isComponentVisible } = useFormioUtils();
     const applicationDetail = ref({} as ApplicationSupplementalDataAPIOutDTO);
     const initialData = ref({} as StudentApplicationFormData);
     const selectedForm = ref();
@@ -247,10 +246,7 @@ export default defineComponent({
       component: FormIOComponent,
       changeType: ChangeTypes,
     ) {
-      if (
-        component.type === FromIOComponentTypes.Hidden ||
-        component._visible === false
-      ) {
+      if (!isComponentVisible(component)) {
         return;
       }
       let cssClass: string;

@@ -1,4 +1,4 @@
-import { FormIOComponent, FormIOForm } from "@/types";
+import { FormIOComponent, FormIOForm, FromIOComponentTypes } from "@/types";
 import { ClassConstructor, plainToClass } from "class-transformer";
 import { Utils } from "@formio/js";
 import { AppConfigService } from "@/services/AppConfigService";
@@ -114,7 +114,7 @@ export function useFormioUtils() {
   /**
    * Iterates recursively in all components checking for
    * a matchCondition provided as a parameter.
-   * @param form form to iterate through.
+   * @param component component to iterate through.
    * @param matchCondition match condition to include
    * a component in the results.
    * @param options related options.
@@ -123,15 +123,15 @@ export function useFormioUtils() {
    * matchCondition function.
    */
   const recursiveSearch = (
-    form: any,
-    matchCondition: (component: any) => boolean,
+    component: FormIOComponent,
+    matchCondition: (component: FormIOComponent) => boolean,
     options?: {
       stopOnFirstMatch: boolean;
     },
-  ): any[] => {
-    const matchedComponents: any[] = [];
+  ): FormIOComponent[] => {
+    const matchedComponents: FormIOComponent[] = [];
     internalRecursiveSearch(
-      form.components,
+      component.components,
       matchedComponents,
       matchCondition,
       options,
@@ -319,6 +319,36 @@ export function useFormioUtils() {
     return `${formPath}-${version}`.toLowerCase();
   };
 
+  /**
+   * Checks if a Form.IO component is visible, either checking its own visibility
+   * or if it is inside a container, checking if at least one of its children is visible.
+   * @param component component to be checked.
+   * @returns true if the component has some visibility, false otherwise.
+   */
+  const isComponentVisible = (component: FormIOComponent): boolean => {
+    if (
+      component.type === FromIOComponentTypes.Hidden ||
+      component._visible === false
+    ) {
+      return false;
+    }
+    if (component.type === FromIOComponentTypes.Container) {
+      // Try to find at least one visible child component.
+      const visibleChildren = recursiveSearch(
+        component,
+        (component) =>
+          component._visible === true &&
+          // Hidden components are not visible but they have their _visible property as true.
+          component.type !== FromIOComponentTypes.Hidden,
+        { stopOnFirstMatch: true },
+      );
+      if (!visibleChildren.length) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   return {
     getComponent,
     getFirstComponent,
@@ -339,5 +369,6 @@ export function useFormioUtils() {
     getReadyToSaveFormDefinition,
     getFormattedFormDefinition,
     createCacheIdentifier,
+    isComponentVisible,
   };
 }
