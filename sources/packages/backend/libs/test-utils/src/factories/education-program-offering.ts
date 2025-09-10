@@ -14,7 +14,14 @@ import {
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
-import { OfferingYesNoOptions } from "apps/api/src/services";
+
+/**
+ * Offering Yes/No options.
+ */
+enum OfferingYesNoOptions {
+  Yes = "yes",
+  No = "no",
+}
 
 export function createFakeEducationProgramOffering(
   relations: {

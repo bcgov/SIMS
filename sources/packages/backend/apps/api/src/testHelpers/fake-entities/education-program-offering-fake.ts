@@ -7,9 +7,9 @@ import {
   OfferingTypes,
   OfferingIntensity,
   OfferingStatus,
-  OfferingYesNoOptions,
 } from "@sims/sims-db";
 import { createFakeEducationProgram } from "./education-program-fake";
+import { OfferingYesNoOptions } from "../../services/education-program-offering/education-program-offering-validation.models";
 
 export function createFakeEducationProgramOffering(
   program?: EducationProgram,
