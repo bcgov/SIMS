@@ -1,6 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
-  OfferingYesNoOptions,
   Institution,
   InstitutionLocation,
   OfferingIntensity,
@@ -34,7 +33,10 @@ import {
 import { getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
 import { EducationProgramOfferingAPIInDTO } from "apps/api/src/route-controllers/education-program-offering/models/education-program-offering.dto";
-import { OnlineInstructionModeOptions } from "../../../../services";
+import {
+  OfferingYesNoOptions,
+  OnlineInstructionModeOptions,
+} from "../../../../services";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffering", () => {
   let app: INestApplication;

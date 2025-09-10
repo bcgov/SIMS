@@ -1,6 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
-  OfferingYesNoOptions,
   EducationProgram,
   Institution,
   InstitutionLocation,
@@ -30,6 +29,7 @@ import * as faker from "faker";
 import {
   OfferingValidationInfos,
   OfferingValidationWarnings,
+  OfferingYesNoOptions,
 } from "../../../../services";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,

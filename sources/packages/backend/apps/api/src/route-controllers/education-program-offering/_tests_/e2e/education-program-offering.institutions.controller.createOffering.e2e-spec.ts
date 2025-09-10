@@ -1,6 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
-  OfferingYesNoOptions,
   Institution,
   InstitutionLocation,
   OfferingIntensity,
@@ -36,7 +35,10 @@ import {
   StudyBreakAPIOutDTO,
   StudyBreaksAndWeeksOutDTO,
 } from "../../models/education-program-offering.dto";
-import { OnlineInstructionModeOptions } from "../../../../services";
+import {
+  OfferingYesNoOptions,
+  OnlineInstructionModeOptions,
+} from "../../../../services";
 import { getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
 
