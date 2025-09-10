@@ -79,6 +79,7 @@ export function createFakePartTimeAssessmentConsolidatedData(
     studentDataIndigenousStatus: YesNoOptions.No,
     studentDataHasDependents: YesNoOptions.No,
     studentDataYouthInCare: YesNoOptions.No,
+    studentDataLivingAtHome: YesNoOptions.No,
     studentDataAdditionalTransportRequested: YesNoOptions.No,
     studentTaxYear: +programStartYear - 1,
     programLocation: Provinces.BritishColumbia,

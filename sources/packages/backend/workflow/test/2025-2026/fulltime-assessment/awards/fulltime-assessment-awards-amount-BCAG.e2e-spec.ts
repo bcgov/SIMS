@@ -25,7 +25,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       false,
     );
     expect(calculatedAssessment.variables.provincialAwardWeeklyBCAGMax).toBe(0);
-    expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(0);
+    // The provincialAwardBCAGAmount is a sloped calculation amount based on family income.
+    // If it's above the threshold for eligibility it will result in $0 or a negative number.
+    expect(
+      calculatedAssessment.variables.provincialAwardBCAGAmount,
+    ).toBeLessThanOrEqual(0);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
     expect(
       calculatedAssessment.variables.finalProvincialAwardNetBCAGAmount,
