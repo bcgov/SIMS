@@ -64,7 +64,6 @@ import {
 } from "../../utilities";
 import { DATE_ONLY_ISO_FORMAT } from "@sims/utilities";
 import { YesNoOptions } from "@sims/test-utils";
-import { OfferingYesNoOptions } from "apps/api/src/services";
 
 /**
  * User friendly names for the fields.
@@ -751,15 +750,13 @@ export class OfferingValidationModel {
   @HasFundedWeeksWithinMaximumLimit(
     studyStartDateProperty,
     studyEndDateProperty,
-    (
-      isAviationOffering: OfferingYesNoOptions,
-      aviationCredentialType: string,
-    ) => {
-      if (isAviationOffering === OfferingYesNoOptions.No) {
+    (offeringModel: OfferingValidationModel) => {
+      if (offeringModel.isAviationOffering === OfferingYesNoOptions.No) {
         return true;
       }
-      return MAX_FUNDED_WEEKS[aviationCredentialType];
+      return MAX_FUNDED_WEEKS[offeringModel.aviationCredentialType] ?? true;
     },
+    userFriendlyNames.aviationCredentialType,
     {
       context: ValidationContext.CreateWarning(
         OfferingValidationWarnings.InvalidFundedWeeksForAviationOfferingCredentials,

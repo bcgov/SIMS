@@ -7,7 +7,6 @@ import {
 } from "class-validator";
 import {
   OfferingValidationModel,
-  OfferingYesNoOptions,
   StudyBreak,
 } from "../education-program-offering-validation.models";
 import { OfferingCalculationValidationBaseConstraint } from "./offering-calculation-validation-base-constraint";
@@ -29,26 +28,19 @@ class HasFundedWeeksWithinMaximumLimitConstraint
       args,
     );
     const [, , getMaximumFundedWeeksAllowed] = args.constraints;
-    const maxAllowedFundedWeeks: number | boolean | undefined =
-      getMaximumFundedWeeksAllowed(
-        offeringModel.isAviationOffering,
-        offeringModel.aviationCredentialType,
-      );
+    const maxAllowedFundedWeeks: number | boolean =
+      getMaximumFundedWeeksAllowed(offeringModel);
     if (typeof maxAllowedFundedWeeks === "boolean") {
       return maxAllowedFundedWeeks;
-    }
-    // If the maximum allowed funded weeks is not defined for a certain type,
-    // then the validation should return true.
-    if (!maxAllowedFundedWeeks) {
-      return true;
     }
     return (
       calculatedStudyBreaksAndWeeks.totalFundedWeeks <= maxAllowedFundedWeeks
     );
   }
 
-  defaultMessage() {
-    return "The dates you have entered will create an offering with more funded weeks than allowed based on the aviation credential selected.";
+  defaultMessage(args: ValidationArguments) {
+    const [, , , propertyDisplayName] = args.constraints;
+    return `The dates you have entered will create an offering with more funded weeks than allowed based on the ${propertyDisplayName} selected.`;
   }
 }
 
@@ -67,9 +59,9 @@ export function HasFundedWeeksWithinMaximumLimit(
   startPeriodProperty: (targetObject: unknown) => Date | string,
   endPeriodProperty: (targetObject: unknown) => Date | string,
   getMaximumFundedWeeksAllowed: (
-    isAviationOffering: OfferingYesNoOptions,
-    targetObject: unknown,
-  ) => number | boolean | undefined,
+    offeringModel: OfferingValidationModel,
+  ) => number | boolean,
+  propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
@@ -82,6 +74,7 @@ export function HasFundedWeeksWithinMaximumLimit(
         startPeriodProperty,
         endPeriodProperty,
         getMaximumFundedWeeksAllowed,
+        propertyDisplayName,
       ],
       validator: HasFundedWeeksWithinMaximumLimitConstraint,
     });
