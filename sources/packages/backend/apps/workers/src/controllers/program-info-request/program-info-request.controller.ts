@@ -50,7 +50,7 @@ export class ProgramInfoRequestController {
     try {
       const application = await this.applicationService.getApplicationById(
         job.variables.applicationId,
-        { loadDynamicData: false },
+        { loadDynamicData: true },
       );
       if (!application) {
         const message = "Application not found while verifying the PIR.";
@@ -64,27 +64,29 @@ export class ProgramInfoRequestController {
           programInfoStatus: application.pirStatus,
         });
       }
+      // Check for previously approved PIR to reuse the information.
+      const applicationDataHash = this.applicationService.getProgramDataHash(
+        application.data,
+      );
       if (job.customHeaders.programInfoStatus === ProgramInfoStatus.required) {
-        // Check for previously approved PIR to reuse the information.
-        const applicationDataHash = this.applicationService.getProgramDataHash(
-          application.data,
-        );
         let previouslyApprovedPIR: Application | null = null;
         if (applicationDataHash) {
           previouslyApprovedPIR =
             await this.programInfoRequestService.getPreviouslyApprovedPIROfferingId(
               applicationDataHash,
-              application.id,
+              application.parentApplication.id,
             );
           if (previouslyApprovedPIR) {
             jobLogger.log(
               `Found previously approved PIR approved for application ID ${previouslyApprovedPIR.id} for application ID ${application.id}. Reusing the PIR information.`,
             );
             await this.programInfoRequestService.updatePreviouslyApprovedProgramInfoStatus(
+              application.student.id,
               job.variables.applicationId,
               previouslyApprovedPIR.id,
               previouslyApprovedPIR.pirProgram.id,
               previouslyApprovedPIR.currentAssessment.offering.id,
+              applicationDataHash,
             );
             return job.complete({
               programInfoStatus: ProgramInfoStatus.completed,
@@ -95,11 +97,12 @@ export class ProgramInfoRequestController {
       // PIR status not required or no previously approved PIR found.
       await this.programInfoRequestService.updateProgramInfoStatus(
         job.variables.applicationId,
-        ProgramInfoStatus.notRequired,
+        job.customHeaders.programInfoStatus,
+        applicationDataHash,
         job.variables.studentDataSelectedProgram,
       );
       jobLogger.log(
-        `PIR status updated for application ID ${job.variables.applicationId} updated to ${ProgramInfoStatus.notRequired}.`,
+        `PIR status updated for application ID ${job.variables.applicationId} updated to ${job.customHeaders.programInfoStatus}.`,
       );
       return job.complete({
         programInfoStatus: job.customHeaders.programInfoStatus,

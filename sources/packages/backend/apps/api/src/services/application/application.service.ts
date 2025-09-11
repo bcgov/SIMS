@@ -32,6 +32,7 @@ import {
   InstitutionLocation,
   StudentAppeal,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
+  EducationProgram,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -280,6 +281,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
     newApplication.applicationEditStatus = ApplicationEditStatus.Edited;
     newApplication.applicationEditStatusUpdatedOn = now;
     newApplication.applicationEditStatusUpdatedBy = auditUser;
+    newApplication.pirProgram = {
+      id: application.pirProgram?.id,
+    } as EducationProgram;
     newApplication.parentApplication = {
       id: application.parentApplication.id,
     } as Application;
@@ -1112,6 +1116,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "currentAssessment.id",
         "currentAssessment.assessmentWorkflowId",
         "location.id",
+        "pirProgram.id",
         "offering.id",
         "studentAppeal.id",
         "versions.id",
@@ -1119,6 +1124,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.location", "location")
+      .leftJoin("application.pirProgram", "pirProgram")
       .leftJoin("application.parentApplication", "parentApplication")
       .leftJoin(
         "parentApplication.versions",
