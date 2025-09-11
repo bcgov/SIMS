@@ -31,7 +31,7 @@ class HasFundedWeeksWithinMaximumLimitConstraint
       studyBreaks,
       args,
     );
-    const [getMaximumFundedWeeksAllowed] = args.constraints;
+    const [, , getMaximumFundedWeeksAllowed] = args.constraints;
     const maxAllowedFundedWeeks = getMaximumFundedWeeksAllowed(
       offeringModel.aviationCredentialType,
     );
@@ -62,7 +62,7 @@ class HasFundedWeeksWithinMaximumLimitConstraint
 export function HasFundedWeeksWithinMaximumLimit(
   startPeriodProperty: (targetObject: unknown) => Date | string,
   endPeriodProperty: (targetObject: unknown) => Date | string,
-  getMaximumFundedWeeksAllowed: (targetObject: unknown) => number,
+  getMaximumFundedWeeksAllowed: (targetObject: unknown) => number | undefined,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
