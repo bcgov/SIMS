@@ -27,8 +27,3 @@ ADD
   COLUMN aviation_credential_type VARCHAR(50);
 
 COMMENT ON COLUMN sims.education_programs_offerings_history.aviation_credential_type IS 'Historical data from the original table. See original table comments for details.';
-
-ALTER TABLE
-  sims.education_programs_offerings_history
-ALTER COLUMN
-  is_aviation_offering;
