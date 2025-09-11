@@ -16,6 +16,22 @@ const NON_VISIBLE_COMPONENT_TYPES = [
 ];
 
 /**
+ * Result of a component search including the
+ * deep level in the UI hierarchy.
+ */
+interface ComponentSearchResult {
+  /**
+   * Component found.
+   */
+  component: FormIOComponent;
+  /**
+   * Deep level in the UI hierarchy where the component was found.
+   * As greater the number, furthest from the reference component.
+   */
+  deepLevel: number;
+}
+
+/**
  * Properties that are not required to be saved.
  */
 const NON_REQUIRED_FORM_PROPERTIES = [
@@ -58,7 +74,7 @@ export function useFormioUtils() {
       (component) => component.component.key === componentKey,
       { stopOnFirstMatch: true },
     );
-    return firstComponentFound;
+    return firstComponentFound.component;
   };
 
   // Forces a component to execute a redraw.
@@ -90,19 +106,21 @@ export function useFormioUtils() {
    * stored along the recursive iterations.
    * @param matchCondition match condition to include
    * a component in the results.
+   * @param deepLevel current deep level in the UI hierarchy.
    * @param options related options.
    * - `stopOnFirstMatch` stop the recursive search as soon as the first match is found.
    */
   const internalRecursiveSearch = (
-    components: any[],
-    matchedComponents: any[],
-    matchCondition: (component: any) => boolean,
+    components: FormIOComponent[],
+    matchedComponents: ComponentSearchResult[],
+    matchCondition: (component: FormIOComponent) => boolean,
+    deepLevel: number,
     options?: {
       stopOnFirstMatch: boolean;
     },
   ) => {
     const stopOnFirstMatch = options?.stopOnFirstMatch ?? false;
-    components.forEach((component: any) => {
+    components.forEach((component: FormIOComponent) => {
       if (stopOnFirstMatch && matchedComponents.length) {
         // If only the first match is needed, and one was found, stop searching.
         return;
@@ -112,11 +130,15 @@ export function useFormioUtils() {
           component.components,
           matchedComponents,
           matchCondition,
+          deepLevel + 1,
           options,
         );
       }
       if (matchCondition(component)) {
-        matchedComponents.push(component);
+        matchedComponents.push({
+          component,
+          deepLevel,
+        });
       }
     });
   };
@@ -138,57 +160,69 @@ export function useFormioUtils() {
     options?: {
       stopOnFirstMatch: boolean;
     },
-  ): FormIOComponent[] => {
-    const matchedComponents: FormIOComponent[] = [];
+  ): ComponentSearchResult[] => {
+    const deepLevel = 0;
+    const matchedComponents: ComponentSearchResult[] = [];
     internalRecursiveSearch(
       component.components,
       matchedComponents,
       matchCondition,
+      deepLevel,
       options,
     );
     return matchedComponents;
   };
 
   /**
-   * Search recursively by a component and returns
-   * all the matches with the same key.
+   * Search recursively by a component and returns all the matches with the same key,
+   * ordered from the closest to the furthest in the UI hierarchy.
    * @param components components to be checked.
    * @param componentKey key to be matched.
-   * @param options search options.
-   * - `stopOnFirstMatch` indicates if should stop at the first match, default true.
    * @returns components found.
    */
   const searchByKey = (
     components: FormIOComponent[],
     componentKey: string,
-    options?: {
-      stopOnFirstMatch: boolean;
-    },
   ): FormIOComponent[] => {
-    const defaultOptions = { stopOnFirstMatch: true };
-    const matchedComponents: any[] = [];
+    const deepLevel = 0;
+    const matchedComponents: ComponentSearchResult[] = [];
     internalRecursiveSearch(
       components,
       matchedComponents,
       (component) => component.key === componentKey,
-      options ?? defaultOptions,
+      deepLevel,
+      { stopOnFirstMatch: false },
     );
-    return matchedComponents;
+    return matchedComponents
+      .toSorted((a, b) => a.deepLevel - b.deepLevel)
+      .map((result) => result.component);
   };
 
-  // Search for components of a specific type.
-  const getComponentsOfType = (form: any, type: string): any[] => {
+  /**
+   * Search for components of a specific type.
+   * @param form form component.
+   * @param type component type to search for.
+   * @returns array of components matching the specified type.
+   */
+  const getComponentsOfType = (
+    form: FormIOForm,
+    type: string,
+  ): ComponentSearchResult[] => {
     return recursiveSearch(form, (component) => component.type === type);
   };
 
-  // Get all unique file names from all file components.
-  const getAssociatedFiles = (form: any): string[] => {
-    const fileComponents = getComponentsOfType(form, "file");
+  /**
+   * Get all unique file names from all file components.
+   * @param form form component.
+   * @returns array of unique file names.
+   */
+  const getAssociatedFiles = (form: FormIOForm): string[] => {
+    const fileComponents = getComponentsOfType(form, FromIOComponentTypes.File);
     const associatedFiles: string[] = [];
     fileComponents.forEach((fileComponent) => {
-      const fileComponentValue = fileComponent.getValue();
-      if (fileComponentValue) {
-        fileComponentValue.forEach((file: any) => {
+      const fileComponentValue = fileComponent.component.getValue();
+      if (Array.isArray(fileComponentValue)) {
+        fileComponentValue.forEach((file: { name: string }) => {
           associatedFiles.push(file.name);
         });
       }
