@@ -31,4 +31,4 @@ COMMENT ON COLUMN sims.education_programs_offerings_history.aviation_credential_
 ALTER TABLE
   sims.education_programs_offerings_history
 ALTER COLUMN
-  is_aviation_offering DROP DEFAULT;
+  is_aviation_offering;

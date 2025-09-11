@@ -12,7 +12,7 @@ import {
  * aviation credential as the offering.
  */
 @ValidatorConstraint()
-class ProgramAviationCredentialMismatchConstraint
+class ProgramAllowsAviationCredentialConstraint
   implements ValidatorConstraintInterface
 {
   validate(aviationCredentialType: string, args: ValidationArguments): boolean {
@@ -48,7 +48,7 @@ export function ProgramAviationCredentialMismatch(
       propertyName,
       options: validationOptions,
       constraints: [propertyDisplayName],
-      validator: ProgramAviationCredentialMismatchConstraint,
+      validator: ProgramAllowsAviationCredentialConstraint,
     });
   };
 }
