@@ -1742,7 +1742,6 @@ The remaining limit in the program year is calculated with a floor of 0.</bpmn:d
           <zeebe:output source="=if studentDataGovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataGovernmentFundingCosts" target="studentDataGovernmentFundingCosts" />
           <zeebe:output source="=if studentDataNonGovernmentFundingCosts = null&#10;then 0&#10;else&#10;  studentDataNonGovernmentFundingCosts" target="studentDataNonGovernmentFundingCosts" />
           <zeebe:output source="=if studentDataIncomeAssistanceAmount = null&#10;then 0&#10;else &#10;  studentDataIncomeAssistanceAmount" target="studentDataIncomeAssistanceAmount" />
-          <zeebe:output source="=if studentDataStudentParentNetContribution = null&#10;then 0&#10;else studentDataStudentParentNetContribution" target="studentDataStudentParentNetContribution" />
           <zeebe:output source="=if studentDataVoluntaryContributions = null then 0&#10;else studentDataVoluntaryContributions" target="studentDataVoluntaryContributions" />
           <zeebe:output source="=if institutionLocationProvince = null&#10;then &#34;BC&#34;&#10;else &#10;  institutionLocationProvince" target="institutionLocationProvince" />
         </zeebe:ioMapping>

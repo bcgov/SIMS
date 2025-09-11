@@ -100,14 +100,12 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   programYearStartDate: string;
   studentDataRelationshipStatus: RelationshipStatusType;
   studentDataTaxReturnIncome: number;
-  studentDataWhenDidYouGraduateOrLeaveHighSchool: string;
   studentDataIndigenousStatus: YesNoOptions;
   studentDataHasDependents: YesNoOptions;
   studentDataLivingAtHome: YesNoOptions;
   studentDataSelfContainedSuite: YesNoOptions;
   studentDataYouthInCare: YesNoOptions | "preferNotToAnswer";
   studentTaxYear: number;
-  programLocation: Provinces;
   institutionLocationProvince: Provinces;
   institutionType: InstitutionTypes;
   programLength: ProgramLengthOptions;
@@ -146,10 +144,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataPartnerEmploymentInsurance?: YesNoOptions;
   studentDataPartnerFedralProvincialPDReceiptCost?: number;
   studentDataPartnerChildSupportCosts?: number;
-  studentDataParentDependentTable?: JSONDoc;
   studentDataPartnerCaringForDependant?: YesNoOptions;
-  studentDataStudentParentNetAssests?: number;
-  studentDataStudentParentNetContribution?: number;
   studentDataPartnerTotalIncomeAssistance?: number;
   studentDataVoluntaryContributions?: number;
   studentDataScholarshipAmount?: number;
