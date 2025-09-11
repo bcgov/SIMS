@@ -15,10 +15,10 @@ import { OfferingCalculationValidationBaseConstraint } from "./offering-calculat
 /**
  * For an offering that contains study breaks, execute the calculation
  * of the funded study period to validate if it matches the maximum allowed
- * study period amount of funded weeks for the selected offering credential.
+ * study period amount of funded weeks within the maximum limit.
  */
 @ValidatorConstraint()
-class HasValidFundedWeeksForOfferingCredentialsConstraint
+class HasFundedWeeksWithinMaximumLimitConstraint
   extends OfferingCalculationValidationBaseConstraint
   implements ValidatorConstraintInterface
 {
@@ -31,8 +31,8 @@ class HasValidFundedWeeksForOfferingCredentialsConstraint
       studyBreaks,
       args,
     );
-    const [getFundedWeeks] = args.constraints;
-    const maxAllowedFundedWeeks = getFundedWeeks(
+    const [getMaximumFundedWeeksAllowed] = args.constraints;
+    const maxAllowedFundedWeeks = getMaximumFundedWeeksAllowed(
       offeringModel.aviationCredentialType,
     );
     if (!maxAllowedFundedWeeks) {
@@ -51,27 +51,32 @@ class HasValidFundedWeeksForOfferingCredentialsConstraint
 /**
  * For an offering that contains study breaks, execute the calculation
  * of the funded study period to validate if it matches the maximum allowed
- * study period amount of funded weeks for the selected offering credential.
+ * study period amount of funded weeks within the maximum limit.
  * @param startPeriodProperty property of the model that identifies the offering start date.
  * @param endPeriodProperty property of the model that identifies the offering end date.
- * @param getFundedWeeks function that returns the number of funded weeks for the selected offering credential.
+ * @param getMaximumFundedWeeksAllowed function that returns the maximum number of allowed
+ * funded weeks within the maximum limit.
  * @param validationOptions validations options.
  * @returns true if the funded weeks for the selected aviation credential are within maximum limits, otherwise false.
  */
-export function HasValidFundedWeeksForOfferingCredentials(
+export function HasFundedWeeksWithinMaximumLimit(
   startPeriodProperty: (targetObject: unknown) => Date | string,
   endPeriodProperty: (targetObject: unknown) => Date | string,
-  getFundedWeeks: (targetObject: unknown) => number,
+  getMaximumFundedWeeksAllowed: (targetObject: unknown) => number,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
     registerDecorator({
-      name: "HasValidFundedWeeksForOfferingCredentials",
+      name: "HasFundedWeeksWithinMaximumLimit",
       target: object.constructor,
       propertyName,
       options: validationOptions,
-      constraints: [startPeriodProperty, endPeriodProperty, getFundedWeeks],
-      validator: HasValidFundedWeeksForOfferingCredentialsConstraint,
+      constraints: [
+        startPeriodProperty,
+        endPeriodProperty,
+        getMaximumFundedWeeksAllowed,
+      ],
+      validator: HasFundedWeeksWithinMaximumLimitConstraint,
     });
   };
 }

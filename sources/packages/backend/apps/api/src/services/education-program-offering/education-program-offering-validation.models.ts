@@ -46,7 +46,7 @@ import { StudyBreaksCombinedMustNotExceedsThreshold } from "./custom-validators/
 import { HasValidOfferingPeriodForFundedWeeks } from "./custom-validators/has-valid-offering-period-for-funded-weeks";
 import { ProgramAllowsAviation } from "./custom-validators/program-allows-aviation";
 import { ProgramAviationCredentialMismatch } from "./custom-validators/program-allows-aviation-credential";
-import { HasValidFundedWeeksForOfferingCredentials } from "./custom-validators/has-valid-funded-weeks-for-offering-credentials";
+import { HasFundedWeeksWithinMaximumLimit } from "./custom-validators/has-funded-weeks-within-maximum-limit";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -747,7 +747,7 @@ export class OfferingValidationModel {
       ),
     },
   )
-  @HasValidFundedWeeksForOfferingCredentials(
+  @HasFundedWeeksWithinMaximumLimit(
     studyStartDateProperty,
     studyEndDateProperty,
     (aviationCredentialType: string) =>
