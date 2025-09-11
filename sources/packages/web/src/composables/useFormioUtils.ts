@@ -74,7 +74,7 @@ export function useFormioUtils() {
       (component) => component.component.key === componentKey,
       { stopOnFirstMatch: true },
     );
-    return firstComponentFound.component;
+    return firstComponentFound?.component;
   };
 
   // Forces a component to execute a redraw.
