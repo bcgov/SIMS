@@ -45,7 +45,7 @@ import { ProgramAllowsOfferingWIL } from "./custom-validators/program-allows-off
 import { StudyBreaksCombinedMustNotExceedsThreshold } from "./custom-validators/study-break-has-valid-consecutive-threshold";
 import { HasValidOfferingPeriodForFundedWeeks } from "./custom-validators/has-valid-offering-period-for-funded-weeks";
 import { ProgramAllowsAviation } from "./custom-validators/program-allows-aviation";
-import { ProgramAviationCredentialMismatch } from "./custom-validators/program-allows-aviation-credential";
+import { ProgramAllowsAviationCredential } from "./custom-validators/program-allows-aviation-credential";
 import { HasFundedWeeksWithinMaximumLimit } from "./custom-validators/has-funded-weeks-within-maximum-limit";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
@@ -64,6 +64,7 @@ import {
 } from "../../utilities";
 import { DATE_ONLY_ISO_FORMAT } from "@sims/utilities";
 import { YesNoOptions } from "@sims/test-utils";
+import { OfferingYesNoOptions } from "apps/api/src/services";
 
 /**
  * User friendly names for the fields.
@@ -632,7 +633,7 @@ export class OfferingValidationModel {
       OfferingValidationWarnings.AviationCredIsPrivatePilotTraining,
     ),
   })
-  @ProgramAviationCredentialMismatch(userFriendlyNames.aviationCredentialType, {
+  @ProgramAllowsAviationCredential(userFriendlyNames.aviationCredentialType, {
     context: ValidationContext.CreateWarning(
       OfferingValidationWarnings.ProgramAviationCredentialMismatch,
     ),
@@ -750,8 +751,15 @@ export class OfferingValidationModel {
   @HasFundedWeeksWithinMaximumLimit(
     studyStartDateProperty,
     studyEndDateProperty,
-    (aviationCredentialType: string) =>
-      MAX_FUNDED_WEEKS[aviationCredentialType],
+    (
+      isAviationOffering: OfferingYesNoOptions,
+      aviationCredentialType: string,
+    ) => {
+      if (isAviationOffering === OfferingYesNoOptions.No) {
+        return true;
+      }
+      return MAX_FUNDED_WEEKS[aviationCredentialType];
+    },
     {
       context: ValidationContext.CreateWarning(
         OfferingValidationWarnings.InvalidFundedWeeksForAviationOfferingCredentials,

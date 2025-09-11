@@ -24,17 +24,21 @@ class HasFundedWeeksWithinMaximumLimitConstraint
 {
   validate(studyBreaks: StudyBreak[], args: ValidationArguments): boolean {
     const offeringModel = args.object as OfferingValidationModel;
-    if (offeringModel.isAviationOffering === OfferingYesNoOptions.No) {
-      return true;
-    }
     const calculatedStudyBreaksAndWeeks = this.getCalculatedStudyBreaks(
       studyBreaks,
       args,
     );
     const [, , getMaximumFundedWeeksAllowed] = args.constraints;
-    const maxAllowedFundedWeeks = getMaximumFundedWeeksAllowed(
-      offeringModel.aviationCredentialType,
-    );
+    const maxAllowedFundedWeeks: number | boolean | undefined =
+      getMaximumFundedWeeksAllowed(
+        offeringModel.isAviationOffering,
+        offeringModel.aviationCredentialType,
+      );
+    if (typeof maxAllowedFundedWeeks === "boolean") {
+      return maxAllowedFundedWeeks;
+    }
+    // If the maximum allowed funded weeks is not defined for a certain type,
+    // then the validation should return true.
     if (!maxAllowedFundedWeeks) {
       return true;
     }
@@ -62,7 +66,10 @@ class HasFundedWeeksWithinMaximumLimitConstraint
 export function HasFundedWeeksWithinMaximumLimit(
   startPeriodProperty: (targetObject: unknown) => Date | string,
   endPeriodProperty: (targetObject: unknown) => Date | string,
-  getMaximumFundedWeeksAllowed: (targetObject: unknown) => number | undefined,
+  getMaximumFundedWeeksAllowed: (
+    isAviationOffering: OfferingYesNoOptions,
+    targetObject: unknown,
+  ) => number | boolean | undefined,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {

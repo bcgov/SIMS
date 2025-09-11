@@ -37,13 +37,13 @@ class ProgramAllowsAviationCredentialConstraint
  * @returns true if the education program and offering have the same aviation
  * credential, otherwise, false.
  */
-export function ProgramAviationCredentialMismatch(
+export function ProgramAllowsAviationCredential(
   propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string) => {
     registerDecorator({
-      name: "ProgramAviationCredentialMismatch",
+      name: "ProgramAllowsAviationCredential",
       target: object.constructor,
       propertyName,
       options: validationOptions,
