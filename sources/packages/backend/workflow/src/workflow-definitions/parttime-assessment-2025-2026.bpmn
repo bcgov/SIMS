@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0ihicdz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.35.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="7a75e87a-6774-4e60-9a94-5dbbe3be143a">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0ihicdz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.38.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="7a75e87a-6774-4e60-9a94-5dbbe3be143a">
   <bpmn:message id="Message_3q4oc02" name="Message_3q4oc02" />
   <bpmn:collaboration id="Collaboration_1cf99un">
     <bpmn:participant id="Participant_1mct69m" name="parttime-assessment-2025-2026" processRef="parttime-assessment-2025-2026" />
@@ -776,7 +776,7 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if (calculatedDataTotalFamilyIncome &#60;= dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTIncomeCap)&#10;then dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount&#10;else&#10;  max(dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount - ((calculatedDataTotalFamilyIncome - dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTIncomeCap) * dmnPartTimeAwardFamilySizeVariables.limitAwardCSPTSlope),&#10;     100&#10;  )" target="federalAwardCSPTAmount" />
-          <zeebe:output source="=dmnPartTimeAwardAllowableLimits.limitAwardCSPTAmount - programYearTotalPartTimeCSPT" target="limitAwardCSPTRemaining" />
+          <zeebe:output source="=federalAwardCSPTAmount - programYearTotalPartTimeCSPT" target="limitAwardCSPTRemaining" />
           <zeebe:output source="=if (awardEligibilityCSPT = true and calculatedDataTotalRemainingNeed1 &#62;= 100 and limitAwardCSPTRemaining &#62;= 100)&#10;then&#10;  min(calculatedDataTotalRemainingNeed1, limitAwardCSPTRemaining, federalAwardCSPTAmount)&#10;else&#10;0" target="federalAwardNetCSPTAmount" />
           <zeebe:output source="=max(0,(calculatedDataTotalRemainingNeed1 - federalAwardNetCSPTAmount))" target="calculatedDataTotalRemainingNeed2" />
         </zeebe:ioMapping>
@@ -1710,10 +1710,6 @@ dmnX (comes from dmn)</bpmn:text>
           <dc:Bounds x="756" y="815" width="88" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_0eiso39_di" bpmnElement="Association_0eiso39">
-        <di:waypoint x="804" y="887" />
-        <di:waypoint x="825" y="980" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_02o9884" bpmnElement="Flow_1su3k2o">
         <di:waypoint x="1426" y="810" />
         <di:waypoint x="1494" y="810" />
@@ -2392,9 +2388,9 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="918" y="870" />
         <di:waypoint x="962" y="870" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0x6kg2f_di" bpmnElement="Association_0x6kg2f">
-        <di:waypoint x="890" y="885" />
-        <di:waypoint x="830" y="980" />
+      <bpmndi:BPMNEdge id="Association_0eiso39_di" bpmnElement="Association_0eiso39">
+        <di:waypoint x="804" y="887" />
+        <di:waypoint x="825" y="980" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0hjhvfj" bpmnElement="TextAnnotation_15vd5py">
         <dc:Bounds x="7749" y="2700" width="100" height="30" />
@@ -2561,6 +2557,10 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNEdge id="Association_1eiopcp_di" bpmnElement="Association_1eiopcp">
         <di:waypoint x="2310" y="1040" />
         <di:waypoint x="2310" y="993" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0x6kg2f_di" bpmnElement="Association_0x6kg2f">
+        <di:waypoint x="890" y="885" />
+        <di:waypoint x="830" y="980" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
