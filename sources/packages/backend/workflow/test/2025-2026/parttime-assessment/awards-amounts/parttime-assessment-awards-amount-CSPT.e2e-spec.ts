@@ -6,7 +6,7 @@ import {
 } from "../../../test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CSPT.`, () => {
-  it("Should determine federalAwardCSPTAmount when awardEligibilityCSPT is true and calculatedDataTotalFamilyIncome <= limitAwardCSPTIncomeCap", async () => {
+  it("Should determine federalAwardCSPTAmount when awardEligibilityCSPT is true and calculatedDataTotalFamilyIncome <= limitAwardCSPTIncomeCap.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -36,7 +36,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(2520);
   });
 
-  it("Should determine federalAwardCSPTAmount when awardEligibilityCSPT is true and calculatedDataTotalFamilyIncome > limitAwardCSPTIncomeCap", async () => {
+  it("Should determine federalAwardCSPTAmount when awardEligibilityCSPT is true and calculatedDataTotalFamilyIncome > limitAwardCSPTIncomeCap.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -64,7 +64,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
   });
 
-  it("Should determine federalAwardNetCSPTAmount when awardEligibilityCSPT is true", async () => {
+  it("Should determine federalAwardNetCSPTAmount when awardEligibilityCSPT is true.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -101,7 +101,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(0);
   });
 
-  it("Should determine federalAwardNetCSPTAmount when awardEligibilityCSPT is true and no CSPT awarded in the program year previously", async () => {
+  it("Should determine federalAwardNetCSPTAmount when awardEligibilityCSPT is true and no CSPT awarded in the program year previously.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -123,7 +123,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(2520);
   });
 
-  it("Should determine federalAwardNetCSPTAmount as zero when awardEligibilityCSPT is true and difference between the programYearLimits and CSPT awarded in the program year previously is less than 100", async () => {
+  it("Should determine federalAwardNetCSPTAmount as zero when awardEligibilityCSPT is true and difference between the programYearLimits and CSPT awarded in the program year previously is less than 100.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -131,7 +131,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
-    assessmentConsolidatedData.programYearTotalPartTimeCSPT = 2421;
+    assessmentConsolidatedData.programYearTotalPartTimeCSPT = 795;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
@@ -139,12 +139,109 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
-    expect(calculatedAssessment.variables.limitAwardCSPTRemaining).toBe(99);
-    expect(
-      calculatedAssessment.variables.federalAwardCSPTAmount,
-    ).toBeGreaterThan(100);
+    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(805);
+    // Award limit remaining is $805 - $795 = $10 which is less than $100
+    expect(calculatedAssessment.variables.limitAwardCSPTRemaining).toBeLessThan(
+      100,
+    );
     expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(0);
   });
+
+  it(
+    "Should determine Net CSPT amount as the lower of remaining CSPT and remaining need when wardEligibilityCSPT is true " +
+      "both are over the minimum award amount ($100) and student has max award amount based on income.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataCRAReportedIncome = 37700;
+      assessmentConsolidatedData.programYearTotalPartTimeCSPT = 1000;
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
+      expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(2520);
+      // Award limit remaining is $2520 - $1,000 = $1,520
+      expect(calculatedAssessment.variables.limitAwardCSPTRemaining).toBe(1520);
+      // When remaining award is less than remaining need, remaining award is used as net.
+      expect(
+        calculatedAssessment.variables.limitAwardCSPTRemaining,
+      ).toBeLessThan(
+        calculatedAssessment.variables.calculatedDataTotalRemainingNeed1,
+      );
+      expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(
+        calculatedAssessment.variables.limitAwardCSPTRemaining,
+      );
+    },
+  );
+
+  it(
+    "Should determine Net CSPT amount as remaining CSPT when awardEligibilityCSPT is true " +
+      " and remaining CSPT is less than remaining need but higher than the minimum award amount ($100).",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataCRAReportedIncome = 54000;
+      assessmentConsolidatedData.programYearTotalPartTimeCSPT = 500;
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
+      expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(1217);
+      // Award limit remaining is $1217 - $500 = $717.
+      expect(calculatedAssessment.variables.limitAwardCSPTRemaining).toBe(717);
+      // When remaining award is less than remaining need, remaining award is used as net.
+      expect(
+        calculatedAssessment.variables.limitAwardCSPTRemaining,
+      ).toBeLessThan(
+        calculatedAssessment.variables.calculatedDataTotalRemainingNeed1,
+      );
+      expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(
+        717,
+      );
+    },
+  );
+
+  it(
+    "Should determine Net CSPT amount as remaining need when awardEligibilityCSPT is true " +
+      " and remaining need is less than remaining CSPT but higher than the minimum award amount ($100).",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.offeringActualTuitionCosts = 500;
+      assessmentConsolidatedData.studentDataCRAReportedIncome = 36810;
+      assessmentConsolidatedData.programYearTotalPartTimeCSPT = 150;
+      assessmentConsolidatedData.offeringCourseLoad = 30;
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
+      expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(2520);
+      // Award limit remaining is $2520 - $150 = $2370.
+      expect(calculatedAssessment.variables.limitAwardCSPTRemaining).toBe(2370);
+      // When remaining need is less than remaining award, remaining need is used as net.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalRemainingNeed1,
+      ).toBeLessThan(calculatedAssessment.variables.limitAwardCSPTRemaining);
+      expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(
+        1868,
+      );
+    },
+  );
 
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
