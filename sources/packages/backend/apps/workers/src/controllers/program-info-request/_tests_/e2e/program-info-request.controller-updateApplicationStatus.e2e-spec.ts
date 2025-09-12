@@ -223,7 +223,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     });
   });
 
-  it("Should update application PIR status using the status in the worker payload when the application does not contain dynamic data, which includes 'programPersistentProperties'.", async () => {
+  it("Should update application PIR status using the status in the worker payload when the application does not contain dynamic data with 'programPersistentProperties'.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);

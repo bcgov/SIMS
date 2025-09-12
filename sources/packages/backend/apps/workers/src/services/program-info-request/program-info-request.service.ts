@@ -29,7 +29,6 @@ export class ProgramInfoRequestService {
    * @param pirProgram optional program selected by the student.
    * When not provided the PIR will be required to be completed by
    * the institution.
-   * @returns update result.
    */
   async updateProgramInfoStatus(
     applicationId: number,
@@ -60,14 +59,12 @@ export class ProgramInfoRequestService {
 
   /**
    * Updates the Program Information Request (PIR) using the information
-   * from a previously approved PIR.
+   * from a previously approved PIR, when possible.
    * Ensures that the PIR is only updated if it was not set in the meantime.
    * @param applicationId application to have the PIR updated.
    * @param pirHash application data hash to find a previously approved PIR.
    * @returns true when the application was updated with the previously approved PIR,
    * false when no previously approved PIR was found.
-   * @throws CustomNamedError with code PIR_STATUS_ALREADY_SET when the PIR
-   * was already set in the meantime to ensure the worker idempotency.
    */
   async tryUpdateFromPreviouslyApprovedPIR(
     applicationId: number,
@@ -97,12 +94,12 @@ export class ProgramInfoRequestService {
             {
               pirStatus: ProgramInfoStatus.completed,
               pirProgram: previouslyApprovedPIR.pirProgram,
-              pirApprovalReference: { id: previouslyApprovedPIR.id },
               pirHash,
-              updatedAt: now,
-              modifier: this.systemUsersService.systemUser,
+              pirApprovalReference: { id: previouslyApprovedPIR.id },
               pirAssessedBy: this.systemUsersService.systemUser,
               pirAssessedDate: now,
+              updatedAt: now,
+              modifier: this.systemUsersService.systemUser,
             },
           );
         // Update current assessment offering using the previously approved PIR assessment offering.
