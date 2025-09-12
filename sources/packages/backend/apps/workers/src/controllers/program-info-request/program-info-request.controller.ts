@@ -18,7 +18,7 @@ import {
   MustReturnJobActionAcknowledgement,
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";
-import { Application, ProgramInfoStatus } from "@sims/sims-db";
+import { ProgramInfoStatus } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 
 @Controller()
@@ -69,24 +69,15 @@ export class ProgramInfoRequestController {
         application.data,
       );
       if (job.customHeaders.programInfoStatus === ProgramInfoStatus.required) {
-        let previouslyApprovedPIR: Application | null = null;
         if (applicationDataHash) {
-          previouslyApprovedPIR =
-            await this.programInfoRequestService.getPreviouslyApprovedPIROfferingId(
-              applicationDataHash,
-              application.parentApplication.id,
-            );
-          if (previouslyApprovedPIR) {
-            jobLogger.log(
-              `Found previously approved PIR approved for application ID ${previouslyApprovedPIR.id} for application ID ${application.id}. Reusing the PIR information.`,
-            );
-            await this.programInfoRequestService.updatePreviouslyApprovedProgramInfoStatus(
-              application.student.id,
+          const updatedFromPreviousPIR =
+            await this.programInfoRequestService.tryUpdateFromPreviouslyApprovedPIR(
               job.variables.applicationId,
-              previouslyApprovedPIR.id,
-              previouslyApprovedPIR.pirProgram.id,
-              previouslyApprovedPIR.currentAssessment.offering.id,
               applicationDataHash,
+            );
+          if (updatedFromPreviousPIR) {
+            jobLogger.log(
+              `Found previously approved PIR approved for application ID ${job.variables.applicationId}. PIR information was reused.`,
             );
             return job.complete({
               programInfoStatus: ProgramInfoStatus.completed,

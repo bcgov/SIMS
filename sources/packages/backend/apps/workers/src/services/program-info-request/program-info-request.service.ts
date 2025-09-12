@@ -7,7 +7,7 @@ import {
   ProgramInfoStatus,
   StudentAssessment,
 } from "@sims/sims-db";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import { CustomNamedError, getDateOnlyFormat } from "@sims/utilities";
 import { PIR_STATUS_ALREADY_SET } from "apps/workers/src/constants";
 import { DataSource, EntityManager, IsNull, Repository } from "typeorm";
 
@@ -62,29 +62,27 @@ export class ProgramInfoRequestService {
    * Updates the Program Information Request (PIR) using the information
    * from a previously approved PIR.
    * @param applicationId application to have the PIR updated.
-   * @param pirApprovalReferenceId application that approved the PIR previously.
-   * @param pirProgram program selected by the student during the previous PIR.
-   * @param offeringId offering ID that was approved during the previous PIR. Please
-   * note that the offering ID may not belong to the program selected by the student
-   * by the student as the institution may have approved a different program.
+   * @param pirHash application data hash to find a previously approved PIR.
+   * @returns true when the application was updated with the previously approved PIR,
+   * false when no previously approved PIR was found.
    */
-  async tryUpdateFromPreviouslyApprovedProgramInfoStatus(
+  async tryUpdateFromPreviouslyApprovedPIR(
     applicationId: number,
     pirHash: string,
   ): Promise<boolean> {
     return await this.dataSource.transaction(
       async (transactionalEntityManager) => {
+        const application = await this.getPreviouslyApprovedPIRApplication(
+          applicationId,
+          pirHash,
+          transactionalEntityManager,
+        );
         // Check for previously approved PIR to reuse the information.
-        const previouslyApprovedPIR =
-          await this.getPreviouslyApprovedPIRApplication(
-            pirHash,
-            applicationId,
-            transactionalEntityManager,
-          );
-        if (!previouslyApprovedPIR) {
+        if (!application?.parentApplication?.versions?.length) {
           return false;
         }
         // Update the application PIR information.
+        const [previouslyApprovedPIR] = application.parentApplication.versions;
         const now = new Date();
         const updateApplicationPromise = transactionalEntityManager
           .getRepository(Application)
@@ -104,12 +102,12 @@ export class ProgramInfoRequestService {
               pirAssessedDate: now,
             },
           );
-        // Update current offering.
+        // Update current assessment offering using the previously approved PIR assessment offering.
         const updateAssessmentPromise = transactionalEntityManager
           .getRepository(StudentAssessment)
           .update(
             {
-              id: previouslyApprovedPIR.currentAssessment.id,
+              id: application.currentAssessment.id,
             },
             {
               offering: previouslyApprovedPIR.currentAssessment.offering,
@@ -119,10 +117,10 @@ export class ProgramInfoRequestService {
           );
         // Create a note for the student indicating that the PIR was automatically completed.
         const studentNotePromise = this.noteSharedService.createStudentNote(
-          previouslyApprovedPIR.student.id,
+          application.student.id,
           NoteType.Application,
-          `Program information request automatically completed on ${getISODateOnlyString(
-            previouslyApprovedPIR.pirApprovalReference.pirAssessedDate,
+          `Program information request automatically completed using information from previous request approved on ${getDateOnlyFormat(
+            previouslyApprovedPIR.pirAssessedDate,
           )}.`,
           this.systemUsersService.systemUser.id,
           transactionalEntityManager,
@@ -145,30 +143,62 @@ export class ProgramInfoRequestService {
     );
   }
 
+  /**
+   * Get information about the current application and a previously approved PIR.
+   * @param applicationId application ID.
+   * @param pirHash PIR hash.
+   * @param entityManager Entity manager.
+   * @returns application information or null if not found.
+   */
   private async getPreviouslyApprovedPIRApplication(
-    currentPIRHash: string,
-    parentApplicationId: number,
+    applicationId: number,
+    pirHash: string,
     entityManager: EntityManager,
   ): Promise<Application | null> {
-    return entityManager.getRepository(Application).findOne({
+    const application = await entityManager.getRepository(Application).findOne({
       select: {
         id: true,
-        pirProgram: { id: true },
-        submittedDate: true,
+        parentApplication: {
+          id: true,
+          versions: {
+            id: true,
+            pirProgram: { id: true },
+            pirAssessedDate: true,
+            submittedDate: true,
+            currentAssessment: { id: true, offering: { id: true } },
+            createdAt: true,
+          },
+        },
         currentAssessment: { id: true, offering: { id: true } },
         student: { id: true },
       },
       relations: {
-        pirProgram: true,
-        student: true,
+        parentApplication: {
+          versions: {
+            pirProgram: true,
+            currentAssessment: { offering: true },
+          },
+        },
         currentAssessment: { offering: true },
+        student: true,
       },
       where: {
-        pirHash: currentPIRHash,
-        pirStatus: ProgramInfoStatus.completed,
-        parentApplication: { id: parentApplicationId },
+        id: applicationId,
+        parentApplication: {
+          versions: {
+            pirHash,
+            pirStatus: ProgramInfoStatus.completed,
+          },
+        },
       },
-      order: { submittedDate: "ASC" },
+      order: {
+        parentApplication: {
+          versions: {
+            createdAt: "ASC",
+          },
+        },
+      },
     });
+    return application;
   }
 }
