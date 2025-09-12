@@ -8,7 +8,7 @@ import {
   StudentAssessment,
 } from "@sims/sims-db";
 import { CustomNamedError, getDateOnlyFormat } from "@sims/utilities";
-import { PIR_STATUS_ALREADY_SET } from "apps/workers/src/constants";
+import { PIR_STATUS_ALREADY_SET } from "../../constants";
 import { DataSource, EntityManager, IsNull, Repository } from "typeorm";
 
 @Injectable()
@@ -61,10 +61,13 @@ export class ProgramInfoRequestService {
   /**
    * Updates the Program Information Request (PIR) using the information
    * from a previously approved PIR.
+   * Ensures that the PIR is only updated if it was not set in the meantime.
    * @param applicationId application to have the PIR updated.
    * @param pirHash application data hash to find a previously approved PIR.
    * @returns true when the application was updated with the previously approved PIR,
    * false when no previously approved PIR was found.
+   * @throws CustomNamedError with code PIR_STATUS_ALREADY_SET when the PIR
+   * was already set in the meantime to ensure the worker idempotency.
    */
   async tryUpdateFromPreviouslyApprovedPIR(
     applicationId: number,
@@ -119,7 +122,7 @@ export class ProgramInfoRequestService {
         const studentNotePromise = this.noteSharedService.createStudentNote(
           application.student.id,
           NoteType.Application,
-          `Program information request automatically completed using information from previous request approved on ${getDateOnlyFormat(
+          `The program information request was automatically completed using information from a previous request that was approved on ${getDateOnlyFormat(
             previouslyApprovedPIR.pirAssessedDate,
           )}.`,
           this.systemUsersService.systemUser.id,
@@ -146,15 +149,16 @@ export class ProgramInfoRequestService {
   /**
    * Get information about the current application and a previously approved PIR.
    * @param applicationId application ID.
-   * @param pirHash PIR hash.
-   * @param entityManager Entity manager.
-   * @returns application information or null if not found.
+   * @param pirHash PIR hash to search by an equivalent previously approved PIR.
+   * @param entityManager entity manager.
+   * @returns application information including the previously approved PIR at the
+   * versions of the parent application, ordered by the creation date ascending.
    */
   private async getPreviouslyApprovedPIRApplication(
     applicationId: number,
     pirHash: string,
     entityManager: EntityManager,
-  ): Promise<Application | null> {
+  ): Promise<Application> {
     const application = await entityManager.getRepository(Application).findOne({
       select: {
         id: true,
