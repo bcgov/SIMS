@@ -93,7 +93,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     expect(expectedApplication.pirStatus).toBe(ProgramInfoStatus.declined);
   });
 
-  it("Should update application PIR to completed when a PIR with the same hash was previously approved for some of the application versions.", async () => {
+  it("Should update the application PIR to completed when a PIR with the same hash was previously approved for some of the application versions", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
@@ -223,7 +223,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     });
   });
 
-  it("Should update application PIR status using the status in the worker payload when the application does not contains dynamic data which includes 'programPersistentProperties'.", async () => {
+  it("Should update application PIR status using the status in the worker payload when the application does not contain dynamic data, which includes 'programPersistentProperties'.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
@@ -297,7 +297,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     });
   });
 
-  it("Should update application PIR status using the status in the worker payload when a previously approved PIR exists but with a different hash.", async () => {
+  it("Should update the application PIR status using the status in the worker payload when a previously approved PIR exists, but with a different hash.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
@@ -355,7 +355,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     // Asserts
     expect(result).toEqual({
       resultType: MockedZeebeJobResult.Complete,
-      outputVariables: { programInfoStatus: ProgramInfoStatus.completed },
+      outputVariables: { programInfoStatus: ProgramInfoStatus.required },
     });
 
     // Asserts that the application PIR status is completed
@@ -381,7 +381,8 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     expect(expectedApplication).toEqual({
       id: pirApplicationCurrent.id,
       pirStatus: ProgramInfoStatus.required,
-      pirHash: null,
+      pirHash:
+        "fcd7007c38efef538e6d5fa09d37565a6388111c26eb558b1b8b21b9bacfcb2c",
       pirProgram: { id: pirOffering.educationProgram.id },
       pirAssessedDate: null,
       pirAssessedBy: null,
