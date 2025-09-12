@@ -64,12 +64,14 @@ export class ProgramInfoRequestController {
           programInfoStatus: application.pirStatus,
         });
       }
-      // Check for previously approved PIR to reuse the information.
+      // Generate the hash, if supported, of the application data to be compared with previously
+      // approved PIRs. If the program does not support PIR, the hash will be null.
       const applicationDataHash = this.applicationService.getProgramDataHash(
         application.data,
       );
       if (job.customHeaders.programInfoStatus === ProgramInfoStatus.required) {
         if (applicationDataHash) {
+          // Check for previously approved PIR to reuse the information.
           const updatedFromPreviousPIR =
             await this.programInfoRequestService.tryUpdateFromPreviouslyApprovedPIR(
               job.variables.applicationId,
@@ -77,7 +79,7 @@ export class ProgramInfoRequestController {
             );
           if (updatedFromPreviousPIR) {
             jobLogger.log(
-              `Found previously approved PIR approved for application ID ${job.variables.applicationId}. PIR information was reused.`,
+              `Previously approved PIR information was reused to complete the request for application ID ${job.variables.applicationId}.`,
             );
             return job.complete({
               programInfoStatus: ProgramInfoStatus.completed,
@@ -93,7 +95,7 @@ export class ProgramInfoRequestController {
         job.variables.studentDataSelectedProgram,
       );
       jobLogger.log(
-        `PIR status updated for application ID ${job.variables.applicationId} updated to ${job.customHeaders.programInfoStatus}.`,
+        `PIR status updated to ${job.customHeaders.programInfoStatus} for application ID ${job.variables.applicationId}.`,
       );
       return job.complete({
         programInfoStatus: job.customHeaders.programInfoStatus,

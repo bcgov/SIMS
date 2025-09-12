@@ -223,6 +223,173 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     });
   });
 
+  it("Should update application PIR status using the status in the worker payload when the application does not contains dynamic data which includes 'programPersistentProperties'.", async () => {
+    // Arrange
+    const now = new Date();
+    MockDate.set(now);
+    // Save a user to be used as the modifier and PIR assessed by.
+    const savedUser = await db.user.save(createFakeUser());
+    const fakeOffering = createFakeEducationProgramOffering({
+      auditUser: savedUser,
+    });
+    const pirOffering = await db.educationProgramOffering.save(fakeOffering);
+    // Create a new version of the previous application have the PIR approved.
+    const pirApplicationCurrent = await saveFakeApplication(
+      db.dataSource,
+      undefined,
+      {
+        applicationData: {
+          programName: "valueA",
+          programDescription: "valueB",
+        } as ApplicationData,
+      },
+    );
+    const updateApplicationStatusPayload = createFakeUpdatePIRStatusPayload(
+      pirApplicationCurrent.id,
+      pirOffering.educationProgram.id,
+      ProgramInfoStatus.required,
+    );
+
+    // Act
+    const result = await programInfoRequestController.updateApplicationStatus(
+      createFakeWorkerJob<
+        ProgramInfoRequestJobInDTO,
+        ProgramInfoRequestJobHeaderDTO,
+        ProgramInfoRequestJobOutDTO
+      >(updateApplicationStatusPayload),
+    );
+
+    // Asserts
+    expect(result).toEqual({
+      resultType: MockedZeebeJobResult.Complete,
+      outputVariables: { programInfoStatus: ProgramInfoStatus.required },
+    });
+
+    // Asserts that the application PIR status is completed
+    // and data was updated as expected.
+    const expectedApplication = await db.application.findOne({
+      select: {
+        id: true,
+        pirStatus: true,
+        pirHash: true,
+        pirProgram: { id: true },
+        pirAssessedDate: true,
+        pirAssessedBy: { id: true },
+        updatedAt: true,
+        modifier: { id: true },
+      },
+      relations: {
+        pirAssessedBy: true,
+        pirProgram: true,
+        modifier: true,
+      },
+      where: { id: pirApplicationCurrent.id },
+    });
+    expect(expectedApplication).toEqual({
+      id: pirApplicationCurrent.id,
+      pirStatus: ProgramInfoStatus.required,
+      pirHash: null,
+      pirProgram: { id: pirOffering.educationProgram.id },
+      pirAssessedDate: null,
+      pirAssessedBy: null,
+      updatedAt: now,
+      modifier: systemUsersService.systemUser,
+    });
+  });
+
+  it("Should update application PIR status using the status in the worker payload when a previously approved PIR exists but with a different hash.", async () => {
+    // Arrange
+    const now = new Date();
+    MockDate.set(now);
+    const pirAssessedDate = addDays(-1);
+    // Save a user to be used as the modifier and PIR assessed by.
+    const savedUser = await db.user.save(createFakeUser());
+    const fakeOffering = createFakeEducationProgramOffering({
+      auditUser: savedUser,
+    });
+    const pirOffering = await db.educationProgramOffering.save(fakeOffering);
+    // Save a previous application version with an approved PIR and different hash.
+    // pirHash as "someOtherHash" which is different from the hash of { programName: "valueA", programDescription: "valueB"}.
+    const pirApplicationVersion = await saveFakeApplication(
+      db.dataSource,
+      {
+        pirProgram: pirOffering.educationProgram,
+        offering: pirOffering,
+      },
+      {
+        pirStatus: ProgramInfoStatus.completed,
+        initialValues: {
+          pirHash: "someOtherHash",
+          pirAssessedDate: pirAssessedDate,
+        },
+      },
+    );
+    // Create a new version of the previous application have the PIR approved.
+    const pirApplicationCurrent = await saveFakeApplication(
+      db.dataSource,
+      {
+        parentApplication: pirApplicationVersion,
+      },
+      {
+        applicationData: {
+          programName: "valueA",
+          programPersistentProperties: ["programName"],
+        } as ApplicationData,
+      },
+    );
+    const updateApplicationStatusPayload = createFakeUpdatePIRStatusPayload(
+      pirApplicationCurrent.id,
+      pirOffering.educationProgram.id,
+      ProgramInfoStatus.required,
+    );
+
+    // Act
+    const result = await programInfoRequestController.updateApplicationStatus(
+      createFakeWorkerJob<
+        ProgramInfoRequestJobInDTO,
+        ProgramInfoRequestJobHeaderDTO,
+        ProgramInfoRequestJobOutDTO
+      >(updateApplicationStatusPayload),
+    );
+
+    // Asserts
+    expect(result).toEqual({
+      resultType: MockedZeebeJobResult.Complete,
+      outputVariables: { programInfoStatus: ProgramInfoStatus.completed },
+    });
+
+    // Asserts that the application PIR status is completed
+    // and data was updated as expected.
+    const expectedApplication = await db.application.findOne({
+      select: {
+        id: true,
+        pirStatus: true,
+        pirHash: true,
+        pirProgram: { id: true },
+        pirAssessedDate: true,
+        pirAssessedBy: { id: true },
+        updatedAt: true,
+        modifier: { id: true },
+      },
+      relations: {
+        pirAssessedBy: true,
+        pirProgram: true,
+        modifier: true,
+      },
+      where: { id: pirApplicationCurrent.id },
+    });
+    expect(expectedApplication).toEqual({
+      id: pirApplicationCurrent.id,
+      pirStatus: ProgramInfoStatus.required,
+      pirHash: null,
+      pirProgram: { id: pirOffering.educationProgram.id },
+      pirAssessedDate: null,
+      pirAssessedBy: null,
+      updatedAt: now,
+      modifier: systemUsersService.systemUser,
+    });
+  });
+
   it("Should not update application PIR status when already set.", async () => {
     // Arrange
     const savedUser = await db.user.save(createFakeUser());
