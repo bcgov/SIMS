@@ -227,7 +227,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
 
   it(
     "Should determine Net BCAG amount as remaining need when awardEligibilityBCAG is true " +
-      " and remaining need is less than remaining BCAG but higher than the minimum award amount ($100).",
+      "and remaining need is less than remaining BCAG but higher than the minimum award amount ($100).",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -260,13 +260,14 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
 
   it(
     "Should determine Net BCAG amount as remaining need when awardEligibilityBCAG is true " +
-      " and remaining BCAG is less than remaining need but higher than the minimum award amount ($100).",
+      "and remaining BCAG is less than remaining need but higher than the minimum award amount ($100).",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataCRAReportedIncome = 36810;
       assessmentConsolidatedData.programYearTotalPartTimeBCAG = 150;
+      assessmentConsolidatedData.offeringCourseLoad = 20;
       // Act
       const calculatedAssessment =
         await executePartTimeAssessmentForProgramYear(

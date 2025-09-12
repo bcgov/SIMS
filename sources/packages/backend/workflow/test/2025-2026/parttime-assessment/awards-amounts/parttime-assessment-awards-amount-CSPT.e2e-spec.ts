@@ -148,7 +148,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
   });
 
   it(
-    "Should determine Net CSPT amount as the lower of remaining CSPT and remaining need when wardEligibilityCSPT is true " +
+    "Should determine Net CSPT amount as the lower of remaining CSPT and remaining need when awardEligibilityCSPT is true, " +
       "both are over the minimum award amount ($100) and student has max award amount based on income.",
     async () => {
       // Arrange
@@ -180,40 +180,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
   );
 
   it(
-    "Should determine Net CSPT amount as remaining CSPT when awardEligibilityCSPT is true " +
-      " and remaining CSPT is less than remaining need but higher than the minimum award amount ($100).",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataCRAReportedIncome = 54000;
-      assessmentConsolidatedData.programYearTotalPartTimeCSPT = 500;
-      // Act
-      const calculatedAssessment =
-        await executePartTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-      // Assert
-      expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
-      expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(1217);
-      // Award limit remaining is $1217 - $500 = $717.
-      expect(calculatedAssessment.variables.limitAwardCSPTRemaining).toBe(717);
-      // When remaining award is less than remaining need, remaining award is used as net.
-      expect(
-        calculatedAssessment.variables.limitAwardCSPTRemaining,
-      ).toBeLessThan(
-        calculatedAssessment.variables.calculatedDataTotalRemainingNeed1,
-      );
-      expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(
-        717,
-      );
-    },
-  );
-
-  it(
     "Should determine Net CSPT amount as remaining need when awardEligibilityCSPT is true " +
-      " and remaining need is less than remaining CSPT but higher than the minimum award amount ($100).",
+      "and remaining need is less than remaining CSPT but higher than the minimum award amount ($100).",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
