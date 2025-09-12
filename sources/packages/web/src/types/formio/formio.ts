@@ -98,6 +98,7 @@ export enum FromIOComponentTypes {
   Radio = "radio",
   Calendar = "calendar",
   Container = "container",
+  File = "file",
 }
 
 export interface FormIOComponentInternal {
@@ -121,4 +122,5 @@ export interface FormIOComponent {
   disabled: boolean;
   type: FromIOComponentTypes;
   setValue: (value: unknown) => void;
+  getValue: () => unknown;
 }
