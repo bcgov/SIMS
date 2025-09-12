@@ -19,6 +19,7 @@ import {
   DisbursementScheduleService,
   ApplicationExceptionSearchService,
   ApplicationExceptionHashService,
+  ProgramInfoRequestService,
 } from "./services";
 import { ZeebeHealthIndicator, ZeebeTransportStrategy } from "./zeebe";
 import {
@@ -85,6 +86,7 @@ import { TerminusModule } from "@nestjs/terminus";
     ZeebeHealthIndicator,
     AssessmentSequentialProcessingService,
     StudentLoanBalanceSharedService,
+    ProgramInfoRequestService,
   ],
 })
 export class WorkersModule {}

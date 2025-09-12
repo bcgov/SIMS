@@ -10,3 +10,4 @@ export * from "./disbursement-schedule/disbursement-schedule.model";
 export * from "./application-exception/application-exception-search.service";
 export * from "./application-exception/application-exception.models";
 export * from "./application-exception/application-exception-hash.service";
+export * from "./program-info-request/program-info-request.service";

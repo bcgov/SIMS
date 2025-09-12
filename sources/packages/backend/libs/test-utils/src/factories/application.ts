@@ -46,6 +46,7 @@ export function createFakeApplication(
     precedingApplication?: Application;
     parentApplication?: Application;
     applicationEditStatusUpdatedBy?: User;
+    pirProgram?: EducationProgram;
   },
   options?: { initialValue?: Partial<Application> },
 ): Application {
@@ -72,7 +73,10 @@ export function createFakeApplication(
     faker.datatype.number({ max: 9999999999, min: 1000000000 }).toString();
   application.applicationException = relations?.applicationException;
   application.location = relations?.location ?? createFakeInstitutionLocation();
+  application.pirProgram = relations?.pirProgram;
   application.pirStatus = options?.initialValue?.pirStatus;
+  application.pirHash = options?.initialValue?.pirHash;
+  application.pirAssessedDate = options?.initialValue?.pirAssessedDate;
   application.isArchived = options?.initialValue?.isArchived;
   application.submittedDate = options?.initialValue?.submittedDate;
   application.precedingApplication = relations?.precedingApplication;
@@ -283,6 +287,7 @@ export async function saveFakeApplication(
     applicationException?: ApplicationException;
     precedingApplication?: Application;
     parentApplication?: Application;
+    pirProgram?: EducationProgram;
   },
   options?: {
     initialValues?: Partial<Application>;
@@ -327,6 +332,7 @@ export async function saveFakeApplication(
       precedingApplication: relations?.precedingApplication,
       parentApplication: relations?.parentApplication,
       applicationEditStatusUpdatedBy: savedUser,
+      pirProgram: relations?.pirProgram,
     },
     {
       initialValue: {
@@ -358,7 +364,7 @@ export async function saveFakeApplication(
 
   // Offering.
   let savedOffering = relations?.offering;
-  if (!savedOffering) {
+  if (!savedOffering && options?.pirStatus !== ProgramInfoStatus.required) {
     const fakeOffering = createFakeEducationProgramOffering(
       {
         institution: relations?.institution,
