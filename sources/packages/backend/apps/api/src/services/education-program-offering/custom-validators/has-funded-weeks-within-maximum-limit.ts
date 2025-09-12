@@ -40,7 +40,7 @@ class HasFundedWeeksWithinMaximumLimitConstraint
 
   defaultMessage(args: ValidationArguments) {
     const [, , , propertyDisplayName] = args.constraints;
-    return `The dates you have entered will create an offering with more funded weeks than allowed based on the ${propertyDisplayName} selected.`;
+    return `The dates you have entered will create an offering with more funded weeks than allowed based on the ${propertyDisplayName}.`;
   }
 }
 
