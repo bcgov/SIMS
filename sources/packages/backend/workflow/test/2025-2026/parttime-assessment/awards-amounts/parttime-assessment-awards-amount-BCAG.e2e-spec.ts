@@ -7,7 +7,7 @@ import {
 import { InstitutionTypes } from "../../../models";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BCAG.`, () => {
-  it("Should determine provincialAwardBCAGAmount when calculatedDataTotalFamilyIncome <= limitAwardBCAGIncomeCap", async () => {
+  it("Should determine provincialAwardBCAGAmount when calculatedDataTotalFamilyIncome <= limitAwardBCAGIncomeCap.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -82,7 +82,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     ).toBeLessThan(1000);
   });
 
-  it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is true", async () => {
+  it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is true.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -109,7 +109,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     );
   });
 
-  it("Should determine provincialAwardNetBCAGAmount as zero when awardEligibilityBCAG is false", async () => {
+  it("Should determine provincialAwardNetBCAGAmount as zero when awardEligibilityBCAG is false.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -128,7 +128,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
   });
 
-  it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is true and no BCAG awarded in the program year previously", async () => {
+  it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is true and no BCAG awarded in the program year previously.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -154,30 +154,37 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     );
   });
 
-  it("Should determine provincialAwardNetBCAGAmount as zero when awardEligibilityBCAG is true and difference between the programYearLimits and BCAG awarded in the program year previously is less than 100", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
-    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
-    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
-    // Public institution
-    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
-    assessmentConsolidatedData.programYearTotalPartTimeBCAG = 901;
+  it(
+    "Should determine provincialAwardNetBCAGAmount as zero when awardEligibilityBCAG is true " +
+      "and difference between the programYearLimits and BCAG awarded in the program year previously is less than 100.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
+      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
+      assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+      // Public institution
+      assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
+      assessmentConsolidatedData.programYearTotalPartTimeBCAG = 901;
 
-    // Act
-    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-    // Assert
-    // awardEligibilityBCAG is true.
-    // provincialAwardNetBCAGAmount is 0.
-    expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
-    expect(calculatedAssessment.variables.limitAwardBCAGRemaining).toBe(99);
-    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
-  });
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // awardEligibilityBCAG is true.
+      // provincialAwardNetBCAGAmount is 0.
+      expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
+      expect(calculatedAssessment.variables.limitAwardBCAGRemaining).toBe(99);
+      expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+        0,
+      );
+    },
+  );
 
   it(
     "Should determine provincialAwardBCAGAmount to be 1000, provincialAwardNetBCAGAmount to be 700 when " +
@@ -214,6 +221,73 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       );
       expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
         700,
+      );
+    },
+  );
+
+  it(
+    "Should determine Net BCAG amount as remaining need when awardEligibilityBCAG is true " +
+      " and remaining need is less than remaining BCAG but higher than the minimum award amount ($100).",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.offeringActualTuitionCosts = 1500;
+      assessmentConsolidatedData.studentDataCRAReportedIncome = 36810;
+      assessmentConsolidatedData.programYearTotalPartTimeBCAG = 150;
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
+      expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(
+        1000,
+      );
+      // Award limit remaining is $1000 - $150 = $850.
+      expect(calculatedAssessment.variables.limitAwardBCAGRemaining).toBe(850);
+      // When remaining need is less than remaining award, remaining need is used as net.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalRemainingNeed3,
+      ).toBeLessThan(calculatedAssessment.variables.limitAwardBCAGRemaining);
+      expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+        508,
+      );
+    },
+  );
+
+  it(
+    "Should determine Net BCAG amount as remaining need when awardEligibilityBCAG is true " +
+      " and remaining BCAG is less than remaining need but higher than the minimum award amount ($100).",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataCRAReportedIncome = 36810;
+      assessmentConsolidatedData.programYearTotalPartTimeBCAG = 150;
+      // Act
+      const calculatedAssessment =
+        await executePartTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(true);
+      expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(
+        1000,
+      );
+      // Award limit remaining is $1000 - $150 = $850.
+      expect(calculatedAssessment.variables.limitAwardBCAGRemaining).toBe(850);
+      // When remaining need is less than remaining award, remaining need is used as net.
+      expect(
+        calculatedAssessment.variables.limitAwardBCAGRemaining,
+      ).toBeLessThan(
+        calculatedAssessment.variables.calculatedDataTotalRemainingNeed3,
+      );
+      expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
+        850,
       );
     },
   );
