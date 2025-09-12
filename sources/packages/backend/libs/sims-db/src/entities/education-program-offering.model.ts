@@ -159,6 +159,23 @@ export class EducationProgramOffering extends RecordDataModel {
   yearOfStudy: number;
 
   /**
+   * Indicates if the offering is an aviation offering.
+   */
+  @Column({
+    name: "is_aviation_offering",
+  })
+  isAviationOffering: string;
+
+  /**
+   * Indicates the aviation credential type for the aviation offering.
+   */
+  @Column({
+    name: "aviation_credential_type",
+    nullable: true,
+  })
+  aviationCredentialType?: string;
+
+  /**
    * Determines if the offering has WIL component.
    */
   @Column({

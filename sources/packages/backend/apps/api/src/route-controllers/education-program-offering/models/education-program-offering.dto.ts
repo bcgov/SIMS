@@ -9,8 +9,8 @@ import { Allow, IsEnum, IsIn, IsNotEmpty, MaxLength } from "class-validator";
 import { Type } from "class-transformer";
 import {
   OfferingDeliveryOptions,
-  OnlineInstructionModeOptions,
   OfferingYesNoOptions,
+  OnlineInstructionModeOptions,
 } from "../../../services";
 
 export class StudyBreakAPIOutDTO {
@@ -77,6 +77,10 @@ export class EducationProgramOfferingAPIInDTO {
   @Allow()
   offeringType: OfferingTypes;
   @Allow()
+  isAviationOffering: OfferingYesNoOptions;
+  @Allow()
+  aviationCredentialType?: string;
+  @Allow()
   offeringWILComponentType?: string;
   @Allow()
   @Type(() => StudyBreakInDTO)
@@ -118,6 +122,8 @@ export class EducationProgramOfferingAPIOutDTO {
   lacksStudyBreaks: boolean;
   offeringIntensity: OfferingIntensity;
   yearOfStudy: number;
+  isAviationOffering: string;
+  aviationCredentialType?: string;
   hasOfferingWILComponent: string;
   offeringDeclaration: boolean;
   offeringStatus: OfferingStatus;

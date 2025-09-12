@@ -9,6 +9,7 @@ import {
   OfferingStatus,
 } from "@sims/sims-db";
 import { createFakeEducationProgram } from "./education-program-fake";
+import { OfferingYesNoOptions } from "../../services/education-program-offering/education-program-offering-validation.models";
 
 export function createFakeEducationProgramOffering(
   program?: EducationProgram,
@@ -28,6 +29,7 @@ export function createFakeEducationProgramOffering(
   offering.offeringType = OfferingTypes.Public;
   offering.yearOfStudy = 1;
   offering.courseLoad = 45;
+  offering.isAviationOffering = OfferingYesNoOptions.No;
   offering.hasOfferingWILComponent = "no";
   offering.offeringDeclaration = true;
   offering.offeringStatus = OfferingStatus.Approved;

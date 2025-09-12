@@ -44,7 +44,9 @@ import { ProgramAllowsOfferingDelivery } from "./custom-validators/program-allow
 import { ProgramAllowsOfferingWIL } from "./custom-validators/program-allows-offering-wil";
 import { StudyBreaksCombinedMustNotExceedsThreshold } from "./custom-validators/study-break-has-valid-consecutive-threshold";
 import { HasValidOfferingPeriodForFundedWeeks } from "./custom-validators/has-valid-offering-period-for-funded-weeks";
-
+import { ProgramAllowsAviation } from "./custom-validators/program-allows-aviation";
+import { ProgramAllowsAviationCredential } from "./custom-validators/program-allows-aviation-credential";
+import { HasFundedWeeksWithinMaximumLimit } from "./custom-validators/has-funded-weeks-within-maximum-limit";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -63,6 +65,9 @@ import {
 import { DATE_ONLY_ISO_FORMAT } from "@sims/utilities";
 import { YesNoOptions } from "@sims/test-utils";
 
+/**
+ * User friendly names for the fields.
+ */
 const userFriendlyNames = {
   offeringName: "Name",
   studyStartDate: "Start date",
@@ -75,6 +80,8 @@ const userFriendlyNames = {
   offeringIntensity: "Offering intensity",
   yearOfStudy: "Year of study",
   showYearOfStudy: "Show year of study",
+  isAviationOffering: "Aviation Offering",
+  aviationCredentialType: "Aviation credential type",
   hasOfferingWILComponent: "WIL Component",
   offeringWILComponentType: "WIL Component Type",
   offeringDeclaration: "Consent",
@@ -176,6 +183,8 @@ export type EducationProgramForOfferingValidationContext = Pick<
   | "hasWILComponent"
   | "deliveredOnSite"
   | "deliveredOnline"
+  | "isAviationProgram"
+  | "credentialTypesAviation"
 >;
 
 /**
@@ -214,6 +223,10 @@ export enum OfferingValidationWarnings {
   InvalidStudyDatesPeriodLength = "invalidStudyDatesPeriodLength",
   InvalidFundedStudyPeriodLength = "invalidFundedStudyPeriodLength",
   OfferingCostExceedMaximum = "offeringCostExceedMaximum",
+  ProgramNotAviation = "programNotAviation",
+  ProgramAviationCredentialMismatch = "programAviationCredentialMismatch",
+  AviationCredIsPrivatePilotTraining = "aviationCredIsPrivatePilotTraining",
+  InvalidFundedWeeksForAviationOfferingCredentials = "invalidFundedWeeksForAviationOfferingCredentials",
 }
 
 /**
@@ -243,6 +256,16 @@ export enum OfferingYesNoOptions {
 }
 
 /**
+ * Aviation Credential Type options.
+ */
+export enum AviationCredentialTypeOptions {
+  CommercialPilotTraining = "commercialPilotTraining",
+  InstructorsRating = "instructorsRating",
+  Endorsements = "endorsements",
+  PrivatePilotTraining = "privatePilotTraining",
+}
+
+/**
  * Offering online instruction modes.
  */
 export enum OnlineInstructionModeOptions {
@@ -260,6 +283,22 @@ enum InstitutionContextConditions {
   AllowOnlineDeliveryInputs = "AllowOnlineDeliveryInputs",
   BCPrivateOrPublicWithDeliveryOptionBlended = "BCPrivateOrPublicWithDeliveryOptionBlended",
 }
+
+const aviationCredentialTypesEligibleForFunding = [
+  AviationCredentialTypeOptions.CommercialPilotTraining,
+  AviationCredentialTypeOptions.InstructorsRating,
+  AviationCredentialTypeOptions.Endorsements,
+];
+
+/**
+ * Maximum allowed funded weeks for each aviation credential type
+ * that should be enforced when calculating the funded weeks.
+ */
+const MAX_FUNDED_WEEKS = {
+  [AviationCredentialTypeOptions.CommercialPilotTraining]: 17,
+  [AviationCredentialTypeOptions.InstructorsRating]: 13,
+  [AviationCredentialTypeOptions.Endorsements]: 13,
+};
 
 /**
  * Offering study breaks.
@@ -552,6 +591,54 @@ export class OfferingValidationModel {
   })
   yearOfStudy: number;
   /**
+   * Indicates if the offering is an aviation offering.
+   */
+  @IsEnum(OfferingYesNoOptions, {
+    message: getEnumFormatMessage(
+      userFriendlyNames.isAviationOffering,
+      OfferingYesNoOptions,
+    ),
+  })
+  @ValidateIf((offering: OfferingValidationModel) => !!offering.programContext)
+  @ProgramAllowsAviation(userFriendlyNames.isAviationOffering, {
+    context: ValidationContext.CreateWarning(
+      OfferingValidationWarnings.ProgramNotAviation,
+    ),
+  })
+  isAviationOffering: OfferingYesNoOptions;
+  /**
+   * Indicates the aviation credential for the offering.
+   */
+  @IsEnum(AviationCredentialTypeOptions, {
+    message: getEnumFormatMessage(
+      userFriendlyNames.aviationCredentialType,
+      AviationCredentialTypeOptions,
+    ),
+  })
+  @AllowIf(
+    (offering: OfferingValidationModel) =>
+      offering.isAviationOffering === OfferingYesNoOptions.Yes,
+    userFriendlyNames.aviationCredentialType,
+  )
+  @ValidateIf(
+    (offering: OfferingValidationModel) =>
+      offering.isAviationOffering === OfferingYesNoOptions.Yes,
+  )
+  /**
+   * The aviation credential types other than the ones listed as eligible for funding below will cause the below validation to be failed.
+   */
+  @IsIn(aviationCredentialTypesEligibleForFunding, {
+    context: ValidationContext.CreateWarning(
+      OfferingValidationWarnings.AviationCredIsPrivatePilotTraining,
+    ),
+  })
+  @ProgramAllowsAviationCredential(userFriendlyNames.aviationCredentialType, {
+    context: ValidationContext.CreateWarning(
+      OfferingValidationWarnings.ProgramAviationCredentialMismatch,
+    ),
+  })
+  aviationCredentialType?: string;
+  /**
    * Indicates if the offering has a WIL(work-integrated learning).
    */
   @IsEnum(OfferingYesNoOptions, {
@@ -657,6 +744,22 @@ export class OfferingValidationModel {
     {
       context: ValidationContext.CreateWarning(
         OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
+      ),
+    },
+  )
+  @HasFundedWeeksWithinMaximumLimit(
+    studyStartDateProperty,
+    studyEndDateProperty,
+    (offeringModel: OfferingValidationModel) => {
+      if (offeringModel.isAviationOffering === OfferingYesNoOptions.No) {
+        return true;
+      }
+      return MAX_FUNDED_WEEKS[offeringModel.aviationCredentialType] ?? true;
+    },
+    userFriendlyNames.aviationCredentialType,
+    {
+      context: ValidationContext.CreateWarning(
+        OfferingValidationWarnings.InvalidFundedWeeksForAviationOfferingCredentials,
       ),
     },
   )

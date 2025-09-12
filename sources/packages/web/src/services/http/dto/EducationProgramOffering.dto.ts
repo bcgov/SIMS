@@ -79,6 +79,10 @@ export class EducationProgramOfferingAPIInDTO {
   @Expose()
   offeringType: OfferingTypes;
   @Expose()
+  isAviationOffering: OfferingYesNoOptions;
+  @Expose()
+  aviationCredentialType?: string;
+  @Expose()
   offeringWILComponentType?: string;
   @Expose()
   @Type(() => StudyBreakInDTO)
@@ -141,6 +145,8 @@ export interface EducationProgramOfferingAPIOutDTO {
   offeringStatus: OfferingStatus;
   precedingOfferingId?: number;
   offeringType: OfferingTypes;
+  isAviationOffering: OfferingYesNoOptions;
+  aviationCredentialType?: string;
   offeringWILComponentType?: string;
   studyBreaks: StudyBreakAPIOutDTO[];
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;

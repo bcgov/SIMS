@@ -15,6 +15,14 @@ import {
 import { getISODateOnlyString } from "@sims/utilities";
 import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
 
+/**
+ * Offering Yes/No options.
+ */
+enum OfferingYesNoOptions {
+  Yes = "yes",
+  No = "no",
+}
+
 export function createFakeEducationProgramOffering(
   relations: {
     auditUser: User;
@@ -59,6 +67,10 @@ export function createFakeEducationProgramOffering(
     options?.initialValues?.offeringType ?? OfferingTypes.Public;
   offering.yearOfStudy = 1;
   offering.courseLoad = 45;
+  offering.isAviationOffering =
+    options?.initialValues?.isAviationOffering ?? OfferingYesNoOptions.No;
+  offering.aviationCredentialType =
+    options?.initialValues?.aviationCredentialType ?? "endorsements";
   offering.hasOfferingWILComponent =
     options?.initialValues?.hasOfferingWILComponent ?? "no";
   offering.offeringWILType = options?.initialValues?.offeringWILType;
