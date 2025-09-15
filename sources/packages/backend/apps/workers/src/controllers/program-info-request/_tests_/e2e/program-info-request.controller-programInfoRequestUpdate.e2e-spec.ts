@@ -1,5 +1,6 @@
 import {
   ApplicationData,
+  ApplicationStatus,
   EducationProgram,
   NoteType,
   ProgramInfoStatus,
@@ -114,6 +115,7 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
         offering: pirOffering,
       },
       {
+        applicationStatus: ApplicationStatus.Completed,
         pirStatus: ProgramInfoStatus.completed,
         initialValues: {
           pirHash,
@@ -121,13 +123,14 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
         },
       },
     );
-    // Create a new version of the previous application have the PIR approved.
+    // Create a new version of the previous application to have the PIR approved.
     const pirApplicationCurrent = await saveFakeApplication(
       db.dataSource,
       {
         parentApplication: pirApplicationVersion,
       },
       {
+        applicationStatus: ApplicationStatus.InProgress,
         applicationData: {
           programName: "valueA",
           programDescription: "valueB",
@@ -232,11 +235,12 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
       auditUser: savedUser,
     });
     const pirOffering = await db.educationProgramOffering.save(fakeOffering);
-    // Create a new version of the previous application have the PIR approved.
+    // Create a new version of the previous application to have the PIR approved.
     const pirApplicationCurrent = await saveFakeApplication(
       db.dataSource,
       undefined,
       {
+        applicationStatus: ApplicationStatus.InProgress,
         applicationData: {
           programName: "valueA",
           programDescription: "valueB",
@@ -316,6 +320,7 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
         offering: pirOffering,
       },
       {
+        applicationStatus: ApplicationStatus.Completed,
         pirStatus: ProgramInfoStatus.completed,
         initialValues: {
           pirHash: "someOtherHash",
@@ -323,13 +328,14 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
         },
       },
     );
-    // Create a new version of the previous application have the PIR approved.
+    // Create a new version of the previous application to have the PIR approved.
     const pirApplicationCurrent = await saveFakeApplication(
       db.dataSource,
       {
         parentApplication: pirApplicationVersion,
       },
       {
+        applicationStatus: ApplicationStatus.InProgress,
         applicationData: {
           programName: "valueA",
           programPersistentProperties: ["programName"],
