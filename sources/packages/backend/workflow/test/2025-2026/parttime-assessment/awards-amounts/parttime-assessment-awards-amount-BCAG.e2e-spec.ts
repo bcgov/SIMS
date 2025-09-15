@@ -232,9 +232,11 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.offeringActualTuitionCosts = 1500;
+      assessmentConsolidatedData.offeringActualTuitionCosts = 2000;
       assessmentConsolidatedData.studentDataCRAReportedIncome = 36810;
       assessmentConsolidatedData.programYearTotalPartTimeBCAG = 150;
+      assessmentConsolidatedData.offeringProgramRelatedCosts = 100;
+      assessmentConsolidatedData.offeringMandatoryFees = 100;
       // Act
       const calculatedAssessment =
         await executePartTimeAssessmentForProgramYear(
@@ -253,7 +255,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
         calculatedAssessment.variables.calculatedDataTotalRemainingNeed3,
       ).toBeLessThan(calculatedAssessment.variables.limitAwardBCAGRemaining);
       expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
-        508,
+        255,
       );
     },
   );
