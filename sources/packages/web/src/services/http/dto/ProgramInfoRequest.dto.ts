@@ -19,6 +19,7 @@ export interface ProgramInfoRequestAPIOutDTO {
   selectedProgram?: number;
   selectedOffering?: number;
   pirStatus: ProgramInfoStatus;
+  pirApprovalReferenceAssessedDate?: Date;
   studentCustomProgram: string;
   studentCustomProgramDescription: string;
   studentStudyStartDate: string;

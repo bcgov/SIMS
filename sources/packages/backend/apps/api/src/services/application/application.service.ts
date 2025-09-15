@@ -818,6 +818,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.id",
         "application.applicationNumber",
         "application.pirStatus",
+        "pirApprovalReference.pirAssessedDate",
         "application.data",
         "application.pirDeniedOtherDesc",
         "application.offeringIntensity",
@@ -867,6 +868,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("offering.educationProgram", "educationProgram")
       .innerJoin("student.user", "user")
       .leftJoin("application.pirDeniedReasonId", "PIRDeniedReason")
+      .leftJoin("application.pirApprovalReference", "pirApprovalReference")
       .where("application.id = :applicationId", {
         applicationId,
       })

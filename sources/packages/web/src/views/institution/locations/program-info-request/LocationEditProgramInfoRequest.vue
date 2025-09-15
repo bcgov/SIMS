@@ -7,6 +7,21 @@
         subTitle="View Application"
       />
     </template>
+    <template #alerts>
+      <banner
+        v-if="!!initialData.pirApprovalReferenceAssessedDate"
+        :type="BannerTypes.Info"
+        header="Program information request auto-approved"
+      >
+        <template #content
+          >The program information request was automatically completed using
+          information from a previous request that was approved on
+          {{
+            dateOnlyLongString(initialData.pirApprovalReferenceAssessedDate)
+          }}.</template
+        >
+      </banner>
+    </template>
     <formio-container
       formName="programInformationRequest"
       :formData="initialData"
@@ -22,6 +37,9 @@
           @primaryClick="submit"
           @secondaryClick="goBack"
           :disablePrimaryButton="isReadOnlyUser(locationId)"
+          :showPrimaryButton="
+            initialData.pirStatus === ProgramInfoStatus.required
+          "
         /> </template
     ></formio-container>
   </full-page-container>
@@ -46,6 +64,8 @@ import {
   FormIOCustomEvent,
   FormIOCustomEventTypes,
   FormIOForm,
+  ProgramInfoStatus,
+  BannerTypes,
 } from "@/types";
 import {
   STUDY_DATE_OVERLAP_ERROR,
@@ -83,7 +103,7 @@ export default defineComponent({
     const goBackRouteParams = {
       name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
     } as RouteLocationRaw;
-    let selectedProgramId;
+    let selectedProgramId: number;
 
     // Components names on Form.IO definition that will be manipulated.
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
@@ -302,6 +322,9 @@ export default defineComponent({
       goBackRouteParams,
       goBack,
       isReadOnlyUser,
+      BannerTypes,
+      dateOnlyLongString,
+      ProgramInfoStatus,
     };
   },
 });
