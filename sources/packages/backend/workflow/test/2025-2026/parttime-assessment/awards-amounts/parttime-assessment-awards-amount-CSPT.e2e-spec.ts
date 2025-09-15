@@ -139,8 +139,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
-    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(805);
-    // Award limit remaining is $805 - $795 = $10 which is less than $100
+    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(
+      804.617856,
+    );
+    // Award limit remaining is $804.617856 - $795 = $9.617856 which is less than $100.
     expect(calculatedAssessment.variables.limitAwardCSPTRemaining).toBeLessThan(
       100,
     );
@@ -187,6 +189,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.offeringActualTuitionCosts = 500;
+      assessmentConsolidatedData.offeringMandatoryFees = 100;
+      assessmentConsolidatedData.offeringProgramRelatedCosts = 200;
       assessmentConsolidatedData.studentDataCRAReportedIncome = 36810;
       assessmentConsolidatedData.programYearTotalPartTimeCSPT = 150;
       assessmentConsolidatedData.offeringCourseLoad = 30;
@@ -205,8 +209,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       expect(
         calculatedAssessment.variables.calculatedDataTotalRemainingNeed1,
       ).toBeLessThan(calculatedAssessment.variables.limitAwardCSPTRemaining);
+      // Need should be tuition ($500) + fees ($100) + program related costs ($200) + transportation ($13 x 15 weeks) + miscellaneous ($10 x 15 weeks)
       expect(calculatedAssessment.variables.federalAwardNetCSPTAmount).toBe(
-        1868,
+        1145,
       );
     },
   );
