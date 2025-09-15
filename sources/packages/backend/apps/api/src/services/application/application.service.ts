@@ -1112,6 +1112,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "currentAssessment.id",
         "currentAssessment.assessmentWorkflowId",
         "location.id",
+        "pirProgram.id",
         "offering.id",
         "studentAppeal.id",
         "versions.id",
@@ -1119,6 +1120,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.location", "location")
+      .leftJoin("application.pirProgram", "pirProgram")
       .leftJoin("application.parentApplication", "parentApplication")
       .leftJoin(
         "parentApplication.versions",
@@ -1217,6 +1219,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
       application.currentAssessment.modifier = auditUser;
       application.currentAssessment.updatedAt = now;
       application.pirStatus = ProgramInfoStatus.completed;
+      application.pirAssessedBy = auditUser;
+      application.pirAssessedDate = now;
       application.modifier = auditUser;
       application.updatedAt = now;
       await this.studentRestrictionService.assessSINRestrictionForOfferingId(
@@ -1596,9 +1600,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
           PIR_DENIED_REASON_NOT_FOUND_ERROR,
         );
       }
+      const auditUser = { id: auditUserId } as User;
+      const now = new Date();
       application.pirDeniedOtherDesc = otherReasonDesc;
       application.pirStatus = ProgramInfoStatus.declined;
-      application.modifier = { id: auditUserId } as User;
+      application.pirAssessedBy = auditUser;
+      application.pirAssessedDate = now;
+      application.modifier = auditUser;
+      application.updatedAt = now;
       await transactionalEntityManager
         .getRepository(Application)
         .save(application);

@@ -1,12 +1,12 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
-import { ApplicationService } from "../../services";
+import { ApplicationService, ProgramInfoRequestService } from "../../services";
 import {
   ProgramInfoRequestJobInDTO,
   ProgramInfoRequestJobHeaderDTO,
   ProgramInfoRequestJobOutDTO,
 } from "..";
-import { APPLICATION_NOT_FOUND } from "../../constants";
+import { APPLICATION_NOT_FOUND, PIR_STATUS_ALREADY_SET } from "../../constants";
 import {
   APPLICATION_ID,
   STUDENT_DATA_SELECTED_PROGRAM,
@@ -18,10 +18,15 @@ import {
   MustReturnJobActionAcknowledgement,
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";
+import { ProgramInfoStatus } from "@sims/sims-db";
+import { CustomNamedError } from "@sims/utilities";
 
 @Controller()
 export class ProgramInfoRequestController {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly programInfoRequestService: ProgramInfoRequestService,
+  ) {}
 
   /**
    * Defines the Program Information Request (PIR) status for the student
@@ -32,7 +37,7 @@ export class ProgramInfoRequestController {
     fetchVariable: [APPLICATION_ID, STUDENT_DATA_SELECTED_PROGRAM],
     maxJobsToActivate: MaxJobsToActivate.High,
   })
-  async updateApplicationStatus(
+  async programInfoRequestUpdate(
     job: Readonly<
       ZeebeJob<
         ProgramInfoRequestJobInDTO,
@@ -45,7 +50,7 @@ export class ProgramInfoRequestController {
     try {
       const application = await this.applicationService.getApplicationById(
         job.variables.applicationId,
-        { loadDynamicData: false },
+        { loadDynamicData: true },
       );
       if (!application) {
         const message = "Application not found while verifying the PIR.";
@@ -59,16 +64,59 @@ export class ProgramInfoRequestController {
           programInfoStatus: application.pirStatus,
         });
       }
-      await this.applicationService.updateProgramInfoStatus(
+      // Generate the hash, if supported, of the application data to be compared with previously
+      // approved PIRs. If the program does not support PIR, the hash will be null.
+      const applicationDataHash = this.applicationService.getProgramDataHash(
+        application.data,
+      );
+      if (job.customHeaders.programInfoStatus === ProgramInfoStatus.required) {
+        if (applicationDataHash) {
+          // Check for previously approved PIR to reuse the information.
+          const updatedFromPreviousPIR =
+            await this.programInfoRequestService.tryUpdateFromPreviouslyApprovedPIR(
+              job.variables.applicationId,
+              applicationDataHash,
+            );
+          if (updatedFromPreviousPIR) {
+            jobLogger.log(
+              `Previously approved PIR information was reused to complete the request for application ID ${job.variables.applicationId}.`,
+            );
+            return job.complete({
+              programInfoStatus: ProgramInfoStatus.completed,
+            });
+          }
+        }
+      }
+      // PIR status not required or no previously approved PIR found.
+      await this.programInfoRequestService.updateProgramInfoStatus(
         job.variables.applicationId,
         job.customHeaders.programInfoStatus,
+        applicationDataHash,
         job.variables.studentDataSelectedProgram,
       );
-      jobLogger.log("PIR status updated.");
+      jobLogger.log(
+        `PIR status updated to ${job.customHeaders.programInfoStatus} for application ID ${job.variables.applicationId}.`,
+      );
       return job.complete({
         programInfoStatus: job.customHeaders.programInfoStatus,
       });
     } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === PIR_STATUS_ALREADY_SET
+      ) {
+        jobLogger.log(
+          `PIR status was already set for application ID ${job.variables.applicationId}.`,
+        );
+        // PIR status was already set, just return its most updated status.
+        const application = await this.applicationService.getApplicationById(
+          job.variables.applicationId,
+          { loadDynamicData: false },
+        );
+        return job.complete({
+          programInfoStatus: application.pirStatus,
+        });
+      }
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,
       });

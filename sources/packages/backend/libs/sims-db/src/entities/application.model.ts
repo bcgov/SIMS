@@ -435,6 +435,46 @@ export class Application extends RecordDataModel {
     },
   )
   versions: Application[];
+
+  /**
+   * Hash of the program information request (PIR) data.
+   */
+  @Column({
+    name: "pir_hash",
+    type: "char",
+    nullable: true,
+  })
+  pirHash?: string;
+
+  /**
+   * Application that approved this PIR previously, if any.
+   */
+  @OneToOne(() => Application, { nullable: true })
+  @JoinColumn({
+    name: "pir_approval_reference_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  pirApprovalReference?: Application;
+
+  /**
+   * Date when the PIR was assessed (completed or denied).
+   */
+  @Column({
+    name: "pir_assessed_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  pirAssessedDate?: Date;
+
+  /**
+   * User who assessed the PIR.
+   */
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({
+    name: "pir_assessed_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  pirAssessedBy?: User;
 }
 
 /**

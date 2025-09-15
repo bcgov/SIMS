@@ -2,11 +2,12 @@ import { Injectable } from "@nestjs/common";
 import { SystemUsersService } from "@sims/services";
 import {
   Application,
+  ApplicationData,
   ApplicationEditStatus,
   ApplicationStatus,
-  ProgramInfoStatus,
   RecordDataModelService,
 } from "@sims/sims-db";
+import { hashObjectToHex } from "@sims/utilities";
 import { DataSource, In, UpdateResult } from "typeorm";
 
 @Injectable()
@@ -42,31 +43,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatusUpdatedOn: now,
         modifier: this.systemUsersService.systemUser,
         updatedAt: now,
-      },
-    );
-  }
-
-  /**
-   * Updates the Program Information Request (PIR) for the first time.
-   * @param applicationId application to have the PIR updated.
-   * @param pirStatus status to be updated.
-   * @param pirProgram optional program selected by the student.
-   * When not provided the PIR will be required to be completed by
-   * the institution.
-   * @returns update result.
-   */
-  async updateProgramInfoStatus(
-    applicationId: number,
-    pirStatus: ProgramInfoStatus,
-    pirProgram?: number,
-  ): Promise<UpdateResult> {
-    return this.repo.update(
-      {
-        id: applicationId,
-      },
-      {
-        pirStatus,
-        pirProgram: { id: pirProgram },
       },
     );
   }
@@ -145,5 +121,30 @@ export class ApplicationService extends RecordDataModelService<Application> {
         updatedAt: now,
       },
     );
+  }
+
+  /**
+   * Generates a hash based on the program persistent properties
+   * defined in the application data.
+   * @param applicationData application data to extract the program persistent
+   * properties and generate the hash.
+   * @returns hexadecimal hash of the program persistent properties
+   * or null if the application does not support program data verification.
+   */
+  getProgramDataHash(applicationData: ApplicationData): string | null {
+    const programProperties = applicationData.programPersistentProperties;
+    // Return null if program persistent properties are not defined,
+    // since the application does not support program data verification.
+    if (!programProperties?.length) {
+      return null;
+    }
+    const programDataHashableContent = {};
+    for (const propertyName of programProperties) {
+      if (applicationData.hasOwnProperty(propertyName)) {
+        programDataHashableContent[propertyName] =
+          applicationData[propertyName];
+      }
+    }
+    return hashObjectToHex(JSON.stringify(programDataHashableContent));
   }
 }
