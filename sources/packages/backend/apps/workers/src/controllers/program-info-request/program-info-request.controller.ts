@@ -37,7 +37,7 @@ export class ProgramInfoRequestController {
     fetchVariable: [APPLICATION_ID, STUDENT_DATA_SELECTED_PROGRAM],
     maxJobsToActivate: MaxJobsToActivate.High,
   })
-  async updateApplicationStatus(
+  async programInfoRequestUpdate(
     job: Readonly<
       ZeebeJob<
         ProgramInfoRequestJobInDTO,

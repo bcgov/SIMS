@@ -32,7 +32,6 @@ import {
   InstitutionLocation,
   StudentAppeal,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
-  EducationProgram,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -281,9 +280,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     newApplication.applicationEditStatus = ApplicationEditStatus.Edited;
     newApplication.applicationEditStatusUpdatedOn = now;
     newApplication.applicationEditStatusUpdatedBy = auditUser;
-    newApplication.pirProgram = {
-      id: application.pirProgram?.id,
-    } as EducationProgram;
     newApplication.parentApplication = {
       id: application.parentApplication.id,
     } as Application;

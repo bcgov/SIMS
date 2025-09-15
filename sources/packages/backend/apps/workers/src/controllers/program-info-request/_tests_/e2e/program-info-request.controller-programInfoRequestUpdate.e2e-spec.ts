@@ -31,7 +31,7 @@ import { addDays, getDateOnlyFormat } from "@sims/utilities";
 import MockDate from "mockdate";
 import { SystemUsersService } from "@sims/services";
 
-describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
+describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
   let db: E2EDataSources;
   let programInfoRequestController: ProgramInfoRequestController;
   let systemUsersService: SystemUsersService;
@@ -47,8 +47,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
 
   beforeEach(async () => {
     // Mock the current date.
-    const now = new Date();
-    MockDate.set(now);
+    MockDate.reset();
   });
 
   it("Should update application PIR status when not set.", async () => {
@@ -64,19 +63,19 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     } as EducationProgram;
     const savedApplication = await db.application.save(fakeApplication);
 
-    const updateApplicationStatusPayload = createFakeUpdatePIRStatusPayload(
+    const programInfoRequestUpdatePayload = createFakeUpdatePIRStatusPayload(
       savedApplication.id,
       savedApplication.pirProgram.id,
       ProgramInfoStatus.declined,
     );
 
     // Act
-    const result = await programInfoRequestController.updateApplicationStatus(
+    const result = await programInfoRequestController.programInfoRequestUpdate(
       createFakeWorkerJob<
         ProgramInfoRequestJobInDTO,
         ProgramInfoRequestJobHeaderDTO,
         ProgramInfoRequestJobOutDTO
-      >(updateApplicationStatusPayload),
+      >(programInfoRequestUpdatePayload),
     );
 
     // Asserts
@@ -136,19 +135,19 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
         } as ApplicationData,
       },
     );
-    const updateApplicationStatusPayload = createFakeUpdatePIRStatusPayload(
+    const programInfoRequestUpdatePayload = createFakeUpdatePIRStatusPayload(
       pirApplicationCurrent.id,
       pirOffering.educationProgram.id,
       ProgramInfoStatus.required,
     );
 
     // Act
-    const result = await programInfoRequestController.updateApplicationStatus(
+    const result = await programInfoRequestController.programInfoRequestUpdate(
       createFakeWorkerJob<
         ProgramInfoRequestJobInDTO,
         ProgramInfoRequestJobHeaderDTO,
         ProgramInfoRequestJobOutDTO
-      >(updateApplicationStatusPayload),
+      >(programInfoRequestUpdatePayload),
     );
 
     // Asserts
@@ -244,19 +243,19 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
         } as ApplicationData,
       },
     );
-    const updateApplicationStatusPayload = createFakeUpdatePIRStatusPayload(
+    const programInfoRequestUpdatePayload = createFakeUpdatePIRStatusPayload(
       pirApplicationCurrent.id,
       pirOffering.educationProgram.id,
       ProgramInfoStatus.required,
     );
 
     // Act
-    const result = await programInfoRequestController.updateApplicationStatus(
+    const result = await programInfoRequestController.programInfoRequestUpdate(
       createFakeWorkerJob<
         ProgramInfoRequestJobInDTO,
         ProgramInfoRequestJobHeaderDTO,
         ProgramInfoRequestJobOutDTO
-      >(updateApplicationStatusPayload),
+      >(programInfoRequestUpdatePayload),
     );
 
     // Asserts
@@ -337,19 +336,19 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
         } as ApplicationData,
       },
     );
-    const updateApplicationStatusPayload = createFakeUpdatePIRStatusPayload(
+    const programInfoRequestUpdatePayload = createFakeUpdatePIRStatusPayload(
       pirApplicationCurrent.id,
       pirOffering.educationProgram.id,
       ProgramInfoStatus.required,
     );
 
     // Act
-    const result = await programInfoRequestController.updateApplicationStatus(
+    const result = await programInfoRequestController.programInfoRequestUpdate(
       createFakeWorkerJob<
         ProgramInfoRequestJobInDTO,
         ProgramInfoRequestJobHeaderDTO,
         ProgramInfoRequestJobOutDTO
-      >(updateApplicationStatusPayload),
+      >(programInfoRequestUpdatePayload),
     );
 
     // Asserts
@@ -368,12 +367,14 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
         pirProgram: { id: true },
         pirAssessedDate: true,
         pirAssessedBy: { id: true },
+        pirApprovalReference: { id: true },
         updatedAt: true,
         modifier: { id: true },
       },
       relations: {
         pirAssessedBy: true,
         pirProgram: true,
+        pirApprovalReference: true,
         modifier: true,
       },
       where: { id: pirApplicationCurrent.id },
@@ -386,6 +387,7 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
       pirProgram: { id: pirOffering.educationProgram.id },
       pirAssessedDate: null,
       pirAssessedBy: null,
+      pirApprovalReference: null,
       updatedAt: now,
       modifier: systemUsersService.systemUser,
     });
@@ -405,19 +407,19 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
     fakeApplication.pirStatus = ProgramInfoStatus.required;
     const savedApplication = await db.application.save(fakeApplication);
 
-    const updateApplicationStatusPayload = createFakeUpdatePIRStatusPayload(
+    const programInfoRequestUpdatePayload = createFakeUpdatePIRStatusPayload(
       savedApplication.id,
       savedApplication.pirProgram.id,
       ProgramInfoStatus.completed,
     );
 
     //Act
-    const result = await programInfoRequestController.updateApplicationStatus(
+    const result = await programInfoRequestController.programInfoRequestUpdate(
       createFakeWorkerJob<
         ProgramInfoRequestJobInDTO,
         ProgramInfoRequestJobHeaderDTO,
         ProgramInfoRequestJobOutDTO
-      >(updateApplicationStatusPayload),
+      >(programInfoRequestUpdatePayload),
     );
 
     // Asserts
@@ -436,19 +438,19 @@ describe("ProgramInfoRequestController(e2e)-updateApplicationStatus", () => {
 
   it("Should have job error status when could not find the application.", async () => {
     // Arrange
-    const updateApplicationStatusPayload = createFakeUpdatePIRStatusPayload(
+    const programInfoRequestUpdatePayload = createFakeUpdatePIRStatusPayload(
       999999,
       999999,
       ProgramInfoStatus.completed,
     );
 
     //Act
-    const result = await programInfoRequestController.updateApplicationStatus(
+    const result = await programInfoRequestController.programInfoRequestUpdate(
       createFakeWorkerJob<
         ProgramInfoRequestJobInDTO,
         ProgramInfoRequestJobHeaderDTO,
         ProgramInfoRequestJobOutDTO
-      >(updateApplicationStatusPayload),
+      >(programInfoRequestUpdatePayload),
     );
 
     // Assert

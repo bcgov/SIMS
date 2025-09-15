@@ -78,7 +78,7 @@ export class ProgramInfoRequestService {
           transactionalEntityManager,
         );
         // Check for previously approved PIR to reuse the information.
-        if (!application?.parentApplication?.versions?.length) {
+        if (!application?.parentApplication.versions.length) {
           return false;
         }
         // Update the application PIR information.
@@ -170,7 +170,7 @@ export class ProgramInfoRequestService {
             createdAt: true,
           },
         },
-        currentAssessment: { id: true, offering: { id: true } },
+        currentAssessment: { id: true },
         student: { id: true },
       },
       relations: {
@@ -180,7 +180,7 @@ export class ProgramInfoRequestService {
             currentAssessment: { offering: true },
           },
         },
-        currentAssessment: { offering: true },
+        currentAssessment: true,
         student: true,
       },
       where: {
