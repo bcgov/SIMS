@@ -112,6 +112,8 @@ export class ProgramInfoRequestInstitutionsController extends BaseController {
     result.applicationSubmittedDate = application.submittedDate;
     result.studentFullName = getUserFullName(application.student.user);
     result.pirStatus = application.pirStatus;
+    result.pirApprovalReferenceAssessedDate =
+      application.pirApprovalReference?.pirAssessedDate;
     // Student application dynamic data.
     result.studentCustomProgram = application.data.programName;
     result.studentCustomProgramDescription =
