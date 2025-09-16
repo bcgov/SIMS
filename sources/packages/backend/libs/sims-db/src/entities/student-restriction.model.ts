@@ -71,7 +71,7 @@ export class StudentRestriction extends BaseRestrictionModel {
   /**
    * User who resolved the restriction.
    */
-  @ManyToOne(() => User, { eager: false, cascade: false })
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({
     name: "resolved_by",
     referencedColumnName: "id",
