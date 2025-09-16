@@ -31,6 +31,7 @@ import {
   OfferingValidationInfos,
   OfferingValidationWarnings,
   OfferingYesNoOptions,
+  userFriendlyNames,
 } from "../../../../services";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
@@ -758,7 +759,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it.only("Should return warning when a full-time program is not an aviation program but has an aviation offering.", async () => {
+  it("Should return warning when a full-time program is not an aviation program but has an aviation offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -809,8 +810,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           },
           {
             typeCode: "aviationCredIsPrivatePilotTraining",
-            message:
-              "aviationCredentialType must be one of the following values: commercialPilotTraining, instructorsRating, endorsements",
+            message: `${userFriendlyNames.aviationCredentialType} must be one of the following values: commercialPilotTraining, instructorsRating, endorsements`,
           },
         ],
         studyPeriodBreakdown: {
@@ -822,7 +822,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it.only("Should return warning when a part-time program is an aviation program and has an aviation offering with a non matching aviation credential type.", async () => {
+  it("Should return warning when a part-time program is an aviation program and has an aviation offering with a non matching aviation credential type.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -838,14 +838,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
     const payload = {
       offeringName: "Second aviation offering validation",
       yearOfStudy: 1,
-      offeringIntensity: OfferingIntensity.fullTime,
+      offeringIntensity: OfferingIntensity.partTime,
       offeringDelivered: OfferingDeliveryOptions.Onsite,
       isAviationOffering: OfferingYesNoOptions.Yes,
-      aviationCredentialType:
-        AviationCredentialTypeOptions.PrivatePilotTraining,
+      aviationCredentialType: AviationCredentialTypeOptions.Endorsements,
       hasOfferingWILComponent: "no",
       studyStartDate: "2024-06-01",
-      studyEndDate: "2024-12-02",
+      studyEndDate: "2024-07-22",
       lacksStudyBreaks: true,
       studyBreaks: [],
       offeringType: OfferingTypes.Public,
@@ -874,22 +873,17 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
             message:
               "Aviation credential type for the program does not match the offering aviation credential.",
           },
-          {
-            typeCode: "aviationCredIsPrivatePilotTraining",
-            message:
-              "aviationCredentialType must be one of the following values: commercialPilotTraining, instructorsRating, endorsements",
-          },
         ],
         studyPeriodBreakdown: {
-          fundedStudyPeriodDays: 185,
-          totalDays: 185,
-          totalFundedWeeks: 27,
+          fundedStudyPeriodDays: 52,
+          totalDays: 52,
+          totalFundedWeeks: 8,
           unfundedStudyPeriodDays: 0,
         },
       });
   });
 
-  it.only(
+  it(
     "Should return warning when a full-time program is an aviation program and has an aviation offering " +
       "with funded weeks being more than the maximum allowed funded weeks for this aviation credential type.",
     async () => {
@@ -954,7 +948,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
     },
   );
 
-  it.only("Should return warning when a part-time program is an aviation program and has an aviation offering with a private pilot training aviation credential type.", async () => {
+  it("Should return warning when a part-time program is an aviation program and has an aviation offering with a private pilot training aviation credential type.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -1016,7 +1010,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
-  it.only(
+  it(
     "Should return error when a full-time program is an aviation program and has an aviation offering " +
       "that is not one of the allowed aviation credential type - private pilot training, instructors rating, commercial pilot training or endorsements.",
     async () => {
@@ -1087,7 +1081,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
     },
   );
 
-  it.only("Should return error when a full-time program is an aviation program and offering is not selected as one of the following options: yes,no.", async () => {
+  it("Should return error when a full-time program is an aviation program and offering is not selected as one of the following options: yes,no.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
