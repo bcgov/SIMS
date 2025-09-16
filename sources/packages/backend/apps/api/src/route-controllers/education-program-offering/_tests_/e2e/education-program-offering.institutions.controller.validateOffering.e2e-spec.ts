@@ -997,8 +997,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
         warnings: [
           {
             typeCode: "aviationCredIsPrivatePilotTraining",
-            message:
-              "aviationCredentialType must be one of the following values: commercialPilotTraining, instructorsRating, endorsements",
+            message: `${userFriendlyNames.aviationCredentialType} must be one of the following values: commercialPilotTraining, instructorsRating, endorsements`,
           },
         ],
         studyPeriodBreakdown: {
@@ -1067,8 +1066,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
             },
             {
               typeCode: "aviationCredIsPrivatePilotTraining",
-              message:
-                "aviationCredentialType must be one of the following values: commercialPilotTraining, instructorsRating, endorsements",
+              message: `${userFriendlyNames.aviationCredentialType} must be one of the following values: commercialPilotTraining, instructorsRating, endorsements`,
             },
           ],
           studyPeriodBreakdown: {
