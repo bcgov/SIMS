@@ -54,11 +54,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       false,
     );
     expect(calculatedAssessment.variables.provincialAwardWeeklyBCAGMax).toBe(
-      29.4118,
+      117.6471,
     );
     // The provincialAwardBCAGAmount is calculated as: weekly amount * number of weeks.
-    // 29.4118 * 34 weeks = 1000
-    expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(1000);
+    // 117.6471 * 34 weeks = 4000
+    expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(4000);
     // The provincialAwardNetBCAGAmount is calculated as the lesser of provincialAwardBCAGAmount or the minimum BCAG award amount.
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
       calculatedAssessment.variables.provincialAwardBCAGAmount,
@@ -84,11 +84,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(false);
     expect(calculatedAssessment.variables.awardEligibilityBCAG2Year).toBe(true);
     expect(calculatedAssessment.variables.provincialAwardWeeklyBCAGMax).toBe(
-      117.6471,
+      29.4118,
     );
     // The provincialAwardBCAGAmount is calculated as: weekly amount * number of weeks.
-    // 117.6471 * 34 weeks = 4000
-    expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(4000);
+    // 29.4118 * 34 weeks = 1000
+    expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(1000);
     // The provincialAwardNetBCAGAmount is calculated as the lesser of provincialAwardBCAGAmount or the minimum BCAG award amount.
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
       calculatedAssessment.variables.provincialAwardBCAGAmount,
