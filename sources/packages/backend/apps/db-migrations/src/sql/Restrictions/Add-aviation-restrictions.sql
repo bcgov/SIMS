@@ -17,7 +17,7 @@ VALUES
         'Other',
         ARRAY ['Stop part time disbursement',
     'Stop full time disbursement'] :: sims.restriction_action_types [],
-        '[{ "name": "Credential types", "value": ["commercialPilotTraining"] }]' :: JSONB,
+        '[{ "name": "Aviation credential types", "value": ["commercialPilotTraining"] }]' :: JSONB,
         'Error' :: sims.restriction_notification_types,
         FALSE
     ),
@@ -28,7 +28,7 @@ VALUES
         'Other',
         ARRAY ['Stop part time disbursement',
     'Stop full time disbursement'] :: sims.restriction_action_types [],
-        '[{ "name": "Credential types", "value": ["instructorsRating"] }]' :: JSONB,
+        '[{ "name": "Aviation credential types", "value": ["instructorsRating"] }]' :: JSONB,
         'Error' :: sims.restriction_notification_types,
         FALSE
     ),
@@ -39,7 +39,7 @@ VALUES
         'Other',
         ARRAY ['Stop part time disbursement',
     'Stop full time disbursement'] :: sims.restriction_action_types [],
-        '[{ "name": "Credential types", "value": ["endorsements"] }]' :: JSONB,
+        '[{ "name": "Aviation credential types", "value": ["endorsements"] }]' :: JSONB,
         'Error' :: sims.restriction_notification_types,
         FALSE
     ),
@@ -51,7 +51,7 @@ VALUES
         'Other',
         ARRAY ['Stop part time disbursement',
     'Stop full time disbursement'] :: sims.restriction_action_types [],
-        '[{ "name": "Credential types", "value": ["commercialPilotTraining", "instructorsRating", "endorsements"] }]' :: JSONB,
+        '[{ "name": "Aviation credential types", "value": ["commercialPilotTraining", "instructorsRating", "endorsements"] }]' :: JSONB,
         'Error' :: sims.restriction_notification_types,
         TRUE
     );

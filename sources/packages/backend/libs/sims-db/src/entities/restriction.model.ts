@@ -110,5 +110,5 @@ export interface ActionEffectiveCondition {
  * Restriction action effective condition names.
  */
 export enum ActionEffectiveConditionNames {
-  CredentialTypes = "Credential types",
+  AviationCredentialTypes = "Aviation credential types",
 }
