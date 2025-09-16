@@ -103,7 +103,7 @@ export default defineComponent({
     const goBackRouteParams = {
       name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_SUMMARY,
     } as RouteLocationRaw;
-    let selectedProgramId: number;
+    let selectedProgramId: number | undefined;
 
     // Components names on Form.IO definition that will be manipulated.
     const PROGRAMS_DROPDOWN_KEY = "selectedProgram";
