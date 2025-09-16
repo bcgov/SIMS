@@ -52,8 +52,8 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
   });
 
   it(
-    "Should get PIR as required returning program and offering information provided by the student " +
-      "when no program and offering was selected during the application submission.",
+    "Should get PIR as required, returning program, and offering information provided by the student " +
+      "when no program or offering was selected during the application submission.",
     async () => {
       // Arrange
       // Dynamic data used to retrieve PIR information when no program or offering was provided.
@@ -115,7 +115,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
   );
 
   it(
-    "Should get PIR as required returning existing program and offering information provided by the student " +
+    "Should get PIR as required, returning the existing program and offering information provided by the student " +
       "when a program was selected and an offering was not selected during the application submission.",
     async () => {
       // Arrange
@@ -177,7 +177,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
     },
   );
 
-  it("Should get a completed PIR including previous approval information when a PIR was auto-approved based on a previously approved PIR.", async () => {
+  it("Should get a completed PIR, including previous approval information, when a PIR was auto-approved based on a previously approved PIR.", async () => {
     // Arrange
     const pirAssessedDate = addDays(-1);
     // Student to be shared between applications.
