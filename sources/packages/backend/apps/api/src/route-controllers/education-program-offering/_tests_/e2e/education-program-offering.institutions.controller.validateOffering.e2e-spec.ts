@@ -27,9 +27,11 @@ import {
 import * as request from "supertest";
 import * as faker from "faker";
 import {
+  AviationCredentialTypeOptions,
   OfferingValidationInfos,
   OfferingValidationWarnings,
   OfferingYesNoOptions,
+  userFriendlyNames,
 } from "../../../../services";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
@@ -752,6 +754,380 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           fundedStudyPeriodDays: 2,
           totalDays: 2,
           totalFundedWeeks: 1,
+          unfundedStudyPeriodDays: 0,
+        },
+      });
+  });
+
+  it("Should return warning when a full-time program is not an aviation program but has an aviation offering.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const payload = {
+      offeringName: "Aviation offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Online,
+      isAviationOffering: OfferingYesNoOptions.Yes,
+      aviationCredentialType:
+        AviationCredentialTypeOptions.PrivatePilotTraining,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-06-01",
+      studyEndDate: "2024-12-02",
+      lacksStudyBreaks: true,
+      studyBreaks: [],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      courseLoad: 30,
+    };
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFFullTimeProgram.id}/validation`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: OfferingStatus.CreationPending,
+        errors: [],
+        infos: [],
+        warnings: [
+          {
+            typeCode: "programNotAviation",
+            message:
+              "Aviation Offering is defined as yes but the program is not an aviation program.",
+          },
+          {
+            typeCode: "programAviationCredentialMismatch",
+            message:
+              "Aviation credential type for the program does not match the offering aviation credential.",
+          },
+          {
+            typeCode: "aviationCredIsPrivatePilotTraining",
+            message: `${userFriendlyNames.aviationCredentialType} must be one of the following values: commercialPilotTraining, instructorsRating, endorsements`,
+          },
+        ],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 185,
+          totalDays: 185,
+          totalFundedWeeks: 27,
+          unfundedStudyPeriodDays: 0,
+        },
+      });
+  });
+
+  it("Should return warning when a part-time program is an aviation program and has an aviation offering with a non matching aviation credential type.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    collegeFPartTimeProgram.isAviationProgram = "yes";
+    collegeFPartTimeProgram.credentialTypesAviation = {
+      commercialPilotTraining: true,
+      instructorsRating: true,
+      endorsements: false,
+      privatePilotTraining: false,
+    };
+    await db.educationProgram.save(collegeFPartTimeProgram);
+    const payload = {
+      offeringName: "Second aviation offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.partTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      isAviationOffering: OfferingYesNoOptions.Yes,
+      aviationCredentialType: AviationCredentialTypeOptions.Endorsements,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-06-01",
+      studyEndDate: "2024-07-22",
+      lacksStudyBreaks: true,
+      studyBreaks: [],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      courseLoad: 30,
+    };
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFPartTimeProgram.id}/validation`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: OfferingStatus.CreationPending,
+        errors: [],
+        infos: [],
+        warnings: [
+          {
+            typeCode: "programAviationCredentialMismatch",
+            message:
+              "Aviation credential type for the program does not match the offering aviation credential.",
+          },
+        ],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 52,
+          totalDays: 52,
+          totalFundedWeeks: 8,
+          unfundedStudyPeriodDays: 0,
+        },
+      });
+  });
+
+  it(
+    "Should return warning when a full-time program is an aviation program and has an aviation offering " +
+      "with funded weeks being more than the maximum allowed funded weeks for this aviation credential type.",
+    async () => {
+      // Arrange
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      collegeFFullTimeProgram.isAviationProgram = "yes";
+      collegeFFullTimeProgram.credentialTypesAviation = {
+        commercialPilotTraining: false,
+        instructorsRating: true,
+        endorsements: false,
+        privatePilotTraining: true,
+      };
+      await db.educationProgram.save(collegeFFullTimeProgram);
+      const payload = {
+        offeringName: "Second aviation offering validation",
+        yearOfStudy: 1,
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringDelivered: OfferingDeliveryOptions.Online,
+        isAviationOffering: OfferingYesNoOptions.Yes,
+        aviationCredentialType: AviationCredentialTypeOptions.InstructorsRating,
+        hasOfferingWILComponent: "no",
+        studyStartDate: "2024-06-01",
+        studyEndDate: "2024-12-02",
+        lacksStudyBreaks: true,
+        studyBreaks: [],
+        offeringType: OfferingTypes.Public,
+        offeringDeclaration: true,
+        actualTuitionCosts: 1234,
+        programRelatedCosts: 3211,
+        mandatoryFees: 456,
+        exceptionalExpenses: 555,
+        courseLoad: 30,
+      };
+      const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFFullTimeProgram.id}/validation`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          offeringStatus: OfferingStatus.CreationPending,
+          errors: [],
+          infos: [],
+          warnings: [
+            {
+              typeCode: "invalidFundedWeeksForAviationOfferingCredentials",
+              message:
+                "The dates you have entered will create an offering with more funded weeks than allowed based on the Aviation credential type.",
+            },
+          ],
+          studyPeriodBreakdown: {
+            fundedStudyPeriodDays: 185,
+            totalDays: 185,
+            totalFundedWeeks: 27,
+            unfundedStudyPeriodDays: 0,
+          },
+        });
+    },
+  );
+
+  it("Should return warning when a part-time program is an aviation program and has an aviation offering with a private pilot training aviation credential type.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    collegeFPartTimeProgram.isAviationProgram = "yes";
+    collegeFPartTimeProgram.credentialTypesAviation = {
+      commercialPilotTraining: true,
+      instructorsRating: true,
+      endorsements: false,
+      privatePilotTraining: true,
+    };
+    await db.educationProgram.save(collegeFPartTimeProgram);
+    const payload = {
+      offeringName: "Second aviation offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      isAviationOffering: OfferingYesNoOptions.Yes,
+      aviationCredentialType:
+        AviationCredentialTypeOptions.PrivatePilotTraining,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-06-01",
+      studyEndDate: "2024-12-02",
+      lacksStudyBreaks: true,
+      studyBreaks: [],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      courseLoad: 30,
+    };
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFPartTimeProgram.id}/validation`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        offeringStatus: OfferingStatus.CreationPending,
+        errors: [],
+        infos: [],
+        warnings: [
+          {
+            typeCode: "aviationCredIsPrivatePilotTraining",
+            message: `${userFriendlyNames.aviationCredentialType} must be one of the following values: commercialPilotTraining, instructorsRating, endorsements`,
+          },
+        ],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 185,
+          totalDays: 185,
+          totalFundedWeeks: 27,
+          unfundedStudyPeriodDays: 0,
+        },
+      });
+  });
+
+  it(
+    "Should return error when a full-time program is an aviation program and has an aviation offering " +
+      "that is not one of the allowed aviation credential type - private pilot training, instructors rating, commercial pilot training or endorsements.",
+    async () => {
+      // Arrange
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      collegeFFullTimeProgram.isAviationProgram = "yes";
+      collegeFFullTimeProgram.credentialTypesAviation = {
+        commercialPilotTraining: false,
+        instructorsRating: true,
+        endorsements: false,
+        privatePilotTraining: true,
+      };
+      await db.educationProgram.save(collegeFFullTimeProgram);
+      const payload = {
+        offeringName: "Second aviation offering validation",
+        yearOfStudy: 1,
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringDelivered: OfferingDeliveryOptions.Online,
+        isAviationOffering: OfferingYesNoOptions.Yes,
+        aviationCredentialType: "invalid aviation credential type",
+        hasOfferingWILComponent: "no",
+        studyStartDate: "2024-06-01",
+        studyEndDate: "2024-12-02",
+        lacksStudyBreaks: true,
+        studyBreaks: [],
+        offeringType: OfferingTypes.Public,
+        offeringDeclaration: true,
+        actualTuitionCosts: 1234,
+        programRelatedCosts: 3211,
+        mandatoryFees: 456,
+        exceptionalExpenses: 555,
+        courseLoad: 30,
+      };
+      const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFFullTimeProgram.id}/validation`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          errors: [
+            "Aviation credential type must be one of the following options: commercialPilotTraining,instructorsRating,endorsements,privatePilotTraining",
+          ],
+          infos: [],
+          warnings: [
+            {
+              typeCode: "programAviationCredentialMismatch",
+              message:
+                "Aviation credential type for the program does not match the offering aviation credential.",
+            },
+            {
+              typeCode: "aviationCredIsPrivatePilotTraining",
+              message: `${userFriendlyNames.aviationCredentialType} must be one of the following values: commercialPilotTraining, instructorsRating, endorsements`,
+            },
+          ],
+          studyPeriodBreakdown: {
+            fundedStudyPeriodDays: 185,
+            totalDays: 185,
+            totalFundedWeeks: 27,
+            unfundedStudyPeriodDays: 0,
+          },
+        });
+    },
+  );
+
+  it("Should return error when a full-time program is an aviation program and offering is not selected as one of the following options: yes,no.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    collegeFFullTimeProgram.isAviationProgram = "yes";
+    collegeFFullTimeProgram.credentialTypesAviation = {
+      commercialPilotTraining: false,
+      instructorsRating: true,
+      endorsements: false,
+      privatePilotTraining: true,
+    };
+    await db.educationProgram.save(collegeFFullTimeProgram);
+    const payload = {
+      offeringName: "Second aviation offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Online,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-06-01",
+      studyEndDate: "2024-12-02",
+      lacksStudyBreaks: true,
+      studyBreaks: [],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      courseLoad: 30,
+    };
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFFullTimeProgram.id}/validation`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        errors: [
+          "Aviation Offering must be one of the following options: yes,no",
+        ],
+        infos: [],
+        warnings: [],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 185,
+          totalDays: 185,
+          totalFundedWeeks: 27,
           unfundedStudyPeriodDays: 0,
         },
       });
