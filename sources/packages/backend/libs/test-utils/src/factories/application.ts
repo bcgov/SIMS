@@ -47,6 +47,7 @@ export function createFakeApplication(
     parentApplication?: Application;
     applicationEditStatusUpdatedBy?: User;
     pirProgram?: EducationProgram;
+    pirApprovalReference?: Application;
   },
   options?: { initialValue?: Partial<Application> },
 ): Application {
@@ -77,6 +78,7 @@ export function createFakeApplication(
   application.pirStatus = options?.initialValue?.pirStatus;
   application.pirHash = options?.initialValue?.pirHash;
   application.pirAssessedDate = options?.initialValue?.pirAssessedDate;
+  application.pirApprovalReference = relations?.pirApprovalReference;
   application.isArchived = options?.initialValue?.isArchived;
   application.submittedDate = options?.initialValue?.submittedDate;
   application.precedingApplication = relations?.precedingApplication;
@@ -131,6 +133,8 @@ export async function saveFakeApplicationDisbursements(
     msfaaNumber?: MSFAANumber;
     program?: EducationProgram;
     programYear?: ProgramYear;
+    pirProgram?: EducationProgram;
+    pirApprovalReference?: Application;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
@@ -282,6 +286,7 @@ export async function saveFakeApplication(
     institutionLocation?: InstitutionLocation;
     student?: Student;
     program?: EducationProgram;
+    pirApprovalReference?: Application;
     offering?: EducationProgramOffering;
     programYear?: ProgramYear;
     applicationException?: ApplicationException;
@@ -333,6 +338,7 @@ export async function saveFakeApplication(
       parentApplication: relations?.parentApplication,
       applicationEditStatusUpdatedBy: savedUser,
       pirProgram: relations?.pirProgram,
+      pirApprovalReference: relations?.pirApprovalReference,
     },
     {
       initialValue: {

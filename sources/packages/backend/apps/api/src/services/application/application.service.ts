@@ -853,15 +853,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.active",
         "programYear.startDate",
         "programYear.endDate",
-        "sinValidation.id",
-        "sinValidation.sin",
         "studentAssessments.id",
         "studentAssessments.triggerType",
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirProgram", "pirProgram")
       .innerJoin("application.student", "student")
-      .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.location", "location")
       .innerJoin("application.studentAssessments", "studentAssessments")
       .leftJoin("studentAssessments.offering", "offering")
