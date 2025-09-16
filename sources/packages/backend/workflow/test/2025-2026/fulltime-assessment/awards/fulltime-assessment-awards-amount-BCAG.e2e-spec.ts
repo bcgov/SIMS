@@ -3,7 +3,6 @@ import {
   ZeebeMockedClient,
   createFakeAssessmentConsolidatedData,
   executeFullTimeAssessmentForProgramYear,
-  executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { ProgramLengthOptions } from "../../../models";
 
@@ -45,7 +44,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       ProgramLengthOptions.TwelveWeeksToFiftyTwoWeeks;
 
     // Act
-    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
@@ -77,7 +76,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     assessmentConsolidatedData.studentDataTaxReturnIncome = 36810; // Below the BCAG income threshold for single student
 
     // Act
-    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
