@@ -15,7 +15,7 @@ import {
   createFakeEducationProgramOffering,
   createFakeInstitutionLocation,
   createFakeUser,
-  saveFakeApplicationDisbursements,
+  saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
@@ -72,7 +72,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
         ],
       } as ApplicationData;
       // Application with PIR required.
-      const applicationRequiredPIR = await saveFakeApplicationDisbursements(
+      const applicationRequiredPIR = await saveFakeApplication(
         db.dataSource,
         {
           institutionLocation: collegeFLocation,
@@ -131,7 +131,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
         createFakeEducationProgram({ user }),
       );
       // Application with PIR required.
-      const applicationRequiredPIR = await saveFakeApplicationDisbursements(
+      const applicationRequiredPIR = await saveFakeApplication(
         db.dataSource,
         {
           institutionLocation: collegeFLocation,
@@ -189,7 +189,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
     });
     const pirOffering = await db.educationProgramOffering.save(fakeOffering);
     const pirProgram = pirOffering.educationProgram;
-    const previousApprovedPIR = await saveFakeApplicationDisbursements(
+    const previousApprovedPIR = await saveFakeApplication(
       db.dataSource,
       {
         student,
@@ -197,15 +197,15 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
         pirProgram,
       },
       {
-        applicationInitialValues: {
+        initialValues: {
           pirAssessedDate,
-          offeringIntensity: pirOffering.offeringIntensity,
         },
+        offeringIntensity: pirOffering.offeringIntensity,
         pirStatus: ProgramInfoStatus.completed,
         applicationStatus: ApplicationStatus.Assessment,
       },
     );
-    const autoCompletedPIR = await saveFakeApplicationDisbursements(
+    const autoCompletedPIR = await saveFakeApplication(
       db.dataSource,
       {
         student,
@@ -216,9 +216,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
       {
         pirStatus: ProgramInfoStatus.completed,
         applicationStatus: ApplicationStatus.Completed,
-        applicationInitialValues: {
-          offeringIntensity: pirOffering.offeringIntensity,
-        },
+        offeringIntensity: pirOffering.offeringIntensity,
       },
     );
     autoCompletedPIR.currentAssessment.offering = pirOffering;
