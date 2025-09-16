@@ -1,13 +1,22 @@
 import {
+  Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { BaseRestrictionModel } from "./base-restriction.model";
-import { Student, Application, ApplicationRestrictionBypass } from ".";
+import {
+  Student,
+  Application,
+  ApplicationRestrictionBypass,
+  Note,
+  User,
+} from ".";
 
 /**
  * Entity for student restrictions
@@ -48,4 +57,54 @@ export class StudentRestriction extends BaseRestrictionModel {
     },
   )
   applicationRestrictionBypasses?: ApplicationRestrictionBypass[];
+
+  /**
+   * Date when the restriction was resolved.
+   */
+  @Column({
+    name: "resolved_at",
+    type: "timestamptz",
+    nullable: true,
+  })
+  resolvedAt?: Date;
+
+  /**
+   * User who resolved the restriction.
+   */
+  @ManyToOne(() => User, { eager: false, cascade: false })
+  @JoinColumn({
+    name: "resolved_by",
+    referencedColumnName: "id",
+  })
+  resolvedBy?: User;
+
+  /**
+   * Note added during restriction deletion.
+   */
+  @OneToOne(() => Note, { nullable: true })
+  @JoinColumn({
+    name: "deletion_note_id",
+    referencedColumnName: "id",
+  })
+  deletionNote?: Note;
+
+  /**
+   * Date when the restriction was deleted.
+   */
+  @DeleteDateColumn({
+    name: "deleted_at",
+    type: "timestamptz",
+    nullable: true,
+  })
+  deletedAt?: Date;
+
+  /**
+   * User who deleted the restriction.
+   */
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({
+    name: "deleted_by",
+    referencedColumnName: "id",
+  })
+  deletedBy?: User;
 }
