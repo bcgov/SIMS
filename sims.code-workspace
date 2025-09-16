@@ -220,7 +220,10 @@
       "typeorm",
       "unparse",
       "WTHD",
-      "Zeebe"
+      "Zeebe",
+      "AVCP",
+      "AVIR",
+      "AVEN"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"
