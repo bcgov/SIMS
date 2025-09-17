@@ -74,7 +74,7 @@ export class StudentRestriction extends BaseRestrictionModel {
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({
     name: "resolved_by",
-    referencedColumnName: "id",
+    referencedColumnName: ColumnNames.ID,
   })
   resolvedBy?: User;
 
@@ -84,7 +84,7 @@ export class StudentRestriction extends BaseRestrictionModel {
   @OneToOne(() => Note, { nullable: true })
   @JoinColumn({
     name: "deletion_note_id",
-    referencedColumnName: "id",
+    referencedColumnName: ColumnNames.ID,
   })
   deletionNote?: Note;
 
@@ -104,7 +104,7 @@ export class StudentRestriction extends BaseRestrictionModel {
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({
     name: "deleted_by",
-    referencedColumnName: "id",
+    referencedColumnName: ColumnNames.ID,
   })
   deletedBy?: User;
 }
