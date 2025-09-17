@@ -19,3 +19,4 @@ export * from "./compressed-file-utils";
 export * from "./application-data-comparison/application-data-comparison";
 export * from "./application-data-comparison/application-data-comparison.models";
 export * from "./hash-utils";
+export * from "./restriction-utils";

@@ -1,13 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION } from "@sims/services/constants";
 import {
+  ActionEffectiveCondition,
+  ActionEffectiveConditionNames,
   RecordDataModelService,
   Restriction,
   RestrictionActionType,
   RestrictionNotificationType,
   RestrictionType,
 } from "@sims/sims-db";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, EntityManager, Repository } from "typeorm";
 import { EnsureFederalRestrictionResult } from "./models/federal-restriction.model";
 
 /**
@@ -97,5 +99,31 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
     }
 
     return result;
+  }
+
+  /**
+   * Get the restriction for aviation credential type.
+   * @param aviationCredentialType aviation credential type.
+   * @param options options.
+   *  - `entityManager` entity manager to execute in transaction.
+   * @returns restriction for the aviation credential type.
+   */
+  async getRestrictionForAviationCredentialType(
+    aviationCredentialType: string,
+    options?: { entityManager?: EntityManager },
+  ): Promise<Restriction> {
+    const aviationCredentialTypeCondition: ActionEffectiveCondition = {
+      name: ActionEffectiveConditionNames.AviationCredentialTypes,
+      value: [aviationCredentialType],
+    };
+    const repo =
+      options?.entityManager?.getRepository(Restriction) ?? this.repo;
+    return repo.findOne({
+      select: { id: true, restrictionCode: true },
+      where: {
+        actionEffectiveConditions: aviationCredentialTypeCondition,
+        isLegacy: false,
+      },
+    });
   }
 }

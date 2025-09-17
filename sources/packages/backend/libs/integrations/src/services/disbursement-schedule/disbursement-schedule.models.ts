@@ -199,6 +199,7 @@ export type EligibleECertOffering = Pick<
   | "actualTuitionCosts"
   | "programRelatedCosts"
   | "mandatoryFees"
+  | "aviationCredentialType"
 >;
 
 /**
