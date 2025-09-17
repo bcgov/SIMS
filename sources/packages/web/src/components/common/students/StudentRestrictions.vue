@@ -66,26 +66,30 @@
           </Column>
           <Column field="restrictionId" header="Actions">
             <template #body="slotProps">
-              <v-btn
-                color="primary"
-                variant="outlined"
-                class="mr-2"
-                @click="viewStudentRestriction(slotProps.data.restrictionId)"
-                >View</v-btn
-              >
-              <check-permission-role :role="Role.StudentDeleteRestrictions">
-                <template #="{ notAllowed }">
-                  <v-btn
-                    color="primary"
-                    variant="outlined"
-                    :disabled="notAllowed"
-                    @click="
-                      deleteInstitutionRestriction(slotProps.data.restrictionId)
-                    "
-                    >Delete</v-btn
-                  ></template
-                ></check-permission-role
-              >
+              <div class="d-flex">
+                <v-btn
+                  color="primary"
+                  variant="outlined"
+                  class="mr-2"
+                  @click="viewStudentRestriction(slotProps.data.restrictionId)"
+                  >View</v-btn
+                >
+                <check-permission-role :role="Role.StudentDeleteRestrictions">
+                  <template #="{ notAllowed }">
+                    <v-btn
+                      color="primary"
+                      variant="outlined"
+                      :disabled="notAllowed"
+                      @click="
+                        deleteInstitutionRestriction(
+                          slotProps.data.restrictionId,
+                        )
+                      "
+                      >Delete</v-btn
+                    ></template
+                  ></check-permission-role
+                >
+              </div>
             </template></Column
           >
         </DataTable>
