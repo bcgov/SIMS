@@ -8,11 +8,12 @@ UPDATE
     sims.student_restrictions
 SET
     is_active = false,
-    updated_at = now()
+    updated_at = NOW(),
+    resolved_at = NOW()
 FROM
     sims.restrictions restrictions
 WHERE
-    sims.student_restrictions.is_active = true
+    sims.student_restrictions.is_active = TRUE
     AND restrictions.id = sims.student_restrictions.restriction_id
     AND restrictions.restriction_type = 'Federal'
     AND NOT EXISTS (

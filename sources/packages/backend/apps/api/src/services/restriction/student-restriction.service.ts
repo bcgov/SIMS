@@ -224,11 +224,16 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         userId,
         transactionalEntityManager,
       );
+      const now = new Date();
+      const auditUser = { id: userId } as User;
       const studentRestriction = new StudentRestriction();
       studentRestriction.id = studentRestrictionId;
-      studentRestriction.modifier = { id: userId } as User;
+      studentRestriction.modifier = auditUser;
+      studentRestriction.updatedAt = now;
       studentRestriction.isActive = false;
       studentRestriction.resolutionNote = note;
+      studentRestriction.resolvedBy = auditUser;
+      studentRestriction.resolvedAt = now;
       await transactionalEntityManager
         .getRepository(StudentRestriction)
         .save(studentRestriction);

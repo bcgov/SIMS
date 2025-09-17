@@ -45,4 +45,5 @@ export enum Role {
   StudentReissueMSFAA = "student-reissue-msfaa",
   StudentUpdateDisabilityStatus = "student-update-disability-status",
   StudentReverseScholasticStanding = "student-reverse-scholastic-standing",
+  StudentDeleteRestrictions = "student-delete-restrictions",
 }
