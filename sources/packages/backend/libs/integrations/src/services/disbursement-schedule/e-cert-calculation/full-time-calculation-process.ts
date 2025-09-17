@@ -3,6 +3,7 @@ import { ECertProcessStep } from "../e-cert-processing-steps/e-cert-steps-models
 import { ECertCalculationProcess } from "./e-cert-calculation-process";
 import { DataSource } from "typeorm";
 import {
+  AddAviationCredentialRestrictionStep,
   ApplyOverawardsDeductionsStep,
   ApplyStopBCFundingRestrictionStep,
   AssertLifeTimeMaximumFullTimeStep,
@@ -36,6 +37,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
     private readonly createBCTotalGrantsStep: CreateBCTotalGrantsStep,
     private readonly persistCalculationsStep: PersistCalculationsStep,
     private readonly restrictionBypassesResolutionStep: RestrictionBypassesResolutionStep,
+    private readonly addAviationCredentialRestrictionStep: AddAviationCredentialRestrictionStep,
   ) {
     super(dataSource, eCertNotificationService);
   }
@@ -70,6 +72,7 @@ export class FullTimeCalculationProcess extends ECertCalculationProcess {
       this.calculateTuitionRemittanceEffectiveAmountStep,
       this.createBCTotalGrantsStep,
       this.persistCalculationsStep,
+      this.addAviationCredentialRestrictionStep,
       this.restrictionBypassesResolutionStep,
     ];
   }

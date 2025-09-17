@@ -118,12 +118,13 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
     };
     const repo =
       options?.entityManager?.getRepository(Restriction) ?? this.repo;
-    return repo.findOne({
-      select: { id: true, restrictionCode: true },
-      where: {
-        actionEffectiveConditions: [aviationCredentialTypeCondition],
-        isLegacy: false,
-      },
-    });
+    return repo
+      .createQueryBuilder("restriction")
+      .select(["restriction.id", "restriction.restrictionCode"])
+      .where("restriction.actionEffectiveConditions = :conditions", {
+        conditions: JSON.stringify([aviationCredentialTypeCondition]),
+      })
+      .andWhere("restriction.isLegacy = false")
+      .getOne();
   }
 }

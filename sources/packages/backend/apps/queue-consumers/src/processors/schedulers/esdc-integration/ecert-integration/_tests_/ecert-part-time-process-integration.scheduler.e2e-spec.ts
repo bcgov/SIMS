@@ -1513,6 +1513,92 @@ describe(
       ).toBe(true);
     });
 
+    it(
+      "Should calculate and send the e-cert and create restriction AVCP after persisting the e-cert calculations" +
+        " when a student is funded for an aviation credential type 'commercialPilotTraining' for the first time.",
+      async () => {
+        // Arrange
+        // Aviation credential type.
+        const aviationCredentialType = "commercialPilotTraining";
+        // Eligible COE basic properties.
+        const eligibleDisbursement: Partial<DisbursementSchedule> = {
+          coeStatus: COEStatus.completed,
+          coeUpdatedAt: new Date(),
+        };
+        // Student with valid SIN.
+        const student = await saveFakeStudent(db.dataSource);
+        // Valid MSFAA Number.
+        const msfaaNumber = await db.msfaaNumber.save(
+          createFakeMSFAANumber(
+            { student },
+            { msfaaState: MSFAAStates.Signed },
+          ),
+        );
+        await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            student,
+            msfaaNumber,
+            firstDisbursementValues: [
+              createFakeDisbursementValue(
+                DisbursementValueType.CanadaLoan,
+                "CSLP",
+                199,
+              ),
+              // Should be disbursed because it is a federal grant.
+              createFakeDisbursementValue(
+                DisbursementValueType.CanadaGrant,
+                "CSGP",
+                299,
+              ),
+              // Should not be disbursed due to B6A restriction.
+              createFakeDisbursementValue(
+                DisbursementValueType.BCLoan,
+                "SBSD",
+                399,
+              ),
+              // Should not be disbursed due to BCLM restriction.
+              createFakeDisbursementValue(
+                DisbursementValueType.BCGrant,
+                "BCAG",
+                499,
+              ),
+            ],
+          },
+          {
+            offeringIntensity: OfferingIntensity.partTime,
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              assessmentData: { weeks: 5 } as Assessment,
+              assessmentDate: new Date(),
+            },
+            firstDisbursementInitialValues: {
+              ...eligibleDisbursement,
+              disbursementDate: getISODateOnlyString(addDays(1)),
+            },
+            offeringInitialValues: {
+              isAviationOffering: "yes",
+              aviationCredentialType,
+            },
+          },
+        );
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            "Checking offering for aviation credential types to add a restriction.",
+            `New restriction AVCP for the aviation credential type ${aviationCredentialType} was added.`,
+          ]),
+        ).toBe(true);
+      },
+    );
+
     /**
      * Helper function to get the uploaded file name.
      * @returns The uploaded file name

@@ -23,11 +23,13 @@ import {
   ECertFeedbackErrorService,
   ECertGenerationService,
   ECertNotificationService,
+  RestrictionService,
   SshService,
 } from "../../services";
 import { SystemUserModule } from "@sims/services/system-users";
 import { SFASApplicationService } from "@sims/services/sfas";
 import {
+  AddAviationCredentialRestrictionStep,
   ApplyOverawardsDeductionsStep,
   ApplyStopBCFundingRestrictionStep,
   AssertLifeTimeMaximumFullTimeStep,
@@ -75,6 +77,7 @@ import {
     SFASApplicationService,
     DisbursementScheduleSharedService,
     ECertNotificationService,
+    RestrictionService,
     // e-Cert calculation steps.
     ValidateDisbursementFullTimeStep,
     ValidateDisbursementPartTimeStep,
@@ -86,6 +89,7 @@ import {
     CreateBCTotalGrantsStep,
     PersistCalculationsStep,
     RestrictionBypassesResolutionStep,
+    AddAviationCredentialRestrictionStep,
     FullTimeCalculationProcess,
     PartTimeCalculationProcess,
     AssessmentSequentialProcessingService,

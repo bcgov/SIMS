@@ -11,6 +11,7 @@ import {
 } from "../disbursement-schedule.models";
 import { RestrictionCode } from "@sims/services";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { isRestrictionActionEffective } from "@sims/utilities";
 
 /**
  * Check active student restrictions by its action type in an eligible disbursement.
@@ -23,9 +24,14 @@ export function getRestrictionByActionType(
   eCertDisbursement: EligibleECertDisbursement,
   actionType: RestrictionActionType,
 ): StudentActiveRestriction {
-  return eCertDisbursement
-    .getEffectiveRestrictions()
-    .find((restriction) => restriction.actions.includes(actionType));
+  return eCertDisbursement.getEffectiveRestrictions().find(
+    (restriction) =>
+      restriction.actions.includes(actionType) &&
+      isRestrictionActionEffective(restriction.actionEffectiveConditions, {
+        aviationCredentialType:
+          eCertDisbursement.offering.aviationCredentialType,
+      }),
+  );
 }
 
 /**

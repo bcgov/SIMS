@@ -4,15 +4,10 @@ import {
 } from "@sims/sims-db";
 
 type ContextData = { aviationCredentialType?: string };
-const actionEffectiveConditionsMap: {
-  [key in ActionEffectiveConditionNames]: (
-    actionEffectiveCondition: ActionEffectiveCondition,
-    contextData: ContextData,
-  ) => boolean;
-} = {
-  [ActionEffectiveConditionNames.AviationCredentialTypes]:
-    aviationCredentialTypeCondition,
-};
+type ConditionEvaluator = (
+  actionEffectiveCondition: ActionEffectiveCondition,
+  contextData: ContextData,
+) => boolean;
 
 /**
  * Evaluates if the restriction actions are effective based on the provided conditions.
@@ -32,7 +27,7 @@ export function isRestrictionActionEffective(
   }
   // When one or more conditions are provided all must be satisfied for the restriction actions to be effective.
   return actionEffectiveConditions.every((actionEffectiveCondition) =>
-    actionEffectiveConditionsMap[actionEffectiveCondition.name](
+    getActionEffectiveConditionsMap()[actionEffectiveCondition.name](
       actionEffectiveCondition,
       contextData,
     ),
@@ -49,9 +44,19 @@ function aviationCredentialTypeCondition(
   actionEffectiveCondition: ActionEffectiveCondition,
   contextData: ContextData,
 ): boolean {
-  if (!contextData.aviationCredentialType) {
-    return true;
-  }
   const conditionValues = actionEffectiveCondition.value as string[];
   return conditionValues.includes(contextData.aviationCredentialType);
+}
+
+/**
+ * Returns a map of condition evaluators.
+ * @returns map of condition evaluators.
+ */
+function getActionEffectiveConditionsMap(): {
+  [key in ActionEffectiveConditionNames]: ConditionEvaluator;
+} {
+  return {
+    [ActionEffectiveConditionNames.AviationCredentialTypes]:
+      aviationCredentialTypeCondition,
+  };
 }
