@@ -223,7 +223,8 @@
       "Zeebe",
       "AVCP",
       "AVIR",
-      "AVEN"
+      "AVEN",
+      "DATATABLE"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"

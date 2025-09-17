@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import {
-  PaginationOptions,
   PaginatedResults,
   OrderByCondition,
+  COEPaginationOptions,
 } from "../../utilities";
 import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import { DataSource, Brackets } from "typeorm";
@@ -53,7 +53,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
   async getCOEByLocation(
     locationId: number,
     enrolmentPeriod: EnrollmentPeriod,
-    paginationOptions: PaginationOptions,
+    paginationOptions: COEPaginationOptions,
   ): Promise<PaginatedResults<DisbursementSchedule>> {
     const disbursementCOEQuery =
       this.confirmationOfEnrollmentService.getDisbursementForCOEQuery(
@@ -62,29 +62,42 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
     disbursementCOEQuery.andWhere("location.id = :locationId", { locationId });
     // Add pagination, sort and search criteria.
-    if (paginationOptions.searchCriteria) {
-      disbursementCOEQuery
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where(getUserFullNameLikeSearch()).orWhere(
-              "application.applicationNumber Ilike :searchCriteria",
-            );
-          }),
-        )
-        .setParameter(
-          "searchCriteria",
-          `%${paginationOptions.searchCriteria.trim()}%`,
-        );
+    if (paginationOptions.search) {
+      disbursementCOEQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where(getUserFullNameLikeSearch("user", "search")).orWhere(
+            "application.applicationNumber ILIKE :search",
+          );
+        }),
+      );
+      disbursementCOEQuery.setParameter(
+        "search",
+        `%${paginationOptions.search.trim()}%`,
+      );
     }
-    disbursementCOEQuery
-      .orderBy(
-        this.transformToEntitySortField(
-          paginationOptions.sortField,
-          paginationOptions.sortOrder,
-        ),
-      )
-      .skip(paginationOptions.page * paginationOptions.pageLimit)
-      .take(paginationOptions.pageLimit);
+    if (paginationOptions.intensityFilter) {
+      disbursementCOEQuery.andWhere(
+        "application.offeringIntensity = :intensityFilter",
+        {
+          intensityFilter: paginationOptions.intensityFilter,
+        },
+      );
+    }
+    if (!paginationOptions.sortField || !paginationOptions.sortOrder) {
+      disbursementCOEQuery
+        .skip(paginationOptions.page * paginationOptions.pageLimit)
+        .take(paginationOptions.pageLimit);
+    } else {
+      disbursementCOEQuery
+        .orderBy(
+          this.transformToEntitySortField(
+            paginationOptions.sortField,
+            paginationOptions.sortOrder,
+          ),
+        )
+        .skip(paginationOptions.page * paginationOptions.pageLimit)
+        .take(paginationOptions.pageLimit);
+    }
 
     const [result, count] = await disbursementCOEQuery.getManyAndCount();
     return {
@@ -183,6 +196,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const coeSortOptions = {
       applicationNumber: "application.applicationNumber",
       disbursementDate: "disbursementSchedule.disbursementDate",
+      studyEndDate: "offering.studyEndDate",
     };
     const dbColumnName =
       coeSortOptions[sortField] || "disbursementSchedule.coeStatus";

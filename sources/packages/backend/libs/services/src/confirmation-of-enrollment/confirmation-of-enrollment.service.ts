@@ -775,6 +775,7 @@ export class ConfirmationOfEnrollmentService {
         "location.institutionCode",
         "application.id",
         "application.applicationNumber",
+        "application.offeringIntensity",
         "application.studentNumber",
         "student.id",
         "student.birthDate",
