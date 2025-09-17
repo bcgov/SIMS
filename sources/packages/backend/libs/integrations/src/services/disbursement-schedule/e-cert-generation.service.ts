@@ -99,6 +99,7 @@ export class ECertGenerationService {
         "restriction.id",
         "restriction.restrictionCode",
         "restriction.actionType",
+        "restriction.actionEffectiveConditions",
         "restrictionBypass.id",
         "restrictionBypass.bypassBehavior",
         "restrictionBypassStudentRestriction.id",

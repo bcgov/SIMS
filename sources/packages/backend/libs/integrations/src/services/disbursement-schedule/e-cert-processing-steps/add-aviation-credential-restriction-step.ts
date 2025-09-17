@@ -1,14 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { round } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import {
-  DisbursementScheduleSharedService,
   RestrictionCode,
-  SFASApplicationService,
   StudentRestrictionSharedService,
   SystemUsersService,
 } from "@sims/services";
-import { DisbursementValue, StudentRestriction } from "@sims/sims-db";
+import { StudentRestriction } from "@sims/sims-db";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
@@ -28,8 +25,6 @@ export class AddAviationCredentialRestrictionStep implements ECertProcessStep {
     private readonly restrictionService: RestrictionService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
     private readonly systemUsersService: SystemUsersService,
-    private readonly sfasApplicationService: SFASApplicationService,
-    private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
     private readonly eCertGenerationService: ECertGenerationService,
   ) {}
 
@@ -82,66 +77,16 @@ export class AddAviationCredentialRestrictionStep implements ECertProcessStep {
     await entityManager
       .getRepository(StudentRestriction)
       .save(aviationStudentRestriction);
+    // If a new restriction was created refresh the active restrictions list.
+    const activeRestrictions =
+      await this.eCertGenerationService.getStudentActiveRestrictions(
+        eCertDisbursement.studentId,
+        entityManager,
+      );
+    eCertDisbursement.refreshActiveStudentRestrictions(activeRestrictions);
     log.info(
       `New restriction ${aviationRestriction.restrictionCode} for the aviation credential type ${aviationCredentialType} was added.`,
     );
-    return true;
-  }
-
-  /**
-   * Check if the student hits/exceeds the life time maximum for the BCSL Award.
-   * If they hits/exceeds the life time maximum, then the award is reduced so the
-   * student hits the exact maximum value and the student restriction
-   * {@link  RestrictionCode.BCLM} is placed for the student.
-   * @param eCertDisbursement student disbursement that is part of one e-Cert.
-   * @param disbursementValue award value to be verified.
-   * @param entityManager used to execute the commands in the same transaction.
-   * @returns true if a new restriction was created, otherwise false.
-   */
-  private async checkLifeTimeMaximumAndAddStudentRestriction(
-    eCertDisbursement: EligibleECertDisbursement,
-    disbursementValue: DisbursementValue,
-    entityManager: EntityManager,
-  ): Promise<boolean> {
-    // Get totals including legacy system.
-    const [totalLegacyBCSLAmount, totalDisbursedBCSLAmount] = await Promise.all(
-      [
-        this.sfasApplicationService.totalLegacyBCSLAmount(
-          eCertDisbursement.studentId,
-        ),
-        this.disbursementScheduleSharedService.totalDisbursedBCSLAmount(
-          eCertDisbursement.studentId,
-        ),
-      ],
-    );
-    const totalLifeTimeAmount =
-      totalLegacyBCSLAmount +
-      totalDisbursedBCSLAmount +
-      disbursementValue.effectiveAmount;
-    if (totalLifeTimeAmount < eCertDisbursement.maxLifetimeBCLoanAmount) {
-      // The limit was not reached.
-      return false;
-    }
-    // Amount subtracted when lifetime maximum is reached.
-    const amountSubtracted =
-      totalLifeTimeAmount - eCertDisbursement.maxLifetimeBCLoanAmount;
-    // Ideally disbursementValue.effectiveAmount should be greater or equal to amountSubtracted.
-    // The flow will not reach here if the ministry ignore the restriction for the previous
-    // disbursement/application and money went out to the student, even though they reach the maximum.
-    const newEffectiveAmount =
-      disbursementValue.effectiveAmount - amountSubtracted;
-    // Create RestrictionCode.BCLM restriction when lifetime maximum is reached/exceeded.
-    const bclmRestriction =
-      await this.studentRestrictionSharedService.createRestrictionToSave(
-        eCertDisbursement.studentId,
-        RestrictionCode.BCLM,
-        this.systemUsersService.systemUser.id,
-        eCertDisbursement.applicationId,
-      );
-    await entityManager.getRepository(StudentRestriction).save(bclmRestriction);
-    disbursementValue.effectiveAmount = round(newEffectiveAmount);
-    disbursementValue.restrictionAmountSubtracted = amountSubtracted;
-    disbursementValue.restrictionSubtracted = bclmRestriction.restriction;
     return true;
   }
 }
