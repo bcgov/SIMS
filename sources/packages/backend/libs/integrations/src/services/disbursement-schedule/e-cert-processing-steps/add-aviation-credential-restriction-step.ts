@@ -44,7 +44,9 @@ export class AddAviationCredentialRestrictionStep implements ECertProcessStep {
     entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<boolean> {
-    log.info("Checking offering for aviation credential types.");
+    log.info(
+      "Checking offering for aviation credential types to add a restriction.",
+    );
     if (!eCertDisbursement.offering.aviationCredentialType) {
       log.info(
         "The offering does not belong to aviation credential types. Hence skipping the step.",
@@ -53,7 +55,7 @@ export class AddAviationCredentialRestrictionStep implements ECertProcessStep {
     }
     const aviationCredentialType =
       eCertDisbursement.offering.aviationCredentialType;
-    // Get restriction that is expected for the aviation credential type.
+    // Get restriction that is applicable for the given aviation credential type.
     const aviationRestriction =
       await this.restrictionService.getRestrictionForAviationCredentialType(
         aviationCredentialType,
@@ -63,36 +65,26 @@ export class AddAviationCredentialRestrictionStep implements ECertProcessStep {
       eCertDisbursement,
       aviationRestriction.restrictionCode as RestrictionCode,
     );
+    // If the aviation restriction for the given credential type is already present, do not add a new restriction.
     if (isAviationRestrictionAlreadyPresent) {
       log.info(
         `Student already has a ${aviationRestriction.restrictionCode} restriction for the aviation credential type ${aviationCredentialType}.`,
       );
       return true;
     }
-
-    // Check if a new restriction should be created and award adjusted.
-    const newRestrictionCreated =
-      await this.checkLifeTimeMaximumAndAddStudentRestriction(
-        eCertDisbursement,
-        bcLoan,
-        entityManager,
+    const aviationStudentRestriction =
+      this.studentRestrictionSharedService.buildStudentRestriction(
+        eCertDisbursement.studentId,
+        aviationRestriction.id,
+        this.systemUsersService.systemUser.id,
+        { applicationId: eCertDisbursement.applicationId },
       );
-    if (newRestrictionCreated) {
-      // If a new restriction was created refresh the active restrictions list.
-      const activeRestrictions =
-        await this.eCertGenerationService.getStudentActiveRestrictions(
-          eCertDisbursement.studentId,
-          entityManager,
-        );
-      eCertDisbursement.refreshActiveStudentRestrictions(activeRestrictions);
-      log.info(
-        `New ${RestrictionCode.BCLM} restriction was added to the student account.`,
-      );
-    } else {
-      log.info(
-        `No ${RestrictionCode.BCLM} restriction was created at this time.`,
-      );
-    }
+    await entityManager
+      .getRepository(StudentRestriction)
+      .save(aviationStudentRestriction);
+    log.info(
+      `New restriction ${aviationRestriction.restrictionCode} for the aviation credential type ${aviationCredentialType} was added.`,
+    );
     return true;
   }
 

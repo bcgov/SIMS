@@ -121,7 +121,7 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
     return repo.findOne({
       select: { id: true, restrictionCode: true },
       where: {
-        actionEffectiveConditions: aviationCredentialTypeCondition,
+        actionEffectiveConditions: [aviationCredentialTypeCondition],
         isLegacy: false,
       },
     });
