@@ -79,8 +79,7 @@ export function createFakeEducationProgramOffering(
     options?.initialValues?.studyStartDate ??
     getISODateOnlyString(faker.date.recent(1));
   offering.studyEndDate =
-    options?.initialValues?.studyEndDate ??
-    getISODateOnlyString(faker.date.soon(30));
+    options?.initialValues?.studyEndDate ?? getISODateOnlyString(new Date());
   offering.studyBreaks =
     options?.initialValues?.studyBreaks ??
     ({

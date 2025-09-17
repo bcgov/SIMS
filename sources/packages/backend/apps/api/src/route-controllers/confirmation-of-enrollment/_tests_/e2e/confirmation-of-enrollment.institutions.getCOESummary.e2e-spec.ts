@@ -116,9 +116,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         expect(firstCOE).toStrictEqual({
           applicationNumber: applicationA.applicationNumber,
           applicationId: applicationA.id,
-          studyStartPeriod:
+          offeringIntensity: firstCOE.offeringIntensity,
+          studentNumber: firstCOE.studentNumber,
+          studyStartDate:
             applicationA.currentAssessment.offering.studyStartDate,
-          studyEndPeriod: applicationA.currentAssessment.offering.studyEndDate,
+          studyEndDate: applicationA.currentAssessment.offering.studyEndDate,
           coeStatus: COEStatus.required,
           fullName: getUserFullName(applicationA.student.user),
           disbursementScheduleId: applicationAFirstSchedule.id,
@@ -127,9 +129,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         expect(secondCOE).toStrictEqual({
           applicationNumber: applicationB.applicationNumber,
           applicationId: applicationB.id,
-          studyStartPeriod:
+          offeringIntensity: applicationB.offeringIntensity,
+          studentNumber: applicationB.studentNumber,
+          studyStartDate:
             applicationB.currentAssessment.offering.studyStartDate,
-          studyEndPeriod: applicationB.currentAssessment.offering.studyEndDate,
+          studyEndDate: applicationB.currentAssessment.offering.studyEndDate,
           coeStatus: COEStatus.required,
           fullName: getUserFullName(applicationB.student.user),
           disbursementScheduleId: applicationBFirstSchedule.id,
@@ -213,9 +217,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
             {
               applicationNumber: applicationA.applicationNumber,
               applicationId: applicationA.id,
-              studyStartPeriod:
+              offeringIntensity: applicationA.offeringIntensity,
+              studentNumber: applicationA.studentNumber,
+              studyStartDate:
                 applicationA.currentAssessment.offering.studyStartDate,
-              studyEndPeriod:
+              studyEndDate:
                 applicationA.currentAssessment.offering.studyEndDate,
               coeStatus: COEStatus.required,
               fullName: getUserFullName(applicationA.student.user),
@@ -225,9 +231,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
             {
               applicationNumber: applicationB.applicationNumber,
               applicationId: applicationB.id,
-              studyStartPeriod:
+              offeringIntensity: applicationB.offeringIntensity,
+              studentNumber: applicationB.studentNumber,
+              studyStartDate:
                 applicationB.currentAssessment.offering.studyStartDate,
-              studyEndPeriod:
+              studyEndDate:
                 applicationB.currentAssessment.offering.studyEndDate,
               coeStatus: COEStatus.required,
               fullName: getUserFullName(applicationB.student.user),
@@ -295,9 +303,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
             {
               applicationNumber: applicationA.applicationNumber,
               applicationId: applicationA.id,
-              studyStartPeriod:
+              offeringIntensity: applicationA.offeringIntensity,
+              studentNumber: applicationA.studentNumber,
+              studyStartDate:
                 applicationA.currentAssessment.offering.studyStartDate,
-              studyEndPeriod:
+              studyEndDate:
                 applicationA.currentAssessment.offering.studyEndDate,
               coeStatus: COEStatus.required,
               fullName: getUserFullName(applicationA.student.user),
@@ -442,9 +452,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         expect(firstCOE).toStrictEqual({
           applicationNumber: applicationA.applicationNumber,
           applicationId: applicationA.id,
-          studyStartPeriod:
+          offeringIntensity: firstCOE.offeringIntensity,
+          studentNumber: firstCOE.studentNumber,
+          studyStartDate:
             applicationA.currentAssessment.offering.studyStartDate,
-          studyEndPeriod: applicationA.currentAssessment.offering.studyEndDate,
+          studyEndDate: applicationA.currentAssessment.offering.studyEndDate,
           coeStatus: COEStatus.required,
           fullName: getUserFullName(applicationA.student.user),
           disbursementScheduleId: applicationASecondSchedule.id,
@@ -453,9 +465,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         expect(secondCOE).toStrictEqual({
           applicationNumber: applicationB.applicationNumber,
           applicationId: applicationB.id,
-          studyStartPeriod:
+          offeringIntensity: secondCOE.offeringIntensity,
+          studentNumber: secondCOE.studentNumber,
+          studyStartDate:
             applicationB.currentAssessment.offering.studyStartDate,
-          studyEndPeriod: applicationB.currentAssessment.offering.studyEndDate,
+          studyEndDate: applicationB.currentAssessment.offering.studyEndDate,
           coeStatus: COEStatus.required,
           fullName: getUserFullName(applicationB.student.user),
           disbursementScheduleId: applicationBSecondSchedule.id,
@@ -526,9 +540,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
             {
               applicationNumber: applicationA.applicationNumber,
               applicationId: applicationA.id,
-              studyStartPeriod:
+              offeringIntensity: applicationA.offeringIntensity,
+              studentNumber: applicationA.studentNumber,
+              studyStartDate:
                 applicationA.currentAssessment.offering.studyStartDate,
-              studyEndPeriod:
+              studyEndDate:
                 applicationA.currentAssessment.offering.studyEndDate,
               coeStatus: COEStatus.completed,
               fullName: getUserFullName(applicationA.student.user),
@@ -538,9 +554,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
             {
               applicationNumber: applicationB.applicationNumber,
               applicationId: applicationB.id,
-              studyStartPeriod:
+              offeringIntensity: applicationB.offeringIntensity,
+              studentNumber: applicationB.studentNumber,
+              studyStartDate:
                 applicationB.currentAssessment.offering.studyStartDate,
-              studyEndPeriod:
+              studyEndDate:
                 applicationB.currentAssessment.offering.studyEndDate,
               coeStatus: COEStatus.declined,
               fullName: getUserFullName(applicationB.student.user),
