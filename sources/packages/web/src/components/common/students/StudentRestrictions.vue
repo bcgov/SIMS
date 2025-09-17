@@ -64,13 +64,27 @@
               />
             </template>
           </Column>
-          <Column field="restrictionId" header="">
+          <Column field="restrictionId" header="Actions">
             <template #body="slotProps">
               <v-btn
                 color="primary"
                 variant="outlined"
+                class="mr-2"
                 @click="viewStudentRestriction(slotProps.data.restrictionId)"
                 >View</v-btn
+              >
+              <check-permission-role :role="Role.StudentDeleteRestrictions">
+                <template #="{ notAllowed }">
+                  <v-btn
+                    color="primary"
+                    variant="outlined"
+                    :disabled="notAllowed"
+                    @click="
+                      deleteInstitutionRestriction(slotProps.data.restrictionId)
+                    "
+                    >Delete</v-btn
+                  ></template
+                ></check-permission-role
               >
             </template></Column
           >
@@ -89,6 +103,23 @@
       :entityType="RestrictionEntityType.Student"
       :allowedRole="Role.StudentAddRestriction"
     />
+    <user-note-confirm-modal
+      title="Delete restriction"
+      ref="deleteRestriction"
+      okLabel="Delete restriction"
+    >
+      <template #content>
+        <p>
+          <strong>Attention:</strong> You are about to delete this restriction.
+          Once deleted, the restriction will not be accounted for in student's
+          restrictions history. If you need to maintain a record of the
+          restriction, please exit this screen and choose
+          <strong>Resolve restriction</strong>
+          instead.
+        </p>
+      </template>
+      ></user-note-confirm-modal
+    >
   </body-header-container>
 </template>
 
@@ -98,7 +129,6 @@ import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
 import AddStudentRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
-const { emptyStringFiller, conditionalEmptyStringFiller } = useFormatters();
 import {
   RestrictionStatus,
   DEFAULT_PAGE_LIMIT,
@@ -106,6 +136,7 @@ import {
   RestrictionEntityType,
   LayoutTemplates,
   Role,
+  ApiProcessError,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -114,6 +145,11 @@ import {
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
 } from "@/services/http/dto";
+import UserNoteConfirmModal, {
+  UserNoteModal,
+} from "@/components/common/modals/UserNoteConfirmModal.vue";
+
+const { emptyStringFiller, conditionalEmptyStringFiller } = useFormatters();
 
 export default defineComponent({
   components: {
@@ -121,6 +157,7 @@ export default defineComponent({
     ViewRestrictionModal,
     AddStudentRestrictionModal,
     CheckPermissionRole,
+    UserNoteConfirmModal,
   },
   props: {
     studentId: {
@@ -148,6 +185,7 @@ export default defineComponent({
     const addRestriction = ref(
       {} as ModalDialog<AssignRestrictionAPIInDTO | boolean>,
     );
+    const deleteRestriction = ref({} as ModalDialog<UserNoteModal<number>>);
     const studentRestriction = ref();
     const snackBar = useSnackBar();
 
@@ -220,9 +258,36 @@ export default defineComponent({
       }
     };
 
+    const deleteInstitutionRestriction = async (restrictionId: number) => {
+      await deleteRestriction.value.showModal(
+        restrictionId,
+        cancelDisbursement,
+      );
+    };
+
+    const cancelDisbursement = async (
+      userNoteModalResult: UserNoteModal<number>,
+    ): Promise<boolean> => {
+      try {
+        // TODO: call the API to delete the restriction.
+        snackBar.success("Restriction deleted.");
+        return true;
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          snackBar.error(error.message);
+          return false;
+        }
+        snackBar.error(
+          "An unexpected error happened while deleting the restriction.",
+        );
+      }
+      return false;
+    };
+
     onMounted(async () => {
       await loadStudentRestrictions();
     });
+
     return {
       dateOnlyLongString,
       studentRestrictions,
@@ -231,10 +296,12 @@ export default defineComponent({
       PAGINATION_LIST,
       studentRestriction,
       viewStudentRestriction,
+      deleteInstitutionRestriction,
       viewRestriction,
       showModal,
       addRestriction,
       addStudentRestriction,
+      deleteRestriction,
       RestrictionEntityType,
       LayoutTemplates,
       Role,
