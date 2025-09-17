@@ -809,6 +809,7 @@ export class ConfirmationOfEnrollmentService {
       .andWhere("disbursementSchedule.hasEstimatedAwards = true");
     // Get only COE(s) that are eligible to be confirmed by institution.
     if (enrolmentPeriod === EnrollmentPeriod.Current) {
+      const today = getISODateOnlyString(new Date());
       disbursementCOEQuery
         .andWhere(
           "disbursementSchedule.disbursementDate <= :coeThresholdDate",
@@ -816,7 +817,8 @@ export class ConfirmationOfEnrollmentService {
         )
         .andWhere("disbursementSchedule.coeStatus = :required", {
           required: COEStatus.required,
-        });
+        })
+        .andWhere("offering.studyEndDate <= :today", { today });
     }
     // Get only COE(s) that are either already confirmed or not eligible to be confirmed by institution.
     else {

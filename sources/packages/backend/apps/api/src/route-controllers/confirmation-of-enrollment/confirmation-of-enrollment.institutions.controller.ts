@@ -105,40 +105,32 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         enrollmentPeriod,
         paginationOptions,
       );
-    const filteredResults = disbursementPaginatedResult.results.filter(
-      (disbursement: DisbursementSchedule) => {
-        const today = new Date();
-        const studyEndDate = new Date(
-          disbursement.studentAssessment.offering.studyEndDate,
-        );
-        return (
-          disbursement.studentAssessment.offering.studyEndDate &&
-          studyEndDate <= today
-        );
-      },
-    );
     return {
-      results: filteredResults.map((disbursement: DisbursementSchedule) => {
-        const offering = disbursement.studentAssessment.offering;
-        return {
-          applicationNumber:
-            disbursement.studentAssessment.application.applicationNumber,
-          applicationId: disbursement.studentAssessment.application.id,
-          offeringIntensity:
-            disbursement.studentAssessment.application.offeringIntensity,
-          studentNumber:
-            disbursement.studentAssessment.application.studentNumber,
-          studyStartDate: getISODateOnlyString(offering.studyStartDate),
-          studyEndDate: getISODateOnlyString(offering.studyEndDate),
-          coeStatus: disbursement.coeStatus,
-          fullName: getUserFullName(
-            disbursement.studentAssessment.application.student.user,
-          ),
-          disbursementScheduleId: disbursement.id,
-          disbursementDate: getISODateOnlyString(disbursement.disbursementDate),
-        };
-      }),
-      count: filteredResults.length,
+      results: disbursementPaginatedResult.results.map(
+        (disbursement: DisbursementSchedule) => {
+          const offering = disbursement.studentAssessment.offering;
+          return {
+            applicationNumber:
+              disbursement.studentAssessment.application.applicationNumber,
+            applicationId: disbursement.studentAssessment.application.id,
+            offeringIntensity:
+              disbursement.studentAssessment.application.offeringIntensity,
+            studentNumber:
+              disbursement.studentAssessment.application.studentNumber,
+            studyStartDate: getISODateOnlyString(offering.studyStartDate),
+            studyEndDate: getISODateOnlyString(offering.studyEndDate),
+            coeStatus: disbursement.coeStatus,
+            fullName: getUserFullName(
+              disbursement.studentAssessment.application.student.user,
+            ),
+            disbursementScheduleId: disbursement.id,
+            disbursementDate: getISODateOnlyString(
+              disbursement.disbursementDate,
+            ),
+          };
+        },
+      ),
+      count: disbursementPaginatedResult.count,
     };
   }
 
