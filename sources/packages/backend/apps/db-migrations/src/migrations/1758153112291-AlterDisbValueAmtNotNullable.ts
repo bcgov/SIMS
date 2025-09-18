@@ -1,5 +1,5 @@
-import { getSQLFileData } from "@sims/utilities";
 import { MigrationInterface, QueryRunner } from "typeorm";
+import { getSQLFileData } from "../utilities/sqlLoader";
 
 export class AlterDisbValueAmtNotNullable1758153112291
   implements MigrationInterface
