@@ -31,11 +31,8 @@
                 :propertyValue="restrictionData.createdBy" /></v-col
             ><v-col
               ><title-value propertyTitle="Status" /><status-chip-restriction
-                :status="
-                  restrictionData.isActive
-                    ? RestrictionStatus.Active
-                    : RestrictionStatus.Resolved
-                " /></v-col
+                :is-active="restrictionData.isActive"
+                :deleted-at="restrictionData.deletedAt" /></v-col
           ></v-row>
         </content-group>
         <template v-if="showResolution">
@@ -63,7 +60,7 @@
                 ><title-value
                   propertyTitle="Date resolved"
                   :propertyValue="
-                    dateOnlyLongString(restrictionData.updatedAt)
+                    dateOnlyLongString(restrictionData.resolvedAt)
                   " /></v-col
               ><v-col
                 ><title-value

@@ -43,6 +43,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * - `filterNoEffectRestrictions` filterNoEffectRestrictions is a flag to filter restrictions based on notificationType.
    * - `onlyActive` onlyActive is a flag, which decides whether to select all
    * restrictions (i.e false) or to select only active restrictions (i.e true).
+   * - `withDeleted` flag to include soft deleted restrictions.
    * @returns Student restrictions.
    */
   async getStudentRestrictionsById(
@@ -50,6 +51,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     options?: {
       filterNoEffectRestrictions?: boolean;
       onlyActive?: boolean;
+      withDeleted?: boolean;
     },
   ): Promise<StudentRestriction[]> {
     const query = this.repo
@@ -59,6 +61,8 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "studentRestrictions.isActive",
         "studentRestrictions.updatedAt",
         "studentRestrictions.createdAt",
+        "studentRestrictions.resolvedAt",
+        "studentRestrictions.deletedAt",
         "restriction.restrictionType",
         "restriction.restrictionCategory",
         "restriction.restrictionCode",
@@ -77,6 +81,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "restriction.notificationType != :restrictionNotificationType",
         { restrictionNotificationType: RestrictionNotificationType.NoEffect },
       );
+    }
+    if (options?.withDeleted) {
+      query.withDeleted();
     }
     return query
       .orderBy("studentRestrictions.isActive", "DESC")
@@ -108,6 +115,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "studentRestrictions.isActive",
         "studentRestrictions.updatedAt",
         "studentRestrictions.createdAt",
+        "studentRestrictions.resolvedAt",
         "creator.firstName",
         "creator.lastName",
         "modifier.firstName",

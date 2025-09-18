@@ -30,8 +30,9 @@ export class RestrictionInstitutionSummaryAPIOutDTO extends RestrictionBaseAPIOu
  */
 export class RestrictionSummaryAPIOutDTO extends RestrictionBaseAPIOutDTO {
   createdAt: Date;
-  updatedAt: Date;
   isActive: boolean;
+  resolvedAt?: Date;
+  deletedAt?: Date;
 }
 
 /**

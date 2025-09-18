@@ -18,7 +18,7 @@ export class RestrictionControllerService {
    * Get restrictions for a student for aest view.
    * @param studentId id of the student to retrieve restrictions.
    * @param options for restrictions.
-   * - `extendedDetails` option to specify the additional property (updatedAt) to be returned to the aest.
+   * - `extendedDetails` option to specify the additional properties to be returned to the Ministry.
    * @returns student restrictions for the provided student id.
    */
   async getStudentRestrictions(
@@ -42,7 +42,7 @@ export class RestrictionControllerService {
    * Get restrictions for a student.
    * @param studentId id of the student to retrieve restrictions.
    * @param options for restrictions.
-   * - `extendedDetails` option to specify the additional property (updatedAt) to be returned to the aest.
+   * - `extendedDetails` option to specify the additional properties to be returned to the Ministry.
    * - `filterNoEffectRestrictions` option to filter restrictions based on notificationType.
    * @returns student restrictions for the provided student id.
    */
@@ -60,6 +60,7 @@ export class RestrictionControllerService {
         studentId,
         {
           filterNoEffectRestrictions: options?.filterNoEffectRestrictions,
+          withDeleted: options?.extendedDetails,
         },
       );
     return studentRestrictions?.map((studentRestriction) => ({
@@ -69,8 +70,11 @@ export class RestrictionControllerService {
       restrictionCode: studentRestriction.restriction.restrictionCode,
       description: studentRestriction.restriction.description,
       createdAt: studentRestriction.createdAt,
-      updatedAt: options?.extendedDetails
-        ? studentRestriction.updatedAt
+      resolvedAt: options?.extendedDetails
+        ? studentRestriction.resolvedAt
+        : undefined,
+      deletedAt: options?.extendedDetails
+        ? studentRestriction.deletedAt
         : undefined,
       isActive: studentRestriction.isActive,
     }));
@@ -154,7 +158,7 @@ export class RestrictionControllerService {
     if (options?.extendedDetails) {
       return {
         ...restrictionDetail,
-        updatedAt: studentRestriction.updatedAt,
+        resolvedAt: studentRestriction.resolvedAt,
         deletedAt: studentRestriction.deletedAt,
         updatedBy: getUserFullName(studentRestriction.modifier) || undefined,
         deletedBy: getUserFullName(studentRestriction.deletedBy) || undefined,

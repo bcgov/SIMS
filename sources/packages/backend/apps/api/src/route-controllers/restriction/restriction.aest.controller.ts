@@ -9,7 +9,6 @@ import {
   NotFoundException,
   InternalServerErrorException,
   ParseIntPipe,
-  Delete,
 } from "@nestjs/common";
 import {
   StudentRestrictionService,
@@ -228,7 +227,7 @@ export class RestrictionAESTController extends BaseController {
   @ApiNotFoundResponse({
     description: "Provincial restriction not found to be deleted.",
   })
-  @Delete("student/:studentId/student-restriction/:studentRestrictionId")
+  @Patch("student/:studentId/student-restriction/:studentRestrictionId/delete")
   async deleteStudentProvincialRestriction(
     @UserToken() userToken: IUserToken,
     @Param("studentId", ParseIntPipe) studentId: number,
@@ -313,7 +312,9 @@ export class RestrictionAESTController extends BaseController {
       restrictionCode: institutionRestriction.restriction.restrictionCode,
       description: institutionRestriction.restriction.description,
       createdAt: institutionRestriction.createdAt,
-      updatedAt: institutionRestriction.updatedAt,
+      // Currently mapping resolvedAt to updatedAt as there is no resolvedAt for
+      // institutions restrictions but the API shares the same DTO.
+      resolvedAt: institutionRestriction.updatedAt,
       createdBy: getUserFullName(institutionRestriction.creator),
       updatedBy: getUserFullName(institutionRestriction.modifier),
       isActive: institutionRestriction.isActive,

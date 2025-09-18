@@ -48,19 +48,16 @@
           <Column field="updatedAt" header="Resolved">
             <template #body="slotProps">{{
               conditionalEmptyStringFiller(
-                !slotProps.data.isActive,
-                dateOnlyLongString(slotProps.data.updatedAt),
+                slotProps.data.resolvedAt,
+                dateOnlyLongString(slotProps.data.resolvedAt),
               )
             }}</template></Column
           >
           <Column field="isActive" header="Status">
             <template #body="slotProps">
               <status-chip-restriction
-                :status="
-                  slotProps.data.isActive
-                    ? RestrictionStatus.Active
-                    : RestrictionStatus.Resolved
-                "
+                :is-active="slotProps.data.isActive"
+                :deleted-at="slotProps.data.deletedAt"
               />
             </template>
           </Column>
@@ -77,13 +74,16 @@
                 <check-permission-role :role="Role.StudentDeleteRestriction">
                   <template #="{ notAllowed }">
                     <v-btn
+                      v-if="
+                        canDeleteRestriction &&
+                        slotProps.data.restrictionType ===
+                          RestrictionType.Provincial
+                      "
                       color="primary"
                       variant="outlined"
-                      :disabled="notAllowed"
+                      :disabled="notAllowed || !!slotProps.data.deletedAt"
                       @click="
-                        deleteInstitutionRestriction(
-                          slotProps.data.restrictionId,
-                        )
+                        deleteStudentRestriction(slotProps.data.restrictionId)
                       "
                       >Delete</v-btn
                     ></template
@@ -141,6 +141,7 @@ import {
   LayoutTemplates,
   Role,
   ApiProcessError,
+  RestrictionType,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -148,6 +149,7 @@ import {
   AssignRestrictionAPIInDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
+  RestrictionSummaryAPIOutDTO,
 } from "@/services/http/dto";
 import UserNoteConfirmModal, {
   UserNoteModal,
@@ -178,9 +180,14 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    canDeleteRestriction: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
-    const studentRestrictions = ref();
+    const studentRestrictions = ref([] as RestrictionSummaryAPIOutDTO[]);
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
     const viewRestriction = ref(
@@ -262,19 +269,24 @@ export default defineComponent({
       }
     };
 
-    const deleteInstitutionRestriction = async (restrictionId: number) => {
+    const deleteStudentRestriction = async (restrictionId: number) => {
       await deleteRestriction.value.showModal(
         restrictionId,
-        cancelDisbursement,
+        deleteStudentRestrictionCall,
       );
     };
 
-    const cancelDisbursement = async (
+    const deleteStudentRestrictionCall = async (
       userNoteModalResult: UserNoteModal<number>,
     ): Promise<boolean> => {
       try {
-        // TODO: call the API to delete the restriction.
+        await RestrictionService.shared.deleteStudentProvincialRestriction(
+          props.studentId,
+          userNoteModalResult.showParameter,
+          { noteDescription: userNoteModalResult.note },
+        );
         snackBar.success("Restriction deleted.");
+        await loadStudentRestrictions();
         return true;
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
@@ -300,17 +312,18 @@ export default defineComponent({
       PAGINATION_LIST,
       studentRestriction,
       viewStudentRestriction,
-      deleteInstitutionRestriction,
+      deleteRestriction,
       viewRestriction,
       showModal,
       addRestriction,
       addStudentRestriction,
-      deleteRestriction,
+      deleteStudentRestriction,
       RestrictionEntityType,
       LayoutTemplates,
       Role,
       emptyStringFiller,
       conditionalEmptyStringFiller,
+      RestrictionType,
     };
   },
 });
