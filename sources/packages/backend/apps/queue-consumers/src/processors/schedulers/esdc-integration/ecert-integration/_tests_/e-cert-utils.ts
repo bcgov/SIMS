@@ -195,3 +195,44 @@ export async function createBlockedDisbursementTestData(
     disbursement,
   };
 }
+
+/**
+ * Load disbursement schedule and student restriction details.
+ * @param db e2e data sources.
+ * @param disbursementId disbursement schedule id.
+ * @returns disbursement schedule with student restrictions.
+ */
+export async function loadDisbursementAndStudentRestrictions(
+  db: E2EDataSources,
+  disbursementId: number,
+): Promise<DisbursementSchedule> {
+  return db.disbursementSchedule.findOne({
+    select: {
+      id: true,
+      disbursementScheduleStatus: true,
+      studentAssessment: {
+        id: true,
+        application: {
+          id: true,
+          student: {
+            id: true,
+            studentRestrictions: {
+              id: true,
+              isActive: true,
+              restriction: { id: true, restrictionCode: true },
+            },
+          },
+        },
+      },
+    },
+    relations: {
+      studentAssessment: {
+        application: {
+          student: { studentRestrictions: { restriction: true } },
+        },
+      },
+    },
+    where: { id: disbursementId },
+    loadEagerRelations: false,
+  });
+}

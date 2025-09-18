@@ -54,4 +54,21 @@ export enum RestrictionCode {
    * potential partial match exists.
    */
   HOLD = "HOLD",
+  /**
+   * Aviation credential restriction which prevents a student from being funded
+   * for the credential commercial pilot program again in the future.
+   */
+  AVCP = "AVCP",
+
+  /**
+   * Aviation instructor restriction prevents a student from being funded
+   * for the credential instructor's rating again in the future.
+   */
+  AVIR = "AVIR",
+
+  /**
+   * Aviation instructor restriction prevents a student from being funded
+   * for the credential endorsements again in the future.
+   */
+  AVEN = "AVEN",
 }

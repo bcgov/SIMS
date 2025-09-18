@@ -26,12 +26,17 @@ export function isRestrictionActionEffective(
     return true;
   }
   // When one or more conditions are provided all must be satisfied for the restriction actions to be effective.
-  return actionEffectiveConditions.every((actionEffectiveCondition) =>
-    getActionEffectiveConditionsMap()[actionEffectiveCondition.name](
-      actionEffectiveCondition,
-      contextData,
-    ),
-  );
+  return actionEffectiveConditions.every((actionEffectiveCondition) => {
+    // Get the condition evaluator based on the condition name.
+    const conditionEvaluator =
+      getActionEffectiveConditionsMap()[actionEffectiveCondition.name];
+    if (!conditionEvaluator) {
+      throw new Error(
+        `No evaluator found for the action effective condition: ${actionEffectiveCondition.name}.`,
+      );
+    }
+    return conditionEvaluator(actionEffectiveCondition, contextData);
+  });
 }
 
 /**
