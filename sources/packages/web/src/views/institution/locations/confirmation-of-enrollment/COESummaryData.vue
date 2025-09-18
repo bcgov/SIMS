@@ -121,7 +121,7 @@ import {
   PaginationOptions,
   DataTableOptions,
 } from "@/types";
-import { useFormatters, useOffering } from "@/composables";
+import { useFormatters, useOffering, useSnackBar } from "@/composables";
 import StatusChipCOE from "@/components/generic/StatusChipCOE.vue";
 import {
   COESummaryAPIOutDTO,
@@ -157,6 +157,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
+    const snackBar = useSnackBar();
     const disbursements = ref(
       {} as PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>,
     );
@@ -216,8 +217,8 @@ export default defineComponent({
             paginationOptions,
           );
         disbursements.value = disbursementAndCount;
-      } catch (error: unknown) {
-        console.error("Error loading confirmation of enrollments:", error);
+      } catch {
+        snackBar.error("Error loading confirmation of enrollments.");
         disbursements.value = { results: [], count: 0 };
       } finally {
         enrollmentsLoading.value = false;
