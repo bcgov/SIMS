@@ -12,10 +12,26 @@ import {
   createFakeMSFAANumber,
   E2EDataSources,
   MSFAAStates,
+  RestrictionCode,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { In } from "typeorm";
+
+export const AVIATION_CREDENTIAL_TEST_INPUTS = [
+  {
+    aviationCredentialType: "commercialPilotTraining",
+    restrictionCode: RestrictionCode.AVCP,
+  },
+  {
+    aviationCredentialType: "instructorsRating",
+    restrictionCode: RestrictionCode.AVIR,
+  },
+  {
+    aviationCredentialType: "endorsements",
+    restrictionCode: RestrictionCode.AVEN,
+  },
+];
 
 /**
  * Load disbursement awards for further validations.
@@ -233,6 +249,11 @@ export async function loadDisbursementAndStudentRestrictions(
       },
     },
     where: { id: disbursementId },
+    order: {
+      studentAssessment: {
+        application: { student: { studentRestrictions: { id: "ASC" } } },
+      },
+    },
     loadEagerRelations: false,
   });
 }
