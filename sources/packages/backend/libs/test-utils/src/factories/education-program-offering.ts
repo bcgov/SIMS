@@ -70,7 +70,7 @@ export function createFakeEducationProgramOffering(
   offering.isAviationOffering =
     options?.initialValues?.isAviationOffering ?? OfferingYesNoOptions.No;
   offering.aviationCredentialType =
-    options?.initialValues?.aviationCredentialType ?? "endorsements";
+    options?.initialValues?.aviationCredentialType;
   offering.hasOfferingWILComponent =
     options?.initialValues?.hasOfferingWILComponent ?? "no";
   offering.offeringWILType = options?.initialValues?.offeringWILType;
