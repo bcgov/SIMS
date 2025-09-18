@@ -189,7 +189,6 @@ export default defineComponent({
 
     const updateSummaryList = async (locationId: number) => {
       try {
-        debugger;
         enrollmentsLoading.value = true;
         const paginationOptions: PaginationOptions = {
           page: currentPagination.page,
@@ -230,7 +229,6 @@ export default defineComponent({
     };
 
     const paginationAndSortEvent = async (event: DataTableOptions) => {
-      debugger;
       currentPagination.page = event.page;
       currentPagination.pageLimit = event.itemsPerPage;
       if (event.sortBy.length) {
@@ -251,7 +249,6 @@ export default defineComponent({
         //update the list
         searchQuery.value = "";
         intensityFilter.value = IntensityFilter.All;
-        disbursements.value = { results: [], count: 0 };
         await updateSummaryList(currValue);
       },
       {

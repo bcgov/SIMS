@@ -192,6 +192,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     const coeSortOptions = {
       applicationNumber: "application.applicationNumber",
       disbursementDate: "disbursementSchedule.disbursementDate",
+      coeStatus: "disbursementSchedule.coeStatus",
       studyEndDate: "offering.studyEndDate",
     };
     const dbColumnName =
