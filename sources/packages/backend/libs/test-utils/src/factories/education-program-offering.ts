@@ -12,7 +12,7 @@ import {
   Institution,
   StudyBreaksAndWeeks,
 } from "@sims/sims-db";
-import { getISODateOnlyString } from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
 
 /**
@@ -80,7 +80,7 @@ export function createFakeEducationProgramOffering(
     getISODateOnlyString(faker.date.recent(1));
   offering.studyEndDate =
     options?.initialValues?.studyEndDate ??
-    getISODateOnlyString(new Date(Date.now() + 3 * 24 * 60 * 60 * 1000));
+    getISODateOnlyString(addDays(3, offering.studyStartDate));
   offering.studyBreaks =
     options?.initialValues?.studyBreaks ??
     ({
