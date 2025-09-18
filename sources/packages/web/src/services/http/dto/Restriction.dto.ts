@@ -27,8 +27,11 @@ export interface RestrictionDetailAPIOutDTO
   extends RestrictionSummaryAPIOutDTO {
   createdBy: string;
   updatedBy: string;
+  deletedBy?: string;
+  deletedAt?: Date;
   restrictionNote?: string;
   resolutionNote?: string;
+  deletionNote?: string;
 }
 
 /**

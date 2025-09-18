@@ -50,14 +50,26 @@ export class RestrictionInstitutionDetailAPIOutDTO extends RestrictionBaseAPIOut
 export class RestrictionDetailAPIOutDTO extends RestrictionSummaryAPIOutDTO {
   createdBy: string;
   updatedBy: string;
+  deletedBy?: string;
+  deletedAt?: Date;
   restrictionNote?: string;
   resolutionNote?: string;
+  deletionNote?: string;
 }
 
 /**
  * DTO to resolve restriction to a student/institution.
  */
 export class ResolveRestrictionAPIInDTO {
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
+}
+
+/**
+ * Delete a restriction from a student.
+ */
+export class DeleteRestrictionAPIInDTO {
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;

@@ -18,6 +18,8 @@ import {
   RestrictionCode,
   StudentRestrictionSharedService,
 } from "@sims/services";
+
+export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
 export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
 export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
 
@@ -88,6 +90,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * @param studentRestrictionId student restriction id.
    * @param options for student restrictions.
    * - `filterNoEffectRestrictions` filterNoEffectRestrictions flag to filter restrictions based on notificationType.
+   * - `withDeleted` flag to include soft deleted restrictions.
    * @returns Student Restriction details.
    */
   async getStudentRestrictionDetailsById(
@@ -95,6 +98,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     studentRestrictionId: number,
     options?: {
       filterNoEffectRestrictions?: boolean;
+      withDeleted?: boolean;
     },
   ): Promise<StudentRestriction> {
     const query = this.repo
@@ -132,6 +136,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
           restrictionNotificationType: RestrictionNotificationType.NoEffect,
         },
       );
+    }
+    if (options?.withDeleted) {
+      query.withDeleted();
     }
     return query.getOne();
   }
@@ -237,6 +244,61 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       await transactionalEntityManager
         .getRepository(StudentRestriction)
         .save(studentRestriction);
+    });
+  }
+
+  /**
+   * Soft deletes a provincial restriction from Student.
+   * @param studentId ID of the student to get a restriction.
+   * @param studentRestrictionId ID of the student restriction to be deleted.
+   * @param auditUserId audit user ID who is deleting the restriction.
+   * @param noteDescription student notes added during deletion of restriction.
+   */
+  async deleteProvincialRestriction(
+    studentId: number,
+    studentRestrictionId: number,
+    auditUserId: number,
+    noteDescription: string,
+  ): Promise<void> {
+    const restriction = await this.repo.findOne({
+      select: {
+        id: true,
+        deletedAt: true,
+      },
+      relations: {
+        restriction: true,
+      },
+      where: {
+        id: studentRestrictionId,
+        student: { id: studentId },
+        restriction: { restrictionType: RestrictionType.Provincial },
+      },
+    });
+    if (!restriction) {
+      throw new CustomNamedError(
+        "Provincial restriction not found to be deleted.",
+        RESTRICTION_NOT_FOUND,
+      );
+    }
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const now = new Date();
+      const auditUser = { id: auditUserId } as User;
+      const note = await this.noteSharedService.createStudentNote(
+        studentId,
+        NoteType.Restriction,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      await transactionalEntityManager
+        .getRepository(StudentRestriction)
+        .update(restriction.id, {
+          deletionNote: note,
+          deletedAt: now,
+          deletedBy: auditUser,
+          modifier: auditUser,
+          updatedAt: now,
+        });
     });
   }
 

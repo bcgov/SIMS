@@ -133,30 +133,35 @@ export class RestrictionControllerService {
         studentRestrictionId,
         {
           filterNoEffectRestrictions: options?.filterNoEffectRestrictions,
+          withDeleted: options?.extendedDetails,
         },
       );
     if (!studentRestriction) {
       throw new NotFoundException("The student restriction does not exist.");
     }
-    return {
+    const restrictionDetail = {
       restrictionId: studentRestriction.id,
       restrictionType: studentRestriction.restriction.restrictionType,
       restrictionCategory: studentRestriction.restriction.restrictionCategory,
       restrictionCode: studentRestriction.restriction.restrictionCode,
       description: studentRestriction.restriction.description,
-      createdAt: studentRestriction.createdAt,
-      updatedAt: options?.extendedDetails
-        ? studentRestriction.updatedAt
-        : undefined,
-      createdBy: getUserFullName(studentRestriction.creator),
-      updatedBy: options?.extendedDetails
-        ? getUserFullName(studentRestriction.modifier)
-        : undefined,
       isActive: studentRestriction.isActive,
+      createdAt: studentRestriction.createdAt,
+      createdBy: getUserFullName(studentRestriction.creator),
       restrictionNote: studentRestriction.restrictionNote?.description,
-      resolutionNote: options?.extendedDetails
-        ? studentRestriction.resolutionNote?.description
-        : undefined,
     };
+    // Return additional properties for the Ministry view.
+    if (options?.extendedDetails) {
+      return {
+        ...restrictionDetail,
+        updatedAt: studentRestriction.updatedAt,
+        deletedAt: studentRestriction.deletedAt,
+        updatedBy: getUserFullName(studentRestriction.modifier) || undefined,
+        deletedBy: getUserFullName(studentRestriction.deletedBy) || undefined,
+        resolutionNote: studentRestriction.resolutionNote?.description,
+        deletionNote: studentRestriction.deletionNote?.description,
+      };
+    }
+    return restrictionDetail;
   }
 }

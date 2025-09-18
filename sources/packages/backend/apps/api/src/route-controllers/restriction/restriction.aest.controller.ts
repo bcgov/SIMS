@@ -9,6 +9,7 @@ import {
   NotFoundException,
   InternalServerErrorException,
   ParseIntPipe,
+  Delete,
 } from "@nestjs/common";
 import {
   StudentRestrictionService,
@@ -17,6 +18,7 @@ import {
   InstitutionService,
   RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_PROVINCIAL,
+  RESTRICTION_NOT_FOUND,
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -35,6 +37,7 @@ import {
   AssignRestrictionAPIInDTO,
   RestrictionStatusAPIOutDTO,
   RestrictionCategoryParamAPIInDTO,
+  DeleteRestrictionAPIInDTO,
 } from "./models/restriction.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
@@ -47,6 +50,7 @@ import { Role } from "../../auth/roles.enum";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { RestrictionControllerService } from "./restriction.controller.service";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Controller for AEST Restrictions.
@@ -211,6 +215,40 @@ export class RestrictionAESTController extends BaseController {
       throw new InternalServerErrorException(
         "Unexpected error while resolving restriction",
       );
+    }
+  }
+
+  /**
+   * Soft deletes a provincial restriction from Student.
+   * @param studentId ID of the student to get a restriction.
+   * @param studentRestrictionId ID of the student restriction to be deleted.
+   * @param payload delete restriction details.
+   */
+  @Roles(Role.StudentDeleteRestriction)
+  @ApiNotFoundResponse({
+    description: "Provincial restriction not found to be deleted.",
+  })
+  @Delete("student/:studentId/student-restriction/:studentRestrictionId")
+  async deleteStudentProvincialRestriction(
+    @UserToken() userToken: IUserToken,
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
+    @Body() payload: DeleteRestrictionAPIInDTO,
+  ): Promise<void> {
+    try {
+      await this.studentRestrictionService.deleteProvincialRestriction(
+        studentId,
+        studentRestrictionId,
+        userToken.userId,
+        payload.noteDescription,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        if (error.name === RESTRICTION_NOT_FOUND) {
+          throw new NotFoundException(error.message);
+        }
+      }
+      throw error;
     }
   }
 

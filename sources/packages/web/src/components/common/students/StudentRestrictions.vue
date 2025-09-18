@@ -74,7 +74,7 @@
                   @click="viewStudentRestriction(slotProps.data.restrictionId)"
                   >View</v-btn
                 >
-                <check-permission-role :role="Role.StudentDeleteRestrictions">
+                <check-permission-role :role="Role.StudentDeleteRestriction">
                   <template #="{ notAllowed }">
                     <v-btn
                       color="primary"
