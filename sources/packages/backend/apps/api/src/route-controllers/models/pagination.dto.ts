@@ -89,10 +89,6 @@ export class ConfirmationOfEnrollmentPaginationOptionsAPIInDTO extends Paginatio
     "studyEndDate",
   ])
   sortField?: string;
-
-  @IsOptional()
-  search?: string;
-
   @IsOptional()
   @IsEnum(OfferingIntensity)
   intensityFilter?: OfferingIntensity;

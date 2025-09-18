@@ -30,6 +30,7 @@ export class ConfirmationOfEnrollmentService {
     enrollmentPeriod: EnrollmentPeriod,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>> {
+    debugger;
     return ApiClient.ConfirmationOfEnrollment.getCOESummary(
       locationId,
       enrollmentPeriod,

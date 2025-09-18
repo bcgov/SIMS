@@ -32,7 +32,7 @@
                 >
               </v-btn-toggle>
             </v-col>
-            <v-col cols="3">
+            <v-col>
               <v-text-field
                 density="compact"
                 label="Search by name or application number"
@@ -52,7 +52,6 @@
           message="No enrollment records found"
         >
           <v-data-table-server
-            v-if="disbursements?.count"
             :headers="COESummaryHeaders"
             :items="disbursements.results"
             :items-length="disbursements.count"
@@ -78,7 +77,7 @@
               {{ item.applicationNumber }}
             </template>
             <template #[`item.offeringIntensity`]="{ item }">
-              {{ item.offeringIntensity }}
+              {{ mapOfferingIntensity(item.offeringIntensity) }}
             </template>
             <template #[`item.studentNumber`]="{ item }">
               {{ item.studentNumber }}
@@ -115,14 +114,12 @@ import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   PAGINATION_LIST,
-  DEFAULT_PAGE_NUMBER,
   LayoutTemplates,
   EnrollmentPeriod,
   COESummaryHeaders,
   OfferingIntensity,
-  DEFAULT_DATATABLE_PAGE_NUMBER,
-  DataTableSortByOrder,
   PaginationOptions,
+  DataTableOptions,
 } from "@/types";
 import { useFormatters, useOffering } from "@/composables";
 import StatusChipCOE from "@/components/generic/StatusChipCOE.vue";
@@ -164,16 +161,21 @@ export default defineComponent({
       {} as PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>,
     );
     const { mapOfferingIntensity } = useOffering();
-    const page = ref(DEFAULT_PAGE_NUMBER);
-    const pageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const sortField = ref(DEFAULT_SORT_FIELD);
-    const sortOrder = ref(DataTableSortOrder.ASC);
     const searchQuery = ref("");
     const enrollmentsLoading = ref(false);
     const intensityFilter = ref(IntensityFilter.All);
     const rowsPerPageOptions = computed(() =>
       disbursements.value.results?.length > 10 ? PAGINATION_LIST : undefined,
     );
+    /**
+     * Current state of the pagination.
+     */
+    const currentPagination: PaginationOptions = {
+      page: 1,
+      pageLimit: DEFAULT_PAGE_LIMIT,
+      sortField: DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortOrder.DESC,
+    };
 
     const goToViewApplication = (disbursementScheduleId: number) => {
       router.push({
@@ -185,39 +187,34 @@ export default defineComponent({
       });
     };
 
-    const updateSummaryList = async (
-      locationId: number,
-      page = DEFAULT_DATATABLE_PAGE_NUMBER,
-      pageLimit = DEFAULT_PAGE_LIMIT,
-      inputSortField?: string,
-      inputSortOrder?: DataTableSortByOrder,
-    ) => {
+    const updateSummaryList = async (locationId: number) => {
       try {
+        debugger;
         enrollmentsLoading.value = true;
-        const searchCriteria: PaginationOptions = {
-          page,
-          pageLimit,
-          sortField: inputSortField,
-          sortOrder: inputSortOrder,
+        const paginationOptions: PaginationOptions = {
+          page: currentPagination.page,
+          pageLimit: currentPagination.pageLimit,
+          sortField: currentPagination.sortField,
+          sortOrder: currentPagination.sortOrder,
         };
         if (
           intensityFilter.value &&
           intensityFilter.value !== IntensityFilter.All
         ) {
-          searchCriteria.searchCriteria = {
-            search: searchQuery.value,
+          paginationOptions.searchCriteria = {
+            searchCriteria: searchQuery.value,
             intensityFilter: intensityFilter.value as OfferingIntensity,
           };
         } else {
-          searchCriteria.searchCriteria = {
-            search: searchQuery.value,
+          paginationOptions.searchCriteria = {
+            searchCriteria: searchQuery.value,
           };
         }
         const disbursementAndCount =
           await ConfirmationOfEnrollmentService.shared.getCOESummary(
             locationId,
             props.enrollmentPeriod,
-            searchCriteria,
+            paginationOptions,
           );
         disbursements.value = disbursementAndCount;
       } catch (error: unknown) {
@@ -232,24 +229,20 @@ export default defineComponent({
       await updateSummaryList(props.locationId);
     };
 
-    const paginationAndSortEvent = async (options) => {
-      page.value = options.page;
-      pageLimit.value = options.itemsPerPage;
-      if (options.sortBy?.length) {
-        const [sort] = options.sortBy;
-        sortField.value = sort.key;
-        sortOrder.value =
-          sort.order === "desc"
-            ? DataTableSortOrder.DESC
-            : DataTableSortOrder.ASC;
+    const paginationAndSortEvent = async (event: DataTableOptions) => {
+      debugger;
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
+      if (event.sortBy.length) {
+        const [sortBy] = event.sortBy;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
+      } else {
+        // Sorting was removed, reset to default.
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortOrder.DESC;
       }
-      await updateSummaryList(
-        props.locationId,
-        page.value,
-        pageLimit.value,
-        sortField.value,
-        sortOrder.value as unknown as DataTableSortByOrder,
-      );
+      await updateSummaryList(props.locationId);
     };
 
     watch(
@@ -270,7 +263,6 @@ export default defineComponent({
       disbursements,
       dateOnlyLongString,
       goToViewApplication,
-      pageLimit,
       rowsPerPageOptions,
       searchQuery,
       intensityFilter,

@@ -17,7 +17,7 @@ export class ConfirmationOfEnrollmentAPIInDTO {
 export interface COESummaryAPIOutDTO {
   applicationNumber: string;
   offeringIntensity: OfferingIntensity;
-  studentNumber: string;
+  studentNumber?: string;
   studyStartDate: string;
   studyEndDate: string;
   applicationId: number;

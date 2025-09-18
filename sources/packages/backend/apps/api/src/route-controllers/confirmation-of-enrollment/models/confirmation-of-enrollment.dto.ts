@@ -76,7 +76,7 @@ export class StudyBreak {
 export class COESummaryAPIOutDTO {
   applicationNumber: string;
   offeringIntensity: OfferingIntensity;
-  studentNumber: string;
+  studentNumber?: string;
   studyStartDate: string;
   studyEndDate: string;
   applicationId: number;

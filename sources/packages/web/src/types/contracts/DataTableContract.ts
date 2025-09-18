@@ -545,7 +545,7 @@ export const COESummaryHeaders = [
   { title: "Application Number", key: "applicationNumber", sortable: false },
   { title: "Intensity", key: "offeringIntensity", sortable: false },
   { title: "Student Number", key: "studentNumber", sortable: false },
-  { title: "Disbursement date", key: "disbursementDate", sortable: true },
+  { title: "Disbursement Date", key: "disbursementDate", sortable: true },
   { title: "Status", key: "coeStatus", sortable: true },
   { title: "Action", key: "applicationId", sortable: false },
 ];

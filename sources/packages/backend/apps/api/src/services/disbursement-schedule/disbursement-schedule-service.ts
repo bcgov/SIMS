@@ -62,7 +62,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
     disbursementCOEQuery.andWhere("location.id = :locationId", { locationId });
     // Add pagination, sort and search criteria.
-    if (paginationOptions.search) {
+    if (paginationOptions.searchCriteria) {
       disbursementCOEQuery.andWhere(
         new Brackets((qb) => {
           qb.where(getUserFullNameLikeSearch("user", "search")).orWhere(
@@ -72,7 +72,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       );
       disbursementCOEQuery.setParameter(
         "search",
-        `%${paginationOptions.search.trim()}%`,
+        `%${paginationOptions.searchCriteria.trim()}%`,
       );
     }
     if (paginationOptions.intensityFilter) {
@@ -83,21 +83,17 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         },
       );
     }
-    if (!paginationOptions.sortField || !paginationOptions.sortOrder) {
-      disbursementCOEQuery
-        .skip(paginationOptions.page * paginationOptions.pageLimit)
-        .take(paginationOptions.pageLimit);
-    } else {
-      disbursementCOEQuery
-        .orderBy(
-          this.transformToEntitySortField(
-            paginationOptions.sortField,
-            paginationOptions.sortOrder,
-          ),
-        )
-        .skip(paginationOptions.page * paginationOptions.pageLimit)
-        .take(paginationOptions.pageLimit);
+    if (paginationOptions.sortField) {
+      disbursementCOEQuery.orderBy(
+        this.transformToEntitySortField(
+          paginationOptions.sortField,
+          paginationOptions.sortOrder ?? FieldSortOrder.ASC,
+        ),
+      );
     }
+    disbursementCOEQuery
+      .skip(paginationOptions.page * paginationOptions.pageLimit)
+      .take(paginationOptions.pageLimit);
 
     const [result, count] = await disbursementCOEQuery.getManyAndCount();
     return {

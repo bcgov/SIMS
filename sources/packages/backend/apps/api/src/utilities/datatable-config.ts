@@ -68,8 +68,7 @@ export interface PIRPaginationOptions extends BasePaginationOptions {
 /**
  * COE specific parameters.
  */
-export interface COEPaginationOptions extends BasePaginationOptions {
-  search?: string;
+export interface COEPaginationOptions extends PaginationOptions {
   intensityFilter?: OfferingIntensity;
 }
 
