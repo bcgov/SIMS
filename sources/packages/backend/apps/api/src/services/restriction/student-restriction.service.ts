@@ -296,9 +296,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         RESTRICTION_NOT_FOUND,
       );
     }
-    if (!restriction.deletedAt) {
+    if (restriction.deletedAt) {
       throw new CustomNamedError(
-        "Provincial restriction is already deleted.",
+        "Provincial restriction is already set as deleted.",
         RESTRICTION_IS_DELETED,
       );
     }
@@ -326,7 +326,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         );
       if (!updateResult.affected) {
         throw new CustomNamedError(
-          "Provincial restriction is already deleted.",
+          "Provincial restriction is already set as deleted.",
           RESTRICTION_IS_DELETED,
         );
       }
