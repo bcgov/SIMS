@@ -510,7 +510,7 @@ export interface CalculatedAssessmentModel {
     limitTransportationAllowance: number;
   };
   // Disbursement schedules
-  disbursementSchedules: DisbursementScheduleData[];
+  disbursementSchedules: Array<DisbursementScheduleData>;
   calculatedDataTotalAcademicExpenses: number;
   calculatedDataRemainingBookLimit: number;
 }
