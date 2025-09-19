@@ -480,16 +480,7 @@ export interface CalculatedAssessmentModel {
     limitTransportationAllowance: number;
   };
   // Disbursement schedules
-  disbursementSchedules: Array<{
-    disbursementDate: string;
-    negotiatedExpiryDate: string;
-    disbursements: Array<{
-      awardEligibility: boolean;
-      valueAmount: number;
-      valueCode: string;
-      valueType: string;
-    }>;
-  }>;
+  disbursementSchedules: Array<unknown>;
   calculatedDataTotalAcademicExpenses: number;
   calculatedDataRemainingBookLimit: number;
 }

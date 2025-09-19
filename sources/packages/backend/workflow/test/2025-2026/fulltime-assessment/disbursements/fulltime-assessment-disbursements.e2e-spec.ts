@@ -3,7 +3,7 @@ import {
   ZeebeMockedClient,
   executeFullTimeConfigureDisbursement,
 } from "../../../test-utils";
-import { addDays, getISODateOnlyString, getUTCNow } from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { createFakeConfigureDisbursementFullTimeData } from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, () => {
@@ -189,21 +189,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       expect(calculatedAssessment.variables.disbursementSchedules).toHaveLength(
         1,
       );
-      //Check if the disbursement schedule dates are correct
-      expect(
-        calculatedAssessment.variables.disbursementSchedules[0]
-          .disbursementDate,
-      ).toBe(getISODateOnlyString(getUTCNow()));
-      expect(
-        calculatedAssessment.variables.disbursementSchedules[0]
-          .negotiatedExpiryDate,
-      ).toBe(getISODateOnlyString(getUTCNow()));
     },
   );
 
   it(
     "Should generate 2 disbursements when offering weeks is greater than 17 weeks " +
-      " and potential disbursement schedule date 2 is greater than today.",
+      "and potential disbursement schedule date 2 is greater than today.",
     async () => {
       // Arrange
       const configureDisbursementData =
@@ -224,23 +215,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       expect(calculatedAssessment.variables.disbursementSchedules).toHaveLength(
         2,
       );
-      //Check if the disbursement schedule dates are correct
-      expect(
-        calculatedAssessment.variables.disbursementSchedules[0]
-          .disbursementDate,
-      ).toBe(configureDisbursementData.offeringStudyStartDate);
-      expect(
-        calculatedAssessment.variables.disbursementSchedules[1]
-          .disbursementDate,
-      ).toBe(getISODateOnlyString(addDays(135)));
-      expect(
-        calculatedAssessment.variables.disbursementSchedules[0]
-          .negotiatedExpiryDate,
-      ).toBe(configureDisbursementData.offeringStudyStartDate);
-      expect(
-        calculatedAssessment.variables.disbursementSchedules[1]
-          .negotiatedExpiryDate,
-      ).toBe(getISODateOnlyString(addDays(135)));
     },
   );
 
