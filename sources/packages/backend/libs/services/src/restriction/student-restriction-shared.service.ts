@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { NotificationActionsService } from "@sims/services/notifications";
 import {
   Application,
+  Note,
   RecordDataModelService,
   Restriction,
   RestrictionNotificationType,
@@ -202,15 +203,42 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
         `Requested restriction code ${restrictionCode} not found.`,
       );
     }
+    return this.buildStudentRestriction(
+      studentId,
+      restriction.id,
+      auditUserId,
+      { applicationId },
+    );
+  }
+
+  /**
+   * Build a new student restriction object.
+   * @param studentId student id.
+   * @param restrictionId restriction id.
+   * @param auditUserId audit user id.
+   * @param options additional options.
+   * @returns a new student restriction object.
+   */
+  buildStudentRestriction(
+    studentId: number,
+    restrictionId: number,
+    auditUserId: number,
+    options?: { applicationId?: number; restrictionNoteId?: number },
+  ): StudentRestriction {
     const studentRestriction = new StudentRestriction();
     studentRestriction.restriction = {
-      id: restriction.id,
+      id: restrictionId,
     } as Restriction;
     studentRestriction.student = { id: studentId } as Student;
-    studentRestriction.application = applicationId
-      ? ({ id: applicationId } as Application)
+    // Add application if provided.
+    studentRestriction.application = options?.applicationId
+      ? ({ id: options.applicationId } as Application)
       : undefined;
     studentRestriction.creator = { id: auditUserId } as User;
+    // Add restriction note if provided.
+    studentRestriction.restrictionNote = options?.restrictionNoteId
+      ? ({ id: options.restrictionNoteId } as Note)
+      : undefined;
     return studentRestriction;
   }
 }

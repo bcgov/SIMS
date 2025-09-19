@@ -134,4 +134,19 @@ export enum RestrictionCode {
    * Bankruptcy has been filed and there is a hold on federal and BC funding.
    */
   RB = "RB",
+  /**
+   * Aviation restriction which prevents a student from being funded
+   * for the credential commercial pilot program again in the future.
+   */
+  AVCP = "AVCP",
+  /**
+   * Aviation restriction prevents a student from being funded
+   * for the credential instructor's rating again in the future.
+   */
+  AVIR = "AVIR",
+  /**
+   * Aviation restriction prevents a student from being funded
+   * for the credential endorsements again in the future.
+   */
+  AVEN = "AVEN",
 }

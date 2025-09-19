@@ -12,10 +12,26 @@ import {
   createFakeMSFAANumber,
   E2EDataSources,
   MSFAAStates,
+  RestrictionCode,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { In } from "typeorm";
+
+export const AVIATION_CREDENTIAL_TEST_INPUTS = [
+  {
+    aviationCredentialType: "commercialPilotTraining",
+    restrictionCode: RestrictionCode.AVCP,
+  },
+  {
+    aviationCredentialType: "instructorsRating",
+    restrictionCode: RestrictionCode.AVIR,
+  },
+  {
+    aviationCredentialType: "endorsements",
+    restrictionCode: RestrictionCode.AVEN,
+  },
+];
 
 /**
  * Load disbursement awards for further validations.
@@ -194,4 +210,50 @@ export async function createBlockedDisbursementTestData(
     student,
     disbursement,
   };
+}
+
+/**
+ * Load disbursement schedule and student restriction details.
+ * @param db e2e data sources.
+ * @param disbursementId disbursement schedule id.
+ * @returns disbursement schedule with student restrictions.
+ */
+export async function loadDisbursementAndStudentRestrictions(
+  db: E2EDataSources,
+  disbursementId: number,
+): Promise<DisbursementSchedule> {
+  return db.disbursementSchedule.findOne({
+    select: {
+      id: true,
+      disbursementScheduleStatus: true,
+      studentAssessment: {
+        id: true,
+        application: {
+          id: true,
+          student: {
+            id: true,
+            studentRestrictions: {
+              id: true,
+              isActive: true,
+              restriction: { id: true, restrictionCode: true },
+            },
+          },
+        },
+      },
+    },
+    relations: {
+      studentAssessment: {
+        application: {
+          student: { studentRestrictions: { restriction: true } },
+        },
+      },
+    },
+    where: { id: disbursementId },
+    order: {
+      studentAssessment: {
+        application: { student: { studentRestrictions: { id: "ASC" } } },
+      },
+    },
+    loadEagerRelations: false,
+  });
 }

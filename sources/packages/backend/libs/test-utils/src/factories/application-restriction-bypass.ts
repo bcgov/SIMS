@@ -13,7 +13,8 @@ import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
 import { saveFakeApplication } from "@sims/test-utils/factories/application";
 import { createFakeNote } from "@sims/test-utils/factories/note";
 import { saveFakeStudentRestriction } from "@sims/test-utils/factories/student-restriction";
-import { ArrayContains, FindOneOptions } from "typeorm";
+import { createFakeUser } from "@sims/test-utils/factories/user";
+import { ArrayContains, FindOneOptions, IsNull } from "typeorm";
 
 /**
  * Create a fake application restrictions bypass.
@@ -96,9 +97,9 @@ export async function saveFakeApplicationRestrictionBypass(
   bypass.application =
     relations.application ?? (await saveFakeApplication(db.dataSource));
   bypass.bypassBehavior =
-    options.initialValues?.bypassBehavior ??
+    options?.initialValues?.bypassBehavior ??
     RestrictionBypassBehaviors.AllDisbursements;
-  bypass.isActive = options.initialValues?.isActive ?? true;
+  bypass.isActive = options?.initialValues?.isActive ?? true;
   bypass.creator = relations?.creator;
   bypass.createdAt = now;
   // Define studentRestriction.
@@ -109,6 +110,7 @@ export async function saveFakeApplicationRestrictionBypass(
       : {
           where: {
             actionType: ArrayContains([options.restrictionActionType]),
+            actionEffectiveConditions: IsNull(),
           },
         };
     const restriction = await db.restriction.findOne(findOptions);
@@ -132,7 +134,8 @@ export async function saveFakeApplicationRestrictionBypass(
       }),
     );
   }
-  bypass.bypassCreatedBy = relations.bypassCreatedBy;
+  bypass.bypassCreatedBy =
+    relations.bypassCreatedBy ?? (await db.user.save(createFakeUser()));
   bypass.bypassCreatedDate = now;
   if (options?.isRemoved) {
     // Define columns to set the bypass as removed.
