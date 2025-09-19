@@ -36,7 +36,6 @@
           ></v-row>
         </content-group>
         <template v-if="showResolution">
-          <v-divider-opaque />
           <h3 class="category-header-medium mb-5">Resolution</h3>
           <v-textarea
             v-if="allowUserToEdit"
@@ -65,7 +64,28 @@
               ><v-col
                 ><title-value
                   propertyTitle="Resolved by"
-                  :propertyValue="restrictionData.updatedBy" /></v-col
+                  :propertyValue="restrictionData.resolvedBy" /></v-col
+            ></v-row>
+          </content-group>
+        </template>
+        <template v-if="showDeletion">
+          <h3 class="category-header-medium mb-5">Deletion</h3>
+          <content-group v-if="!!restrictionData.deletedAt">
+            <title-value
+              propertyTitle="Deletion reason"
+              :propertyValue="restrictionData.deletionNote"
+            />
+            <v-row
+              ><v-col
+                ><title-value
+                  propertyTitle="Date deleted"
+                  :propertyValue="
+                    dateOnlyLongString(restrictionData.deletedAt)
+                  " /></v-col
+              ><v-col
+                ><title-value
+                  propertyTitle="Deleted by"
+                  :propertyValue="restrictionData.deletedBy" /></v-col
             ></v-row>
           </content-group>
         </template>
@@ -74,7 +94,6 @@
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
             <footer-buttons
-              :processing="processing"
               :primaryLabel="allowUserToEdit ? 'Resolve restriction' : 'Close'"
               secondaryLabel="Cancel"
               @primaryClick="allowUserToEdit ? submit() : cancel()"
@@ -160,21 +179,30 @@ export default defineComponent({
 
     const allowUserToEdit = computed(
       () =>
+        !props.restrictionData.deletedAt &&
         props.restrictionData.isActive &&
         props.restrictionData.restrictionType !== RestrictionType.Federal &&
         props.canResolveRestriction,
     );
 
-    const showResolution = computed(
-      () =>
+    const showResolution = computed(() => {
+      if (props.restrictionData.deletedAt) {
+        // Show resolution section if the restriction was deleted, but has some note.
+        return !!props.restrictionData.resolutionNote;
+      }
+      return (
         props.canResolveRestriction &&
         props.restrictionData.restrictionType !== RestrictionType.Federal &&
         // If no resolution note is present, consider no resolution was provided.
         // For instance, resolved provincial restrictions imported from legacy
         // will not have a resolution associated with it.
-        (props.restrictionData.isActive ||
-          props.restrictionData.resolutionNote),
-    );
+        (props.restrictionData.isActive || props.restrictionData.resolutionNote)
+      );
+    });
+
+    const showDeletion = computed(() => {
+      return !!props.restrictionData.deletedAt;
+    });
 
     return {
       showDialog,
@@ -189,6 +217,7 @@ export default defineComponent({
       checkResolutionNotesLength,
       allowUserToEdit,
       showResolution,
+      showDeletion,
       dateOnlyLongString,
     };
   },

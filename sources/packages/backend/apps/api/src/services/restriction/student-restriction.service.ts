@@ -116,23 +116,29 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "studentRestrictions.updatedAt",
         "studentRestrictions.createdAt",
         "studentRestrictions.resolvedAt",
+        "studentRestrictions.deletedAt",
         "creator.firstName",
         "creator.lastName",
-        "modifier.firstName",
-        "modifier.lastName",
+        "resolvedBy.firstName",
+        "resolvedBy.lastName",
+        "deletedBy.firstName",
+        "deletedBy.lastName",
         "restriction.restrictionType",
         "restriction.restrictionCategory",
         "restriction.description",
         "restriction.restrictionCode",
         "restrictionNote.description",
         "resolutionNote.description",
+        "deletionNote.description",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
       .leftJoin("studentRestrictions.creator", "creator")
-      .leftJoin("studentRestrictions.modifier", "modifier")
+      .leftJoin("studentRestrictions.resolvedBy", "resolvedBy")
+      .leftJoin("studentRestrictions.deletedBy", "deletedBy")
       .innerJoin("studentRestrictions.student", "student")
       .leftJoin("studentRestrictions.restrictionNote", "restrictionNote")
       .leftJoin("studentRestrictions.resolutionNote", "resolutionNote")
+      .leftJoin("studentRestrictions.deletionNote", "deletionNote")
       .where("student.id = :studentId", { studentId })
       .andWhere("studentRestrictions.id = :studentRestrictionId", {
         studentRestrictionId,

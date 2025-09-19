@@ -27,7 +27,7 @@ export interface RestrictionSummaryAPIOutDTO extends RestrictionBaseDTO {
 export interface RestrictionDetailAPIOutDTO
   extends RestrictionSummaryAPIOutDTO {
   createdBy: string;
-  updatedBy: string;
+  resolvedBy: string;
   deletedBy?: string;
   deletedAt?: Date;
   restrictionNote?: string;

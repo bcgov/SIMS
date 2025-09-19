@@ -50,7 +50,7 @@ export class RestrictionInstitutionDetailAPIOutDTO extends RestrictionBaseAPIOut
  */
 export class RestrictionDetailAPIOutDTO extends RestrictionSummaryAPIOutDTO {
   createdBy: string;
-  updatedBy: string;
+  resolvedBy: string;
   deletedBy?: string;
   deletedAt?: Date;
   restrictionNote?: string;

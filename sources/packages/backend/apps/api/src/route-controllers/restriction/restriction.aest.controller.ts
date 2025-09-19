@@ -316,7 +316,9 @@ export class RestrictionAESTController extends BaseController {
       // institutions restrictions but the API shares the same DTO.
       resolvedAt: institutionRestriction.updatedAt,
       createdBy: getUserFullName(institutionRestriction.creator),
-      updatedBy: getUserFullName(institutionRestriction.modifier),
+      // Currently mapping modifier to resolvedBy as there is no resolvedBy for
+      // institutions restrictions but the API shares the same DTO.
+      resolvedBy: getUserFullName(institutionRestriction.modifier),
       isActive: institutionRestriction.isActive,
       restrictionNote: institutionRestriction.restrictionNote?.description,
       resolutionNote: institutionRestriction.resolutionNote?.description,

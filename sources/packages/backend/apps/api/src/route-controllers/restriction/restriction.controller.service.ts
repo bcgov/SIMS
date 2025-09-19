@@ -160,7 +160,7 @@ export class RestrictionControllerService {
         ...restrictionDetail,
         resolvedAt: studentRestriction.resolvedAt,
         deletedAt: studentRestriction.deletedAt,
-        updatedBy: getUserFullName(studentRestriction.modifier) || undefined,
+        resolvedBy: getUserFullName(studentRestriction.resolvedBy) || undefined,
         deletedBy: getUserFullName(studentRestriction.deletedBy) || undefined,
         resolutionNote: studentRestriction.resolutionNote?.description,
         deletionNote: studentRestriction.deletionNote?.description,
