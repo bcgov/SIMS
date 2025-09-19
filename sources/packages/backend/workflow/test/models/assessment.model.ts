@@ -32,19 +32,6 @@ export interface StudentRoomAndBoardAppealData extends JSONDoc {
   roomAndBoardAmount: number;
 }
 
-export interface DisbursementScheduleData extends JSONDoc {
-  disbursementDate: string;
-  negotiatedExpiryDate: string;
-  disbursements: Array<DisbursementAwardData>;
-}
-
-export interface DisbursementAwardData extends JSONDoc {
-  valueCode: string;
-  valueType: string;
-  valueAmount: number;
-  awardEligibility: boolean;
-}
-
 export enum TransportationCostSituation {
   NoLimit = "noLimit",
   EducationPlacement = "educationPlacement",
@@ -493,7 +480,16 @@ export interface CalculatedAssessmentModel {
     limitTransportationAllowance: number;
   };
   // Disbursement schedules
-  disbursementSchedules: Array<DisbursementScheduleData>;
+  disbursementSchedules: Array<{
+    disbursementDate: string;
+    negotiatedExpiryDate: string;
+    disbursements: Array<{
+      awardEligibility: boolean;
+      valueAmount: number;
+      valueCode: string;
+      valueType: string;
+    }>;
+  }>;
   calculatedDataTotalAcademicExpenses: number;
   calculatedDataRemainingBookLimit: number;
 }
