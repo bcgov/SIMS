@@ -113,8 +113,12 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
             applicationNumber:
               disbursement.studentAssessment.application.applicationNumber,
             applicationId: disbursement.studentAssessment.application.id,
-            studyStartPeriod: getISODateOnlyString(offering.studyStartDate),
-            studyEndPeriod: getISODateOnlyString(offering.studyEndDate),
+            offeringIntensity:
+              disbursement.studentAssessment.application.offeringIntensity,
+            studentNumber:
+              disbursement.studentAssessment.application.studentNumber,
+            studyStartDate: offering.studyStartDate,
+            studyEndDate: offering.studyEndDate,
             coeStatus: disbursement.coeStatus,
             fullName: getUserFullName(
               disbursement.studentAssessment.application.student.user,

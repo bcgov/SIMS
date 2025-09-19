@@ -537,3 +537,15 @@ export const PendingOfferingChangeRequestsHeaders = [
   { title: "Offering Name", sortable: true, key: "offeringName" },
   { title: "Action", sortable: false, key: "actions" },
 ];
+
+export const COESummaryHeaders = [
+  { title: "Name", key: "fullName", sortable: true },
+  { title: "Start Date", key: "studyStartDate", sortable: false },
+  { title: "End Date", key: "studyEndDate", sortable: true },
+  { title: "Application Number", key: "applicationNumber", sortable: false },
+  { title: "Intensity", key: "offeringIntensity", sortable: false },
+  { title: "Student Number", key: "studentNumber", sortable: false },
+  { title: "Disbursement Date", key: "disbursementDate", sortable: true },
+  { title: "Status", key: "coeStatus", sortable: true },
+  { title: "Action", key: "applicationId", sortable: false },
+];

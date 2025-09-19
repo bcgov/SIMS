@@ -6,68 +6,98 @@
           <slot name="coeSummarySubtitle">{{ coeSummarySubtitle }}</slot>
         </template>
         <template #actions>
-          <v-text-field
-            density="compact"
-            label="Search Name"
-            variant="outlined"
-            v-model="searchCriteria"
-            data-cy="searchCriteria"
-            @keyup.enter="searchCOE"
-            prepend-inner-icon="mdi-magnify"
-            hide-details="auto"
-          />
+          <v-row class="justify-end">
+            <v-col cols="auto">
+              <v-btn-toggle
+                v-model="intensityFilter"
+                class="btn-toggle"
+                selected-class="selected-btn-toggle"
+                @update:model-value="resetPageAndLoadEnrollments"
+              >
+                <v-btn
+                  rounded="xl"
+                  color="primary"
+                  :value="IntensityFilter.All"
+                  class="mr-2"
+                  >All</v-btn
+                >
+                <v-btn
+                  v-for="intensity in Object.values(OfferingIntensity)"
+                  :key="intensity"
+                  rounded="xl"
+                  color="primary"
+                  :value="intensity"
+                  class="mr-2"
+                  >{{ mapOfferingIntensity(intensity) }}</v-btn
+                >
+              </v-btn-toggle>
+            </v-col>
+            <v-col>
+              <v-text-field
+                density="compact"
+                label="Search by name or application number"
+                variant="outlined"
+                v-model="searchQuery"
+                @keyup.enter="resetPageAndLoadEnrollments"
+                prepend-inner-icon="mdi-magnify"
+                hide-details="auto"
+              />
+            </v-col>
+          </v-row>
         </template>
       </body-header>
       <content-group>
-        <toggle-content :toggled="!disbursements.count">
-          <DataTable
-            :value="disbursements.results"
-            :lazy="true"
-            :paginator="true"
-            :rows="pageLimit"
-            :rowsPerPageOptions="rowsPerPageOptions"
-            :totalRecords="disbursements.count"
-            @page="pageEvent"
-            @sort="sortEvent"
+        <toggle-content
+          :toggled="!enrollmentsLoading && !disbursements.count"
+          message="No enrollment records found"
+        >
+          <v-data-table-server
+            :headers="COESummaryHeaders"
+            :items="disbursements.results"
+            :items-length="disbursements.count"
+            :loading="enrollmentsLoading"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            @update:options="paginationAndSortEvent"
           >
-            <Column field="fullName" header="Name" :sortable="true">
-              <template #body="slotProps">
-                <span>{{ slotProps.data.fullName }}</span>
-              </template>
-            </Column>
-            <Column field="studyStartPeriod" header="Study dates">
-              <template #body="slotProps">
-                <span>
-                  {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
-                  {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
-                </span>
-              </template></Column
-            >
-            <Column field="applicationNumber" header="Application #"></Column>
-            <Column field="disbursementDate" header="Disbursement date">
-              <template #body="slotProps">
-                <span>
-                  {{ dateOnlyLongString(slotProps.data.disbursementDate) }}
-                </span>
-              </template></Column
-            >
-            <Column field="coeStatus" header="Status" :sortable="true">
-              <template #body="slotProps">
-                <status-chip-c-o-e :status="slotProps.data.coeStatus" />
-              </template>
-            </Column>
-            <Column field="applicationId" header="Action">
-              <template #body="slotProps">
-                <v-btn
-                  color="primary"
-                  @click="
-                    goToViewApplication(slotProps.data.disbursementScheduleId)
-                  "
-                  >View</v-btn
-                >
-              </template>
-            </Column>
-          </DataTable>
+            <template #[`item.fullName`]="{ item }">
+              <span>{{ item.fullName }}</span>
+            </template>
+            <template #[`item.studyStartDate`]="{ item }">
+              <span>
+                {{ dateOnlyLongString(item.studyStartDate) }}
+              </span>
+            </template>
+            <template #[`item.studyEndDate`]="{ item }">
+              <span>
+                {{ dateOnlyLongString(item.studyEndDate) }}
+              </span>
+            </template>
+            <template #[`item.applicationNumber`]="{ item }">
+              {{ item.applicationNumber }}
+            </template>
+            <template #[`item.offeringIntensity`]="{ item }">
+              {{ mapOfferingIntensity(item.offeringIntensity) }}
+            </template>
+            <template #[`item.studentNumber`]="{ item }">
+              {{ item.studentNumber }}
+            </template>
+            <template #[`item.disbursementDate`]="{ item }">
+              <span>
+                {{ dateOnlyLongString(item.disbursementDate) }}
+              </span>
+            </template>
+            <template #[`item.coeStatus`]="{ item }">
+              <status-chip-c-o-e :status="item.coeStatus" />
+            </template>
+            <template #[`item.applicationId`]="{ item }">
+              <v-btn
+                color="primary"
+                @click="goToViewApplication(item.disbursementScheduleId)"
+                >View</v-btn
+              >
+            </template>
+          </v-data-table-server>
         </toggle-content>
       </content-group>
     </v-container>
@@ -82,13 +112,16 @@ import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnroll
 import {
   DataTableSortOrder,
   DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
   PAGINATION_LIST,
-  DEFAULT_PAGE_NUMBER,
-  PageAndSortEvent,
   LayoutTemplates,
   EnrollmentPeriod,
+  COESummaryHeaders,
+  OfferingIntensity,
+  PaginationOptions,
+  DataTableOptions,
 } from "@/types";
-import { useFormatters } from "@/composables";
+import { useFormatters, useOffering, useSnackBar } from "@/composables";
 import StatusChipCOE from "@/components/generic/StatusChipCOE.vue";
 import {
   COESummaryAPIOutDTO,
@@ -96,6 +129,10 @@ import {
 } from "@/services/http/dto";
 
 const DEFAULT_SORT_FIELD = "coeStatus";
+const IntensityFilter = {
+  All: "All",
+  ...OfferingIntensity,
+};
 
 export default defineComponent({
   components: { StatusChipCOE },
@@ -120,17 +157,26 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
+    const snackBar = useSnackBar();
     const disbursements = ref(
       {} as PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>,
     );
-    const page = ref(DEFAULT_PAGE_NUMBER);
-    const pageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const sortField = ref(DEFAULT_SORT_FIELD);
-    const sortOrder = ref(DataTableSortOrder.ASC);
-    const searchCriteria = ref();
+    const { mapOfferingIntensity } = useOffering();
+    const searchQuery = ref("");
+    const enrollmentsLoading = ref(false);
+    const intensityFilter = ref(IntensityFilter.All);
     const rowsPerPageOptions = computed(() =>
       disbursements.value.results?.length > 10 ? PAGINATION_LIST : undefined,
     );
+    /**
+     * Current state of the pagination.
+     */
+    const currentPagination: PaginationOptions = {
+      page: 1,
+      pageLimit: DEFAULT_PAGE_LIMIT,
+      sortField: DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortOrder.DESC,
+    };
 
     const goToViewApplication = (disbursementScheduleId: number) => {
       router.push({
@@ -143,38 +189,58 @@ export default defineComponent({
     };
 
     const updateSummaryList = async (locationId: number) => {
-      const disbursementAndCount =
-        await ConfirmationOfEnrollmentService.shared.getCOESummary(
-          locationId,
-          props.enrollmentPeriod,
-          {
-            page: page.value,
-            pageLimit: pageLimit.value,
-            sortField: sortField.value,
-            sortOrder: sortOrder.value,
-            searchCriteria: searchCriteria.value,
-          },
-        );
-      disbursements.value = disbursementAndCount;
+      try {
+        enrollmentsLoading.value = true;
+        const paginationOptions: PaginationOptions = {
+          page: currentPagination.page,
+          pageLimit: currentPagination.pageLimit,
+          sortField: currentPagination.sortField,
+          sortOrder: currentPagination.sortOrder,
+        };
+        if (
+          intensityFilter.value &&
+          intensityFilter.value !== IntensityFilter.All
+        ) {
+          paginationOptions.searchCriteria = {
+            searchCriteria: searchQuery.value,
+            intensityFilter: intensityFilter.value as OfferingIntensity,
+          };
+        } else {
+          paginationOptions.searchCriteria = {
+            searchCriteria: searchQuery.value,
+          };
+        }
+        const disbursementAndCount =
+          await ConfirmationOfEnrollmentService.shared.getCOESummary(
+            locationId,
+            props.enrollmentPeriod,
+            paginationOptions,
+          );
+        disbursements.value = disbursementAndCount;
+      } catch {
+        snackBar.error("Error loading confirmation of enrollments.");
+        disbursements.value = { results: [], count: 0 };
+      } finally {
+        enrollmentsLoading.value = false;
+      }
     };
 
-    const pageEvent = async (event: PageAndSortEvent) => {
-      page.value = event?.page;
-      pageLimit.value = event?.rows;
+    const resetPageAndLoadEnrollments = async () => {
       await updateSummaryList(props.locationId);
     };
 
-    const sortEvent = async (event: PageAndSortEvent) => {
-      page.value = DEFAULT_PAGE_NUMBER;
-      pageLimit.value = DEFAULT_PAGE_LIMIT;
-      sortField.value = event.sortField;
-      sortOrder.value = event.sortOrder;
-      await updateSummaryList(props.locationId);
-    };
-
-    const searchCOE = async () => {
-      page.value = DEFAULT_PAGE_NUMBER;
-      pageLimit.value = DEFAULT_PAGE_LIMIT;
+    const paginationAndSortEvent = async (event: DataTableOptions) => {
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
+      if (event.sortBy.length) {
+        const [sortBy] = event.sortBy;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
+      } else {
+        // Sorting was removed, reset to default.
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortOrder.DESC;
+      }
       await updateSummaryList(props.locationId);
     };
 
@@ -182,6 +248,8 @@ export default defineComponent({
       () => props.locationId,
       async (currValue) => {
         //update the list
+        searchQuery.value = "";
+        intensityFilter.value = IntensityFilter.All;
         await updateSummaryList(currValue);
       },
       {
@@ -191,16 +259,21 @@ export default defineComponent({
 
     return {
       disbursements,
-
       dateOnlyLongString,
       goToViewApplication,
-      pageLimit,
       rowsPerPageOptions,
-      searchCriteria,
-      pageEvent,
-      sortEvent,
-      searchCOE,
+      searchQuery,
+      intensityFilter,
+      IntensityFilter,
       LayoutTemplates,
+      COESummaryHeaders,
+      paginationAndSortEvent,
+      enrollmentsLoading,
+      resetPageAndLoadEnrollments,
+      OfferingIntensity,
+      mapOfferingIntensity,
+      DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
     };
   },
 });

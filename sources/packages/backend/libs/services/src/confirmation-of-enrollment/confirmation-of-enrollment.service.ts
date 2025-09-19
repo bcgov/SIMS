@@ -775,6 +775,7 @@ export class ConfirmationOfEnrollmentService {
         "location.institutionCode",
         "application.id",
         "application.applicationNumber",
+        "application.offeringIntensity",
         "application.studentNumber",
         "student.id",
         "student.birthDate",
@@ -815,7 +816,8 @@ export class ConfirmationOfEnrollmentService {
         )
         .andWhere("disbursementSchedule.coeStatus = :required", {
           required: COEStatus.required,
-        });
+        })
+        .andWhere("offering.studyEndDate >= CURRENT_DATE");
     }
     // Get only COE(s) that are either already confirmed or not eligible to be confirmed by institution.
     else {

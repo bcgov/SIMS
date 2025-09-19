@@ -23,9 +23,10 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
     locationId: number,
     enrollmentPeriod: EnrollmentPeriod,
     paginationOptions: PaginationOptions,
+    enableZeroPage = true,
   ): Promise<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>> {
     let url = `location/${locationId}/confirmation-of-enrollment/enrollmentPeriod/${enrollmentPeriod}?`;
-    url += getPaginationQueryString(paginationOptions);
+    url += getPaginationQueryString(paginationOptions, enableZeroPage);
     return this.getCall<PaginatedResultsAPIOutDTO<COESummaryAPIOutDTO>>(
       this.addClientRoot(url),
     );

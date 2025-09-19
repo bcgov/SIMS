@@ -3,6 +3,7 @@ import {
   COEApprovalPeriodStatus,
   COEStatus,
   DisabilityStatus,
+  OfferingIntensity,
   ProgramInfoStatus,
   StudyBreakCOE,
 } from "@/types";
@@ -15,8 +16,10 @@ export class ConfirmationOfEnrollmentAPIInDTO {
 
 export interface COESummaryAPIOutDTO {
   applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
+  offeringIntensity: OfferingIntensity;
+  studentNumber?: string;
+  studyStartDate: string;
+  studyEndDate: string;
   applicationId: number;
   coeStatus: COEStatus;
   fullName: string;
