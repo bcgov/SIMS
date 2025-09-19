@@ -11,17 +11,18 @@ import {
   RestrictionActionType,
 } from "@sims/sims-db";
 import { RestrictionNotificationType } from "@sims/sims-db/entities";
-import { DataSource, EntityManager, In } from "typeorm";
+import { DataSource, EntityManager, In, IsNull } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   NoteSharedService,
   RestrictionCode,
   StudentRestrictionSharedService,
 } from "@sims/services";
-
-export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
-export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
-export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
+import { RESTRICTION_NOT_FOUND, RESTRICTION_IS_DELETED } from "../../constants";
+import {
+  RESTRICTION_NOT_ACTIVE,
+  RESTRICTION_NOT_PROVINCIAL,
+} from "@sims/services/constants";
 
 /**
  * Service layer for Student Restriction.
@@ -287,11 +288,18 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         student: { id: studentId },
         restriction: { restrictionType: RestrictionType.Provincial },
       },
+      withDeleted: true,
     });
     if (!restriction) {
       throw new CustomNamedError(
-        "Provincial restriction not found to be deleted.",
+        "Provincial restriction not found.",
         RESTRICTION_NOT_FOUND,
+      );
+    }
+    if (!restriction.deletedAt) {
+      throw new CustomNamedError(
+        "Provincial restriction is already deleted.",
+        RESTRICTION_IS_DELETED,
       );
     }
     await this.dataSource.transaction(async (transactionalEntityManager) => {
@@ -304,15 +312,24 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         auditUserId,
         transactionalEntityManager,
       );
-      await transactionalEntityManager
+      const updateResult = await transactionalEntityManager
         .getRepository(StudentRestriction)
-        .update(restriction.id, {
-          deletionNote: note,
-          deletedAt: now,
-          deletedBy: auditUser,
-          modifier: auditUser,
-          updatedAt: now,
-        });
+        .update(
+          { id: restriction.id, deletedAt: IsNull() },
+          {
+            deletionNote: note,
+            deletedAt: now,
+            deletedBy: auditUser,
+            modifier: auditUser,
+            updatedAt: now,
+          },
+        );
+      if (!updateResult.affected) {
+        throw new CustomNamedError(
+          "Provincial restriction is already deleted.",
+          RESTRICTION_IS_DELETED,
+        );
+      }
     });
   }
 

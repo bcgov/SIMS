@@ -15,9 +15,6 @@ import {
   InstitutionRestrictionService,
   RestrictionService,
   InstitutionService,
-  RESTRICTION_NOT_ACTIVE,
-  RESTRICTION_NOT_PROVINCIAL,
-  RESTRICTION_NOT_FOUND,
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -38,7 +35,7 @@ import {
   RestrictionCategoryParamAPIInDTO,
   DeleteRestrictionAPIInDTO,
 } from "./models/restriction.dto";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
 import {
   ApiNotFoundResponse,
@@ -50,6 +47,11 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { RestrictionControllerService } from "./restriction.controller.service";
 import { CustomNamedError } from "@sims/utilities";
+import { RESTRICTION_NOT_FOUND, RESTRICTION_IS_DELETED } from "../../constants";
+import {
+  RESTRICTION_NOT_ACTIVE,
+  RESTRICTION_NOT_PROVINCIAL,
+} from "@sims/services/constants";
 
 /**
  * Controller for AEST Restrictions.
@@ -225,7 +227,10 @@ export class RestrictionAESTController extends BaseController {
    */
   @Roles(Role.StudentDeleteRestriction)
   @ApiNotFoundResponse({
-    description: "Provincial restriction not found to be deleted.",
+    description: "Provincial restriction not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Provincial restriction is already deleted.",
   })
   @Patch("student/:studentId/student-restriction/:studentRestrictionId/delete")
   async deleteStudentProvincialRestriction(
@@ -243,8 +248,13 @@ export class RestrictionAESTController extends BaseController {
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        if (error.name === RESTRICTION_NOT_FOUND) {
-          throw new NotFoundException(error.message);
+        switch (error.name) {
+          case RESTRICTION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case RESTRICTION_IS_DELETED:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
         }
       }
       throw error;

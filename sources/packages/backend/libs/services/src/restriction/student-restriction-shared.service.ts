@@ -18,8 +18,7 @@ import {
 } from "typeorm";
 import { RestrictionCode } from "./model/restriction.model";
 import { RestrictionSharedService } from "./restriction-shared.service";
-export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
-export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
+
 /**
  * While performing a possible huge amount of select,
  * breaks the execution in chunks.
