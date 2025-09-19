@@ -1,3 +1,4 @@
+import { EligibleECertDisbursement } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import {
   ActionEffectiveCondition,
   ActionEffectiveConditionNames,
@@ -5,7 +6,7 @@ import {
 
 type ConditionEvaluator = (
   actionEffectiveCondition: ActionEffectiveCondition,
-  applicationContextData: Record<string, unknown>,
+  eligibleECertDisbursement: EligibleECertDisbursement,
 ) => boolean;
 
 /**
@@ -13,12 +14,12 @@ type ConditionEvaluator = (
  * When no conditions are provided then restriction actions are implicitly effective
  * and when one or more conditions are provided all must be satisfied for the restriction actions to be effective.
  * @param actionEffectiveConditions conditions that makes the restriction actions effective.
- * @param applicationContextData application context data required to evaluate the conditions.
+ * @param eligibleECertDisbursement e-Cert application and disbursement context data required to evaluate the conditions.
  * @returns true if the restriction actions are effective, otherwise false.
  */
 export function isRestrictionActionEffective(
   actionEffectiveConditions: ActionEffectiveCondition[] | null,
-  applicationContextData: Record<string, unknown>,
+  eligibleECertDisbursement: EligibleECertDisbursement,
 ): boolean {
   if (!actionEffectiveConditions?.length) {
     // If no conditions are provided then restriction actions are implicitly effective.
@@ -34,14 +35,17 @@ export function isRestrictionActionEffective(
         `No evaluator found for the action effective condition: ${actionEffectiveCondition.name}.`,
       );
     }
-    return conditionEvaluator(actionEffectiveCondition, applicationContextData);
+    return conditionEvaluator(
+      actionEffectiveCondition,
+      eligibleECertDisbursement,
+    );
   });
 }
 
 /**
  * Aviation credential type condition evaluator.
  * @param actionEffectiveCondition condition to be evaluated.
- * @param applicationContextData application context data required to evaluate the condition.
+ * @param eligibleECertDisbursement e-Cert application and disbursement context data required to evaluate the conditions.
  * @returns true if the condition is satisfied or no aviation credential type is provided, otherwise false.
  */
 function aviationCredentialTypeCondition(
@@ -49,12 +53,12 @@ function aviationCredentialTypeCondition(
     name: ActionEffectiveConditionNames;
     value: string[];
   },
-  applicationContextData: { aviationCredentialType?: string },
+  eligibleECertDisbursement: EligibleECertDisbursement,
 ): boolean {
+  const aviationCredentialType =
+    eligibleECertDisbursement.offering.aviationCredentialType;
   const conditionValues = actionEffectiveCondition.value;
-  return conditionValues.includes(
-    applicationContextData.aviationCredentialType,
-  );
+  return conditionValues.includes(aviationCredentialType);
 }
 
 /**

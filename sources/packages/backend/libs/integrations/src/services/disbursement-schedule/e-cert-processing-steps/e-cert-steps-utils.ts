@@ -11,11 +11,12 @@ import {
 } from "../disbursement-schedule.models";
 import { RestrictionCode } from "@sims/services";
 import { ProcessSummary } from "@sims/utilities/logger";
-import { isRestrictionActionEffective } from "@sims/utilities";
+import { isRestrictionActionEffective } from "./e-cert-steps-restriction-utils";
 
 /**
  * Check active student restrictions by its action type in an eligible disbursement.
- * An active bypassed restriction will not be included in the result.
+ * An active bypassed restriction or a restriction which does not satisfy its action effective conditions
+ * will not be included in the result.
  * @param eCertDisbursement student disbursement to check student restrictions.
  * @param actionType action type.
  * @returns the first restriction of the requested action type.
@@ -24,14 +25,16 @@ export function getRestrictionByActionType(
   eCertDisbursement: EligibleECertDisbursement,
   actionType: RestrictionActionType,
 ): StudentActiveRestriction {
-  return eCertDisbursement.getEffectiveRestrictions().find(
-    (restriction) =>
-      restriction.actions.includes(actionType) &&
-      isRestrictionActionEffective(restriction.actionEffectiveConditions, {
-        aviationCredentialType:
-          eCertDisbursement.offering.aviationCredentialType,
-      }),
-  );
+  return eCertDisbursement
+    .getEffectiveRestrictions()
+    .find(
+      (restriction) =>
+        restriction.actions.includes(actionType) &&
+        isRestrictionActionEffective(
+          restriction.actionEffectiveConditions,
+          eCertDisbursement,
+        ),
+    );
 }
 
 /**
