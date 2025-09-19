@@ -187,7 +187,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const studentRestrictions = ref([] as RestrictionSummaryAPIOutDTO[]);
+    const studentRestrictions = ref<RestrictionSummaryAPIOutDTO[]>([]);
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
     const viewRestriction = ref(
