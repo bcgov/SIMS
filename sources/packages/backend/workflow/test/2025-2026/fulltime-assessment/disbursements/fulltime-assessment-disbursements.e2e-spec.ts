@@ -46,12 +46,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       configureDisbursementData,
     );
     // Assert
-    expect(calculatedAssessment.variables.disbursementSchedules).toStrictEqual([
+    expect(calculatedAssessment.variables.disbursementSchedules).toBe([
       {
         disbursementDate: configureDisbursementData.offeringStudyStartDate,
         negotiatedExpiryDate: configureDisbursementData.offeringStudyStartDate,
         disbursements: [
-          ,
           {
             awardEligibility: true,
             valueAmount: 3000,
@@ -115,7 +114,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       configureDisbursementData,
     );
     // Assert
-    expect(calculatedAssessment.variables.disbursementSchedules).toStrictEqual([
+    expect(calculatedAssessment.variables.disbursementSchedules).toBe([
       {
         disbursementDate: configureDisbursementData.offeringStudyStartDate,
         negotiatedExpiryDate: configureDisbursementData.offeringStudyStartDate,
@@ -194,11 +193,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       expect(
         calculatedAssessment.variables.disbursementSchedules[0]
           .disbursementDate,
-      ).toBe(getUTCNow());
+      ).toBe(getISODateOnlyString(getUTCNow()));
       expect(
         calculatedAssessment.variables.disbursementSchedules[0]
           .negotiatedExpiryDate,
-      ).toBe(getUTCNow());
+      ).toBe(getISODateOnlyString(getUTCNow()));
     },
   );
 
@@ -278,9 +277,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
           configureDisbursementData,
         );
         // Assert
-        expect(
-          calculatedAssessment.variables.disbursementSchedules,
-        ).toStrictEqual([
+        expect(calculatedAssessment.variables.disbursementSchedules).toBe([
           {
             disbursementDate: configureDisbursementData.offeringStudyStartDate,
             negotiatedExpiryDate:
