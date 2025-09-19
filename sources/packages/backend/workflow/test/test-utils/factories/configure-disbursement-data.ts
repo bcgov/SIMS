@@ -49,6 +49,7 @@ export function createFakeConfigureDisbursementFullTimeData(
     awardEligibilityBCAG2Year: false,
     awardEligibilityBCAG: true,
     awardEligibilitySBSD: true,
+    awardEligibilityBGPD: true,
     finalFederalAwardNetCSGFAmount: 1000,
     finalFederalAwardNetCSGDAmount: 2000,
     finalFederalAwardNetCSGPAmount: 3000,
