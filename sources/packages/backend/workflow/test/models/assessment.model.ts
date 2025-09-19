@@ -38,6 +38,26 @@ export enum TransportationCostSituation {
   Special = "special",
 }
 
+export enum AwardCode {
+  CSLF = "CSLF",
+  CSGP = "CSGP",
+  CSGD = "CSGD",
+  CSGF = "CSGF",
+  BCSL = "BCSL",
+  BCAG = "BCAG",
+  BGPD = "BGPD",
+  SBSD = "SBSD",
+  CSLP = "CSLP",
+  CSPT = "CSPT",
+}
+
+export enum AwardType {
+  CanadaLoan = "Canada Loan",
+  CanadaGrant = "Canada Grant",
+  BCLoan = "BC Loan",
+  BCGrant = "BC Grant",
+}
+
 export interface StudentAdditionalTransportationAppealData extends JSONDoc {
   additionalTransportRequested: YesNoOptions;
   additionalTransportListedDriver?: YesNoOptions;
@@ -233,22 +253,49 @@ export interface ConfigureDisbursementData extends JSONDoc {
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   offeringWeeks: number;
+  // Shared awards for both full-time and part-time.
   awardEligibilityCSGP: boolean;
   awardEligibilityCSGD: boolean;
-  awardEligibilityCSPT: boolean;
   awardEligibilityBCAG: boolean;
   awardEligibilitySBSD: boolean;
-  finalFederalAwardNetCSLPAmount: number;
+  // Part-time only eligibility.
+  awardEligibilityCSLP?: boolean;
+  awardEligibilityCSPT?: boolean;
+  // Full-time only eligibility.
+  awardEligibilityBCSL?: boolean;
+  awardEligibilityBCTopup?: boolean;
+  awardEligibilityCSLF?: boolean;
+  awardEligibilityCSGF?: boolean;
+  awardEligibilityBCAG2Year?: boolean;
+  awardEligibilityBGPD?: boolean;
+  // Shared final award amounts for both full-time and part-time.
   finalFederalAwardNetCSGPAmount: number;
   finalFederalAwardNetCSGDAmount: number;
-  finalFederalAwardNetCSPTAmount: number;
   finalProvincialAwardNetBCAGAmount: number;
   finalProvincialAwardNetSBSDAmount: number;
+  // Part-time only final award amounts.
+  finalFederalAwardNetCSLPAmount?: number;
+  finalFederalAwardNetCSPTAmount?: number;
+  // Full-time only final award amounts.
+  finalFederalAwardNetCSGFAmount?: number;
+  finalFederalAwardNetCSLFAmount?: number;
+  finalProvincialAwardNetBGPDAmount?: number;
+  finalProvincialAwardNetBCSLAmount?: number;
 }
 
 export interface IdentifiableParentData extends JSONDoc {
   parentIsAbleToReport: YesNoOptions;
   currentYearParentIncome?: number;
+}
+export interface DisbursementScheduleData extends JSONDoc {
+  disbursementDate: string;
+  negotiatedExpiryDate: string;
+  disbursements: Array<{
+    awardEligibility: boolean;
+    valueAmount: number;
+    valueCode: AwardCode;
+    valueType: AwardType;
+  }>;
 }
 
 export interface AssessmentModel {
@@ -463,7 +510,7 @@ export interface CalculatedAssessmentModel {
     limitTransportationAllowance: number;
   };
   // Disbursement schedules
-  disbursementSchedules: Array<unknown>;
+  disbursementSchedules: DisbursementScheduleData[];
   calculatedDataTotalAcademicExpenses: number;
   calculatedDataRemainingBookLimit: number;
 }
