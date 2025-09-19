@@ -290,14 +290,15 @@ export interface IdentifiableParentData extends JSONDoc {
 export interface DisbursementScheduleData extends JSONDoc {
   disbursementDate: string;
   negotiatedExpiryDate: string;
-  disbursements: Array<{
-    awardEligibility: boolean;
-    valueAmount: number;
-    valueCode: AwardCode;
-    valueType: AwardType;
-  }>;
+  disbursements: Disbursements[];
 }
 
+export interface Disbursements extends JSONDoc {
+  valueCode: AwardCode;
+  valueType: AwardType;
+  valueAmount: number;
+  awardEligibility: boolean;
+}
 export interface AssessmentModel {
   weeks: number;
   tuitionCost: number;
@@ -510,7 +511,7 @@ export interface CalculatedAssessmentModel {
     limitTransportationAllowance: number;
   };
   // Disbursement schedules
-  disbursementSchedules: Array<DisbursementScheduleData>;
+  disbursementSchedules: DisbursementScheduleData[];
   calculatedDataTotalAcademicExpenses: number;
   calculatedDataRemainingBookLimit: number;
 }

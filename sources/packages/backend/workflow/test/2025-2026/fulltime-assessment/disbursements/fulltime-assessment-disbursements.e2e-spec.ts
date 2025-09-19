@@ -3,7 +3,7 @@ import {
   ZeebeMockedClient,
   executeFullTimeConfigureDisbursement,
 } from "../../../test-utils";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { addDays, getISODateOnlyString, getUTCNow } from "@sims/utilities";
 import { createFakeConfigureDisbursementFullTimeData } from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, () => {
@@ -199,11 +199,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       expect(
         calculatedAssessment.variables.disbursementSchedules[0]
           .disbursementDate,
-      ).toBe(configureDisbursementData.offeringStudyStartDate);
+      ).toBe(getUTCNow());
       expect(
         calculatedAssessment.variables.disbursementSchedules[0]
           .negotiatedExpiryDate,
-      ).toBe(configureDisbursementData.offeringStudyStartDate);
+      ).toBe(getUTCNow());
     },
   );
 
@@ -294,7 +294,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
               {
                 awardEligibility: true,
                 valueAmount: testFinalAwardNetAmount.roundDownAwardNetAmount,
-                valueCode: "CSLP",
+                valueCode: "CSLF",
                 valueType: "Canada Loan",
               },
               {
