@@ -3,10 +3,9 @@ import {
   ActionEffectiveConditionNames,
 } from "@sims/sims-db";
 
-type ContextData = { aviationCredentialType?: string };
 type ConditionEvaluator = (
   actionEffectiveCondition: ActionEffectiveCondition,
-  contextData: ContextData,
+  applicationContextData: Record<string, unknown>,
 ) => boolean;
 
 /**
@@ -14,12 +13,12 @@ type ConditionEvaluator = (
  * When no conditions are provided then restriction actions are implicitly effective
  * and when one or more conditions are provided all must be satisfied for the restriction actions to be effective.
  * @param actionEffectiveConditions conditions that makes the restriction actions effective.
- * @param contextData context data required to evaluate the conditions.
+ * @param applicationContextData application context data required to evaluate the conditions.
  * @returns true if the restriction actions are effective, otherwise false.
  */
 export function isRestrictionActionEffective(
   actionEffectiveConditions: ActionEffectiveCondition[] | null,
-  contextData: ContextData,
+  applicationContextData: Record<string, unknown>,
 ): boolean {
   if (!actionEffectiveConditions?.length) {
     // If no conditions are provided then restriction actions are implicitly effective.
@@ -35,22 +34,27 @@ export function isRestrictionActionEffective(
         `No evaluator found for the action effective condition: ${actionEffectiveCondition.name}.`,
       );
     }
-    return conditionEvaluator(actionEffectiveCondition, contextData);
+    return conditionEvaluator(actionEffectiveCondition, applicationContextData);
   });
 }
 
 /**
  * Aviation credential type condition evaluator.
  * @param actionEffectiveCondition condition to be evaluated.
- * @param contextData context data required to evaluate the condition.
+ * @param applicationContextData application context data required to evaluate the condition.
  * @returns true if the condition is satisfied or no aviation credential type is provided, otherwise false.
  */
 function aviationCredentialTypeCondition(
-  actionEffectiveCondition: ActionEffectiveCondition,
-  contextData: ContextData,
+  actionEffectiveCondition: {
+    name: ActionEffectiveConditionNames;
+    value: string[];
+  },
+  applicationContextData: { aviationCredentialType?: string },
 ): boolean {
-  const conditionValues = actionEffectiveCondition.value as string[];
-  return conditionValues.includes(contextData.aviationCredentialType);
+  const conditionValues = actionEffectiveCondition.value;
+  return conditionValues.includes(
+    applicationContextData.aviationCredentialType,
+  );
 }
 
 /**
