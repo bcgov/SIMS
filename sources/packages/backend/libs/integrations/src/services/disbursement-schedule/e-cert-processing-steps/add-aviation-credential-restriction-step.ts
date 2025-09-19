@@ -18,6 +18,9 @@ import { RestrictionService } from "@sims/integrations/services";
  * for the given credential type if one does not already exist.
  * By adding this restriction, it will prevent the student from being funded for the same
  * aviation credential type again in the future.
+ *
+ ** Note: Aviation offerings are not expected to create second disbursements due to their number of funded weeks(17 is the maximum).
+ ** In case this scenario changes, the second disbursement would be blocked if no changes are made.
  */
 @Injectable()
 export class AddAviationCredentialRestrictionStep implements ECertProcessStep {
