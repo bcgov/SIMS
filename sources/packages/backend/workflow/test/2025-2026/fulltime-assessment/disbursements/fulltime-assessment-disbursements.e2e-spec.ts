@@ -22,62 +22,65 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       configureDisbursementData,
     );
     // Assert
-    expect(calculatedAssessment.variables.disbursementSchedules).toBe([
-      {
-        disbursementDate: configureDisbursementData.offeringStudyStartDate,
-        negotiatedExpiryDate: configureDisbursementData.offeringStudyStartDate,
-        disbursements: [
-          {
-            awardEligibility: true,
-            valueAmount: 4000,
-            valueCode: "CSLF",
-            valueType: "Canada Loan",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 3000,
-            valueCode: "CSGP",
-            valueType: "Canada Grant",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 2000,
-            valueCode: "CSGD",
-            valueType: "Canada Grant",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 1000,
-            valueCode: "CSGF",
-            valueType: "Canada Grant",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 8000,
-            valueCode: "BCSL",
-            valueType: "BC Loan",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 7000,
-            valueCode: "BCAG",
-            valueType: "BC Grant",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 5000,
-            valueCode: "BGPD",
-            valueType: "BC Grant",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 6000,
-            valueCode: "SBSD",
-            valueType: "BC Grant",
-          },
-        ],
-      },
-    ]);
+    expect(calculatedAssessment.variables.disbursementSchedules).toStrictEqual(
+      expect.arrayContaining([
+        {
+          disbursementDate: configureDisbursementData.offeringStudyStartDate,
+          negotiatedExpiryDate:
+            configureDisbursementData.offeringStudyStartDate,
+          disbursements: [
+            {
+              awardEligibility: true,
+              valueAmount: 4000,
+              valueCode: "CSLF",
+              valueType: "Canada Loan",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 3000,
+              valueCode: "CSGP",
+              valueType: "Canada Grant",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 2000,
+              valueCode: "CSGD",
+              valueType: "Canada Grant",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 1000,
+              valueCode: "CSGF",
+              valueType: "Canada Grant",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 8000,
+              valueCode: "BCSL",
+              valueType: "BC Loan",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 7000,
+              valueCode: "BCAG",
+              valueType: "BC Grant",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 5000,
+              valueCode: "BGPD",
+              valueType: "BC Grant",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 6000,
+              valueCode: "SBSD",
+              valueType: "BC Grant",
+            },
+          ],
+        },
+      ]),
+    );
   });
 
   it("Should not generate disbursement values for an award when eligibility is undefined.", async () => {
@@ -96,56 +99,59 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       configureDisbursementData,
     );
     // Assert
-    expect(calculatedAssessment.variables.disbursementSchedules).toBe([
-      {
-        disbursementDate: configureDisbursementData.offeringStudyStartDate,
-        negotiatedExpiryDate: configureDisbursementData.offeringStudyStartDate,
-        disbursements: [
-          {
-            awardEligibility: true,
-            valueAmount: 4000,
-            valueCode: "CSLF",
-            valueType: "Canada Loan",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 3000,
-            valueCode: "CSGP",
-            valueType: "Canada Grant",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 2000,
-            valueCode: "CSGD",
-            valueType: "Canada Grant",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 1000,
-            valueCode: "CSGF",
-            valueType: "Canada Grant",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 8000,
-            valueCode: "BCSL",
-            valueType: "BC Loan",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 5000,
-            valueCode: "BGPD",
-            valueType: "BC Grant",
-          },
-          {
-            awardEligibility: true,
-            valueAmount: 6000,
-            valueCode: "SBSD",
-            valueType: "BC Grant",
-          },
-        ],
-      },
-    ]);
+    expect(calculatedAssessment.variables.disbursementSchedules).toStrictEqual(
+      expect.arrayContaining([
+        {
+          disbursementDate: configureDisbursementData.offeringStudyStartDate,
+          negotiatedExpiryDate:
+            configureDisbursementData.offeringStudyStartDate,
+          disbursements: [
+            {
+              awardEligibility: true,
+              valueAmount: 4000,
+              valueCode: "CSLF",
+              valueType: "Canada Loan",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 3000,
+              valueCode: "CSGP",
+              valueType: "Canada Grant",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 2000,
+              valueCode: "CSGD",
+              valueType: "Canada Grant",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 1000,
+              valueCode: "CSGF",
+              valueType: "Canada Grant",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 8000,
+              valueCode: "BCSL",
+              valueType: "BC Loan",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 5000,
+              valueCode: "BGPD",
+              valueType: "BC Grant",
+            },
+            {
+              awardEligibility: true,
+              valueAmount: 6000,
+              valueCode: "SBSD",
+              valueType: "BC Grant",
+            },
+          ],
+        },
+      ]),
+    );
   });
 
   it(
