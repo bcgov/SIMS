@@ -1,6 +1,7 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   AssignRestrictionAPIInDTO,
+  DeleteRestrictionAPIInDTO,
   OptionItemAPIOutDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
@@ -63,6 +64,25 @@ export class RestrictionApi extends HttpBaseClient {
     await this.patchCall(
       this.addClientRoot(
         `restriction/student/${studentId}/studentRestriction/${studentRestrictionId}/resolve`,
+      ),
+      payload,
+    );
+  }
+
+  /**
+   * Soft deletes a provincial restriction from Student.
+   * @param studentId ID of the student to get a restriction.
+   * @param studentRestrictionId ID of the student restriction to be deleted.
+   * @param payload delete restriction details.
+   */
+  async deleteStudentProvincialRestriction(
+    studentId: number,
+    studentRestrictionId: number,
+    payload: DeleteRestrictionAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(
+        `restriction/student/${studentId}/student-restriction/${studentRestrictionId}/delete`,
       ),
       payload,
     );

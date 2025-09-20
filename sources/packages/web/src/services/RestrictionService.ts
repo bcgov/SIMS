@@ -1,6 +1,7 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   AssignRestrictionAPIInDTO,
+  DeleteRestrictionAPIInDTO,
   OptionItemAPIOutDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
@@ -58,6 +59,24 @@ export class RestrictionService {
     payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
     await ApiClient.RestrictionApi.resolveStudentRestriction(
+      studentId,
+      studentRestrictionId,
+      payload,
+    );
+  }
+
+  /**
+   * Soft deletes a provincial restriction from Student.
+   * @param studentId ID of the student to get a restriction.
+   * @param studentRestrictionId ID of the student restriction to be deleted.
+   * @param payload delete restriction details.
+   */
+  async deleteStudentProvincialRestriction(
+    studentId: number,
+    studentRestrictionId: number,
+    payload: DeleteRestrictionAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.RestrictionApi.deleteStudentProvincialRestriction(
       studentId,
       studentRestrictionId,
       payload,

@@ -2,8 +2,9 @@
   <tab-container :enableCardView="false"
     ><student-restrictions
       :studentId="studentId"
-      :canAddRestrictions="true"
-      :canResolveRestriction="true"
+      :can-add-restrictions="true"
+      :can-resolve-restriction="true"
+      :can-delete-restriction="true"
     ></student-restrictions>
     <student-scholastic-standing-limited-history :studentId="studentId"
   /></tab-container>

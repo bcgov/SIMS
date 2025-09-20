@@ -1,20 +1,27 @@
 <template>
-  <chip-status :status="chipStatus" :label="status" />
+  <chip-status
+    :status="chipStatus.chipStatus"
+    :label="chipStatus.restrictionStatus"
+  />
 </template>
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { computed, defineComponent } from "vue";
 import { useRestriction } from "@/composables";
-import { RestrictionStatus } from "@/types";
+
 export default defineComponent({
   props: {
-    status: {
-      type: String as PropType<RestrictionStatus>,
+    isActive: {
+      type: Boolean,
       required: true,
+    },
+    deletedAt: {
+      type: Date,
+      required: false,
     },
   },
   setup(props) {
     const { mapRestrictionChipStatus } = useRestriction();
-    const chipStatus = computed(() => mapRestrictionChipStatus(props.status));
+    const chipStatus = computed(() => mapRestrictionChipStatus(props));
     return { chipStatus };
   },
 });

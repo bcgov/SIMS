@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { RESTRICTION_NOT_ACTIVE } from "./student-restriction.service";
 import {
   RecordDataModelService,
   InstitutionRestriction,
@@ -11,6 +10,7 @@ import {
   Institution,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
+import { RESTRICTION_NOT_ACTIVE } from "@sims/services/constants";
 
 /**
  * Service layer for institution Restriction.

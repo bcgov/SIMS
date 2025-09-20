@@ -15,8 +15,6 @@ import {
   InstitutionRestrictionService,
   RestrictionService,
   InstitutionService,
-  RESTRICTION_NOT_ACTIVE,
-  RESTRICTION_NOT_PROVINCIAL,
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -35,8 +33,9 @@ import {
   AssignRestrictionAPIInDTO,
   RestrictionStatusAPIOutDTO,
   RestrictionCategoryParamAPIInDTO,
+  DeleteRestrictionAPIInDTO,
 } from "./models/restriction.dto";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
 import {
   ApiNotFoundResponse,
@@ -47,6 +46,12 @@ import { Role } from "../../auth/roles.enum";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { RestrictionControllerService } from "./restriction.controller.service";
+import { CustomNamedError } from "@sims/utilities";
+import { RESTRICTION_NOT_FOUND, RESTRICTION_IS_DELETED } from "../../constants";
+import {
+  RESTRICTION_NOT_ACTIVE,
+  RESTRICTION_NOT_PROVINCIAL,
+} from "@sims/services/constants";
 
 /**
  * Controller for AEST Restrictions.
@@ -215,6 +220,48 @@ export class RestrictionAESTController extends BaseController {
   }
 
   /**
+   * Soft deletes a provincial restriction from Student.
+   * @param studentId ID of the student to get a restriction.
+   * @param studentRestrictionId ID of the student restriction to be deleted.
+   * @param payload delete restriction details.
+   */
+  @Roles(Role.StudentDeleteRestriction)
+  @ApiNotFoundResponse({
+    description: "Provincial restriction not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Provincial restriction is already set as deleted.",
+  })
+  @Patch("student/:studentId/student-restriction/:studentRestrictionId/delete")
+  async deleteStudentProvincialRestriction(
+    @UserToken() userToken: IUserToken,
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("studentRestrictionId", ParseIntPipe) studentRestrictionId: number,
+    @Body() payload: DeleteRestrictionAPIInDTO,
+  ): Promise<void> {
+    try {
+      await this.studentRestrictionService.deleteProvincialRestriction(
+        studentId,
+        studentRestrictionId,
+        userToken.userId,
+        payload.noteDescription,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case RESTRICTION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case RESTRICTION_IS_DELETED:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
+      }
+      throw error;
+    }
+  }
+
+  /**
    * Get restrictions for an institution.
    * @param institutionId id of the institution to retrieve its restrictions.
    * @returns Institution Restrictions.
@@ -275,9 +322,13 @@ export class RestrictionAESTController extends BaseController {
       restrictionCode: institutionRestriction.restriction.restrictionCode,
       description: institutionRestriction.restriction.description,
       createdAt: institutionRestriction.createdAt,
-      updatedAt: institutionRestriction.updatedAt,
+      // Currently mapping resolvedAt to updatedAt as there is no resolvedAt for
+      // institutions restrictions but the API shares the same DTO.
+      resolvedAt: institutionRestriction.updatedAt,
       createdBy: getUserFullName(institutionRestriction.creator),
-      updatedBy: getUserFullName(institutionRestriction.modifier),
+      // Currently mapping modifier to resolvedBy as there is no resolvedBy for
+      // institutions restrictions but the API shares the same DTO.
+      resolvedBy: getUserFullName(institutionRestriction.modifier),
       isActive: institutionRestriction.isActive,
       restrictionNote: institutionRestriction.restrictionNote?.description,
       resolutionNote: institutionRestriction.resolutionNote?.description,
