@@ -52,7 +52,6 @@ export class RestrictionDetailAPIOutDTO extends RestrictionSummaryAPIOutDTO {
   createdBy: string;
   resolvedBy: string;
   deletedBy?: string;
-  deletedAt?: Date;
   restrictionNote?: string;
   resolutionNote?: string;
   deletionNote?: string;
