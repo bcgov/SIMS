@@ -71,14 +71,16 @@
                   @click="viewStudentRestriction(slotProps.data.restrictionId)"
                   >View</v-btn
                 >
-                <check-permission-role :role="Role.StudentDeleteRestriction">
+                <check-permission-role
+                  :role="Role.StudentDeleteRestriction"
+                  v-if="
+                    canDeleteRestriction &&
+                    slotProps.data.restrictionType ===
+                      RestrictionType.Provincial
+                  "
+                >
                   <template #="{ notAllowed }">
                     <v-btn
-                      v-if="
-                        canDeleteRestriction &&
-                        slotProps.data.restrictionType ===
-                          RestrictionType.Provincial
-                      "
                       color="primary"
                       variant="outlined"
                       :disabled="notAllowed || !!slotProps.data.deletedAt"
