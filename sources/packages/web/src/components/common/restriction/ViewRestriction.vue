@@ -3,7 +3,7 @@
     <modal-dialog-base title="View restriction" :showDialog="showDialog">
       <template #content>
         <error-summary :errors="viewRestrictionForm.errors" />
-        <h3 class="category-header-medium mb-2">Restriction information</h3>
+        <h3 class="category-header-medium">Restriction information</h3>
         <content-group>
           <title-value
             propertyTitle="Category"
@@ -36,7 +36,7 @@
           ></v-row>
         </content-group>
         <template v-if="showResolution">
-          <h3 class="category-header-medium my-2">Resolution</h3>
+          <h3 class="category-header-medium mt-2">Resolution</h3>
           <v-textarea
             v-if="allowUserToEdit"
             label="Resolution reason"
@@ -70,7 +70,7 @@
         </template>
         <template v-if="showDeletion">
           <h3 class="category-header-medium mt-2">Deletion</h3>
-          <content-group v-if="!!restrictionData.deletedAt">
+          <content-group>
             <title-value
               propertyTitle="Deletion reason"
               :propertyValue="restrictionData.deletionNote"
