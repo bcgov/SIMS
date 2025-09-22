@@ -29,7 +29,6 @@ export interface RestrictionDetailAPIOutDTO
   createdBy: string;
   resolvedBy: string;
   deletedBy?: string;
-  deletedAt?: Date;
   restrictionNote?: string;
   resolutionNote?: string;
   deletionNote?: string;
