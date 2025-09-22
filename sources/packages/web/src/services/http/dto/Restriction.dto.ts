@@ -15,9 +15,10 @@ export interface RestrictionBaseDTO {
  * DTO interface for student/institution restriction summary.
  */
 export interface RestrictionSummaryAPIOutDTO extends RestrictionBaseDTO {
-  createdAt: Date;
-  updatedAt: Date;
   isActive: boolean;
+  createdAt: Date;
+  resolvedAt?: Date;
+  deletedAt?: Date;
 }
 
 /**
@@ -26,15 +27,24 @@ export interface RestrictionSummaryAPIOutDTO extends RestrictionBaseDTO {
 export interface RestrictionDetailAPIOutDTO
   extends RestrictionSummaryAPIOutDTO {
   createdBy: string;
-  updatedBy: string;
+  resolvedBy: string;
+  deletedBy?: string;
   restrictionNote?: string;
   resolutionNote?: string;
+  deletionNote?: string;
 }
 
 /**
  * DTO to resolve restriction to a student/institution.
  */
 export interface ResolveRestrictionAPIInDTO {
+  noteDescription: string;
+}
+
+/**
+ * Delete a restriction from a student.
+ */
+export interface DeleteRestrictionAPIInDTO {
   noteDescription: string;
 }
 

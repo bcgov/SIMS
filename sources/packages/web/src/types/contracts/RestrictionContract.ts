@@ -57,4 +57,5 @@ export enum StudentRestrictionStatus {
 export enum RestrictionStatus {
   Active = "Active",
   Resolved = "Resolved",
+  Deleted = "Deleted",
 }
