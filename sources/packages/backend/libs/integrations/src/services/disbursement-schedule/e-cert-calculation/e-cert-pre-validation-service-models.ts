@@ -1,5 +1,6 @@
 import {
   ECertFailedValidation,
+  ECertFailedValidationResult,
   EligibleECertDisbursement,
 } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import { ProcessSummary } from "@sims/utilities/logger";
@@ -19,16 +20,16 @@ const ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS = [
 export class ECertPreValidatorResult {
   private readonly hasBlockingValidations: boolean;
 
-  constructor(private eCertFailedValidations: ECertFailedValidation[]) {
+  constructor(private eCertFailedValidations: ECertFailedValidationResult[]) {
     this.hasBlockingValidations = eCertFailedValidations.some((validation) =>
-      ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS.includes(validation),
+      ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS.includes(validation.resultType),
     );
   }
 
   /**
-   * List of all failed e-Cert validations.
+   * List of all failed e-Cert validation results.
    */
-  get failedValidations(): ReadonlyArray<ECertFailedValidation> {
+  get failedValidations(): ReadonlyArray<ECertFailedValidationResult> {
     return this.eCertFailedValidations;
   }
 

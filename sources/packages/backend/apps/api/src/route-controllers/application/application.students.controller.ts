@@ -162,8 +162,11 @@ export class ApplicationStudentsController extends BaseController {
         applicationId,
         true,
       );
+    const eCertFailedValidations = validationResult.failedValidations.map(
+      (failedValidation) => failedValidation.resultType,
+    );
     return {
-      eCertFailedValidations: [...validationResult.failedValidations],
+      eCertFailedValidations,
       canAcceptAssessment: validationResult.canAcceptAssessment,
     };
   }

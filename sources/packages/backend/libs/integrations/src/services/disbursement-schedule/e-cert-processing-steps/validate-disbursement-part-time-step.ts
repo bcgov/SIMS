@@ -82,9 +82,14 @@ export class ValidateDisbursementPartTimeStep
       log.info(
         `Student has an active '${RestrictionActionType.StopPartTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
       );
-      validationResults.push(
-        ECertFailedValidation.HasStopDisbursementRestriction,
-      );
+      validationResults.push({
+        resultType: ECertFailedValidation.HasStopDisbursementRestriction,
+        additionalInfo: {
+          restrictionCodes: stopPartTimeDisbursementRestrictions.map(
+            (restriction) => restriction.code,
+          ),
+        },
+      });
     }
     logActiveRestrictionsBypasses(
       eCertDisbursement.activeRestrictionBypasses,
@@ -97,7 +102,9 @@ export class ValidateDisbursementPartTimeStep
       log,
     );
     if (!validateLifetimeMaximumCSLP) {
-      validationResults.push(ECertFailedValidation.LifetimeMaximumCSLP);
+      validationResults.push({
+        resultType: ECertFailedValidation.LifetimeMaximumCSLP,
+      });
     }
     return new ECertPreValidatorResult(validationResults);
   }

@@ -2,6 +2,7 @@ import { COEStatus, DisabilityStatus } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
   ECertFailedValidation,
+  ECertFailedValidationResult,
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
 
@@ -17,29 +18,35 @@ export abstract class ValidateDisbursementBase {
   protected validate(
     eCertDisbursement: EligibleECertDisbursement,
     log: ProcessSummary,
-  ): ECertFailedValidation[] {
-    const validationResults: ECertFailedValidation[] = [];
+  ): ECertFailedValidationResult[] {
+    const validationResults: ECertFailedValidationResult[] = [];
     // COE
     if (eCertDisbursement.disbursement.coeStatus !== COEStatus.completed) {
       log.info("Waiting for confirmation of enrolment to be completed.");
-      validationResults.push(ECertFailedValidation.NonCompletedCOE);
+      validationResults.push({
+        resultType: ECertFailedValidation.NonCompletedCOE,
+      });
     }
     // SIN
     if (!eCertDisbursement.hasValidSIN) {
       log.info("Student SIN is invalid or the validation is pending.");
-      validationResults.push(ECertFailedValidation.InvalidSIN);
+      validationResults.push({ resultType: ECertFailedValidation.InvalidSIN });
     }
     // MSFAA cancelation.
     if (eCertDisbursement.disbursement.msfaaNumber?.cancelledDate) {
       log.info("Student MSFAA associated with the disbursement is cancelled.");
-      validationResults.push(ECertFailedValidation.MSFAACanceled);
+      validationResults.push({
+        resultType: ECertFailedValidation.MSFAACanceled,
+      });
     }
     // MSFAA signed.
     if (!eCertDisbursement.disbursement.msfaaNumber?.dateSigned) {
       log.info(
         "Student MSFAA associated with the disbursement is not signed or there is no MSFAA associated with the application.",
       );
-      validationResults.push(ECertFailedValidation.MSFAANotSigned);
+      validationResults.push({
+        resultType: ECertFailedValidation.MSFAANotSigned,
+      });
     }
     // Disability Status PD/PPD Verified.
     const disabilityStatusValidation = eCertDisbursement.disabilityDetails
@@ -50,9 +57,9 @@ export abstract class ValidateDisbursementBase {
       : true;
     if (!disabilityStatusValidation) {
       log.info(`Student disability Status PD/PPD is not verified.`);
-      validationResults.push(
-        ECertFailedValidation.DisabilityStatusNotConfirmed,
-      );
+      validationResults.push({
+        resultType: ECertFailedValidation.DisabilityStatusNotConfirmed,
+      });
     }
     // No estimated awards amounts to be disbursed.
     const hasEstimatedAwards =
@@ -61,7 +68,9 @@ export abstract class ValidateDisbursementBase {
       log.info(
         "Disbursement estimated awards do not contain any amount to be disbursed.",
       );
-      validationResults.push(ECertFailedValidation.NoEstimatedAwardAmounts);
+      validationResults.push({
+        resultType: ECertFailedValidation.NoEstimatedAwardAmounts,
+      });
     }
     return validationResults;
   }

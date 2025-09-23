@@ -72,9 +72,14 @@ export class ValidateDisbursementFullTimeStep
       log.info(
         `Student has an active '${RestrictionActionType.StopFullTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
       );
-      validationResults.push(
-        ECertFailedValidation.HasStopDisbursementRestriction,
-      );
+      validationResults.push({
+        resultType: ECertFailedValidation.HasStopDisbursementRestriction,
+        additionalInfo: {
+          restrictionCodes: stopFullTimeDisbursementRestrictions.map(
+            (restriction) => restriction.code,
+          ),
+        },
+      });
     }
     logActiveRestrictionsBypasses(
       eCertDisbursement.activeRestrictionBypasses,

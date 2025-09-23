@@ -287,6 +287,9 @@ export class ApplicationControllerService {
     const [scholasticStandingChange] = application.studentScholasticStandings;
     const changeRequestInProgress =
       await this.getInProgressChangeRequestDetails(application.id, options);
+    const eCertFailedValidations = eCertValidationResult.failedValidations.map(
+      (failedValidation) => failedValidation.resultType,
+    );
 
     return {
       firstDisbursement: enrolmentDetails.firstDisbursement,
@@ -298,7 +301,7 @@ export class ApplicationControllerService {
       applicationOfferingChangeRequestStatus:
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
       hasBlockFundingFeedbackError,
-      eCertFailedValidations: [...eCertValidationResult.failedValidations],
+      eCertFailedValidations,
       changeRequestInProgress,
     };
   }

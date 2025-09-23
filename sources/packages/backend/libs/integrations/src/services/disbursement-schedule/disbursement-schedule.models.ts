@@ -364,3 +364,20 @@ export enum ECertFailedValidation {
    */
   NoEstimatedAwardAmounts = "NoEstimatedAwardAmounts",
 }
+
+interface StopDisbursementRestrictionValidationResult {
+  resultType: ECertFailedValidation.HasStopDisbursementRestriction;
+  additionalInfo: { restrictionCodes: string[] };
+}
+
+interface OtherECertFailedValidationResult {
+  resultType: Exclude<
+    ECertFailedValidation,
+    ECertFailedValidation.HasStopDisbursementRestriction
+  >;
+  additionalInfo?: unknown;
+}
+
+export type ECertFailedValidationResult =
+  | StopDisbursementRestrictionValidationResult
+  | OtherECertFailedValidationResult;
