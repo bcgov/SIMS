@@ -471,7 +471,6 @@ export class ApplicationRestrictionBypassService {
     const applicationRestrictionBypasses = await bypassRepo.find({
       select: {
         id: true,
-        isActive: true,
         application: {
           id: true,
           applicationNumber: true,
@@ -487,6 +486,7 @@ export class ApplicationRestrictionBypassService {
         studentRestriction: { restriction: true },
       },
       where: {
+        isActive: true,
         studentRestriction: { id: studentRestrictionId, restriction: true },
       },
       withDeleted: true,
