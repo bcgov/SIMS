@@ -168,6 +168,10 @@ export class ApplicationStudentsController extends BaseController {
     return {
       eCertFailedValidations,
       canAcceptAssessment: validationResult.canAcceptAssessment,
+      eCertFailedValidationsInfo:
+        this.applicationControllerService.buildECertFailedValidationsInfo(
+          validationResult.failedValidations,
+        ),
     };
   }
 

@@ -20,7 +20,9 @@ const ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS = [
 export class ECertPreValidatorResult {
   private readonly hasBlockingValidations: boolean;
 
-  constructor(private eCertFailedValidations: ECertFailedValidationResult[]) {
+  constructor(
+    private readonly eCertFailedValidations: ECertFailedValidationResult[],
+  ) {
     this.hasBlockingValidations = eCertFailedValidations.some((validation) =>
       ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS.includes(validation.resultType),
     );

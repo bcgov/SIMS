@@ -136,3 +136,12 @@ export const SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES = [
   AssessmentTriggerType.ScholasticStandingChange,
   AssessmentTriggerType.RelatedApplicationChanged,
 ];
+
+/**
+ * Restriction codes that block aviation programs by the aviation credential type.
+ */
+export const AVIATION_RESTRICTION_CODES: RestrictionCode[] = [
+  RestrictionCode.AVCP,
+  RestrictionCode.AVEN,
+  RestrictionCode.AVIR,
+];

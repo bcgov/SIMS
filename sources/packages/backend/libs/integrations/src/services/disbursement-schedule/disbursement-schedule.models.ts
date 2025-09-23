@@ -367,7 +367,7 @@ export enum ECertFailedValidation {
 
 interface StopDisbursementRestrictionValidationResult {
   resultType: ECertFailedValidation.HasStopDisbursementRestriction;
-  additionalInfo: { restrictionCodes: string[] };
+  additionalInfo: { restrictionCodes: RestrictionCode[] };
 }
 
 interface OtherECertFailedValidationResult {
@@ -375,7 +375,6 @@ interface OtherECertFailedValidationResult {
     ECertFailedValidation,
     ECertFailedValidation.HasStopDisbursementRestriction
   >;
-  additionalInfo?: unknown;
 }
 
 export type ECertFailedValidationResult =

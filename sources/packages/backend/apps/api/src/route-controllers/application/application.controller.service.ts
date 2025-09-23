@@ -36,9 +36,11 @@ import {
   ChangeRequestInProgressAPIOutDTO,
   ApplicationVersionAPIOutDTO,
   ApplicationIdentifiableSupportingUserDetails,
+  ECertFailedValidationInfoAPIOutDTO,
 } from "./models/application.dto";
 import {
   allowApplicationChangeRequest,
+  AVIATION_RESTRICTION_CODES,
   credentialTypeToDisplay,
   deliveryMethod,
   getCOEDeniedReason,
@@ -73,6 +75,10 @@ import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { AssessmentSequentialProcessingService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
+import {
+  ECertFailedValidation,
+  ECertFailedValidationResult,
+} from "@sims/integrations/services";
 
 /**
  * This service controller is a provider which is created to extract the implementation of
@@ -302,6 +308,9 @@ export class ApplicationControllerService {
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
       hasBlockFundingFeedbackError,
       eCertFailedValidations,
+      eCertFailedValidationsInfo: this.buildECertFailedValidationsInfo(
+        eCertValidationResult.failedValidations,
+      ),
       changeRequestInProgress,
     };
   }
@@ -1069,5 +1078,27 @@ export class ApplicationControllerService {
       );
     }
     return formName;
+  }
+
+  /**
+   * Builds the eCert failed validations info.
+   * @param failedValidations eCert failed validations.
+   * @returns eCert failed validations information.
+   */
+  buildECertFailedValidationsInfo(
+    failedValidations: ReadonlyArray<ECertFailedValidationResult>,
+  ): ECertFailedValidationInfoAPIOutDTO | undefined {
+    if (!failedValidations.length) {
+      return undefined;
+    }
+    const isBlockedByAviationRestriction = failedValidations.some(
+      (failedValidation) =>
+        failedValidation.resultType ===
+          ECertFailedValidation.HasStopDisbursementRestriction &&
+        failedValidation.additionalInfo.restrictionCodes.some((code) =>
+          AVIATION_RESTRICTION_CODES.includes(code),
+        ),
+    );
+    return { isBlockedByAviationRestriction };
   }
 }
