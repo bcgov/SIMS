@@ -319,6 +319,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         .update(
           { id: restriction.id, deletedAt: IsNull() },
           {
+            isActive: false,
             deletionNote: note,
             deletedAt: now,
             deletedBy: auditUser,
