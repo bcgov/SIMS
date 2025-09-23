@@ -647,6 +647,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           eCertFailedValidations: [
             ECertFailedValidation.DisabilityStatusNotConfirmed,
           ],
+          eCertFailedValidationsInfo: { isBlockedByAviationRestriction: false },
         });
     },
   );
@@ -710,6 +711,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             ECertFailedValidation.MSFAACanceled,
             ECertFailedValidation.MSFAANotSigned,
           ],
+          eCertFailedValidationsInfo: { isBlockedByAviationRestriction: false },
         });
     },
   );
@@ -782,6 +784,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           eCertFailedValidations: [
             ECertFailedValidation.HasStopDisbursementRestriction,
           ],
+          eCertFailedValidationsInfo: { isBlockedByAviationRestriction: false },
         });
     },
   );
@@ -842,6 +845,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [ECertFailedValidation.InvalidSIN],
+          eCertFailedValidationsInfo: { isBlockedByAviationRestriction: false },
         });
     },
   );
@@ -910,6 +914,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [ECertFailedValidation.LifetimeMaximumCSLP],
+          eCertFailedValidationsInfo: { isBlockedByAviationRestriction: false },
         });
     },
   );
