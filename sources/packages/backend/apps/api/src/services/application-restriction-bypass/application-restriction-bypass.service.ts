@@ -4,13 +4,20 @@ import {
   Application,
   ApplicationRestrictionBypass,
   ApplicationStatus,
+  Note,
   NoteType,
   OfferingIntensity,
   RestrictionActionType,
   StudentRestriction,
   User,
 } from "@sims/sims-db";
-import { ArrayOverlap, DataSource, Repository, UpdateResult } from "typeorm";
+import {
+  ArrayOverlap,
+  DataSource,
+  EntityManager,
+  Repository,
+  UpdateResult,
+} from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
@@ -25,6 +32,7 @@ import {
   BypassRestrictionData,
 } from "../../services/";
 import { NoteSharedService } from "@sims/services";
+import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 /**
  * Service layer for application restriction bypasses.
@@ -57,6 +65,7 @@ export class ApplicationRestrictionBypassService {
         studentRestriction: {
           id: true,
           isActive: true,
+          deletedAt: true,
           restriction: {
             id: true,
             restrictionCategory: true,
@@ -72,6 +81,7 @@ export class ApplicationRestrictionBypassService {
           id: applicationId,
         },
       },
+      withDeleted: true,
       order: { createdAt: "DESC" },
     });
   }
@@ -122,6 +132,7 @@ export class ApplicationRestrictionBypassService {
       where: {
         id,
       },
+      withDeleted: true,
     });
   }
 
@@ -425,12 +436,6 @@ export class ApplicationRestrictionBypassService {
         APPLICATION_RESTRICTION_BYPASS_NOT_FOUND,
       );
     }
-    if (applicationRestrictionBypass.studentRestriction.isActive === false) {
-      throw new CustomNamedError(
-        "Cannot create a bypass when student restriction is not active.",
-        STUDENT_RESTRICTION_IS_NOT_ACTIVE,
-      );
-    }
     if (applicationRestrictionBypass.isActive !== true) {
       throw new CustomNamedError(
         "Cannot remove a bypass when application restriction bypass is not active.",
@@ -450,14 +455,74 @@ export class ApplicationRestrictionBypassService {
         .getRepository(ApplicationRestrictionBypass)
         .update(
           { id },
-          {
-            isActive: false,
-            bypassRemovedDate: new Date(),
-            bypassRemovedBy: auditUser,
-            removalNote: noteObj,
-            modifier: auditUser,
-          },
+          this.getBypassForRemovalUpdate(noteObj, new Date(), auditUser),
         );
     });
+  }
+
+  async bulkRemoveBypassRestriction(
+    studentRestrictionId: number,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const applicationRestrictionBypasses =
+      await this.applicationRestrictionBypassRepo.find({
+        select: {
+          id: true,
+          isActive: true,
+          application: {
+            id: true,
+            applicationNumber: true,
+            student: { id: true },
+          },
+          studentRestriction: {
+            id: true,
+            restriction: { id: true, restrictionCode: true },
+          },
+        },
+        relations: {
+          application: { student: true },
+          studentRestriction: { restriction: true },
+        },
+        where: {
+          studentRestriction: { id: studentRestrictionId, restriction: true },
+        },
+        withDeleted: true,
+      });
+    if (!applicationRestrictionBypasses.length) {
+      return;
+    }
+    const now = new Date();
+    const auditUser = { id: auditUserId } as User;
+    const bypassRepo = entityManager.getRepository(
+      ApplicationRestrictionBypass,
+    );
+    for (const bypass of applicationRestrictionBypasses) {
+      const removalNote = await this.noteSharedService.createStudentNote(
+        bypass.application.student.id,
+        NoteType.Application,
+        `Application ${bypass.application.applicationNumber} had the bypass for the restriction ${bypass.studentRestriction.restriction.restrictionCode} removed because the associated student restriction was deleted.`,
+        auditUserId,
+        entityManager,
+      );
+      await bypassRepo.update(
+        { id: bypass.id, isActive: true },
+        this.getBypassForRemovalUpdate(removalNote, now, auditUser),
+      );
+    }
+  }
+
+  private getBypassForRemovalUpdate(
+    removalNote: Note,
+    now: Date,
+    auditUser: User,
+  ): QueryDeepPartialEntity<ApplicationRestrictionBypass> {
+    return {
+      isActive: false,
+      bypassRemovedDate: now,
+      bypassRemovedBy: auditUser,
+      removalNote: removalNote,
+      modifier: auditUser,
+    };
   }
 }

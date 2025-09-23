@@ -5,6 +5,7 @@ import {
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
+  ApplicationRestrictionBypassService,
   StudentInformationService,
   StudentRestrictionService,
   StudentService,
@@ -29,6 +30,7 @@ import {
     StudentExternalControllerService,
     StudentRestrictionSharedService,
     StudentRestrictionService,
+    ApplicationRestrictionBypassService,
     RestrictionSharedService,
   ],
 })

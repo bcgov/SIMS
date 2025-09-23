@@ -28,6 +28,7 @@ import {
   InstitutionUserAuthService,
   UserService,
   AnnouncementService,
+  ApplicationRestrictionBypassService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -138,6 +139,7 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     CRAIncomeVerificationService,
     SupportingUserService,
     StudentRestrictionSharedService,
+    ApplicationRestrictionBypassService,
     RestrictionSharedService,
     DisbursementOverawardService,
     NoteSharedService,

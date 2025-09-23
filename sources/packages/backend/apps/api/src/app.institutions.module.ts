@@ -34,6 +34,7 @@ import {
   AnnouncementService,
   CRAIncomeVerificationService,
   SupportingUserService,
+  ApplicationRestrictionBypassService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -143,6 +144,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     SequenceControlService,
     StudentFileService,
     StudentRestrictionService,
+    ApplicationRestrictionBypassService,
     RestrictionService,
     RestrictionControllerService,
     StudentScholasticStandingsService,

@@ -13,6 +13,7 @@ import {
   BCeIDService,
   StudentRestrictionService,
 } from "../services";
+
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
 import {
@@ -38,6 +39,7 @@ import {
 } from "@sims/services";
 import { KeycloakService } from "@sims/auth/services";
 import { KeycloakConfig } from "@sims/auth/config";
+import { ApplicationRestrictionBypassService } from "../services/application-restriction-bypass/application-restriction-bypass.service";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,
@@ -62,6 +64,7 @@ const jwtModule = JwtModule.register({
     RestrictionSharedService,
     StudentRestrictionService,
     StudentRestrictionSharedService,
+    ApplicationRestrictionBypassService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

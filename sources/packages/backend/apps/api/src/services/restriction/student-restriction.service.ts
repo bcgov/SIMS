@@ -23,6 +23,7 @@ import {
   RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_PROVINCIAL,
 } from "@sims/services/constants";
+import { ApplicationRestrictionBypassService } from "../../services";
 
 /**
  * Service layer for Student Restriction.
@@ -33,6 +34,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     readonly dataSource: DataSource,
     private readonly noteSharedService: NoteSharedService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
+    private readonly applicationRestrictionBypassService: ApplicationRestrictionBypassService,
   ) {
     super(dataSource.getRepository(StudentRestriction));
   }
@@ -330,6 +332,12 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
           RESTRICTION_IS_DELETED,
         );
       }
+      // Remove active bypasses, if any.
+      await this.applicationRestrictionBypassService.bulkRemoveBypassRestriction(
+        studentRestrictionId,
+        auditUserId,
+        transactionalEntityManager,
+      );
     });
   }
 
