@@ -12,6 +12,7 @@ import {
   InstitutionService,
   BCeIDService,
   StudentRestrictionService,
+  ApplicationRestrictionBypassService,
 } from "../services";
 
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
@@ -39,7 +40,6 @@ import {
 } from "@sims/services";
 import { KeycloakService } from "@sims/auth/services";
 import { KeycloakConfig } from "@sims/auth/config";
-import { ApplicationRestrictionBypassService } from "../services/application-restriction-bypass/application-restriction-bypass.service";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,

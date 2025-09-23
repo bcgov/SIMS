@@ -4,7 +4,6 @@ import {
   Application,
   ApplicationRestrictionBypass,
   ApplicationStatus,
-  Note,
   NoteType,
   OfferingIntensity,
   RestrictionActionType,
@@ -32,7 +31,6 @@ import {
   BypassRestrictionData,
 } from "../../services/";
 import { NoteSharedService } from "@sims/services";
-import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 
 /**
  * Service layer for application restriction bypasses.
@@ -442,87 +440,120 @@ export class ApplicationRestrictionBypassService {
         APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
       );
     }
-    const auditUser = { id: auditUserId } as User;
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      const noteObj = await this.noteSharedService.createStudentNote(
-        applicationRestrictionBypass.application.student.id,
-        NoteType.Application,
+      return this.updateBypassToRemoved(
+        id,
         removalNote,
+        applicationRestrictionBypass.application.student.id,
         auditUserId,
         transactionalEntityManager,
       );
-      return transactionalEntityManager
-        .getRepository(ApplicationRestrictionBypass)
-        .update(
-          { id },
-          this.getBypassForRemovalUpdate(noteObj, new Date(), auditUser),
-        );
     });
   }
 
+  /**
+   * Finds and removes all active bypasses for a given student restriction id.
+   * @param studentRestrictionId id of the student restriction that was deleted.
+   * @param auditUserId id of the user performing the action.
+   * @param reason reason for the removal of the bypasses to be appended to the note.
+   * @param entityManager entity manager to be used in the transaction.
+   */
   async bulkRemoveBypassRestriction(
     studentRestrictionId: number,
     auditUserId: number,
+    reason: string,
     entityManager: EntityManager,
   ): Promise<void> {
-    const applicationRestrictionBypasses =
-      await this.applicationRestrictionBypassRepo.find({
-        select: {
+    const bypassRepo = entityManager.getRepository(
+      ApplicationRestrictionBypass,
+    );
+    const applicationRestrictionBypasses = await bypassRepo.find({
+      select: {
+        id: true,
+        isActive: true,
+        application: {
           id: true,
-          isActive: true,
-          application: {
-            id: true,
-            applicationNumber: true,
-            student: { id: true },
-          },
-          studentRestriction: {
-            id: true,
-            restriction: { id: true, restrictionCode: true },
-          },
+          applicationNumber: true,
+          student: { id: true },
         },
-        relations: {
-          application: { student: true },
-          studentRestriction: { restriction: true },
+        studentRestriction: {
+          id: true,
+          restriction: { id: true, restrictionCode: true },
         },
-        where: {
-          studentRestriction: { id: studentRestrictionId, restriction: true },
-        },
-        withDeleted: true,
-      });
+      },
+      relations: {
+        application: { student: true },
+        studentRestriction: { restriction: true },
+      },
+      where: {
+        studentRestriction: { id: studentRestrictionId, restriction: true },
+      },
+      withDeleted: true,
+    });
     if (!applicationRestrictionBypasses.length) {
       return;
     }
+    // Execute all updates in parallel to optimize performance.
+    // Just one to few records are expected to be bypassed at a time for a given student restriction,
+    // hence there is no need to limit the concurrency.
+    const updatedBypassesPromises = applicationRestrictionBypasses.map(
+      async (bypass) => {
+        const note = `Application ${bypass.application.applicationNumber} had the bypass for the restriction ${bypass.studentRestriction.restriction.restrictionCode} removed. Reason: ${reason}.`;
+        return this.updateBypassToRemoved(
+          bypass.id,
+          note,
+          bypass.application.student.id,
+          auditUserId,
+          entityManager,
+        );
+      },
+    );
+    await Promise.all(updatedBypassesPromises);
+  }
+
+  /**
+   * Make the necessary changes to the bypass to mark it as removed.
+   * @param bypassId id of the bypass to be removed.
+   * @param note removal note.
+   * @param studentId id of the student to whom the note will be associated.
+   * @param auditUserId id of the user performing the action.
+   * @param entityManager entity manager to be used in the transaction.
+   */
+  private async updateBypassToRemoved(
+    bypassId: number,
+    note: string,
+    studentId: number,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<UpdateResult> {
     const now = new Date();
     const auditUser = { id: auditUserId } as User;
     const bypassRepo = entityManager.getRepository(
       ApplicationRestrictionBypass,
     );
-    for (const bypass of applicationRestrictionBypasses) {
-      const removalNote = await this.noteSharedService.createStudentNote(
-        bypass.application.student.id,
-        NoteType.Application,
-        `Application ${bypass.application.applicationNumber} had the bypass for the restriction ${bypass.studentRestriction.restriction.restrictionCode} removed because the associated student restriction was deleted.`,
-        auditUserId,
-        entityManager,
-      );
-      await bypassRepo.update(
-        { id: bypass.id, isActive: true },
-        this.getBypassForRemovalUpdate(removalNote, now, auditUser),
+    const removalNote = await this.noteSharedService.createStudentNote(
+      studentId,
+      NoteType.Application,
+      note,
+      auditUserId,
+      entityManager,
+    );
+    const updateResult = await bypassRepo.update(
+      { id: bypassId, isActive: true },
+      {
+        isActive: false,
+        bypassRemovedDate: now,
+        bypassRemovedBy: auditUser,
+        removalNote: removalNote,
+        modifier: auditUser,
+      },
+    );
+    if (!updateResult.affected) {
+      throw new CustomNamedError(
+        "Failed to remove the application restriction bypass, it may have been already removed.",
+        APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
       );
     }
-  }
-
-  private getBypassForRemovalUpdate(
-    removalNote: Note,
-    now: Date,
-    auditUser: User,
-  ): QueryDeepPartialEntity<ApplicationRestrictionBypass> {
-    return {
-      isActive: false,
-      bypassRemovedDate: now,
-      bypassRemovedBy: auditUser,
-      removalNote: removalNote,
-      modifier: auditUser,
-    };
+    return updateResult;
   }
 }

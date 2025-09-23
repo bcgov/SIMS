@@ -337,6 +337,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       await this.applicationRestrictionBypassService.bulkRemoveBypassRestriction(
         studentRestrictionId,
         auditUserId,
+        "Associated student restriction deleted",
         transactionalEntityManager,
       );
     });
