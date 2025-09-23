@@ -21,13 +21,13 @@ import { isRestrictionActionEffective } from "./e-cert-steps-restriction-utils";
  * @param actionType action type.
  * @returns the first restriction of the requested action type.
  */
-export function getRestrictionByActionType(
+export function getRestrictionsByActionType(
   eCertDisbursement: EligibleECertDisbursement,
   actionType: RestrictionActionType,
-): StudentActiveRestriction {
+): StudentActiveRestriction[] {
   return eCertDisbursement
     .getEffectiveRestrictions()
-    .find(
+    .filter(
       (restriction) =>
         restriction.actions.includes(actionType) &&
         isRestrictionActionEffective(
@@ -91,9 +91,12 @@ export function shouldStopBCFunding(
     eCertDisbursement.offering.offeringIntensity === OfferingIntensity.fullTime
       ? RestrictionActionType.StopFullTimeBCFunding
       : RestrictionActionType.StopPartTimeBCFunding;
-  const stopFunding = getRestrictionByActionType(
+  const [stopBCFundingRestriction] = getRestrictionsByActionType(
     eCertDisbursement,
     restrictionType,
   );
-  return stopFunding && BC_FUNDING_TYPES.includes(disbursementValue.valueType);
+  return (
+    stopBCFundingRestriction &&
+    BC_FUNDING_TYPES.includes(disbursementValue.valueType)
+  );
 }

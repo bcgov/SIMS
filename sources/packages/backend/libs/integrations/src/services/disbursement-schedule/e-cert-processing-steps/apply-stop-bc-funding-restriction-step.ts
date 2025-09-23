@@ -10,7 +10,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 import {
   shouldStopBCFunding,
-  getRestrictionByActionType,
+  getRestrictionsByActionType,
 } from "./e-cert-steps-utils";
 
 /**
@@ -42,7 +42,7 @@ export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
     log.info(`Checking '${restrictionType}' restriction.`);
 
     // Get the appropriate restriction based on offering intensity
-    const restriction = getRestrictionByActionType(
+    const [restriction] = getRestrictionsByActionType(
       eCertDisbursement,
       restrictionType,
     );

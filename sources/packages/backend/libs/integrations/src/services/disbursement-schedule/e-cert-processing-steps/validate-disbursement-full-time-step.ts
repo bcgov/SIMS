@@ -8,7 +8,7 @@ import {
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
 import {
-  getRestrictionByActionType,
+  getRestrictionsByActionType,
   logActiveRestrictionsBypasses,
 } from "./e-cert-steps-utils";
 import {
@@ -64,11 +64,11 @@ export class ValidateDisbursementFullTimeStep
     log.info("Executing full-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
     // Validate stop full-time disbursement restrictions.
-    const stopFullTimeDisbursement = getRestrictionByActionType(
+    const stopFullTimeDisbursementRestrictions = getRestrictionsByActionType(
       eCertDisbursement,
       RestrictionActionType.StopFullTimeDisbursement,
     );
-    if (stopFullTimeDisbursement) {
+    if (stopFullTimeDisbursementRestrictions.length) {
       log.info(
         `Student has an active '${RestrictionActionType.StopFullTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
       );
