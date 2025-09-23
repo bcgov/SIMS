@@ -453,7 +453,8 @@ export class ApplicationRestrictionBypassService {
 
   /**
    * Finds and removes all active bypasses for a given student restriction id.
-   * @param studentRestrictionId id of the student restriction that was deleted.
+   * @param studentRestrictionId id of the student restriction that cause the
+   * bypass to be removed.
    * @param auditUserId id of the user performing the action.
    * @param reason reason for the removal of the bypasses to be appended to the note.
    * @param entityManager entity manager to be used in the transaction.
