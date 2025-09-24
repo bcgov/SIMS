@@ -1,7 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
-import { ArrayContains, DataSource, Repository } from "typeorm";
+import { ArrayContains, DataSource, IsNull, Repository } from "typeorm";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -756,10 +756,12 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         application.currentAssessment.disbursementSchedules;
 
       const restriction = await db.restriction.findOne({
+        select: { id: true },
         where: {
           actionType: ArrayContains([
             RestrictionActionType.StopPartTimeDisbursement,
           ]),
+          actionEffectiveConditions: IsNull(),
         },
       });
       await saveFakeStudentRestriction(db.dataSource, {
@@ -797,7 +799,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
   );
 
   it(
-    "Should get application details with ecert failed validation results having stop disbursement restriction and indicating effective aviation restriction" +
+    "Should get application details with e-cert failed validation results having stop disbursement restriction and indicating effective aviation restriction" +
       " in the validations info when the application is for aviation credential type 'commercialPilotTraining'" +
       ` and the student has active restriction ${RestrictionCode.AVCP}.`,
     async () => {
@@ -877,7 +879,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
   );
 
   it(
-    "Should get application details with no ecert failed validation results" +
+    "Should get application details with no e-cert failed validation results" +
       " when the application is for aviation credential type 'commercialPilotTraining'" +
       ` but the student has active restriction for different credential type ${RestrictionCode.AVIR}.`,
     async () => {
