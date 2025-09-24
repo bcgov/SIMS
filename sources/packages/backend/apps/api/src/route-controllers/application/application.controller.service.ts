@@ -1091,7 +1091,7 @@ export class ApplicationControllerService {
     if (!failedValidations.length) {
       return undefined;
     }
-    const isBlockedByAviationRestriction = failedValidations.some(
+    const hasEffectiveAviationRestriction = failedValidations.some(
       (failedValidation) =>
         failedValidation.resultType ===
           ECertFailedValidation.HasStopDisbursementRestriction &&
@@ -1099,6 +1099,6 @@ export class ApplicationControllerService {
           AVIATION_RESTRICTION_CODES.includes(code),
         ),
     );
-    return { isBlockedByAviationRestriction };
+    return { hasEffectiveAviationRestriction };
   }
 }

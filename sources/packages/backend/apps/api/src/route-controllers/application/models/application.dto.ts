@@ -247,7 +247,7 @@ export class EnrolmentApplicationDetailsAPIOutDTO {
 }
 
 export class ECertFailedValidationInfoAPIOutDTO {
-  isBlockedByAviationRestriction: boolean;
+  hasEffectiveAviationRestriction: boolean;
 }
 
 export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {

@@ -129,7 +129,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             ECertFailedValidation.DisabilityStatusNotConfirmed,
           ],
           canAcceptAssessment: false,
-          eCertFailedValidationsInfo: { isBlockedByAviationRestriction: false },
+          eCertFailedValidationsInfo: {
+            hasEffectiveAviationRestriction: false,
+          },
         });
     },
   );
@@ -185,7 +187,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             ECertFailedValidation.MSFAANotSigned,
           ],
           canAcceptAssessment: false,
-          eCertFailedValidationsInfo: { isBlockedByAviationRestriction: false },
+          eCertFailedValidationsInfo: {
+            hasEffectiveAviationRestriction: false,
+          },
         });
     },
   );
@@ -250,7 +254,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             ECertFailedValidation.HasStopDisbursementRestriction,
           ],
           canAcceptAssessment: false,
-          eCertFailedValidationsInfo: { isBlockedByAviationRestriction: false },
+          eCertFailedValidationsInfo: {
+            hasEffectiveAviationRestriction: false,
+          },
         });
     },
   );
@@ -298,7 +304,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       .expect({
         eCertFailedValidations: [ECertFailedValidation.NoEstimatedAwardAmounts],
         canAcceptAssessment: false,
-        eCertFailedValidationsInfo: { isBlockedByAviationRestriction: false },
+        eCertFailedValidationsInfo: { hasEffectiveAviationRestriction: false },
       });
   });
 
@@ -365,7 +371,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             ECertFailedValidation.NoEstimatedAwardAmounts,
           ],
           canAcceptAssessment: false,
-          eCertFailedValidationsInfo: { isBlockedByAviationRestriction: false },
+          eCertFailedValidationsInfo: {
+            hasEffectiveAviationRestriction: false,
+          },
         });
     },
   );
