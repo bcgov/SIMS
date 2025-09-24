@@ -542,6 +542,7 @@ export class ApplicationRestrictionBypassService {
         bypassRemovedBy: auditUser,
         removalNote: removalNote,
         modifier: auditUser,
+        updatedAt: now,
       },
     );
     if (!updateResult.affected) {
