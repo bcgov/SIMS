@@ -230,7 +230,9 @@ export class RestrictionAESTController extends BaseController {
     description: "Provincial restriction not found.",
   })
   @ApiUnprocessableEntityResponse({
-    description: "Provincial restriction is already set as deleted.",
+    description:
+      "Provincial restriction is already set as deleted or " +
+      "failed to delete the restriction: an unexpected associated application restriction bypass was already removed.",
   })
   @Patch("student/:studentId/student-restriction/:studentRestrictionId/delete")
   async deleteStudentProvincialRestriction(

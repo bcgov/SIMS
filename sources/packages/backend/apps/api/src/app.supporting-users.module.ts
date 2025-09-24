@@ -16,6 +16,7 @@ import {
   InstitutionService,
   BCeIDService,
   InstitutionUserAuthService,
+  ApplicationRestrictionBypassService,
 } from "./services";
 import {
   DisbursementOverawardService,
@@ -51,6 +52,7 @@ import { AuthModule } from "./auth/auth.module";
     StudentFileService,
     RestrictionService,
     StudentRestrictionService,
+    ApplicationRestrictionBypassService,
     EducationProgramOfferingService,
     EducationProgramService,
     StudentService,

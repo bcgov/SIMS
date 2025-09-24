@@ -12,7 +12,9 @@ import {
   InstitutionService,
   BCeIDService,
   StudentRestrictionService,
+  ApplicationRestrictionBypassService,
 } from "../services";
+
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
 import {
@@ -62,6 +64,7 @@ const jwtModule = JwtModule.register({
     RestrictionSharedService,
     StudentRestrictionService,
     StudentRestrictionSharedService,
+    ApplicationRestrictionBypassService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

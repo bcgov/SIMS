@@ -9,6 +9,7 @@ export interface ApplicationRestrictionBypassSummary {
   restrictionCode: string;
   restrictionCategory: boolean;
   isRestrictionActive: boolean;
+  restrictionDeletedAt?: Date;
   isBypassActive: boolean;
 }
 

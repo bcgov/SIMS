@@ -18,11 +18,16 @@ import {
   RestrictionCode,
   StudentRestrictionSharedService,
 } from "@sims/services";
-import { RESTRICTION_NOT_FOUND, RESTRICTION_IS_DELETED } from "../../constants";
+import {
+  RESTRICTION_NOT_FOUND,
+  RESTRICTION_IS_DELETED,
+  APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
+} from "../../constants";
 import {
   RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_PROVINCIAL,
 } from "@sims/services/constants";
+import { ApplicationRestrictionBypassService } from "../../services";
 
 /**
  * Service layer for Student Restriction.
@@ -33,6 +38,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     readonly dataSource: DataSource,
     private readonly noteSharedService: NoteSharedService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
+    private readonly applicationRestrictionBypassService: ApplicationRestrictionBypassService,
   ) {
     super(dataSource.getRepository(StudentRestriction));
   }
@@ -317,6 +323,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         .update(
           { id: restriction.id, deletedAt: IsNull() },
           {
+            isActive: false,
             deletionNote: note,
             deletedAt: now,
             deletedBy: auditUser,
@@ -329,6 +336,27 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
           "Provincial restriction is already set as deleted.",
           RESTRICTION_IS_DELETED,
         );
+      }
+      // Remove active bypasses, if any.
+      try {
+        await this.applicationRestrictionBypassService.bulkRemoveBypassRestriction(
+          studentRestrictionId,
+          auditUserId,
+          "associated student restriction deleted",
+          transactionalEntityManager,
+        );
+      } catch (error: unknown) {
+        if (
+          error instanceof CustomNamedError &&
+          error.name === APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE
+        ) {
+          // Rethrow with a different message to be more specific on the context.
+          throw new CustomNamedError(
+            "Failed to delete the restriction: an unexpected associated application restriction bypass was already removed.",
+            APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
+          );
+        }
+        throw error;
       }
     });
   }

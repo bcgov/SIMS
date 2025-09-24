@@ -36,7 +36,10 @@
             {{ item.restrictionCode }}
           </template>
           <template #[`item.restrictionStatus`]="{ item }">
-            <status-chip-restriction :is-active="item.isRestrictionActive" />
+            <status-chip-restriction
+              :is-active="item.isRestrictionActive"
+              :deleted-at="item.restrictionDeletedAt"
+            />
           </template>
           <template #[`item.bypassStatus`]="{ item }">
             <status-chip-bypass :is-bypass-active="item.isBypassActive" />

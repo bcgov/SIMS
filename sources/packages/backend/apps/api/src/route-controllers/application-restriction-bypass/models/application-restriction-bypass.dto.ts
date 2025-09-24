@@ -12,6 +12,7 @@ export class ApplicationRestrictionBypassSummary {
   restrictionCategory: string;
   restrictionCode: string;
   isRestrictionActive: boolean;
+  restrictionDeletedAt?: Date;
   isBypassActive: boolean;
 }
 

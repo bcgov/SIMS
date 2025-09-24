@@ -47,10 +47,8 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toEqual({
-          bypasses: [],
-        });
+      .expect({
+        bypasses: [],
       });
   });
 
@@ -79,21 +77,68 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toEqual({
-          bypasses: [
-            {
-              id: restrictionBypass.id,
-              restrictionCategory:
-                restrictionBypass.studentRestriction.restriction
-                  .restrictionCategory,
-              restrictionCode: RestrictionCode.PTSSR,
-              isRestrictionActive:
-                restrictionBypass.studentRestriction.isActive,
-              isBypassActive: restrictionBypass.isActive,
-            },
-          ],
-        });
+      .expect({
+        bypasses: [
+          {
+            id: restrictionBypass.id,
+            restrictionCategory:
+              restrictionBypass.studentRestriction.restriction
+                .restrictionCategory,
+            restrictionCode: RestrictionCode.PTSSR,
+            restrictionDeletedAt: null,
+            isRestrictionActive: restrictionBypass.studentRestriction.isActive,
+            isBypassActive: restrictionBypass.isActive,
+          },
+        ],
+      });
+  });
+
+  it("Should get application restriction bypasses associated with deleted restrictions when there is a restriction bypass associated with a deleted restriction.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      offeringIntensity: OfferingIntensity.partTime,
+    });
+    const restrictionBypass = await saveFakeApplicationRestrictionBypass(
+      db,
+      {
+        application,
+        bypassCreatedBy: sharedMinistryUser,
+        creator: sharedMinistryUser,
+      },
+      {
+        restrictionActionType: RestrictionActionType.StopPartTimeDisbursement,
+        restrictionCode: RestrictionCode.PTSSR,
+      },
+    );
+    // Soft delete the restriction associated with the student restriction.
+    const deletionDate = new Date();
+    await db.studentRestriction.update(
+      restrictionBypass.studentRestriction.id,
+      {
+        deletedAt: deletionDate,
+      },
+    );
+    const endpoint = `/aest/application-restriction-bypass/application/${application.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        bypasses: [
+          {
+            id: restrictionBypass.id,
+            restrictionCategory:
+              restrictionBypass.studentRestriction.restriction
+                .restrictionCategory,
+            restrictionCode: RestrictionCode.PTSSR,
+            restrictionDeletedAt: deletionDate.toISOString(),
+            isRestrictionActive: restrictionBypass.studentRestriction.isActive,
+            isBypassActive: restrictionBypass.isActive,
+          },
+        ],
       });
   });
 
