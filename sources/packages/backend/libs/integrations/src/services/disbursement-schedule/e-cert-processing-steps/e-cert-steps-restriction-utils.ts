@@ -1,4 +1,4 @@
-import { EligibleECertDisbursement } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
+import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 import {
   ActionEffectiveCondition,
   ActionEffectiveConditionNames,
