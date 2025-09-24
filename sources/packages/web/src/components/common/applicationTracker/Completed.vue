@@ -65,7 +65,7 @@
     icon="fa:fas fa-exclamation-triangle"
     icon-color="warning"
     background-color="warning-bg"
-    v-if="!!ecertFailedValidationDetails?.failedValidations?.length"
+    v-if="!!ecertFailedValidationDetails.failedValidations.length"
     ><template #content
       ><ul>
         <!-- Additional information provided when student has already been funded for same type of aviation credential. -->
@@ -75,8 +75,10 @@
               ?.hasEffectiveAviationRestriction
           "
         >
-          You have already been funded for this type of aviation credential and
-          are not eligible for additional funding.
+          You have already received funding for this aviation credential. Please
+          ensure you have applied to the correct offering and contact a
+          Financial Aid Officer at your institution if you need assistance. If
+          you believe this is in error, please contact StudentAid BC.
         </li>
         <li
           v-for="ecertFailedValidationDetail in ecertFailedValidationDetails.failedValidations"
@@ -281,9 +283,9 @@ export default defineComponent({
     const router = useRouter();
     const assessmentDetails = ref({} as CompletedApplicationDetailsAPIOutDTO);
     const multipleCOEDenialReason = ref<string>();
-    const ecertFailedValidationDetails = ref<EcertFailedValidationDetails>(
-      {} as EcertFailedValidationDetails,
-    );
+    const ecertFailedValidationDetails = ref<EcertFailedValidationDetails>({
+      failedValidations: [],
+    } as EcertFailedValidationDetails);
 
     const loadCompletedApplicationDetails = async () => {
       assessmentDetails.value =
@@ -305,6 +307,8 @@ export default defineComponent({
         )
           ecertFailedValidationDetails.value.failedValidations.push(detail);
       });
+      ecertFailedValidationDetails.value.eCertFailedValidationsInfo =
+        assessmentDetails.value.eCertFailedValidationsInfo;
     };
 
     onMounted(loadCompletedApplicationDetails);
