@@ -36,7 +36,7 @@ import {
   ChangeRequestInProgressAPIOutDTO,
   ApplicationVersionAPIOutDTO,
   ApplicationIdentifiableSupportingUserDetails,
-  ECertFailedValidationInfoAPIOutDTO,
+  ECertFailedValidationsInfoAPIOutDTO,
 } from "./models/application.dto";
 import {
   allowApplicationChangeRequest,
@@ -1087,7 +1087,7 @@ export class ApplicationControllerService {
    */
   buildECertFailedValidationsInfo(
     failedValidations: ReadonlyArray<ECertFailedValidationResult>,
-  ): ECertFailedValidationInfoAPIOutDTO | undefined {
+  ): ECertFailedValidationsInfoAPIOutDTO | undefined {
     if (!failedValidations.length) {
       return undefined;
     }

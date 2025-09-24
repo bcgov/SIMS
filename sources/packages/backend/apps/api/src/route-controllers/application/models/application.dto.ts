@@ -246,7 +246,7 @@ export class EnrolmentApplicationDetailsAPIOutDTO {
   assessmentTriggerType?: AssessmentTriggerType;
 }
 
-export class ECertFailedValidationInfoAPIOutDTO {
+export class ECertFailedValidationsInfoAPIOutDTO {
   hasEffectiveAviationRestriction: boolean;
 }
 
@@ -258,7 +258,7 @@ export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDe
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
   eCertFailedValidations: ECertFailedValidation[];
-  eCertFailedValidationsInfo?: ECertFailedValidationInfoAPIOutDTO;
+  eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
   changeRequestInProgress?: ChangeRequestInProgressAPIOutDTO;
 }
 
@@ -281,7 +281,7 @@ export class ApplicationAssessmentStatusDetailsAPIOutDTO {
 export class ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
-  eCertFailedValidationsInfo?: ECertFailedValidationInfoAPIOutDTO;
+  eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
 }
 
 export class ApplicationSupportingUsersAPIOutDTO {

@@ -65,11 +65,21 @@
     icon="fa:fas fa-exclamation-triangle"
     icon-color="warning"
     background-color="warning-bg"
-    v-if="!!ecertFailedValidationDetails.length"
+    v-if="!!ecertFailedValidationDetails?.failedValidations?.length"
     ><template #content
       ><ul>
+        <!-- Additional information provided when student has already been funded for same type of aviation credential. -->
         <li
-          v-for="ecertFailedValidationDetail in ecertFailedValidationDetails"
+          v-if="
+            ecertFailedValidationDetails.eCertFailedValidationsInfo
+              ?.hasEffectiveAviationRestriction
+          "
+        >
+          You have already been funded for this type of aviation credential and
+          are not eligible for additional funding.
+        </li>
+        <li
+          v-for="ecertFailedValidationDetail in ecertFailedValidationDetails.failedValidations"
           :key="ecertFailedValidationDetail.failedType"
         >
           <span
@@ -244,8 +254,8 @@ import ApplicationInProgressChangeRequest from "@/components/common/applicationT
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import {
-  EcertFailedValidationDetail,
   ECERT_FAILED_MESSAGES,
+  EcertFailedValidationDetails,
 } from "@/constants";
 
 export default defineComponent({
@@ -271,7 +281,9 @@ export default defineComponent({
     const router = useRouter();
     const assessmentDetails = ref({} as CompletedApplicationDetailsAPIOutDTO);
     const multipleCOEDenialReason = ref<string>();
-    const ecertFailedValidationDetails = ref<EcertFailedValidationDetail[]>([]);
+    const ecertFailedValidationDetails = ref<EcertFailedValidationDetails>(
+      {} as EcertFailedValidationDetails,
+    );
 
     const loadCompletedApplicationDetails = async () => {
       assessmentDetails.value =
@@ -291,7 +303,7 @@ export default defineComponent({
             detail.failedType,
           )
         )
-          ecertFailedValidationDetails.value.push(detail);
+          ecertFailedValidationDetails.value.failedValidations.push(detail);
       });
     };
 
