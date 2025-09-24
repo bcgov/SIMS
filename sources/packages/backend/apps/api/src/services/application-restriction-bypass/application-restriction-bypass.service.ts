@@ -411,17 +411,12 @@ export class ApplicationRestrictionBypassService {
         select: {
           id: true,
           isActive: true,
-          studentRestriction: {
-            isActive: true,
-          },
           application: {
             id: true,
-            applicationStatus: true,
             student: { id: true },
           },
         },
         relations: {
-          studentRestriction: true,
           application: { student: true },
         },
         where: {
