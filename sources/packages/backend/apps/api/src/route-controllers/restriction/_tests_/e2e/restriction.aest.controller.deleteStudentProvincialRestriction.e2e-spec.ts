@@ -268,7 +268,7 @@ describe("RestrictionAESTController(e2e)-deleteStudentProvincialRestriction.", (
       });
   });
 
-  it("Should throw a BadRequestEntityException when an invalid payload is received.", async () => {
+  it("Should throw a BadRequestException when an invalid payload is received.", async () => {
     // Arrange
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/restriction/student/999999/student-restriction/999999/delete`;
