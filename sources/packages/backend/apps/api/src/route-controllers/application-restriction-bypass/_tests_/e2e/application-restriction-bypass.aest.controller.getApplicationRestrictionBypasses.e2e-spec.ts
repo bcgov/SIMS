@@ -47,10 +47,8 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toEqual({
-          bypasses: [],
-        });
+      .expect({
+        bypasses: [],
       });
   });
 
@@ -79,22 +77,19 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toEqual({
-          bypasses: [
-            {
-              id: restrictionBypass.id,
-              restrictionCategory:
-                restrictionBypass.studentRestriction.restriction
-                  .restrictionCategory,
-              restrictionCode: RestrictionCode.PTSSR,
-              restrictionDeletedAt: null,
-              isRestrictionActive:
-                restrictionBypass.studentRestriction.isActive,
-              isBypassActive: restrictionBypass.isActive,
-            },
-          ],
-        });
+      .expect({
+        bypasses: [
+          {
+            id: restrictionBypass.id,
+            restrictionCategory:
+              restrictionBypass.studentRestriction.restriction
+                .restrictionCategory,
+            restrictionCode: RestrictionCode.PTSSR,
+            restrictionDeletedAt: null,
+            isRestrictionActive: restrictionBypass.studentRestriction.isActive,
+            isBypassActive: restrictionBypass.isActive,
+          },
+        ],
       });
   });
 
@@ -131,22 +126,19 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toEqual({
-          bypasses: [
-            {
-              id: restrictionBypass.id,
-              restrictionCategory:
-                restrictionBypass.studentRestriction.restriction
-                  .restrictionCategory,
-              restrictionCode: RestrictionCode.PTSSR,
-              restrictionDeletedAt: deletionDate.toISOString(),
-              isRestrictionActive:
-                restrictionBypass.studentRestriction.isActive,
-              isBypassActive: restrictionBypass.isActive,
-            },
-          ],
-        });
+      .expect({
+        bypasses: [
+          {
+            id: restrictionBypass.id,
+            restrictionCategory:
+              restrictionBypass.studentRestriction.restriction
+                .restrictionCategory,
+            restrictionCode: RestrictionCode.PTSSR,
+            restrictionDeletedAt: deletionDate.toISOString(),
+            isRestrictionActive: restrictionBypass.studentRestriction.isActive,
+            isBypassActive: restrictionBypass.isActive,
+          },
+        ],
       });
   });
 
