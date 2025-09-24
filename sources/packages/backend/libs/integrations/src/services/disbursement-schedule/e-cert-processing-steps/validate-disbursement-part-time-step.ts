@@ -8,7 +8,7 @@ import {
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
 import {
-  getRestrictionByActionType,
+  getRestrictionsByActionType,
   logActiveRestrictionsBypasses,
 } from "./e-cert-steps-utils";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
@@ -74,17 +74,22 @@ export class ValidateDisbursementPartTimeStep
     log.info("Executing part-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
     // Validate stop part-time disbursement restrictions.
-    const stopPartTimeDisbursement = getRestrictionByActionType(
+    const stopPartTimeDisbursementRestrictions = getRestrictionsByActionType(
       eCertDisbursement,
       RestrictionActionType.StopPartTimeDisbursement,
     );
-    if (stopPartTimeDisbursement) {
+    if (stopPartTimeDisbursementRestrictions.length) {
       log.info(
         `Student has an active '${RestrictionActionType.StopPartTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
       );
-      validationResults.push(
-        ECertFailedValidation.HasStopDisbursementRestriction,
-      );
+      validationResults.push({
+        resultType: ECertFailedValidation.HasStopDisbursementRestriction,
+        additionalInfo: {
+          restrictionCodes: stopPartTimeDisbursementRestrictions.map(
+            (restriction) => restriction.code,
+          ),
+        },
+      });
     }
     logActiveRestrictionsBypasses(
       eCertDisbursement.activeRestrictionBypasses,
@@ -97,7 +102,9 @@ export class ValidateDisbursementPartTimeStep
       log,
     );
     if (!validateLifetimeMaximumCSLP) {
-      validationResults.push(ECertFailedValidation.LifetimeMaximumCSLP);
+      validationResults.push({
+        resultType: ECertFailedValidation.LifetimeMaximumCSLP,
+      });
     }
     return new ECertPreValidatorResult(validationResults);
   }

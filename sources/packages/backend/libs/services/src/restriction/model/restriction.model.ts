@@ -69,4 +69,8 @@ export enum RestrictionCode {
    * for the credential endorsements again in the future.
    */
   AVEN = "AVEN",
+  /**
+   * Legacy aviation restriction added from SFAS.
+   */
+  SFAS_AV = "SFAS_AV",
 }

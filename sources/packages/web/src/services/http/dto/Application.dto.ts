@@ -191,6 +191,10 @@ export interface EnrolmentApplicationDetailsAPIOutDTO {
   assessmentTriggerType: AssessmentTriggerType;
 }
 
+export interface ECertFailedValidationsInfoAPIOutDTO {
+  hasEffectiveAviationRestriction: boolean;
+}
+
 export interface CompletedApplicationDetailsAPIOutDTO
   extends EnrolmentApplicationDetailsAPIOutDTO {
   assessmentTriggerType: AssessmentTriggerType;
@@ -202,6 +206,7 @@ export interface CompletedApplicationDetailsAPIOutDTO
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
   eCertFailedValidations: ECertFailedValidation[];
+  eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
   changeRequestInProgress?: ChangeRequestInProgressAPIOutDTO;
 }
 
@@ -232,6 +237,7 @@ export interface ApplicationAssessmentStatusDetailsAPIOutDTO {
 export interface ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
+  eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
 }
 
 export interface ApplicationSupportingUsersAPIOutDTO {

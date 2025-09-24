@@ -465,6 +465,72 @@
           "collapsed": true
         },
         {
+          "title": "Code AVCP - Aviation Commercial Pilot Program funded",
+          "customClass": "collapsible",
+          "collapsible": true,
+          "key": "codeAVCPTitle",
+          "type": "panel",
+          "label": "Panel",
+          "collapsed": true,
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "html": "<p>Your application for assistance through StudentAid BC has been denied. You have been issued your maximum entitlement to funding through StudentAid BC for an aviation credential. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 1-778-309-4621 (outside North America).</p>",
+              "label": "Content",
+              "refreshOnChange": false,
+              "key": "contentAVCP",
+              "type": "content",
+              "input": false,
+              "tableView": false
+            }
+          ]
+        },
+        {
+          "title": "Code AVIR - Aviation Instructor's Rating funded",
+          "customClass": "collapsible",
+          "collapsible": true,
+          "key": "codeAVIRTitle",
+          "type": "panel",
+          "label": "Panel",
+          "collapsed": true,
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "html": "<p>Your application for assistance through StudentAid BC has been denied. You have been issued your maximum entitlement to funding through StudentAid BC for an aviation credential. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 1-778-309-4621 (outside North America).</p>",
+              "label": "Content",
+              "refreshOnChange": false,
+              "key": "contentAVIR",
+              "type": "content",
+              "input": false,
+              "tableView": false
+            }
+          ]
+        },
+        {
+          "title": "Code AVEN - Aviation Endorsements funded",
+          "customClass": "collapsible",
+          "collapsible": true,
+          "key": "codeAVENTitle",
+          "type": "panel",
+          "label": "Panel",
+          "collapsed": true,
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "html": "<p>Your application for assistance through StudentAid BC has been denied. You have been issued your maximum entitlement to funding through StudentAid BC for an aviation credential. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 1-778-309-4621 (outside North America).</p>",
+              "label": "Content",
+              "refreshOnChange": false,
+              "key": "contentAVEN",
+              "type": "content",
+              "input": false,
+              "tableView": false
+            }
+          ]
+        },
+        {
           "label": "HTML",
           "tag": "h3",
           "className": "category-header-medium primary-color mt-5",

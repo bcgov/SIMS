@@ -65,11 +65,23 @@
     icon="fa:fas fa-exclamation-triangle"
     icon-color="warning"
     background-color="warning-bg"
-    v-if="!!ecertFailedValidationDetails.length"
+    v-if="!!ecertFailedValidationDetails.failedValidations.length"
     ><template #content
       ><ul>
+        <!-- Additional information provided when student has already been funded for same type of aviation credential. -->
         <li
-          v-for="ecertFailedValidationDetail in ecertFailedValidationDetails"
+          v-if="
+            ecertFailedValidationDetails.eCertFailedValidationsInfo
+              ?.hasEffectiveAviationRestriction
+          "
+        >
+          You have already received funding for this aviation credential. Please
+          ensure you have applied to the correct offering and contact a
+          Financial Aid Officer at your institution if you need assistance. If
+          you believe this is in error, please contact StudentAid BC.
+        </li>
+        <li
+          v-for="ecertFailedValidationDetail in ecertFailedValidationDetails.failedValidations"
           :key="ecertFailedValidationDetail.failedType"
         >
           <span
@@ -244,8 +256,8 @@ import ApplicationInProgressChangeRequest from "@/components/common/applicationT
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import {
-  EcertFailedValidationDetail,
   ECERT_FAILED_MESSAGES,
+  EcertFailedValidationDetails,
 } from "@/constants";
 
 export default defineComponent({
@@ -271,7 +283,9 @@ export default defineComponent({
     const router = useRouter();
     const assessmentDetails = ref({} as CompletedApplicationDetailsAPIOutDTO);
     const multipleCOEDenialReason = ref<string>();
-    const ecertFailedValidationDetails = ref<EcertFailedValidationDetail[]>([]);
+    const ecertFailedValidationDetails = ref<EcertFailedValidationDetails>({
+      failedValidations: [],
+    } as EcertFailedValidationDetails);
 
     const loadCompletedApplicationDetails = async () => {
       assessmentDetails.value =
@@ -291,8 +305,10 @@ export default defineComponent({
             detail.failedType,
           )
         )
-          ecertFailedValidationDetails.value.push(detail);
+          ecertFailedValidationDetails.value.failedValidations.push(detail);
       });
+      ecertFailedValidationDetails.value.eCertFailedValidationsInfo =
+        assessmentDetails.value.eCertFailedValidationsInfo;
     };
 
     onMounted(loadCompletedApplicationDetails);
