@@ -19,7 +19,7 @@ import { isRestrictionActionEffective } from "./e-cert-steps-restriction-utils";
  * will not be included in the result.
  * @param eCertDisbursement student disbursement to check student restrictions.
  * @param actionType action type.
- * @returns the first restriction of the requested action type.
+ * @returns the all the effective restrictions of the requested action type.
  */
 export function getRestrictionsByActionType(
   eCertDisbursement: EligibleECertDisbursement,
