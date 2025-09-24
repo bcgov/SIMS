@@ -144,4 +144,5 @@ export const AVIATION_RESTRICTION_CODES: RestrictionCode[] = [
   RestrictionCode.AVCP,
   RestrictionCode.AVEN,
   RestrictionCode.AVIR,
+  RestrictionCode.SFAS_AV,
 ];
