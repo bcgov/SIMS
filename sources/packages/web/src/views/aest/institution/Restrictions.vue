@@ -53,13 +53,7 @@
           >
           <Column field="isActive" header="Status">
             <template #body="slotProps">
-              <status-chip-restriction
-                :status="
-                  slotProps.data.isActive
-                    ? RestrictionStatus.Active
-                    : RestrictionStatus.Resolved
-                "
-              />
+              <status-chip-restriction :is-active="slotProps.data.isActive" />
             </template>
           </Column>
           <Column field="restrictionId" header="">

@@ -11,15 +11,23 @@ import {
   RestrictionActionType,
 } from "@sims/sims-db";
 import { RestrictionNotificationType } from "@sims/sims-db/entities";
-import { DataSource, EntityManager, In } from "typeorm";
+import { DataSource, EntityManager, In, IsNull } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   NoteSharedService,
   RestrictionCode,
   StudentRestrictionSharedService,
 } from "@sims/services";
-export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
-export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
+import {
+  RESTRICTION_NOT_FOUND,
+  RESTRICTION_IS_DELETED,
+  APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
+} from "../../constants";
+import {
+  RESTRICTION_NOT_ACTIVE,
+  RESTRICTION_NOT_PROVINCIAL,
+} from "@sims/services/constants";
+import { ApplicationRestrictionBypassService } from "../../services";
 
 /**
  * Service layer for Student Restriction.
@@ -30,6 +38,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     readonly dataSource: DataSource,
     private readonly noteSharedService: NoteSharedService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
+    private readonly applicationRestrictionBypassService: ApplicationRestrictionBypassService,
   ) {
     super(dataSource.getRepository(StudentRestriction));
   }
@@ -41,6 +50,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * - `filterNoEffectRestrictions` filterNoEffectRestrictions is a flag to filter restrictions based on notificationType.
    * - `onlyActive` onlyActive is a flag, which decides whether to select all
    * restrictions (i.e false) or to select only active restrictions (i.e true).
+   * - `withDeleted` flag to include soft deleted restrictions.
    * @returns Student restrictions.
    */
   async getStudentRestrictionsById(
@@ -48,6 +58,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     options?: {
       filterNoEffectRestrictions?: boolean;
       onlyActive?: boolean;
+      withDeleted?: boolean;
     },
   ): Promise<StudentRestriction[]> {
     const query = this.repo
@@ -57,6 +68,8 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "studentRestrictions.isActive",
         "studentRestrictions.updatedAt",
         "studentRestrictions.createdAt",
+        "studentRestrictions.resolvedAt",
+        "studentRestrictions.deletedAt",
         "restriction.restrictionType",
         "restriction.restrictionCategory",
         "restriction.restrictionCode",
@@ -76,6 +89,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         { restrictionNotificationType: RestrictionNotificationType.NoEffect },
       );
     }
+    if (options?.withDeleted) {
+      query.withDeleted();
+    }
     return query
       .orderBy("studentRestrictions.isActive", "DESC")
       .addOrderBy("studentRestrictions.createdAt", "DESC")
@@ -88,6 +104,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    * @param studentRestrictionId student restriction id.
    * @param options for student restrictions.
    * - `filterNoEffectRestrictions` filterNoEffectRestrictions flag to filter restrictions based on notificationType.
+   * - `withDeleted` flag to include soft deleted restrictions.
    * @returns Student Restriction details.
    */
   async getStudentRestrictionDetailsById(
@@ -95,6 +112,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     studentRestrictionId: number,
     options?: {
       filterNoEffectRestrictions?: boolean;
+      withDeleted?: boolean;
     },
   ): Promise<StudentRestriction> {
     const query = this.repo
@@ -104,23 +122,30 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         "studentRestrictions.isActive",
         "studentRestrictions.updatedAt",
         "studentRestrictions.createdAt",
+        "studentRestrictions.resolvedAt",
+        "studentRestrictions.deletedAt",
         "creator.firstName",
         "creator.lastName",
-        "modifier.firstName",
-        "modifier.lastName",
+        "resolvedBy.firstName",
+        "resolvedBy.lastName",
+        "deletedBy.firstName",
+        "deletedBy.lastName",
         "restriction.restrictionType",
         "restriction.restrictionCategory",
         "restriction.description",
         "restriction.restrictionCode",
         "restrictionNote.description",
         "resolutionNote.description",
+        "deletionNote.description",
       ])
       .innerJoin("studentRestrictions.restriction", "restriction")
       .leftJoin("studentRestrictions.creator", "creator")
-      .leftJoin("studentRestrictions.modifier", "modifier")
+      .leftJoin("studentRestrictions.resolvedBy", "resolvedBy")
+      .leftJoin("studentRestrictions.deletedBy", "deletedBy")
       .innerJoin("studentRestrictions.student", "student")
       .leftJoin("studentRestrictions.restrictionNote", "restrictionNote")
       .leftJoin("studentRestrictions.resolutionNote", "resolutionNote")
+      .leftJoin("studentRestrictions.deletionNote", "deletionNote")
       .where("student.id = :studentId", { studentId })
       .andWhere("studentRestrictions.id = :studentRestrictionId", {
         studentRestrictionId,
@@ -132,6 +157,9 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
           restrictionNotificationType: RestrictionNotificationType.NoEffect,
         },
       );
+    }
+    if (options?.withDeleted) {
+      query.withDeleted();
     }
     return query.getOne();
   }
@@ -237,6 +265,99 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
       await transactionalEntityManager
         .getRepository(StudentRestriction)
         .save(studentRestriction);
+    });
+  }
+
+  /**
+   * Soft deletes a provincial restriction from Student.
+   * @param studentId ID of the student to get a restriction.
+   * @param studentRestrictionId ID of the student restriction to be deleted.
+   * @param auditUserId audit user ID who is deleting the restriction.
+   * @param noteDescription student notes added during deletion of restriction.
+   */
+  async deleteProvincialRestriction(
+    studentId: number,
+    studentRestrictionId: number,
+    auditUserId: number,
+    noteDescription: string,
+  ): Promise<void> {
+    const restriction = await this.repo.findOne({
+      select: {
+        id: true,
+        deletedAt: true,
+      },
+      relations: {
+        restriction: true,
+      },
+      where: {
+        id: studentRestrictionId,
+        student: { id: studentId },
+        restriction: { restrictionType: RestrictionType.Provincial },
+      },
+      withDeleted: true,
+    });
+    if (!restriction) {
+      throw new CustomNamedError(
+        "Provincial restriction not found.",
+        RESTRICTION_NOT_FOUND,
+      );
+    }
+    if (restriction.deletedAt) {
+      throw new CustomNamedError(
+        "Provincial restriction is already set as deleted.",
+        RESTRICTION_IS_DELETED,
+      );
+    }
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const now = new Date();
+      const auditUser = { id: auditUserId } as User;
+      const note = await this.noteSharedService.createStudentNote(
+        studentId,
+        NoteType.Restriction,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      const updateResult = await transactionalEntityManager
+        .getRepository(StudentRestriction)
+        .update(
+          { id: restriction.id, deletedAt: IsNull() },
+          {
+            isActive: false,
+            deletionNote: note,
+            deletedAt: now,
+            deletedBy: auditUser,
+            modifier: auditUser,
+            updatedAt: now,
+          },
+        );
+      if (!updateResult.affected) {
+        throw new CustomNamedError(
+          "Provincial restriction is already set as deleted.",
+          RESTRICTION_IS_DELETED,
+        );
+      }
+      // Remove active bypasses, if any.
+      try {
+        await this.applicationRestrictionBypassService.bulkRemoveBypassRestriction(
+          studentRestrictionId,
+          auditUserId,
+          "associated student restriction deleted",
+          transactionalEntityManager,
+        );
+      } catch (error: unknown) {
+        if (
+          error instanceof CustomNamedError &&
+          error.name === APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE
+        ) {
+          // Rethrow with a different message to be more specific on the context.
+          throw new CustomNamedError(
+            "Failed to delete the restriction: an unexpected associated application restriction bypass was already removed.",
+            APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
+          );
+        }
+        throw error;
+      }
     });
   }
 

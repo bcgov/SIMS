@@ -49,7 +49,7 @@
     "reflect-metadata": "^0.2.2",
     "sass": "^1.75.0",
     "typescript": "^4.9.5",
-    "vite": "^6.3.4",
+    "vite": "^6.3.6",
     "vite-plugin-vuetify": "^2.1.0"
   }
 }
