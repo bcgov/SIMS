@@ -2,8 +2,8 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeStudent,
   saveFakeApplicationRestrictionBypass,
+  saveFakeStudent,
   saveFakeStudentRestriction,
 } from "@sims/test-utils";
 import {
@@ -44,7 +44,7 @@ describe("RestrictionAESTController(e2e)-deleteStudentProvincialRestriction.", (
     // Arrange
     const now = new Date();
     MockDate.set(now);
-    const student = await db.student.save(createFakeStudent());
+    const student = await saveFakeStudent(db.dataSource);
     // Find any provincial restriction.
     const restriction = await db.restriction.findOne({
       select: { id: true },
@@ -113,7 +113,7 @@ describe("RestrictionAESTController(e2e)-deleteStudentProvincialRestriction.", (
     const now = new Date();
     MockDate.set(now);
     const pastBypassRemovedDate = addDays(-1, now);
-    const student = await db.student.save(createFakeStudent());
+    const student = await saveFakeStudent(db.dataSource);
     // Find any provincial restriction.
     const restriction = await db.restriction.findOne({
       select: { id: true, restrictionCode: true },
@@ -203,7 +203,7 @@ describe("RestrictionAESTController(e2e)-deleteStudentProvincialRestriction.", (
 
   it("Should throw a NotFoundException when trying to delete a provincial restriction, but it is a federal restriction.", async () => {
     // Arrange
-    const student = await db.student.save(createFakeStudent());
+    const student = await saveFakeStudent(db.dataSource);
     // Find any federal restriction.
     const restriction = await db.restriction.findOne({
       select: { id: true },
@@ -235,7 +235,7 @@ describe("RestrictionAESTController(e2e)-deleteStudentProvincialRestriction.", (
 
   it("Should throw an UnprocessableEntityException when trying to delete a provincial restriction that is already deleted.", async () => {
     // Arrange
-    const student = await db.student.save(createFakeStudent());
+    const student = await saveFakeStudent(db.dataSource);
     // Find any provincial restriction.
     const restriction = await db.restriction.findOne({
       select: { id: true },
