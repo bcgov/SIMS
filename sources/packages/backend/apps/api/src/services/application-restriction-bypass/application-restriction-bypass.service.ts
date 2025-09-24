@@ -482,7 +482,7 @@ export class ApplicationRestrictionBypassService {
       },
       where: {
         isActive: true,
-        studentRestriction: { id: studentRestrictionId, restriction: true },
+        studentRestriction: { id: studentRestrictionId },
       },
       withDeleted: true,
     });
