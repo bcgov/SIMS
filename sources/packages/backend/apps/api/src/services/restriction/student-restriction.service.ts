@@ -18,7 +18,11 @@ import {
   RestrictionCode,
   StudentRestrictionSharedService,
 } from "@sims/services";
-import { RESTRICTION_NOT_FOUND, RESTRICTION_IS_DELETED } from "../../constants";
+import {
+  RESTRICTION_NOT_FOUND,
+  RESTRICTION_IS_DELETED,
+  APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
+} from "../../constants";
 import {
   RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_PROVINCIAL,
@@ -334,12 +338,26 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
         );
       }
       // Remove active bypasses, if any.
-      await this.applicationRestrictionBypassService.bulkRemoveBypassRestriction(
-        studentRestrictionId,
-        auditUserId,
-        "associated student restriction deleted",
-        transactionalEntityManager,
-      );
+      try {
+        await this.applicationRestrictionBypassService.bulkRemoveBypassRestriction(
+          studentRestrictionId,
+          auditUserId,
+          "associated student restriction deleted",
+          transactionalEntityManager,
+        );
+      } catch (error: unknown) {
+        if (
+          error instanceof CustomNamedError &&
+          error.name === APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE
+        ) {
+          // Rethrow with a different message to be more specific on the context.
+          throw new CustomNamedError(
+            "Failed to delete the restriction: an unexpected associated application restriction bypass was already removed.",
+            APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
+          );
+        }
+        throw error;
+      }
     });
   }
 
