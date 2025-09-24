@@ -126,7 +126,7 @@ describe("RestrictionAESTController(e2e)-deleteStudentProvincialRestriction.", (
       restriction,
     });
     // Create two bypasses, one active and other removed, associated with the student restriction to be deleted.
-    // The removed bypass has its removal date set in the past allow it to be asserted as not updated.
+    // The removed bypass has its removal date set in the past to allow it to be asserted as not updated.
     const activeBypassPromise = saveFakeApplicationRestrictionBypass(db, {
       studentRestriction,
     });
@@ -201,7 +201,7 @@ describe("RestrictionAESTController(e2e)-deleteStudentProvincialRestriction.", (
     );
   });
 
-  it("Should throw a NotFoundException when trying to delete a provincial restriction but it is a federal restriction.", async () => {
+  it("Should throw a NotFoundException when trying to delete a provincial restriction, but it is a federal restriction.", async () => {
     // Arrange
     const student = await db.student.save(createFakeStudent());
     // Find any federal restriction.
@@ -268,26 +268,10 @@ describe("RestrictionAESTController(e2e)-deleteStudentProvincialRestriction.", (
       });
   });
 
-  it("Should throw a BadRequestEntityException when an invalid payload was received.", async () => {
+  it("Should throw a BadRequestEntityException when an invalid payload is received.", async () => {
     // Arrange
-    const student = await db.student.save(createFakeStudent());
-    // Find any provincial restriction.
-    const restriction = await db.restriction.findOne({
-      select: { id: true },
-      where: {
-        restrictionType: RestrictionType.Provincial,
-      },
-    });
-    const studentRestriction = await saveFakeStudentRestriction(
-      db.dataSource,
-      {
-        student,
-        restriction,
-      },
-      { deletedAt: new Date() },
-    );
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const endpoint = `/aest/restriction/student/${student.id}/student-restriction/${studentRestriction.id}/delete`;
+    const endpoint = `/aest/restriction/student/999999/student-restriction/999999/delete`;
 
     // Act/Assert
     await request(app.getHttpServer())
