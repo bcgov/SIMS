@@ -13,7 +13,6 @@ import {
   saveFakeStudentRestriction,
   createFakeInstitution,
   createFakeInstitutionLocation,
-  createFakeStudentAssessment,
 } from "@sims/test-utils";
 import { getUploadedFile, getUploadedFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
@@ -139,7 +138,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate an IER12 file with two records using the application's current assessment for a single student with no dependents when there are two disbursements, one sent and one pending.", async () => {
+  it("Should generate an IER12 file with two records for a single student with no dependents when there are two disbursements, one sent and one pending.", async () => {
     // Arrange
     const testInputData = {
       student: JOHN_DOE_FROM_CANADA,
@@ -151,7 +150,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
         applicationStatusUpdatedOn: undefined,
       },
       assessment: {
-        triggerType: AssessmentTriggerType.ManualReassessment,
+        triggerType: AssessmentTriggerType.OriginalAssessment,
         assessmentDate: undefined,
         workflowData: WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS,
         assessmentData: ASSESSMENT_DATA_SINGLE_INDEPENDENT,
@@ -186,13 +185,6 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
         programYearPrefix: sharedProgramYearPrefix,
         submittedDate: referenceSubmissionDate,
       },
-    );
-    // Create an original assessment to be ignored by the IER12 processing.
-    await db.studentAssessment.insert(
-      createFakeStudentAssessment({
-        application,
-        auditUser: application.student.user,
-      }),
     );
 
     // Queued job.

@@ -36,11 +36,7 @@ export class StudentAssessmentService {
     // Base criteria to get the pending assessment for IER 12.
     const ierAssessmentBaseCriteria: FindOptionsWhere<StudentAssessment> = {
       offering: {
-        offeringIntensity: OfferingIntensity.fullTime,
         institutionLocation: { hasIntegration: true },
-      },
-      application: {
-        applicationStatus: Not(ApplicationStatus.Edited),
       },
     };
     return this.applicationRepo.find({
@@ -153,6 +149,8 @@ export class StudentAssessmentService {
         },
       },
       where: {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: Not(ApplicationStatus.Edited),
         currentAssessment: [
           {
             assessmentDate: dateEqualTo(processingDate),
