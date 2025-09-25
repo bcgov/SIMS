@@ -1,32 +1,35 @@
 import { Injectable } from "@nestjs/common";
 import {
+  Application,
   ApplicationStatus,
   OfferingIntensity,
-  RecordDataModelService,
   StudentAssessment,
   User,
 } from "@sims/sims-db";
-import { DataSource, FindOptionsWhere, In, Not, UpdateResult } from "typeorm";
+import { FindOptionsWhere, In, Not, Repository, UpdateResult } from "typeorm";
 import { addDays, dateEqualTo } from "@sims/utilities";
+import { InjectRepository } from "@nestjs/typeorm";
 
 /**
  * Manages the student assessment related operations.
  */
 @Injectable()
-export class StudentAssessmentService extends RecordDataModelService<StudentAssessment> {
-  constructor(dataSource: DataSource) {
-    super(dataSource.getRepository(StudentAssessment));
-  }
+export class StudentAssessmentService {
+  constructor(
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
+    @InjectRepository(StudentAssessment)
+    private readonly studentAssessmentRepo: Repository<StudentAssessment>,
+  ) {}
 
   /**
-   * Get the pending assessment for the institutions which have integration true for the particular date.
-   * @param generatedDate Date in which the assessment for
-   * particular institution is generated.
-   * @returns Pending assessment for the institution location.
+   * Get the pending current assessment for the institutions which have integration true for the particular date.
+   * @param generatedDate date in which the assessment for particular institution is generated.
+   * @returns pending application and its current assessment for the institution location.
    */
-  async getPendingAssessment(
+  async getPendingApplicationsCurrentAssessment(
     generatedDate?: string,
-  ): Promise<StudentAssessment[]> {
+  ): Promise<Application[]> {
     const processingDate = generatedDate
       ? new Date(generatedDate)
       : addDays(-1);
@@ -40,136 +43,140 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         applicationStatus: Not(ApplicationStatus.Edited),
       },
     };
-    return this.repo.find({
+    return this.applicationRepo.find({
       select: {
         id: true,
-        assessmentData: true as unknown,
-        workflowData: true as unknown,
-        assessmentDate: true,
-        triggerType: true,
-        application: {
+        applicationNumber: true,
+        data: true as unknown,
+        submittedDate: true,
+        applicationStatus: true,
+        applicationStatusUpdatedOn: true,
+        studentNumber: true,
+        student: {
           id: true,
-          applicationNumber: true,
-          data: true as unknown,
-          submittedDate: true,
-          applicationStatus: true,
-          applicationStatusUpdatedOn: true,
-          studentNumber: true,
-          student: {
+          sinValidation: { id: true, sin: true },
+          user: { id: true, lastName: true, firstName: true },
+          birthDate: true,
+          contactInfo: true as unknown,
+          disabilityStatus: true,
+          studentRestrictions: {
             id: true,
-            sinValidation: { id: true, sin: true },
-            user: { id: true, lastName: true, firstName: true },
-            birthDate: true,
-            contactInfo: true as unknown,
-            disabilityStatus: true,
-            studentRestrictions: {
+            isActive: true,
+            restriction: {
               id: true,
-              isActive: true,
-              restriction: {
-                id: true,
-                restrictionCode: true,
-                actionType: true,
-              },
+              restrictionCode: true,
+              actionType: true,
             },
           },
-          programYear: {
-            id: true,
-            programYear: true,
-          },
-          studentScholasticStandings: { id: true, changeType: true },
         },
-        offering: {
+        programYear: {
           id: true,
-          parentOffering: { id: true },
-          educationProgram: {
-            id: true,
-            name: true,
-            credentialType: true,
-            fieldOfStudyCode: true,
-            cipCode: true,
-            nocCode: true,
-            sabcCode: true,
-            institutionProgramCode: true,
-            completionYears: true,
-          },
-          institutionLocation: {
-            id: true,
-            institutionCode: true,
-          },
-          yearOfStudy: true,
-          studyStartDate: true,
-          studyEndDate: true,
-          actualTuitionCosts: true,
-          programRelatedCosts: true,
-          mandatoryFees: true,
-          exceptionalExpenses: true,
+          programYear: true,
         },
-        disbursementSchedules: {
+        studentScholasticStandings: { id: true, changeType: true },
+        currentAssessment: {
           id: true,
-          coeStatus: true,
-          disbursementScheduleStatus: true,
-          disbursementDate: true,
-          updatedAt: true,
-          dateSent: true,
-          disbursementValues: {
+          assessmentData: true as unknown,
+          workflowData: true as unknown,
+          assessmentDate: true,
+          triggerType: true,
+          offering: {
             id: true,
-            valueCode: true,
-            valueAmount: true,
-            valueType: true,
-            restrictionAmountSubtracted: true,
+            parentOffering: { id: true },
+            educationProgram: {
+              id: true,
+              name: true,
+              credentialType: true,
+              fieldOfStudyCode: true,
+              cipCode: true,
+              nocCode: true,
+              sabcCode: true,
+              institutionProgramCode: true,
+              completionYears: true,
+            },
+            institutionLocation: {
+              id: true,
+              institutionCode: true,
+            },
+            yearOfStudy: true,
+            studyStartDate: true,
+            studyEndDate: true,
+            actualTuitionCosts: true,
+            programRelatedCosts: true,
+            mandatoryFees: true,
+            exceptionalExpenses: true,
           },
-          disbursementReceipts: {
+          disbursementSchedules: {
             id: true,
-            disburseDate: true,
-          },
-          disbursementFeedbackErrors: {
+            coeStatus: true,
+            disbursementScheduleStatus: true,
+            disbursementDate: true,
             updatedAt: true,
-            eCertFeedbackError: { id: true, errorCode: true },
+            dateSent: true,
+            disbursementValues: {
+              id: true,
+              valueCode: true,
+              valueAmount: true,
+              valueType: true,
+              restrictionAmountSubtracted: true,
+            },
+            disbursementReceipts: {
+              id: true,
+              disburseDate: true,
+            },
+            disbursementFeedbackErrors: {
+              updatedAt: true,
+              eCertFeedbackError: { id: true, errorCode: true },
+            },
           },
         },
       },
       relations: {
-        disbursementSchedules: {
-          disbursementValues: true,
-          disbursementReceipts: true,
-          disbursementFeedbackErrors: { eCertFeedbackError: true },
+        student: {
+          sinValidation: true,
+          user: true,
+          studentRestrictions: { restriction: true },
         },
-        application: {
-          student: {
-            sinValidation: true,
-            user: true,
-            studentRestrictions: { restriction: true },
+        studentScholasticStandings: true,
+        programYear: true,
+        currentAssessment: {
+          disbursementSchedules: {
+            disbursementValues: true,
+            disbursementReceipts: true,
+            disbursementFeedbackErrors: { eCertFeedbackError: true },
           },
-          studentScholasticStandings: true,
-          programYear: true,
-        },
-        offering: {
-          institutionLocation: true,
-          educationProgram: true,
-          parentOffering: true,
+          offering: {
+            institutionLocation: true,
+            educationProgram: true,
+            parentOffering: true,
+          },
         },
       },
-      where: [
-        {
-          assessmentDate: dateEqualTo(processingDate),
-          ...ierAssessmentBaseCriteria,
-        },
-        {
-          disbursementSchedules: { updatedAt: dateEqualTo(processingDate) },
-          ...ierAssessmentBaseCriteria,
-        },
-        {
-          disbursementSchedules: {
-            disbursementFeedbackErrors: {
-              updatedAt: dateEqualTo(processingDate),
-            },
+      where: {
+        currentAssessment: [
+          {
+            assessmentDate: dateEqualTo(processingDate),
+            ...ierAssessmentBaseCriteria,
           },
-          ...ierAssessmentBaseCriteria,
-        },
-      ],
+          {
+            disbursementSchedules: { updatedAt: dateEqualTo(processingDate) },
+            ...ierAssessmentBaseCriteria,
+          },
+          {
+            disbursementSchedules: {
+              disbursementFeedbackErrors: {
+                updatedAt: dateEqualTo(processingDate),
+              },
+            },
+            ...ierAssessmentBaseCriteria,
+          },
+        ],
+      },
       order: {
-        assessmentDate: "ASC",
-        disbursementSchedules: { disbursementDate: "ASC" },
+        currentAssessment: {
+          assessmentDate: "ASC",
+          disbursementSchedules: { disbursementDate: "ASC" },
+        },
       },
     });
   }
@@ -186,7 +193,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     reportedDate: Date,
     auditUserId: number,
   ): Promise<UpdateResult> {
-    return this.repo.update(
+    return this.studentAssessmentRepo.update(
       { id: In(assessmentIds) },
       {
         reportedDate: reportedDate,
