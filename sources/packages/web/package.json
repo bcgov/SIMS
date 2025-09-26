@@ -6,7 +6,7 @@
     "serve": "vite",
     "build": "vite build",
     "preview": "vite preview --port 8080",
-    "lint": "eslint ./src --ext .vue,.js,.ts",
+    "lint": "eslint ./src",
     "build-local": "NODE_ENV=development vite build",
     "format": "prettier --write \"src/**/*.{ts,vue,scss,html,json}\""
   },
