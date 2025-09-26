@@ -1,22 +1,15 @@
 import globals from "globals";
+import { defineConfig } from "eslint/config";
+import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier";
 
-export default [
+export default defineConfig(
   // Base configurations
-  ...tseslint.configs.recommended,
+  eslint.configs.recommended,
+  tseslint.configs.recommended,
   // Main configuration for your source files
   {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-      parserOptions: {
-        parser: tseslint.parser,
-        project: "./tsconfig.json",
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
     rules: {
       "@typescript-eslint/interface-name-prefix": "off",
       "@typescript-eslint/explicit-function-return-type": "off",
@@ -36,4 +29,4 @@ export default [
   },
   // Prettier config must be last to override other formatting rules
   eslintConfigPrettier,
-];
+);

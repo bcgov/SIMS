@@ -129,6 +129,7 @@
     "faker": "^5.2.0",
     "find-config": "^1.0.0",
     "jest": "^29.6.4",
+    "jiti": "^2.6.0",
     "mockdate": "^3.0.5",
     "prettier": "^3.6.2",
     "supertest": "^6.3.3",
