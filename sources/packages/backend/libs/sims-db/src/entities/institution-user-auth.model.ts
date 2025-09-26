@@ -17,14 +17,14 @@ export class InstitutionUserAuth extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne((type) => InstitutionLocation, { eager: false })
+  @ManyToOne(() => InstitutionLocation, { eager: false })
   @JoinColumn({
     name: "institution_location_id",
     referencedColumnName: "id",
   })
   location: InstitutionLocation;
 
-  @ManyToOne((type) => InstitutionUserTypeAndRole, { eager: true })
+  @ManyToOne(() => InstitutionUserTypeAndRole, { eager: true })
   @JoinColumn({
     name: "institution_user_type_role_id",
     referencedColumnName: "id",
@@ -32,7 +32,7 @@ export class InstitutionUserAuth extends RecordDataModel {
   authType: InstitutionUserTypeAndRole;
 
   @ManyToOne(
-    (type) => InstitutionUser,
+    () => InstitutionUser,
     (institutionUser) => institutionUser.authorizations,
     { eager: false },
   )
