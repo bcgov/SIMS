@@ -1,8 +1,9 @@
 import pluginVue from "eslint-plugin-vue";
+import { defineConfig } from "eslint/config";
 import vueTsEslintConfig from "@vue/eslint-config-typescript";
 import eslintConfigPrettier from "eslint-config-prettier";
 
-export default [
+export default defineConfig(
   ...pluginVue.configs["flat/strongly-recommended"],
   ...vueTsEslintConfig(),
   {
@@ -15,4 +16,4 @@ export default [
   },
   // Prettier config must be last to disable conflicting formatting rules.
   eslintConfigPrettier,
-];
+);
