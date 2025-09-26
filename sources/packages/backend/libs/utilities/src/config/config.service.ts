@@ -220,6 +220,17 @@ export class ConfigService {
   }
 
   /**
+   * When enabled, allow full-time application submission
+   * only for programs from beta institutions.
+   */
+  get allowBetaInstitutionsOnly(): boolean {
+    return this.getCachedConfig(
+      "allowBetaInstitutionsOnlyConfig",
+      process.env.ALLOW_BETA_INSTITUTIONS_ONLY === "true",
+    );
+  }
+
+  /**
    * When defined as true, allows the simulation of a complete cycle of the
    * CRA send/response process that allows the workflow to proceed without
    * the need for the actual CRA verification happens. By default, it should be

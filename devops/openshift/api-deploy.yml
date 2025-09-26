@@ -63,6 +63,8 @@ objects:
                   value: "${APP_ENV}"
                 - name: ALLOW_BETA_USERS_ONLY
                   value: "${ALLOW_BETA_USERS_ONLY}"
+                - name: ALLOW_BETA_INSTITUTIONS_ONLY
+                  value: "${ALLOW_BETA_INSTITUTIONS_ONLY}"
                 - name: POSTGRES_HOST
                   valueFrom:
                     secretKeyRef:
@@ -584,6 +586,8 @@ parameters:
   - name: TLS_CA_CERTIFICATE
     required: true
   - name: ALLOW_BETA_USERS_ONLY
+    required: true
+  - name: ALLOW_BETA_INSTITUTIONS_ONLY
     required: true
   - name: EXTERNAL_API_PATH
     value: /api/external
