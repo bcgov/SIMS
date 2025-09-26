@@ -44,7 +44,7 @@ export class BCeIDServiceMock {
         return resp.data;
       }
       return null;
-    } catch (excp) {
+    } catch {
       return null;
     }
   }

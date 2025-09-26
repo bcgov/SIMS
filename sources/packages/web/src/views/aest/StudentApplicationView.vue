@@ -65,7 +65,6 @@
 import { onMounted, ref, defineComponent } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  ApplicationBaseAPIOutDTO,
   ApplicationDataChangeAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
   ApplicationChangeRequestAPIInDTO,
@@ -144,8 +143,7 @@ export default defineComponent({
     onMounted(async () => {
       // When the application version is present load the given application version instead of the current application version.
       const applicationId = props.versionApplicationId ?? props.applicationId;
-      let application: ApplicationBaseAPIOutDTO;
-      application = await ApplicationService.shared.getApplicationDetail(
+      const application = await ApplicationService.shared.getApplicationDetail(
         applicationId,
       );
       applicationDetail.value =

@@ -115,7 +115,7 @@ export default defineComponent({
     const { checkNullOrEmptyRule } = useRules();
     const { mapOfferingIntensities } = useOffering();
     const draftApplicationModal = ref({} as ModalDialog<boolean>);
-    let offeringIntensityOptions = ref([] as SelectItemType[]);
+    const offeringIntensityOptions = ref([] as SelectItemType[]);
 
     onMounted(async () => {
       const { isFulltimeAllowed } = await AppConfigService.shared.config();

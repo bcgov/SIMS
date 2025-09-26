@@ -151,7 +151,7 @@ export default defineComponent({
         paginatedInvoices.value = await CASInvoiceService.shared.getInvoices({
           ...currentPagination,
         });
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("Unexpected error while loading CAS invoices.");
       } finally {
         invoiceLoading.value = false;
@@ -180,7 +180,7 @@ export default defineComponent({
           await CASInvoiceService.shared.resolveCASInvoice(invoice.id);
           snackBar.success("Invoice resolved.");
           await loadManualInterventionInvoices();
-        } catch (error: unknown) {
+        } catch {
           snackBar.error("Unexpected error while resolving the invoice.");
         } finally {
           invoice.resolutionInProgress = false;

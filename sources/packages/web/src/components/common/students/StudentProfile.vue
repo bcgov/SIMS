@@ -215,7 +215,7 @@ export default defineComponent({
         await loadStudentProfile();
         snackBar.success("Profile Information updated successfully.");
         return true;
-      } catch (error) {
+      } catch {
         snackBar.error(
           "An error happened while updating the profile information. Your profile information could not be updated.",
         );

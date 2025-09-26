@@ -1,7 +1,4 @@
-import {
-  DesignationAgreement,
-  DesignationAgreementLocation,
-} from "@sims/sims-db";
+import { DesignationAgreement } from "@sims/sims-db";
 import { E2EDataSources } from "../data-source/e2e-data-source";
 import { createFakeDesignationAgreement } from "./designation-agreement";
 import { createFakeInstitution } from "./institution";

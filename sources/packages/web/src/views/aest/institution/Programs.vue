@@ -165,7 +165,7 @@ export default defineComponent({
         const searchInactiveProgram = searchProgramStatus.value.some(
           (searchItem) => searchItem === INACTIVE_PROGRAM,
         );
-        let searchCriteria: Record<string, string | string[] | boolean> = {
+        const searchCriteria: Record<string, string | string[] | boolean> = {
           programNameSearch: searchProgramName.value,
           locationNameSearch: searchLocationName.value,
           inactiveProgramSearch: searchInactiveProgram,

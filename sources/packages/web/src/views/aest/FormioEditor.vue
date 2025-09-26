@@ -66,6 +66,7 @@
           <template v-slot:item="{ item, props }">
             <v-list-item v-bind="props">
               <v-list-item-content>
+                <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
                 <v-list-item-subtitle v-text="item.value" />
               </v-list-item-content>
             </v-list-item>
