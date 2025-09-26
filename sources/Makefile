@@ -92,7 +92,7 @@ export APP_ENV := $(or $(APP_ENV), local)
 # Allow beta users only to access the system if true.
 export ALLOW_BETA_USERS_ONLY := $(or $(ALLOW_BETA_USERS_ONLY), false)
 
-# Allow full-time application submissions only for beta institutions if true.
+# Allow full-time application submissions only for beta institution locations if true.
 export ALLOW_BETA_INSTITUTIONS_ONLY := $(or $(ALLOW_BETA_INSTITUTIONS_ONLY), false)
 
 # Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers),

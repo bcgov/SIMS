@@ -180,9 +180,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         INSTITUTION_LOCATION_NOT_VALID,
       );
     }
-    // Validate beta institution only if the offering intensity is full-time.
+    // Validate beta institution location only if the offering intensity is full-time.
     if (application.offeringIntensity === OfferingIntensity.fullTime) {
-      this.validateBetaInstitution(institutionLocation.isBetaInstitution);
+      this.validateBetaInstitutionLocation(institutionLocation.isBeta);
     }
     // Offering is assigned to the original assessment if the application is not
     // required for PIR.
@@ -2422,16 +2422,18 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
   /**
    * Check if the beta institution mode is enabled and if enabled
-   * allow application submission only for beta institutions.
-   * @param isBetaInstitution is beta institution.
-   * @throws {ForbiddenException} application submission for a non-beta institution is not allowed.
+   * allow application submission only for beta institution locations.
+   * @param isBetaInstitutionLocation is beta institution.
+   * @throws {ForbiddenException} application submission for a non-beta institution location is not allowed.
    */
-  private validateBetaInstitution(isBetaInstitution: boolean): void {
+  private validateBetaInstitutionLocation(
+    isBetaInstitutionLocation: boolean,
+  ): void {
     const allowBetaInstitutionsOnly =
       this.configService.allowBetaInstitutionsOnly;
-    if (allowBetaInstitutionsOnly && !isBetaInstitution) {
+    if (allowBetaInstitutionsOnly && !isBetaInstitutionLocation) {
       throw new CustomNamedError(
-        "Application submission for a non-beta institution is not allowed.",
+        "Application submission for a non-beta institution location is not allowed.",
         INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }

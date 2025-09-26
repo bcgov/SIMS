@@ -221,7 +221,7 @@ export class ConfigService {
 
   /**
    * When enabled, allow full-time application submission
-   * only for programs from beta institutions.
+   * only for programs from beta institution locations.
    */
   get allowBetaInstitutionsOnly(): boolean {
     return this.getCachedConfig(

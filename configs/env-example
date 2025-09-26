@@ -174,7 +174,7 @@ MAXIMUM_IDLE_TIME_FOR_WARNING_AEST =
 # Allow beta users only to access the system if true.
 ALLOW_BETA_USERS_ONLY=
 
-# Allow full-time application submissions only for beta institutions if true.
+# Allow full-time application submissions only for beta institution locations if true.
 ALLOW_BETA_INSTITUTIONS_ONLY=
 
 # App Environment

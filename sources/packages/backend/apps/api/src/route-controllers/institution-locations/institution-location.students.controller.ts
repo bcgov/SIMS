@@ -40,7 +40,7 @@ export class InstitutionLocationStudentsController extends BaseController {
     @Query("offeringIntensity", new ParseEnumQueryPipe(OfferingIntensity))
     offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
-    // For the context of full-time applications, allow only beta institutions
+    // For the context of full-time applications, allow only beta institution locations
     // if the beta flag is enabled.
     const allowBetaInstitutionsOnly =
       offeringIntensity === OfferingIntensity.fullTime &&
