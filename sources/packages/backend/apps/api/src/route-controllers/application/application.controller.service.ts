@@ -978,8 +978,6 @@ export class ApplicationControllerService {
         application.student.user.lastName,
         application.student.user.firstName,
       );
-      // Validate beta institution only if the offering intensity is full-time.
-      this.validateBetaInstitution(application.location.isBetaInstitution);
     }
     // For program years still relying on the form.io variable howWillYouBeAttendingTheProgram
     // to determine the offering intensity, we need to set the value in the payload
@@ -1055,22 +1053,6 @@ export class ApplicationControllerService {
     if (!hasFulltimeAccess) {
       throw new ForbiddenException(
         "User is not allowed to submit a full-time application.",
-      );
-    }
-  }
-
-  /**
-   * Check if the beta institution mode is enabled and if enabled
-   * allow application submission only for beta institutions.
-   * @param isBetaInstitution is beta institution.
-   * @throws {ForbiddenException} application submission for a non-beta institution is not allowed.
-   */
-  private validateBetaInstitution(isBetaInstitution: boolean): void {
-    const allowBetaInstitutionsOnly =
-      this.configService.allowBetaInstitutionsOnly;
-    if (allowBetaInstitutionsOnly && !isBetaInstitution) {
-      throw new ForbiddenException(
-        "Application submission for a non-beta institution is not allowed.",
       );
     }
   }

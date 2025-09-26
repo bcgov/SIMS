@@ -81,6 +81,7 @@ import {
 } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import { StudentService } from "..";
+import { INVALID_OPERATION_IN_THE_CURRENT_STATE } from "@sims/services/constants";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -178,6 +179,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "Not able to find the institution location.",
         INSTITUTION_LOCATION_NOT_VALID,
       );
+    }
+    // Validate beta institution only if the offering intensity is full-time.
+    if (application.offeringIntensity === OfferingIntensity.fullTime) {
+      this.validateBetaInstitution(institutionLocation.isBetaInstitution);
     }
     // Offering is assigned to the original assessment if the application is not
     // required for PIR.
@@ -2302,7 +2307,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: {
         id: true,
         programYear: { id: true, active: true, startDate: true, endDate: true },
-        location: { id: true, isBetaInstitution: true },
         offeringIntensity: true,
         student: {
           id: true,
@@ -2315,7 +2319,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       relations: {
         programYear: true,
-        location: true,
         student: {
           user: true,
         },
@@ -2414,6 +2417,23 @@ export class ApplicationService extends RecordDataModelService<Application> {
         targetApplicationData[propertyName] =
           sourceApplicationData[propertyName];
       }
+    }
+  }
+
+  /**
+   * Check if the beta institution mode is enabled and if enabled
+   * allow application submission only for beta institutions.
+   * @param isBetaInstitution is beta institution.
+   * @throws {ForbiddenException} application submission for a non-beta institution is not allowed.
+   */
+  private validateBetaInstitution(isBetaInstitution: boolean): void {
+    const allowBetaInstitutionsOnly =
+      this.configService.allowBetaInstitutionsOnly;
+    if (allowBetaInstitutionsOnly && !isBetaInstitution) {
+      throw new CustomNamedError(
+        "Application submission for a non-beta institution is not allowed.",
+        INVALID_OPERATION_IN_THE_CURRENT_STATE,
+      );
     }
   }
 

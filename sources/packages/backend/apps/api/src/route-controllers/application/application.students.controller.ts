@@ -12,6 +12,7 @@ import {
   ParseIntPipe,
   DefaultValuePipe,
   ParseBoolPipe,
+  ForbiddenException,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -67,6 +68,7 @@ import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import { INVALID_OPERATION_IN_THE_CURRENT_STATE } from "@sims/services/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -256,6 +258,8 @@ export class ApplicationStudentsController extends BaseController {
             );
           case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
             throw new UnprocessableEntityException(error.message);
+          case INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            throw new ForbiddenException(error.message);
         }
       }
       throw error;
