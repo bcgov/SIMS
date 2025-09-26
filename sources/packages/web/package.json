@@ -16,9 +16,6 @@
     "@formio/js": "^5.0.2",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
-    "@typescript-eslint/eslint-plugin": "^8.44.1",
-    "@typescript-eslint/parser": "^8.44.1",
-    "@vue/eslint-config-typescript": "^14.6.0",
     "axios": "^1.12.0",
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.10.5",
@@ -42,17 +39,15 @@
     "@fortawesome/fontawesome-free": "^6.5.2",
     "@types/node": "^22.18.6",
     "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/eslint-config-typescript": "^14.6.0",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-vue": "^10.5.0",
     "jiti": "^2.6.0",
     "prettier": "^2.5.0",
     "reflect-metadata": "^0.2.2",
     "sass": "^1.75.0",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.44.1",
     "vite": "^6.3.6",
-    "vite-plugin-vuetify": "^2.1.0",
-    "vue-eslint-parser": "^10.2.0"
+    "vite-plugin-vuetify": "^2.1.0"
   }
 }
