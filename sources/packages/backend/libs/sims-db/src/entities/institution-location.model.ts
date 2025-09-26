@@ -73,7 +73,7 @@ export class InstitutionLocation extends RecordDataModel {
   })
   integrationContacts?: string[];
 
-  /*
+  /**
    * Identifies if the institution is a beta institution.
    */
   @Column({

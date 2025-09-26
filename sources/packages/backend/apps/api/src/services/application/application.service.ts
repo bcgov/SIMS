@@ -2302,6 +2302,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: {
         id: true,
         programYear: { id: true, active: true, startDate: true, endDate: true },
+        location: { id: true, isBetaInstitution: true },
         offeringIntensity: true,
         student: {
           id: true,
@@ -2314,6 +2315,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       relations: {
         programYear: true,
+        location: true,
         student: {
           user: true,
         },
