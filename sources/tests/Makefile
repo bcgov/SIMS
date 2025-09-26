@@ -18,6 +18,7 @@ export MAXIMUM_IDLE_TIME_FOR_WARNING_AEST := $(or $(MAXIMUM_IDLE_TIME_FOR_WARNIN
 export APP_ENV := $(or $(APP_ENV), local)
 
 export ALLOW_BETA_USERS_ONLY :=$(or $(ALLOW_BETA_USERS_ONLY), false)
+export ALLOW_BETA_INSTITUTIONS_ONLY :=$(or $(ALLOW_BETA_INSTITUTIONS_ONLY), false)
 
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov

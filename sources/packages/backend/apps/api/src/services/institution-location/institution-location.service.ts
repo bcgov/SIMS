@@ -142,20 +142,26 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   /**
    * Gets all locations available and return just
    * a subset of available data.
+   * @param onlyBetaInstitutions if true then return only beta institution locations.
    * @returns all locations.
    */
-  async getDesignatedLocations(): Promise<Partial<InstitutionLocation>[]> {
-    return this.repo
+  async getDesignatedLocations(
+    onlyBetaInstitutions: boolean,
+  ): Promise<Partial<InstitutionLocation>[]> {
+    const designatedLocationsQuery = this.repo
       .createQueryBuilder("location")
       .select("location.id")
       .addSelect("location.name")
       .orderBy("location.name")
-      .andWhere(
+      .where(
         `EXISTS(${this.designationAgreementLocationService
           .getExistsDesignatedLocation()
           .getSql()})`,
-      )
-      .getMany();
+      );
+    if (onlyBetaInstitutions) {
+      designatedLocationsQuery.andWhere("location.isBeta = true");
+    }
+    return designatedLocationsQuery.getMany();
   }
 
   /**
@@ -177,6 +183,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         "institutionLocation.id",
         "institutionLocation.institutionCode",
         "institutionLocation.primaryContact",
+        "institutionLocation.isBeta",
         "institution.id",
         "institution.operatingName",
         "institution.legalOperatingName",

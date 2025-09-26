@@ -72,4 +72,12 @@ export class InstitutionLocation extends RecordDataModel {
     type: "varchar",
   })
   integrationContacts?: string[];
+
+  /**
+   * Identifies if the institution location is a beta.
+   */
+  @Column({
+    name: "is_beta",
+  })
+  isBeta: boolean;
 }

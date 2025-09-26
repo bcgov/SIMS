@@ -74,6 +74,7 @@ services:
       - MAXIMUM_IDLE_TIME_FOR_WARNING_AEST=${MAXIMUM_IDLE_TIME_FOR_WARNING_AEST}
       - APP_ENV=${APP_ENV}
       - ALLOW_BETA_USERS_ONLY=${ALLOW_BETA_USERS_ONLY}
+      - ALLOW_BETA_INSTITUTIONS_ONLY=${ALLOW_BETA_INSTITUTIONS_ONLY}
     networks:
       - local-network-tests
     restart: always
