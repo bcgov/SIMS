@@ -1,4 +1,8 @@
-import { PaginatedResults, PaginationOptions } from "../types";
+import {
+  OfferingIntensity,
+  PaginatedResults,
+  PaginationOptions,
+} from "../types";
 import ApiClient from "./http/ApiClient";
 import {
   InstitutionLocationFormAPIInDTO,
@@ -99,8 +103,10 @@ export class InstitutionService {
     return ApiClient.Institution.allInstitutionLocations(institutionId);
   }
 
-  async getLocationsOptionsList(): Promise<OptionItemAPIOutDTO[]> {
-    return ApiClient.InstitutionLocation.getOptionsList();
+  async getLocationsOptionsList(
+    offeringIntensity?: OfferingIntensity,
+  ): Promise<OptionItemAPIOutDTO[]> {
+    return ApiClient.InstitutionLocation.getOptionsList(offeringIntensity);
   }
 
   /**

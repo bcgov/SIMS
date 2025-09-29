@@ -11,6 +11,7 @@ export interface ConfigAPIOutDTO {
   auth: AuthConfigAPIOutDTO;
   version: string;
   isFulltimeAllowed: boolean;
+  allowBetaInstitutionsOnly: boolean;
   maximumIdleTimeForWarningStudent: number;
   maximumIdleTimeForWarningSupportingUser: number;
   maximumIdleTimeForWarningInstitution: number;

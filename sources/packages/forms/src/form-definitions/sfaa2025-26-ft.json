@@ -338,6 +338,14 @@
           "type": "hidden",
           "input": true,
           "tableView": false
+        },
+        {
+          "label": "Allow beta institutions only",
+          "persistent": false,
+          "key": "allowBetaInstitutionsOnly",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
         }
       ],
       "input": false,

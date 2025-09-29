@@ -166,6 +166,7 @@ export default defineComponent({
           await formioDataLoader.loadLocations(
             formInstance,
             LOCATIONS_DROPDOWN_KEY,
+            offeringIntensity,
           );
           const selectedLocationId = getSelectedId(formInstance);
 

@@ -61,6 +61,7 @@ export class AppConfigService {
       updateTime: new Date(),
       version: config.version,
       isFulltimeAllowed: config.isFulltimeAllowed,
+      allowBetaInstitutionsOnly: config.allowBetaInstitutionsOnly,
       maximumIdleTimeForWarningStudent: config.maximumIdleTimeForWarningStudent,
       maximumIdleTimeForWarningSupportingUser:
         config.maximumIdleTimeForWarningSupportingUser,
