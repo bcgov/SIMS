@@ -42,11 +42,11 @@ export class InstitutionLocationStudentsController extends BaseController {
   ): Promise<OptionItemAPIOutDTO[]> {
     // For the context of full-time applications, allow only beta institution locations
     // if the beta flag is enabled.
-    const allowBetaInstitutionsOnly =
+    const onlyBetaInstitutionLocations =
       offeringIntensity === OfferingIntensity.fullTime &&
       this.configService.allowBetaInstitutionsOnly;
     const locations = await this.locationService.getDesignatedLocations(
-      allowBetaInstitutionsOnly,
+      onlyBetaInstitutionLocations,
     );
     return locations.map((location) => ({
       id: location.id,

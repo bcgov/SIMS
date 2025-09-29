@@ -2423,7 +2423,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Check if the beta institution mode is enabled and if enabled
    * allow application submission only for beta institution locations.
-   * @param isBetaInstitutionLocation is beta institution.
+   * @param isBetaInstitutionLocation is beta institution location.
    * @throws {ForbiddenException} application submission for a non-beta institution location is not allowed.
    */
   private validateBetaInstitutionLocation(
