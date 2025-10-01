@@ -145,7 +145,7 @@ describe(
       ]);
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       // Assert log has the extra details.
