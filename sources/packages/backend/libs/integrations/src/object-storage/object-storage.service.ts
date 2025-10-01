@@ -4,6 +4,7 @@ import {
   PutObjectCommand,
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
+import { Readable } from "stream";
 import { ConfigService } from "@sims/utilities/config";
 import { GetObjectResult, StorageObject } from "./models/object-storage.models";
 
@@ -65,7 +66,7 @@ export class ObjectStorageService {
     return {
       contentLength: response.ContentLength,
       contentType: response.ContentType,
-      body: response.Body,
+      body: response.Body as Readable,
     };
   }
 }
