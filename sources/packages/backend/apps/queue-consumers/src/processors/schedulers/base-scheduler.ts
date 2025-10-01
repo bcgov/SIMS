@@ -149,7 +149,9 @@ export abstract class BaseScheduler<T>
    */
   async getNexSchedulerExecutionMilliseconds(): Promise<number> {
     const repeatOptions = await this.queueCronConfiguration();
-    const result = CronExpressionParser.parse(repeatOptions.cron);
+    const result = CronExpressionParser.parse(repeatOptions.cron, {
+      tz: "UTC",
+    });
     return result.next().getTime();
   }
 
