@@ -1,3 +1,4 @@
+import { OfferingIntensity } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   InstitutionLocationFormAPIInDTO,
@@ -41,10 +42,14 @@ export class InstitutionLocationApi extends HttpBaseClient {
     );
   }
 
-  public async getOptionsList(): Promise<OptionItemAPIOutDTO[]> {
-    return this.getCall<OptionItemAPIOutDTO[]>(
-      this.addClientRoot("location/options-list"),
-    );
+  public async getOptionsList(
+    offeringIntensity?: OfferingIntensity,
+  ): Promise<OptionItemAPIOutDTO[]> {
+    let url = "location/options-list";
+    if (offeringIntensity) {
+      url = `${url}?offeringIntensity=${offeringIntensity}`;
+    }
+    return this.getCall<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
   }
 
   public async getActiveApplication(
