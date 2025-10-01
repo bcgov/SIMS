@@ -30,25 +30,25 @@ export enum PartTimeAwardTypes {
 export const AWARDS: AwardDetail[] = [
   {
     awardType: FullTimeAwardTypes.CSLF,
-    awardTypeDisplay: FullTimeAwardTypes.CSLF,
+    awardTypeDisplay: "CSL-FT",
     description: "Canada Student Loan for Full-time Studies",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
     awardType: FullTimeAwardTypes.CSGP,
-    awardTypeDisplay: FullTimeAwardTypes.CSGP,
+    awardTypeDisplay: "CSG-D",
     description: "Canada Student Grant for Student with Permanent Disability",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
     awardType: FullTimeAwardTypes.CSGD,
-    awardTypeDisplay: FullTimeAwardTypes.CSGD,
+    awardTypeDisplay: "CSG-FTDEP",
     description: "Canada Student Grant for Students with Dependents",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
     awardType: FullTimeAwardTypes.CSGF,
-    awardTypeDisplay: FullTimeAwardTypes.CSGF,
+    awardTypeDisplay: "CSG-FT",
     description: "Canada Student Grant for Full-time Studies",
     offeringIntensity: OfferingIntensity.fullTime,
   },
@@ -66,7 +66,7 @@ export const AWARDS: AwardDetail[] = [
   },
   {
     awardType: FullTimeAwardTypes.BGPD,
-    awardTypeDisplay: FullTimeAwardTypes.BGPD,
+    awardTypeDisplay: "BCAG-D",
     description: "B.C. Permanent Disability Grant",
     offeringIntensity: OfferingIntensity.fullTime,
   },
