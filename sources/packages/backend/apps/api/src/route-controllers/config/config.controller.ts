@@ -30,6 +30,7 @@ export class ConfigController extends BaseController {
       },
       version: this.configService.apiVersion,
       isFulltimeAllowed: this.configService.isFulltimeAllowed,
+      allowBetaInstitutionsOnly: this.configService.allowBetaInstitutionsOnly,
       maximumIdleTimeForWarningStudent:
         this.configService.maximumIdleTimeForWarningStudent,
       maximumIdleTimeForWarningSupportingUser:

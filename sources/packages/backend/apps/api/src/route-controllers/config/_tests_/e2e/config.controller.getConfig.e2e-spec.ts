@@ -17,6 +17,7 @@ describe("ConfigController(e2e)-getConfig", () => {
     KEYCLOAK_CLIENT_SUPPORTING_USERS: "supporting-users",
     SITE_MINDER_LOGOUT_URL: "https://fake-siteminder-logout-url",
     IS_FULLTIME_ALLOWED: "false",
+    ALLOW_BETA_INSTITUTIONS_ONLY: "false",
     MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT: "270",
     MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER: "270",
     MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION: "3600",
@@ -59,6 +60,7 @@ describe("ConfigController(e2e)-getConfig", () => {
           externalSiteMinderLogoutUrl: fakeEnvVariables.SITE_MINDER_LOGOUT_URL,
         },
         isFulltimeAllowed: fakeEnvVariables.IS_FULLTIME_ALLOWED === "true",
+        allowBetaInstitutionsOnly: false,
         maximumIdleTimeForWarningStudent:
           +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
         maximumIdleTimeForWarningSupportingUser:

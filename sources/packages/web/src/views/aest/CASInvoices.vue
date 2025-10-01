@@ -219,7 +219,7 @@ export default defineComponent({
           await CASInvoiceBatchService.shared.getInvoiceBatches({
             ...currentPagination,
           });
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("Unexpected error while loading CAS invoices.");
       } finally {
         invoiceBatchesLoading.value = false;
@@ -233,7 +233,7 @@ export default defineComponent({
         await CASInvoiceBatchService.shared.downloadCASInvoiceBatchReport(
           batch.id,
         );
-      } catch (error: unknown) {
+      } catch {
         snackBar.error("Unexpected error while downloading the batch.");
       } finally {
         batch.downloadInProgress = false;
@@ -251,7 +251,7 @@ export default defineComponent({
             `Batch ${batch.batchName} has been approved and added to the queue.`,
           );
           loadInvoiceBatches();
-        } catch (error: unknown) {
+        } catch {
           snackBar.error(`Unexpected error updating batch ${batch.batchName}.`);
         } finally {
           batch.approvalInProgress = false;
@@ -268,7 +268,7 @@ export default defineComponent({
           });
           snackBar.success(`Batch ${batch.batchName} has been rejected.`);
           loadInvoiceBatches();
-        } catch (error: unknown) {
+        } catch {
           snackBar.error(`Unexpected error updating batch ${batch.batchName}.`);
         } finally {
           batch.approvalInProgress = false;

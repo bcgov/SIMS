@@ -225,7 +225,7 @@ export default defineComponent({
         snackBar.success("Program deactivated with success.");
         emit("programDataUpdated");
         return true;
-      } catch (error) {
+      } catch {
         snackBar.error("An error happened while deactivating the program.");
         return false;
       }
