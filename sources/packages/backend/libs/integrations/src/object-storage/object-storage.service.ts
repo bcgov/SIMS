@@ -4,7 +4,7 @@ import {
   PutObjectCommand,
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
-import { Readable } from "stream";
+import { Readable } from "node:stream";
 import { ConfigService } from "@sims/utilities/config";
 import { GetObjectResult, StorageObject } from "./models/object-storage.models";
 
