@@ -86,7 +86,9 @@ describe(
       const queueData = {
         assessmentId: updatedApplication.currentProcessingAssessment.id,
       } as StartAssessmentQueueInDTO;
-      expect(startApplicationAssessmentQueueMock.add).toBeCalledWith(queueData);
+      expect(startApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
+        queueData,
+      );
       // currentProcessingAssessment must be updated with the queued assessment.
       expect(updatedApplication.currentAssessment.id).toBe(
         updatedApplication.currentProcessingAssessment.id,
@@ -138,7 +140,9 @@ describe(
       const queueData = {
         assessmentId: oldestAssessment.id,
       } as StartAssessmentQueueInDTO;
-      expect(startApplicationAssessmentQueueMock.add).toBeCalledWith(queueData);
+      expect(startApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
+        queueData,
+      );
       // currentProcessingAssessment must be updated with the oldest assessment
       // and currentAssessment and currentProcessingAssessment must be different.
       expect(updatedApplication.currentProcessingAssessment.id).toBe(
@@ -175,7 +179,7 @@ describe(
         await processor.processQueue(mockedJob.job);
 
         // Assert
-        expect(startApplicationAssessmentQueueMock.add).not.toBeCalled();
+        expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalled();
       });
     });
 
@@ -195,7 +199,7 @@ describe(
       await processor.processQueue(mockedJob.job);
 
       // Assert
-      expect(startApplicationAssessmentQueueMock.add).not.toBeCalled();
+      expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalled();
     });
 
     it(`Should queue the assessment cancellation when an application has one assessment with status '${StudentAssessmentStatus.CancellationRequested}'.`, async () => {
@@ -224,7 +228,7 @@ describe(
       const queueData = {
         assessmentId: updatedApplication.currentAssessment.id,
       } as CancelAssessmentQueueInDTO;
-      expect(cancelApplicationAssessmentQueueMock.add).toBeCalledWith(
+      expect(cancelApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
         queueData,
       );
 
@@ -258,7 +262,7 @@ describe(
       await processor.processQueue(mockedJob.job);
 
       // Assert
-      expect(cancelApplicationAssessmentQueueMock.add).not.toBeCalled();
+      expect(cancelApplicationAssessmentQueueMock.add).not.toHaveBeenCalled();
     });
 
     /**
