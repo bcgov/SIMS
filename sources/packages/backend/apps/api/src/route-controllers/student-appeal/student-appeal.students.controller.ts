@@ -160,7 +160,7 @@ export class StudentAppealStudentsController extends BaseController {
           );
         });
       dryRunSubmissionResults = await Promise.all(dryRunPromise);
-    } catch (error) {
+    } catch {
       //TODO: Add a logger to log the error trace.
       throw new InternalServerErrorException(
         "Dry run submission failed due to unknown reason.",
@@ -184,7 +184,7 @@ export class StudentAppealStudentsController extends BaseController {
           files: payload.studentAppealRequests.find(
             (studentAppeal) => studentAppeal.formName === result.formName,
           ).files,
-        } as StudentAppealRequestModel),
+        }) as StudentAppealRequestModel,
     );
 
     const studentAppeal = await this.studentAppealService.saveStudentAppeals(
