@@ -114,7 +114,7 @@ describe(
       const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      expect(zbClientMock.cancelProcessInstance).toBeCalledWith(
+      expect(zbClientMock.cancelProcessInstance).toHaveBeenCalledWith(
         workflowInstanceId,
       );
       expect(result).toEqual(["Assessment cancelled with success."]);
@@ -211,7 +211,7 @@ describe(
         ]),
       );
 
-      expect(mockedJob.job.discard).toBeCalled();
+      expect(mockedJob.job.discard).toHaveBeenCalled();
     });
 
     it("Should throw an error and call job.discard when the application is not in the expected status.", async () => {
@@ -236,7 +236,7 @@ describe(
       await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
         expectedError,
       );
-      expect(mockedJob.job.discard).toBeCalled();
+      expect(mockedJob.job.discard).toHaveBeenCalled();
     });
 
     it("Should throw an error and call job.discard when the assessment id was not found.", async () => {
@@ -253,7 +253,7 @@ describe(
       await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
         error,
       );
-      expect(mockedJob.job.discard).toBeCalled();
+      expect(mockedJob.job.discard).toHaveBeenCalled();
     });
 
     it("Should find an impacted application and create a reassessment when canceling an application with a assessment date set in the current assessment.", async () => {
