@@ -89,7 +89,6 @@
     "qs": "^6.9.6",
     "redis": "^4.6.11",
     "reflect-metadata": "^0.2.2",
-    "rimraf": "^3.0.2",
     "rxjs": "^7.8.2",
     "soap": "^1.1.10",
     "ssh2-sftp-client": "^11.0.0",
