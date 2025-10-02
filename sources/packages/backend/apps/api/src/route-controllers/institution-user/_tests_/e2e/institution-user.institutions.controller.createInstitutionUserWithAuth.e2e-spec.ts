@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
@@ -72,7 +72,7 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
   it("Should throw an UnprocessableEntityException error when the user passed in the payload is not found on BCeID.", async () => {
     // Arrange
     const payload = {
-      bceidUserId: faker.random.alpha({ count: 5 }),
+      bceidUserId: faker.string.alpha({ length: 5 }),
       permissions: [
         {
           locationId: collegeFLocationA.id,
@@ -104,7 +104,7 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     // Arrange
     const user = createFakeUser();
     const payload = {
-      bceidUserId: faker.random.alpha({ count: 5 }),
+      bceidUserId: faker.string.alpha({ length: 5 }),
       permissions: [
         {
           locationId: collegeFLocationA.id,
@@ -153,7 +153,7 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     await db.user.save(user);
 
     const payload = {
-      bceidUserId: faker.random.alpha({ count: 5 }),
+      bceidUserId: faker.string.alpha({ length: 5 }),
       permissions: [
         {
           locationId: collegeFLocationA.id,
@@ -189,7 +189,7 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     // Arrange
     const user = createFakeUser();
     const payload = {
-      bceidUserId: faker.random.alpha({ count: 5 }),
+      bceidUserId: faker.string.alpha({ length: 5 }),
       permissions: [
         {
           locationId: collegeFLocationA.id,

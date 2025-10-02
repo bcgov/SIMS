@@ -20,7 +20,7 @@ import {
   User,
 } from "@sims/sims-db";
 import * as request from "supertest";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
   let app: INestApplication;
@@ -425,7 +425,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
         institution: institution,
         user: sharedUser,
       });
-      const programSearchString = faker.datatype.uuid();
+      const programSearchString = faker.string.uuid();
       firstApprovedProgram.name = programSearchString;
       const secondApprovedProgram = createFakeEducationProgram({
         institution: institution,
@@ -531,7 +531,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       "when the search for the programs is made and the declined program status is selected along with the inactive programs selected and the program name and location name search filter.",
     async () => {
       // Arrange
-      const locationSearchString = faker.datatype.uuid();
+      const locationSearchString = faker.string.uuid();
       institutionLocation.name = locationSearchString;
       const secondInstitutionLocation = createFakeInstitutionLocation({
         institution: institution,
@@ -552,7 +552,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
           },
         },
       );
-      const programSearchString = faker.datatype.uuid();
+      const programSearchString = faker.string.uuid();
       declinedProgram.name = programSearchString;
       const pendingProgram = createFakeEducationProgram(
         {

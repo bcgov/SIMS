@@ -30,7 +30,7 @@ import {
   StudentAssessment,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { AssessmentSequentialProcessingService } from "@sims/services";
 import { TestingModule } from "@nestjs/testing";
 import { QueueConsumersModule } from "../../../../src/queue-consumers.module";

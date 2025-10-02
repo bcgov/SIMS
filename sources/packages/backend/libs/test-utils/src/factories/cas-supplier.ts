@@ -11,7 +11,7 @@ import {
   E2EDataSources,
   saveFakeStudent,
 } from "@sims/test-utils";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Saves a fake CAS supplier.
@@ -77,13 +77,13 @@ export function createFakeCASSupplier(
     casSupplier.isValid = options?.initialValues.isValid ?? true;
   } else {
     casSupplier.supplierAddress = {
-      supplierSiteCode: faker.datatype.number(999).toString(),
-      addressLine1: faker.address.streetAddress(),
-      addressLine2: faker.address.streetAddress(),
-      city: faker.address.city(),
-      provinceState: faker.address.state(),
-      country: faker.address.country(),
-      postalCode: faker.address.zipCode(),
+      supplierSiteCode: faker.number.int(999).toString(),
+      addressLine1: faker.location.streetAddress(),
+      addressLine2: faker.location.streetAddress(),
+      city: faker.location.city(),
+      provinceState: faker.location.state(),
+      country: faker.location.country(),
+      postalCode: faker.location.zipCode(),
       status: "ACTIVE",
       siteProtected: "YES",
       lastUpdated: new Date(),
@@ -91,12 +91,12 @@ export function createFakeCASSupplier(
     casSupplier.supplierProtected = true;
     casSupplier.isValid = options?.initialValues.isValid ?? false;
   }
-  casSupplier.supplierName = `${faker.name.lastName()}, ${faker.name.firstName()}`;
+  casSupplier.supplierName = `${faker.person.lastName()}, ${faker.person.firstName()}`;
   casSupplier.supplierNumber =
     options?.initialValues?.supplierNumber ??
-    faker.datatype.number({ min: 100000, max: 9999999999 }).toString();
-  casSupplier.supplierAddress.supplierSiteCode = faker.datatype
-    .number({ min: 100, max: 999 })
+    faker.number.int({ min: 100000, max: 9999999999 }).toString();
+  casSupplier.supplierAddress.supplierSiteCode = faker.number
+    .int({ min: 100, max: 999 })
     .toString();
   casSupplier.supplierStatusUpdatedOn = new Date();
   casSupplier.creator = relations.auditUser;

@@ -18,7 +18,7 @@ import { AppAESTModule } from "../../../../app.aest.module";
 import { FormNames, FormService } from "../../../../services";
 import { Notification, NotificationMessageType, User } from "@sims/sims-db";
 import { In, IsNull } from "typeorm";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountApplication", () => {
   let app: INestApplication;
@@ -203,7 +203,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
 
     await saveFakeSFASIndividual(db.dataSource, {
       initialValues: {
-        lastName: faker.datatype.uuid(),
+        lastName: faker.string.uuid(),
         birthDate: TEST_BIRTH_DATE1,
         sin: TEST_SIN1,
       },

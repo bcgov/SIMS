@@ -1,5 +1,5 @@
 import { SINValidation, Student } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Creates a fake SINValidation.
@@ -21,7 +21,7 @@ export function createFakeSINValidation(
   // to the SIN be considered not temporary by default.
   sinValidation.sin =
     options?.initialValue?.sin ??
-    faker.datatype.number({ min: 100000000, max: 899999999 }).toString();
+    faker.number.int({ min: 100000000, max: 899999999 }).toString();
   sinValidation.dateSent = now;
   sinValidation.dateReceived =
     options?.initialValue?.dateReceived !== undefined

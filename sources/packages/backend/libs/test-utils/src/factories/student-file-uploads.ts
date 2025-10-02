@@ -1,4 +1,4 @@
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   FileOriginType,
   Student,
@@ -36,16 +36,14 @@ export function createFakeStudentFileUpload(
   const studentFile = new StudentFile();
   studentFile.fileName = options?.fileName ?? faker.system.fileName();
   studentFile.uniqueFileName =
-    studentFile.fileName +
-    faker.datatype.uuid() +
-    "." +
-    faker.system.fileType();
+    studentFile.fileName + faker.string.uuid() + "." + faker.system.fileType();
   studentFile.groupName = options?.groupName ?? "Ministry communications";
   studentFile.student = relations?.student ?? createFakeStudent();
   studentFile.creator = relations?.creator;
   studentFile.fileOrigin = options?.fileOrigin ?? FileOriginType.Ministry;
   studentFile.virusScanStatus = VirusScanStatus.Pending;
-  studentFile.fileHash = options?.hash ?? faker.random.alphaNumeric(64);
+  studentFile.fileHash =
+    options?.hash ?? faker.string.alphanumeric({ length: 64 });
   return studentFile;
 }
 

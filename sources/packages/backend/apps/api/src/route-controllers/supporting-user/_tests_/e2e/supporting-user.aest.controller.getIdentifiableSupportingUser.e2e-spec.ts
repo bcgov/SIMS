@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
@@ -50,7 +50,7 @@ describe("SupportingUserAESTController(e2e)-getIdentifiableSupportingUser", () =
       programYear: recentPYParentForm.programYear,
     });
 
-    const parentFullName = faker.random.alpha({ count: 50 });
+    const parentFullName = faker.string.alpha({ length: 50 });
     const parent = createFakeSupportingUser(
       { application },
       {

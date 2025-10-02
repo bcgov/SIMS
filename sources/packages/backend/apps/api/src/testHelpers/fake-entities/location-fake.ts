@@ -1,4 +1,4 @@
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { Institution, InstitutionLocation } from "@sims/sims-db";
 import { createFakeInstitution } from "@sims/test-utils";
 
@@ -8,12 +8,12 @@ export function createFakeLocation(
   const location = new InstitutionLocation();
   location.data = {
     address: {
-      addressLine1: faker.address.streetAddress(),
-      addressLine2: faker.address.secondaryAddress(),
+      addressLine1: faker.location.streetAddress(),
+      addressLine2: faker.location.secondaryAddress(),
       provinceState: "BC",
       country: "CAN",
       city: "Victoria",
-      postalCode: faker.address.zipCode("A9A9A9"),
+      postalCode: faker.location.zipCode("A9A9A9"),
     },
   };
   location.primaryContact = {
@@ -22,7 +22,7 @@ export function createFakeLocation(
     email: "Email",
     phone: "Phone",
   };
-  location.name = faker.company.companyName();
+  location.name = faker.company.name();
   location.institution = institution ?? createFakeInstitution();
   return location;
 }

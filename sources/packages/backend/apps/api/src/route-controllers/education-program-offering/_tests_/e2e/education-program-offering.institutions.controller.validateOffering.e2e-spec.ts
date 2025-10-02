@@ -25,7 +25,7 @@ import {
   createFakeEducationProgram,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   AviationCredentialTypeOptions,
   OfferingValidationInfos,
@@ -70,7 +70,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       },
       {
         initialValue: {
-          sabcCode: faker.random.alpha({ count: 4 }),
+          sabcCode: faker.string.alpha({ length: 4, casing: "upper" }),
           deliveredOnline: true,
         },
       },

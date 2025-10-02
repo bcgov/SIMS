@@ -1,4 +1,4 @@
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   EducationProgram,
   Institution,
@@ -27,7 +27,7 @@ export function createFakeEducationProgram(
   },
 ): EducationProgram {
   const program = new EducationProgram();
-  program.name = faker.name.jobArea();
+  program.name = faker.person.jobArea();
   program.description = "description";
   program.credentialType = "credentialType";
   program.cipCode = "cipCode";

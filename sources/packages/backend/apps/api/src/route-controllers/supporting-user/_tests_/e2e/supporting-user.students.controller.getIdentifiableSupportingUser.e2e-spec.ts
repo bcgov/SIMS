@@ -1,7 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -60,7 +60,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
       programYear: recentPYParentForm.programYear,
     });
     // Create fake supporting user parent.
-    const parentFullName = faker.random.alpha({ count: 50 });
+    const parentFullName = faker.string.alpha({ length: 50 });
     const parent = createFakeSupportingUser(
       { application },
       {
@@ -137,7 +137,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
     });
     const student = application.student;
     // Create fake supporting user parent.
-    const parentFullName = faker.random.alpha({ count: 50 });
+    const parentFullName = faker.string.alpha({ length: 50 });
     const parent = createFakeSupportingUser(
       { application },
       {
@@ -202,7 +202,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
       });
       const student = application.student;
       // Create fake supporting user parent.
-      const parentFullName = faker.random.alpha({ count: 50 });
+      const parentFullName = faker.string.alpha({ length: 50 });
       const parent = createFakeSupportingUser(
         { application },
         {

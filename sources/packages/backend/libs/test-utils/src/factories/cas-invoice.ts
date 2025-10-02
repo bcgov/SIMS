@@ -7,7 +7,7 @@ import {
   DisbursementValueType,
   User,
 } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { createFakeCASInvoiceDetail } from "./cas-invoice-detail";
 import { E2EDataSources } from "..";
 
@@ -38,7 +38,7 @@ export function createFakeCASInvoice(
   casInvoice.casInvoiceBatch = relations.casInvoiceBatch;
   casInvoice.disbursementReceipt = relations.disbursementReceipt;
   casInvoice.casSupplier = relations.casSupplier;
-  casInvoice.invoiceNumber = faker.datatype.uuid();
+  casInvoice.invoiceNumber = faker.string.uuid();
   casInvoice.invoiceStatus =
     options?.initialValue?.invoiceStatus ?? CASInvoiceStatus.Pending;
   casInvoice.invoiceStatusUpdatedOn =

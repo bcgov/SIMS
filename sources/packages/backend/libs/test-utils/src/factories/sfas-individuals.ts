@@ -1,7 +1,7 @@
 import { SFASIndividual } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { createFakeStudent } from "@sims/test-utils/factories/student";
 
 /**
@@ -15,30 +15,30 @@ export function createFakeSFASIndividual(options?: {
   initialValues?: Partial<SFASIndividual>;
   includeAddressLine2?: boolean;
 }) {
-  const fakeMSFAANumber = faker.datatype
-    .number({
+  const fakeMSFAANumber = faker.number
+    .int({
       min: 1000000000,
       max: 9999999999,
     })
     .toString();
-  const fakeId = faker.datatype.number({ min: 100000000, max: 999999999 });
-  const fakeSIN = faker.datatype
-    .number({ min: 100000000, max: 899999999 })
+  const fakeId = faker.number.int({ min: 100000000, max: 999999999 });
+  const fakeSIN = faker.number
+    .int({ min: 100000000, max: 899999999 })
     .toString();
 
   const sfasIndividual = new SFASIndividual();
   sfasIndividual.id = options?.initialValues?.id ?? fakeId;
   sfasIndividual.birthDate =
     options?.initialValues?.birthDate ??
-    getISODateOnlyString(faker.date.past(18));
+    getISODateOnlyString(faker.date.past({ years: 18 }));
   sfasIndividual.msfaaNumber =
     options?.initialValues?.msfaaNumber ?? fakeMSFAANumber;
   sfasIndividual.partTimeMSFAANumber =
     options?.initialValues?.partTimeMSFAANumber ?? fakeMSFAANumber;
   sfasIndividual.firstName =
-    options?.initialValues?.firstName ?? faker.name.firstName();
+    options?.initialValues?.firstName ?? faker.person.firstName();
   sfasIndividual.lastName =
-    options?.initialValues?.lastName ?? faker.name.lastName();
+    options?.initialValues?.lastName ?? faker.person.lastName();
   sfasIndividual.sin = options?.initialValues?.sin ?? fakeSIN;
   sfasIndividual.unsuccessfulCompletion =
     options?.initialValues?.unsuccessfulCompletion ?? 0;
@@ -55,17 +55,17 @@ export function createFakeSFASIndividual(options?: {
   sfasIndividual.student =
     options?.initialValues?.student ?? createFakeStudent();
   sfasIndividual.phoneNumber =
-    options?.initialValues?.phoneNumber ?? +faker.datatype.number(9999999999);
+    options?.initialValues?.phoneNumber ?? +faker.number.int(9999999999);
   sfasIndividual.addressLine1 =
-    options?.initialValues?.addressLine1 ?? faker.address.streetAddress();
-  sfasIndividual.city = options?.initialValues?.city ?? faker.address.city();
+    options?.initialValues?.addressLine1 ?? faker.location.streetAddress();
+  sfasIndividual.city = options?.initialValues?.city ?? faker.location.city();
   sfasIndividual.provinceState = options?.initialValues?.provinceState ?? "BC";
   sfasIndividual.country = options?.initialValues?.country ?? "CAN";
   sfasIndividual.postalZipCode =
     options?.initialValues?.postalZipCode ?? "A1A 1A1";
   if (options?.includeAddressLine2) {
     sfasIndividual.addressLine2 =
-      options?.initialValues?.addressLine2 ?? faker.address.secondaryAddress();
+      options?.initialValues?.addressLine2 ?? faker.location.secondaryAddress();
   }
   sfasIndividual.updatedAt = options?.initialValues?.updatedAt;
   return sfasIndividual;

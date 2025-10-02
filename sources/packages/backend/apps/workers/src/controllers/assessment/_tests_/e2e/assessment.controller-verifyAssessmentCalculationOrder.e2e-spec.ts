@@ -32,7 +32,7 @@ import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { createFakeVerifyAssessmentCalculationOrderPayload } from "./verify-assessment-calculation-order-factory";
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
 import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import * as dayjs from "dayjs";
 
 describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {

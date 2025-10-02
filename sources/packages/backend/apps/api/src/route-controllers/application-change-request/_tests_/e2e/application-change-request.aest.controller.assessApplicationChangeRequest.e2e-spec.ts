@@ -9,7 +9,7 @@ import {
   getAESTUser,
 } from "../../../../testHelpers";
 import { ApplicationEditStatus, ApplicationStatus, User } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   createE2EDataSources,
   createFakeStudentAppeal,
@@ -475,7 +475,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
    */
   function getPayload(applicationEditStatus: ApplicationEditStatus) {
     return {
-      note: faker.datatype.uuid(),
+      note: faker.string.uuid(),
       applicationEditStatus,
     };
   }

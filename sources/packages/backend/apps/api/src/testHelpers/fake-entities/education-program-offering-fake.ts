@@ -1,4 +1,4 @@
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { createFakeLocation } from ".";
 import {
   EducationProgram,
@@ -16,11 +16,11 @@ export function createFakeEducationProgramOffering(
   institutionLocation?: InstitutionLocation,
 ): EducationProgramOffering {
   const offering = new EducationProgramOffering();
-  offering.name = faker.random.word();
-  offering.actualTuitionCosts = faker.datatype.number(1000);
-  offering.programRelatedCosts = faker.datatype.number(1000);
-  offering.mandatoryFees = faker.datatype.number(1000);
-  offering.exceptionalExpenses = faker.datatype.number(1000);
+  offering.name = faker.lorem.word();
+  offering.actualTuitionCosts = faker.number.int(1000);
+  offering.programRelatedCosts = faker.number.int(1000);
+  offering.mandatoryFees = faker.number.int(1000);
+  offering.exceptionalExpenses = faker.number.int(1000);
   offering.offeringDelivered = "offeringDelivered";
   offering.lacksStudyBreaks = true;
   offering.educationProgram = program ?? createFakeEducationProgram();

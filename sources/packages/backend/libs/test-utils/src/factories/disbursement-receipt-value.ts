@@ -1,5 +1,5 @@
 import { DisbursementReceipt, DisbursementReceiptValue } from "@sims/sims-db";
-import faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Create fake disbursement receipt value.
@@ -17,10 +17,10 @@ export function createFakeDisbursementReceiptValue(
 ): DisbursementReceiptValue {
   const disbursementReceiptValue = new DisbursementReceiptValue();
   disbursementReceiptValue.grantType =
-    initialValues.grantType ?? faker.random.alpha({ count: 4 });
+    initialValues.grantType ?? faker.string.alpha({ length: 4 });
   disbursementReceiptValue.grantAmount =
     initialValues.grantAmount ??
-    faker.datatype.number({
+    faker.number.int({
       min: 1000,
       max: 9999,
     });

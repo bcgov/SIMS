@@ -33,7 +33,7 @@ import {
   IER12TestInputData,
 } from "./models/data-inputs";
 import { addDays, dateDifference, getISODateOnlyString } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Save all IER12 related records providing all data that
