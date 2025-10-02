@@ -5,7 +5,7 @@ import { ConfigService } from "@sims/utilities/config";
 import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { CronRepeatOptions, Queue } from "bull";
 import { v4 as uuid } from "uuid";
-import * as cronParser from "cron-parser";
+import { CronExpressionParser } from "cron-parser";
 import { BaseQueue } from "../schedulers/base-queue";
 
 export abstract class BaseScheduler<T>
@@ -149,8 +149,8 @@ export abstract class BaseScheduler<T>
    */
   async getNexSchedulerExecutionMilliseconds(): Promise<number> {
     const repeatOptions = await this.queueCronConfiguration();
-    const result = cronParser.parseExpression(repeatOptions.cron, {
-      utc: true,
+    const result = CronExpressionParser.parse(repeatOptions.cron, {
+      tz: "UTC",
     });
     return result.next().getTime();
   }
