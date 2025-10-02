@@ -67,7 +67,7 @@ export CRA_RESPONSE_FOLDER := $(or $(CRA_RESPONSE_FOLDER), CRA-Response)
 export CRA_PROGRAM_AREA_CODE := $(or $(CRA_PROGRAM_AREA_CODE), )
 export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
 # Versions used by camunda-docker compose-core.yml during the make camunda.
-# Versions upgraded following the combination available on https://github.com/camunda/camunda-distributions/releases/tag/
+# Versions upgraded following the combination available at https://github.com/camunda/camunda-distributions/releases
 export CAMUNDA_CONNECTORS_VERSION := $(or $(CAMUNDA_CONNECTORS_VERSION), 8.7.8)
 # Operate, Zeebe, and tasklist shares the same version below.
 export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.7.12)
