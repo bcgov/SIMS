@@ -1,8 +1,9 @@
+# File based on the https://docs.camunda.io/docs/next/self-managed/quickstart/developer-quickstart/docker-compose/
 # While the Docker images themselves are supported for production usage,
 # this docker-compose.yaml is designed to be used by developers to run
 # an environment locally. It is not designed to be used in production.
 # We recommend to use Kubernetes in production with our Helm Charts:
-# https://docs.camunda.io/docs/self-managed/platform-deployment/kubernetes-helm/
+# https://docs.camunda.io/docs/self-managed/setup/install/
 # For local development, we recommend using KIND instead of `docker-compose`:
 # https://docs.camunda.io/docs/self-managed/platform-deployment/helm-kubernetes/guides/local-kubernetes-cluster/
 
@@ -26,6 +27,7 @@ services:
       # allow running with low disk space
       - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
       - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
+      - CAMUNDA_DATABASE_URL=http://elasticsearch:9200
       - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
     healthcheck:
       test:
@@ -54,6 +56,8 @@ services:
       - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
       - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://elasticsearch:9200
       - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
+      - CAMUNDA_OPERATE_CSRFPREVENTIONENABLED=false
+      - CAMUNDA_DATABASE_URL=http://elasticsearch:9200
       - management.endpoints.web.exposure.include=health
       - management.endpoint.health.probes.enabled=true
     healthcheck:
@@ -83,6 +87,8 @@ services:
       - CAMUNDA_TASKLIST_ZEEBE_RESTADDRESS=http://zeebe:8080
       - CAMUNDA_TASKLIST_ELASTICSEARCH_URL=http://elasticsearch:9200
       - CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
+      - CAMUNDA_TASKLIST_CSRFPREVENTIONENABLED=false
+      - CAMUNDA_DATABASE_URL=http://elasticsearch:9200
       - management.endpoints.web.exposure.include=health
       - management.endpoint.health.probes.enabled=true
     healthcheck:
@@ -108,13 +114,15 @@ services:
     ports:
       - "8085:8080"
     environment:
-      - ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
-      - ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
-      - CAMUNDA_OPERATE_CLIENT_URL=http://operate:8080
-      - CAMUNDA_OPERATE_CLIENT_USERNAME=demo
-      - CAMUNDA_OPERATE_CLIENT_PASSWORD=demo
-      - management.endpoints.web.exposure.include=health
+      - CAMUNDA_CLIENT_MODE=self-managed
+      - CAMUNDA_CLIENT_ZEEBE_GRPCADDRESS=http://zeebe:26500
+      - CAMUNDA_CLIENT_ZEEBE_RESTADDRESS=http://zeebe:8080
+      - OPERATE_CLIENT_BASEURL=http://operate:8080
+      - OPERATE_CLIENT_PROFILE=simple
+      - management.endpoints.web.exposure.include=health,metrics
       - management.endpoint.health.probes.enabled=true
+      - logging.level.io.camunda.zeebe.client.impl.ZeebeCallCredentials=ERROR
+      - logging.level.io.camunda.connector.runtime.inbound.importer=ERROR
     healthcheck:
       test:
         ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health/readiness"]
@@ -160,25 +168,9 @@ services:
     networks:
       - local-network
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
-    container_name: kibana
-    restart: unless-stopped
-    ports:
-      - 5601:5601
-    volumes:
-      - kibana:/usr/share/kibana/data
-    networks:
-      - local-network
-    depends_on:
-      - elasticsearch
-    profiles:
-      - kibana
-
 volumes:
   zeebe:
   elastic:
-  kibana:
 
 networks:
   local-network:

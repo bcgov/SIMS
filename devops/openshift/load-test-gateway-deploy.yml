@@ -59,10 +59,10 @@ objects:
                       name: ${LOAD_TEST_GATEWAY_SECRET_NAME}
                 - name: DISABLE_ORM_CACHE
                   value: ${DISABLE_ORM_CACHE}
-                - name: ZEEBE_ADDRESS
+                - name: ZEEBE_GRPC_ADDRESS
                   valueFrom:
                     secretKeyRef:
-                      key: ${ZEEBE_ADDRESS_KEY}
+                      key: ${ZEEBE_GRPC_ADDRESS_KEY}
                       name: ${LOAD_TEST_GATEWAY_SECRET_NAME}
                 - name: ZEEBE_CLIENT_ID
                   valueFrom:
@@ -171,7 +171,7 @@ parameters:
     value: "0"
   - name: LOAD_TEST_GATEWAY_SECRET_NAME
     required: true
-  - name: ZEEBE_ADDRESS_KEY
+  - name: ZEEBE_GRPC_ADDRESS_KEY
     value: zeebe-address
     required: true
   - name: ZEEBE_CLIENT_ID_KEY

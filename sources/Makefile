@@ -67,13 +67,13 @@ export CRA_RESPONSE_FOLDER := $(or $(CRA_RESPONSE_FOLDER), CRA-Response)
 export CRA_PROGRAM_AREA_CODE := $(or $(CRA_PROGRAM_AREA_CODE), )
 export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
 # Versions used by camunda-docker compose-core.yml during the make camunda.
-# Versions upgraded following the combination available on https://github.com/camunda/camunda-platform/blob/main/.env
-export CAMUNDA_CONNECTORS_VERSION := $(or $(CAMUNDA_CONNECTORS_VERSION), 8.6.9)
-export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.6.12)
-export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 8.17.1)
+# Versions upgraded following the combination available at https://github.com/camunda/camunda-distributions/releases
+export CAMUNDA_CONNECTORS_VERSION := $(or $(CAMUNDA_CONNECTORS_VERSION), 8.7.8)
+# Operate, Zeebe, and tasklist shares the same version below.
+export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.7.12)
+export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 8.17.10)
 # Camunda default values for local development.
 export CAMUNDA_OAUTH_DISABLED := $(or $(CAMUNDA_OAUTH_DISABLED), true)
-export CAMUNDA_SECURE_CONNECTION := $(or $(CAMUNDA_SECURE_CONNECTION), false)
 export ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS := $(or $(ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS), 45)
 # CAS
 export CAS_BASE_URL := $(or $(CAS_BASE_URL), )
@@ -201,7 +201,7 @@ web: create-docker-local-network
 camunda: create-docker-local-network
 	@echo "Create Camunda locally (Zeebe, Operate, Tasklist, and Elasticsearch)..."
 	@echo "- Use user and password as 'demo' to login to Operate."
-	@echo "- Use Zeebe address env variable as 'ZEEBE_ADDRESS=localhost:26500' to connect to the local environment."
+	@echo "- Use Zeebe address env variable as 'ZEEBE_GRPC_ADDRESS=grpc://localhost:26500' to connect to the local environment."
 	@echo "- Use endpoint http://localhost:26500 to deploy to the local environment from the desktop modeler."
 	@docker compose -f camunda-docker-compose-core.yml up -d
 
