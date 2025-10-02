@@ -60,10 +60,10 @@ objects:
                     secretKeyRef:
                       key: ${SIMS_DB_NAME}
                       name: ${WORKERS_SECRET_NAME}
-                - name: ZEEBE_ADDRESS
+                - name: ZEEBE_GRPC_ADDRESS
                   valueFrom:
                     secretKeyRef:
-                      key: ${ZEEBE_ADDRESS_KEY}
+                      key: ${ZEEBE_GRPC_ADDRESS_KEY}
                       name: ${WORKERS_SECRET_NAME}
                 - name: ZEEBE_CLIENT_ID
                   valueFrom:
@@ -178,7 +178,7 @@ parameters:
     value: "0"
   - name: WORKERS_SECRET_NAME
     required: true
-  - name: ZEEBE_ADDRESS_KEY
+  - name: ZEEBE_GRPC_ADDRESS_KEY
     value: zeebe-address
   - name: ZEEBE_CLIENT_ID_KEY
     value: zeebe-client-id

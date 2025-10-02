@@ -51,7 +51,7 @@
     "@bull-board/express": "^6.13.0",
     "@bull-board/nestjs": "^6.13.0",
     "@bull-board/ui": "^6.13.0",
-    "@camunda8/sdk": "^8.7.18",
+    "@camunda8/sdk": "^8.7.30",
     "@golevelup/nestjs-discovery": "^5.0.0",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/bull": "^11.0.3",

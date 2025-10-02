@@ -170,10 +170,10 @@ objects:
                       name: ${API_SECRET_NAME}
                 - name: QUEUE_DASHBOARD_BASE_URL
                   value: "${QUEUE_DASHBOARD_BASE_URL}"
-                - name: ZEEBE_ADDRESS
+                - name: ZEEBE_GRPC_ADDRESS
                   valueFrom:
                     secretKeyRef:
-                      key: ${ZEEBE_ADDRESS_KEY}
+                      key: ${ZEEBE_GRPC_ADDRESS_KEY}
                       name: ${API_SECRET_NAME}
                 - name: ZEEBE_CLIENT_ID
                   valueFrom:
@@ -531,7 +531,7 @@ parameters:
     value: "false"
   - name: SWAGGER_ENABLED
     value: "true"
-  - name: ZEEBE_ADDRESS_KEY
+  - name: ZEEBE_GRPC_ADDRESS_KEY
     value: zeebe-address
     require: true
   - name: ZEEBE_CLIENT_ID_KEY
