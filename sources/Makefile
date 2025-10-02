@@ -201,7 +201,7 @@ web: create-docker-local-network
 camunda: create-docker-local-network
 	@echo "Create Camunda locally (Zeebe, Operate, Tasklist, and Elasticsearch)..."
 	@echo "- Use user and password as 'demo' to login to Operate."
-	@echo "- Use Zeebe address env variable as 'ZEEBE_ADDRESS=localhost:26500' to connect to the local environment."
+	@echo "- Use Zeebe address env variable as 'ZEEBE_GRPC_ADDRESS=grpc://localhost:26500' to connect to the local environment."
 	@echo "- Use endpoint http://localhost:26500 to deploy to the local environment from the desktop modeler."
 	@docker compose -f camunda-docker-compose-core.yml up -d
 
