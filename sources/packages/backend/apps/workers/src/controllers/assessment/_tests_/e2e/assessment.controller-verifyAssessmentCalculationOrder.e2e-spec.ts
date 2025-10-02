@@ -402,16 +402,16 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     const firstAssessmentDate =
       currentApplication.currentAssessment.assessmentDate;
     // The start date for the first SFAS and SFAS part-time application record is set to the date before the first assessment date of the current application.
-    const firstLegacyApplicationStartDate = faker.date.between(
-      programYear.startDate,
-      addDays(-1, firstAssessmentDate),
-    );
+    const firstLegacyApplicationStartDate = faker.date.between({
+      from: programYear.startDate,
+      to: addDays(-1, firstAssessmentDate),
+    });
     const firstLegacyApplicationEndDate = addDays(30, firstAssessmentDate);
     // The start date for the second SFAS and SFAS part-time application record is set to the date after the end date of the first SFAS application.
-    const secondLegacyApplicationStartDate = faker.date.between(
-      firstLegacyApplicationEndDate,
-      addDays(10, firstLegacyApplicationEndDate),
-    );
+    const secondLegacyApplicationStartDate = faker.date.between({
+      from: firstLegacyApplicationEndDate,
+      to: addDays(10, firstLegacyApplicationEndDate),
+    });
     const secondLegacyApplicationEndDate = addDays(
       40,
       firstLegacyApplicationEndDate,
@@ -866,16 +866,16 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     const firstAssessmentDate =
       currentApplication.currentAssessment.assessmentDate;
     // The start date for the first SFAS and SFAS part-time application record is set to the date before the first assessment date of the current application.
-    const firstLegacyApplicationStartDate = faker.date.between(
-      programYear.startDate,
-      addDays(-1, firstAssessmentDate),
-    );
+    const firstLegacyApplicationStartDate = faker.date.between({
+      from: programYear.startDate,
+      to: addDays(-1, firstAssessmentDate),
+    });
     const firstLegacyApplicationEndDate = addDays(30, firstAssessmentDate);
     // The start date for the second SFAS and SFAS part-time application record is set to the date after the end date of the first SFAS application.
-    const secondLegacyApplicationStartDate = faker.date.between(
-      firstLegacyApplicationEndDate,
-      addDays(10, firstLegacyApplicationEndDate),
-    );
+    const secondLegacyApplicationStartDate = faker.date.between({
+      from: firstLegacyApplicationEndDate,
+      to: addDays(10, firstLegacyApplicationEndDate),
+    });
     const secondLegacyApplicationEndDate = addDays(
       40,
       firstLegacyApplicationEndDate,
@@ -1026,10 +1026,10 @@ describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
     const firstAssessmentDate =
       currentApplication.currentAssessment.assessmentDate;
     // The start date for the first SFAS and SFAS part-time application record is set to the date before the first assessment date of the current application.
-    const legacyApplicationStartDate = faker.date.between(
-      programYear.startDate,
-      addDays(-1, firstAssessmentDate),
-    );
+    const legacyApplicationStartDate = faker.date.between({
+      from: programYear.startDate,
+      to: addDays(-1, firstAssessmentDate),
+    });
     const legacyApplicationEndDate = addDays(30, firstAssessmentDate);
 
     // Create the second assessment for the current application with a different assessment date.
