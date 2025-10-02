@@ -90,7 +90,8 @@
     "soap": "^1.4.2",
     "ssh2-sftp-client": "^12.0.1",
     "swagger-ui-express": "^5.0.1",
-    "typeorm": "^0.3.27"
+    "typeorm": "^0.3.27",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@aws-sdk/types": "^3.901.0",
@@ -114,7 +115,6 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/pg": "^8.15.5",
     "@types/supertest": "^6.0.3",
-    "@types/uuid": "^11.0.0",
     "copy-webpack-plugin": "^13.0.1",
     "cross-env": "^10.1.0",
     "eslint": "^9.36.0",
