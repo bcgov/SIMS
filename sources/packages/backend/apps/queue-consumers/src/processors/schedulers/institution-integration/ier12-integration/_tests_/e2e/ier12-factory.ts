@@ -171,7 +171,7 @@ async function saveIER12StudentFromTestInput(
       country: "canada",
       selectedCountry: "Canada",
     },
-    phone: faker.phone.phoneNumber(),
+    phone: faker.phone.number({ style: "national" }),
   };
   fakeStudent.disabilityStatus = testInputStudent.disabilityStatus;
   // SIN validation

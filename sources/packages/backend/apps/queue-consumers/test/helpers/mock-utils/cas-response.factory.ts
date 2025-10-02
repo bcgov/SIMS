@@ -92,9 +92,7 @@ export function createFakeCASNotFoundSupplierResponse(): CASSupplierResponse {
  */
 export function createFakePendingInvoicesResponse(): SendInvoicesResponse {
   return {
-    invoiceNumber: faker.datatype
-      .number({ min: 1000000, max: 9999999 })
-      .toString(),
+    invoiceNumber: faker.number.int({ min: 1000000, max: 9999999 }).toString(),
     casReturnedMessages: ["SUCCEEDED"],
   };
 }

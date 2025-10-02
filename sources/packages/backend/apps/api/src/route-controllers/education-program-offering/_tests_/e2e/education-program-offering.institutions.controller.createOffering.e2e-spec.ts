@@ -158,7 +158,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       user: collegeFUser,
     });
     fakeEducationProgram.sabcCode = faker.string.alpha({
-      length: 6,
+      length: 4,
       casing: "upper",
     });
     const savedFakeEducationProgram =
