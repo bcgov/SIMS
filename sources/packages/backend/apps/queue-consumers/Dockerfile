@@ -17,4 +17,7 @@ COPY ./libs ./libs
 RUN npm run build queue-consumers
 
 # Entry point
-CMD [ "npm", "run", "start:prod:queue-consumers" ]
+
+ENV NODE_OPTIONS="--enable-source-maps"
+
+CMD ["node", "dist/apps/queue-consumers/main.js"]
