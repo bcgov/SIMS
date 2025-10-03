@@ -17,7 +17,7 @@ import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { StudentLoanBalancesPartTimeIntegrationScheduler } from "../student-loan-balances-part-time-integration.scheduler";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { Student } from "@sims/sims-db";
 
 /**
@@ -66,7 +66,7 @@ describe(
       // last name to match the expected file records.
       await db.user.update(
         { lastName: RESERVED_USER_LAST_NAME },
-        { lastName: faker.datatype.uuid() },
+        { lastName: faker.string.uuid() },
       );
     });
 
@@ -337,7 +337,7 @@ describe(
       user.lastName =
         lastNameType === "reserved"
           ? RESERVED_USER_LAST_NAME
-          : faker.datatype.uuid();
+          : faker.string.uuid();
       return saveFakeStudent(
         db.dataSource,
         { user },

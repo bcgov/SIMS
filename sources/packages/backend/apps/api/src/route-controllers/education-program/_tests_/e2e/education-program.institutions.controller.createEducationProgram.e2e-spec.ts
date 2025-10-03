@@ -25,7 +25,7 @@ import * as request from "supertest";
 import { FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
@@ -58,7 +58,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should create an education program when valid data is passed.", async () => {
     // Arrange
-    const sabcCode = `${faker.random.alpha({ count: 3 })}1`;
+    const sabcCode = `${faker.string.alpha({ length: 3, casing: "upper" })}1`;
     const payload = getPayload(sabcCode);
     const formService = await getProviderInstanceForModule(
       testingModule,
@@ -383,7 +383,10 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       fieldOfStudyCode: "15",
       nocCode: "2174",
       sabcCode: sabcCode,
-      institutionProgramCode: faker.random.alpha({ count: 3 }),
+      institutionProgramCode: faker.string.alpha({
+        length: 3,
+        casing: "upper",
+      }),
       programIntensity: "Full Time and Part Time",
       programDeliveryTypes: {
         deliveredOnSite: true,

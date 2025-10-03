@@ -25,7 +25,7 @@ import {
   getAuthorizedLocation,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -93,10 +93,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       institution: collegeF,
       user: collegeFUser,
     });
-    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-    const savedFakeEducationProgram = await db.educationProgram.save(
-      fakeEducationProgram,
-    );
+    fakeEducationProgram.sabcCode = faker.string.alpha({
+      length: 4,
+      casing: "upper",
+    });
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
     const newOffering = createFakeEducationProgramOffering(
       savedFakeEducationProgram,
       collegeFLocation,
@@ -202,9 +204,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         institution: collegeF,
         user: collegeFUser,
       });
-      const savedFakeEducationProgram = await db.educationProgram.save(
-        fakeEducationProgram,
-      );
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
       const newOffering = createFakeEducationProgramOffering(
         savedFakeEducationProgram,
         collegeFLocation,
@@ -330,9 +331,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         institution: institutionCollegeC,
         user: institutionCollegeCUser,
       });
-      const savedFakeEducationProgram = await db.educationProgram.save(
-        fakeEducationProgram,
-      );
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
       const newOffering = createFakeEducationProgramOffering(
         savedFakeEducationProgram,
         collegeCLocation,
@@ -491,9 +491,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         },
       },
     );
-    const savedFakeEducationProgram = await db.educationProgram.save(
-      fakeEducationProgram,
-    );
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
     const newOffering = createFakeEducationProgramOffering(
       savedFakeEducationProgram,
       collegeFLocation,
@@ -558,10 +557,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         institution: collegeF,
         user: collegeFUser,
       });
-      fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-      const savedFakeEducationProgram = await db.educationProgram.save(
-        fakeEducationProgram,
-      );
+      fakeEducationProgram.sabcCode = faker.string.alpha({
+        length: 4,
+        casing: "upper",
+      });
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
       const newOffering = createFakeEducationProgramOffering(
         savedFakeEducationProgram,
         collegeFLocation,
@@ -634,10 +635,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         institution: collegeF,
         user: collegeFUser,
       });
-      fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-      const savedFakeEducationProgram = await db.educationProgram.save(
-        fakeEducationProgram,
-      );
+      fakeEducationProgram.sabcCode = faker.string.alpha({
+        length: 4,
+        casing: "upper",
+      });
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
       const newOffering = createFakeEducationProgramOffering(
         savedFakeEducationProgram,
         collegeFLocation,
@@ -753,9 +756,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
         institution: collegeF,
         user: collegeFUser,
       });
-      const savedFakeEducationProgram = await db.educationProgram.save(
-        fakeEducationProgram,
-      );
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
       const newOffering = createFakeEducationProgramOffering(
         savedFakeEducationProgram,
         collegeFLocation,
@@ -851,10 +853,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       institution: collegeF,
       user: collegeFUser,
     });
-    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-    const savedFakeEducationProgram = await db.educationProgram.save(
-      fakeEducationProgram,
-    );
+    fakeEducationProgram.sabcCode = faker.string.alpha({
+      length: 4,
+      casing: "upper",
+    });
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
     const newOffering = createFakeEducationProgramOffering(
       savedFakeEducationProgram,
       collegeFLocation,

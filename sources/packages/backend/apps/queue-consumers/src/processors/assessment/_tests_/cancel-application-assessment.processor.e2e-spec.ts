@@ -30,7 +30,7 @@ import {
   StudentAssessment,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { AssessmentSequentialProcessingService } from "@sims/services";
 import { TestingModule } from "@nestjs/testing";
 import { QueueConsumersModule } from "../../../../src/queue-consumers.module";
@@ -72,8 +72,8 @@ describe(
 
     it("Should cancel the assessment pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
       // Arrange
-      const workflowInstanceId = faker.datatype
-        .number({
+      const workflowInstanceId = faker.number
+        .int({
           min: 1000000000,
           max: 9999999999,
         })

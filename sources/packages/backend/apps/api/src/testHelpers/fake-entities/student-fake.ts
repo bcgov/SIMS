@@ -1,4 +1,4 @@
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { Student, User } from "@sims/sims-db";
 import { createFakeUser } from "@sims/test-utils";
 
@@ -8,17 +8,17 @@ import { createFakeUser } from "@sims/test-utils";
 export function createFakeStudent(user?: User): Student {
   const student = new Student();
   student.user = user ?? createFakeUser();
-  student.birthDate = faker.date.past(18).toISOString();
+  student.birthDate = faker.date.past({ years: 99 }).toISOString();
   student.gender = "nonBinary";
   student.contactInfo = {
     address: {
-      addressLine1: faker.address.streetAddress(),
-      city: faker.address.city(),
+      addressLine1: faker.location.streetAddress(),
+      city: faker.location.city(),
       country: "CAN",
       provinceState: "BC",
-      postalCode: faker.address.zipCode(),
+      postalCode: faker.location.zipCode(),
     },
-    phone: faker.phone.phoneNumber(),
+    phone: faker.phone.number({ style: "national" }),
   };
   return student;
 }

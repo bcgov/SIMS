@@ -1,6 +1,6 @@
 import { SFASApplication, SFASIndividual } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Create fake SFAS application.
@@ -19,16 +19,17 @@ export function createFakeSFASApplication(
   },
 ): SFASApplication {
   const sfasApplication = new SFASApplication();
-  sfasApplication.id = faker.datatype.number({
+  sfasApplication.id = faker.number.int({
     min: 100000000,
     max: 999999999,
   });
   sfasApplication.programYearId = options?.initialValues?.programYearId;
   sfasApplication.startDate =
     options?.initialValues.startDate ??
-    getISODateOnlyString(faker.date.past(18));
+    getISODateOnlyString(faker.date.past({ years: 18 }));
   sfasApplication.endDate =
-    options?.initialValues.endDate ?? getISODateOnlyString(faker.date.past(18));
+    options?.initialValues.endDate ??
+    getISODateOnlyString(faker.date.past({ years: 18 }));
   sfasApplication.individual = relations.individual;
   sfasApplication.bslAward = options?.initialValues.bslAward ?? 20;
   sfasApplication.cslAward = options?.initialValues.cslAward ?? 20;
@@ -39,20 +40,20 @@ export function createFakeSFASApplication(
   sfasApplication.csgdAward = options?.initialValues.csgdAward ?? 0;
   sfasApplication.csgpAward = options?.initialValues.csgpAward ?? 0;
   sfasApplication.sbsdAward = options?.initialValues.sbsdAward ?? 0;
-  sfasApplication.createdAt = faker.date.past(18);
-  sfasApplication.updatedAt = faker.date.past(18);
-  sfasApplication.extractedAt = faker.date.past(18);
+  sfasApplication.createdAt = faker.date.past({ years: 18 });
+  sfasApplication.updatedAt = faker.date.past({ years: 18 });
+  sfasApplication.extractedAt = faker.date.past({ years: 18 });
   sfasApplication.applicationCancelDate =
     options?.initialValues?.applicationCancelDate ?? null;
   sfasApplication.applicationNumber =
     options?.initialValues?.applicationNumber ??
-    faker.datatype.number({
+    faker.number.int({
       max: 9999999999,
       min: 1000000000,
     });
   sfasApplication.applicationStatusCode =
     options?.initialValues?.applicationStatusCode ??
-    faker.random.alpha({ count: 4, upcase: true });
+    faker.string.alpha({ length: 4, casing: "upper" });
   sfasApplication.withdrawalDate = options?.initialValues?.withdrawalDate;
   sfasApplication.withdrawalReason = options?.initialValues?.withdrawalReason;
   sfasApplication.withdrawalActiveFlag =
@@ -96,7 +97,7 @@ export function createFakeSFASApplication(
       options?.initialValues?.maritalStatus ?? "MA";
     sfasApplication.marriageDate =
       options?.initialValues?.marriageDate ??
-      getISODateOnlyString(faker.date.past(18));
+      getISODateOnlyString(faker.date.past({ years: 18 }));
   }
   return sfasApplication;
 }

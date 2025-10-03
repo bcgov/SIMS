@@ -25,7 +25,7 @@ import {
   getAuthorizedLocation,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -157,10 +157,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       institution: collegeF,
       user: collegeFUser,
     });
-    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-    const savedFakeEducationProgram = await db.educationProgram.save(
-      fakeEducationProgram,
-    );
+    fakeEducationProgram.sabcCode = faker.string.alpha({
+      length: 4,
+      casing: "upper",
+    });
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
     const studyBreak = {
       breakStartDate: "2023-12-01",
@@ -277,9 +279,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         institution: collegeF,
         user: collegeFUser,
       });
-      const savedFakeEducationProgram = await db.educationProgram.save(
-        fakeEducationProgram,
-      );
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
       const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
       const studyBreak = {
         breakStartDate: "2023-12-01",
@@ -400,9 +401,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         institution: collegeF,
         user: collegeFUser,
       });
-      const savedFakeEducationProgram = await db.educationProgram.save(
-        fakeEducationProgram,
-      );
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
       const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
       const studyBreak = {
         breakStartDate: "2023-12-01",
@@ -460,9 +460,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       institution: institutionCollegeC,
       user: institutionCollegeCUser,
     });
-    const savedFakeEducationProgram = await db.educationProgram.save(
-      fakeEducationProgram,
-    );
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
     const endpoint = `/institutions/education-program-offering/location/${collegeCLocation.id}/education-program/${savedFakeEducationProgram.id}`;
     const studyBreak = {
       breakStartDate: "2023-12-01",
@@ -582,9 +581,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         institution: institutionCollegeC,
         user: institutionCollegeCUser,
       });
-      const savedFakeEducationProgram = await db.educationProgram.save(
-        fakeEducationProgram,
-      );
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
       const endpoint = `/institutions/education-program-offering/location/${collegeCLocation.id}/education-program/${savedFakeEducationProgram.id}`;
       const studyBreak = {
         breakStartDate: "2023-12-01",
@@ -708,9 +706,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       institution: institutionCollegeC,
       user: institutionCollegeCUser,
     });
-    const savedFakeEducationProgram = await db.educationProgram.save(
-      fakeEducationProgram,
-    );
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
     const endpoint = `/institutions/education-program-offering/location/${collegeCLocation.id}/education-program/${savedFakeEducationProgram.id}`;
     const studyBreak = {
       breakStartDate: "2023-12-01",
@@ -766,10 +763,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       institution: institutionCollegeD,
       user: institutionCollegeDUser,
     });
-    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-    const savedFakeEducationProgram = await db.educationProgram.save(
-      fakeEducationProgram,
-    );
+    fakeEducationProgram.sabcCode = faker.string.alpha({
+      length: 4,
+      casing: "upper",
+    });
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
     const endpoint = `/institutions/education-program-offering/location/${collegeDLocation.id}/education-program/${savedFakeEducationProgram.id}`;
     const studyBreak = {
       breakStartDate: "2023-12-01",
@@ -911,9 +910,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         },
       },
     );
-    const savedFakeEducationProgram = await db.educationProgram.save(
-      fakeEducationProgram,
-    );
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
     const studyBreak = {
       breakStartDate: "2023-12-01",
@@ -971,10 +969,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         institution: collegeF,
         user: collegeFUser,
       });
-      fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-      const savedFakeEducationProgram = await db.educationProgram.save(
-        fakeEducationProgram,
-      );
+      fakeEducationProgram.sabcCode = faker.string.alpha({
+        length: 4,
+        casing: "upper",
+      });
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
       const existingOffering = createFakeEducationProgramOffering(
         savedFakeEducationProgram,
         collegeFLocation,
@@ -1040,10 +1040,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         institution: collegeF,
         user: collegeFUser,
       });
-      fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-      const savedFakeEducationProgram = await db.educationProgram.save(
-        fakeEducationProgram,
-      );
+      fakeEducationProgram.sabcCode = faker.string.alpha({
+        length: 4,
+        casing: "upper",
+      });
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
       const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
       payload.offeringName = "Offering 2";
       payload.actualTuitionCosts = 100001;
@@ -1125,9 +1127,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         institution: collegeF,
         user: collegeFUser,
       });
-      const savedFakeEducationProgram = await db.educationProgram.save(
-        fakeEducationProgram,
-      );
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
       const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
       payload.studyStartDate = "2024-05-23";
       payload.studyEndDate = "2024-05-24";
@@ -1200,10 +1201,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       institution: collegeF,
       user: collegeFUser,
     });
-    fakeEducationProgram.sabcCode = faker.random.alpha({ count: 4 });
-    const savedFakeEducationProgram = await db.educationProgram.save(
-      fakeEducationProgram,
-    );
+    fakeEducationProgram.sabcCode = faker.string.alpha({
+      length: 4,
+      casing: "upper",
+    });
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
     payload.offeringName = "Offering 3";
     payload.mandatoryFees = MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE + 1;

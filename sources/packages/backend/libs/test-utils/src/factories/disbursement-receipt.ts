@@ -9,7 +9,7 @@ import {
   RECEIPT_FUNDING_TYPE_PROVINCIAL_FULL_TIME,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { createFakeDisbursementReceiptValue } from "./disbursement-receipt-value";
 import { E2EDataSources } from "../data-source/e2e-data-source";
 
@@ -28,20 +28,20 @@ export function createFakeDisbursementReceipt(relations: {
     relations.disbursementSchedule.studentAssessment.application.student;
   const now = new Date();
   const isoDateNow = getISODateOnlyString(new Date());
-  const randomAmount = faker.datatype.number({
+  const randomAmount = faker.number.int({
     min: 1000,
     max: 8999,
   });
   const receipt = new DisbursementReceipt();
   receipt.batchRunDate = isoDateNow;
   receipt.fileDate = isoDateNow;
-  receipt.sequenceNumber = faker.datatype.number({
+  receipt.sequenceNumber = faker.number.int({
     min: 1,
     max: 99999,
   });
   receipt.studentSIN =
     student?.sinValidation?.sin ??
-    faker.datatype.number({ min: 100000000, max: 899999999 }).toString();
+    faker.number.int({ min: 100000000, max: 899999999 }).toString();
   receipt.disbursementSchedule = relations.disbursementSchedule;
   receipt.fundingType = RECEIPT_FUNDING_TYPE_FEDERAL;
   receipt.totalEntitledDisbursedAmount = randomAmount;
@@ -52,10 +52,10 @@ export function createFakeDisbursementReceipt(relations: {
   receipt.dateSignedInstitution = isoDateNow;
   receipt.institutionCode =
     relations.institutionLocation?.institutionCode ??
-    faker.random.alpha({ count: 4, upcase: true });
-  receipt.disburseMethodStudent = faker.random.alpha({
-    count: 1,
-    upcase: true,
+    faker.string.alpha({ length: 4, casing: "upper" });
+  receipt.disburseMethodStudent = faker.string.alpha({
+    length: 1,
+    casing: "upper",
   });
   receipt.studyPeriodEndDate = isoDateNow;
   receipt.totalEntitledGrantAmount = randomAmount;

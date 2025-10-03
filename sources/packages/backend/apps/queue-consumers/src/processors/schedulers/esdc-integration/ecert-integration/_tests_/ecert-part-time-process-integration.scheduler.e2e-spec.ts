@@ -55,7 +55,7 @@ import {
   loadDisbursementSchedules,
 } from "./e-cert-utils";
 import { SystemUsersService } from "@sims/services";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP } from "@sims/integrations/esdc-integration";
 
 describe(
@@ -109,9 +109,8 @@ describe(
 
     it("Should create a notification for the ministry and student for a blocked disbursement when there are no previously existing notifications for the disbursement.", async () => {
       // Arrange
-      const { student, disbursement } = await createBlockedDisbursementTestData(
-        db,
-      );
+      const { student, disbursement } =
+        await createBlockedDisbursementTestData(db);
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
@@ -235,9 +234,8 @@ describe(
 
     it("Should not create a notification for the student for a disbursement when there are already 3 notifications created.", async () => {
       // Arrange
-      const { student, disbursement } = await createBlockedDisbursementTestData(
-        db,
-      );
+      const { student, disbursement } =
+        await createBlockedDisbursementTestData(db);
       // Create pre-existing notificationsToCreate notifications for the student and ministry for the above created disbursement.
       const notificationsToCreate = 3;
       await saveNotifications(notificationsToCreate, student, disbursement.id);
@@ -270,9 +268,8 @@ describe(
 
     it("Should not create a notification for the student for a disbursement when an attempt is made to create the 2nd notification before 7 days from the first notification.", async () => {
       // Arrange
-      const { student, disbursement } = await createBlockedDisbursementTestData(
-        db,
-      );
+      const { student, disbursement } =
+        await createBlockedDisbursementTestData(db);
       // Create 1 pre-existing notification for the student and the ministry 6 days before the current date for the above created disbursement.
       await saveNotifications(1, student, disbursement.id, -6);
       // Queued job.
@@ -314,9 +311,8 @@ describe(
 
     it("Should create a notification for the student for a disbursement when an attempt is made to create the 2nd notification on or after 7 days from the first notification.", async () => {
       // Arrange
-      const { student, disbursement } = await createBlockedDisbursementTestData(
-        db,
-      );
+      const { student, disbursement } =
+        await createBlockedDisbursementTestData(db);
       // Create 1 pre-existing notification for the above created disbursement.
       await saveNotifications(1, student, disbursement.id, -7);
       // Queued job.

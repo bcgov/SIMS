@@ -13,7 +13,7 @@ import {
   createE2EDataSources,
   createFakeUser,
 } from "@sims/test-utils";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { getISODateOnlyString } from "@sims/utilities";
 
 /**
@@ -122,7 +122,7 @@ describe("StudentAESTController(e2e)-getStudentLegacyMatches", () => {
   it("Should get potential student matches from legacy when there is an exact last name (case insensitive) and DOB match.", async () => {
     // Arrange.
     const user = createFakeUser();
-    const userLastName = faker.datatype.uuid();
+    const userLastName = faker.string.uuid();
     user.lastName = userLastName.toLowerCase();
     const birthDate = getISODateOnlyString(new Date());
     const student = await saveFakeStudent(

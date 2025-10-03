@@ -4,7 +4,7 @@ import {
   RestrictionNotificationType,
   RestrictionType,
 } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Creates a fake restriction to be persisted.
@@ -22,9 +22,9 @@ export function createFakeRestriction(options?: {
     options?.initialValues.restrictionCategory ?? "Other";
   restriction.restrictionCode =
     options?.initialValues.restrictionCode ??
-    faker.random.alpha({ count: 10, upcase: true });
+    faker.string.alpha({ length: 10, casing: "upper" });
   restriction.description =
-    options?.initialValues.description ?? faker.random.words(2);
+    options?.initialValues.description ?? faker.lorem.words(2);
   restriction.actionType = options?.initialValues.actionType ?? [
     RestrictionActionType.NoEffect,
   ];

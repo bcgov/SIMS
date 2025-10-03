@@ -9,7 +9,7 @@ import {
   createFakeInstitution,
   createFakeInstitutionLocation,
 } from "@sims/test-utils";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { IsNull } from "typeorm";
 
 export const CONR_008_CONF_FILE = "CONR-008-CONF-20250502-144027.TXT";

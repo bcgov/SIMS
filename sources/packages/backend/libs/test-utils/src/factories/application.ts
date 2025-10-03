@@ -23,7 +23,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { DataSource } from "typeorm";
 import {
   createFakeDisbursementSchedule,
@@ -71,7 +71,7 @@ export function createFakeApplication(
   // with fixed length of 10 characters.
   application.applicationNumber =
     options?.initialValue?.applicationNumber ??
-    faker.datatype.number({ max: 9999999999, min: 1000000000 }).toString();
+    faker.number.int({ max: 9999999999, min: 1000000000 }).toString();
   application.applicationException = relations?.applicationException;
   application.location = relations?.location ?? createFakeInstitutionLocation();
   application.pirProgram = relations?.pirProgram;

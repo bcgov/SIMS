@@ -3,7 +3,7 @@ import {
   ApplicationExceptionRequest,
   User,
 } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { createFakeApplicationException } from "./application-exception";
 
 /**
@@ -35,7 +35,7 @@ export function createFakeApplicationExceptionRequest(
       });
   }
   applicationExceptionRequest.exceptionName =
-    options?.initialData?.exceptionName ?? faker.name.firstName();
+    options?.initialData?.exceptionName ?? faker.person.firstName();
   applicationExceptionRequest.exceptionDescription =
     options?.initialData?.exceptionDescription ??
     "Fake application exception description";
