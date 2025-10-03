@@ -16,7 +16,5 @@ COPY ./libs ./libs
 # Building app
 RUN npm run build queue-consumers
 
-ENV NODE_OPTIONS="--enable-source-maps"
-
 # Entry point
-CMD ["node", "dist/apps/queue-consumers/main.js"]
+CMD ["node", "--enable-source-maps", "dist/apps/queue-consumers/main.js"]
