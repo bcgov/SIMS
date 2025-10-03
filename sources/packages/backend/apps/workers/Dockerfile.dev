@@ -24,4 +24,4 @@ RUN mkdir -p /app/apps/workers/coverage/ && chown node /app/apps/workers/coverag
 USER node
 
 # Entrypoint
-CMD [ "node", "--run", "docker:start:workers" ]
+CMD [ "npm", "run", "docker:start:workers" ]

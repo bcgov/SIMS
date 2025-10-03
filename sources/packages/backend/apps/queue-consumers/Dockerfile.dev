@@ -35,4 +35,4 @@ RUN mkdir -p /app/dist/apps/test-db-seeding/ && chown node /app/dist/apps/test-d
 USER node
 
 # Entry point
-CMD [ "node", "--run", "docker:start:queue-consumers" ]
+CMD [ "npm", "run", "docker:start:queue-consumers" ]

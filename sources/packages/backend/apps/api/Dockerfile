@@ -22,5 +22,10 @@ RUN npm run build api
 # Exposing application port
 EXPOSE ${PORT}
 
+# Fixing permissions for OpenShift because it runs containers with a random user ID.
+# See: https://docs.openshift.com/container-platform/4.11/openshift_images/create-images.html#use-uid_create-images
+RUN chgrp -R 0 ./.npm && \
+    chmod -R g=u ./.npm
+
 # Entry point
-CMD [ "node", "--run", "start:prod:api" ]
+CMD [ "npm", "run", "start:prod:api" ]

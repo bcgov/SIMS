@@ -22,6 +22,6 @@ COPY env-setup.js ./
 USER node
 
 # Entry point
-CMD [ "node", "--run", "migration:repl" ]
+CMD [ "npm", "run", "migration:repl" ]
 # When deployed to OpenShift, the entry point is set to run the DB migrations on the PROD Dockerfile.
-# CMD [ "node", "--run", "migration:run" ]
+# CMD [ "npm", "run", "migration:run" ]

@@ -31,4 +31,4 @@ EXPOSE ${PORT}
 USER node
 
 # Entry point
-CMD [ "node", "--run", "docker:start:load-test-gateway" ]
+CMD [ "npm", "run", "docker:start:load-test-gateway" ]
