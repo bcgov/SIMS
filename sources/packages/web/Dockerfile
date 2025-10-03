@@ -1,7 +1,8 @@
+# "builder" stage, based on Node.js, to build and compile the frontend.
 FROM artifacts.developer.gov.bc.ca/docker-remote/node:24.9.0-alpine3.21 AS builder
 
 # Application Port.
-ENV PORT 3030
+ENV PORT=3030
 
 # Setting app as work dir.
 WORKDIR /app
