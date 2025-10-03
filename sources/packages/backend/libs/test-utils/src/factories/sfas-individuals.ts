@@ -3,6 +3,10 @@ import { getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import { faker } from "@faker-js/faker";
 import { createFakeStudent } from "@sims/test-utils/factories/student";
+import { truncateString } from "@sims/test-utils/utils";
+
+const MAX_ADDRESS_LENGTH = 40;
+const MAX_CITY_LENGTH = 25;
 
 /**
  * Create fake sfas individual.
@@ -14,7 +18,7 @@ import { createFakeStudent } from "@sims/test-utils/factories/student";
 export function createFakeSFASIndividual(options?: {
   initialValues?: Partial<SFASIndividual>;
   includeAddressLine2?: boolean;
-}) {
+}): SFASIndividual {
   const fakeMSFAANumber = faker.number
     .int({
       min: 1000000000,
@@ -30,7 +34,7 @@ export function createFakeSFASIndividual(options?: {
   sfasIndividual.id = options?.initialValues?.id ?? fakeId;
   sfasIndividual.birthDate =
     options?.initialValues?.birthDate ??
-    getISODateOnlyString(faker.date.past({ years: 18 }));
+    getISODateOnlyString(faker.date.past({ years: 99 }));
   sfasIndividual.msfaaNumber =
     options?.initialValues?.msfaaNumber ?? fakeMSFAANumber;
   sfasIndividual.partTimeMSFAANumber =
@@ -57,15 +61,19 @@ export function createFakeSFASIndividual(options?: {
   sfasIndividual.phoneNumber =
     options?.initialValues?.phoneNumber ?? +faker.number.int(9999999999);
   sfasIndividual.addressLine1 =
-    options?.initialValues?.addressLine1 ?? faker.location.streetAddress();
-  sfasIndividual.city = options?.initialValues?.city ?? faker.location.city();
+    options?.initialValues?.addressLine1 ??
+    truncateString(faker.location.streetAddress(), MAX_ADDRESS_LENGTH);
+  sfasIndividual.city =
+    options?.initialValues?.city ??
+    truncateString(faker.location.city(), MAX_CITY_LENGTH);
   sfasIndividual.provinceState = options?.initialValues?.provinceState ?? "BC";
   sfasIndividual.country = options?.initialValues?.country ?? "CAN";
   sfasIndividual.postalZipCode =
     options?.initialValues?.postalZipCode ?? "A1A 1A1";
   if (options?.includeAddressLine2) {
     sfasIndividual.addressLine2 =
-      options?.initialValues?.addressLine2 ?? faker.location.secondaryAddress();
+      options?.initialValues?.addressLine2 ??
+      truncateString(faker.location.secondaryAddress(), MAX_ADDRESS_LENGTH);
   }
   sfasIndividual.updatedAt = options?.initialValues?.updatedAt;
   return sfasIndividual;
