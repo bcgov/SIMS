@@ -17,7 +17,7 @@
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
     "axios": "^1.12.2",
-    "bootstrap": "^5.3.6",
+    "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.10.5",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
