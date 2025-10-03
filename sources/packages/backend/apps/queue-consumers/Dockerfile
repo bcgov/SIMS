@@ -1,6 +1,9 @@
 # Base Image
 FROM artifacts.developer.gov.bc.ca/docker-remote/node:24.9.0-alpine3.21
 
+# Give Node more heap (tune below your pod limit, e.g., 3 GiB)
+ENV NODE_OPTIONS="--max-old-space-size=3072"
+
 # Copying root files to image workdir.
 COPY /*.json /*.js ./
 
