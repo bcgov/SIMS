@@ -1,4 +1,4 @@
-FROM artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi9/nodejs-22:9.5 AS builder
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:24.9.0-alpine3.21 AS builder
 
 # Application Port.
 ENV PORT 3030
