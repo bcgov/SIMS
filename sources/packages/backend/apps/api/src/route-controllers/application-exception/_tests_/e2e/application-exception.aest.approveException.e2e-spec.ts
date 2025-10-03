@@ -12,7 +12,7 @@ import {
   ApplicationExceptionStatus,
   ApplicationStatus,
 } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
 import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
@@ -42,7 +42,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     );
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Approved,
-      noteDescription: faker.lorem.text(10),
+      noteDescription: faker.lorem.words(10),
     };
     const endpoint = `/aest/application-exception/${application.applicationException.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -81,7 +81,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     );
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Declined,
-      noteDescription: faker.lorem.text(10),
+      noteDescription: faker.lorem.words(10),
     };
     const endpoint = `/aest/application-exception/${application.applicationException.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -115,7 +115,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     // Arrange
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Approved,
-      noteDescription: faker.lorem.text(10),
+      noteDescription: faker.lorem.words(10),
     };
     const endpoint = "/aest/application-exception/9999999";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -142,7 +142,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     );
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Approved,
-      noteDescription: faker.lorem.text(10),
+      noteDescription: faker.lorem.words(10),
     };
     const endpoint = `/aest/application-exception/${application.applicationException.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -172,7 +172,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     await db.application.save(application);
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Approved,
-      noteDescription: faker.lorem.text(10),
+      noteDescription: faker.lorem.words(10),
     };
     const endpoint = `/aest/application-exception/${application.applicationException.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -194,7 +194,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     // Arrange
     const updateApplicationException = {
       exceptionStatus: ApplicationExceptionStatus.Pending,
-      noteDescription: faker.lorem.text(10),
+      noteDescription: faker.lorem.words(10),
     };
     const endpoint = "/aest/application-exception/1";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);

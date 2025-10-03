@@ -11,7 +11,7 @@ import {
   SendInvoicesResponse,
 } from "@sims/integrations/cas/models/cas-service.model";
 import { CASSupplierRecordStatus, SupplierAddress } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Creates a fake CAS supplier response.
@@ -92,9 +92,7 @@ export function createFakeCASNotFoundSupplierResponse(): CASSupplierResponse {
  */
 export function createFakePendingInvoicesResponse(): SendInvoicesResponse {
   return {
-    invoiceNumber: faker.datatype
-      .number({ min: 1000000, max: 9999999 })
-      .toString(),
+    invoiceNumber: faker.number.int({ min: 1000000, max: 9999999 }).toString(),
     casReturnedMessages: ["SUCCEEDED"],
   };
 }
@@ -117,12 +115,12 @@ export function createFakeCASCreateSupplierAndSiteResponse(options?: {
     submittedData: {
       SupplierName: "DOE, JOHN",
       SubCategory: "Individual",
-      Sin: faker.datatype.number({ min: 100000000, max: 999999999 }).toString(),
+      Sin: faker.number.int({ min: 100000000, max: 999999999 }).toString(),
       SupplierAddress: [supplierAddress],
     },
     response: {
-      supplierNumber: faker.datatype
-        .number({ min: 1000000, max: 9999999 })
+      supplierNumber: faker.number
+        .int({ min: 1000000, max: 9999999 })
         .toString(),
       supplierSiteCode: "001",
     },
@@ -143,7 +141,7 @@ export function createFakeCASSiteForExistingSupplierResponse(options?: {
 }): CreateExistingSupplierSiteResponse {
   const supplierNumber =
     options?.initialValues?.supplierNumber ??
-    faker.datatype.number({ min: 1000000, max: 9999999 }).toString();
+    faker.number.int({ min: 1000000, max: 9999999 }).toString();
   const supplierAddress = createFakeCASSupplierAddress(
     options?.initialValues?.supplierAddress,
   );
@@ -165,7 +163,7 @@ export function createFakeCASSupplierAddress(
   return {
     AddressLine1: supplierAddress?.addressLine1
       ? formatAddress(supplierAddress?.addressLine1)
-      : faker.address.streetAddress(false).toUpperCase(),
+      : faker.location.streetAddress(false).toUpperCase(),
     City: supplierAddress?.city
       ? formatCity(supplierAddress?.city)
       : "Victoria",

@@ -42,6 +42,6 @@
     "index.ts"
   ],
   "transformIgnorePatterns": [
-    "/node_modules/(?!uuid)"
+    "/node_modules/(?!@faker-js|uuid)"
   ]
 }

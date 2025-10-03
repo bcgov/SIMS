@@ -1,6 +1,6 @@
 import { SFASApplication, SFASApplicationDisbursement } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Create fake SFAS application disbursement.
@@ -16,7 +16,7 @@ export function createFakeSFASApplicationDisbursement(
   },
 ): SFASApplicationDisbursement {
   const sfasApplicationDependant = new SFASApplicationDisbursement();
-  sfasApplicationDependant.id = faker.datatype.number({
+  sfasApplicationDependant.id = faker.number.int({
     min: 100000000,
     max: 999999999,
   });
@@ -27,10 +27,10 @@ export function createFakeSFASApplicationDisbursement(
     options?.initialValues?.fundingAmount ?? 100;
   sfasApplicationDependant.fundingDate =
     options?.initialValues?.fundingDate ??
-    getISODateOnlyString(faker.date.past(18));
+    getISODateOnlyString(faker.date.recent({ days: 18 }));
   sfasApplicationDependant.dateIssued =
     options?.initialValues?.dateIssued ??
-    getISODateOnlyString(faker.date.past(18));
+    getISODateOnlyString(faker.date.recent({ days: 18 }));
   sfasApplicationDependant.extractedAt = new Date();
   return sfasApplicationDependant;
 }

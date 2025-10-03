@@ -33,7 +33,7 @@ import {
   IER12TestInputData,
 } from "./models/data-inputs";
 import { addDays, dateDifference, getISODateOnlyString } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Save all IER12 related records providing all data that
@@ -171,7 +171,7 @@ async function saveIER12StudentFromTestInput(
       country: "canada",
       selectedCountry: "Canada",
     },
-    phone: faker.phone.phoneNumber(),
+    phone: faker.phone.number({ style: "national" }),
   };
   fakeStudent.disabilityStatus = testInputStudent.disabilityStatus;
   // SIN validation

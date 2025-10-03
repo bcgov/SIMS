@@ -42,5 +42,8 @@
     "^@sims/test-utils(|/.*)$": "<rootDir>/libs/test-utils/src/$1",
     "^@sims/integrations(|/.*)$": "<rootDir>/libs/integrations/src/$1",
     "^@sims/auth(|/.*)$": "<rootDir>/libs/auth/src/$1"
-  }
+  },
+  "transformIgnorePatterns": [
+    "/node_modules/(?!@faker-js|uuid)"
+  ]
 }

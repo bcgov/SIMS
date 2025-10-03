@@ -1,5 +1,5 @@
 import { Institution, Note, NoteType, Student, User } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { DataSource } from "typeorm";
 import { createFakeUser } from "./user";
 
@@ -11,7 +11,7 @@ export function createFakeNote(
 ): Note {
   const note = new Note();
   note.noteType = noteType;
-  note.description = faker.random.words(10);
+  note.description = faker.lorem.words(10);
   note.creator = relations?.creator ?? createFakeUser();
   return note;
 }

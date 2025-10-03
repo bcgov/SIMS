@@ -5,7 +5,7 @@ import {
   Student,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Represents the different MSFAA scenarios.
@@ -54,8 +54,8 @@ export function createFakeMSFAANumber(
   msfaaNumber.referenceApplication = relations?.referenceApplication;
   msfaaNumber.msfaaNumber =
     options?.msfaaInitialValues?.msfaaNumber ??
-    faker.datatype
-      .number({
+    faker.number
+      .int({
         min: 1000000000,
         max: 9999999999,
       })

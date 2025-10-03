@@ -15,7 +15,7 @@ import {
   createFakeUser,
   createFakeSFASRestriction,
 } from "@sims/test-utils";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { getISODateOnlyString } from "@sims/utilities";
 import { NoteType } from "@sims/sims-db";
 
@@ -53,7 +53,7 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
     async () => {
       // Arrange.
       const user = createFakeUser();
-      const userLastName = faker.datatype.uuid();
+      const userLastName = faker.string.uuid();
       user.lastName = userLastName;
       const birthDate = getISODateOnlyString(new Date());
       const student = await saveFakeStudent(
@@ -82,7 +82,7 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
       );
       const payload = {
         individualId: legacyProfileMatch.id,
-        noteDescription: faker.datatype.uuid(),
+        noteDescription: faker.string.uuid(),
       };
       const endpoint = `/aest/student/${student.id}/legacy-match`;
 
@@ -161,7 +161,7 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
     const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
     const payload = {
       individualId: legacyProfileMatch.id,
-      noteDescription: faker.datatype.uuid(),
+      noteDescription: faker.string.uuid(),
     };
     const endpoint = `/aest/student/${student.id}/legacy-match`;
 
@@ -188,7 +188,7 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
     const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
     const payload = {
       individualId: legacyProfileMatch.id,
-      noteDescription: faker.datatype.uuid(),
+      noteDescription: faker.string.uuid(),
     };
     const endpoint = `/aest/student/${student.id}/legacy-match`;
 

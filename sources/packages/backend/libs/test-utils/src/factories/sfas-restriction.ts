@@ -1,6 +1,6 @@
 import { SFASRestriction } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Create and save fake SFAS restriction.
@@ -17,7 +17,7 @@ export function createFakeSFASRestriction(options?: {
   restriction.individualId = options?.initialValues.individualId;
   restriction.code =
     options?.initialValues.code ??
-    faker.random.alpha({ count: 4, upcase: true });
+    faker.string.alpha({ length: 4, casing: "upper" });
   restriction.effectiveDate =
     options?.initialValues.effectiveDate ?? getISODateOnlyString(now);
   restriction.removalDate = options?.initialValues.removalDate;

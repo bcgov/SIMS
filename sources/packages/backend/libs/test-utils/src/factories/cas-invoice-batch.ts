@@ -9,7 +9,7 @@ import {
   SupplierStatus,
   User,
 } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { saveFakeCASSupplier } from "./cas-supplier";
 import {
   E2EDataSources,
@@ -35,7 +35,7 @@ export function createFakeCASInvoiceBatch(
 ): CASInvoiceBatch {
   const now = new Date();
   const casInvoiceBatch = new CASInvoiceBatch();
-  casInvoiceBatch.batchName = `SIMS-BATCH-${faker.datatype.uuid()}}`;
+  casInvoiceBatch.batchName = `SIMS-BATCH-${faker.string.uuid()}}`;
   casInvoiceBatch.batchDate = options?.initialValue?.batchDate ?? now;
   casInvoiceBatch.approvalStatus =
     options?.initialValue?.approvalStatus ??

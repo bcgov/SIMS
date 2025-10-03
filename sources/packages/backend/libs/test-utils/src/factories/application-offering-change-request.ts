@@ -8,7 +8,7 @@ import {
 import { saveFakeApplicationDisbursements } from "./application";
 import { createFakeEducationProgramOffering } from "./education-program-offering";
 import { createFakeUser } from "./user";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { E2EDataSources } from "../data-source/e2e-data-source";
 
 /**

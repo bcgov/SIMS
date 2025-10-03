@@ -1,4 +1,4 @@
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   CASSupplier,
   DisabilityStatus,
@@ -23,21 +23,22 @@ export function createFakeStudent(
   student.casSupplier = relations?.casSupplier;
   student.birthDate =
     options?.initialValue?.birthDate ??
-    getISODateOnlyString(faker.date.past(18));
+    getISODateOnlyString(faker.date.past({ years: 99 }));
   student.gender = options?.initialValue?.gender ?? "nonBinary";
   student.contactInfo = options?.initialValue?.contactInfo ?? {
     address: {
-      addressLine1: faker.address.streetAddress(),
-      city: faker.address.city(),
+      addressLine1: faker.location.streetAddress(),
+      city: faker.location.city(),
       country: "Canada",
       selectedCountry: COUNTRY_CANADA,
       provinceState: "BC",
-      postalCode: faker.address.zipCode(),
+      postalCode: faker.location.zipCode(),
     },
-    phone: faker.phone.phoneNumber(),
+    phone: faker.phone.number({ style: "national" }),
   };
   if (options?.includeAddressLine2) {
-    student.contactInfo.address.addressLine2 = faker.address.secondaryAddress();
+    student.contactInfo.address.addressLine2 =
+      faker.location.secondaryAddress();
   }
   student.sinConsent = true;
   student.disabilityStatus =

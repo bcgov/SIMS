@@ -22,7 +22,7 @@ import {
 } from "../../supporting-user.dto";
 import { createFakeCreateIdentifiableSupportingUsersPayload } from "./create-identifiable-supporting-user";
 import { ICustomHeaders } from "@camunda8/sdk/dist/zeebe/types";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   APPLICATION_NOT_FOUND,
   SUPPORTING_USER_FULL_NAME_NOT_RESOLVED,
@@ -43,7 +43,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       "and create a student notification for parent declaration required by parent.",
     async () => {
       // Arrange
-      const parentFullName = faker.datatype.uuid();
+      const parentFullName = faker.string.uuid();
       const savedApplication = await saveFakeApplication(
         db.dataSource,
         undefined,
@@ -122,8 +122,8 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       "and create a student notification for parent declaration required by student.",
     async () => {
       // Arrange
-      const parentFullName1 = faker.datatype.uuid();
-      const parentFullName2 = faker.datatype.uuid();
+      const parentFullName1 = faker.string.uuid();
+      const parentFullName2 = faker.string.uuid();
       const savedApplication = await saveFakeApplication(
         db.dataSource,
         undefined,
@@ -202,7 +202,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
 
   it("Should not create a parent when the parent was already created.", async () => {
     // Arrange
-    const parentFullName = faker.datatype.uuid();
+    const parentFullName = faker.string.uuid();
     const savedApplication = await saveFakeApplication(
       db.dataSource,
       undefined,

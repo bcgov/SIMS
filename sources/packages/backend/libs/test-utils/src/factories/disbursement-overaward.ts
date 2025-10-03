@@ -7,7 +7,7 @@ import {
   StudentAssessment,
   User,
 } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 export function createFakeDisbursementOveraward(relations?: {
   student?: Student;
@@ -20,15 +20,14 @@ export function createFakeDisbursementOveraward(relations?: {
   disbursementOveraward.student = relations?.student;
   disbursementOveraward.studentAssessment = relations?.studentAssessment;
   disbursementOveraward.disbursementSchedule = relations?.disbursementSchedule;
-  disbursementOveraward.overawardValue = faker.datatype.number({
+  disbursementOveraward.overawardValue = faker.number.int({
     min: 500,
     max: 50000,
   });
-  disbursementOveraward.disbursementValueCode = faker.random
-    .alpha({
-      count: 4,
-    })
-    .toUpperCase();
+  disbursementOveraward.disbursementValueCode = faker.string.alpha({
+    length: 4,
+    casing: "upper",
+  });
   disbursementOveraward.originType =
     DisbursementOverawardOriginType.ManualRecord;
   disbursementOveraward.deletedAt = null;
