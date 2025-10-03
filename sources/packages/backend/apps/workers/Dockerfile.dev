@@ -1,8 +1,6 @@
 # Base Image
 FROM node:24.9.0-alpine3.21
 
-LABEL maintainer="BC GOV"
-
 WORKDIR /app
 
 # Copying root files to image workdir.
@@ -26,4 +24,4 @@ RUN mkdir -p /app/apps/workers/coverage/ && chown node /app/apps/workers/coverag
 USER node
 
 # Entrypoint
-CMD [ "npm", "run", "docker:start:workers" ]
+CMD [ "node", "--run", "docker:start:workers" ]
