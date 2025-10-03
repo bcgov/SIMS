@@ -70,7 +70,7 @@ parameters:
   - name: CPU_REQUEST
     value: "1"
   - name: MEMORY_REQUEST
-    value: "4Gi"
+    value: "2Gi"
   - name: ARG_KEY_1
     value: __DUMMY_1
   - name: ARG_KEY_2
