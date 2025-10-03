@@ -1,7 +1,7 @@
 # Base Image
 FROM node:24.9.0-alpine3.21
 
-LABEL maintainer="BC GOV"
+WORKDIR /app
 
 # Updating container path variable with node bin
 ENV PATH=$PATH:/app/node_modules/.bin
@@ -22,6 +22,6 @@ COPY env-setup.js ./
 USER node
 
 # Entry point
-CMD [ "npm", "run", "migration:repl" ]
+CMD [ "node", "--run", "migration:repl" ]
 # When deployed to OpenShift, the entry point is set to run the DB migrations on the PROD Dockerfile.
 # CMD [ "npm", "run", "migration:run" ]
