@@ -38,4 +38,4 @@ RUN mkdir -p /app/apps/api/coverage/ && chown node /app/apps/api/coverage/
 USER node
 
 # Entrypoint
-CMD [ "node", "--run", "docker:start:api" ]
+CMD [ "npm", "run", "docker:start:api" ]
