@@ -1,6 +1,7 @@
 {
-  "name": "studentaid-bc",
+  "name": "student-aid-bc-frontend",
   "version": "0.1.0",
+  "author": "StudentAid BC",
   "private": true,
   "scripts": {
     "serve": "vite",

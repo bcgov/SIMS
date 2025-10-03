@@ -1,7 +1,7 @@
 # Base Image
 FROM artifacts.developer.gov.bc.ca/docker-remote/node:24.9.0-alpine3.21
 
-LABEL maintainer="BC GOV"
+WORKDIR /app
 
 # Application Port
 ENV PORT 3000
@@ -22,10 +22,5 @@ RUN npm run build api
 # Exposing application port
 EXPOSE ${PORT}
 
-# Grant access to group 0 to allow npm v9 to work
-# See: https://docs.openshift.com/container-platform/4.11/openshift_images/create-images.html#use-uid_create-images
-RUN chgrp -R 0 ./.npm && \
-    chmod -R g=u ./.npm
-
 # Entry point
-CMD [ "npm", "run", "start:prod:api" ]
+CMD [ "node", "--run", "start:prod:api" ]
