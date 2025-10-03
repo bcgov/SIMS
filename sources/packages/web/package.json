@@ -18,7 +18,7 @@
     "@mdi/js": "^7.4.47",
     "axios": "^1.12.2",
     "bootstrap": "^5.3.6",
-    "bootstrap-icons": "^1.10.5",
+    "bootstrap-icons": "^1.13.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "dayjs": "^1.11.18",
