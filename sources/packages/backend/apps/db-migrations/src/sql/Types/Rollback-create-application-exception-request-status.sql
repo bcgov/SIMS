@@ -1,0 +1,1 @@
+DROP TYPE sims.application_exception_request_status;
