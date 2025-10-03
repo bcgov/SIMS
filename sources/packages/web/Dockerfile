@@ -7,14 +7,14 @@ ENV PORT=3030
 # Setting app as work dir.
 WORKDIR /app
 
-# Copying package.json and package-lock.json.
-COPY ./package*.json ./
+# Copying sources.
+COPY ./src ./src
+COPY ./nginx ./nginx
+COPY ./public ./public
+COPY ./index.html ./vite.config.ts ./tsconfig.json ./package*.json ./
 
 # Installing dependencies.
 RUN npm ci
-
-# Copying sources.
-COPY . .
 
 # Replace ${PORT} variable in the template and save as default.conf.
 RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.template > default.conf
