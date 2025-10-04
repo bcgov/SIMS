@@ -1,7 +1,7 @@
 {
-  "name": "forms",
+  "name": "studentaid-forms-deployment",
   "version": "1.0.0",
-  "description": "Form IO Definitions",
+  "description": "Form IO Definitions Deployment",
   "main": "deploy-forms.js",
   "scripts": {
     "deploy": "ts-node ./src/deploy-forms.ts"
@@ -10,10 +10,10 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "axios": "^1.12.2",
-    "dotenv": "^17.2.2"
+    "dotenv": "^17.2.3"
   }
 }
