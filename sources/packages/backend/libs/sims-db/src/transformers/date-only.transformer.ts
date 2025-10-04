@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import * as dayjs from "dayjs";
 import { FindOperator, ValueTransformer } from "typeorm";
 export const TYPEORM_DATE_ONLY_FORMAT = "YYYY-MM-DD";
 

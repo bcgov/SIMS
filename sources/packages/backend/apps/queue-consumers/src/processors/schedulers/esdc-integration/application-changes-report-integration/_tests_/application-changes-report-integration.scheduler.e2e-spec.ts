@@ -40,7 +40,7 @@ import {
   APPLICATION_CHANGES_DATE_TIME_FORMAT,
 } from "@sims/integrations/esdc-integration";
 import MockDate from "mockdate";
-import dayjs from "dayjs";
+import * as dayjs from "dayjs";
 
 describe(
   describeProcessorRootTest(QueueNames.ApplicationChangesReportIntegration),

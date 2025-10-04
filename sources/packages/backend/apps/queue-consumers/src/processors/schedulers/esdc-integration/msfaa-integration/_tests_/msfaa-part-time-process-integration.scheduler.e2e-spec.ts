@@ -23,7 +23,7 @@ import {
   getMSFAASequenceGroupName,
   getProcessDateFromMSFAARequestContent,
 } from "./msfaa-helper";
-import dayjs from "dayjs";
+import * as dayjs from "dayjs";
 
 describe(
   describeProcessorRootTest(QueueNames.PartTimeMSFAAProcessIntegration),

@@ -1,6 +1,6 @@
 import { CustomNamedError } from "@sims/utilities";
 import { ProcessSummary } from "@sims/utilities/logger";
-import dayjs from "dayjs";
+import * as dayjs from "dayjs";
 
 /**
  * Used for log indentation to create a hierarchy

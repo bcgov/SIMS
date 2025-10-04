@@ -57,7 +57,7 @@ import {
 import { createIER12SchedulerJobMock } from "./utils";
 import { isValidFileTimestamp } from "@sims/test-utils/utils";
 import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
-import dayjs from "dayjs";
+import * as dayjs from "dayjs";
 
 describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   let app: INestApplication;

@@ -1,14 +1,14 @@
 /**
  * commonly used functions
  */
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import localizedFormat from "dayjs/plugin/localizedFormat";
-import timezone from "dayjs/plugin/timezone";
-import dayOfYear from "dayjs/plugin/dayOfYear";
-import isBetween from "dayjs/plugin/isBetween";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import * as dayjs from "dayjs";
+import * as utc from "dayjs/plugin/utc";
+import * as localizedFormat from "dayjs/plugin/localizedFormat";
+import * as timezone from "dayjs/plugin/timezone";
+import * as dayOfYear from "dayjs/plugin/dayOfYear";
+import * as isBetween from "dayjs/plugin/isBetween";
+import * as customParseFormat from "dayjs/plugin/customParseFormat";
+import * as isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import { And, FindOperator, LessThan, MoreThanOrEqual } from "typeorm";
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);

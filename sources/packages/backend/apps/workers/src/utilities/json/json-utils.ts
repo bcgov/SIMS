@@ -2,7 +2,7 @@ import {
   ICustomHeaders,
   IOutputVariables,
 } from "@camunda8/sdk/dist/zeebe/types";
-import jsonata from "jsonata";
+import * as jsonata from "jsonata";
 
 /**
  * Creates a new object based in the filter object provided.

@@ -6,7 +6,7 @@ import {
 } from "@sims/integrations/esdc-integration/msfaa-integration/models/msfaa-integration.model";
 import { OfferingIntensity } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
-import dayjs from "dayjs";
+import * as dayjs from "dayjs";
 
 export const THROW_AWAY_MSFAA_NUMBER = "3000";
 

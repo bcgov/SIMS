@@ -1,5 +1,5 @@
 import { CASAuthDetails } from "@sims/integrations/cas/models/cas-service.model";
-import dayjs from "dayjs";
+import * as dayjs from "dayjs";
 
 /**
  * Default amount of time to a token be expired and be

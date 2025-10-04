@@ -4,9 +4,9 @@ import { NestFactory } from "@nestjs/core";
 import { QueueConsumersModule } from "./queue-consumers.module";
 import { LoggerService } from "@sims/utilities/logger";
 import { SystemUsersService } from "@sims/services";
-import cookieParser from "cookie-parser";
+import * as cookieParser from "cookie-parser";
 
-(async (): Promise<void> => {
+(async () => {
   const app = await NestFactory.create(QueueConsumersModule);
   const config = app.get<ConfigService>(ConfigService);
 

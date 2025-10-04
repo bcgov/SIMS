@@ -37,8 +37,8 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import { ECEProcessIntegrationScheduler } from "../ece-process-integration.scheduler";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { RecordTypeCodes } from "@sims/integrations/institution-integration/ece-integration";
-import Client from "ssh2-sftp-client";
-import dayjs from "dayjs";
+import * as Client from "ssh2-sftp-client";
+import * as dayjs from "dayjs";
 import { YNFlag } from "@sims/integrations/models";
 
 describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {

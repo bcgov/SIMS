@@ -47,8 +47,8 @@ import {
 } from "@sims/utilities";
 import { FullTimeECertProcessIntegrationScheduler } from "../ecert-full-time-process-integration.scheduler";
 import { DeepMocked } from "@golevelup/ts-jest";
-import Client from "ssh2-sftp-client";
-import dayjs from "dayjs";
+import * as Client from "ssh2-sftp-client";
+import * as dayjs from "dayjs";
 import { FullTimeCertRecordParser } from "./parsers/full-time-e-cert-record-parser";
 import {
   AVIATION_CREDENTIAL_TEST_INPUTS,
