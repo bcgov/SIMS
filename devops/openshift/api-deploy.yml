@@ -190,6 +190,8 @@ objects:
                     secretKeyRef:
                       key: ${CAMUNDA_OAUTH_URL_KEY}
                       name: ${API_SECRET_NAME}
+                - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+                  value: "true"
                 - name: APPLICATION_ARCHIVE_DAYS
                   value: ${APPLICATION_ARCHIVE_DAYS}
                 - name: S3_ACCESS_KEY_ID

@@ -80,6 +80,8 @@ objects:
                     secretKeyRef:
                       key: ${CAMUNDA_OAUTH_URL_KEY}
                       name: ${WORKERS_SECRET_NAME}
+                - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+                  value: "true"
                 - name: ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS
                   valueFrom:
                     secretKeyRef:
