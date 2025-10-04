@@ -507,4 +507,4 @@ parameters:
   - name: TLS_CA_CERTIFICATE
     required: true
   - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
-    value: true
+    value: "true"

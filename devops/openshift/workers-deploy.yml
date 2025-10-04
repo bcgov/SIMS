@@ -203,4 +203,4 @@ parameters:
   - name: DISABLE_ORM_CACHE
     required: true
   - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
-    value: true
+    value: "true"
