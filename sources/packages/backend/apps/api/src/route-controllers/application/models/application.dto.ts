@@ -251,7 +251,7 @@ export class ECertFailedValidationsInfoAPIOutDTO {
 }
 
 export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {
-  assessmentTriggerType: AssessmentTriggerType;
+  declare assessmentTriggerType: AssessmentTriggerType;
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestId?: number;

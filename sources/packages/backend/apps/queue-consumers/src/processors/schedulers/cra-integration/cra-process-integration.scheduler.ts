@@ -43,5 +43,5 @@ export class CRAProcessIntegrationScheduler extends BaseScheduler<void> {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

@@ -170,5 +170,5 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRASFTPResponseFi
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

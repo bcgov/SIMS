@@ -31,5 +31,5 @@ export class FullTimeECertProcessIntegrationScheduler extends ECertProcessIntegr
    * allow the base classes to write logs using the correct context.
    */
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

@@ -46,5 +46,5 @@ export class SINValidationResponseIntegrationScheduler extends BaseScheduler<voi
    * allow the base classes to write logs using the correct context.
    */
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

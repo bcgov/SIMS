@@ -54,5 +54,5 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
    * allow the base classes to write logs using the correct context.
    */
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

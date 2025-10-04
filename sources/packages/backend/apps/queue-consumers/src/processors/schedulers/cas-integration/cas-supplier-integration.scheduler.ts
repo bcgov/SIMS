@@ -57,5 +57,5 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

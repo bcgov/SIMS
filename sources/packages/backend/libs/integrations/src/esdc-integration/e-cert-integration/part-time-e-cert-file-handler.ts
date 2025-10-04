@@ -10,7 +10,7 @@ import {
 } from "@sims/services/constants";
 import { ECertUploadResult } from "./models/e-cert-integration-model";
 import { Injectable } from "@nestjs/common";
-import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
+import { ConfigService } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertFileHandler } from "./e-cert-file-handler";
 import { ECertPartTimeIntegrationService } from "./e-cert-part-time-integration/e-cert-part-time.integration.service";
@@ -21,7 +21,6 @@ export const ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP = "ECERT_PT_SENT_FILE";
 
 @Injectable()
 export class PartTimeECertFileHandler extends ECertFileHandler {
-  esdcConfig: ESDCIntegrationConfig;
   constructor(
     dataSource: DataSource,
     configService: ConfigService,

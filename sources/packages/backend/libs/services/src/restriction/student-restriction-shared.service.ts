@@ -32,7 +32,7 @@ const NOTIFICATIONS_SELECT_CHUNK_SIZE = 1000;
 @Injectable()
 export class StudentRestrictionSharedService extends RecordDataModelService<StudentRestriction> {
   constructor(
-    private readonly dataSource: DataSource,
+    dataSource: DataSource,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly restrictionSharedService: RestrictionSharedService,
   ) {

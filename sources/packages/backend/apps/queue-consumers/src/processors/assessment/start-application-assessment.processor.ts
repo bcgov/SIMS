@@ -66,5 +66,5 @@ export class StartApplicationAssessmentProcessor extends BaseQueue<StartAssessme
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }
