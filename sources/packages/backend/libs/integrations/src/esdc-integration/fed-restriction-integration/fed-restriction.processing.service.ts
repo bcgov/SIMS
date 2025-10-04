@@ -103,9 +103,8 @@ export class FedRestrictionProcessingService {
     let downloadResult: FedRestrictionFileRecord[];
     try {
       // Download the Federal Restrictions file with the full snapshot of the data.
-      downloadResult = await this.integrationService.downloadResponseFile(
-        remoteFilePath,
-      );
+      downloadResult =
+        await this.integrationService.downloadResponseFile(remoteFilePath);
       this.logger.log("File download finished.");
     } catch (error) {
       const errorMessage = `Error downloading file ${remoteFilePath}.`;
@@ -309,5 +308,5 @@ export class FedRestrictionProcessingService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

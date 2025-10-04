@@ -427,5 +427,5 @@ export class IER12ProcessingService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

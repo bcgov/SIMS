@@ -93,5 +93,5 @@ export abstract class BaseQueue<T> {
    * to set the proper log context.
    */
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

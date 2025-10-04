@@ -172,9 +172,8 @@ export class StudentControllerService {
       this.logger.log(
         `Downloading the file ${studentFile.fileName} from S3 storage.`,
       );
-      const fileContent = await this.objectStorageService.getObject(
-        uniqueFileName,
-      );
+      const fileContent =
+        await this.objectStorageService.getObject(uniqueFileName);
       this.logger.log(
         `Downloaded the file ${studentFile.fileName} from S3 storage.`,
       );
@@ -330,9 +329,8 @@ export class StudentControllerService {
     | StudentUploadFileAPIOutDTO[]
     | AESTStudentFileDetailsAPIOutDTO[]
   > {
-    const studentDocuments = await this.fileService.getStudentUploadedFiles(
-      studentId,
-    );
+    const studentDocuments =
+      await this.fileService.getStudentUploadedFiles(studentId);
     return studentDocuments.map((studentDocument) => ({
       fileName: studentDocument.fileName,
       uniqueFileName: studentDocument.uniqueFileName,
@@ -447,5 +445,5 @@ export class StudentControllerService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

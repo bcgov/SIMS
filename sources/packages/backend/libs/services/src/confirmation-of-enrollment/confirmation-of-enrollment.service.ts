@@ -153,8 +153,8 @@ export class ConfirmationOfEnrollmentService {
         },
       });
     return previousTuitionRemittanceData
-      ? previousTuitionRemittanceData.tuitionRemittanceEffectiveAmount ??
-          previousTuitionRemittanceData.tuitionRemittanceRequestedAmount
+      ? (previousTuitionRemittanceData.tuitionRemittanceEffectiveAmount ??
+          previousTuitionRemittanceData.tuitionRemittanceRequestedAmount)
       : 0;
   }
 
@@ -884,5 +884,5 @@ export class ConfirmationOfEnrollmentService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

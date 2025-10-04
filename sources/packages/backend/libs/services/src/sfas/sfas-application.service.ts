@@ -120,5 +120,5 @@ export class SFASApplicationService extends DataModelService<SFASApplication> {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

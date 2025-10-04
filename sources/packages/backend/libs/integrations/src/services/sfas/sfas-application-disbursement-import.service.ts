@@ -61,5 +61,5 @@ export class SFASApplicationDisbursementImportService
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

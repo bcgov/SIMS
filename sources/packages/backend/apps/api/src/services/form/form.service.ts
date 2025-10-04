@@ -192,5 +192,5 @@ export class FormService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

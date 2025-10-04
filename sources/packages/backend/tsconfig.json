@@ -1,19 +1,17 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
+    "module": "commonjs",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2024",
+    "target": "ES2024",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "allowJs": true,
-    // Module Resolution
-    "moduleResolution": "nodenext",
     "forceConsistentCasingInFileNames": true,
     // Additional Checks
     "noUnusedLocals": true,

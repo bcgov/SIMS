@@ -77,9 +77,8 @@ export class SFASIntegrationProcessingService {
     let downloadResult: DownloadResult;
     processSummary.info(`Starting download of file ${remoteFilePath}.`);
     try {
-      downloadResult = await this.sfasService.downloadResponseFile(
-        remoteFilePath,
-      );
+      downloadResult =
+        await this.sfasService.downloadResponseFile(remoteFilePath);
       processSummary.info("File download finished.");
     } catch (error) {
       throw new Error(`Error downloading file ${remoteFilePath}.`, error);
@@ -227,5 +226,5 @@ export class SFASIntegrationProcessingService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

@@ -25,7 +25,7 @@ export class KeycloakService {
   private readonly authConfig: AuthConfig;
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 
   constructor(
     configService: ConfigService,

@@ -68,5 +68,5 @@ export class GCNotifyService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

@@ -56,5 +56,5 @@ export class SFASPartTimeApplicationsImportService
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

@@ -219,5 +219,5 @@ export class SINValidationProcessingService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

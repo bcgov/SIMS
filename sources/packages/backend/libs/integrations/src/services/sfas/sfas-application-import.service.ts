@@ -91,5 +91,5 @@ export class SFASApplicationImportService
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }
