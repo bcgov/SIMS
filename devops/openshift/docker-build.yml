@@ -29,14 +29,11 @@ objects:
           name: "${NAME}:${TAG}"
       runPolicy: SerialLatestOnly
       source:
-        type: Git
         contextDir: "${SOURCE_CONTEXT_DIR}"
         git:
           uri: "${SOURCE_REPOSITORY_URL}"
           ref: "${SOURCE_REPOSITORY_REF}"
-        strategy:
-          git:
-            cloneDepth: 1
+        type: Git
       strategy:
         dockerStrategy:
           dockerfilePath: "${DOCKER_FILE_PATH}"
