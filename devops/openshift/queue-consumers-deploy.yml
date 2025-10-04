@@ -98,7 +98,7 @@ objects:
                       key: ${CAMUNDA_OAUTH_URL_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
-                  value: "true"
+                  value: ${CAMUNDA_TOKEN_DISK_CACHE_DISABLE}
                 - name: INSTITUTION_REQUEST_FOLDER
                   valueFrom:
                     secretKeyRef:
@@ -506,3 +506,5 @@ parameters:
     required: true
   - name: TLS_CA_CERTIFICATE
     required: true
+  - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+    value: true

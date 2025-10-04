@@ -191,7 +191,7 @@ objects:
                       key: ${CAMUNDA_OAUTH_URL_KEY}
                       name: ${API_SECRET_NAME}
                 - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
-                  value: "true"
+                  value: ${CAMUNDA_TOKEN_DISK_CACHE_DISABLE}
                 - name: APPLICATION_ARCHIVE_DAYS
                   value: ${APPLICATION_ARCHIVE_DAYS}
                 - name: S3_ACCESS_KEY_ID
@@ -596,3 +596,5 @@ parameters:
     required: true
   - name: EXTERNAL_IP_WHITELIST
     required: true
+  - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+    value: true

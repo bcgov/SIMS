@@ -20,7 +20,7 @@ RUN npm ci
 RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.template > default.conf
 
 # Building app
-RUN npm run build-local
+RUN npm run build
 
 FROM artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/nginx-122 AS deployer
 
