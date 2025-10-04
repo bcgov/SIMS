@@ -33,7 +33,7 @@ import { createFakeVerifyAssessmentCalculationOrderPayload } from "./verify-asse
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
 import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
 import { faker } from "@faker-js/faker";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 
 describe("AssessmentController(e2e)-verifyAssessmentCalculationOrder", () => {
   let db: E2EDataSources;

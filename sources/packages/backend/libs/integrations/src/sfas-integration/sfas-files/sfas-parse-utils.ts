@@ -1,5 +1,5 @@
 import { getDateOnlyFromFormat } from "@sims/utilities";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 
 // Expected date only format received from SFAS.
 const DATE_FORMAT = "YYYYMMDD";

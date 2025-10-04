@@ -5,7 +5,7 @@ import {
   MSFAANumber,
   OfferingIntensity,
 } from "@sims/sims-db";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 import { MAX_MSFAA_VALID_DAYS } from "@sims/utilities";
 
 /**

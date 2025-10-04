@@ -1,4 +1,4 @@
-import * as AdmZip from "adm-zip";
+import AdmZip from "adm-zip";
 
 /**
  * Reads the first extracted file from a compressed archive file.
