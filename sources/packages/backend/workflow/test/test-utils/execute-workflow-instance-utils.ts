@@ -62,6 +62,26 @@ export async function executePartTimeAssessmentForProgramYear(
 }
 
 /**
+ * Executes the fulltime-configure-disbursement BPMN workflow.
+ * @param assessmentConsolidatedData assessment data.
+ * @returns result of the workflow execution.
+ */
+export async function executeFullTimeConfigureDisbursement(
+  configureDisbursementData: ConfigureDisbursementData,
+): Promise<CreateProcessInstanceWithResultResponse<CalculatedAssessmentModel>> {
+  return ZeebeMockedClient.getMockedZeebeInstance().createProcessInstanceWithResult<
+    ConfigureDisbursementData,
+    CalculatedAssessmentModel
+  >({
+    bpmnProcessId: "fulltime-configure-disbursement",
+    variables: {
+      ...configureDisbursementData,
+    },
+    requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+  });
+}
+
+/**
  * Executes the parttime-configure-disbursement BPMN workflow.
  * @param assessmentConsolidatedData assessment data.
  * @returns result of the workflow execution.
