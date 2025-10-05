@@ -1,4 +1,4 @@
-# Generalised template for building from Dockerfile in a git repo.
+# Generalized template for building from Dockerfile in a git repo.
 # Includes importing the base image as an imagestream.
 apiVersion: template.openshift.io/v1
 kind: Template
@@ -39,15 +39,6 @@ objects:
           dockerfilePath: "${DOCKER_FILE_PATH}"
           pullSecret:
             name: artifactory-secret-credential
-          buildArgs:
-            - name: ${ARG_KEY_1}
-              value: ${ARG_VAL_1}
-            - name: ${ARG_KEY_2}
-              value: ${ARG_VAL_2}
-            - name: ${ARG_KEY_3}
-              value: ${ARG_VAL_3}
-            - name: ${ARG_KEY_4}
-              value: ${ARG_VAL_4}
         type: Docker
 parameters:
   - name: NAME
@@ -71,15 +62,3 @@ parameters:
     value: "1"
   - name: MEMORY_REQUEST
     value: "2Gi"
-  - name: ARG_KEY_1
-    value: __DUMMY_1
-  - name: ARG_KEY_2
-    value: __DUMMY_2
-  - name: ARG_KEY_3
-    value: __DUMMY_3
-  - name: ARG_KEY_4
-    value: __DUMMY_4
-  - name: ARG_VAL_1
-  - name: ARG_VAL_2
-  - name: ARG_VAL_3
-  - name: ARG_VAL_4
