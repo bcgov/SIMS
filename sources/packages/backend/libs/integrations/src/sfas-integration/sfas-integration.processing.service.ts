@@ -81,7 +81,7 @@ export class SFASIntegrationProcessingService {
         await this.sfasService.downloadResponseFile(remoteFilePath);
       processSummary.info("File download finished.");
     } catch (error) {
-      throw new Error(`Error downloading file ${remoteFilePath}.`, error);
+      throw new Error(`Error downloading file ${remoteFilePath}.`, { cause: error });
     }
     processSummary.info(`Starting records import for file ${remoteFilePath}.`);
     // Execute the import of all files records.
