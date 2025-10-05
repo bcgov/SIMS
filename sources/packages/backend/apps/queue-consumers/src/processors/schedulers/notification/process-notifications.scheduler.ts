@@ -71,5 +71,5 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
    * allow the base classes to write logs using the correct context.
    */
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

@@ -171,5 +171,5 @@ export class ECEProcessingService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

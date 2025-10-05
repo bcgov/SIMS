@@ -38,9 +38,8 @@ export class CASInvoicesBatchesCreationScheduler extends BaseScheduler<void> {
   ): Promise<string[] | string> {
     processSummary.info("Executing CAS invoices batches creation.");
     try {
-      const createdBatch = await this.casInvoiceBatchService.createInvoiceBatch(
-        processSummary,
-      );
+      const createdBatch =
+        await this.casInvoiceBatchService.createInvoiceBatch(processSummary);
       return [
         `Batch created: ${createdBatch.batchName}.`,
         `Invoices created: ${createdBatch.casInvoices.length}.`,
@@ -59,5 +58,5 @@ export class CASInvoicesBatchesCreationScheduler extends BaseScheduler<void> {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

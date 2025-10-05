@@ -188,5 +188,5 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

@@ -8,7 +8,6 @@ import { Reflector } from "@nestjs/core";
 import { AuthorizedParties, IUserToken } from "..";
 import { AUTHORIZED_PARTY_KEY } from "../decorators/authorized-party.decorator";
 import { IdentityProviders } from "@sims/sims-db";
-import { ConfigService } from "@sims/utilities/config";
 import { Audiences } from "../../auth/audiences.enum";
 
 /**
@@ -17,10 +16,7 @@ import { Audiences } from "../../auth/audiences.enum";
  */
 @Injectable()
 export class AuthorizedPartiesGuard implements CanActivate {
-  constructor(
-    private readonly reflector: Reflector,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     const authorizedParties = this.reflector.getAllAndOverride<

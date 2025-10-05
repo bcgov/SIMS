@@ -150,5 +150,5 @@ export class StudentService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

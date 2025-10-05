@@ -38,9 +38,8 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
     await this.eCertCalculationProcess.executeCalculations(processSummary);
     // e-Cert file generation.
     processSummary.info("Sending e-Cert file.");
-    const uploadResult = await this.eCertFileHandler.generateECert(
-      processSummary,
-    );
+    const uploadResult =
+      await this.eCertFileHandler.generateECert(processSummary);
     const generatedFileMessage = `Generated file: ${uploadResult.generatedFile}`;
     const uploadedRecordsMessage = `Uploaded records: ${uploadResult.uploadedRecords}`;
     processSummary.info(generatedFileMessage);
@@ -55,5 +54,5 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
    * allow the base classes to write logs using the correct context.
    */
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

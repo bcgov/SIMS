@@ -233,5 +233,5 @@ export class SFASRestrictionImportService
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

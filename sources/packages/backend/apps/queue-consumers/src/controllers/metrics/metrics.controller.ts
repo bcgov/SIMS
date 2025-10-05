@@ -31,5 +31,5 @@ export class MetricsController {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

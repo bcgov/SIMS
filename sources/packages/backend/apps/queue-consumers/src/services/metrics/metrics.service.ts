@@ -185,5 +185,5 @@ export class MetricsService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

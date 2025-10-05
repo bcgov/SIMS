@@ -231,5 +231,5 @@ export class BCeIDService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

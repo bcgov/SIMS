@@ -28,6 +28,12 @@ interface SecondDisbursementStillPending {
 
 @Injectable()
 export class ApplicationService {
+  /**
+   * Sub query to validate if an application has assessment already being
+   * processed by the workflow.
+   */
+  private readonly inProgressStatusesExistsQuery: string;
+
   constructor(
     private readonly configService: ConfigService,
     @InjectRepository(Application)
@@ -38,7 +44,16 @@ export class ApplicationService {
     private readonly notificationRepo: Repository<Notification>,
     @InjectRepository(DisbursementSchedule)
     private readonly disbursementScheduleRepo: Repository<DisbursementSchedule>,
-  ) {}
+  ) {
+    this.inProgressStatusesExistsQuery = this.studentAssessmentRepo
+      .createQueryBuilder("studentAssessment")
+      .select("1")
+      .where("studentAssessment.application.id = application.id")
+      .andWhere(
+        "studentAssessment.studentAssessmentStatus IN (:...inProgressStatuses)",
+      )
+      .getQuery();
+  }
 
   /**
    * Archives one or more applications when application archive days
@@ -77,19 +92,6 @@ export class ApplicationService {
 
     return updateResult.affected;
   }
-
-  /**
-   * Sub query to validate if an application has assessment already being
-   * processed by the workflow.
-   */
-  private inProgressStatusesExistsQuery = this.studentAssessmentRepo
-    .createQueryBuilder("studentAssessment")
-    .select("1")
-    .where("studentAssessment.application.id = application.id")
-    .andWhere(
-      "studentAssessment.studentAssessmentStatus IN (:...inProgressStatuses)",
-    )
-    .getQuery();
 
   /**
    * Finds all applications with some pending student assessment to be

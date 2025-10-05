@@ -108,9 +108,8 @@ export class EducationProgramOfferingImportCSVService {
   private async getLocationsMaps(
     institutionId: number,
   ): Promise<InstitutionCodeToIdMap> {
-    const locations = await this.institutionLocationService.getLocationDetails(
-      institutionId,
-    );
+    const locations =
+      await this.institutionLocationService.getLocationDetails(institutionId);
     const institutionMap: InstitutionCodeToIdMap = {};
     locations.forEach((location) => {
       if (location.institutionCode) {
@@ -252,5 +251,5 @@ export class EducationProgramOfferingImportCSVService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

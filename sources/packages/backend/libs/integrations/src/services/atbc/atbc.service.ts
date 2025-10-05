@@ -117,5 +117,5 @@ export class ATBCService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

@@ -19,7 +19,7 @@ import {
 
 @Injectable()
 export class SupportingUserService extends RecordDataModelService<SupportingUser> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(dataSource: DataSource) {
     super(dataSource.getRepository(SupportingUser));
   }
 

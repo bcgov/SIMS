@@ -139,5 +139,5 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<SINVali
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

@@ -82,5 +82,5 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
    * allow the base classes to write logs using the correct context.
    */
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

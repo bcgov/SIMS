@@ -151,6 +151,9 @@
     "cSpell.words": [
       "addressline",
       "AEST",
+      "AVCP",
+      "AVEN",
+      "AVIR",
       "bcag",
       "BCLM",
       "BCSC",
@@ -160,6 +163,7 @@
       "Bitnami",
       "CCRA",
       "Clamav",
+      "clamscan",
       "composables",
       "CSGD",
       "csgf",
@@ -168,6 +172,7 @@
       "cslf",
       "CSLP",
       "CSPT",
+      "DATATABLE",
       "dependants",
       "ecert",
       "enrolment",
@@ -220,11 +225,7 @@
       "typeorm",
       "unparse",
       "WTHD",
-      "Zeebe",
-      "AVCP",
-      "AVIR",
-      "AVEN",
-      "DATATABLE"
+      "Zeebe"
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"

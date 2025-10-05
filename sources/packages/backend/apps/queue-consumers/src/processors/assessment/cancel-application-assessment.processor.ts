@@ -185,5 +185,5 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

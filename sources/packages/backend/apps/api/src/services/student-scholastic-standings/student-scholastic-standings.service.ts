@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import {
   RecordDataModelService,
   StudentScholasticStanding,
@@ -55,8 +55,6 @@ const SCHOLASTIC_RESTRICTION_TYPES_FULL_TIME = [
  */
 @Injectable()
 export class StudentScholasticStandingsService extends RecordDataModelService<StudentScholasticStanding> {
-  private readonly offeringRepo: Repository<EducationProgramOffering>;
-
   constructor(
     private readonly dataSource: DataSource,
     private readonly studentRestrictionService: StudentRestrictionService,
@@ -65,7 +63,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     private readonly sfasIndividualService: SFASIndividualService,
   ) {
     super(dataSource.getRepository(StudentScholasticStanding));
-    this.offeringRepo = dataSource.getRepository(EducationProgramOffering);
   }
 
   /**

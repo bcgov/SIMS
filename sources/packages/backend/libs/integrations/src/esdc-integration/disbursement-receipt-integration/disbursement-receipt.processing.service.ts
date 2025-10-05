@@ -91,9 +91,8 @@ export class DisbursementReceiptProcessingService {
     processSummary.info(`Processing file ${remoteFilePath}.`);
     let responseData: DisbursementReceiptDownloadResponse;
     try {
-      responseData = await this.integrationService.downloadResponseFile(
-        remoteFilePath,
-      );
+      responseData =
+        await this.integrationService.downloadResponseFile(remoteFilePath);
     } catch (error: unknown) {
       this.logger.error(error);
       processSummary.error(`Error downloading file ${remoteFilePath}.`, error);
@@ -233,5 +232,5 @@ export class DisbursementReceiptProcessingService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

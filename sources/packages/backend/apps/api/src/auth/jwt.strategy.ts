@@ -10,7 +10,6 @@ import {
 import { InstitutionUserAuthService, UserService } from "../services";
 import { AuthorizedParties } from "./authorized-parties.enum";
 import { KeycloakConfig } from "@sims/auth/config";
-import { ConfigService } from "@sims/utilities/config";
 import { Audiences } from "./audiences.enum";
 
 /**
@@ -24,7 +23,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly userService: UserService,
     private readonly institutionUserAuthService: InstitutionUserAuthService,
-    private readonly configService: ConfigService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

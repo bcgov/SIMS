@@ -150,9 +150,8 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
           // update it with the information received from ESDC.
           // This will be most common scenario.
           operationDescription = "SIN validation record updated.";
-          const updatedRecord = await sinValidationRepo.save(
-            existingValidation,
-          );
+          const updatedRecord =
+            await sinValidationRepo.save(existingValidation);
 
           if (
             validationResponse.sinCheckStatus !== SINCheckStatus.UnderReview
@@ -273,5 +272,5 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

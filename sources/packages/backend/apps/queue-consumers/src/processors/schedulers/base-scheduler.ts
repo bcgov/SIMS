@@ -156,5 +156,5 @@ export abstract class BaseScheduler<T>
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

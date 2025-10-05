@@ -1,8 +1,4 @@
 import { Controller, Get } from "@nestjs/common";
-import {
-  DynamicFormConfigurationService,
-  ProgramYearService,
-} from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
@@ -19,8 +15,6 @@ import { ProgramYearControllerService } from "./program-year.controller.service"
 export class ProgramYearStudentsController extends BaseController {
   constructor(
     private readonly programYearControllerService: ProgramYearControllerService,
-    private readonly programYearService: ProgramYearService,
-    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
   ) {
     super();
   }

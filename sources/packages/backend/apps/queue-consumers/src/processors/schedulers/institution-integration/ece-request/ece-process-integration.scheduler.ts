@@ -32,9 +32,8 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<void> {
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[] | string> {
-    const uploadResults = await this.eceFileService.processECEFile(
-      processSummary,
-    );
+    const uploadResults =
+      await this.eceFileService.processECEFile(processSummary);
     if (!uploadResults.length) {
       return "No eligible COEs found.";
     }
@@ -51,5 +50,5 @@ export class ECEProcessIntegrationScheduler extends BaseScheduler<void> {
    * allow the base classes to write logs using the correct context.
    */
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

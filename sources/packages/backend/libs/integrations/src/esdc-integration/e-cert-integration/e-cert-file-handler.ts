@@ -18,7 +18,7 @@ import {
   ECertUploadResult,
 } from "./models/e-cert-integration-model";
 import { ECertIntegrationService } from "./e-cert.integration.service";
-import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
+import { ConfigService } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
 import * as path from "path";
@@ -40,7 +40,6 @@ interface ErrorDetails {
 type ECertFeedbackCodeMap = Record<string, ErrorDetails>;
 
 export abstract class ECertFileHandler extends ESDCFileHandler {
-  esdcConfig: ESDCIntegrationConfig;
   constructor(
     private readonly dataSource: DataSource,
     configService: ConfigService,
@@ -211,7 +210,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
           valueCode: disbursementValue.valueCode,
           valueAmount: disbursementValue.valueAmount,
           effectiveAmount: disbursementValue.effectiveAmount,
-        } as Award),
+        }) as Award,
     );
 
     return {
@@ -276,9 +275,8 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
     // Get eCert feedback error map for all the error codes.
     let eCertFeedbackErrorCodeMap: ECertFeedbackCodeMap;
     try {
-      eCertFeedbackErrorCodeMap = await this.getECertFeedbackErrorsMap(
-        offeringIntensity,
-      );
+      eCertFeedbackErrorCodeMap =
+        await this.getECertFeedbackErrorsMap(offeringIntensity);
     } catch (error: unknown) {
       processSummary.error(
         "Error retrieving e-Cert feedback error map for error codes.",

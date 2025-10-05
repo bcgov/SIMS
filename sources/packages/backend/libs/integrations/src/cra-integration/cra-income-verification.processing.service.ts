@@ -376,5 +376,5 @@ export class CRAIncomeVerificationProcessingService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

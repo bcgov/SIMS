@@ -782,9 +782,6 @@ export class StudentService extends RecordDataModelService<Student> {
     });
   }
 
-  @InjectLogger()
-  logger: LoggerService;
-
   /**
    * Get student disability status.
    * @param pdStatus SFAS PD status.
@@ -877,4 +874,7 @@ export class StudentService extends RecordDataModelService<Student> {
     casSupplier.student = { id: studentId } as Student;
     return casSupplier;
   }
+
+  @InjectLogger()
+  declare logger: LoggerService;
 }

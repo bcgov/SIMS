@@ -30,9 +30,8 @@ export class MSFAAResponseProcessingService {
     offeringIntensity: OfferingIntensity,
     processSummary: ProcessSummary,
   ): Promise<void> {
-    const filePaths = await this.msfaaService.getResponseFilesFullPath(
-      offeringIntensity,
-    );
+    const filePaths =
+      await this.msfaaService.getResponseFilesFullPath(offeringIntensity);
     for (const filePath of filePaths) {
       const childProcessSummary = new ProcessSummary();
       processSummary.children(childProcessSummary);
@@ -148,5 +147,5 @@ export class MSFAAResponseProcessingService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }
