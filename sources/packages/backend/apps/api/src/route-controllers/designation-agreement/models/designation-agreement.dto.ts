@@ -79,6 +79,7 @@ export class SubmitDesignationAgreementAPIInDTO {
    * isBCPrivate is part of the form and defines if the dynamic area of the form.io definition will be visible or not, which also will impact the validation using the dryrun.
    * Since this value has the source of truth on the institution, it must be populated by the API prior to the dryrun validation and it is part of DTO to make explicit its place in the form payload submitted but it will also be ignored by Nestjs because it does not have a decorator.
    */
+  @Allow()
   isBCPrivate: boolean;
 }
 
