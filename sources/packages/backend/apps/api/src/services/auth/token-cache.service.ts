@@ -28,7 +28,9 @@ export class TokenCacheService {
   constructor(
     private readonly name: string,
     private readonly tokenAquireMethod: () => Promise<TokenCacheResponse>,
-  ) {}
+  ) {
+    this.logger.log(`TokenCacheService created for '${name}'.`);
+  }
 
   /**
    * Gets the token checking if there is one present on cache and

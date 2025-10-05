@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ScanResult } from "@sims/services/clamav/models/clamav.models";
-import NodeClam from "clamscan";
+import * as NodeClam from "clamscan";
 
 @Injectable()
 export class ClamAVService {
