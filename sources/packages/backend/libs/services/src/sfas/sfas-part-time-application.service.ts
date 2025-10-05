@@ -103,5 +103,5 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

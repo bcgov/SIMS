@@ -876,5 +876,5 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

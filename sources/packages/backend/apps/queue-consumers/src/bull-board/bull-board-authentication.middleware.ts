@@ -121,5 +121,5 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

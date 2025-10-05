@@ -228,5 +228,5 @@ export class ApplicationWithdrawalImportTextService {
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

@@ -21,5 +21,5 @@ export class QueuesMetricsModule implements OnModuleInit {
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

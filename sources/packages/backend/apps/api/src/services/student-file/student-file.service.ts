@@ -286,5 +286,5 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

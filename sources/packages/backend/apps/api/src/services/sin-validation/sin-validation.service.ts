@@ -183,5 +183,5 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

@@ -26,5 +26,5 @@ export class DynamicFormConfigurationModule implements OnModuleInit {
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

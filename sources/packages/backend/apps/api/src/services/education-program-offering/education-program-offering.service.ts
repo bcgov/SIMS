@@ -1578,5 +1578,5 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

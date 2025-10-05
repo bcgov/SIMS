@@ -251,5 +251,5 @@ export class EducationProgramOfferingImportCSVService {
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

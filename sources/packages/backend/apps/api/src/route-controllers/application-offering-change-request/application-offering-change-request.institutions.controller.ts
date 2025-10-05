@@ -319,6 +319,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
       );
     }
   }
+
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

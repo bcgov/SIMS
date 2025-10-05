@@ -70,5 +70,5 @@ export class TokenCacheService {
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }

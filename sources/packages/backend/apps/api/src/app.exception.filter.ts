@@ -20,5 +20,5 @@ export class AppAllExceptionsFilter extends BaseExceptionFilter {
   }
 
   @InjectLogger()
-  declare logger: LoggerService;
+  logger: LoggerService;
 }
