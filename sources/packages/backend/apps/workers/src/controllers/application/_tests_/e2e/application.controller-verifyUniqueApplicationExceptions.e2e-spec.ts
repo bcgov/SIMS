@@ -5,6 +5,7 @@ import {
 } from "@sims/services/constants";
 import {
   ApplicationData,
+  ApplicationExceptionRequestStatus,
   ApplicationExceptionStatus,
   EducationProgramOffering,
   ProgramInfoStatus,
@@ -157,6 +158,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               exceptionName: true,
               exceptionDescription: true,
               exceptionHash: true,
+              exceptionRequestStatus: true,
             },
           },
         },
@@ -184,6 +186,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               exceptionDescription: "Some Application Exception - 1",
               exceptionHash:
                 "96001142bc2a3cae09072fb3992b611016ae8c3a07c2b0cb78e1f6f2789b6169",
+              exceptionRequestStatus: ApplicationExceptionRequestStatus.Pending,
             },
             {
               id: expect.any(Number),
@@ -191,6 +194,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               exceptionDescription: "Some Application Exception - 2",
               exceptionHash:
                 "f032fcc52cfa04d24fb5abcd5c208f5b63c1b7893f2beeab1f5704a8eed11f1a",
+              exceptionRequestStatus: ApplicationExceptionRequestStatus.Pending,
             },
             {
               id: expect.any(Number),
@@ -198,6 +202,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               exceptionDescription: "Some Other Application Exception",
               exceptionHash:
                 "2fcd1a09f2f7e8e2a5a46880cc97a8c38ef0b7428b8d2ffbf3ed740921fc62cd",
+              exceptionRequestStatus: ApplicationExceptionRequestStatus.Pending,
             },
           ],
         },
@@ -223,6 +228,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
             exceptionName: "someApplicationException",
             exceptionHash:
               "b0e3a8697648475e79c33f61a41cb514715690094ab9acdaae2737c744fc42de",
+            exceptionRequestStatus: ApplicationExceptionRequestStatus.Approved,
           },
         },
       );
@@ -235,6 +241,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
             exceptionName: "someOtherApplicationException",
             exceptionHash:
               "58f52eef5c7049560ef87de8d7a8726c8ac1b8c9c6e4d034168c7a86762c2900",
+            exceptionRequestStatus: ApplicationExceptionRequestStatus.Approved,
           },
         },
       );
@@ -338,6 +345,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               },
               creator: { id: true },
               createdAt: true,
+              exceptionRequestStatus: true,
             },
           },
         },
@@ -387,6 +395,8 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               },
               creator: systemUsersService.systemUser,
               createdAt: now,
+              exceptionRequestStatus:
+                ApplicationExceptionRequestStatus.Approved,
             },
             {
               id: expect.any(Number),
@@ -399,6 +409,8 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               },
               creator: systemUsersService.systemUser,
               createdAt: now,
+              exceptionRequestStatus:
+                ApplicationExceptionRequestStatus.Approved,
             },
           ],
         },
@@ -452,6 +464,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
             id: true,
             exceptionName: true,
             exceptionDescription: true,
+            exceptionRequestStatus: true,
           },
         },
       },
@@ -470,6 +483,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
             id: expect.any(Number),
             exceptionName: "studyEndDateIsPastApplicationException",
             exceptionDescription: "Study end date is past",
+            exceptionRequestStatus: ApplicationExceptionRequestStatus.Pending,
           },
         ],
       },

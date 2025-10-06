@@ -113,7 +113,9 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     );
     // Check if all exceptions were already approved, to set the exception status.
     const allExceptionsApproved = newException.exceptionRequests.every(
-      (exceptionRequest) => !!exceptionRequest.approvalExceptionRequest?.id,
+      (exceptionRequest) =>
+        exceptionRequest.exceptionRequestStatus ===
+        ApplicationExceptionRequestStatus.Approved,
     );
     if (allExceptionsApproved) {
       newException.exceptionStatus = ApplicationExceptionStatus.Approved;
@@ -195,7 +197,10 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         parentApplication: {
           versions: {
             applicationException: {
-              exceptionStatus: ApplicationExceptionStatus.Approved,
+              exceptionRequests: {
+                exceptionRequestStatus:
+                  ApplicationExceptionRequestStatus.Approved,
+              },
             },
           },
         },
