@@ -1,8 +1,8 @@
 {
-  "name": "api",
+  "name": "studentaid-backend",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "StudentAid BC",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
