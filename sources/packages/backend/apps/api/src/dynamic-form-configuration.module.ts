@@ -1,10 +1,10 @@
-import { Global, LoggerService, Module, OnModuleInit } from "@nestjs/common";
+import { Global, Inject, Module, OnModuleInit } from "@nestjs/common";
 import {
   DynamicFormConfigurationService,
   ProgramYearService,
 } from "./services";
-import { InjectLogger } from "@sims/utilities/logger";
 import { DynamicFormConfigurationController } from "./route-controllers";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Global()
 @Module({
@@ -25,6 +25,6 @@ export class DynamicFormConfigurationModule implements OnModuleInit {
     await this.dynamicFormConfigurationService.loadAllDynamicFormConfigurations();
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

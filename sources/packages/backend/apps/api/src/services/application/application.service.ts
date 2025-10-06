@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import {
   DataSource,
   In,
@@ -7,7 +7,7 @@ import {
   EntityManager,
   SelectQueryBuilder,
 } from "typeorm";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
   Application,
@@ -2439,6 +2439,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

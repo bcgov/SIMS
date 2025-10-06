@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   Application,
@@ -34,7 +34,7 @@ import {
   isBeforeDate,
   isBetweenPeriod,
 } from "@sims/utilities";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { SequenceControlService } from "../sequence-control/sequence-control.service";
 import { NotificationActionsService } from "../notifications";
 import {
@@ -883,6 +883,6 @@ export class ConfirmationOfEnrollmentService {
     return nextDocumentNumber;
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

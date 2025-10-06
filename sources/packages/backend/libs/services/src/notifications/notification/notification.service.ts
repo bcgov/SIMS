@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   Notification,
@@ -19,7 +19,7 @@ import {
   NotificationProcessingSummary,
   SaveNotificationModel,
 } from "./notification.model";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import {
   NotificationEmailMessage,
   GCNotifyErrorResponse,
@@ -247,6 +247,6 @@ export class NotificationService extends RecordDataModelService<Notification> {
     };
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { DataSource, Brackets, MoreThanOrEqual, IsNull, Not } from "typeorm";
 import { DataModelService, SFASPartTimeApplications } from "@sims/sims-db";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import {
   MAX_MSFAA_VALID_DAYS,
   addDays,
@@ -102,6 +102,6 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
     return null;
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

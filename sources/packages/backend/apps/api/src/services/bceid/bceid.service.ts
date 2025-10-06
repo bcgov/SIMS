@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { BasicAuthSecurity, Client, createClientAsync } from "soap";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { ConfigService, BCeIDConfig } from "@sims/utilities/config";
 import { AccountDetails } from "./account-details.model";
 import {
@@ -230,6 +230,6 @@ export class BCeIDService {
     return { Authorization: auth };
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

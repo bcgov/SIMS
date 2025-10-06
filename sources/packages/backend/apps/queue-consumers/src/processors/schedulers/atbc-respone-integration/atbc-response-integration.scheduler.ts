@@ -2,11 +2,8 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueService } from "@sims/services/queue";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { Inject } from "@nestjs/common";
 
 /**
  * Process all the applied PD requests to verify the status with ATBC.
@@ -42,6 +39,6 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
    * Even if the logger is not used, it is required to be set, to
    * allow the base classes to write logs using the correct context.
    */
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

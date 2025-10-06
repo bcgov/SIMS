@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { NotificationMessage, NotificationMessageType } from "@sims/sims-db";
 import {
   base64Encode,
@@ -37,7 +37,7 @@ import {
   ParentInformationRequiredFromStudentNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
 import { SystemUsersService } from "@sims/services/system-users";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
@@ -1411,6 +1411,6 @@ export class NotificationActionsService {
     );
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

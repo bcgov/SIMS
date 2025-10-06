@@ -4,11 +4,8 @@ import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { SFASIntegrationProcessingService } from "@sims/integrations/sfas-integration";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { Inject } from "@nestjs/common";
 
 /**
  * Process all SFAS integration files from the SFTP location.
@@ -49,6 +46,6 @@ export class SFASIntegrationScheduler extends BaseScheduler<void> {
    * Even if the logger is not used, it is required to be set, to
    * allow the base classes to write logs using the correct context.
    */
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

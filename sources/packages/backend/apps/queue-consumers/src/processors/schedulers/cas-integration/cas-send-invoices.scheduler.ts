@@ -1,15 +1,12 @@
 import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { CASInvoiceService } from "../../../services";
 import { CASIntegrationQueueInDTO } from "./models/cas-integration.dto";
+import { Inject } from "@nestjs/common";
 
 /**
  * Scheduler to send invoices to CAS.
@@ -57,6 +54,6 @@ export class CASSendInvoicesScheduler extends BaseScheduler<CASIntegrationQueueI
    * Even if the logger is not used, it is required to be set, to
    * allow the base classes to write logs using the correct context.
    */
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

@@ -1,11 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { MSFAANumberService } from "@sims/integrations/services";
 import { OfferingIntensity } from "@sims/sims-db";
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import {
   MSFAASFTPResponseFile,
   ReceivedStatusCode,
@@ -146,6 +142,6 @@ export class MSFAAResponseProcessingService {
     );
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

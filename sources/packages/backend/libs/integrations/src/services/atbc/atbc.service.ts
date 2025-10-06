@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { ATBCIntegrationConfig, ConfigService } from "@sims/utilities/config";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { ATBCHeader, ATBCAuthTokenResponse } from "./models/atbc-auth.model";
 import {
   ATBCCreateClientResponse,
@@ -116,6 +116,6 @@ export class ATBCService {
     }
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

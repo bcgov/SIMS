@@ -2,15 +2,12 @@ import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
 import { SIMSToSFASProcessingService } from "@sims/integrations/sfas-integration";
 import { SIMSToSFASService } from "@sims/integrations/services/sfas";
 import { SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE } from "@sims/integrations/constants";
+import { Inject } from "@nestjs/common";
 
 @Processor(QueueNames.SIMSToSFASIntegration)
 export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
@@ -73,6 +70,6 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
    * Even if the logger is not used, it is required to be set, to
    * allow the base classes to write logs using the correct context.
    */
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

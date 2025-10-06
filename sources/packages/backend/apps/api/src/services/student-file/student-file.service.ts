@@ -1,10 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
   StudentFile,
@@ -285,6 +281,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     );
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

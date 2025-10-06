@@ -4,8 +4,9 @@ import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Queue } from "bull";
 import { PartTimeCalculationProcess } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { ECertProcessIntegrationBaseScheduler } from "./ecert-process-integration-base.scheduler";
+import { Inject } from "@nestjs/common";
 
 @Processor(QueueNames.PartTimeECertIntegration)
 export class PartTimeECertProcessIntegrationScheduler extends ECertProcessIntegrationBaseScheduler {
@@ -30,6 +31,6 @@ export class PartTimeECertProcessIntegrationScheduler extends ECertProcessIntegr
    * Even if the logger is not used, it is required to be set, to
    * allow the base classes to write logs using the correct context.
    */
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

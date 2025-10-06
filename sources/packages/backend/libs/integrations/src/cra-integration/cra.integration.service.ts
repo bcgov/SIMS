@@ -1,5 +1,5 @@
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { Injectable } from "@nestjs/common";
+import { LoggerService } from "@sims/utilities/logger";
+import { Inject, Injectable } from "@nestjs/common";
 import { ConfigService, CRAIntegrationConfig } from "@sims/utilities/config";
 import {
   CRAPersonRecord,
@@ -169,6 +169,6 @@ export class CRAIntegrationService extends SFTPIntegrationBase<CRASFTPResponseFi
     };
   }
 
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

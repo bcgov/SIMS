@@ -1,11 +1,11 @@
-import { Inject, LoggerService, Module, OnModuleInit } from "@nestjs/common";
+import { Inject, Module, OnModuleInit } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { BULL_BOARD_INSTANCE, BullBoardInstance } from "@bull-board/nestjs";
 import { QueueService } from "@sims/services/queue/queue.service";
-import { InjectLogger } from "@sims/utilities/logger";
 import { getQueueToken } from "@nestjs/bull";
 import { Queue } from "bull";
 import { BullAdapter } from "@bull-board/api/bullAdapter";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Module({})
 export class BullBoardQueuesRegistrationModule implements OnModuleInit {
@@ -40,6 +40,6 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
     });
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

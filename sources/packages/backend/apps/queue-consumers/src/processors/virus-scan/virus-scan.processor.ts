@@ -3,16 +3,13 @@ import { CustomNamedError, QueueNames } from "@sims/utilities";
 import { StudentFileService } from "../../services";
 import { Job } from "bull";
 import { VirusScanQueueInDTO, VirusScanResult } from "@sims/services/queue";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { logProcessSummaryToJobLogger } from "../../utilities";
 import {
   EMPTY_FILE,
   FILE_NOT_FOUND,
 } from "../../constants/error-code.constants";
+import { Inject } from "@nestjs/common";
 
 @Processor(QueueNames.FileVirusScanProcessor)
 export class VirusScanProcessor {
@@ -61,6 +58,6 @@ export class VirusScanProcessor {
     };
   }
 
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

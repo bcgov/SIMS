@@ -1,6 +1,6 @@
-import { Global, LoggerService, Module, OnModuleInit } from "@nestjs/common";
-import { InjectLogger } from "@sims/utilities/logger";
+import { Global, Inject, Module, OnModuleInit } from "@nestjs/common";
 import { MetricsService } from "./services";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Global()
 @Module({
@@ -20,6 +20,6 @@ export class QueuesMetricsModule implements OnModuleInit {
     await this.metricsService.associateQueueEventsCountersMetrics();
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

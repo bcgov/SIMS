@@ -1,9 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { Inject, Injectable } from "@nestjs/common";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt.integration.service";
 import { DisbursementReceiptDownloadResponse } from "./models/disbursement-receipt-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
@@ -231,6 +227,6 @@ export class DisbursementReceiptProcessingService {
     }
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

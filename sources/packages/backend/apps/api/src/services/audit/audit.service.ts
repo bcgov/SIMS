@@ -1,7 +1,7 @@
-import { Injectable, LoggerService } from "@nestjs/common";
-import { InjectLogger } from "@sims/utilities/logger";
+import { Inject, Injectable } from "@nestjs/common";
 import { AuditEvent } from "./audit-event.enum";
 import { AuthorizedParties } from "../../auth";
+import { LoggerService } from "@sims/utilities/logger";
 
 const SIMS_AUDIT_EVENT_PREFIX = "SIMS Audit Event";
 
@@ -87,6 +87,6 @@ export class AuditService {
     return portalFriendlyName;
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

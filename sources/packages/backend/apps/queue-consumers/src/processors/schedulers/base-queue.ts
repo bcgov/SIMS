@@ -1,9 +1,5 @@
 import { CustomNamedError, parseJSONError } from "@sims/utilities";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import {
   PROCESS_SUMMARY_CONTAINS_ERROR,
   getSuccessMessageWithAttentionCheck,
@@ -92,6 +88,6 @@ export abstract class BaseQueue<T> {
    * Default logger. This must be provided in the derived class
    * to set the proper log context.
    */
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

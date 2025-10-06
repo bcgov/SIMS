@@ -1,4 +1,4 @@
-import { Injectable, NestMiddleware } from "@nestjs/common";
+import { Inject, Injectable, NestMiddleware } from "@nestjs/common";
 import {
   JsonWebTokenError,
   JwtService,
@@ -12,7 +12,7 @@ import {
 } from "@sims/auth/constants";
 import { QueueDashboardToken } from "@sims/auth/services";
 import { ConfigService } from "@sims/utilities/config";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { HttpStatusCode } from "axios";
 import { NextFunction, Request, Response } from "express";
 
@@ -120,6 +120,6 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
     }
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

@@ -1,9 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { Inject, Injectable } from "@nestjs/common";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { DownloadResult, RecordTypeCodes } from "./sfas-integration.models";
 import { SFASIntegrationService } from "./sfas-integration.service";
 import {
@@ -81,7 +77,9 @@ export class SFASIntegrationProcessingService {
         await this.sfasService.downloadResponseFile(remoteFilePath);
       processSummary.info("File download finished.");
     } catch (error) {
-      throw new Error(`Error downloading file ${remoteFilePath}.`, { cause: error });
+      throw new Error(`Error downloading file ${remoteFilePath}.`, {
+        cause: error,
+      });
     }
     processSummary.info(`Starting records import for file ${remoteFilePath}.`);
     // Execute the import of all files records.
@@ -225,6 +223,6 @@ export class SFASIntegrationProcessingService {
     }
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

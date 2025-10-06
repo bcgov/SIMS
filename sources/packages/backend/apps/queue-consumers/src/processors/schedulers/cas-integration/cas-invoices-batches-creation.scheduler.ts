@@ -1,15 +1,12 @@
 import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { CustomNamedError, QueueNames } from "@sims/utilities";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { CASInvoiceBatchService } from "../../../services";
 import { DATABASE_TRANSACTION_CANCELLATION } from "@sims/services/constants";
+import { Inject } from "@nestjs/common";
 
 /**
  * Scheduler to generate batches for CAS invoices for e-Cert receipts.
@@ -57,6 +54,6 @@ export class CASInvoicesBatchesCreationScheduler extends BaseScheduler<void> {
     }
   }
 
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

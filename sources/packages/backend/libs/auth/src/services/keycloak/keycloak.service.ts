@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { stringify } from "qs";
 import { TokenRequest, TokenResponse } from "./token.model";
 import { RealmConfig } from "./realm-config.model";
 import { OpenIdConfig } from "./openid-config.model";
 import { KeycloakConfig } from "../../config";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import {
   AuthConfig,
   ConfigService,
@@ -24,8 +24,8 @@ import { HttpService } from "@nestjs/axios";
 export class KeycloakService {
   private readonly authConfig: AuthConfig;
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 
   constructor(
     configService: ConfigService,

@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { Inject, Injectable } from "@nestjs/common";
+import { LoggerService } from "@sims/utilities/logger";
 import * as Client from "ssh2-sftp-client";
 import {
   MSFAASFTPResponseFile,
@@ -241,6 +241,6 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
     }
   }
 
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

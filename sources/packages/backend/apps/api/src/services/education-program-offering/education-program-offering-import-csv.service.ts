@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { EducationProgram, OfferingTypes } from "@sims/sims-db";
 import { EducationProgramService, InstitutionLocationService } from "..";
 import {
@@ -18,7 +18,7 @@ import { flattenErrorMessages } from "../../utilities/class-validation";
 import { parse } from "papaparse";
 import { CustomNamedError } from "@sims/utilities";
 import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "../../constants";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 
 interface LocationDetails {
   id: number;
@@ -250,6 +250,6 @@ export class EducationProgramOfferingImportCSVService {
     });
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

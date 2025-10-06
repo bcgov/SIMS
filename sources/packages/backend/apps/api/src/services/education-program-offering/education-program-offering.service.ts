@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   EducationProgramOffering,
@@ -67,7 +67,7 @@ import {
   OfferingYesNoOptions,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import {
   InstitutionAddsPendingOfferingNotification,
   NotificationActionsService,
@@ -1577,6 +1577,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .filter((studyBreak) => !!studyBreak);
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

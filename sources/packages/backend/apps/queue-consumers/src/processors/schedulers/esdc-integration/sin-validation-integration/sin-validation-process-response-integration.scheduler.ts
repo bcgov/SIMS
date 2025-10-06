@@ -4,11 +4,8 @@ import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { Inject } from "@nestjs/common";
 
 @Processor(QueueNames.SINValidationResponseIntegration)
 export class SINValidationResponseIntegrationScheduler extends BaseScheduler<void> {
@@ -45,6 +42,6 @@ export class SINValidationResponseIntegrationScheduler extends BaseScheduler<voi
    * Even if the logger is not used, it is required to be set, to
    * allow the base classes to write logs using the correct context.
    */
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

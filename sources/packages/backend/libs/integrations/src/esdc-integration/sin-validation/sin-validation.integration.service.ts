@@ -1,5 +1,5 @@
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
-import { Injectable } from "@nestjs/common";
+import { LoggerService } from "@sims/utilities/logger";
+import { Inject, Injectable } from "@nestjs/common";
 import { SINValidationFileResponse } from "./sin-validation-files/sin-validation-file-response";
 import { SINValidationFileHeader } from "./sin-validation-files/sin-validation-file-header";
 import {
@@ -138,6 +138,6 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<SINVali
     return { header, records };
   }
 
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

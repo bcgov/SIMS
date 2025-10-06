@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   InternalServerErrorException,
   NotFoundException,
   Param,
@@ -54,7 +55,7 @@ import {
   OFFERING_INTENSITY_MISMATCH,
   OFFERING_PROGRAM_YEAR_MISMATCH,
 } from "../../constants";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { ApplicationOfferingChangeRequestControllerService } from "./application-offering-change-request.controller.service";
 
 /**
@@ -319,6 +320,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
       );
     }
   }
-  @InjectLogger()
-  declare logger: LoggerService;
+
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

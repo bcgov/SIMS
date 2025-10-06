@@ -1,9 +1,5 @@
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
-import { Injectable } from "@nestjs/common";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { Inject, Injectable } from "@nestjs/common";
 import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
 import { DataSource, Repository } from "typeorm";
 import { FederalRestriction, Restriction } from "@sims/sims-db";
@@ -307,6 +303,6 @@ export class FedRestrictionProcessingService {
     }
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

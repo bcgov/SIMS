@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   Application,
@@ -19,7 +19,7 @@ import {
   SupplierStatus,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, UpdateResult } from "typeorm";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -56,7 +56,6 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly studentRestrictionService: StudentRestrictionService,
   ) {
     super(dataSource.getRepository(Student));
-    this.logger.log("[Created]");
   }
 
   /**
@@ -70,6 +69,7 @@ export class StudentService extends RecordDataModelService<Student> {
     studentId: number,
     options?: { includeLegacy?: boolean },
   ): Promise<Student> {
+    this.logger.log(`Getting student by id: ${studentId}.`);
     const studentQuery = this.repo
       .createQueryBuilder("student")
       .select([
@@ -875,6 +875,6 @@ export class StudentService extends RecordDataModelService<Student> {
     return casSupplier;
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }

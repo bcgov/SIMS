@@ -5,11 +5,8 @@ import { ProcessNotificationsQueueInDTO } from "./models/notification.dto";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { Inject } from "@nestjs/common";
 
 /**
  * Process notifications which are unsent.
@@ -70,6 +67,6 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
    * Even if the logger is not used, it is required to be set, to
    * allow the base classes to write logs using the correct context.
    */
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

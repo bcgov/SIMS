@@ -4,13 +4,10 @@ import { StartAssessmentQueueInDTO } from "@sims/services/queue";
 import { WorkflowClientService } from "@sims/services";
 import { QueueNames } from "@sims/utilities";
 import { StudentAssessmentService } from "../../services";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { StudentAssessmentStatus } from "@sims/sims-db";
 import { BaseQueue } from "../../processors";
+import { Inject } from "@nestjs/common";
 
 /**
  * Process messages sent to start assessment queue.
@@ -65,6 +62,6 @@ export class StartApplicationAssessmentProcessor extends BaseQueue<StartAssessme
     return "Workflow call executed with success.";
   }
 
-  @InjectLogger()
+  @Inject(LoggerService)
   declare logger: LoggerService;
 }

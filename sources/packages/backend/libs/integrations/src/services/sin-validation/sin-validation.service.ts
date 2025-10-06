@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { DataSource, EntityManager, Repository } from "typeorm";
 import { RecordDataModelService, SINValidation, User } from "@sims/sims-db";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { SINValidationFileResponse } from "@sims/integrations/esdc-integration";
 import {
   SINValidationRecord,
@@ -271,6 +271,6 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
     );
   }
 
-  @InjectLogger()
-  declare logger: LoggerService;
+  @Inject(LoggerService)
+  logger: LoggerService;
 }
