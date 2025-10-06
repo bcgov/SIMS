@@ -7,6 +7,7 @@ import {
   ApplicationExceptionRequest,
   ApplicationExceptionStatus,
   NoteType,
+  ApplicationExceptionRequestStatus,
 } from "@sims/sims-db";
 import { ApplicationDataExceptionHashed } from "./application-exception.models";
 import { CustomNamedError } from "@sims/utilities";
@@ -50,7 +51,8 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         ({
           exceptionName,
           exceptionDescription: this.getExceptionDescription(exceptionName),
-        } as ApplicationExceptionRequest),
+          exceptionRequestStatus: ApplicationExceptionRequestStatus.Pending,
+        }) as ApplicationExceptionRequest,
     );
     return entityManager.getRepository(ApplicationException).save(newException);
   }
@@ -87,18 +89,27 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     newException.createdAt = now;
     // Create the exceptions requests identifying if the exception was already approved.
     newException.exceptionRequests = exceptionRequests.map(
-      (exceptionRequest) =>
-        ({
+      (exceptionRequest) => {
+        const approvalExceptionRequest = this.getPreviouslyApprovedException(
+          exceptionRequest,
+          previouslyApprovedExceptionRequests,
+        );
+        // If the exception request with the same name and hash was previously approved
+        // then the status of the exception request will be set to approved.
+        // Otherwise the status will be set to pending which requires ministry assessment.
+        const exceptionRequestStatus = approvalExceptionRequest?.id
+          ? ApplicationExceptionRequestStatus.Approved
+          : ApplicationExceptionRequestStatus.Pending;
+        return {
           exceptionName: exceptionRequest.key,
           exceptionDescription: exceptionRequest.description,
           exceptionHash: exceptionRequest.fullHashContent,
-          approvalExceptionRequest: this.getPreviouslyApprovedException(
-            exceptionRequest,
-            previouslyApprovedExceptionRequests,
-          ),
+          approvalExceptionRequest,
+          exceptionRequestStatus,
           creator: this.systemUsersService.systemUser,
           createdAt: now,
-        } as ApplicationExceptionRequest),
+        } as ApplicationExceptionRequest;
+      },
     );
     // Check if all exceptions were already approved, to set the exception status.
     const allExceptionsApproved = newException.exceptionRequests.every(
@@ -289,7 +300,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
   private searchExceptionsRecursively(
     payload: unknown,
     applicationExceptions: string[],
-  ) {
+  ): void {
     if (Array.isArray(payload)) {
       for (const arrayItem of payload) {
         // If the payload is an array, iterate through each item
