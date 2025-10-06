@@ -884,5 +884,5 @@ export class ConfirmationOfEnrollmentService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

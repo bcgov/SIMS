@@ -2440,5 +2440,5 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

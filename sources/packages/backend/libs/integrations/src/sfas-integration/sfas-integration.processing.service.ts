@@ -226,5 +226,5 @@ export class SFASIntegrationProcessingService {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }

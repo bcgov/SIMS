@@ -41,5 +41,5 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
   }
 
   @InjectLogger()
-  logger: LoggerService;
+  declare logger: LoggerService;
 }
