@@ -1,7 +1,9 @@
 # Base Image
-FROM artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi9/nodejs-22:9.5
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:24.9.0-alpine3.22
 
-LABEL maintainer="BC GOV"
+ENV npm_config_cache=/app/.npm
+
+WORKDIR /app
 
 # Application Port
 ENV PORT 3000
@@ -22,7 +24,7 @@ RUN npm run build api
 # Exposing application port
 EXPOSE ${PORT}
 
-# Grant access to group 0 to allow npm v9 to work
+# Fixing permissions for OpenShift because it runs containers with a random user ID.
 # See: https://docs.openshift.com/container-platform/4.11/openshift_images/create-images.html#use-uid_create-images
 RUN chgrp -R 0 ./.npm && \
     chmod -R g=u ./.npm

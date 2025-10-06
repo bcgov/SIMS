@@ -135,7 +135,7 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=
 REDIS_STANDALONE_MODE=true
-QUEUE_CONSUMERS_PORT=
+QUEUE_CONSUMERS_PORT=3010
 QUEUE_PREFIX={sims-local}
 # The below secret should be set with any valid base 64 string for local development.
 QUEUE_DASHBOARD_TOKEN_SECRET=

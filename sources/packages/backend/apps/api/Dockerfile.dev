@@ -1,15 +1,13 @@
 # Base Image
-FROM node:22.13.1-alpine3.20
-
-LABEL maintainer="BC GOV"
-
-# Updating container path variable with node bin
-ENV PATH $PATH:/app/node_modules/.bin
-
-# Application Port
-ENV PORT 3000
+FROM node:24.9.0-alpine3.22
 
 WORKDIR /app
+
+# Updating container path variable with node bin
+ENV PATH=$PATH:/app/node_modules/.bin
+
+# Application Port
+ENV PORT=3000
 
 # Copying root files to image workdir.
 COPY /*.json /*.js ./
