@@ -69,7 +69,6 @@ export class StudentService extends RecordDataModelService<Student> {
     studentId: number,
     options?: { includeLegacy?: boolean },
   ): Promise<Student> {
-    this.logger.log(`Getting student by id: ${studentId}.`);
     const studentQuery = this.repo
       .createQueryBuilder("student")
       .select([
@@ -876,5 +875,5 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

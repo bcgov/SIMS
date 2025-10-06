@@ -77,5 +77,5 @@ export class ECertPreValidationService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

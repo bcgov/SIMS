@@ -3,8 +3,7 @@ import { QueueService } from "@sims/services/queue";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { ECertCalculationProcess } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { Inject } from "@nestjs/common";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler<void> {
   constructor(
@@ -14,6 +13,7 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
     private readonly eCertFileHandler: ECertFileHandler,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(ECertProcessIntegrationBaseScheduler.name);
   }
 
   /**
@@ -43,13 +43,4 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
     processSummary.info(uploadedRecordsMessage);
     return [generatedFileMessage, uploadedRecordsMessage];
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

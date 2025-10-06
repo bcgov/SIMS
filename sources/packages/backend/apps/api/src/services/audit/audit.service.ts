@@ -88,5 +88,5 @@ export class AuditService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

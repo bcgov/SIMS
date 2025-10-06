@@ -20,6 +20,7 @@ export class ProcessArchiveApplicationsScheduler extends BaseScheduler<void> {
     private readonly systemUsersService: SystemUsersService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(ProcessArchiveApplicationsScheduler.name);
   }
 
   /**

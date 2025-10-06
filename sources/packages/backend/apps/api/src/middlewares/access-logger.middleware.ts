@@ -48,5 +48,5 @@ export class AccessLoggerMiddleware implements NestMiddleware {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

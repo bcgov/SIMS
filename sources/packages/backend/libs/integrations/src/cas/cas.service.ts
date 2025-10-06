@@ -302,5 +302,5 @@ export class CASService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

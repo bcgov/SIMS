@@ -221,7 +221,7 @@ export class BCeIDService {
    * Gets WSDL authentication header needed to retrieve the WSDL from BCeID Web Service.
    * @returns Authorization header converted to base64 string.
    */
-  private getWsdlAuthHeader() {
+  private getWsdlAuthHeader(): { Authorization: string } {
     const auth =
       "Basic " +
       Buffer.from(
@@ -231,5 +231,5 @@ export class BCeIDService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

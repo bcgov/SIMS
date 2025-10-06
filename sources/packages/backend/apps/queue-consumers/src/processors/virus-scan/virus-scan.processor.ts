@@ -59,5 +59,5 @@ export class VirusScanProcessor {
   }
 
   @Inject(LoggerService)
-  declare logger: LoggerService;
+  private logger: LoggerService;
 }

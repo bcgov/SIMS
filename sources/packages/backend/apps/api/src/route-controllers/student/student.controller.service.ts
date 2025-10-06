@@ -442,5 +442,5 @@ export class StudentControllerService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

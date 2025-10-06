@@ -1,11 +1,10 @@
 import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { ECEResponseProcessingService } from "@sims/integrations/institution-integration/ece-integration";
-import { Inject } from "@nestjs/common";
 
 @Processor(QueueNames.ECEProcessResponseIntegration)
 export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
@@ -16,6 +15,7 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
     queueService: QueueService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(ECEResponseIntegrationScheduler.name);
   }
 
   /**
@@ -39,13 +39,4 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
     });
     return `ECE response files received: ${processingResult.length}. Check logs for details.`;
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

@@ -228,5 +228,5 @@ export class DisbursementReceiptProcessingService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

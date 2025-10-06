@@ -248,5 +248,5 @@ export class NotificationService extends RecordDataModelService<Notification> {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

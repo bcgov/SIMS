@@ -142,5 +142,5 @@ export class ATBCIntegrationProcessingService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

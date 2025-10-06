@@ -4,8 +4,7 @@ import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { Inject } from "@nestjs/common";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 @Processor(QueueNames.SINValidationResponseIntegration)
 export class SINValidationResponseIntegrationScheduler extends BaseScheduler<void> {
@@ -16,6 +15,7 @@ export class SINValidationResponseIntegrationScheduler extends BaseScheduler<voi
     private readonly sinValidationProcessingService: SINValidationProcessingService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(SINValidationResponseIntegrationScheduler.name);
   }
 
   /**
@@ -35,13 +35,4 @@ export class SINValidationResponseIntegrationScheduler extends BaseScheduler<voi
     );
     return "ESDC SIN validation response files processed.";
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

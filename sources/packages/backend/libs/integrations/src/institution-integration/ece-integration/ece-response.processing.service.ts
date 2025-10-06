@@ -500,5 +500,5 @@ export class ECEResponseProcessingService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

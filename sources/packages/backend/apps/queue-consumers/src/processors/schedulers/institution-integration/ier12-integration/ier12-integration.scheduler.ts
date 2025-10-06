@@ -2,11 +2,10 @@ import { InjectQueue, Processor } from "@nestjs/bull";
 import { IER12ProcessingService } from "@sims/integrations/institution-integration/ier12-integration";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { GeneratedDateQueueInDTO } from "./models/ier.model";
-import { Inject } from "@nestjs/common";
 
 @Processor(QueueNames.IER12Integration)
 export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueInDTO> {
@@ -17,6 +16,7 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
     queueService: QueueService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(IER12IntegrationScheduler.name);
   }
 
   /**
@@ -43,13 +43,4 @@ export class IER12IntegrationScheduler extends BaseScheduler<GeneratedDateQueueI
         `Uploaded file ${uploadResult.generatedFile}, with ${uploadResult.uploadedRecords} record(s).`,
     );
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

@@ -143,5 +143,5 @@ export class MSFAAResponseProcessingService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

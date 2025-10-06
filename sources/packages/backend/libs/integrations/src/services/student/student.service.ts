@@ -1,7 +1,6 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DisabilityStatus, SINValidation, Student, User } from "@sims/sims-db";
-import { LoggerService } from "@sims/utilities/logger";
 import { EntityManager, Raw, Repository, UpdateResult } from "typeorm";
 
 @Injectable()
@@ -148,7 +147,4 @@ export class StudentService {
       { disabilityStatus, studentPDUpdateAt: disabilityStatusUpdatedDate },
     );
   }
-
-  @Inject(LoggerService)
-  logger: LoggerService;
 }

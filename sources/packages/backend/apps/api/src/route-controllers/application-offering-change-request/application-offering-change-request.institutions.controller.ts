@@ -322,5 +322,5 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

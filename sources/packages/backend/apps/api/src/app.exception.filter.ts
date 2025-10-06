@@ -19,5 +19,5 @@ export class AppAllExceptionsFilter extends BaseExceptionFilter {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

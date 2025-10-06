@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import {
   RecordDataModelService,
@@ -7,7 +7,6 @@ import {
   Student,
   User,
 } from "@sims/sims-db";
-import { LoggerService } from "@sims/utilities/logger";
 import { CustomNamedError } from "@sims/utilities";
 import { removeWhiteSpaces } from "../../utilities";
 import {
@@ -181,7 +180,4 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       return sinValidationRepo.save(sinToBeUpdated);
     });
   }
-
-  @Inject(LoggerService)
-  logger: LoggerService;
 }

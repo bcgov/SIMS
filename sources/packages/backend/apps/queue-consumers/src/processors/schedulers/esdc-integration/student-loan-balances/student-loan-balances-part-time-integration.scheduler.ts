@@ -3,9 +3,8 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { StudentLoanBalancesProcessingService } from "@sims/integrations/esdc-integration";
-import { Inject } from "@nestjs/common/decorators/core/inject.decorator";
 
 /**
  * Process Student Loan Balances file from the SFTP location.
@@ -19,6 +18,9 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
     private readonly studentLoanBalancesProcessingService: StudentLoanBalancesProcessingService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(
+      StudentLoanBalancesPartTimeIntegrationScheduler.name,
+    );
   }
 
   /**
@@ -39,13 +41,4 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
     );
     return "Process finalized with success.";
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

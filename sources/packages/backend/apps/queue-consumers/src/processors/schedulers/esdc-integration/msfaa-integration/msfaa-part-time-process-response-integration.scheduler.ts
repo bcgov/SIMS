@@ -5,8 +5,7 @@ import { OfferingIntensity } from "@sims/sims-db";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { Inject } from "@nestjs/common";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 @Processor(QueueNames.PartTimeMSFAAProcessResponseIntegration)
 export class PartTimeMSFAAProcessResponseIntegrationScheduler extends BaseScheduler<void> {
@@ -17,6 +16,9 @@ export class PartTimeMSFAAProcessResponseIntegrationScheduler extends BaseSchedu
     private readonly msfaaResponseService: MSFAAResponseProcessingService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(
+      PartTimeMSFAAProcessResponseIntegrationScheduler.name,
+    );
   }
 
   /**
@@ -35,13 +37,4 @@ export class PartTimeMSFAAProcessResponseIntegrationScheduler extends BaseSchedu
     );
     return "MSFAA part-time response files processed.";
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

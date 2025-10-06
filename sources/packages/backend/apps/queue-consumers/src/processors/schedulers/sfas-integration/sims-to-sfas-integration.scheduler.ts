@@ -2,12 +2,11 @@ import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
 import { SIMSToSFASProcessingService } from "@sims/integrations/sfas-integration";
 import { SIMSToSFASService } from "@sims/integrations/services/sfas";
 import { SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE } from "@sims/integrations/constants";
-import { Inject } from "@nestjs/common";
 
 @Processor(QueueNames.SIMSToSFASIntegration)
 export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
@@ -19,6 +18,7 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
     private readonly simsToSFASIntegrationProcessingService: SIMSToSFASProcessingService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(SIMSToSFASIntegrationScheduler.name);
   }
 
   /**
@@ -63,13 +63,4 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
       `Uploaded file name: ${uploadedFileName}.`,
     ];
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

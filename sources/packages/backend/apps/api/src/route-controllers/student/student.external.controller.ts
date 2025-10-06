@@ -107,5 +107,5 @@ export class StudentExternalController extends BaseController {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

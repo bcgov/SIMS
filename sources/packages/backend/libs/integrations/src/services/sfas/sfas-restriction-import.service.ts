@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { DataSource, EntityManager, In, Raw, Repository } from "typeorm";
 import {
   DataModelService,
@@ -11,7 +11,6 @@ import {
   RestrictionNotificationType,
   StudentRestriction,
 } from "@sims/sims-db";
-import { LoggerService } from "@sims/utilities/logger";
 import { getUTC, getISODateOnlyString, getSQLFileData } from "@sims/utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
@@ -231,7 +230,4 @@ export class SFASRestrictionImportService
       entityManager,
     );
   }
-
-  @Inject(LoggerService)
-  logger: LoggerService;
 }

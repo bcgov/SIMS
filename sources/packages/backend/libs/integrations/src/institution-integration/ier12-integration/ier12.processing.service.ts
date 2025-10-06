@@ -423,5 +423,5 @@ export class IER12ProcessingService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

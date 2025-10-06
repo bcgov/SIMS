@@ -19,5 +19,5 @@ export class LoadTestAllExceptionsFilter extends BaseExceptionFilter {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

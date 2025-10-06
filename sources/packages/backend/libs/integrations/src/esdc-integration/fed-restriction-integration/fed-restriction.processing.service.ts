@@ -304,5 +304,5 @@ export class FedRestrictionProcessingService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

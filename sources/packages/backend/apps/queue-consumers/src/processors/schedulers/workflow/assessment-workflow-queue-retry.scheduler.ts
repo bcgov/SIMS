@@ -5,9 +5,8 @@ import { addHours, QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { WorkflowEnqueuerService } from "../../../services";
 import {} from "../../models/processors.models";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { AssessmentWorkflowQueueRetryInDTO } from "./models/assessment-workflow-queue-retry.dto";
-import { Inject } from "@nestjs/common";
 
 /**
  * Retry assessments.
@@ -21,6 +20,7 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(WorkflowQueueRetryScheduler.name);
   }
 
   /**
@@ -92,13 +92,4 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
       );
     return { amountHoursAssessmentRetry };
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

@@ -47,5 +47,5 @@ export class SFASIntegrationService extends SFTPIntegrationBase<DownloadResult> 
   }
 
   @Inject(LoggerService)
-  declare logger: LoggerService;
+  private logger: LoggerService;
 }

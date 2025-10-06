@@ -5,8 +5,7 @@ import { ProcessNotificationsQueueInDTO } from "./models/notification.dto";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { Inject } from "@nestjs/common";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Process notifications which are unsent.
@@ -20,6 +19,7 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
     queueService: QueueService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(ProcessNotificationScheduler.name);
   }
 
   protected async payload(): Promise<ProcessNotificationsQueueInDTO> {
@@ -60,13 +60,4 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
     processedLogResult.forEach((log) => processSummary.info(log));
     return processedLogResult;
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

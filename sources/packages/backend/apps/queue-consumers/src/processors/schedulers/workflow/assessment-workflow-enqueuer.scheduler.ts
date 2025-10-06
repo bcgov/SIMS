@@ -4,8 +4,7 @@ import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { WorkflowEnqueuerService } from "../../../services";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { Inject } from "@nestjs/common";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Search for assessments that have some pending operation, for instance,
@@ -20,6 +19,7 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(AssessmentWorkflowEnqueuerScheduler.name);
   }
 
   /**
@@ -71,13 +71,4 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
       parentProcessSummary.error(errorMessage, error);
     }
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

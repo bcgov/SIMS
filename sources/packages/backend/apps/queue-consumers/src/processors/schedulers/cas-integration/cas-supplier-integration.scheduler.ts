@@ -1,11 +1,10 @@
 import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { CASSupplierIntegrationService } from "../../../services";
-import { Inject } from "@nestjs/common";
 
 @Processor(QueueNames.CASSupplierIntegration)
 export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
@@ -16,6 +15,7 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
     private readonly casSupplierIntegrationService: CASSupplierIntegrationService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(CASSupplierIntegrationScheduler.name);
   }
 
   /**
@@ -52,7 +52,4 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
       `Records updated: ${suppliersUpdated}.`,
     ];
   }
-
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

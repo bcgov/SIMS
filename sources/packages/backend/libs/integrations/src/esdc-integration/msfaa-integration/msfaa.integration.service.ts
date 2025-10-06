@@ -242,5 +242,5 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
   }
 
   @Inject(LoggerService)
-  declare logger: LoggerService;
+  private logger: LoggerService;
 }

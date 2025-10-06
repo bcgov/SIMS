@@ -2,10 +2,9 @@ import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
 import { StudentApplicationNotificationService } from "../../../services";
-import { Inject } from "@nestjs/common";
 
 @Processor(QueueNames.StudentApplicationNotifications)
 export class StudentApplicationNotificationsScheduler extends BaseScheduler<void> {
@@ -16,6 +15,7 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
     private readonly studentApplicationNotificationService: StudentApplicationNotificationService,
   ) {
     super(schedulerQueue, queueService);
+    this.logger.setContext(StudentApplicationNotificationsScheduler.name);
   }
 
   /**
@@ -33,13 +33,4 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
     );
     return "Process finalized with success.";
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

@@ -1412,5 +1412,5 @@ export class NotificationActionsService {
   }
 
   @Inject(LoggerService)
-  logger: LoggerService;
+  private logger: LoggerService;
 }

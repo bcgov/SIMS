@@ -11,7 +11,7 @@ import { CustomNamedError, QueueNames } from "@sims/utilities";
 import { StudentAssessmentService } from "../../services";
 import { DataSource } from "typeorm";
 import { ZeebeGRPCError, ZeebeGRPCErrorTypes } from "@sims/services/zeebe";
-import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { ProcessSummary } from "@sims/utilities/logger";
 import {
   ApplicationStatus,
   COEStatus,
@@ -23,7 +23,6 @@ import {
   ASSESSMENT_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
-import { Inject } from "@nestjs/common";
 
 /**
  * Process the workflow cancellation.
@@ -39,6 +38,7 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
     private readonly systemUserService: SystemUsersService,
   ) {
     super();
+    this.logger.setContext(CancelApplicationAssessmentProcessor.name);
   }
 
   /**
@@ -180,7 +180,4 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
       return "Assessment cancelled with success.";
     });
   }
-
-  @Inject(LoggerService)
-  declare logger: LoggerService;
 }

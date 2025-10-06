@@ -85,9 +85,9 @@ export abstract class BaseQueue<T> {
   ): Promise<string | string[]>;
 
   /**
-   * Default logger. This must be provided in the derived class
-   * to set the proper log context.
+   * Default logger. The classes inheriting from this are
+   * responsible for setting the proper log context.
    */
   @Inject(LoggerService)
-  logger: LoggerService;
+  protected logger: LoggerService;
 }
