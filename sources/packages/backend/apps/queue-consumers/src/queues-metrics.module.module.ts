@@ -1,4 +1,4 @@
-import { Global, Inject, Module, OnModuleInit } from "@nestjs/common";
+import { Global, Module, OnModuleInit } from "@nestjs/common";
 import { MetricsService } from "./services";
 import { LoggerService } from "@sims/utilities/logger";
 
@@ -8,7 +8,10 @@ import { LoggerService } from "@sims/utilities/logger";
   exports: [MetricsService],
 })
 export class QueuesMetricsModule implements OnModuleInit {
-  constructor(private readonly metricsService: MetricsService) {}
+  constructor(
+    private readonly metricsService: MetricsService,
+    private readonly logger: LoggerService,
+  ) {}
 
   /**
    * Method that is invoked on application initialization and
@@ -19,7 +22,4 @@ export class QueuesMetricsModule implements OnModuleInit {
     this.metricsService.setGlobalMetricsConfigurations();
     await this.metricsService.associateQueueEventsCountersMetrics();
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

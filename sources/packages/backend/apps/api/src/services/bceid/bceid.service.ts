@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { BasicAuthSecurity, Client, createClientAsync } from "soap";
 import { LoggerService } from "@sims/utilities/logger";
 import { ConfigService, BCeIDConfig } from "@sims/utilities/config";
@@ -25,7 +25,10 @@ import {
 @Injectable()
 export class BCeIDService {
   private bceidConfig: BCeIDConfig;
-  constructor(private readonly config: ConfigService) {
+  constructor(
+    private readonly config: ConfigService,
+    private readonly logger: LoggerService,
+  ) {
     this.bceidConfig = this.config.bceid;
   }
 
@@ -229,7 +232,4 @@ export class BCeIDService {
       ).toString("base64");
     return { Authorization: auth };
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

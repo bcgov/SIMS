@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt.integration.service";
 import { DisbursementReceiptDownloadResponse } from "./models/disbursement-receipt-integration.model";
@@ -38,6 +38,7 @@ export class DisbursementReceiptProcessingService {
     private readonly reportService: ReportService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly logger: LoggerService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -226,7 +227,4 @@ export class DisbursementReceiptProcessingService {
       processSummary.error(errorMessage, error);
     }
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

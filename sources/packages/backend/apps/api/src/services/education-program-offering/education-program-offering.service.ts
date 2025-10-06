@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   EducationProgramOffering,
@@ -79,6 +79,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     private readonly dataSource: DataSource,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
   }
@@ -1576,7 +1577,4 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       })
       .filter((studyBreak) => !!studyBreak);
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

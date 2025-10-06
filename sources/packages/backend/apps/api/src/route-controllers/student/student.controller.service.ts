@@ -1,6 +1,5 @@
 import {
   ForbiddenException,
-  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -63,6 +62,7 @@ export class StudentControllerService {
     private readonly applicationService: ApplicationService,
     private readonly objectStorageService: ObjectStorageService,
     private readonly sfasIndividualService: SFASIndividualService,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -440,7 +440,4 @@ export class StudentControllerService {
       student.sinValidation.sin,
     );
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

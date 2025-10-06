@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   Notification,
@@ -38,6 +38,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
   constructor(
     dataSource: DataSource,
     private readonly gcNotifyService: GCNotifyService,
+    private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(Notification));
   }
@@ -246,7 +247,4 @@ export class NotificationService extends RecordDataModelService<Notification> {
       notificationsSuccessfullyProcessed,
     };
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

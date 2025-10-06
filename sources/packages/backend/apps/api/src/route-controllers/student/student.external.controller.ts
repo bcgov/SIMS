@@ -3,7 +3,6 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
-  Inject,
   NotFoundException,
   Post,
 } from "@nestjs/common";
@@ -35,6 +34,7 @@ export class StudentExternalController extends BaseController {
   constructor(
     private readonly studentInformationService: StudentInformationService,
     private readonly studentExternalControllerService: StudentExternalControllerService,
+    private readonly logger: LoggerService,
   ) {
     super();
   }
@@ -105,7 +105,4 @@ export class StudentExternalController extends BaseController {
       applications,
     };
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

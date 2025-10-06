@@ -1,5 +1,5 @@
 import { getQueueToken } from "@nestjs/bull";
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { QueueService } from "@sims/services/queue";
 import { processInParallel } from "@sims/utilities";
@@ -39,6 +39,7 @@ export class MetricsService {
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly queueService: QueueService,
+    private readonly logger: LoggerService,
   ) {
     this.jobCountsGauge = new Gauge({
       name: "queue_job_counts_current_total",
@@ -183,7 +184,4 @@ export class MetricsService {
     }
     return this.monitoredQueueProviders;
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

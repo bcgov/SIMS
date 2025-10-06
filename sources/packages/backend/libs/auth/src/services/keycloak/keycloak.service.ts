@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { stringify } from "qs";
 import { TokenRequest, TokenResponse } from "./token.model";
 import { RealmConfig } from "./realm-config.model";
@@ -24,12 +24,10 @@ import { HttpService } from "@nestjs/axios";
 export class KeycloakService {
   private readonly authConfig: AuthConfig;
 
-  @Inject(LoggerService)
-  private logger: LoggerService;
-
   constructor(
     configService: ConfigService,
     private readonly httpService: HttpService,
+    private readonly logger: LoggerService,
   ) {
     this.authConfig = configService.auth;
   }
@@ -41,9 +39,11 @@ export class KeycloakService {
    * injection framework.
    */
   public static get shared(): KeycloakService {
+    const logger = new LoggerService();
+    logger.setContext(KeycloakService.name);
     return (
       KeycloakService._shared ||
-      (this._shared = new this(new ConfigService(), new HttpService()))
+      (this._shared = new this(new ConfigService(), new HttpService(), logger))
     );
   }
 

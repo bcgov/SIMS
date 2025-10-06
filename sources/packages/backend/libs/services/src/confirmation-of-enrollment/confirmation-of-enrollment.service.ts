@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   Application,
@@ -69,6 +69,7 @@ export class ConfirmationOfEnrollmentService {
     private readonly notificationActionsService: NotificationActionsService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly systemUserService: SystemUsersService,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -882,7 +883,4 @@ export class ConfirmationOfEnrollmentService {
     );
     return nextDocumentNumber;
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

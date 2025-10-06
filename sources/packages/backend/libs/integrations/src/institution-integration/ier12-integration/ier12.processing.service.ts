@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   Application,
   DisbursementSchedule,
@@ -47,6 +47,7 @@ export class IER12ProcessingService {
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly applicationEventCodeUtilsService: ApplicationEventCodeUtilsService,
     private readonly applicationEventDateUtilsService: ApplicationEventDateUtilsService,
+    private readonly logger: LoggerService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -421,7 +422,4 @@ export class IER12ProcessingService {
       ? studentOverawardsBalance[awardType] > 0
       : false;
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

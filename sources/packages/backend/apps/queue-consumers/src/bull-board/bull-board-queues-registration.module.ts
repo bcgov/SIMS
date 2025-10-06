@@ -14,6 +14,7 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
     private readonly queueService: QueueService,
     @Inject(BULL_BOARD_INSTANCE)
     private readonly board: BullBoardInstance,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -39,7 +40,4 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
       this.board.addQueue(queueAdapter);
     });
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

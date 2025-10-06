@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { EligibleECertDisbursement } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import {
@@ -25,6 +25,7 @@ export class ECertPreValidationService {
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly validateDisbursementFullTimeStep: ValidateDisbursementFullTimeStep,
     private readonly validateDisbursementPartTimeStep: ValidateDisbursementPartTimeStep,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -75,7 +76,4 @@ export class ECertPreValidationService {
       ? this.validateDisbursementFullTimeStep
       : this.validateDisbursementPartTimeStep;
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

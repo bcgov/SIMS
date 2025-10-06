@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
@@ -35,6 +35,7 @@ export class ApplicationWithdrawalImportTextService {
   constructor(
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -226,7 +227,4 @@ export class ApplicationWithdrawalImportTextService {
       },
     });
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

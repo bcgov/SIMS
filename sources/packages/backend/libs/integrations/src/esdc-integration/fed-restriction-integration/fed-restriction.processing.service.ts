@@ -1,5 +1,5 @@
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
 import { DataSource, Repository } from "typeorm";
 import { FederalRestriction, Restriction } from "@sims/sims-db";
@@ -31,6 +31,7 @@ export class FedRestrictionProcessingService {
     private readonly integrationService: FedRestrictionIntegrationService,
     private readonly studentRestrictionsService: StudentRestrictionSharedService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly logger: LoggerService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -302,7 +303,4 @@ export class FedRestrictionProcessingService {
       throw new Error(logMessage, { cause: error });
     }
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Header,
-  Inject,
   InternalServerErrorException,
 } from "@nestjs/common";
 import { register } from "prom-client";
@@ -14,6 +13,8 @@ import { LoggerService } from "@sims/utilities/logger";
  */
 @Controller("metrics")
 export class MetricsController {
+  constructor(private readonly logger: LoggerService) {}
+
   /**
    * Exports metrics from the queue-consumers.
    * @returns metrics in Prometheus format.
@@ -30,7 +31,4 @@ export class MetricsController {
       );
     }
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

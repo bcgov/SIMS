@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { EducationProgram, OfferingTypes } from "@sims/sims-db";
 import { EducationProgramService, InstitutionLocationService } from "..";
 import {
@@ -39,6 +39,7 @@ export class EducationProgramOfferingImportCSVService {
   constructor(
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly educationProgramService: EducationProgramService,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -249,7 +250,4 @@ export class EducationProgramOfferingImportCSVService {
       };
     });
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

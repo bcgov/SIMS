@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { MSFAANumberService } from "@sims/integrations/services";
 import { OfferingIntensity } from "@sims/sims-db";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
@@ -15,6 +15,7 @@ export class MSFAAResponseProcessingService {
   constructor(
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly msfaaService: MSFAAIntegrationService,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -141,7 +142,4 @@ export class MSFAAResponseProcessingService {
       cancelledRecord.newIssuingProvince,
     );
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

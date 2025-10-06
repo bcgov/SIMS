@@ -1,4 +1,4 @@
-import { Inject, Injectable, NestMiddleware } from "@nestjs/common";
+import { Injectable, NestMiddleware } from "@nestjs/common";
 import {
   JsonWebTokenError,
   JwtService,
@@ -26,6 +26,7 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
   constructor(
     private readonly jwtService: JwtService,
     configService: ConfigService,
+    private readonly logger: LoggerService,
   ) {
     this.jwtVerifyOptions = {
       secret: configService.queueDashboardAccess.tokenSecret,
@@ -119,7 +120,4 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
       this.logger.log(logMessage);
     }
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

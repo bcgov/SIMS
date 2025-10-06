@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import {
   getDateOnlyFromFormat,
@@ -22,6 +22,7 @@ export class ATBCIntegrationProcessingService {
     private readonly studentService: StudentService,
     private readonly atbcService: ATBCService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -140,7 +141,4 @@ export class ATBCIntegrationProcessingService {
     }
     return false;
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { DownloadResult, RecordTypeCodes } from "./sfas-integration.models";
 import { SFASIntegrationService } from "./sfas-integration.service";
@@ -28,6 +28,7 @@ export class SFASIntegrationProcessingService {
     private readonly sfasApplicationDependantImportService: SFASApplicationDependantImportService,
     private readonly sfasApplicationDisbursementImportService: SFASApplicationDisbursementImportService,
     config: ConfigService,
+    private readonly logger: LoggerService,
   ) {
     this.ftpReceiveFolder = config.sfasIntegration.ftpReceiveFolder;
   }
@@ -222,7 +223,4 @@ export class SFASIntegrationProcessingService {
         return null;
     }
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

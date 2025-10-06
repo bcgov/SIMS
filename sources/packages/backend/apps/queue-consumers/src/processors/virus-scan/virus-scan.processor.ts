@@ -9,11 +9,13 @@ import {
   EMPTY_FILE,
   FILE_NOT_FOUND,
 } from "../../constants/error-code.constants";
-import { Inject } from "@nestjs/common";
 
 @Processor(QueueNames.FileVirusScanProcessor)
 export class VirusScanProcessor {
-  constructor(private readonly studentFileService: StudentFileService) {}
+  constructor(
+    private readonly studentFileService: StudentFileService,
+    private readonly logger: LoggerService,
+  ) {}
 
   /**
    * Perform virus scanning for all the files having pending scan status.
@@ -57,7 +59,4 @@ export class VirusScanProcessor {
       isInfected,
     };
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

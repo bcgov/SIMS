@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
   InternalServerErrorException,
   NotFoundException,
   Param,
@@ -72,6 +71,7 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
     private readonly applicationOfferingChangeRequestControllerService: ApplicationOfferingChangeRequestControllerService,
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
     private readonly applicationService: ApplicationService,
+    private readonly logger: LoggerService,
   ) {
     super();
   }
@@ -320,7 +320,4 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
       );
     }
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

@@ -1,4 +1,4 @@
-import { HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { AxiosError } from "axios";
 import {
   NotificationEmailMessage,
@@ -17,6 +17,7 @@ export class GCNotifyService {
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
+    private readonly logger: LoggerService,
   ) {
     this.gcNotifyConfig = this.configService.notify;
   }
@@ -66,7 +67,4 @@ export class GCNotifyService {
       throw error;
     }
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

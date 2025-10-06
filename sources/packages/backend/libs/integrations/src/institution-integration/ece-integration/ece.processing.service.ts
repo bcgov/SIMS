@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { DisbursementSchedule } from "@sims/sims-db";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import {
@@ -17,6 +17,7 @@ export class ECEProcessingService {
     config: ConfigService,
     private readonly eceIntegrationService: ECEIntegrationService,
     private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly logger: LoggerService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -165,7 +166,4 @@ export class ECEProcessingService {
         studentAssessment.workflowData.calculatedData.pdppdStatus,
     };
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

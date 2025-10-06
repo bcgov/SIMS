@@ -1,4 +1,4 @@
-import { HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import {
   CASAuthDetails,
   CASSupplierResponse,
@@ -45,6 +45,7 @@ export class CASService {
   constructor(
     config: ConfigService,
     private readonly httpService: HttpService,
+    private readonly logger: LoggerService,
   ) {
     this.casIntegrationConfig = config.casIntegration;
   }
@@ -300,7 +301,4 @@ export class CASService {
     }
     throw new Error(defaultMessage, { cause: error });
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

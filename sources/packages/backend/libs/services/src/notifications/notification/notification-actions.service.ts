@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { NotificationMessage, NotificationMessageType } from "@sims/sims-db";
 import {
   base64Encode,
@@ -48,6 +48,7 @@ export class NotificationActionsService {
     private readonly notificationService: NotificationService,
     private readonly notificationMessageService: NotificationMessageService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -1410,7 +1411,4 @@ export class NotificationActionsService {
       { entityManager },
     );
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }
