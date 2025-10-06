@@ -17,6 +17,7 @@ export class ECEResponseIntegrationService extends SFTPIntegrationBase<
 > {
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(ECEResponseIntegrationService.name);
   }
 
   /**

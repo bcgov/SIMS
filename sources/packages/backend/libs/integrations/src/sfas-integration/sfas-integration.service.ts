@@ -1,5 +1,4 @@
-import { LoggerService } from "@sims/utilities/logger";
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@sims/utilities/config";
 import { SFASRecordIdentification } from "./sfas-files/sfas-record-identification";
 import { DownloadResult, RecordTypeCodes } from "./sfas-integration.models";
@@ -10,6 +9,7 @@ import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 export class SFASIntegrationService extends SFTPIntegrationBase<DownloadResult> {
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(SFASIntegrationService.name);
   }
 
   /**
@@ -45,7 +45,4 @@ export class SFASIntegrationService extends SFTPIntegrationBase<DownloadResult> 
       records,
     };
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

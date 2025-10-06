@@ -278,5 +278,5 @@ export abstract class SFTPIntegrationBase<DownloadType> {
   }
 
   @Inject(LoggerService)
-  private logger: LoggerService;
+  protected logger: LoggerService;
 }

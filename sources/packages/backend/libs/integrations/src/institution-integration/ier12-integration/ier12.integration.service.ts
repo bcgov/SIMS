@@ -32,6 +32,7 @@ import { YNFlag } from "@sims/integrations/models";
 export class IER12IntegrationService extends SFTPIntegrationBase<void> {
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(IER12IntegrationService.name);
   }
   /**
    * Create the IER 12 content, by populating the records.

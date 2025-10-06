@@ -18,6 +18,7 @@ import {
 export class ApplicationChangesReportIntegrationService extends SFTPIntegrationBase<void> {
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(ApplicationChangesReportIntegrationService.name);
   }
 
   /**

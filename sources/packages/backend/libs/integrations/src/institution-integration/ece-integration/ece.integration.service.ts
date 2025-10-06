@@ -19,6 +19,7 @@ import { YNFlag } from "@sims/integrations/models";
 export class ECEIntegrationService extends SFTPIntegrationBase<void> {
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(ECEIntegrationService.name);
   }
   /**
    * Create the ECE request content, by populating the records.

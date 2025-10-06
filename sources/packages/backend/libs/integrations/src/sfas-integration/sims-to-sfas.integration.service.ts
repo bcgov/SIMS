@@ -13,6 +13,7 @@ import { StudentRestriction } from "@sims/sims-db";
 export class SIMSToSFASIntegrationService extends SFTPIntegrationBase<void> {
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(SIMSToSFASIntegrationService.name);
   }
 
   /**

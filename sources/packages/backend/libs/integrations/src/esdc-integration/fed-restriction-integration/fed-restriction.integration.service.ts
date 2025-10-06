@@ -9,6 +9,7 @@ export class FedRestrictionIntegrationService extends SFTPIntegrationBase<
 > {
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(FedRestrictionIntegrationService.name);
   }
 
   /**

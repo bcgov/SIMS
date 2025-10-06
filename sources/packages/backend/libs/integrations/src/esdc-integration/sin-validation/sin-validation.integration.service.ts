@@ -1,5 +1,4 @@
-import { LoggerService } from "@sims/utilities/logger";
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { SINValidationFileResponse } from "./sin-validation-files/sin-validation-file-response";
 import { SINValidationFileHeader } from "./sin-validation-files/sin-validation-file-header";
 import {
@@ -22,6 +21,7 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<SINVali
   private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(SINValidationIntegrationService.name);
     this.esdcConfig = config.esdcIntegration;
   }
 
@@ -137,7 +137,4 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<SINVali
 
     return { header, records };
   }
-
-  @Inject(LoggerService)
-  private logger: LoggerService;
 }

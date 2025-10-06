@@ -14,6 +14,7 @@ import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<DisbursementReceiptDownloadResponse> {
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(DisbursementReceiptIntegrationService.name);
   }
 
   /**

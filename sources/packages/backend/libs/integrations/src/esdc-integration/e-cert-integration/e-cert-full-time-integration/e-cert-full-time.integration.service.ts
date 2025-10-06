@@ -36,6 +36,7 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
     sshService: SshService,
   ) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(ECertFullTimeIntegrationService.name);
   }
 
   /**

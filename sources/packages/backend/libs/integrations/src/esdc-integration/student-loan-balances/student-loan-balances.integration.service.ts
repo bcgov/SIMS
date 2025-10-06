@@ -15,6 +15,7 @@ import { CustomNamedError } from "@sims/utilities";
 export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<StudentLoanBalancesSFTPResponseFile> {
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(StudentLoanBalancesIntegrationService.name);
   }
 
   /**

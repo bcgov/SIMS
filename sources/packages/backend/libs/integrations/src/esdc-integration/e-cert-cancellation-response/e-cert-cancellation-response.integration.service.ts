@@ -15,6 +15,7 @@ import { FILE_PARSING_ERROR } from "@sims/services/constants";
 export class ECertCancellationResponseIntegrationService extends SFTPIntegrationBase<ECertCancellationDownloadResponse> {
   constructor(config: ConfigService, sshService: SshService) {
     super(config.zoneBSFTP, sshService);
+    this.logger.setContext(ECertCancellationResponseIntegrationService.name);
   }
 
   /**
