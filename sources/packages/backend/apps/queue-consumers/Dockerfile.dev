@@ -7,7 +7,7 @@ ENV PATH=$PATH:/app/node_modules/.bin
 WORKDIR /app
 
 # Queue Port
-ENV PORT=3001
+ENV PORT=3010
 
 # Copying root files to image workdir.
 COPY /*.json /*.js ./
