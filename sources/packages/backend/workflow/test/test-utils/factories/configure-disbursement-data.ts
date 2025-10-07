@@ -27,6 +27,7 @@ export function createFakeConfigureDisbursementPartTimeData(
     finalProvincialAwardNetSBSDAmount: 6000,
   };
 }
+
 /**
  * Create fake data for configure disbursement full time workflow.
  * @param programYear program year.
