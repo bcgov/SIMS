@@ -40,5 +40,8 @@
     ".model.ts",
     ".dto.ts",
     "index.ts"
+  ],
+  "transformIgnorePatterns": [
+    "/node_modules/(?!@faker-js|uuid)"
   ]
 }

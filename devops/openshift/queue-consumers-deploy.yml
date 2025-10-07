@@ -77,10 +77,10 @@ objects:
                     secretKeyRef:
                       key: ${QUEUE_DASHBOARD_TOKEN_SECRET_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
-                - name: ZEEBE_ADDRESS
+                - name: ZEEBE_GRPC_ADDRESS
                   valueFrom:
                     secretKeyRef:
-                      key: ${ZEEBE_ADDRESS_KEY}
+                      key: ${ZEEBE_GRPC_ADDRESS_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: ZEEBE_CLIENT_ID
                   valueFrom:
@@ -97,6 +97,8 @@ objects:
                     secretKeyRef:
                       key: ${CAMUNDA_OAUTH_URL_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+                  value: ${CAMUNDA_TOKEN_DISK_CACHE_DISABLE}
                 - name: INSTITUTION_REQUEST_FOLDER
                   valueFrom:
                     secretKeyRef:
@@ -392,7 +394,7 @@ parameters:
     value: "0"
   - name: QUEUE_CONSUMERS_SECRET_NAME
     required: true
-  - name: ZEEBE_ADDRESS_KEY
+  - name: ZEEBE_GRPC_ADDRESS_KEY
     value: zeebe-address
     required: true
   - name: ZEEBE_CLIENT_ID_KEY
@@ -504,3 +506,5 @@ parameters:
     required: true
   - name: TLS_CA_CERTIFICATE
     required: true
+  - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+    value: "true"

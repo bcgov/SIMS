@@ -18,7 +18,7 @@ describe("Test string convertion to PEM format", () => {
     // Arranged
     const text: string = null;
     // Act/Assert
-    expect(convertStringToPEM(text)).toThrowError(
+    expect(convertStringToPEM(text)).toThrow(
       "publicKey parameter was not provided",
     );
   });

@@ -67,7 +67,7 @@ import {
   OfferingYesNoOptions,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import {
   InstitutionAddsPendingOfferingNotification,
   NotificationActionsService,
@@ -79,6 +79,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     private readonly dataSource: DataSource,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
   }
@@ -530,9 +531,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       this.offeringValidationService.validateOfferingModel(
         educationProgramOffering,
       );
-    const hasExistingApplication = await this.hasExistingApplication(
-      offeringId,
-    );
+    const hasExistingApplication =
+      await this.hasExistingApplication(offeringId);
     if (hasExistingApplication) {
       throw new CustomNamedError(
         "The offering cannot be updated because it is already associated with some assessment.",
@@ -653,9 +653,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async validateOfferingById(
     offeringId: number,
   ): Promise<OfferingValidationResult> {
-    const validationModel = await this.createValidationModelFromOfferingId(
-      offeringId,
-    );
+    const validationModel =
+      await this.createValidationModelFromOfferingId(offeringId);
     return this.offeringValidationService.validateOfferingModel(
       validationModel,
       true,
@@ -1578,7 +1577,4 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       })
       .filter((studyBreak) => !!studyBreak);
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

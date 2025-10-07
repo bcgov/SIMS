@@ -1,4 +1,4 @@
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 export interface FakeStudent {
   username: string;
@@ -18,7 +18,7 @@ export const STUDENTS_INITIAL_DATA = [
       sin: "706941291",
       isValidSIN: true,
       sinConsent: true,
-      birthDate: faker.date.past(18).toISOString(),
+      birthDate: faker.date.past({ years: 99 }).toISOString(),
       gender: "F",
     },
   },

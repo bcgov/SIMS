@@ -4,11 +4,7 @@ import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 @Processor(QueueNames.FullTimeFeedbackIntegration)
 export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<void> {
@@ -17,8 +13,9 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly fullTimeECertFileHandler: FullTimeECertFileHandler,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**
@@ -34,13 +31,4 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
     await this.fullTimeECertFileHandler.processECertResponses(processSummary);
     return "Process finalized with success.";
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @InjectLogger()
-  logger: LoggerService;
 }

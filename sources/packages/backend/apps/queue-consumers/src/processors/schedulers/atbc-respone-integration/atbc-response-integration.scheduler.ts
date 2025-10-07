@@ -2,11 +2,7 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueService } from "@sims/services/queue";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Process all the applied PD requests to verify the status with ATBC.
@@ -16,8 +12,9 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly atbcIntegrationProcessingService: ATBCIntegrationProcessingService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**
@@ -35,13 +32,4 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
     );
     return "Completed processing disability status.";
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @InjectLogger()
-  logger: LoggerService;
 }

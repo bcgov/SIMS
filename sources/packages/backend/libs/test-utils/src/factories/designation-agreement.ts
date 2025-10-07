@@ -8,7 +8,7 @@ import {
 } from "@sims/sims-db";
 import { INSTITUTION_TYPE_BC_PRIVATE } from "@sims/sims-db/constant";
 import { addDays, formatDate } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Create a fake designation agreement.
@@ -44,7 +44,7 @@ export function createFakeDesignationAgreement(
     fakeDesignationAgreement.institution.institutionType.id ===
     INSTITUTION_TYPE_BC_PRIVATE;
   fakeDesignationAgreement.submittedData = {
-    legalAuthorityName: faker.name.findName(),
+    legalAuthorityName: faker.person.fullName(),
     legalAuthorityEmailAddress: faker.internet.email(),
     scheduleA: isBCPrivate ? true : false,
     scheduleB: isBCPrivate ? true : false,
@@ -52,18 +52,18 @@ export function createFakeDesignationAgreement(
     agreementAccepted: isBCPrivate ? true : false,
     enrolmentOfficers: [
       {
-        name: isBCPrivate ? faker.name.findName() : "",
+        name: isBCPrivate ? faker.person.fullName() : "",
         email: isBCPrivate ? faker.internet.email() : "",
-        phone: isBCPrivate ? faker.phone.phoneNumber("##########") : "",
-        positionTitle: isBCPrivate ? faker.name.jobTitle() : "",
+        phone: isBCPrivate ? faker.phone.number({ style: "national" }) : "",
+        positionTitle: isBCPrivate ? faker.person.jobTitle() : "",
       },
     ],
     eligibilityOfficers: [
       {
-        name: isBCPrivate ? faker.name.findName() : "",
+        name: isBCPrivate ? faker.person.fullName() : "",
         email: isBCPrivate ? faker.internet.email() : "",
-        phone: isBCPrivate ? faker.phone.phoneNumber("##########") : "",
-        positionTitle: isBCPrivate ? faker.name.jobTitle() : "",
+        phone: isBCPrivate ? faker.phone.number({ style: "national" }) : "",
+        positionTitle: isBCPrivate ? faker.person.jobTitle() : "",
       },
     ],
   };

@@ -74,7 +74,7 @@ describe("ApplicationEventCodeUtilsService-getApplicationEventCode", () => {
     // Assert
     expect(
       applicationEventCodeDuringAssessmentUtilsService.applicationEventCodeDuringAssessment,
-    ).toBeCalledWith(applicationNumber);
+    ).toHaveBeenCalledWith(applicationNumber);
   });
 
   it(`Should call applicationEventCodeDuringEnrolmentAndCompleted when the application status is ${ApplicationStatus.Enrolment}.`, async () => {
@@ -88,7 +88,7 @@ describe("ApplicationEventCodeUtilsService-getApplicationEventCode", () => {
     // Assert
     expect(
       applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringEnrolmentAndCompleted,
-    ).toBeCalledWith(payload.coeStatus);
+    ).toHaveBeenCalledWith(payload.coeStatus);
   });
 
   it(`Should call applicationEventCodeDuringCompleted when the application status is ${ApplicationStatus.Completed}.`, async () => {
@@ -103,6 +103,6 @@ describe("ApplicationEventCodeUtilsService-getApplicationEventCode", () => {
     // Assert
     expect(
       applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringCompleted,
-    ).toBeCalledWith(payload, activeRestrictionsActionTypes);
+    ).toHaveBeenCalledWith(payload, activeRestrictionsActionTypes);
   });
 });

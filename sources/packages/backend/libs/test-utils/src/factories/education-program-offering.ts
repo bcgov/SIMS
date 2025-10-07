@@ -1,4 +1,4 @@
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { createFakeInstitutionLocation } from "./institution-location";
 import { createFakeEducationProgram } from "./education-program";
 import {
@@ -12,7 +12,7 @@ import {
   Institution,
   StudyBreaksAndWeeks,
 } from "@sims/sims-db";
-import { getISODateOnlyString } from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
 
 /**
@@ -41,11 +41,11 @@ export function createFakeEducationProgramOffering(
   const institution =
     relations?.institutionLocation?.institution ?? relations.institution;
   const offering = new EducationProgramOffering();
-  offering.name = faker.random.word();
-  offering.actualTuitionCosts = faker.datatype.number(1000);
-  offering.programRelatedCosts = faker.datatype.number(1000);
-  offering.mandatoryFees = faker.datatype.number(1000);
-  offering.exceptionalExpenses = faker.datatype.number(1000);
+  offering.name = faker.lorem.word();
+  offering.actualTuitionCosts = faker.number.int(1000);
+  offering.programRelatedCosts = faker.number.int(1000);
+  offering.mandatoryFees = faker.number.int(1000);
+  offering.exceptionalExpenses = faker.number.int(1000);
   offering.offeringDelivered = "offeringDelivered";
   offering.lacksStudyBreaks = true;
   offering.educationProgram =
@@ -70,17 +70,17 @@ export function createFakeEducationProgramOffering(
   offering.isAviationOffering =
     options?.initialValues?.isAviationOffering ?? OfferingYesNoOptions.No;
   offering.aviationCredentialType =
-    options?.initialValues?.aviationCredentialType ?? "endorsements";
+    options?.initialValues?.aviationCredentialType;
   offering.hasOfferingWILComponent =
     options?.initialValues?.hasOfferingWILComponent ?? "no";
   offering.offeringWILType = options?.initialValues?.offeringWILType;
   offering.offeringDeclaration = true;
   offering.studyStartDate =
     options?.initialValues?.studyStartDate ??
-    getISODateOnlyString(faker.date.recent(1));
+    getISODateOnlyString(faker.date.recent({ days: 1 }));
   offering.studyEndDate =
     options?.initialValues?.studyEndDate ??
-    getISODateOnlyString(faker.date.soon(30));
+    getISODateOnlyString(addDays(3, offering.studyStartDate));
   offering.studyBreaks =
     options?.initialValues?.studyBreaks ??
     ({

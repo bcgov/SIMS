@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { DryRunSubmissionResult } from "../../types";
 import { ConfigService, FormsConfig } from "@sims/utilities/config";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { JwtService } from "@nestjs/jwt";
 import { TokenCacheService } from "..";
 import { TokenCacheResponse } from "../auth/token-cache.service.models";
@@ -28,6 +28,7 @@ export class FormService {
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
     private readonly httpService: HttpService,
+    private readonly logger: LoggerService,
   ) {
     this.tokenCacheService = new TokenCacheService("Form.IO", () =>
       this.getToken(),
@@ -190,7 +191,4 @@ export class FormService {
       throw excp;
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

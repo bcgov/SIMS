@@ -5,11 +5,7 @@ import { OfferingIntensity } from "@sims/sims-db";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 @Processor(QueueNames.FullTimeMSFAAProcessResponseIntegration)
 export class FullTimeMSFAAProcessResponseIntegrationScheduler extends BaseScheduler<void> {
@@ -18,8 +14,9 @@ export class FullTimeMSFAAProcessResponseIntegrationScheduler extends BaseSchedu
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly msfaaResponseService: MSFAAResponseProcessingService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**
@@ -38,13 +35,4 @@ export class FullTimeMSFAAProcessResponseIntegrationScheduler extends BaseSchedu
     );
     return "MSFAA full-time response files processed.";
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @InjectLogger()
-  logger: LoggerService;
 }

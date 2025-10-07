@@ -21,7 +21,7 @@ import {
 } from "./models/student-external-search.dto";
 import { StudentExternalControllerService } from "./student.external.controller.service";
 import { SFASApplication } from "@sims/sims-db";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 
 /**
  * Student controller for external client.
@@ -34,6 +34,7 @@ export class StudentExternalController extends BaseController {
   constructor(
     private readonly studentInformationService: StudentInformationService,
     private readonly studentExternalControllerService: StudentExternalControllerService,
+    private readonly logger: LoggerService,
   ) {
     super();
   }
@@ -104,7 +105,4 @@ export class StudentExternalController extends BaseController {
       applications,
     };
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

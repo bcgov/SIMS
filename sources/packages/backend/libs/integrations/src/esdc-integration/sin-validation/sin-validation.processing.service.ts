@@ -1,8 +1,4 @@
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { SequenceControlService, SystemUsersService } from "@sims/services";
 import { SINValidationIntegrationService } from "./sin-validation.integration.service";
@@ -35,6 +31,7 @@ export class SINValidationProcessingService {
     private readonly sequenceService: SequenceControlService,
     private readonly sinValidationIntegrationService: SINValidationIntegrationService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly logger: LoggerService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -217,7 +214,4 @@ export class SINValidationProcessingService {
       this.logger.error(logMessage, error);
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

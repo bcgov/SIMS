@@ -34,7 +34,7 @@ import {
   isBeforeDate,
   isBetweenPeriod,
 } from "@sims/utilities";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { SequenceControlService } from "../sequence-control/sequence-control.service";
 import { NotificationActionsService } from "../notifications";
 import {
@@ -69,6 +69,7 @@ export class ConfirmationOfEnrollmentService {
     private readonly notificationActionsService: NotificationActionsService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly systemUserService: SystemUsersService,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -153,8 +154,8 @@ export class ConfirmationOfEnrollmentService {
         },
       });
     return previousTuitionRemittanceData
-      ? previousTuitionRemittanceData.tuitionRemittanceEffectiveAmount ??
-          previousTuitionRemittanceData.tuitionRemittanceRequestedAmount
+      ? (previousTuitionRemittanceData.tuitionRemittanceEffectiveAmount ??
+          previousTuitionRemittanceData.tuitionRemittanceRequestedAmount)
       : 0;
   }
 
@@ -775,6 +776,7 @@ export class ConfirmationOfEnrollmentService {
         "location.institutionCode",
         "application.id",
         "application.applicationNumber",
+        "application.offeringIntensity",
         "application.studentNumber",
         "student.id",
         "student.birthDate",
@@ -815,7 +817,8 @@ export class ConfirmationOfEnrollmentService {
         )
         .andWhere("disbursementSchedule.coeStatus = :required", {
           required: COEStatus.required,
-        });
+        })
+        .andWhere("offering.studyEndDate >= CURRENT_DATE");
     }
     // Get only COE(s) that are either already confirmed or not eligible to be confirmed by institution.
     else {
@@ -880,7 +883,4 @@ export class ConfirmationOfEnrollmentService {
     );
     return nextDocumentNumber;
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

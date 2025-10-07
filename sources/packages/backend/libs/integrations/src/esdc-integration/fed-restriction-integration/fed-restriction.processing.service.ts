@@ -1,8 +1,4 @@
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
 import { DataSource, Repository } from "typeorm";
@@ -35,6 +31,7 @@ export class FedRestrictionProcessingService {
     private readonly integrationService: FedRestrictionIntegrationService,
     private readonly studentRestrictionsService: StudentRestrictionSharedService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly logger: LoggerService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -103,9 +100,8 @@ export class FedRestrictionProcessingService {
     let downloadResult: FedRestrictionFileRecord[];
     try {
       // Download the Federal Restrictions file with the full snapshot of the data.
-      downloadResult = await this.integrationService.downloadResponseFile(
-        remoteFilePath,
-      );
+      downloadResult =
+        await this.integrationService.downloadResponseFile(remoteFilePath);
       this.logger.log("File download finished.");
     } catch (error) {
       const errorMessage = `Error downloading file ${remoteFilePath}.`;
@@ -307,7 +303,4 @@ export class FedRestrictionProcessingService {
       throw new Error(logMessage, { cause: error });
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

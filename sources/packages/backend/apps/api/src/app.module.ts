@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { AppService } from "./app.service";
-import { RouterModule } from "@nestjs/core";
+import { APP_FILTER, RouterModule } from "@nestjs/core";
 import {
   UserService,
   BCeIDServiceProvider,
@@ -37,6 +37,7 @@ import { TerminusModule } from "@nestjs/terminus";
 import { DynamicFormConfigurationModule } from "./dynamic-form-configuration.module";
 import { json } from "express";
 import { JSON_300KB } from "./constants";
+import { AppAllExceptionsFilter } from "./app.exception.filter";
 
 @Module({
   imports: [
@@ -92,10 +93,14 @@ import { JSON_300KB } from "./constants";
     BCeIDServiceProvider,
     FormService,
     ProgramYearService,
+    {
+      provide: APP_FILTER,
+      useClass: AppAllExceptionsFilter,
+    },
   ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+  configure(consumer: MiddlewareConsumer): void {
     consumer.apply(AccessLoggerMiddleware).exclude("health").forRoutes("*");
     // Allow the configuration of the body parser for individual routes.
     consumer

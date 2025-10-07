@@ -243,17 +243,21 @@ export class DisbursementDetailsAPIOutDTO {
 export class EnrolmentApplicationDetailsAPIOutDTO {
   firstDisbursement?: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
-  assessmentTriggerType?: AssessmentTriggerType;
+  assessmentTriggerType: AssessmentTriggerType;
+}
+
+export class ECertFailedValidationsInfoAPIOutDTO {
+  hasEffectiveAviationRestriction: boolean;
 }
 
 export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {
-  assessmentTriggerType: AssessmentTriggerType;
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;
   eCertFailedValidations: ECertFailedValidation[];
+  eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
   changeRequestInProgress?: ChangeRequestInProgressAPIOutDTO;
 }
 
@@ -276,6 +280,7 @@ export class ApplicationAssessmentStatusDetailsAPIOutDTO {
 export class ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
+  eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
 }
 
 export class ApplicationSupportingUsersAPIOutDTO {

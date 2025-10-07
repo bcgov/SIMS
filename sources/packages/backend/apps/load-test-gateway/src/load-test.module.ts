@@ -7,6 +7,8 @@ import { ZeebeModule } from "@sims/services";
 import { LoadTestAuthModule } from "./auth/load-test-auth.module";
 import { LoadTestHttpModule } from "./load-test-http/load-test-http.module";
 import { LoggerModule } from "@sims/utilities/logger";
+import { APP_FILTER } from "@nestjs/core/constants";
+import { LoadTestAllExceptionsFilter } from "./load-test-exception.filter";
 
 @Module({
   imports: [
@@ -18,6 +20,12 @@ import { LoggerModule } from "@sims/utilities/logger";
     LoadTestHttpModule,
   ],
   controllers: [WorkflowAssessmentSubmissionController],
-  providers: [WorkflowDataLoadService],
+  providers: [
+    WorkflowDataLoadService,
+    {
+      provide: APP_FILTER,
+      useClass: LoadTestAllExceptionsFilter,
+    },
+  ],
 })
 export class LoadTestModule {}

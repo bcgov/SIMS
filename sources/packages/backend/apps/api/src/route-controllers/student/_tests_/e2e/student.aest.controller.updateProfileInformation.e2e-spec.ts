@@ -12,7 +12,7 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { IdentityProviders } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 interface StudentProfileUpdateInfo {
   givenNames: string;
@@ -32,11 +32,11 @@ describe("StudentAESTController(e2e)-updateProfileInformation", () => {
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     studentProfileUpdateInfo = {
-      givenNames: faker.name.firstName(),
-      lastName: faker.name.lastName(),
+      givenNames: faker.person.firstName(),
+      lastName: faker.person.lastName(),
       birthdate: "1990-01-15",
       email: faker.internet.email(),
-      noteDescription: faker.datatype.uuid(),
+      noteDescription: faker.string.uuid(),
     };
   });
 
@@ -192,10 +192,10 @@ describe("StudentAESTController(e2e)-updateProfileInformation", () => {
     await request(app.getHttpServer())
       .patch(endpoint)
       .send({
-        givenNames: faker.name.firstName(),
+        givenNames: faker.person.firstName(),
         birthdate: "1990-01-15",
         email: faker.internet.email(),
-        noteDescription: faker.lorem.text(),
+        noteDescription: faker.lorem.words(10),
       })
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)

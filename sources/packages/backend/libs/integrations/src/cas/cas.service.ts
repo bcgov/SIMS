@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, LoggerService } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import {
   CASAuthDetails,
   CASSupplierResponse,
@@ -23,7 +23,6 @@ import {
   parseJSONError,
 } from "@sims/utilities";
 import { CAS_AUTH_ERROR, CAS_BAD_REQUEST } from "@sims/integrations/constants";
-import { InjectLogger } from "@sims/utilities/logger";
 import {
   CASCachedAuthDetails,
   formatAddress,
@@ -31,6 +30,7 @@ import {
   formatPostalCode,
   formatUserName,
 } from ".";
+import { LoggerService } from "@sims/utilities/logger";
 
 /**
  * CAS response property that contains further information about errors.
@@ -45,6 +45,7 @@ export class CASService {
   constructor(
     config: ConfigService,
     private readonly httpService: HttpService,
+    private readonly logger: LoggerService,
   ) {
     this.casIntegrationConfig = config.casIntegration;
   }
@@ -300,7 +301,4 @@ export class CASService {
     }
     throw new Error(defaultMessage, { cause: error });
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

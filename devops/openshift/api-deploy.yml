@@ -63,6 +63,8 @@ objects:
                   value: "${APP_ENV}"
                 - name: ALLOW_BETA_USERS_ONLY
                   value: "${ALLOW_BETA_USERS_ONLY}"
+                - name: ALLOW_BETA_INSTITUTIONS_ONLY
+                  value: "${ALLOW_BETA_INSTITUTIONS_ONLY}"
                 - name: POSTGRES_HOST
                   valueFrom:
                     secretKeyRef:
@@ -168,10 +170,10 @@ objects:
                       name: ${API_SECRET_NAME}
                 - name: QUEUE_DASHBOARD_BASE_URL
                   value: "${QUEUE_DASHBOARD_BASE_URL}"
-                - name: ZEEBE_ADDRESS
+                - name: ZEEBE_GRPC_ADDRESS
                   valueFrom:
                     secretKeyRef:
-                      key: ${ZEEBE_ADDRESS_KEY}
+                      key: ${ZEEBE_GRPC_ADDRESS_KEY}
                       name: ${API_SECRET_NAME}
                 - name: ZEEBE_CLIENT_ID
                   valueFrom:
@@ -188,6 +190,8 @@ objects:
                     secretKeyRef:
                       key: ${CAMUNDA_OAUTH_URL_KEY}
                       name: ${API_SECRET_NAME}
+                - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+                  value: ${CAMUNDA_TOKEN_DISK_CACHE_DISABLE}
                 - name: APPLICATION_ARCHIVE_DAYS
                   value: ${APPLICATION_ARCHIVE_DAYS}
                 - name: S3_ACCESS_KEY_ID
@@ -529,7 +533,7 @@ parameters:
     value: "false"
   - name: SWAGGER_ENABLED
     value: "true"
-  - name: ZEEBE_ADDRESS_KEY
+  - name: ZEEBE_GRPC_ADDRESS_KEY
     value: zeebe-address
     require: true
   - name: ZEEBE_CLIENT_ID_KEY
@@ -585,8 +589,12 @@ parameters:
     required: true
   - name: ALLOW_BETA_USERS_ONLY
     required: true
+  - name: ALLOW_BETA_INSTITUTIONS_ONLY
+    required: true
   - name: EXTERNAL_API_PATH
     value: /api/external
     required: true
   - name: EXTERNAL_IP_WHITELIST
     required: true
+  - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+    value: "true"

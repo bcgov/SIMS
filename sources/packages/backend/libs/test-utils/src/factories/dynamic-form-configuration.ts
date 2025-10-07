@@ -5,7 +5,7 @@ import {
   ProgramYear,
 } from "@sims/sims-db";
 import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Create a fake dynamic form configuration.
@@ -29,7 +29,7 @@ export function createFakeDynamicFormConfiguration(
   dynamicFormConfiguration.programYear = relations?.programYear;
   dynamicFormConfiguration.offeringIntensity = options?.offeringIntensity;
   dynamicFormConfiguration.formDefinitionName =
-    options?.formDefinitionName ?? faker.random.alphaNumeric(50);
+    options?.formDefinitionName ?? faker.string.alphanumeric({ length: 50 });
   return dynamicFormConfiguration;
 }
 

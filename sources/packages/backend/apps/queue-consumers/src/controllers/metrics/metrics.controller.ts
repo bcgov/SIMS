@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
 } from "@nestjs/common";
 import { register } from "prom-client";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 
 /**
  * Allows prometheus to scrape metrics from the queue-consumers.
@@ -13,6 +13,8 @@ import { InjectLogger, LoggerService } from "@sims/utilities/logger";
  */
 @Controller("metrics")
 export class MetricsController {
+  constructor(private readonly logger: LoggerService) {}
+
   /**
    * Exports metrics from the queue-consumers.
    * @returns metrics in Prometheus format.
@@ -29,7 +31,4 @@ export class MetricsController {
       );
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

@@ -92,7 +92,7 @@ describe(
           `Assessment id ${mockedJob.job.data.assessmentId} is not in ${StudentAssessmentStatus.Queued} status.`,
         ]),
       ).toBe(true);
-      expect(mockedJob.job.discard).toBeCalled();
+      expect(mockedJob.job.discard).toHaveBeenCalled();
     });
 
     it("Should invoke the workflow create instance method with the received job parameters.", async () => {

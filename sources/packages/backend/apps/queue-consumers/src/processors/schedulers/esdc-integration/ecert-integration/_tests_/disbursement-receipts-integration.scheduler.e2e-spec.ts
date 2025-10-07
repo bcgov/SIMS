@@ -145,7 +145,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       expect(
@@ -180,7 +180,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       expect(
@@ -798,7 +798,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Act
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrowError(
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
     });

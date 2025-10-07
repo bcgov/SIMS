@@ -10,11 +10,7 @@ import {
   ValidateDisbursementPartTimeStep,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
 import { OfferingIntensity } from "@sims/sims-db";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { DataSource } from "typeorm";
 
 /**
@@ -29,6 +25,7 @@ export class ECertPreValidationService {
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly validateDisbursementFullTimeStep: ValidateDisbursementFullTimeStep,
     private readonly validateDisbursementPartTimeStep: ValidateDisbursementPartTimeStep,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -79,7 +76,4 @@ export class ECertPreValidationService {
       ? this.validateDisbursementFullTimeStep
       : this.validateDisbursementPartTimeStep;
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

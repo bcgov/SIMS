@@ -5,7 +5,7 @@ import {
   NotificationMessageType,
   User,
 } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Creates a fake message payload.
@@ -14,10 +14,10 @@ import * as faker from "faker";
 function createDummyMessagePayload(): NotificationEmailMessage {
   return {
     email_address: faker.internet.email(),
-    template_id: faker.datatype.string(),
+    template_id: faker.string.uuid(),
     personalisation: {
-      givenNames: faker.name.firstName(),
-      lastName: faker.name.lastName(),
+      givenNames: faker.person.firstName(),
+      lastName: faker.person.lastName(),
     },
   };
 }

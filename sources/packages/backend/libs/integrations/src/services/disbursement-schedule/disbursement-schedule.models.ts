@@ -1,5 +1,6 @@
 import { RestrictionCode } from "@sims/services";
 import {
+  ActionEffectiveCondition,
   DisabilityStatus,
   DisbursementSchedule,
   DisbursementValueType,
@@ -165,6 +166,10 @@ export interface StudentActiveRestriction {
    * Actions associated with the restriction.
    */
   actions: RestrictionActionType[];
+  /**
+   * Action effective conditions associated with the restriction.
+   */
+  actionEffectiveConditions?: ActionEffectiveCondition[];
 }
 
 /**
@@ -199,6 +204,7 @@ export type EligibleECertOffering = Pick<
   | "actualTuitionCosts"
   | "programRelatedCosts"
   | "mandatoryFees"
+  | "aviationCredentialType"
 >;
 
 /**
@@ -309,6 +315,8 @@ export function mapStudentActiveRestrictions(
       id: studentRestriction.restriction.id,
       code: studentRestriction.restriction.restrictionCode as RestrictionCode,
       actions: studentRestriction.restriction.actionType,
+      actionEffectiveConditions:
+        studentRestriction.restriction.actionEffectiveConditions,
     }),
   );
 }
@@ -356,3 +364,19 @@ export enum ECertFailedValidation {
    */
   NoEstimatedAwardAmounts = "NoEstimatedAwardAmounts",
 }
+
+interface StopDisbursementRestrictionValidationResult {
+  resultType: ECertFailedValidation.HasStopDisbursementRestriction;
+  additionalInfo: { restrictionCodes: RestrictionCode[] };
+}
+
+interface OtherECertFailedValidationResult {
+  resultType: Exclude<
+    ECertFailedValidation,
+    ECertFailedValidation.HasStopDisbursementRestriction
+  >;
+}
+
+export type ECertFailedValidationResult =
+  | StopDisbursementRestrictionValidationResult
+  | OtherECertFailedValidationResult;

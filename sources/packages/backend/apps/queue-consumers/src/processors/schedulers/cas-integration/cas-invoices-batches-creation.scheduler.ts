@@ -1,11 +1,7 @@
 import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { CustomNamedError, QueueNames } from "@sims/utilities";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { CASInvoiceBatchService } from "../../../services";
@@ -21,8 +17,9 @@ export class CASInvoicesBatchesCreationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly casInvoiceBatchService: CASInvoiceBatchService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**
@@ -38,9 +35,8 @@ export class CASInvoicesBatchesCreationScheduler extends BaseScheduler<void> {
   ): Promise<string[] | string> {
     processSummary.info("Executing CAS invoices batches creation.");
     try {
-      const createdBatch = await this.casInvoiceBatchService.createInvoiceBatch(
-        processSummary,
-      );
+      const createdBatch =
+        await this.casInvoiceBatchService.createInvoiceBatch(processSummary);
       return [
         `Batch created: ${createdBatch.batchName}.`,
         `Invoices created: ${createdBatch.casInvoices.length}.`,
@@ -57,7 +53,4 @@ export class CASInvoicesBatchesCreationScheduler extends BaseScheduler<void> {
       processSummary.info("CAS invoices batches creation process executed.");
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

@@ -1,5 +1,10 @@
 import { Min, Max, IsNotEmpty, ValidateIf } from "class-validator";
-import { COEStatus, DisabilityStatus, ProgramInfoStatus } from "@sims/sims-db";
+import {
+  COEStatus,
+  DisabilityStatus,
+  OfferingIntensity,
+  ProgramInfoStatus,
+} from "@sims/sims-db";
 import { COEApprovalPeriodStatus } from "../../../services/disbursement-schedule/disbursement-schedule.models";
 import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../../utilities";
 import { COE_DENIED_REASON_OTHER_ID } from "@sims/utilities";
@@ -70,8 +75,10 @@ export class StudyBreak {
 
 export class COESummaryAPIOutDTO {
   applicationNumber: string;
-  studyStartPeriod: string;
-  studyEndPeriod: string;
+  offeringIntensity: OfferingIntensity;
+  studentNumber?: string;
+  studyStartDate: string;
+  studyEndDate: string;
   applicationId: number;
   coeStatus: COEStatus;
   fullName: string;

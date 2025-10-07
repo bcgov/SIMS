@@ -50,11 +50,7 @@ import { ApiProcessError } from "../../types";
 import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "../../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { NoSuchKey } from "@aws-sdk/client-s3";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { SFASIndividualService } from "@sims/services";
 
 @Injectable()
@@ -66,6 +62,7 @@ export class StudentControllerService {
     private readonly applicationService: ApplicationService,
     private readonly objectStorageService: ObjectStorageService,
     private readonly sfasIndividualService: SFASIndividualService,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -172,9 +169,8 @@ export class StudentControllerService {
       this.logger.log(
         `Downloading the file ${studentFile.fileName} from S3 storage.`,
       );
-      const fileContent = await this.objectStorageService.getObject(
-        uniqueFileName,
-      );
+      const fileContent =
+        await this.objectStorageService.getObject(uniqueFileName);
       this.logger.log(
         `Downloaded the file ${studentFile.fileName} from S3 storage.`,
       );
@@ -330,9 +326,8 @@ export class StudentControllerService {
     | StudentUploadFileAPIOutDTO[]
     | AESTStudentFileDetailsAPIOutDTO[]
   > {
-    const studentDocuments = await this.fileService.getStudentUploadedFiles(
-      studentId,
-    );
+    const studentDocuments =
+      await this.fileService.getStudentUploadedFiles(studentId);
     return studentDocuments.map((studentDocument) => ({
       fileName: studentDocument.fileName,
       uniqueFileName: studentDocument.uniqueFileName,
@@ -445,7 +440,4 @@ export class StudentControllerService {
       student.sinValidation.sin,
     );
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

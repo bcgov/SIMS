@@ -68,7 +68,7 @@ import { YesNoOptions } from "@sims/test-utils";
 /**
  * User friendly names for the fields.
  */
-const userFriendlyNames = {
+export const userFriendlyNames = {
   offeringName: "Name",
   studyStartDate: "Start date",
   studyEndDate: "End date",
@@ -628,6 +628,11 @@ export class OfferingValidationModel {
    * The aviation credential types other than the ones listed as eligible for funding below will cause the below validation to be failed.
    */
   @IsIn(aviationCredentialTypesEligibleForFunding, {
+    message: `${
+      userFriendlyNames.aviationCredentialType
+    } must be one of the following values: ${aviationCredentialTypesEligibleForFunding.join(
+      ", ",
+    )}`,
     context: ValidationContext.CreateWarning(
       OfferingValidationWarnings.AviationCredIsPrivatePilotTraining,
     ),

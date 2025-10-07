@@ -1,9 +1,5 @@
 import { CustomNamedError, parseJSONError } from "@sims/utilities";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import {
   PROCESS_SUMMARY_CONTAINS_ERROR,
   getSuccessMessageWithAttentionCheck,
@@ -18,6 +14,7 @@ import { Inject } from "@nestjs/common";
  * Provides basic functionality for queue processing.
  */
 export abstract class BaseQueue<T> {
+  constructor(protected readonly logger: LoggerService) {}
   /**
    * Metrics service to allow incrementing job events.
    */
@@ -87,11 +84,4 @@ export abstract class BaseQueue<T> {
     job: Job<T>,
     processSummary: ProcessSummary,
   ): Promise<string | string[]>;
-
-  /**
-   * Default logger. This must be provided in the derived class
-   * to set the proper log context.
-   */
-  @InjectLogger()
-  logger: LoggerService;
 }

@@ -2,4 +2,4 @@
 DELETE FROM
     sims.sfas_restriction_maps
 WHERE
-    legacy_code = 'B2D'
+    legacy_code = 'B2D';

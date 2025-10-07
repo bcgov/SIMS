@@ -29,6 +29,7 @@ import {
   createFakeUser,
   saveFakeStudentRestriction,
   createFakeDisbursementOveraward,
+  RestrictionCode,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { ArrayContains, IsNull, Like, Not } from "typeorm";
@@ -46,13 +47,15 @@ import * as dayjs from "dayjs";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
 import { PartTimeCertRecordParser } from "./parsers/part-time-e-cert-record-parser";
 import {
+  AVIATION_CREDENTIAL_TEST_INPUTS,
   awardAssert,
   createBlockedDisbursementTestData,
   loadAwardValues,
+  loadDisbursementAndStudentRestrictions,
   loadDisbursementSchedules,
 } from "./e-cert-utils";
 import { SystemUsersService } from "@sims/services";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP } from "@sims/integrations/esdc-integration";
 
 describe(
@@ -106,9 +109,8 @@ describe(
 
     it("Should create a notification for the ministry and student for a blocked disbursement when there are no previously existing notifications for the disbursement.", async () => {
       // Arrange
-      const { student, disbursement } = await createBlockedDisbursementTestData(
-        db,
-      );
+      const { student, disbursement } =
+        await createBlockedDisbursementTestData(db);
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
@@ -232,9 +234,8 @@ describe(
 
     it("Should not create a notification for the student for a disbursement when there are already 3 notifications created.", async () => {
       // Arrange
-      const { student, disbursement } = await createBlockedDisbursementTestData(
-        db,
-      );
+      const { student, disbursement } =
+        await createBlockedDisbursementTestData(db);
       // Create pre-existing notificationsToCreate notifications for the student and ministry for the above created disbursement.
       const notificationsToCreate = 3;
       await saveNotifications(notificationsToCreate, student, disbursement.id);
@@ -267,9 +268,8 @@ describe(
 
     it("Should not create a notification for the student for a disbursement when an attempt is made to create the 2nd notification before 7 days from the first notification.", async () => {
       // Arrange
-      const { student, disbursement } = await createBlockedDisbursementTestData(
-        db,
-      );
+      const { student, disbursement } =
+        await createBlockedDisbursementTestData(db);
       // Create 1 pre-existing notification for the student and the ministry 6 days before the current date for the above created disbursement.
       await saveNotifications(1, student, disbursement.id, -6);
       // Queued job.
@@ -311,9 +311,8 @@ describe(
 
     it("Should create a notification for the student for a disbursement when an attempt is made to create the 2nd notification on or after 7 days from the first notification.", async () => {
       // Arrange
-      const { student, disbursement } = await createBlockedDisbursementTestData(
-        db,
-      );
+      const { student, disbursement } =
+        await createBlockedDisbursementTestData(db);
       // Create 1 pre-existing notification for the above created disbursement.
       await saveNotifications(1, student, disbursement.id, -7);
       // Queued job.
@@ -1185,6 +1184,7 @@ describe(
             actionType: ArrayContains([
               RestrictionActionType.StopPartTimeDisbursement,
             ]),
+            actionEffectiveConditions: IsNull(),
           },
         });
         // Create a non-bypassed student restriction to stop disbursement.
@@ -1511,6 +1511,518 @@ describe(
           effectiveAmount: 0,
         }),
       ).toBe(true);
+    });
+
+    describe("Aviation credential part-time applications e-Cert generation", () => {
+      for (const {
+        aviationCredentialType,
+        restrictionCode,
+      } of AVIATION_CREDENTIAL_TEST_INPUTS) {
+        it(
+          `Should calculate and send the e-cert and create restriction ${restrictionCode} after persisting the e-cert calculations` +
+            ` when a student is funded for an aviation credential type '${aviationCredentialType}' for the first time.`,
+          async () => {
+            // Arrange
+            // Eligible COE basic properties.
+            const eligibleDisbursement: Partial<DisbursementSchedule> = {
+              coeStatus: COEStatus.completed,
+              coeUpdatedAt: new Date(),
+            };
+            // Student with valid SIN.
+            const student = await saveFakeStudent(db.dataSource);
+            // Valid MSFAA Number.
+            const msfaaNumber = await db.msfaaNumber.save(
+              createFakeMSFAANumber(
+                { student },
+                { msfaaState: MSFAAStates.Signed },
+              ),
+            );
+            const aviationCredentialApplication =
+              await saveFakeApplicationDisbursements(
+                db.dataSource,
+                {
+                  student,
+                  msfaaNumber,
+                  firstDisbursementValues: [
+                    createFakeDisbursementValue(
+                      DisbursementValueType.CanadaLoan,
+                      "CSLP",
+                      100,
+                    ),
+                    createFakeDisbursementValue(
+                      DisbursementValueType.BCLoan,
+                      "CSPT",
+                      150,
+                    ),
+                  ],
+                },
+                {
+                  offeringIntensity: OfferingIntensity.partTime,
+                  applicationStatus: ApplicationStatus.Completed,
+                  currentAssessmentInitialValues: {
+                    assessmentData: { weeks: 5 } as Assessment,
+                    assessmentDate: new Date(),
+                  },
+                  firstDisbursementInitialValues: {
+                    ...eligibleDisbursement,
+                    disbursementDate: getISODateOnlyString(addDays(1)),
+                  },
+                  offeringInitialValues: {
+                    isAviationOffering: "yes",
+                    aviationCredentialType,
+                  },
+                },
+              );
+
+            // Queued job.
+            const mockedJob = mockBullJob<void>();
+
+            // Act
+            const result = await processor.processQueue(mockedJob.job);
+
+            // Assert
+            // Assert uploaded file.
+            const uploadedFile = getUploadedFile(sftpClientMock);
+            const uploadedFileName = getUploadedFileName();
+            expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+            // One record should be sent.
+            expect(result).toStrictEqual([
+              `Generated file: ${uploadedFileName}`,
+              "Uploaded records: 1",
+            ]);
+            // Assert log messages for the successful disbursement and created restriction.
+            expect(
+              mockedJob.containLogMessages([
+                `All calculations were saved and disbursement was set to '${DisbursementScheduleStatus.ReadyToSend}'.`,
+                "Checking offering for aviation credential types to add a restriction.",
+                `New restriction ${restrictionCode} for the aviation credential type ${aviationCredentialType} was added.`,
+              ]),
+            ).toBe(true);
+            const [disbursement] =
+              aviationCredentialApplication.currentAssessment
+                .disbursementSchedules;
+            // Validate the disbursement schedule status and created student restriction.
+            const updatedDisbursement =
+              await loadDisbursementAndStudentRestrictions(db, disbursement.id);
+            expect(updatedDisbursement).toEqual({
+              id: disbursement.id,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+              studentAssessment: {
+                id: aviationCredentialApplication.currentAssessment.id,
+                application: {
+                  id: aviationCredentialApplication.id,
+                  student: {
+                    id: aviationCredentialApplication.student.id,
+                    studentRestrictions: [
+                      {
+                        id: expect.any(Number),
+                        isActive: true,
+                        restriction: {
+                          id: expect.any(Number),
+                          restrictionCode: restrictionCode,
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            });
+          },
+        );
+
+        it(
+          `Should block the disbursement for aviation credential type '${aviationCredentialType}'` +
+            ` when the student already has an active restriction ${restrictionCode} added due to previous funding of the same aviation credential type.`,
+          async () => {
+            // Arrange
+            // Eligible COE basic properties.
+            const eligibleDisbursement: Partial<DisbursementSchedule> = {
+              coeStatus: COEStatus.completed,
+              coeUpdatedAt: new Date(),
+            };
+            // Student with valid SIN.
+            const student = await saveFakeStudent(db.dataSource);
+            // Valid MSFAA Number.
+            const msfaaNumber = await db.msfaaNumber.save(
+              createFakeMSFAANumber(
+                { student },
+                { msfaaState: MSFAAStates.Signed },
+              ),
+            );
+            const aviationCredentialApplication =
+              await saveFakeApplicationDisbursements(
+                db.dataSource,
+                {
+                  student,
+                  msfaaNumber,
+                  firstDisbursementValues: [
+                    createFakeDisbursementValue(
+                      DisbursementValueType.CanadaLoan,
+                      "CSLP",
+                      100,
+                    ),
+                    createFakeDisbursementValue(
+                      DisbursementValueType.BCLoan,
+                      "CSPT",
+                      150,
+                    ),
+                  ],
+                },
+                {
+                  offeringIntensity: OfferingIntensity.partTime,
+                  applicationStatus: ApplicationStatus.Completed,
+                  currentAssessmentInitialValues: {
+                    assessmentData: { weeks: 5 } as Assessment,
+                    assessmentDate: new Date(),
+                  },
+                  firstDisbursementInitialValues: {
+                    ...eligibleDisbursement,
+                    disbursementDate: getISODateOnlyString(addDays(1)),
+                  },
+                  offeringInitialValues: {
+                    isAviationOffering: "yes",
+                    aviationCredentialType,
+                  },
+                },
+              );
+            // Add a student restriction for the same aviation credential type.
+            const restriction = await db.restriction.findOne({
+              select: { id: true },
+              where: { restrictionCode },
+            });
+            const studentRestriction = await saveFakeStudentRestriction(
+              db.dataSource,
+              {
+                student: aviationCredentialApplication.student,
+                restriction,
+              },
+            );
+            // Queued job.
+            const mockedJob = mockBullJob<void>();
+
+            // Act
+            const result = await processor.processQueue(mockedJob.job);
+
+            // Assert
+            // Assert uploaded file.
+            const uploadedFile = getUploadedFile(sftpClientMock);
+            const uploadedFileName = getUploadedFileName();
+            expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+            // No records should be sent.
+            expect(result).toStrictEqual([
+              `Generated file: ${uploadedFileName}`,
+              "Uploaded records: 0",
+            ]);
+            // Assert log messages for the blocked disbursement.
+            expect(
+              mockedJob.containLogMessages([
+                `Student has an active '${RestrictionActionType.StopPartTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
+                "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
+              ]),
+            ).toBe(true);
+            const [disbursement] =
+              aviationCredentialApplication.currentAssessment
+                .disbursementSchedules;
+            // Validate the disbursement schedule status and existing student restriction.
+            const updatedDisbursement =
+              await loadDisbursementAndStudentRestrictions(db, disbursement.id);
+            expect(updatedDisbursement).toEqual({
+              id: disbursement.id,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+              studentAssessment: {
+                id: aviationCredentialApplication.currentAssessment.id,
+                application: {
+                  id: aviationCredentialApplication.id,
+                  student: {
+                    id: aviationCredentialApplication.student.id,
+                    // Student should have only one student restriction added from previous funding.
+                    studentRestrictions: [
+                      {
+                        id: studentRestriction.id,
+                        isActive: true,
+                        restriction: {
+                          id: restriction.id,
+                          restrictionCode: restrictionCode,
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            });
+          },
+        );
+      }
+
+      it(
+        "Should generate e-cert and not block the disbursement for aviation credential type 'commercialPilotTraining'" +
+          ` and create an aviation restriction ${RestrictionCode.AVCP} for 'commercialPilotTraining' after persisting the calculations` +
+          " when the student already has an active restriction AVEN added due to previous funding but for different aviation credential type.",
+        async () => {
+          // Arrange
+          const aviationCredentialType = "commercialPilotTraining";
+          // Restriction code for a different aviation credential.
+          const differentAviationCredentialRestrictionCode =
+            RestrictionCode.AVEN;
+          // Eligible COE basic properties.
+          const eligibleDisbursement: Partial<DisbursementSchedule> = {
+            coeStatus: COEStatus.completed,
+            coeUpdatedAt: new Date(),
+          };
+          // Student with valid SIN.
+          const student = await saveFakeStudent(db.dataSource);
+          // Valid MSFAA Number.
+          const msfaaNumber = await db.msfaaNumber.save(
+            createFakeMSFAANumber(
+              { student },
+              { msfaaState: MSFAAStates.Signed },
+            ),
+          );
+          const aviationCredentialApplication =
+            await saveFakeApplicationDisbursements(
+              db.dataSource,
+              {
+                student,
+                msfaaNumber,
+                firstDisbursementValues: [
+                  createFakeDisbursementValue(
+                    DisbursementValueType.CanadaLoan,
+                    "CSLP",
+                    100,
+                  ),
+                  createFakeDisbursementValue(
+                    DisbursementValueType.BCLoan,
+                    "CSPT",
+                    150,
+                  ),
+                ],
+              },
+              {
+                offeringIntensity: OfferingIntensity.partTime,
+                applicationStatus: ApplicationStatus.Completed,
+                currentAssessmentInitialValues: {
+                  assessmentData: { weeks: 5 } as Assessment,
+                  assessmentDate: new Date(),
+                },
+                firstDisbursementInitialValues: {
+                  ...eligibleDisbursement,
+                  disbursementDate: getISODateOnlyString(addDays(1)),
+                },
+                offeringInitialValues: {
+                  isAviationOffering: "yes",
+                  aviationCredentialType,
+                },
+              },
+            );
+          // Add a student restriction for the different aviation credential type.
+          const restriction = await db.restriction.findOne({
+            select: { id: true },
+            where: {
+              restrictionCode: differentAviationCredentialRestrictionCode,
+            },
+          });
+          const differentAviationCredentialRestriction =
+            await saveFakeStudentRestriction(db.dataSource, {
+              student: aviationCredentialApplication.student,
+              restriction,
+            });
+          // Queued job.
+          const mockedJob = mockBullJob<void>();
+
+          // Act
+          const result = await processor.processQueue(mockedJob.job);
+
+          // Assert
+          // Assert uploaded file.
+          const uploadedFile = getUploadedFile(sftpClientMock);
+          const uploadedFileName = getUploadedFileName();
+          expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+          // One record should be sent.
+          expect(result).toStrictEqual([
+            `Generated file: ${uploadedFileName}`,
+            "Uploaded records: 1",
+          ]);
+          // Assert log messages for the successful disbursement and created restriction for the aviation credential.
+          expect(
+            mockedJob.containLogMessages([
+              `All calculations were saved and disbursement was set to '${DisbursementScheduleStatus.ReadyToSend}'.`,
+              "Checking offering for aviation credential types to add a restriction.",
+              `New restriction ${RestrictionCode.AVCP} for the aviation credential type ${aviationCredentialType} was added.`,
+            ]),
+          ).toBe(true);
+          const [disbursement] =
+            aviationCredentialApplication.currentAssessment
+              .disbursementSchedules;
+          // Validate the disbursement schedule status and existing and new student restriction.
+          const updatedDisbursement =
+            await loadDisbursementAndStudentRestrictions(db, disbursement.id);
+          expect(updatedDisbursement).toEqual({
+            id: disbursement.id,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            studentAssessment: {
+              id: aviationCredentialApplication.currentAssessment.id,
+              application: {
+                id: aviationCredentialApplication.id,
+                student: {
+                  id: aviationCredentialApplication.student.id,
+                  // Student should have 2 student restrictions where one is added from previous funding
+                  // and the other one is added from the current e-cert generation.
+                  studentRestrictions: [
+                    {
+                      id: differentAviationCredentialRestriction.id,
+                      isActive: true,
+                      restriction: {
+                        id: restriction.id,
+                        restrictionCode:
+                          differentAviationCredentialRestrictionCode,
+                      },
+                    },
+                    {
+                      id: expect.any(Number),
+                      isActive: true,
+                      restriction: {
+                        id: expect.any(Number),
+                        restrictionCode: RestrictionCode.AVCP,
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          });
+        },
+      );
+
+      it(
+        "Should generate e-cert and not block the disbursement for aviation credential type 'commercialPilotTraining'" +
+          ` when the student already has an active restriction ${RestrictionCode.AVCP} added due to previous funding of the same aviation credential type` +
+          " but the restriction was bypassed.",
+        async () => {
+          // Arrange
+          const aviationCredentialType = "commercialPilotTraining";
+          // Eligible COE basic properties.
+          const eligibleDisbursement: Partial<DisbursementSchedule> = {
+            coeStatus: COEStatus.completed,
+            coeUpdatedAt: new Date(),
+          };
+          // Student with valid SIN.
+          const student = await saveFakeStudent(db.dataSource);
+          // Valid MSFAA Number.
+          const msfaaNumber = await db.msfaaNumber.save(
+            createFakeMSFAANumber(
+              { student },
+              { msfaaState: MSFAAStates.Signed },
+            ),
+          );
+          const aviationCredentialApplication =
+            await saveFakeApplicationDisbursements(
+              db.dataSource,
+              {
+                student,
+                msfaaNumber,
+                firstDisbursementValues: [
+                  createFakeDisbursementValue(
+                    DisbursementValueType.CanadaLoan,
+                    "CSLP",
+                    100,
+                  ),
+                  createFakeDisbursementValue(
+                    DisbursementValueType.BCLoan,
+                    "CSPT",
+                    150,
+                  ),
+                ],
+              },
+              {
+                offeringIntensity: OfferingIntensity.partTime,
+                applicationStatus: ApplicationStatus.Completed,
+                currentAssessmentInitialValues: {
+                  assessmentData: { weeks: 5 } as Assessment,
+                  assessmentDate: new Date(),
+                },
+                firstDisbursementInitialValues: {
+                  ...eligibleDisbursement,
+                  disbursementDate: getISODateOnlyString(addDays(1)),
+                },
+                offeringInitialValues: {
+                  isAviationOffering: "yes",
+                  aviationCredentialType,
+                },
+              },
+            );
+          // Add a student restriction for the same aviation credential type.
+          const restriction = await db.restriction.findOne({
+            select: { id: true },
+            where: { restrictionCode: RestrictionCode.AVCP },
+          });
+          const studentRestriction = await saveFakeStudentRestriction(
+            db.dataSource,
+            {
+              student: aviationCredentialApplication.student,
+              restriction,
+            },
+          );
+          // Create restriction bypass.
+          await saveFakeApplicationRestrictionBypass(db, {
+            application: aviationCredentialApplication,
+            studentRestriction,
+          });
+          // Queued job.
+          const mockedJob = mockBullJob<void>();
+
+          // Act
+          const result = await processor.processQueue(mockedJob.job);
+
+          // Assert
+          // Assert uploaded file.
+          const uploadedFile = getUploadedFile(sftpClientMock);
+          const uploadedFileName = getUploadedFileName();
+          expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+          // One record should be sent.
+          expect(result).toStrictEqual([
+            `Generated file: ${uploadedFileName}`,
+            "Uploaded records: 1",
+          ]);
+          // Assert log messages for the successful disbursement and existing student restriction.
+          expect(
+            mockedJob.containLogMessages([
+              `All calculations were saved and disbursement was set to '${DisbursementScheduleStatus.ReadyToSend}'.`,
+              "Checking offering for aviation credential types to add a restriction.",
+              `Student already has a ${RestrictionCode.AVCP} restriction for the aviation credential type commercialPilotTraining.`,
+            ]),
+          ).toBe(true);
+          const [disbursement] =
+            aviationCredentialApplication.currentAssessment
+              .disbursementSchedules;
+          // Validate the disbursement schedule status and existing student restriction.
+          const updatedDisbursement =
+            await loadDisbursementAndStudentRestrictions(db, disbursement.id);
+          expect(updatedDisbursement).toEqual({
+            id: disbursement.id,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            studentAssessment: {
+              id: aviationCredentialApplication.currentAssessment.id,
+              application: {
+                id: aviationCredentialApplication.id,
+                student: {
+                  id: aviationCredentialApplication.student.id,
+                  // Student should have only one student restriction added from previous funding.
+                  studentRestrictions: [
+                    {
+                      id: studentRestriction.id,
+                      isActive: true,
+                      restriction: {
+                        id: restriction.id,
+                        restrictionCode: RestrictionCode.AVCP,
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          });
+        },
+      );
     });
 
     /**

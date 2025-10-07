@@ -1,7 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
-import { ArrayContains, DataSource, Repository } from "typeorm";
+import { ArrayContains, DataSource, IsNull, Repository } from "typeorm";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -27,6 +27,7 @@ import {
   saveFakeApplication,
   createFakeCRAIncomeVerification,
   createFakeSupportingUser,
+  RestrictionCode,
 } from "@sims/test-utils";
 import {
   Application,
@@ -647,6 +648,9 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           eCertFailedValidations: [
             ECertFailedValidation.DisabilityStatusNotConfirmed,
           ],
+          eCertFailedValidationsInfo: {
+            hasEffectiveAviationRestriction: false,
+          },
         });
     },
   );
@@ -710,6 +714,9 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             ECertFailedValidation.MSFAACanceled,
             ECertFailedValidation.MSFAANotSigned,
           ],
+          eCertFailedValidationsInfo: {
+            hasEffectiveAviationRestriction: false,
+          },
         });
     },
   );
@@ -749,10 +756,12 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         application.currentAssessment.disbursementSchedules;
 
       const restriction = await db.restriction.findOne({
+        select: { id: true },
         where: {
           actionType: ArrayContains([
             RestrictionActionType.StopPartTimeDisbursement,
           ]),
+          actionEffectiveConditions: IsNull(),
         },
       });
       await saveFakeStudentRestriction(db.dataSource, {
@@ -782,6 +791,166 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           eCertFailedValidations: [
             ECertFailedValidation.HasStopDisbursementRestriction,
           ],
+          eCertFailedValidationsInfo: {
+            hasEffectiveAviationRestriction: false,
+          },
+        });
+    },
+  );
+
+  it(
+    "Should get application details with e-cert failed validation results having stop disbursement restriction and indicating effective aviation restriction" +
+      " in the validations info when the application is for aviation credential type 'commercialPilotTraining'" +
+      ` and the student has active restriction ${RestrictionCode.AVCP}.`,
+    async () => {
+      // Arrange
+      const aviationCredentialType = "commercialPilotTraining";
+      const student = await saveFakeStudent(db.dataSource);
+      const msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(msfaaNumber);
+
+      // Mock user services to return the saved student.
+      await mockUserLoginInfo(appModule, student);
+
+      // Application for aviation credential type 'commercialPilotTraining'.
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student, msfaaNumber },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+          offeringInitialValues: {
+            isAviationOffering: "yes",
+            aviationCredentialType,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      const restriction = await db.restriction.findOne({
+        select: { id: true },
+        where: {
+          restrictionCode: RestrictionCode.AVCP,
+        },
+      });
+
+      await saveFakeStudentRestriction(db.dataSource, {
+        student,
+        application,
+        restriction,
+      });
+
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          firstDisbursement: {
+            coeStatus: firstDisbursement.coeStatus,
+            disbursementScheduleStatus:
+              firstDisbursement.disbursementScheduleStatus,
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasBlockFundingFeedbackError: false,
+          eCertFailedValidations: [
+            ECertFailedValidation.HasStopDisbursementRestriction,
+          ],
+          eCertFailedValidationsInfo: { hasEffectiveAviationRestriction: true },
+        });
+    },
+  );
+
+  it(
+    "Should get application details with no e-cert failed validation results" +
+      " when the application is for aviation credential type 'commercialPilotTraining'" +
+      ` but the student has active restriction for different credential type ${RestrictionCode.AVIR}.`,
+    async () => {
+      // Arrange
+      const aviationCredentialType = "commercialPilotTraining";
+      const student = await saveFakeStudent(db.dataSource);
+      const msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+        },
+      );
+      await db.msfaaNumber.save(msfaaNumber);
+
+      // Mock user services to return the saved student.
+      await mockUserLoginInfo(appModule, student);
+
+      // Application for aviation credential type 'commercialPilotTraining'.
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student, msfaaNumber },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+          offeringInitialValues: {
+            isAviationOffering: "yes",
+            aviationCredentialType,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      // Restriction for different aviation credential type.
+      const restriction = await db.restriction.findOne({
+        select: { id: true },
+        where: {
+          restrictionCode: RestrictionCode.AVIR,
+        },
+      });
+
+      await saveFakeStudentRestriction(db.dataSource, {
+        student,
+        application,
+        restriction,
+      });
+
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          firstDisbursement: {
+            coeStatus: firstDisbursement.coeStatus,
+            disbursementScheduleStatus:
+              firstDisbursement.disbursementScheduleStatus,
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasBlockFundingFeedbackError: false,
+          eCertFailedValidations: [],
         });
     },
   );
@@ -842,6 +1011,9 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [ECertFailedValidation.InvalidSIN],
+          eCertFailedValidationsInfo: {
+            hasEffectiveAviationRestriction: false,
+          },
         });
     },
   );
@@ -910,6 +1082,9 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [ECertFailedValidation.LifetimeMaximumCSLP],
+          eCertFailedValidationsInfo: {
+            hasEffectiveAviationRestriction: false,
+          },
         });
     },
   );

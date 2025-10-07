@@ -1,6 +1,6 @@
 import { SFASApplication, SFASApplicationDependant } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Create fake SFAS application dependant.
@@ -16,16 +16,16 @@ export function createFakeSFASApplicationDependant(
   },
 ): SFASApplicationDependant {
   const sfasApplicationDependant = new SFASApplicationDependant();
-  sfasApplicationDependant.id = faker.datatype.number({
+  sfasApplicationDependant.id = faker.number.int({
     min: 100000000,
     max: 999999999,
   });
   sfasApplicationDependant.application = relations.sfasApplication;
   sfasApplicationDependant.dependantName =
-    options?.initialValues?.dependantName ?? faker.name.firstName();
+    options?.initialValues?.dependantName ?? faker.person.firstName();
   sfasApplicationDependant.dependantBirthDate =
     options?.initialValues?.dependantBirthDate ??
-    getISODateOnlyString(faker.date.past(18));
+    getISODateOnlyString(faker.date.past({ years: 18 }));
   sfasApplicationDependant.extractedAt = new Date();
   return sfasApplicationDependant;
 }

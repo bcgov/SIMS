@@ -1,13 +1,16 @@
-import { Injectable, LoggerService, NestMiddleware } from "@nestjs/common";
+import { Injectable, NestMiddleware } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { InjectLogger } from "@sims/utilities/logger";
 import { IUserToken } from "../auth";
 import { getClientIPFromRequest } from "../utilities";
 import { Request, Response, NextFunction } from "express";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class AccessLoggerMiddleware implements NestMiddleware {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly logger: LoggerService,
+  ) {}
   /**
    * Logs access information of every request.
    * @param request http request.
@@ -46,7 +49,4 @@ export class AccessLoggerMiddleware implements NestMiddleware {
     );
     return user;
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

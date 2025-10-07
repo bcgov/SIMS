@@ -1,9 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { DisbursementReceiptIntegrationService } from "./disbursement-receipt.integration.service";
 import { DisbursementReceiptDownloadResponse } from "./models/disbursement-receipt-integration.model";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
@@ -42,6 +38,7 @@ export class DisbursementReceiptProcessingService {
     private readonly reportService: ReportService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly logger: LoggerService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -91,9 +88,8 @@ export class DisbursementReceiptProcessingService {
     processSummary.info(`Processing file ${remoteFilePath}.`);
     let responseData: DisbursementReceiptDownloadResponse;
     try {
-      responseData = await this.integrationService.downloadResponseFile(
-        remoteFilePath,
-      );
+      responseData =
+        await this.integrationService.downloadResponseFile(remoteFilePath);
     } catch (error: unknown) {
       this.logger.error(error);
       processSummary.error(`Error downloading file ${remoteFilePath}.`, error);
@@ -231,7 +227,4 @@ export class DisbursementReceiptProcessingService {
       processSummary.error(errorMessage, error);
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

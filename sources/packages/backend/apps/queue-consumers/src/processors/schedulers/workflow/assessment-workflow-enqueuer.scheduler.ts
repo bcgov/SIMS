@@ -4,11 +4,7 @@ import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { WorkflowEnqueuerService } from "../../../services";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Search for assessments that have some pending operation, for instance,
@@ -21,8 +17,9 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**
@@ -74,13 +71,4 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
       parentProcessSummary.error(errorMessage, error);
     }
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @InjectLogger()
-  logger: LoggerService;
 }

@@ -1,11 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { MSFAANumberService } from "@sims/integrations/services";
 import { OfferingIntensity } from "@sims/sims-db";
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import {
   MSFAASFTPResponseFile,
   ReceivedStatusCode,
@@ -19,6 +15,7 @@ export class MSFAAResponseProcessingService {
   constructor(
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly msfaaService: MSFAAIntegrationService,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -30,9 +27,8 @@ export class MSFAAResponseProcessingService {
     offeringIntensity: OfferingIntensity,
     processSummary: ProcessSummary,
   ): Promise<void> {
-    const filePaths = await this.msfaaService.getResponseFilesFullPath(
-      offeringIntensity,
-    );
+    const filePaths =
+      await this.msfaaService.getResponseFilesFullPath(offeringIntensity);
     for (const filePath of filePaths) {
       const childProcessSummary = new ProcessSummary();
       processSummary.children(childProcessSummary);
@@ -146,7 +142,4 @@ export class MSFAAResponseProcessingService {
       cancelledRecord.newIssuingProvince,
     );
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

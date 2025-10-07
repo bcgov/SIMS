@@ -11,15 +11,18 @@ import {
 import { ECertPartTimeFileFooter } from "../../e-cert-files/e-cert-file-footer";
 import { ECertPartTimeFileHeader } from "../../e-cert-files/e-cert-file-header";
 import { ECertPartTimeIntegrationService } from "../../e-cert-part-time.integration.service";
+import { LoggerService } from "@sims/utilities/logger";
 
 describe("ECertPartTimeIntegrationService-createRequestContent", () => {
   let eCertPartTimeIntegrationService: ECertPartTimeIntegrationService;
   let configService: ConfigService;
   let sshService: SshService;
+  let logger: LoggerService;
 
   beforeAll(() => {
     configService = createMock<ConfigService>();
     sshService = createMock<SshService>();
+    logger = createMock<LoggerService>();
     const eCertPartTimeFileHeader = new ECertPartTimeFileHeader();
     const eCertPartTimeFileFooter = new ECertPartTimeFileFooter();
     eCertPartTimeIntegrationService = new ECertPartTimeIntegrationService(
@@ -27,6 +30,7 @@ describe("ECertPartTimeIntegrationService-createRequestContent", () => {
       eCertPartTimeFileFooter,
       configService,
       sshService,
+      logger,
     );
   });
 

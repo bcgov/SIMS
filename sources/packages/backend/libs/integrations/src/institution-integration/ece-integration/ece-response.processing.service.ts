@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import * as path from "path";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { ECEResponseIntegrationService } from "./ece-response.integration.service";
 import {
   ConfigService,
@@ -57,6 +57,7 @@ export class ECEResponseProcessingService {
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly systemUsersService: SystemUsersService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly logger: LoggerService
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -498,7 +499,4 @@ export class ECEResponseProcessingService {
       this.logger.error(logMessage, error);
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

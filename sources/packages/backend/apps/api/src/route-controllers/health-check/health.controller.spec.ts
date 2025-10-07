@@ -18,7 +18,7 @@ describe.skip("HealthController", () => {
 
   describe("root", () => {
     it("should return a health check", () => {
-      expect(healthController.check()).toBeCalled();
+      expect(healthController.check()).toHaveBeenCalled();
     });
   });
 });

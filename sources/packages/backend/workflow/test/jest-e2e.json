@@ -27,5 +27,8 @@
     "@sims/integrations": "<rootDir>/../libs/integrations/src",
     "@sims/auth/(.*)": "<rootDir>/../libs/auth/src/$1",
     "@sims/auth": "<rootDir>/../libs/auth/src"
-  }
+  },
+  "transformIgnorePatterns": [
+    "/node_modules/(?!@faker-js|uuid)"
+  ]
 }

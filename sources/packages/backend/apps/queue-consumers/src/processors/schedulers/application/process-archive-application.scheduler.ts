@@ -5,7 +5,7 @@ import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { ApplicationService } from "../../../services";
 import { SystemUsersService } from "@sims/services/system-users";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Process applications archiving.
@@ -18,8 +18,9 @@ export class ProcessArchiveApplicationsScheduler extends BaseScheduler<void> {
     queueService: QueueService,
     private readonly applicationService: ApplicationService,
     private readonly systemUsersService: SystemUsersService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

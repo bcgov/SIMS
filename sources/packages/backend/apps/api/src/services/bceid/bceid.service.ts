@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { BasicAuthSecurity, Client, createClientAsync } from "soap";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { ConfigService, BCeIDConfig } from "@sims/utilities/config";
 import { AccountDetails } from "./account-details.model";
 import {
@@ -25,7 +25,10 @@ import {
 @Injectable()
 export class BCeIDService {
   private bceidConfig: BCeIDConfig;
-  constructor(private readonly config: ConfigService) {
+  constructor(
+    private readonly config: ConfigService,
+    private readonly logger: LoggerService,
+  ) {
     this.bceidConfig = this.config.bceid;
   }
 
@@ -221,7 +224,7 @@ export class BCeIDService {
    * Gets WSDL authentication header needed to retrieve the WSDL from BCeID Web Service.
    * @returns Authorization header converted to base64 string.
    */
-  private getWsdlAuthHeader() {
+  private getWsdlAuthHeader(): { Authorization: string } {
     const auth =
       "Basic " +
       Buffer.from(
@@ -229,7 +232,4 @@ export class BCeIDService {
       ).toString("base64");
     return { Authorization: auth };
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

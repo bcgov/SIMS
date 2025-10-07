@@ -413,6 +413,7 @@ export interface CalculatedAssessmentModel {
   provincialAwardNetCSGTAmount: number;
   // BCAG
   federalAwardNetBCAGAmount: number;
+  provincialAwardWeeklyBCAGMax: number;
   provincialAwardNetBCAGAmount: number;
   // BCAG2Year
   awardEligibilityBCAG2Year: number;

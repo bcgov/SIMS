@@ -7,7 +7,6 @@ import {
   Student,
   User,
 } from "@sims/sims-db";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { CustomNamedError } from "@sims/utilities";
 import { removeWhiteSpaces } from "../../utilities";
 import {
@@ -181,7 +180,4 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       return sinValidationRepo.save(sinToBeUpdated);
     });
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

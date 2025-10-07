@@ -12,6 +12,7 @@ import {
   ParseIntPipe,
   DefaultValuePipe,
   ParseBoolPipe,
+  ForbiddenException,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -67,6 +68,7 @@ import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import { INVALID_OPERATION_IN_THE_CURRENT_STATE } from "@sims/services/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -162,9 +164,16 @@ export class ApplicationStudentsController extends BaseController {
         applicationId,
         true,
       );
+    const eCertFailedValidations = validationResult.failedValidations.map(
+      (failedValidation) => failedValidation.resultType,
+    );
     return {
-      eCertFailedValidations: [...validationResult.failedValidations],
+      eCertFailedValidations,
       canAcceptAssessment: validationResult.canAcceptAssessment,
+      eCertFailedValidationsInfo:
+        this.applicationControllerService.buildECertFailedValidationsInfo(
+          validationResult.failedValidations,
+        ),
     };
   }
 
@@ -191,7 +200,8 @@ export class ApplicationStudentsController extends BaseController {
       "or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
       "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
       "or Invalid offering intensity " +
-      "or dynamic form configuration not found.",
+      "or dynamic form configuration not found " +
+      "or application submission for a non-beta institution location is not allowed.",
   })
   @ApiBadRequestResponse({
     description: "Form validation failed or Offering intensity type is invalid",
@@ -249,6 +259,8 @@ export class ApplicationStudentsController extends BaseController {
             );
           case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
             throw new UnprocessableEntityException(error.message);
+          case INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            throw new ForbiddenException(error.message);
         }
       }
       throw error;

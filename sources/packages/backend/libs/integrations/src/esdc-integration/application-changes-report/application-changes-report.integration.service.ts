@@ -13,11 +13,16 @@ import {
   ApplicationChangesReportHeaders,
   APPLICATION_CHANGES_DATE_TIME_FORMAT,
 } from "./models/application-changes-report-integration.model";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class ApplicationChangesReportIntegrationService extends SFTPIntegrationBase<void> {
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
   }
 
   /**

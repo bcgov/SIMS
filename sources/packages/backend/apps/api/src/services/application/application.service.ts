@@ -7,7 +7,6 @@ import {
   EntityManager,
   SelectQueryBuilder,
 } from "typeorm";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
   Application,
@@ -81,6 +80,7 @@ import {
 } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import { StudentService } from "..";
+import { INVALID_OPERATION_IN_THE_CURRENT_STATE } from "@sims/services/constants";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
 export const MORE_THAN_ONE_APPLICATION_DRAFT_ERROR =
@@ -178,6 +178,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "Not able to find the institution location.",
         INSTITUTION_LOCATION_NOT_VALID,
       );
+    }
+    // Validate beta institution location only if the offering intensity is full-time.
+    if (application.offeringIntensity === OfferingIntensity.fullTime) {
+      this.validateBetaInstitutionLocation(institutionLocation.isBeta);
     }
     // Offering is assigned to the original assessment if the application is not
     // required for PIR.
@@ -818,6 +822,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.id",
         "application.applicationNumber",
         "application.pirStatus",
+        "pirApprovalReference.pirAssessedDate",
         "application.data",
         "application.pirDeniedOtherDesc",
         "application.offeringIntensity",
@@ -852,21 +857,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "programYear.active",
         "programYear.startDate",
         "programYear.endDate",
-        "sinValidation.id",
-        "sinValidation.sin",
         "studentAssessments.id",
         "studentAssessments.triggerType",
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.pirProgram", "pirProgram")
       .innerJoin("application.student", "student")
-      .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.location", "location")
       .innerJoin("application.studentAssessments", "studentAssessments")
       .leftJoin("studentAssessments.offering", "offering")
       .leftJoin("offering.educationProgram", "educationProgram")
       .innerJoin("student.user", "user")
       .leftJoin("application.pirDeniedReasonId", "PIRDeniedReason")
+      .leftJoin("application.pirApprovalReference", "pirApprovalReference")
       .where("application.id = :applicationId", {
         applicationId,
       })
@@ -2416,6 +2419,22 @@ export class ApplicationService extends RecordDataModelService<Application> {
     }
   }
 
-  @InjectLogger()
-  logger: LoggerService;
+  /**
+   * Check if the beta institution mode is enabled and if enabled
+   * allow application submission only for beta institution locations.
+   * @param isBetaInstitutionLocation is beta institution location.
+   * @throws {ForbiddenException} application submission for a non-beta institution location is not allowed.
+   */
+  private validateBetaInstitutionLocation(
+    isBetaInstitutionLocation: boolean,
+  ): void {
+    const allowBetaInstitutionsOnly =
+      this.configService.allowBetaInstitutionsOnly;
+    if (allowBetaInstitutionsOnly && !isBetaInstitutionLocation) {
+      throw new CustomNamedError(
+        "Application submission for a non-beta institution location is not allowed.",
+        INVALID_OPERATION_IN_THE_CURRENT_STATE,
+      );
+    }
+  }
 }

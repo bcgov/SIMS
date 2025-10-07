@@ -24,6 +24,7 @@ import {
   getPartTimeMaritalStatusCode,
   getTotalDisbursementEffectiveAmount,
 } from "@sims/utilities";
+import { LoggerService } from "@sims/utilities/logger";
 
 /**
  * Manages the file content generation and methods to
@@ -36,8 +37,9 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
     private readonly eCertPartTimeFileFooter: ECertPartTimeFileFooter,
     config: ConfigService,
     sshService: SshService,
+    logger: LoggerService,
   ) {
-    super(config.zoneBSFTP, sshService);
+    super(config.zoneBSFTP, sshService, logger);
   }
 
   /**

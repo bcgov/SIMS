@@ -1,12 +1,11 @@
 import "../../../env-setup";
-import { HttpAdapterHost, NestFactory } from "@nestjs/core";
+import { NestFactory } from "@nestjs/core";
 import { LoadTestModule } from "./load-test.module";
 import { KeycloakConfig } from "@sims/auth/config";
 import { LoggerService } from "@sims/utilities/logger";
 import { exit } from "process";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
-import { LoadTestAllExceptionsFilter } from "./load-test-exception.filter";
 
 async function bootstrap() {
   await KeycloakConfig.load();
@@ -18,10 +17,6 @@ async function bootstrap() {
 
   // Setting global prefix.
   app.setGlobalPrefix("load-test");
-
-  // Exception filter.
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new LoadTestAllExceptionsFilter(httpAdapter));
 
   app.useGlobalPipes(
     new ValidationPipe({

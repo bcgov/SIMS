@@ -30,7 +30,7 @@ import {
   StudentAssessment,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { AssessmentSequentialProcessingService } from "@sims/services";
 import { TestingModule } from "@nestjs/testing";
 import { QueueConsumersModule } from "../../../../src/queue-consumers.module";
@@ -72,8 +72,8 @@ describe(
 
     it("Should cancel the assessment pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
       // Arrange
-      const workflowInstanceId = faker.datatype
-        .number({
+      const workflowInstanceId = faker.number
+        .int({
           min: 1000000000,
           max: 9999999999,
         })
@@ -114,7 +114,7 @@ describe(
       const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      expect(zbClientMock.cancelProcessInstance).toBeCalledWith(
+      expect(zbClientMock.cancelProcessInstance).toHaveBeenCalledWith(
         workflowInstanceId,
       );
       expect(result).toEqual(["Assessment cancelled with success."]);
@@ -211,7 +211,7 @@ describe(
         ]),
       );
 
-      expect(mockedJob.job.discard).toBeCalled();
+      expect(mockedJob.job.discard).toHaveBeenCalled();
     });
 
     it("Should throw an error and call job.discard when the application is not in the expected status.", async () => {
@@ -236,7 +236,7 @@ describe(
       await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
         expectedError,
       );
-      expect(mockedJob.job.discard).toBeCalled();
+      expect(mockedJob.job.discard).toHaveBeenCalled();
     });
 
     it("Should throw an error and call job.discard when the assessment id was not found.", async () => {
@@ -253,7 +253,7 @@ describe(
       await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
         error,
       );
-      expect(mockedJob.job.discard).toBeCalled();
+      expect(mockedJob.job.discard).toHaveBeenCalled();
     });
 
     it("Should find an impacted application and create a reassessment when canceling an application with a assessment date set in the current assessment.", async () => {

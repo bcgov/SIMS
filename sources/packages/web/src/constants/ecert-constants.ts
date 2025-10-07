@@ -1,6 +1,11 @@
+import { CompletedApplicationDetailsAPIOutDTO } from "@/services/http/dto";
 import { ECertFailedValidation } from "@/types";
 
-export interface EcertFailedValidationDetail {
+export type EcertFailedValidationDetails = {
+  failedValidations: EcertFailedValidationDetail[];
+} & Pick<CompletedApplicationDetailsAPIOutDTO, "eCertFailedValidationsInfo">;
+
+interface EcertFailedValidationDetail {
   failedType: ECertFailedValidation;
   failedMessage: string;
 }

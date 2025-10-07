@@ -1,4 +1,4 @@
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { SshService } from "./ssh.service";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
@@ -28,6 +28,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
   constructor(
     private readonly sftpConfig: SFTPConfig,
     private readonly sshService: SshService,
+    protected logger: LoggerService,
   ) {}
 
   /**
@@ -275,7 +276,4 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     }
     this.logger.log(`SFTP client not initialized. Context: ${context}.`);
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

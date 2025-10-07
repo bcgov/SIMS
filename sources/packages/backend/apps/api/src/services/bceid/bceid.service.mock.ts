@@ -44,11 +44,12 @@ export class BCeIDServiceMock {
         return resp.data;
       }
       return null;
-    } catch (excp) {
+    } catch {
       return null;
     }
   }
-  public async getAccountDetails(userName: string): Promise<AccountDetails> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async getAccountDetails(_userName: string): Promise<AccountDetails> {
     const respData = await this.getDevResponse("/user/bceid-account");
     if (respData) {
       return respData as AccountDetails;
@@ -58,7 +59,8 @@ export class BCeIDServiceMock {
   }
 
   public async searchBCeIDAccounts(
-    options: SearchAccountOptions,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _options: SearchAccountOptions,
   ): Promise<SearchBCeIDAccountResult> {
     const respData = await this.getDevResponse("/user/bceid-accounts");
     if (respData) {

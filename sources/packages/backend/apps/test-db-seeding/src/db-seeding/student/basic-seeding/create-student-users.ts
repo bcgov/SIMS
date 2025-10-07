@@ -8,7 +8,7 @@ import {
   SeedPriorityOrder,
 } from "../../../seed-executors";
 import { Repository } from "typeorm";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { STUDENTS_INITIAL_DATA } from "./create-student-users.model";
 
 @Injectable()
@@ -56,13 +56,13 @@ export class CreateStudentUsers {
     fakeStudent.sinConsent = options.sinConsent ?? false;
     fakeStudent.contactInfo = {
       address: {
-        addressLine1: faker.address.streetAddress(),
-        city: faker.address.city(),
+        addressLine1: faker.location.streetAddress(),
+        city: faker.location.city(),
         country: "Canada",
         provinceState: "ON",
-        postalCode: faker.address.zipCode(),
+        postalCode: faker.location.zipCode(),
       },
-      phone: faker.phone.phoneNumber(),
+      phone: faker.phone.number({ style: "national" }),
     };
 
     await this.studentRepo.save(fakeStudent);

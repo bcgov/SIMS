@@ -85,4 +85,30 @@ export class Restriction extends RecordDataModel {
     name: "is_legacy",
   })
   isLegacy: boolean;
+
+  /**
+   * One or more conditions that makes the restriction actions effective if provided.
+   * If no conditions are provided then restriction actions are implicitly effective.
+   */
+  @Column({
+    name: "action_effective_conditions",
+    type: "jsonb",
+    nullable: true,
+  })
+  actionEffectiveConditions?: ActionEffectiveCondition[];
+}
+
+/**
+ * Restriction action effective condition.
+ */
+export interface ActionEffectiveCondition {
+  name: ActionEffectiveConditionNames;
+  value: unknown;
+}
+
+/**
+ * Restriction action effective condition names.
+ */
+export enum ActionEffectiveConditionNames {
+  AviationCredentialTypes = "Aviation credential types",
 }

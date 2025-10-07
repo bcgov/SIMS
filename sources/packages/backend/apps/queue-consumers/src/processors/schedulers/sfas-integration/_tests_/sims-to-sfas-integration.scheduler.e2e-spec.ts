@@ -1,6 +1,6 @@
 import { DeepMocked } from "@golevelup/ts-jest";
 import MockDate from "mockdate";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import { INestApplication } from "@nestjs/common";
 import {
   addDays,
@@ -727,8 +727,8 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
   }): Promise<Student> {
     const user = createFakeUser();
     // Name with fixed length will be easy to build the expected file data.
-    user.firstName = faker.random.alpha({ count: 15 });
-    user.lastName = faker.random.alpha({ count: 25 });
+    user.firstName = faker.string.alpha({ length: 15 });
+    user.lastName = faker.string.alpha({ length: 25 });
     // Create student with expected first name, last name and updated date.
     const student = await saveFakeStudent(db.dataSource, { user });
     // Create CAS supplier.

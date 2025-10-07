@@ -1,19 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import {
+  Application,
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
   FormYesNoOptions,
   FullTimeAssessment,
   RelationshipStatus,
-  StudentAssessment,
   StudentRestriction,
 } from "@sims/sims-db";
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import {
   ConfigService,
   InstitutionIntegrationConfig,
@@ -51,6 +47,7 @@ export class IER12ProcessingService {
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly applicationEventCodeUtilsService: ApplicationEventCodeUtilsService,
     private readonly applicationEventDateUtilsService: ApplicationEventDateUtilsService,
+    private readonly logger: LoggerService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -72,20 +69,23 @@ export class IER12ProcessingService {
     generatedDate?: string,
   ): Promise<IER12UploadResult[]> {
     processSummary.info("Retrieving pending assessment for IER 12.");
-    const pendingAssessments =
-      await this.studentAssessmentService.getPendingAssessment(generatedDate);
-    if (!pendingAssessments.length) {
+    const pendingApplications =
+      await this.studentAssessmentService.getPendingApplicationsCurrentAssessment(
+        generatedDate,
+      );
+    if (!pendingApplications.length) {
       return [];
     }
-    processSummary.info(`Found ${pendingAssessments.length} assessment(s).`);
+    processSummary.info(`Found ${pendingApplications.length} assessment(s).`);
     const fileRecords: Record<string, IER12Record[]> = {};
-    for (const assessment of pendingAssessments) {
+    for (const application of pendingApplications) {
       const institutionCode =
-        assessment.offering.institutionLocation.institutionCode;
+        application.currentAssessment.offering.institutionLocation
+          .institutionCode;
       if (!fileRecords[institutionCode]) {
         fileRecords[institutionCode] = [];
       }
-      const ier12Records = await this.createIER12Record(assessment);
+      const ier12Records = await this.createIER12Record(application);
       fileRecords[institutionCode].push(...ier12Records);
     }
     const uploadResult: IER12UploadResult[] = [];
@@ -165,13 +165,13 @@ export class IER12ProcessingService {
 
   /**
    * Create the Request content for the IER 12 file by populating the content.
-   * @param pendingAssessment pending assessment of institutions.
+   * @param application application and its current assessment.
    * @returns IER 12 records for the student assessment.
    */
   private async createIER12Record(
-    pendingAssessment: StudentAssessment,
+    application: Application,
   ): Promise<IER12Record[]> {
-    const application = pendingAssessment.application;
+    const pendingAssessment = application.currentAssessment;
     const student = application.student;
     const user = student.user;
     const sinValidation = student.sinValidation;
@@ -422,7 +422,4 @@ export class IER12ProcessingService {
       ? studentOverawardsBalance[awardType] > 0
       : false;
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

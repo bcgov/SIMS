@@ -11,7 +11,6 @@ import {
   RestrictionNotificationType,
   StudentRestriction,
 } from "@sims/sims-db";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { getUTC, getISODateOnlyString, getSQLFileData } from "@sims/utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
@@ -231,7 +230,4 @@ export class SFASRestrictionImportService
       entityManager,
     );
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

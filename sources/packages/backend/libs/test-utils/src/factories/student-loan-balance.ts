@@ -1,6 +1,6 @@
 import { Student, StudentLoanBalance, User } from "@sims/sims-db";
 import { addToDateOnlyString, getISODateOnlyString } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Create fake student loan balance.
@@ -23,7 +23,7 @@ export function createFakeStudentLoanBalance(
   studentLoanBalance.student = relations.student;
   studentLoanBalance.cslBalance =
     options?.initialValues?.cslBalance ??
-    faker.datatype.number({
+    faker.number.int({
       min: 500,
       max: 50000,
     });

@@ -90,7 +90,9 @@ describe(
       const queueData = {
         assessmentId: application.currentAssessment.id,
       };
-      expect(startApplicationAssessmentQueueMock.add).toBeCalledWith(queueData);
+      expect(startApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
+        queueData,
+      );
     });
 
     it(`Should queue an assessment for cancellation with ${StudentAssessmentStatus.CancellationQueued} status when it has this status for more than the time configured for the queue.`, async () => {
@@ -117,7 +119,7 @@ describe(
       const queueData = {
         assessmentId: application.currentAssessment.id,
       };
-      expect(cancelApplicationAssessmentQueueMock.add).toBeCalledWith(
+      expect(cancelApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
         queueData,
       );
     });
@@ -147,7 +149,7 @@ describe(
       const queueData = {
         assessmentId: currentAssessment.id,
       };
-      expect(startApplicationAssessmentQueueMock.add).not.toBeCalledWith(
+      expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalledWith(
         queueData,
       );
     });
@@ -177,7 +179,7 @@ describe(
       const queueData = {
         assessmentId: currentAssessment.id,
       };
-      expect(startApplicationAssessmentQueueMock.add).not.toBeCalledWith(
+      expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalledWith(
         queueData,
       );
     });

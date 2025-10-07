@@ -1,7 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -323,7 +323,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       },
     );
     // Create fake supporting user parent.
-    const parentFullName = faker.random.alpha({ count: 50 });
+    const parentFullName = faker.string.alpha({ length: 50 });
     const supportingUser = createFakeSupportingUser(
       { application },
       {
@@ -345,14 +345,14 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
    */
   function createSupportingUserPayload(): ReportedSupportingUserAPIInDTO {
     return {
-      givenNames: faker.random.alpha({ count: 100 }),
-      lastName: faker.random.alpha({ count: 100 }),
-      addressLine1: faker.address.streetAddress(),
-      city: faker.address.city(),
+      givenNames: faker.string.alpha({ length: 100 }),
+      lastName: faker.string.alpha({ length: 100 }),
+      addressLine1: faker.location.streetAddress(),
+      city: faker.location.city(),
       country: "Canada",
-      phone: faker.phone.phoneNumber(),
-      postalCode: faker.address.zipCode(),
-      provinceState: faker.address.state(),
+      phone: faker.phone.number({ style: "national" }),
+      postalCode: faker.location.zipCode(),
+      provinceState: faker.location.state(),
       supportingData: { totalIncome: 1000 },
     };
   }

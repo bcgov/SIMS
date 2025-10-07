@@ -5,7 +5,7 @@ import {
   GCNotifyErrorResponse,
   GCNotifyResult,
 } from "./gc-notify.model";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { ConfigService, GCNotify } from "@sims/utilities/config";
 import { CustomNamedError } from "@sims/utilities";
 import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
@@ -17,6 +17,7 @@ export class GCNotifyService {
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
+    private readonly logger: LoggerService,
   ) {
     this.gcNotifyConfig = this.configService.notify;
   }
@@ -66,7 +67,4 @@ export class GCNotifyService {
       throw error;
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

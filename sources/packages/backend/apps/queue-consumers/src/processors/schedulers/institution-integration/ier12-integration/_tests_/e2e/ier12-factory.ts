@@ -7,6 +7,7 @@ import {
   EducationProgramOffering,
   FullTimeAssessment,
   InstitutionLocation,
+  OfferingIntensity,
   ProgramYear,
   Student,
   StudentAssessment,
@@ -32,7 +33,7 @@ import {
   IER12TestInputData,
 } from "./models/data-inputs";
 import { addDays, dateDifference, getISODateOnlyString } from "@sims/utilities";
-import * as faker from "faker";
+import { faker } from "@faker-js/faker";
 
 /**
  * Save all IER12 related records providing all data that
@@ -102,6 +103,7 @@ export async function saveIER12TestInputData(
     createSecondDisbursement,
     referenceSubmission,
     program,
+    testInputData.offering.offeringIntensity,
   );
   // Assessment and its awards.
   const assessment = await saveIER12AssessmentFromTestInput(
@@ -169,7 +171,7 @@ async function saveIER12StudentFromTestInput(
       country: "canada",
       selectedCountry: "Canada",
     },
-    phone: faker.phone.phoneNumber(),
+    phone: faker.phone.number({ style: "national" }),
   };
   fakeStudent.disabilityStatus = testInputStudent.disabilityStatus;
   // SIN validation
@@ -193,6 +195,8 @@ async function saveIER12StudentFromTestInput(
  * @param createSecondDisbursement indicates if a second disbursement should be created.
  * @param referenceSubmission date when the application was submitted.
  * @param program education program that will have the offering created.
+ * @param offeringIntensity offering intensity to be set in the application.
+ * Must be aligned with the offering intensity set for the assessment offering.
  * @returns the saved applications and its dependencies.
  */
 async function saveIER12ApplicationFromTestInput(
@@ -204,11 +208,12 @@ async function saveIER12ApplicationFromTestInput(
   createSecondDisbursement: boolean,
   referenceSubmission: Date,
   program?: EducationProgram,
+  offeringIntensity?: OfferingIntensity,
 ): Promise<Application> {
   const application = await saveFakeApplicationDisbursements(
     db.dataSource,
     { student, institutionLocation, program, disbursementValues: [] },
-    { createSecondDisbursement },
+    { createSecondDisbursement, offeringIntensity },
   );
   application.applicationNumber = testInputApplication.applicationNumber;
   application.studentNumber = testInputApplication.studentNumber;

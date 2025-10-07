@@ -41,6 +41,10 @@
       >
         <template #content>
           <ul>
+            <li v-if="eCertValidation.hasEffectiveAviationRestriction">
+              You have already been funded for this type of aviation credential
+              and are not eligible for additional funding.
+            </li>
             <li v-if="eCertValidation.disabilityStatusNotConfirmed">
               Your account has not been approved for disability funding. You
               will not be able to accept this assessment until your disability
@@ -142,6 +146,7 @@ export default defineComponent({
       msfaaInvalid: false,
       hasStopDisbursementRestriction: false,
       noEstimatedAwardAmounts: false,
+      hasEffectiveAviationRestriction: false,
     });
 
     /**
@@ -217,6 +222,9 @@ export default defineComponent({
         noEstimatedAwardAmounts: warnings.eCertFailedValidations.includes(
           ECertFailedValidation.NoEstimatedAwardAmounts,
         ),
+        hasEffectiveAviationRestriction:
+          warnings.eCertFailedValidationsInfo
+            ?.hasEffectiveAviationRestriction ?? false,
       };
     });
 

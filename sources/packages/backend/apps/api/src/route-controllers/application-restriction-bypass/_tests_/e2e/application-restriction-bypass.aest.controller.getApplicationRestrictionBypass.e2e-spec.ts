@@ -114,6 +114,61 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       });
   });
 
+  it("Should get an inactive application restriction bypass for a submitted part-time application when there is an application restriction bypass associated with a deleted restriction.", async () => {
+    // Arrange
+    const applicationRestrictionBypass =
+      await saveFakeApplicationRestrictionBypass(
+        db,
+        {
+          bypassCreatedBy: sharedMinistryUser,
+          creator: sharedMinistryUser,
+          bypassRemovedBy: sharedMinistryUser,
+        },
+        {
+          restrictionActionType: RestrictionActionType.StopPartTimeDisbursement,
+          restrictionCode: RestrictionCode.PTSSR,
+          isRemoved: true,
+        },
+      );
+    // Soft delete the restriction associated with the student restriction.
+    const deletionDate = new Date();
+    await db.studentRestriction.update(
+      applicationRestrictionBypass.studentRestriction.id,
+      {
+        deletedAt: deletionDate,
+      },
+    );
+    const endpoint = `/aest/application-restriction-bypass/${applicationRestrictionBypass.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        applicationRestrictionBypassId: applicationRestrictionBypass.id,
+        studentRestrictionId:
+          applicationRestrictionBypass.studentRestriction.id,
+        restrictionCode:
+          applicationRestrictionBypass.studentRestriction.restriction
+            .restrictionCode,
+        creationNote: applicationRestrictionBypass.creationNote.description,
+        removalNote: applicationRestrictionBypass.removalNote.description,
+        createdBy: getUserFullName(
+          applicationRestrictionBypass.bypassCreatedBy,
+        ),
+        createdDate:
+          applicationRestrictionBypass.bypassCreatedDate.toISOString(),
+        removedBy: getUserFullName(
+          applicationRestrictionBypass.bypassRemovedBy,
+        ),
+        removedDate:
+          applicationRestrictionBypass.bypassRemovedDate.toISOString(),
+        bypassBehavior: applicationRestrictionBypass.bypassBehavior,
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });

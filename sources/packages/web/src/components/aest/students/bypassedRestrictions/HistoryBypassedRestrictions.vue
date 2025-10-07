@@ -37,11 +37,8 @@
           </template>
           <template #[`item.restrictionStatus`]="{ item }">
             <status-chip-restriction
-              :status="
-                item.isRestrictionActive
-                  ? RestrictionStatus.Active
-                  : RestrictionStatus.Resolved
-              "
+              :is-active="item.isRestrictionActive"
+              :deleted-at="item.restrictionDeletedAt"
             />
           </template>
           <template #[`item.bypassStatus`]="{ item }">

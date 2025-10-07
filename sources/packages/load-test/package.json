@@ -1,5 +1,5 @@
 {
-  "name": "sims-load-test",
+  "name": "studentaid-load-test",
   "version": "1.0.0",
   "description": "SIMS load testing.",
   "scripts": {
@@ -12,12 +12,12 @@
   "license": "ISC",
   "devDependencies": {
     "ts-loader": "^9.5.4",
-    "typescript": "^5.9.2",
-    "webpack": "^5.101.3",
+    "typescript": "^5.9.3",
+    "webpack": "^5.102.0",
     "webpack-cli": "^6.0.1",
     "webpack-glob-entries": "^1.0.1"
   },
   "dependencies": {
-    "@types/k6": "^1.2.0"
+    "@types/k6": "^1.3.0"
   }
 }

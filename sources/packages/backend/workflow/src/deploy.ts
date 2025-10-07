@@ -38,7 +38,7 @@ const JSON_LOG_INDENTATION = 2;
  */
 (async () => {
   console.info(`**** Deploying to Camunda ****\n`);
-  console.info(`Deploying to Zeebe address ${process.env.ZEEBE_ADDRESS}`);
+  console.info(`Deploying to Zeebe address ${process.env.ZEEBE_GRPC_ADDRESS}`);
 
   const directory = path.resolve(__dirname, `./workflow-definitions`);
   console.info(`Getting resources from ${directory}`);

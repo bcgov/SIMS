@@ -215,7 +215,9 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
         notes: [
           {
             id: expect.any(Number),
-            description: `The program information request was automatically completed using information from a previous request that was approved on ${getDateOnlyFormat(
+            description: `The program information request for application ${
+              pirApplicationCurrent.applicationNumber
+            } was automatically completed using information from a previous request that was approved on ${getDateOnlyFormat(
               pirAssessedDate,
             )}.`,
             noteType: NoteType.Application,

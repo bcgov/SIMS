@@ -1,13 +1,19 @@
-import { Injectable, ConsoleLogger, Scope } from "@nestjs/common";
+import { Injectable, ConsoleLogger, Scope, Inject } from "@nestjs/common";
 import { LogLevels, ProcessSummary } from "./process-summary";
 import { StringBuilder } from "@sims/utilities/string-builder";
 import { parseJSONError } from "@sims/utilities/parse-json";
+import { INQUIRER } from "@nestjs/core";
 
 /**
  * Common log across entire solution.
  */
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService extends ConsoleLogger {
+  constructor(@Inject(INQUIRER) parentClass?: object) {
+    super();
+    // Set the context to the parent class name.
+    super.setContext(parentClass?.constructor.name);
+  }
   /**
    * Log a friendly error message.
    * @param message friendly message.

@@ -119,7 +119,9 @@ export class ProgramInfoRequestService {
         const studentNotePromise = this.noteSharedService.createStudentNote(
           application.student.id,
           NoteType.Application,
-          `The program information request was automatically completed using information from a previous request that was approved on ${getDateOnlyFormat(
+          `The program information request for application ${
+            application.applicationNumber
+          } was automatically completed using information from a previous request that was approved on ${getDateOnlyFormat(
             previouslyApprovedPIR.pirAssessedDate,
           )}.`,
           this.systemUsersService.systemUser.id,
@@ -159,6 +161,7 @@ export class ProgramInfoRequestService {
     const application = await entityManager.getRepository(Application).findOne({
       select: {
         id: true,
+        applicationNumber: true,
         parentApplication: {
           id: true,
           versions: {

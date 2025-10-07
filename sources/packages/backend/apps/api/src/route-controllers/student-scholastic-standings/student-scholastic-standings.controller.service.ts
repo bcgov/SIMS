@@ -8,7 +8,6 @@ import {
   StudentScholasticStandingsService,
   StudentService,
 } from "../../services";
-import { SFASIndividualService } from "@sims/services";
 import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
   ScholasticStandingData,
@@ -31,7 +30,6 @@ export class ScholasticStandingControllerService {
   constructor(
     private readonly studentService: StudentService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
-    private readonly sfasIndividualService: SFASIndividualService,
   ) {}
 
   /**

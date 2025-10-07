@@ -1,4 +1,6 @@
 export * from "./auth/token-cache.service";
+export * from "./application-restriction-bypass/application-restriction-bypass.models";
+export * from "./application-restriction-bypass/application-restriction-bypass.service";
 export * from "./student/student.service";
 export * from "./user/user.service";
 export * from "./bceid/bceid.service";
@@ -48,10 +50,8 @@ export * from "./application-bulk-withdrawal/application-bulk-withdrawal-import-
 export * from "./student-loan-balance/student-loan-balance.service";
 export * from "./announcements/announcement.service";
 export * from "./cas-supplier/cas-supplier.service";
-export * from "./application-restriction-bypass/application-restriction-bypass.service";
 export * from "./audit/audit.service";
 export * from "./audit/audit-event.enum";
-export * from "./application-restriction-bypass/application-restriction-bypass.models";
 export * from "./cas-invoice-batch/cas-invoice-batch.service";
 export * from "./cas-invoice-batch/cas-invoice-batch-report.service";
 export * from "./cas-invoice/cas-invoice.service";
