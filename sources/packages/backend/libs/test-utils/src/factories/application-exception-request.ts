@@ -1,6 +1,7 @@
 import {
   ApplicationException,
   ApplicationExceptionRequest,
+  ApplicationExceptionRequestStatus,
   User,
 } from "@sims/sims-db";
 import { faker } from "@faker-js/faker";
@@ -42,5 +43,8 @@ export function createFakeApplicationExceptionRequest(
   applicationExceptionRequest.creator = relations?.creator;
   applicationExceptionRequest.exceptionHash =
     options?.initialData?.exceptionHash;
+  applicationExceptionRequest.exceptionRequestStatus =
+    options?.initialData?.exceptionRequestStatus ??
+    ApplicationExceptionRequestStatus.Pending;
   return applicationExceptionRequest;
 }
