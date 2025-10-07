@@ -28,11 +28,11 @@ describe("AuditController(e2e)-audit", () => {
       AppModule,
       AuditService,
     );
+    loggerLogSpy = jest.spyOn(auditService["logger"], "log");
   });
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    loggerLogSpy = jest.spyOn(auditService["logger"], "log");
   });
 
   it(`Should log 'Logged In' message when ${AuditEvent.LoggedIn} is requested.`, async () => {
