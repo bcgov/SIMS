@@ -3,7 +3,8 @@ import { ZeebeMockedClient } from "./mock";
 import {
   AssessmentConsolidatedData,
   CalculatedAssessmentModel,
-  ConfigureDisbursementData,
+  ConfigureDisbursementDataFullTime,
+  ConfigureDisbursementDataPartTime,
 } from "../models";
 import { PROCESS_INSTANCE_CREATE_TIMEOUT } from "./constants/system-configurations-constants";
 
@@ -67,10 +68,10 @@ export async function executePartTimeAssessmentForProgramYear(
  * @returns result of the workflow execution.
  */
 export async function executeFullTimeConfigureDisbursement(
-  configureDisbursementData: ConfigureDisbursementData,
+  configureDisbursementData: ConfigureDisbursementDataFullTime,
 ): Promise<CreateProcessInstanceWithResultResponse<CalculatedAssessmentModel>> {
   return ZeebeMockedClient.getMockedZeebeInstance().createProcessInstanceWithResult<
-    ConfigureDisbursementData,
+    ConfigureDisbursementDataFullTime,
     CalculatedAssessmentModel
   >({
     bpmnProcessId: "fulltime-configure-disbursement",
@@ -87,10 +88,10 @@ export async function executeFullTimeConfigureDisbursement(
  * @returns result of the workflow execution.
  */
 export async function executePartTimeConfigureDisbursement(
-  configureDisbursementData: ConfigureDisbursementData,
+  configureDisbursementData: ConfigureDisbursementDataPartTime,
 ): Promise<CreateProcessInstanceWithResultResponse<CalculatedAssessmentModel>> {
   return ZeebeMockedClient.getMockedZeebeInstance().createProcessInstanceWithResult<
-    ConfigureDisbursementData,
+    ConfigureDisbursementDataPartTime,
     CalculatedAssessmentModel
   >({
     bpmnProcessId: "parttime-configure-disbursement",
