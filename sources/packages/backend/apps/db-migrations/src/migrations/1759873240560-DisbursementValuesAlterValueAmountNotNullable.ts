@@ -1,16 +1,10 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class AlterDisbValueAmtNotNullable1758153112291
+export class DisbursementValuesAlterValueAmountNotNullable1759873240560
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      getSQLFileData(
-        "Delete-null-value-amount-records.sql",
-        "DisbursementValues",
-      ),
-    );
     await queryRunner.query(
       getSQLFileData(
         "Alter-value-amount-not-nullable.sql",
@@ -21,7 +15,10 @@ export class AlterDisbValueAmtNotNullable1758153112291
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData("Alter-value-amount-nullable.sql", "DisbursementValues"),
+      getSQLFileData(
+        "Rollback-alter-value-amount-not-nullable.sql",
+        "DisbursementValues",
+      ),
     );
   }
 }
