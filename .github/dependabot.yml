@@ -2,6 +2,8 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/sources/packages/web"
+    commit-message:
+      prefix: "npm-frontend"
     schedule:
       interval: "weekly"
     labels:
@@ -28,8 +30,19 @@ updates:
           - "*"
         update-types:
           - "patch"
+      formio:
+        patterns:
+          - "formio*"
+          - "bootstrap*"
+          - "@fortawesome/fontawesome-free"
+        update-types:
+          - "major"
+          - "minor"
+          - "patch"
   - package-ecosystem: "npm"
     directory: "/sources/packages/backend"
+    commit-message:
+      prefix: "npm-backend"
     schedule:
       interval: "weekly"
     labels:
@@ -54,6 +67,8 @@ updates:
           - "patch"
   - package-ecosystem: "npm"
     directory: "/sources/packages/forms"
+    commit-message:
+      prefix: "npm-forms-deployment"
     schedule:
       interval: "weekly"
     labels:
@@ -78,6 +93,8 @@ updates:
           - "patch"
   - package-ecosystem: "npm"
     directory: "/sources/packages/load-test"
+    commit-message:
+      prefix: "npm-load-test"
     schedule:
       interval: "weekly"
     labels:
@@ -102,6 +119,8 @@ updates:
           - "patch"
   # GitHub Actions updates.
   - package-ecosystem: "github-actions"
+    commit-message:
+      prefix: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
@@ -110,5 +129,19 @@ updates:
       - "GitHub actions"
     groups:
       github-actions-updates:
+        patterns:
+          - "*"
+    # Docker updates.
+  - package-ecosystem: "docker"
+    commit-message:
+      prefix: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "Dependencies"
+      - "Docker"
+    groups:
+      docker-updates:
         patterns:
           - "*"
