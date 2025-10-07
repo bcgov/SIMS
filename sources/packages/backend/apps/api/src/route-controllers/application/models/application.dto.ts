@@ -243,7 +243,7 @@ export class DisbursementDetailsAPIOutDTO {
 export class EnrolmentApplicationDetailsAPIOutDTO {
   firstDisbursement?: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
-  assessmentTriggerType?: AssessmentTriggerType;
+  assessmentTriggerType: AssessmentTriggerType;
 }
 
 export class ECertFailedValidationsInfoAPIOutDTO {
@@ -251,7 +251,6 @@ export class ECertFailedValidationsInfoAPIOutDTO {
 }
 
 export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {
-  declare assessmentTriggerType: AssessmentTriggerType;
   appealStatus?: StudentAppealStatus;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestId?: number;
