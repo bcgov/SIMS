@@ -419,9 +419,9 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
   );
 
   it(
-    "Should create an exception request in approved status when the application data has key of the exception request " +
-      "and the exception request with same key and hash was previously approved " +
-      "but the exception was declined due to other exception request(s).",
+    "Should create application exception request in approved status when the application data has the exception " +
+      "and the individual exception request with same key and hash was previously approved for the application " +
+      "but the overall exception was declined due to other exception request(s) not being approved.",
     async () => {
       // Arrange
       // Create a declined exception with two exception requests
@@ -608,6 +608,161 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
               exceptionDescription: "Some Other Application Exception",
               exceptionHash:
                 "58f52eef5c7049560ef87de8d7a8726c8ac1b8c9c6e4d034168c7a86762c2900",
+              approvalExceptionRequest: null,
+              creator: systemUsersService.systemUser,
+              createdAt: now,
+              exceptionRequestStatus: ApplicationExceptionRequestStatus.Pending,
+            },
+          ],
+        },
+      });
+    },
+  );
+
+  it(
+    "Should create application exception request in pending status when the application data has the exception " +
+      "and the individual exception request with same key and hash was never approved previously but declined for the application.",
+    async () => {
+      // Arrange
+      // Create a declined exception with one exception request which is therefore declined.
+      const exception = createFakeApplicationException();
+      exception.exceptionStatus = ApplicationExceptionStatus.Declined;
+      const savedException = await db.applicationException.save(exception);
+      const exceptionRequest = createFakeApplicationExceptionRequest(
+        {
+          applicationException: savedException,
+        },
+        {
+          initialData: {
+            exceptionName: "someApplicationException",
+            exceptionHash:
+              "b0e3a8697648475e79c33f61a41cb514715690094ab9acdaae2737c744fc42de",
+            exceptionRequestStatus: ApplicationExceptionRequestStatus.Declined,
+          },
+        },
+      );
+      await db.applicationExceptionRequest.save(exceptionRequest);
+      const previousApplication = await saveFakeApplication(db.dataSource, {
+        applicationException: savedException,
+        offering: sharedOffering,
+      });
+      // Most recent application that should create exception request and the exception in pending status.
+      const student = previousApplication.student;
+      const studentFile = await saveFakeStudentFileUpload(
+        db.dataSource,
+        { student },
+        {
+          fileName: "File B",
+          hash: "f4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8c8e4b8",
+        },
+      );
+      const file = createExceptionDataFile(studentFile);
+      const currentApplication = await saveFakeApplication(
+        db.dataSource,
+        {
+          student,
+          parentApplication: previousApplication,
+          offering: sharedOffering,
+        },
+        {
+          applicationData: {
+            workflowName: "",
+            someExceptionList: [
+              {
+                someApplicationException: {
+                  exceptionDescription: "Some Application Exception - 1",
+                  decreaseInParentIncomeSupportingDocuments: [file],
+                },
+              },
+            ],
+          } as ApplicationData,
+        },
+      );
+      const now = new Date();
+      MockDate.set(now);
+
+      const verifyUniqueApplicationExceptionsPayload =
+        createFakeVerifyUniqueApplicationExceptionsPayload(
+          currentApplication.id,
+        );
+
+      // Act
+      const result =
+        await applicationController.verifyUniqueApplicationExceptions(
+          verifyUniqueApplicationExceptionsPayload,
+        );
+
+      // Assert
+      // Validate job result.
+      expect(result).toEqual({
+        resultType: MockedZeebeJobResult.Complete,
+        outputVariables: {
+          applicationExceptionStatus: ApplicationExceptionStatus.Pending,
+        },
+      });
+      // Validate DB changes.
+      const updatedApplication = await db.application.findOne({
+        select: {
+          id: true,
+          updatedAt: true,
+          modifier: { id: true },
+          applicationException: {
+            id: true,
+            createdAt: true,
+            creator: { id: true },
+            exceptionStatus: true,
+            exceptionRequests: {
+              id: true,
+              exceptionName: true,
+              exceptionDescription: true,
+              exceptionHash: true,
+              approvalExceptionRequest: {
+                id: true,
+              },
+              creator: { id: true },
+              createdAt: true,
+              exceptionRequestStatus: true,
+            },
+          },
+        },
+        relations: {
+          modifier: true,
+          applicationException: {
+            creator: true,
+            exceptionRequests: {
+              approvalExceptionRequest: true,
+              creator: true,
+            },
+          },
+        },
+        where: {
+          id: currentApplication.id,
+        },
+        order: {
+          applicationException: {
+            exceptionRequests: {
+              exceptionDescription: "ASC",
+            },
+          },
+        },
+        loadEagerRelations: false,
+      });
+      expect(updatedApplication).toEqual({
+        id: currentApplication.id,
+        updatedAt: now,
+        modifier: systemUsersService.systemUser,
+        applicationException: {
+          id: expect.any(Number),
+          creator: systemUsersService.systemUser,
+          createdAt: now,
+          exceptionStatus: ApplicationExceptionStatus.Pending,
+          exceptionRequests: [
+            {
+              id: expect.any(Number),
+              exceptionName: "someApplicationException",
+              exceptionDescription: "Some Application Exception - 1",
+              exceptionHash:
+                "b0e3a8697648475e79c33f61a41cb514715690094ab9acdaae2737c744fc42de",
               approvalExceptionRequest: null,
               creator: systemUsersService.systemUser,
               createdAt: now,
