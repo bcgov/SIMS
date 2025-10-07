@@ -8,7 +8,7 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { ApplicationException } from "./application-exceptions.model";
-import { ApplicationExceptionRequestStatus } from "@sims/sims-db/entities/application-exception-request-status.type";
+import { ApplicationExceptionRequestStatus } from "./application-exception-request-status.type";
 
 export const EXCEPTION_NAME_MAX_LENGTH = 100;
 
