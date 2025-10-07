@@ -1,4 +1,7 @@
-import { ConfigureDisbursementData } from "workflow/test/models";
+import {
+  ConfigureDisbursementDataFullTime,
+  ConfigureDisbursementDataPartTime,
+} from "workflow/test/models";
 
 /**
  * Create fake data for configure disbursement part time workflow.
@@ -7,7 +10,7 @@ import { ConfigureDisbursementData } from "workflow/test/models";
  */
 export function createFakeConfigureDisbursementPartTimeData(
   programYear: string,
-): ConfigureDisbursementData {
+): ConfigureDisbursementDataPartTime {
   const [, programEndYear] = programYear.split("-");
   return {
     offeringStudyStartDate: `${programEndYear}-02-01`,
@@ -35,7 +38,7 @@ export function createFakeConfigureDisbursementPartTimeData(
  */
 export function createFakeConfigureDisbursementFullTimeData(
   programYear: string,
-): ConfigureDisbursementData {
+): ConfigureDisbursementDataFullTime {
   const [, programEndYear] = programYear.split("-");
   return {
     offeringStudyStartDate: `${programEndYear}-02-01`,

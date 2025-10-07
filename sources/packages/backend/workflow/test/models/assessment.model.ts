@@ -228,39 +228,52 @@ export interface AssessmentConsolidatedData extends JSONDoc {
 
 /**
  * Data required to configure the disbursements.
+ * Common data for both full-time and part-time.
  */
-export interface ConfigureDisbursementData extends JSONDoc {
+interface ConfigureDisbursementData extends JSONDoc {
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   offeringWeeks: number;
-  // Shared awards for both full-time and part-time.
+  // Shared awards.
   awardEligibilityCSGP: boolean;
   awardEligibilityCSGD: boolean;
   awardEligibilityBCAG: boolean;
   awardEligibilitySBSD: boolean;
-  // Part-time only eligibility.
-  awardEligibilityCSLP?: boolean;
-  awardEligibilityCSPT?: boolean;
-  // Full-time only eligibility.
+  // Shared final award amounts.
+  finalFederalAwardNetCSGPAmount: number;
+  finalFederalAwardNetCSGDAmount: number;
+  finalProvincialAwardNetBCAGAmount: number;
+  finalProvincialAwardNetSBSDAmount: number;
+}
+
+/**
+ * Data required to configure the disbursements for full-time students.
+ */
+export interface ConfigureDisbursementDataFullTime
+  extends ConfigureDisbursementData {
   awardEligibilityBCSL?: boolean;
   awardEligibilityBCTopup?: boolean;
   awardEligibilityCSLF?: boolean;
   awardEligibilityCSGF?: boolean;
   awardEligibilityBCAG2Year?: boolean;
   awardEligibilityBGPD?: boolean;
-  // Shared final award amounts for both full-time and part-time.
-  finalFederalAwardNetCSGPAmount: number;
-  finalFederalAwardNetCSGDAmount: number;
-  finalProvincialAwardNetBCAGAmount: number;
-  finalProvincialAwardNetSBSDAmount: number;
-  // Part-time only final award amounts.
-  finalFederalAwardNetCSLPAmount?: number;
-  finalFederalAwardNetCSPTAmount?: number;
-  // Full-time only final award amounts.
   finalFederalAwardNetCSGFAmount?: number;
   finalFederalAwardNetCSLFAmount?: number;
   finalProvincialAwardNetBGPDAmount?: number;
   finalProvincialAwardNetBCSLAmount?: number;
+}
+
+/**
+ * Data required to configure the disbursements for part-time students.
+ */
+export interface ConfigureDisbursementDataPartTime
+  extends ConfigureDisbursementData {
+  // Part-time only eligibility.
+  awardEligibilityCSLP?: boolean;
+  awardEligibilityCSPT?: boolean;
+  // Part-time only final award amounts.
+  finalFederalAwardNetCSLPAmount?: number;
+  finalFederalAwardNetCSPTAmount?: number;
 }
 
 export interface IdentifiableParentData extends JSONDoc {
