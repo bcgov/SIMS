@@ -11,15 +11,18 @@ import { ECertFullTimeFileFooter } from "../../e-cert-files/e-cert-file-footer";
 import { ECertFullTimeFileHeader } from "../../e-cert-files/e-cert-file-header";
 import { ECertFullTimeIntegrationService } from "../../e-cert-full-time.integration.service";
 import { RecordTypeCodes } from "../../../models/e-cert-integration-model";
+import { LoggerService } from "@sims/utilities/logger";
 
 describe("ECertFullTimeIntegrationService-createRequestContent", () => {
   let eCertFullTimeIntegrationService: ECertFullTimeIntegrationService;
   let configService: ConfigService;
   let sshService: SshService;
+  let logger: LoggerService;
 
   beforeAll(() => {
     configService = createMock<ConfigService>();
     sshService = createMock<SshService>();
+    logger = createMock<LoggerService>();
     const eCertFullTimeFileHeader = new ECertFullTimeFileHeader();
     const eCertFullTimeFileFooter = new ECertFullTimeFileFooter();
     eCertFullTimeIntegrationService = new ECertFullTimeIntegrationService(
@@ -27,6 +30,7 @@ describe("ECertFullTimeIntegrationService-createRequestContent", () => {
       eCertFullTimeFileFooter,
       configService,
       sshService,
+      logger,
     );
   });
 
