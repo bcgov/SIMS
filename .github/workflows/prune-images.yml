@@ -71,21 +71,19 @@ jobs:
         run: |
           pushd devops/scripts
           ./pruneImages.sh \
-              --license_plate=${{ vars.OPENSHIFT_LICENSE_PLATE }} \
-              --env=${ENVIRONMENT} \
-              --apps="${APPLICATIONS}" \
-              --prefix=${PREFIX} \
-              --min_tags=${MIN_TAGS}
+            --license_plate=${{ vars.OPENSHIFT_LICENSE_PLATE }} \
+            --env=${ENVIRONMENT} \
+            --apps="${APPLICATIONS}" \
+            --min_tags=${MIN_TAGS}
           popd
 
       - name: Prune Job Images
         run: |
           pushd devops/scripts
           ./pruneImages.sh \
-              --license_plate=${{ vars.OPENSHIFT_LICENSE_PLATE }} \
-              --env=${ENVIRONMENT} \
-              --apps="${OCJOBS}" \
-              --prefix=${PREFIX} \
-              --min_tags=${MIN_TAGS} \
-              --type=JOB
+            --license_plate=${{ vars.OPENSHIFT_LICENSE_PLATE }} \
+            --env=${ENVIRONMENT} \
+            --apps="${OCJOBS}" \
+            --min_tags=${MIN_TAGS} \
+            --type=JOB
           popd
