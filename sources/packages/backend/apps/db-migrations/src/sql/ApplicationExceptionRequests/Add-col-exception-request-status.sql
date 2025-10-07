@@ -13,7 +13,17 @@ UPDATE
 SET
     -- The value for the statuses approved and declined are same between the types sims.application_exception_request_status and sims.application_exception_status
     -- and hence we can directly cast the text value from one type to another.
-    exception_request_status = (exception.exception_status :: text) :: sims.application_exception_request_status
+    exception_request_status = (exception.exception_status :: text) :: sims.application_exception_request_status,
+    modifier = (
+        SELECT
+            id
+        FROM
+            sims.users
+        WHERE
+            -- System user.
+            user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
+    ),
+    updated_at = NOW()
 FROM
     sims.application_exceptions exception
 WHERE

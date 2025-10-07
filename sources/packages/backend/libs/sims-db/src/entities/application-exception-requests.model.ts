@@ -72,7 +72,6 @@ export class ApplicationExceptionRequest extends RecordDataModel {
     nullable: true,
   })
   exceptionHash?: string;
-
   /**
    * Status of the application exception request.
    */
@@ -81,7 +80,6 @@ export class ApplicationExceptionRequest extends RecordDataModel {
     type: "enum",
     enum: ApplicationExceptionRequestStatus,
     enumName: "ApplicationExceptionRequestStatus",
-    nullable: false,
   })
   exceptionRequestStatus: ApplicationExceptionRequestStatus;
 }

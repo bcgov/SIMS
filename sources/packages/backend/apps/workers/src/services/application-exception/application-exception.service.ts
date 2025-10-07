@@ -97,7 +97,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         // If the exception request with the same name and hash was previously approved
         // then the status of the exception request will be set to approved.
         // Otherwise the status will be set to pending which requires ministry assessment.
-        const exceptionRequestStatus = approvalExceptionRequest?.id
+        const exceptionRequestStatus = approvalExceptionRequest
           ? ApplicationExceptionRequestStatus.Approved
           : ApplicationExceptionRequestStatus.Pending;
         return {
