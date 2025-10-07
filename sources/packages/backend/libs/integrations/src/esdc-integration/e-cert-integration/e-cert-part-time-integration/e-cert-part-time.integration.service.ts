@@ -40,7 +40,6 @@ export class ECertPartTimeIntegrationService extends ECertIntegrationService {
     logger: LoggerService,
   ) {
     super(config.zoneBSFTP, sshService, logger);
-    this.logger.setContext(ECertPartTimeIntegrationService.name);
   }
 
   /**
