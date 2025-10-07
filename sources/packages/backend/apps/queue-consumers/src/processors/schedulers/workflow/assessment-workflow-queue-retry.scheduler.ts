@@ -4,12 +4,7 @@ import { BaseScheduler } from "../base-scheduler";
 import { addHours, QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { WorkflowEnqueuerService } from "../../../services";
-import {} from "../../models/processors.models";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { AssessmentWorkflowQueueRetryInDTO } from "./models/assessment-workflow-queue-retry.dto";
 
 /**
@@ -22,8 +17,9 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
     schedulerQueue: Queue<AssessmentWorkflowQueueRetryInDTO>,
     queueService: QueueService,
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**
@@ -95,13 +91,4 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
       );
     return { amountHoursAssessmentRetry };
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @InjectLogger()
-  logger: LoggerService;
 }

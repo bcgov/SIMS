@@ -18,7 +18,7 @@ import { flattenErrorMessages } from "../../utilities/class-validation";
 import { parse } from "papaparse";
 import { CustomNamedError } from "@sims/utilities";
 import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "../../constants";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 
 interface LocationDetails {
   id: number;
@@ -39,6 +39,7 @@ export class EducationProgramOfferingImportCSVService {
   constructor(
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly educationProgramService: EducationProgramService,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -108,9 +109,8 @@ export class EducationProgramOfferingImportCSVService {
   private async getLocationsMaps(
     institutionId: number,
   ): Promise<InstitutionCodeToIdMap> {
-    const locations = await this.institutionLocationService.getLocationDetails(
-      institutionId,
-    );
+    const locations =
+      await this.institutionLocationService.getLocationDetails(institutionId);
     const institutionMap: InstitutionCodeToIdMap = {};
     locations.forEach((location) => {
       if (location.institutionCode) {
@@ -250,7 +250,4 @@ export class EducationProgramOfferingImportCSVService {
       };
     });
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

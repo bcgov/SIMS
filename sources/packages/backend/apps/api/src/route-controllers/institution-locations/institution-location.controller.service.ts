@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { LocationWithDesignationStatus } from "../../services/institution-location/institution-location.models";
-import { FormService, InstitutionLocationService } from "../../services";
+import { InstitutionLocationService } from "../../services";
 import {
   DesignationStatus,
   InstitutionLocationAPIOutDTO,
@@ -13,10 +13,7 @@ import { transformAddressDetailsForAddressBlockForm } from "../utils/address-uti
  */
 @Injectable()
 export class InstitutionLocationControllerService {
-  constructor(
-    private readonly locationService: InstitutionLocationService,
-    private readonly formService: FormService,
-  ) {}
+  constructor(private readonly locationService: InstitutionLocationService) {}
 
   /**
    * Retrieve institution locations and

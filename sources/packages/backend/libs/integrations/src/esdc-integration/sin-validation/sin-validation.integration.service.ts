@@ -1,4 +1,3 @@
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { SINValidationFileResponse } from "./sin-validation-files/sin-validation-file-response";
 import { SINValidationFileHeader } from "./sin-validation-files/sin-validation-file-header";
@@ -16,12 +15,17 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 import { getGenderCode, StringBuilder } from "@sims/utilities";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class SINValidationIntegrationService extends SFTPIntegrationBase<SINValidationResponseResult> {
   private readonly esdcConfig: ESDCIntegrationConfig;
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
     this.esdcConfig = config.esdcIntegration;
   }
 
@@ -137,7 +141,4 @@ export class SINValidationIntegrationService extends SFTPIntegrationBase<SINVali
 
     return { header, records };
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

@@ -19,7 +19,7 @@ import {
   SupplierStatus,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, UpdateResult } from "typeorm";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -54,9 +54,9 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly systemUsersService: SystemUsersService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(Student));
-    this.logger.log("[Created]");
   }
 
   /**
@@ -781,9 +781,6 @@ export class StudentService extends RecordDataModelService<Student> {
       );
     });
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 
   /**
    * Get student disability status.

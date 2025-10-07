@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import * as Client from "ssh2-sftp-client";
 import {
   MSFAASFTPResponseFile,
@@ -25,6 +24,7 @@ import {
 } from "@sims/utilities";
 import { OfferingIntensity } from "@sims/sims-db";
 import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
+import { LoggerService } from "@sims/utilities/logger";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -36,8 +36,12 @@ import { LINE_BREAK_SPLIT_REGEX } from "@sims/integrations/constants";
 export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPResponseFile> {
   private readonly esdcConfig: ESDCIntegrationConfig;
 
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
     this.esdcConfig = config.esdcIntegration;
   }
 
@@ -240,7 +244,4 @@ export class MSFAAIntegrationService extends SFTPIntegrationBase<MSFAASFTPRespon
       await SshService.closeQuietly(client);
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

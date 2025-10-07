@@ -3,11 +3,7 @@ import { QueueService } from "@sims/services/queue";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { ECertCalculationProcess } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler<void> {
   constructor(
@@ -15,8 +11,9 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
     queueService: QueueService,
     private readonly eCertCalculationProcess: ECertCalculationProcess,
     private readonly eCertFileHandler: ECertFileHandler,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**
@@ -38,22 +35,12 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
     await this.eCertCalculationProcess.executeCalculations(processSummary);
     // e-Cert file generation.
     processSummary.info("Sending e-Cert file.");
-    const uploadResult = await this.eCertFileHandler.generateECert(
-      processSummary,
-    );
+    const uploadResult =
+      await this.eCertFileHandler.generateECert(processSummary);
     const generatedFileMessage = `Generated file: ${uploadResult.generatedFile}`;
     const uploadedRecordsMessage = `Uploaded records: ${uploadResult.uploadedRecords}`;
     processSummary.info(generatedFileMessage);
     processSummary.info(uploadedRecordsMessage);
     return [generatedFileMessage, uploadedRecordsMessage];
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @InjectLogger()
-  logger: LoggerService;
 }

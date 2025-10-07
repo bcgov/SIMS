@@ -167,10 +167,12 @@ export class EducationProgramAPIInDTO {
    * the dryrun validation and it is part of DTO to make explicit its place in the form payload submitted.
    * It will also be ignored by Nestjs because it does not have a decorator.
    */
+  @Allow()
   isBCPrivate: boolean;
   /**
    * Indicates the institution type as BC Public. It follows the same reasoning as isBCPrivate.
    */
+  @Allow()
   isBCPublic: boolean;
 }
 

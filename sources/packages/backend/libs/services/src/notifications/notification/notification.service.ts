@@ -19,7 +19,7 @@ import {
   NotificationProcessingSummary,
   SaveNotificationModel,
 } from "./notification.model";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import {
   NotificationEmailMessage,
   GCNotifyErrorResponse,
@@ -38,6 +38,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
   constructor(
     dataSource: DataSource,
     private readonly gcNotifyService: GCNotifyService,
+    private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(Notification));
   }
@@ -246,7 +247,4 @@ export class NotificationService extends RecordDataModelService<Notification> {
       notificationsSuccessfullyProcessed,
     };
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

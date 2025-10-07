@@ -1,10 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { MSFAANumber, OfferingIntensity } from "@sims/sims-db";
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import { SequenceControlService } from "@sims/services";
@@ -28,6 +24,7 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
     private readonly sequenceService: SequenceControlService,
     private readonly msfaaNumberService: MSFAANumberService,
     private readonly msfaaService: MSFAAIntegrationService,
+    private readonly logger: LoggerService,
   ) {
     super(configService);
   }
@@ -186,7 +183,4 @@ export class MSFAARequestProcessingService extends ESDCFileHandler {
       offeringIntensity: offeringIntensity,
     } as MSFAARecord;
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

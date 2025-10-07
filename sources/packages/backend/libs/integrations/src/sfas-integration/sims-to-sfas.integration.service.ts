@@ -8,11 +8,16 @@ import {
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 import { SIMSToSFASFileLineBuilder } from "./sims-sfas-files/sims-to-sfas-file-line-builder";
 import { StudentRestriction } from "@sims/sims-db";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class SIMSToSFASIntegrationService extends SFTPIntegrationBase<void> {
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
   }
 
   /**

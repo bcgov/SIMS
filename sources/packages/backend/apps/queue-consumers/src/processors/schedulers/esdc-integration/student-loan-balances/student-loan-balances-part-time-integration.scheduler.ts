@@ -3,11 +3,7 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { StudentLoanBalancesProcessingService } from "@sims/integrations/esdc-integration";
 
 /**
@@ -20,8 +16,9 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly studentLoanBalancesProcessingService: StudentLoanBalancesProcessingService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**
@@ -42,13 +39,4 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
     );
     return "Process finalized with success.";
   }
-
-  /**
-   * Setting the logger here allows the correct context to be set
-   * during the property injection.
-   * Even if the logger is not used, it is required to be set, to
-   * allow the base classes to write logs using the correct context.
-   */
-  @InjectLogger()
-  logger: LoggerService;
 }

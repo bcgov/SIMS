@@ -3,11 +3,7 @@ import { CustomNamedError, QueueNames } from "@sims/utilities";
 import { StudentFileService } from "../../services";
 import { Job } from "bull";
 import { VirusScanQueueInDTO, VirusScanResult } from "@sims/services/queue";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { logProcessSummaryToJobLogger } from "../../utilities";
 import {
   EMPTY_FILE,
@@ -16,7 +12,10 @@ import {
 
 @Processor(QueueNames.FileVirusScanProcessor)
 export class VirusScanProcessor {
-  constructor(private readonly studentFileService: StudentFileService) {}
+  constructor(
+    private readonly studentFileService: StudentFileService,
+    private readonly logger: LoggerService,
+  ) {}
 
   /**
    * Perform virus scanning for all the files having pending scan status.
@@ -60,7 +59,4 @@ export class VirusScanProcessor {
       isInfected,
     };
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

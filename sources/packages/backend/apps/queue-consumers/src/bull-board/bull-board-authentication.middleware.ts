@@ -12,7 +12,7 @@ import {
 } from "@sims/auth/constants";
 import { QueueDashboardToken } from "@sims/auth/services";
 import { ConfigService } from "@sims/utilities/config";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { HttpStatusCode } from "axios";
 import { NextFunction, Request, Response } from "express";
 
@@ -26,6 +26,7 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
   constructor(
     private readonly jwtService: JwtService,
     configService: ConfigService,
+    private readonly logger: LoggerService,
   ) {
     this.jwtVerifyOptions = {
       secret: configService.queueDashboardAccess.tokenSecret,
@@ -119,7 +120,4 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
       this.logger.log(logMessage);
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import {
   ApplicationBulkWithdrawalData,
   ApplicationBulkWithdrawalFooter,
@@ -35,6 +35,7 @@ export class ApplicationWithdrawalImportTextService {
   constructor(
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -226,7 +227,4 @@ export class ApplicationWithdrawalImportTextService {
       },
     });
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

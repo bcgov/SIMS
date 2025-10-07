@@ -1,10 +1,9 @@
 import "../../../env-setup";
 import "reflect-metadata";
-import { NestFactory, HttpAdapterHost } from "@nestjs/core";
+import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import { LoggerService } from "@sims/utilities/logger";
-import { AppAllExceptionsFilter } from "./app.exception.filter";
 import { exit } from "process";
 import { setGlobalPipes } from "./utilities/auth-utils";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
@@ -39,10 +38,6 @@ async function bootstrap() {
     res.setHeader("Cache-Control", "no-cache");
     next();
   });
-
-  // Exception filter
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AppAllExceptionsFilter(httpAdapter));
 
   // Getting application port
   const port = process.env.PORT || 3000;
@@ -93,10 +88,11 @@ async function bootstrap() {
     logger.error("Application server receive.", error, "Bootstrap");
     exit(1);
   });
-  logger.log(`Application is listing on port ${port}`, "Bootstrap");
+  logger.log(`Application is listening on port ${port}`, "Bootstrap");
 }
 bootstrap().catch((error: unknown) => {
-  const logger = new LoggerService("Bootstrap-Main");
+  const logger = new LoggerService();
+  logger.setContext("Bootstrap-Main");
   logger.error("Application bootstrap exception.", error);
   exit(1);
 });

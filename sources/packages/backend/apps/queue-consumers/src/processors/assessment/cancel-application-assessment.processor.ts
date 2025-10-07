@@ -11,11 +11,7 @@ import { CustomNamedError, QueueNames } from "@sims/utilities";
 import { StudentAssessmentService } from "../../services";
 import { DataSource } from "typeorm";
 import { ZeebeGRPCError, ZeebeGRPCErrorTypes } from "@sims/services/zeebe";
-import {
-  InjectLogger,
-  LoggerService,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import {
   ApplicationStatus,
   COEStatus,
@@ -40,8 +36,9 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
     private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly systemUserService: SystemUsersService,
+    logger: LoggerService,
   ) {
-    super();
+    super(logger);
   }
 
   /**
@@ -183,7 +180,4 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
       return "Assessment cancelled with success.";
     });
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

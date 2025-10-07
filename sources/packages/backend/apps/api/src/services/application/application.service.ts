@@ -7,7 +7,6 @@ import {
   EntityManager,
   SelectQueryBuilder,
 } from "typeorm";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
 import {
   RecordDataModelService,
   Application,
@@ -2438,7 +2437,4 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

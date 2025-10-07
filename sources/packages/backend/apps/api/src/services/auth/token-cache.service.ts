@@ -1,4 +1,4 @@
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { needRenewJwtToken, tokenTimeToDate } from "../../utilities/auth-utils";
 import { TokenCacheResponse } from "./token-cache.service.models";
 
@@ -19,17 +19,19 @@ export const TOKEN_RENEWAL_SECONDS = 30;
  */
 export class TokenCacheService {
   private token: TokenCacheResponse = null;
+  private readonly logger: LoggerService;
 
   /**
    * Creates an instance of token cache service.
    * @param name friendly name for logging.
-   * @param tokenAquireMethod method responsible for acquiring a new token.
+   * @param tokenAcquireMethod method responsible for acquiring a new token.
    */
   constructor(
     private readonly name: string,
-    private readonly tokenAquireMethod: () => Promise<TokenCacheResponse>,
+    private readonly tokenAcquireMethod: () => Promise<TokenCacheResponse>,
   ) {
-    this.logger.log(`TokenCacheService created for '${name}'.`);
+    this.logger = new LoggerService();
+    this.logger.setContext(`TokenCacheService_${name}`);
   }
 
   /**
@@ -54,7 +56,7 @@ export class TokenCacheService {
 
     try {
       // Token is not present or it is about to expire, retrieve a new token.
-      this.token = await this.tokenAquireMethod();
+      this.token = await this.tokenAcquireMethod();
       this.logger.log(
         `New token acquired for '${
           this.name
@@ -68,7 +70,4 @@ export class TokenCacheService {
       throw error;
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

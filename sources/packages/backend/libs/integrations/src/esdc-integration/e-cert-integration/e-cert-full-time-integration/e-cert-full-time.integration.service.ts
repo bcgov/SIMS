@@ -22,6 +22,7 @@ import {
   getPPDFlag,
   getFormattedPostalCode,
 } from "@sims/utilities";
+import { LoggerService } from "@sims/utilities/logger";
 
 /**
  * Manages the file content generation and methods to
@@ -34,8 +35,9 @@ export class ECertFullTimeIntegrationService extends ECertIntegrationService {
     private readonly eCertFullTimeFileFooter: ECertFullTimeFileFooter,
     config: ConfigService,
     sshService: SshService,
+    logger: LoggerService,
   ) {
-    super(config.zoneBSFTP, sshService);
+    super(config.zoneBSFTP, sshService, logger);
   }
 
   /**

@@ -2,11 +2,11 @@ import { OnApplicationBootstrap } from "@nestjs/common";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
-import { InjectLogger, LoggerService } from "@sims/utilities/logger";
 import { CronRepeatOptions, Queue } from "bull";
 import { v4 as uuid } from "uuid";
 import { CronExpressionParser } from "cron-parser";
 import { BaseQueue } from "../schedulers/base-queue";
+import { LoggerService } from "@sims/utilities/logger";
 
 export abstract class BaseScheduler<T>
   extends BaseQueue<T>
@@ -15,8 +15,9 @@ export abstract class BaseScheduler<T>
   constructor(
     protected schedulerQueue: Queue<T>,
     protected queueService: QueueService,
+    logger: LoggerService,
   ) {
-    super();
+    super(logger);
   }
 
   /**
@@ -154,7 +155,4 @@ export abstract class BaseScheduler<T>
     });
     return result.next().getTime();
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

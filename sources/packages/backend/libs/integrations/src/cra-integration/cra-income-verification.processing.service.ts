@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { CRAIncomeVerification, Student } from "@sims/sims-db";
 import { EntityManager } from "typeorm";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import { SequenceControlService, WorkflowClientService } from "@sims/services";
 import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record";
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
@@ -37,6 +37,7 @@ export class CRAIncomeVerificationProcessingService {
     private readonly incomeVerificationService: CRAIncomeVerificationsService,
     private readonly workflowClientService: WorkflowClientService,
     config: ConfigService,
+    private readonly logger: LoggerService,
   ) {
     this.ftpResponseFolder = config.craIntegration.ftpResponseFolder;
   }
@@ -374,7 +375,4 @@ export class CRAIncomeVerificationProcessingService {
     }
     return +tag.split(":").pop();
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

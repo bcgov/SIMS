@@ -1,12 +1,14 @@
-import { Injectable, LoggerService } from "@nestjs/common";
-import { InjectLogger } from "@sims/utilities/logger";
+import { Injectable } from "@nestjs/common";
 import { AuditEvent } from "./audit-event.enum";
 import { AuthorizedParties } from "../../auth";
+import { LoggerService } from "@sims/utilities/logger";
 
 const SIMS_AUDIT_EVENT_PREFIX = "SIMS Audit Event";
 
 @Injectable()
 export class AuditService {
+  constructor(private readonly logger: LoggerService) {}
+
   /**
    * Audit logging.
    * @param clientIP client IP.
@@ -86,7 +88,4 @@ export class AuditService {
     }
     return portalFriendlyName;
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

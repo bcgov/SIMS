@@ -1,9 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { DownloadResult, RecordTypeCodes } from "./sfas-integration.models";
 import { SFASIntegrationService } from "./sfas-integration.service";
 import {
@@ -32,6 +28,7 @@ export class SFASIntegrationProcessingService {
     private readonly sfasApplicationDependantImportService: SFASApplicationDependantImportService,
     private readonly sfasApplicationDisbursementImportService: SFASApplicationDisbursementImportService,
     config: ConfigService,
+    private readonly logger: LoggerService,
   ) {
     this.ftpReceiveFolder = config.sfasIntegration.ftpReceiveFolder;
   }
@@ -77,12 +74,13 @@ export class SFASIntegrationProcessingService {
     let downloadResult: DownloadResult;
     processSummary.info(`Starting download of file ${remoteFilePath}.`);
     try {
-      downloadResult = await this.sfasService.downloadResponseFile(
-        remoteFilePath,
-      );
+      downloadResult =
+        await this.sfasService.downloadResponseFile(remoteFilePath);
       processSummary.info("File download finished.");
     } catch (error) {
-      throw new Error(`Error downloading file ${remoteFilePath}.`, error);
+      throw new Error(`Error downloading file ${remoteFilePath}.`, {
+        cause: error,
+      });
     }
     processSummary.info(`Starting records import for file ${remoteFilePath}.`);
     // Execute the import of all files records.
@@ -225,7 +223,4 @@ export class SFASIntegrationProcessingService {
         return null;
     }
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

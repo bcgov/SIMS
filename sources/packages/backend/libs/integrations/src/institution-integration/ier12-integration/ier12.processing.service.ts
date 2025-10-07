@@ -9,11 +9,7 @@ import {
   RelationshipStatus,
   StudentRestriction,
 } from "@sims/sims-db";
-import {
-  LoggerService,
-  InjectLogger,
-  ProcessSummary,
-} from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import {
   ConfigService,
   InstitutionIntegrationConfig,
@@ -51,6 +47,7 @@ export class IER12ProcessingService {
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly applicationEventCodeUtilsService: ApplicationEventCodeUtilsService,
     private readonly applicationEventDateUtilsService: ApplicationEventDateUtilsService,
+    private readonly logger: LoggerService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -425,7 +422,4 @@ export class IER12ProcessingService {
       ? studentOverawardsBalance[awardType] > 0
       : false;
   }
-
-  @InjectLogger()
-  logger: LoggerService;
 }

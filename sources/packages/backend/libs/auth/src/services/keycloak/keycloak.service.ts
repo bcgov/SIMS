@@ -4,7 +4,7 @@ import { TokenRequest, TokenResponse } from "./token.model";
 import { RealmConfig } from "./realm-config.model";
 import { OpenIdConfig } from "./openid-config.model";
 import { KeycloakConfig } from "../../config";
-import { LoggerService, InjectLogger } from "@sims/utilities/logger";
+import { LoggerService } from "@sims/utilities/logger";
 import {
   AuthConfig,
   ConfigService,
@@ -24,12 +24,10 @@ import { HttpService } from "@nestjs/axios";
 export class KeycloakService {
   private readonly authConfig: AuthConfig;
 
-  @InjectLogger()
-  logger: LoggerService;
-
   constructor(
     configService: ConfigService,
     private readonly httpService: HttpService,
+    private readonly logger: LoggerService,
   ) {
     this.authConfig = configService.auth;
   }
@@ -41,9 +39,11 @@ export class KeycloakService {
    * injection framework.
    */
   public static get shared(): KeycloakService {
+    const logger = new LoggerService();
+    logger.setContext(KeycloakService.name);
     return (
       KeycloakService._shared ||
-      (this._shared = new this(new ConfigService(), new HttpService()))
+      (this._shared = new this(new ConfigService(), new HttpService(), logger))
     );
   }
 
