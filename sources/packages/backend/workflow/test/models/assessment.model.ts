@@ -268,10 +268,8 @@ export interface ConfigureDisbursementDataFullTime
  */
 export interface ConfigureDisbursementDataPartTime
   extends ConfigureDisbursementData {
-  // Part-time only eligibility.
   awardEligibilityCSLP?: boolean;
   awardEligibilityCSPT?: boolean;
-  // Part-time only final award amounts.
   finalFederalAwardNetCSLPAmount?: number;
   finalFederalAwardNetCSPTAmount?: number;
 }
