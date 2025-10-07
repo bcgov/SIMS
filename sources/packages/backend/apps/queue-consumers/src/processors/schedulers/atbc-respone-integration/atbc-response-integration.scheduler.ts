@@ -2,7 +2,7 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueService } from "@sims/services/queue";
 import { ATBCIntegrationProcessingService } from "@sims/integrations/atbc-integration";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Process all the applied PD requests to verify the status with ATBC.
@@ -12,9 +12,9 @@ export class ATBCResponseIntegrationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly atbcIntegrationProcessingService: ATBCIntegrationProcessingService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(ATBCResponseIntegrationScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

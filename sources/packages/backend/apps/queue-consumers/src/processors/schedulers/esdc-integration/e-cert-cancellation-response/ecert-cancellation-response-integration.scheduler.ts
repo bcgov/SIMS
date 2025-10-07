@@ -2,7 +2,7 @@ import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
 import { ECertCancellationResponseProcessingService } from "@sims/integrations/esdc-integration";
 
@@ -13,9 +13,9 @@ export class ECertCancellationResponseIntegrationScheduler extends BaseScheduler
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly eCertCancellationResponseProcessingService: ECertCancellationResponseProcessingService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(ECertCancellationResponseIntegrationScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

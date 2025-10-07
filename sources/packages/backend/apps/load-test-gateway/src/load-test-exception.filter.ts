@@ -1,9 +1,10 @@
-import { Catch, ArgumentsHost } from "@nestjs/common";
+import { Catch, ArgumentsHost, Injectable } from "@nestjs/common";
 import { BaseExceptionFilter } from "@nestjs/core";
 import { Request } from "express";
 import { LoggerService } from "@sims/utilities/logger";
 
 @Catch()
+@Injectable()
 export class LoadTestAllExceptionsFilter extends BaseExceptionFilter {
   constructor(private readonly logger: LoggerService) {
     super();

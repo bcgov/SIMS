@@ -9,12 +9,16 @@ import { DisbursementReceiptFooter } from "./disbursement-receipt-files/disburse
 import { DisbursementReceiptDetail } from "./disbursement-receipt-files/disbursement-receipt-file-detail";
 import { getISODateOnlyString } from "@sims/utilities";
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class DisbursementReceiptIntegrationService extends SFTPIntegrationBase<DisbursementReceiptDownloadResponse> {
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
-    this.logger.setContext(DisbursementReceiptIntegrationService.name);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
   }
 
   /**

@@ -1,7 +1,7 @@
 import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { CASSupplierIntegrationService } from "../../../services";
@@ -13,9 +13,9 @@ export class CASSupplierIntegrationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly casSupplierIntegrationService: CASSupplierIntegrationService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(CASSupplierIntegrationScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

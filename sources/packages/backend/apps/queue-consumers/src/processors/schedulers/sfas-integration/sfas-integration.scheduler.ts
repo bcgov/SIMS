@@ -4,7 +4,7 @@ import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { SFASIntegrationProcessingService } from "@sims/integrations/sfas-integration";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Process all SFAS integration files from the SFTP location.
@@ -16,9 +16,9 @@ export class SFASIntegrationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly sfasIntegrationProcessingService: SFASIntegrationProcessingService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(SFASIntegrationScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

@@ -2,7 +2,7 @@ import { InjectQueue, Processor } from "@nestjs/bull";
 import { CRAIncomeVerificationProcessingService } from "@sims/integrations/cra-integration/cra-income-verification.processing.service";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 
@@ -13,9 +13,9 @@ export class CRAResponseIntegrationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly cra: CRAIncomeVerificationProcessingService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(CRAResponseIntegrationScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

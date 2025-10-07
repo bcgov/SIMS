@@ -3,7 +3,7 @@ import { QueueService } from "@sims/services/queue";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { ECertCalculationProcess } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler<void> {
   constructor(
@@ -11,9 +11,9 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
     queueService: QueueService,
     private readonly eCertCalculationProcess: ECertCalculationProcess,
     private readonly eCertFileHandler: ECertFileHandler,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(ECertProcessIntegrationBaseScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

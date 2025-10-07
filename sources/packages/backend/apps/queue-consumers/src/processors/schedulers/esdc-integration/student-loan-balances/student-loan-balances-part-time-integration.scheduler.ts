@@ -3,7 +3,7 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { StudentLoanBalancesProcessingService } from "@sims/integrations/esdc-integration";
 
 /**
@@ -16,11 +16,9 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly studentLoanBalancesProcessingService: StudentLoanBalancesProcessingService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(
-      StudentLoanBalancesPartTimeIntegrationScheduler.name,
-    );
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

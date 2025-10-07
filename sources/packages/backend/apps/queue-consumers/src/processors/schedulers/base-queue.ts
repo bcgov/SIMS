@@ -14,6 +14,7 @@ import { Inject } from "@nestjs/common";
  * Provides basic functionality for queue processing.
  */
 export abstract class BaseQueue<T> {
+  constructor(protected readonly logger: LoggerService) {}
   /**
    * Metrics service to allow incrementing job events.
    */
@@ -83,11 +84,4 @@ export abstract class BaseQueue<T> {
     job: Job<T>,
     processSummary: ProcessSummary,
   ): Promise<string | string[]>;
-
-  /**
-   * Default logger. The classes inheriting from this are
-   * responsible for setting the proper log context.
-   */
-  @Inject(LoggerService)
-  protected logger: LoggerService;
 }

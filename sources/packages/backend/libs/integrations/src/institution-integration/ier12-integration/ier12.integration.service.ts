@@ -21,6 +21,7 @@ import {
   getTotalYearsOfStudy,
 } from "@sims/utilities";
 import { YNFlag } from "@sims/integrations/models";
+import { LoggerService } from "@sims/utilities/logger";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -30,9 +31,12 @@ import { YNFlag } from "@sims/integrations/models";
  */
 @Injectable()
 export class IER12IntegrationService extends SFTPIntegrationBase<void> {
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
-    this.logger.setContext(IER12IntegrationService.name);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
   }
   /**
    * Create the IER 12 content, by populating the records.

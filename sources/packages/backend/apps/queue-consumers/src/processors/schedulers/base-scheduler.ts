@@ -6,6 +6,7 @@ import { CronRepeatOptions, Queue } from "bull";
 import { v4 as uuid } from "uuid";
 import { CronExpressionParser } from "cron-parser";
 import { BaseQueue } from "../schedulers/base-queue";
+import { LoggerService } from "@sims/utilities/logger";
 
 export abstract class BaseScheduler<T>
   extends BaseQueue<T>
@@ -14,8 +15,9 @@ export abstract class BaseScheduler<T>
   constructor(
     protected schedulerQueue: Queue<T>,
     protected queueService: QueueService,
+    logger: LoggerService,
   ) {
-    super();
+    super(logger);
   }
 
   /**

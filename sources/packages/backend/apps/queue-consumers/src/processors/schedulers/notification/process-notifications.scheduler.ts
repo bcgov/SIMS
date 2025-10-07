@@ -5,7 +5,7 @@ import { ProcessNotificationsQueueInDTO } from "./models/notification.dto";
 import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Process notifications which are unsent.
@@ -17,9 +17,9 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
     schedulerQueue: Queue<ProcessNotificationsQueueInDTO>,
     private readonly notificationService: NotificationService,
     queueService: QueueService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(ProcessNotificationScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   protected async payload(): Promise<ProcessNotificationsQueueInDTO> {

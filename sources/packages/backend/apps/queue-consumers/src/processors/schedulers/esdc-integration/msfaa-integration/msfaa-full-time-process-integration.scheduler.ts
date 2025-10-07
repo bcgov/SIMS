@@ -6,7 +6,7 @@ import { OfferingIntensity } from "@sims/sims-db";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 @Processor(QueueNames.FullTimeMSFAAIntegration)
 export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void> {
@@ -15,9 +15,9 @@ export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly msfaaRequestService: MSFAARequestProcessingService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(FullTimeMSFAAProcessIntegrationScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

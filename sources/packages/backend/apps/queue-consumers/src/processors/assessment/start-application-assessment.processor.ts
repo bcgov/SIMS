@@ -4,7 +4,7 @@ import { StartAssessmentQueueInDTO } from "@sims/services/queue";
 import { WorkflowClientService } from "@sims/services";
 import { QueueNames } from "@sims/utilities";
 import { StudentAssessmentService } from "../../services";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { StudentAssessmentStatus } from "@sims/sims-db";
 import { BaseQueue } from "../../processors";
 
@@ -16,9 +16,9 @@ export class StartApplicationAssessmentProcessor extends BaseQueue<StartAssessme
   constructor(
     private readonly workflowClientService: WorkflowClientService,
     private readonly studentAssessmentService: StudentAssessmentService,
+    logger: LoggerService,
   ) {
-    super();
-    this.logger.setContext(StartApplicationAssessmentProcessor.name);
+    super(logger);
   }
 
   /**

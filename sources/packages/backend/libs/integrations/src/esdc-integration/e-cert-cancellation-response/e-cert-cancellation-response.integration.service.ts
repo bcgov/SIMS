@@ -10,12 +10,16 @@ import { ECertCancellationResponseFileFooter } from "./e-cert-cancellation-respo
 import { ECertCancellationResponseFileDetail } from "./e-cert-cancellation-response-files/e-cert-cancellation-response-file-detail";
 import { CustomNamedError } from "@sims/utilities";
 import { FILE_PARSING_ERROR } from "@sims/services/constants";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class ECertCancellationResponseIntegrationService extends SFTPIntegrationBase<ECertCancellationDownloadResponse> {
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
-    this.logger.setContext(ECertCancellationResponseIntegrationService.name);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
   }
 
   /**

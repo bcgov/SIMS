@@ -15,13 +15,17 @@ import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 import { getGenderCode, StringBuilder } from "@sims/utilities";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class SINValidationIntegrationService extends SFTPIntegrationBase<SINValidationResponseResult> {
   private readonly esdcConfig: ESDCIntegrationConfig;
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
-    this.logger.setContext(SINValidationIntegrationService.name);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
     this.esdcConfig = config.esdcIntegration;
   }
 

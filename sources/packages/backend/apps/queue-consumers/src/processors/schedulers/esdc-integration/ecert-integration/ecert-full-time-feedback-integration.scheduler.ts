@@ -4,7 +4,7 @@ import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 @Processor(QueueNames.FullTimeFeedbackIntegration)
 export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<void> {
@@ -13,9 +13,9 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly fullTimeECertFileHandler: FullTimeECertFileHandler,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(FullTimeECertFeedbackIntegrationScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

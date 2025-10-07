@@ -10,14 +10,18 @@ import {
   FILE_PARSING_ERROR,
   UNEXPECTED_ERROR_DOWNLOADING_FILE,
 } from "@sims/services/constants";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class ECEResponseIntegrationService extends SFTPIntegrationBase<
   ECEResponseFileDetail[]
 > {
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
-    this.logger.setContext(ECEResponseIntegrationService.name);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
   }
 
   /**

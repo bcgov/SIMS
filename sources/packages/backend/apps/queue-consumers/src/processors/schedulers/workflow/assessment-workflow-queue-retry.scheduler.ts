@@ -4,8 +4,7 @@ import { BaseScheduler } from "../base-scheduler";
 import { addHours, QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { WorkflowEnqueuerService } from "../../../services";
-import {} from "../../models/processors.models";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { AssessmentWorkflowQueueRetryInDTO } from "./models/assessment-workflow-queue-retry.dto";
 
 /**
@@ -18,9 +17,9 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
     schedulerQueue: Queue<AssessmentWorkflowQueueRetryInDTO>,
     queueService: QueueService,
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(WorkflowQueueRetryScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

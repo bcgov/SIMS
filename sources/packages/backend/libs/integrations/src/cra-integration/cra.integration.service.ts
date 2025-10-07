@@ -14,6 +14,7 @@ import { CRAResponseStatusRecord } from "./cra-files/cra-response-status-record"
 import { CRAResponseTotalIncomeRecord } from "./cra-files/cra-response-total-income-record";
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
 import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
+import { LoggerService } from "@sims/utilities/logger";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -25,10 +26,13 @@ import { FixedFormatFileLine } from "@sims/integrations/services/ssh";
 export class CRAIntegrationService extends SFTPIntegrationBase<CRASFTPResponseFile> {
   private readonly craConfig: CRAIntegrationConfig;
 
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
     this.craConfig = config.craIntegration;
-    this.logger.setContext(CRAIntegrationService.name);
   }
 
   /**

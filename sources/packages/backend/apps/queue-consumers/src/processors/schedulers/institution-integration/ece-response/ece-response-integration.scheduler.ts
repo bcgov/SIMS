@@ -1,7 +1,7 @@
 import { InjectQueue, Processor } from "@nestjs/bull";
 import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { ECEResponseProcessingService } from "@sims/integrations/institution-integration/ece-integration";
@@ -13,9 +13,9 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     private readonly eceResponseProcessingService: ECEResponseProcessingService,
     queueService: QueueService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(ECEResponseIntegrationScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

@@ -4,7 +4,7 @@ import { BaseScheduler } from "../base-scheduler";
 import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { WorkflowEnqueuerService } from "../../../services";
-import { ProcessSummary } from "@sims/utilities/logger";
+import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 /**
  * Search for assessments that have some pending operation, for instance,
@@ -17,9 +17,9 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
+    logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService);
-    this.logger.setContext(AssessmentWorkflowEnqueuerScheduler.name);
+    super(schedulerQueue, queueService, logger);
   }
 
   /**

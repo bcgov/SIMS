@@ -4,12 +4,16 @@ import { SFASRecordIdentification } from "./sfas-files/sfas-record-identificatio
 import { DownloadResult, RecordTypeCodes } from "./sfas-integration.models";
 import { SFASHeader } from "./sfas-files/sfas-header";
 import { SFTPIntegrationBase, SshService } from "@sims/integrations/services";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class SFASIntegrationService extends SFTPIntegrationBase<DownloadResult> {
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
-    this.logger.setContext(SFASIntegrationService.name);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
   }
 
   /**

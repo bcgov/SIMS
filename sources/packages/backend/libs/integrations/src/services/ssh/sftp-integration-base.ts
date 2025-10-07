@@ -15,7 +15,6 @@ import {
   LINE_BREAK_SPLIT_REGEX,
   SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/integrations/constants";
-import { Inject } from "@nestjs/common";
 
 /**
  * Provides the basic features to enable the SFTP integration.
@@ -29,6 +28,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
   constructor(
     private readonly sftpConfig: SFTPConfig,
     private readonly sshService: SshService,
+    protected logger: LoggerService,
   ) {}
 
   /**
@@ -276,7 +276,4 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     }
     this.logger.log(`SFTP client not initialized. Context: ${context}.`);
   }
-
-  @Inject(LoggerService)
-  protected logger: LoggerService;
 }

@@ -8,6 +8,7 @@ import { ECERequestFileLine } from "./ece-files/ece-file-line";
 import { ECERecord, RecordTypeCodes } from "./models/ece-integration.model";
 import { getStudentDisabilityStatusCode } from "@sims/utilities";
 import { YNFlag } from "@sims/integrations/models";
+import { LoggerService } from "@sims/utilities/logger";
 
 /**
  * Manages the creation of the content files that needs to be sent
@@ -17,9 +18,12 @@ import { YNFlag } from "@sims/integrations/models";
  */
 @Injectable()
 export class ECEIntegrationService extends SFTPIntegrationBase<void> {
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
-    this.logger.setContext(ECEIntegrationService.name);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
   }
   /**
    * Create the ECE request content, by populating the records.

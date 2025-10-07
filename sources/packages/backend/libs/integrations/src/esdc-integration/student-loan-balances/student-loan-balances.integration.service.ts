@@ -10,12 +10,16 @@ import { StudentLoanBalancesFileHeader } from "./student-loan-balances-files/stu
 import { StudentLoanBalancesFileFooter } from "./student-loan-balances-files/student-loan-balances-file-footer";
 import { StudentLoanBalancesFileResponse } from "./student-loan-balances-files/student-loan-balances-file-response";
 import { CustomNamedError } from "@sims/utilities";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class StudentLoanBalancesIntegrationService extends SFTPIntegrationBase<StudentLoanBalancesSFTPResponseFile> {
-  constructor(config: ConfigService, sshService: SshService) {
-    super(config.zoneBSFTP, sshService);
-    this.logger.setContext(StudentLoanBalancesIntegrationService.name);
+  constructor(
+    config: ConfigService,
+    sshService: SshService,
+    logger: LoggerService,
+  ) {
+    super(config.zoneBSFTP, sshService, logger);
   }
 
   /**
