@@ -88,7 +88,7 @@ async function bootstrap() {
     logger.error("Application server receive.", error, "Bootstrap");
     exit(1);
   });
-  logger.log(`Application is listing on port ${port}`, "Bootstrap");
+  logger.log(`Application is listening on port ${port}`, "Bootstrap");
 }
 bootstrap().catch((error: unknown) => {
   const logger = new LoggerService();
