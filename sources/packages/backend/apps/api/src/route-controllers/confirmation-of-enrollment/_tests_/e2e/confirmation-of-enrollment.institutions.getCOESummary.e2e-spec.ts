@@ -591,7 +591,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       );
       // Application A with offering end date as today,
       // which is the edge of the limit to it be included.
-      const applicationAPromise = await saveFakeApplicationDisbursements(
+      const applicationAPromise = saveFakeApplicationDisbursements(
         appDataSource,
         {
           institution: collegeC,
@@ -607,7 +607,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       );
       // Application B with offering end date as tomorrow,
       // which is near the edge of the limit to it be included.
-      const applicationBPromise = await saveFakeApplicationDisbursements(
+      const applicationBPromise = saveFakeApplicationDisbursements(
         appDataSource,
         {
           institution: collegeC,
@@ -623,7 +623,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       );
       // Application C with offering end date one day in the past,
       // which is the edge of the limit to it be excluded.
-      const applicationCPromise = await saveFakeApplicationDisbursements(
+      const applicationCPromise = saveFakeApplicationDisbursements(
         appDataSource,
         {
           institution: collegeC,
@@ -703,7 +703,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       collegeCLocation,
     );
     // Full-time application.
-    const fullTimeApplicationPromise = await saveFakeApplicationDisbursements(
+    const fullTimeApplicationPromise = saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
@@ -716,7 +716,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       },
     );
     // Part-time application.
-    const partTimeApplicationPromise = await saveFakeApplicationDisbursements(
+    const partTimeApplicationPromise = saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
