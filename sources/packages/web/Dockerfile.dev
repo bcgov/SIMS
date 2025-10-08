@@ -23,7 +23,7 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.dev.template > default.conf
 RUN npm run build-local
 
 # Get a nginx image to have only the compiled app in the resulting image.
-FROM nginx:1.22 AS deployer
+FROM nginx:1.29 AS deployer
 
 RUN mkdir -p /opt/app-root/src \
  && mkdir -p /etc/nginx/conf.d
