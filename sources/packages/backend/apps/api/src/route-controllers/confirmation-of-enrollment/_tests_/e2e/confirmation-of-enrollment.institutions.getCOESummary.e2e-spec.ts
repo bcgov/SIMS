@@ -573,8 +573,8 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
 
   it(
     "Should get the COE current summary only for applications with offering end date till today" +
-      " when there is one COE for an offering with end date as today, " +
-      " one COE with the offering end date as tomorrow, " +
+      " when there is one COE for an offering with end date as today," +
+      " one COE with the offering end date as tomorrow," +
       " and one COE with the offering end date in the past.",
     async () => {
       // Arrange
