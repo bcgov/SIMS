@@ -692,7 +692,7 @@
                           "value": "font-size: 2.5rem;padding: 2rem 2rem;background: #ffeaea;color: #b71c1c;border: 4px solid #b71c1c;border-radius: 8px;text-align: left;white-space: normal;line-height: 1.2;"
                         }
                       ],
-                      "content": "<strong>We are currently accepting limited full-time applications</strong> \n<br><br>\n<span>If your institution is not listed here you are not eligible to complete a full-time application in SIMS. Please cancel this application draft and go to the <a href=\"https://studentaidbc.ca/dashboard\" target=\"_blank\" rel=\"noopener noreferrer\">SFAS student dashboard</a> to complete a full-time application.</span>",
+                      "content": "<strong>We are currently accepting limited full-time applications</strong> \n<br><br>\n<span>Only programs that appear in the programs list can be applied for in SIMS. If your program does not appear in this list please cancel this application draft and go to the <a href=\"https://studentaidbc.ca/dashboard\" target=\"_blank\" rel=\"noopener noreferrer\">SFAS student dashboard</a> to complete a full-time application.</span>",
                       "refreshOnChange": false,
                       "key": "html15",
                       "customConditional": "show = !!data.myProgramNotListed && !!data.allowBetaInstitutionsOnly;",
