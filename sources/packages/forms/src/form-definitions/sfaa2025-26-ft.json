@@ -530,11 +530,25 @@
           "refreshOnChange": false,
           "customClass": "banner-alert",
           "key": "html10",
-          "conditional": {
-            "show": "true",
-            "when": "mySchoolIsNotListed",
-            "eq": "true"
-          },
+          "customConditional": "show = (!data.allowBetaInstitutionsOnly && !!data.mySchoolIsNotListed);",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "className": "alert alert-danger fa fa-solid fa-triangle-exclamation",
+          "attrs": [
+            {
+              "attr": "style",
+              "value": "font-size: 2.5rem;padding: 2rem 2rem;background: #ffeaea;color: #b71c1c;border: 4px solid #b71c1c;border-radius: 8px;text-align: left;white-space: normal;line-height: 1.2;"
+            }
+          ],
+          "content": "<strong>We are currently accepting limited full-time applications</strong> \n<br><br>\n<span>If your institution is not listed here you are not eligible to complete a full-time application in SIMS. Please cancel this application draft and go to the <a href=\"https://studentaidbc.ca/dashboard\" target=\"_blank\" rel=\"noopener noreferrer\">SFAS student dashboard</a> to complete a full-time application.</span>",
+          "refreshOnChange": false,
+          "key": "html11",
+          "customConditional": "show = !!data.mySchoolIsNotListed && !!data.allowBetaInstitutionsOnly;",
           "type": "htmlelement",
           "input": false,
           "tableView": false
@@ -651,6 +665,7 @@
                   "components": [
                     {
                       "label": "HTML",
+                      "tag": "p",
                       "className": "alert alert-info fa fa-info-circle",
                       "attrs": [
                         {
@@ -662,11 +677,28 @@
                       "refreshOnChange": false,
                       "customClass": "banner-info",
                       "key": "html12",
-                      "customConditional": "show = data.myProgramNotListed.programnotListed || (data.myStudyPeriodIsntListed && data.myStudyPeriodIsntListed.offeringnotListed);",
+                      "customConditional": "show = !data.allowBetaInstitutionsOnly && (data.myProgramNotListed.programnotListed || (data.myStudyPeriodIsntListed && data.myStudyPeriodIsntListed.offeringnotListed));",
                       "type": "htmlelement",
                       "input": false,
-                      "tableView": false,
-                      "tag": "p"
+                      "tableView": false
+                    },
+                    {
+                      "label": "HTML",
+                      "tag": "p",
+                      "className": "alert alert-danger fa fa-solid fa-triangle-exclamation",
+                      "attrs": [
+                        {
+                          "attr": "style",
+                          "value": "font-size: 2.5rem;padding: 2rem 2rem;background: #ffeaea;color: #b71c1c;border: 4px solid #b71c1c;border-radius: 8px;text-align: left;white-space: normal;line-height: 1.2;"
+                        }
+                      ],
+                      "content": "<strong>We are currently accepting limited full-time applications</strong> \n<br><br>\n<span>If your institution is not listed here you are not eligible to complete a full-time application in SIMS. Please cancel this application draft and go to the <a href=\"https://studentaidbc.ca/dashboard\" target=\"_blank\" rel=\"noopener noreferrer\">SFAS student dashboard</a> to complete a full-time application.</span>",
+                      "refreshOnChange": false,
+                      "key": "html15",
+                      "customConditional": "show = !!data.myProgramNotListed && !!data.allowBetaInstitutionsOnly;",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false
                     },
                     {
                       "label": "HTML",
@@ -681,11 +713,7 @@
                       "content": "Program information",
                       "refreshOnChange": false,
                       "key": "html42",
-                      "conditional": {
-                        "show": "true",
-                        "when": "programnotListed",
-                        "eq": "true"
-                      },
+                      "customConditional": "show = !data.allowBetaInstitutionsOnly && !!data.programnotlisted;",
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false
@@ -693,20 +721,23 @@
                     {
                       "label": "Program name",
                       "placeholder": "Enter the name of your program",
+                      "applyMaskOn": "change",
                       "customClass": "font-weight-bold",
                       "tableView": true,
                       "validate": {
                         "required": true
                       },
+                      "validateWhenHidden": false,
                       "key": "programName",
+                      "customConditional": "show = !data.allowBetaInstitutionsOnly && data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false;",
                       "type": "textfield",
                       "input": true,
-                      "customConditional": "show = data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false;",
                       "lockKey": true
                     },
                     {
                       "label": "Program description",
                       "placeholder": "Enter a short description of your program",
+                      "applyMaskOn": "change",
                       "autoExpand": false,
                       "customClass": "font-weight-bold",
                       "tableView": true,
@@ -714,13 +745,15 @@
                         "required": true,
                         "maxLength": 500
                       },
+                      "validateWhenHidden": false,
                       "key": "programDescription",
+                      "customConditional": "show = !data.allowBetaInstitutionsOnly && data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false;",
                       "type": "textarea",
-                      "input": true,
-                      "customConditional": "show = data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false;"
+                      "input": true
                     },
                     {
                       "label": "HTML",
+                      "tag": "p",
                       "attrs": [
                         {
                           "attr": "",
@@ -731,14 +764,14 @@
                       "refreshOnChange": false,
                       "customClass": "header-md",
                       "key": "html44",
-                      "customConditional": "show = data.offeringnotListed;",
+                      "customConditional": "show = !data.allowBetaInstitutionsOnly && data.offeringnotListed;",
                       "type": "htmlelement",
                       "input": false,
-                      "tableView": false,
-                      "tag": "p"
+                      "tableView": false
                     },
                     {
                       "label": "HTML",
+                      "tag": "p",
                       "attrs": [
                         {
                           "attr": "",
@@ -748,11 +781,10 @@
                       "content": "Information about how this will trigger a program information request from the institution.",
                       "refreshOnChange": false,
                       "key": "html45",
-                      "customConditional": "show = data.offeringnotListed;",
+                      "customConditional": "show = !data.allowBetaInstitutionsOnly && data.offeringnotListed;",
                       "type": "htmlelement",
                       "input": false,
-                      "tableView": false,
-                      "tag": "p"
+                      "tableView": false
                     },
                     {
                       "label": "Columns",
@@ -780,14 +812,16 @@
                                 "locale": "en",
                                 "displayInTimezone": "viewer"
                               },
+                              "applyMaskOn": "change",
                               "tableView": true,
                               "calculateValue": "if (data.studystartDate){\n  data.selectedOfferingDate = '';\n}",
                               "validate": {
                                 "required": true,
                                 "custom": "// To calculate the time difference of studystartDate and programYearStartDate\r\nconst first_difference_In_Time =\r\n  new Date(data.studystartDate).getTime() -\r\n  new Date(data.programYearStartDate).getTime();\r\n// To calculate the time difference of programYearEndDate and studystartDate\r\nconst last_difference_In_Time =\r\n  new Date(data.programYearEndDate).getTime() -\r\n  new Date(data.studystartDate).getTime();\r\n\r\n// To calculate the no. of days between two dates\r\nconst first_difference_In_Days = first_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// To calculate the no. of days between two dates\r\nconst last_difference_In_Days = last_difference_In_Time / (1000 * 3600 * 24);\r\n\r\n// studystartDate should be equal or in between program year start and end date\r\nvalid =\r\n  first_difference_In_Days >= 0 && last_difference_In_Days >= 0\r\n    ? true\r\n    : \"Study start date should be within the program year\";\r\n"
                               },
+                              "validateWhenHidden": false,
                               "key": "studystartDate",
-                              "customConditional": "show = (data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) ||\n       (data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false);",
+                              "customConditional": "show = !data.allowBetaInstitutionsOnly && (data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) ||\n       (data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false);",
                               "type": "textfield",
                               "input": true
                             }
@@ -822,13 +856,15 @@
                                 "locale": "en",
                                 "displayInTimezone": "viewer"
                               },
+                              "applyMaskOn": "change",
                               "tableView": true,
                               "validate": {
                                 "required": true,
                                 "custom": "// To calculate the time difference of two dates\r\nconst Difference_In_Time =\r\n  new Date(data.studyendDate).getTime() -\r\n  new Date(data.studystartDate).getTime();\r\n\r\n// To calculate the no. of days between two dates\r\nconst Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);\r\nvalid = data.studystartDate\r\n  ? Difference_In_Days <= data.studyPeriodMaxDays\r\n    ? true\r\n    : `Invalid Study Period, Dates must not be greater than ${data.studyPeriodMaxDays} days`\r\n  : \"Please provide Study Start date\";"
                               },
+                              "validateWhenHidden": false,
                               "key": "studyendDate",
-                              "customConditional": "show = (data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) ||\n       (data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false);",
+                              "customConditional": "show = !data.allowBetaInstitutionsOnly && (data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) ||\n       (data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false);",
                               "type": "textfield",
                               "input": true,
                               "lockKey": true
