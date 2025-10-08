@@ -702,7 +702,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
     );
-
+    // Full-time application.
     const fullTimeApplicationPromise = await saveFakeApplicationDisbursements(
       appDataSource,
       {
