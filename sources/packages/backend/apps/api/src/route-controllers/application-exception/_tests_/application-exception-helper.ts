@@ -2,6 +2,7 @@ import {
   Application,
   ApplicationException,
   ApplicationExceptionRequest,
+  ApplicationExceptionRequestStatus,
   ApplicationExceptionStatus,
   InstitutionLocation,
   Student,
@@ -30,10 +31,9 @@ export async function saveFakeApplicationWithApplicationException(
     institutionLocation?: InstitutionLocation;
   },
   options?: {
-    applicationExceptionStatus: ApplicationExceptionStatus;
+    applicationExceptionStatus?: ApplicationExceptionStatus;
   },
 ): Promise<Application> {
-  const applicationRepo = dataSource.getRepository(Application);
   const applicationExceptionRepo =
     dataSource.getRepository(ApplicationException);
   const applicationExceptionRequestRepo = dataSource.getRepository(
@@ -53,33 +53,42 @@ export async function saveFakeApplicationWithApplicationException(
   if (options?.applicationExceptionStatus) {
     applicationException.exceptionStatus = options?.applicationExceptionStatus;
   }
-  applicationException = await applicationExceptionRepo.save(
-    applicationException,
+  applicationException =
+    await applicationExceptionRepo.save(applicationException);
+
+  let exceptionRequestStatus = ApplicationExceptionRequestStatus.Pending;
+
+  if (
+    [
+      ApplicationExceptionStatus.Approved,
+      ApplicationExceptionStatus.Declined,
+    ].includes(options?.applicationExceptionStatus)
+  ) {
+    exceptionRequestStatus =
+      options.applicationExceptionStatus === ApplicationExceptionStatus.Approved
+        ? ApplicationExceptionRequestStatus.Approved
+        : ApplicationExceptionRequestStatus.Declined;
+  }
+
+  await applicationExceptionRequestRepo.save(
+    createFakeApplicationExceptionRequest(
+      {
+        applicationException,
+        creator: student.user,
+      },
+      {
+        initialData: {
+          exceptionRequestStatus,
+        },
+      },
+    ),
   );
+
   const application = await saveFakeApplication(dataSource, {
     student,
     applicationException,
     institutionLocation: relations?.institutionLocation,
   });
 
-  await applicationExceptionRequestRepo.save(
-    createFakeApplicationExceptionRequest({
-      applicationException,
-      creator: student.user,
-    }),
-  );
-
-  return applicationRepo.findOne({
-    relations: {
-      applicationException: {
-        exceptionNote: true,
-        exceptionRequests: true,
-        assessedBy: true,
-      },
-      student: true,
-    },
-    where: {
-      id: application.id,
-    },
-  });
+  return application;
 }

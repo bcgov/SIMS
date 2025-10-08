@@ -9,6 +9,7 @@ import {
   ValidateNested,
 } from "class-validator";
 import {
+  ApplicationExceptionRequestStatus,
   ApplicationExceptionStatus,
   EXCEPTION_NAME_MAX_LENGTH,
   NOTE_DESCRIPTION_MAX_LENGTH,
@@ -42,8 +43,10 @@ export class UpdateApplicationExceptionAPIInDTO {
 }
 
 export class ApplicationExceptionRequestAPIOutDTO {
+  exceptionRequestId: number;
   exceptionName: string;
   exceptionDescription: string;
+  exceptionRequestStatus: ApplicationExceptionRequestStatus;
   previouslyApprovedOn?: Date;
 }
 
