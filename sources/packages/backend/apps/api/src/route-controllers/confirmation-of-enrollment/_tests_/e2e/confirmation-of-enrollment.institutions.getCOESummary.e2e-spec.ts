@@ -573,10 +573,12 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
 
   it(
     "Should get the COE current summary only for applications with offering end date till today" +
-      " when there is one COE for an offering with end date as today and one COE with the offering end date in the past.",
+      " when there is one COE for an offering with end date as today, and one COE with the offering end date in the past.",
     async () => {
       // Arrange
       const today = getISODateOnlyString(new Date());
+      const yesterday = getISODateOnlyString(addDays(-1, today));
+      const tomorrow = getISODateOnlyString(addDays(1, today));
       const collegeCLocation = createFakeInstitutionLocation({
         institution: collegeC,
       });
@@ -601,8 +603,8 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
           firstDisbursementInitialValues: { disbursementDate: today },
         },
       );
-      // Application B with offering end date one day in the past,
-      // which is the edge of the limit to it be excluded.
+      // Application B with offering end date as tomorrow,
+      // which is near the edge of the limit to it be included.
       const applicationBPromise = await saveFakeApplicationDisbursements(
         appDataSource,
         {
@@ -611,20 +613,37 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
           student: sharedStudent,
         },
         {
+          applicationStatus: ApplicationStatus.Enrolment,
+          offeringInitialValues: { studyEndDate: tomorrow },
+          // Disbursement date inside COE window and after application A disbursement date.
+          firstDisbursementInitialValues: { disbursementDate: tomorrow },
+        },
+      );
+      // Application C with offering end date one day in the past,
+      // which is the edge of the limit to it be excluded.
+      const applicationCPromise = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+          student: sharedStudent,
+        },
+        {
           applicationStatus: ApplicationStatus.Completed,
-          offeringInitialValues: {
-            studyEndDate: getISODateOnlyString(addDays(-1, today)),
-          },
+          offeringInitialValues: { studyEndDate: yesterday },
           // Disbursement date inside COE window.
           firstDisbursementInitialValues: { disbursementDate: today },
         },
       );
-      const [applicationA] = await Promise.all([
+      const [applicationA, applicationB] = await Promise.all([
         applicationAPromise,
         applicationBPromise,
+        applicationCPromise,
       ]);
-      const [applicationAFirstSchedule] =
-        applicationA.currentAssessment.disbursementSchedules;
+      const [[applicationAFirstSchedule], [applicationBFirstSchedule]] = [
+        applicationA.currentAssessment.disbursementSchedules,
+        applicationB.currentAssessment.disbursementSchedules,
+      ];
 
       const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/enrollmentPeriod/${EnrollmentPeriod.Current}?page=0&pageLimit=10&sortField=disbursementDate&sortOrder=ASC`;
       // Act/Assert
@@ -636,7 +655,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         )
         .expect(HttpStatus.OK)
         .expect({
-          count: 1,
+          count: 2,
           results: [
             {
               applicationNumber: applicationA.applicationNumber,
@@ -651,6 +670,20 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
               fullName: getUserFullName(applicationA.student.user),
               disbursementScheduleId: applicationAFirstSchedule.id,
               disbursementDate: applicationAFirstSchedule.disbursementDate,
+            },
+            {
+              applicationNumber: applicationB.applicationNumber,
+              applicationId: applicationB.id,
+              offeringIntensity: applicationB.offeringIntensity,
+              studentNumber: applicationB.studentNumber,
+              studyStartDate:
+                applicationB.currentAssessment.offering.studyStartDate,
+              studyEndDate:
+                applicationB.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.required,
+              fullName: getUserFullName(applicationB.student.user),
+              disbursementScheduleId: applicationBFirstSchedule.id,
+              disbursementDate: applicationBFirstSchedule.disbursementDate,
             },
           ],
         });
