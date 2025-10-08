@@ -1,7 +1,6 @@
 import {
   Application,
   ApplicationException,
-  ApplicationExceptionRequest,
   ApplicationExceptionRequestStatus,
   ApplicationExceptionStatus,
   InstitutionLocation,
@@ -36,9 +35,6 @@ export async function saveFakeApplicationWithApplicationException(
 ): Promise<Application> {
   const applicationExceptionRepo =
     dataSource.getRepository(ApplicationException);
-  const applicationExceptionRequestRepo = dataSource.getRepository(
-    ApplicationExceptionRequest,
-  );
   const studentRepo = dataSource.getRepository(Student);
   const assessedBy = await getAESTUser(
     dataSource,
@@ -46,49 +42,43 @@ export async function saveFakeApplicationWithApplicationException(
   );
 
   const student = await studentRepo.save(createFakeStudent());
-  let applicationException = createFakeApplicationException({
+  const applicationException = createFakeApplicationException({
     creator: student.user,
     assessedBy,
   });
   if (options?.applicationExceptionStatus) {
     applicationException.exceptionStatus = options?.applicationExceptionStatus;
   }
-  applicationException =
-    await applicationExceptionRepo.save(applicationException);
 
-  let exceptionRequestStatus = ApplicationExceptionRequestStatus.Pending;
+  // Map to set the application exception request status based on the application exception status.
+  const exceptionRequestStatusMap = {
+    [ApplicationExceptionStatus.Pending]:
+      ApplicationExceptionRequestStatus.Pending,
+    [ApplicationExceptionStatus.Approved]:
+      ApplicationExceptionRequestStatus.Approved,
+    [ApplicationExceptionStatus.Declined]:
+      ApplicationExceptionRequestStatus.Declined,
+  };
 
-  if (
-    [
-      ApplicationExceptionStatus.Approved,
-      ApplicationExceptionStatus.Declined,
-    ].includes(options?.applicationExceptionStatus)
-  ) {
-    exceptionRequestStatus =
-      options.applicationExceptionStatus === ApplicationExceptionStatus.Approved
-        ? ApplicationExceptionRequestStatus.Approved
-        : ApplicationExceptionRequestStatus.Declined;
-  }
-
-  await applicationExceptionRequestRepo.save(
-    createFakeApplicationExceptionRequest(
-      {
-        applicationException,
-        creator: student.user,
+  const applicationExceptionRequest = createFakeApplicationExceptionRequest(
+    {
+      applicationException,
+      creator: student.user,
+    },
+    {
+      initialData: {
+        exceptionRequestStatus:
+          exceptionRequestStatusMap[applicationException.exceptionStatus],
       },
-      {
-        initialData: {
-          exceptionRequestStatus,
-        },
-      },
-    ),
+    },
   );
+  applicationException.exceptionRequests = [applicationExceptionRequest];
+  await applicationExceptionRepo.save(applicationException);
 
   const application = await saveFakeApplication(dataSource, {
     student,
     applicationException,
     institutionLocation: relations?.institutionLocation,
   });
-
   return application;
 }

@@ -6,7 +6,10 @@ import {
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
-import { ApplicationExceptionStatus } from "@sims/sims-db";
+import {
+  ApplicationExceptionRequestStatus,
+  ApplicationExceptionStatus,
+} from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
 import {
@@ -26,7 +29,7 @@ describe("ApplicationExceptionAESTController(e2e)-getExceptionById", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get an application exception by id when available.", async () => {
+  it("Should get an application exception by id when the exception is available and approved.", async () => {
     // Arrange
     const application = await saveFakeApplicationWithApplicationException(
       db.dataSource,
@@ -55,8 +58,10 @@ describe("ApplicationExceptionAESTController(e2e)-getExceptionById", () => {
           application.applicationException.assessedDate.toISOString(),
         exceptionRequests: [
           {
+            exceptionRequestId: firstExceptionRequest.id,
             exceptionName: firstExceptionRequest.exceptionName,
             exceptionDescription: firstExceptionRequest.exceptionDescription,
+            exceptionRequestStatus: ApplicationExceptionRequestStatus.Approved,
           },
         ],
       });
@@ -78,9 +83,16 @@ describe("ApplicationExceptionAESTController(e2e)-getExceptionById", () => {
     approvedException.application = application;
     approvedException.assessedDate = new Date();
     approvedException.exceptionRequests = [
-      createFakeApplicationExceptionRequest({
-        applicationException: approvedException,
-      }),
+      createFakeApplicationExceptionRequest(
+        {
+          applicationException: approvedException,
+        },
+        {
+          initialData: {
+            exceptionRequestStatus: ApplicationExceptionRequestStatus.Approved,
+          },
+        },
+      ),
     ];
     await db.applicationException.save(approvedException);
     const [approvedExceptionRequest] = approvedException.exceptionRequests;
@@ -109,9 +121,11 @@ describe("ApplicationExceptionAESTController(e2e)-getExceptionById", () => {
           application.applicationException.assessedDate.toISOString(),
         exceptionRequests: [
           {
+            exceptionRequestId: firstExceptionRequest.id,
             exceptionName: firstExceptionRequest.exceptionName,
             exceptionDescription: firstExceptionRequest.exceptionDescription,
             previouslyApprovedOn: approvedException.assessedDate.toISOString(),
+            exceptionRequestStatus: ApplicationExceptionRequestStatus.Approved,
           },
         ],
       });
