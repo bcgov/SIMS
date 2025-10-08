@@ -32,7 +32,7 @@ updates:
           - "patch"
       formio:
         patterns:
-          - "formio*"
+          - "@formio*"
           - "bootstrap*"
           - "@fortawesome/fontawesome-free"
         update-types:
@@ -135,13 +135,26 @@ updates:
   - package-ecosystem: "docker"
     commit-message:
       prefix: "docker"
-    directory: "/"
+    directory: "/sources/packages/backend/apps/api"
     schedule:
       interval: "weekly"
     labels:
       - "Dependencies"
       - "Docker"
     groups:
-      docker-updates:
+      docker-backend-updates:
+        patterns:
+          - "*"
+  - package-ecosystem: "docker"
+    commit-message:
+      prefix: "docker"
+    directory: "/sources/packages/web"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "Dependencies"
+      - "Docker"
+    groups:
+      docker-frontend-updates:
         patterns:
           - "*"
