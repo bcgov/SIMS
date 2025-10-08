@@ -18,8 +18,8 @@
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
     "axios": "^1.12.2",
-    "bootstrap": "^5.3.6",
-    "bootstrap-icons": "^1.10.5",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "dayjs": "^1.11.18",
@@ -36,7 +36,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^6.5.2",
+    "@fortawesome/fontawesome-free": "^7.1.0",
     "@types/node": "^24.7.0",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-typescript": "^14.6.0",
