@@ -570,6 +570,88 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
     },
   );
 
+  it(
+    "Should get the COE current summary only for applications with offering end date till today" +
+      " when there is one COE for an offering with end date as today and one COE with the offering end date in the past.",
+    async () => {
+      // Arrange
+      const today = getISODateOnlyString(new Date());
+      const collegeCLocation = createFakeInstitutionLocation({
+        institution: collegeC,
+      });
+      await authorizeUserTokenForLocation(
+        appDataSource,
+        InstitutionTokenTypes.CollegeCUser,
+        collegeCLocation,
+      );
+      // Application A with offering end date before today,
+      // which is the edge of the limit to it be included.
+      const applicationA = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+          student: sharedStudent,
+        },
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+          offeringInitialValues: { studyEndDate: today },
+          // Disbursement date inside COE window.
+          firstDisbursementInitialValues: { disbursementDate: today },
+        },
+      );
+      // Application B with offering end date one day in the past,
+      // which is the edge of the limit to it be excluded.
+      await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+          student: sharedStudent,
+        },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringInitialValues: {
+            studyEndDate: getISODateOnlyString(addDays(-1, today)),
+          },
+          // Disbursement date inside COE window.
+          firstDisbursementInitialValues: { disbursementDate: today },
+        },
+      );
+      const [applicationAFirstSchedule] =
+        applicationA.currentAssessment.disbursementSchedules;
+
+      const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/enrollmentPeriod/${EnrollmentPeriod.Current}?page=0&pageLimit=10&sortField=disbursementDate&sortOrder=ASC`;
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(
+          await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+          BEARER_AUTH_TYPE,
+        )
+        .expect(HttpStatus.OK)
+        .expect({
+          count: 1,
+          results: [
+            {
+              applicationNumber: applicationA.applicationNumber,
+              applicationId: applicationA.id,
+              offeringIntensity: applicationA.offeringIntensity,
+              studentNumber: applicationA.studentNumber,
+              studyStartDate:
+                applicationA.currentAssessment.offering.studyStartDate,
+              studyEndDate:
+                applicationA.currentAssessment.offering.studyEndDate,
+              coeStatus: COEStatus.required,
+              fullName: getUserFullName(applicationA.student.user),
+              disbursementScheduleId: applicationAFirstSchedule.id,
+              disbursementDate: applicationAFirstSchedule.disbursementDate,
+            },
+          ],
+        });
+    },
+  );
+
   afterAll(async () => {
     await app?.close();
   });
