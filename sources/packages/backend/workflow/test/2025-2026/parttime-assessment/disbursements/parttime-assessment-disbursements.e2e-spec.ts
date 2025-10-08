@@ -102,6 +102,62 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-disbursements`, 
     ]);
   });
 
+  it("Should not generate disbursement values when award eligibility is undefined.", async () => {
+    // Arrange
+    const configureDisbursementData =
+      createFakeConfigureDisbursementPartTimeData(PROGRAM_YEAR);
+    configureDisbursementData.offeringStudyStartDate = getISODateOnlyString(
+      addDays(30),
+    );
+    configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
+      addDays(240),
+    );
+    configureDisbursementData.awardEligibilityCSLP = undefined;
+    // Act
+    const calculatedAssessment = await executePartTimeConfigureDisbursement(
+      configureDisbursementData,
+    );
+    // Assert
+    expect(calculatedAssessment.variables.disbursementSchedules).toStrictEqual([
+      {
+        disbursementDate: configureDisbursementData.offeringStudyStartDate,
+        negotiatedExpiryDate: configureDisbursementData.offeringStudyStartDate,
+        disbursements: [
+          {
+            awardEligibility: true,
+            valueAmount: 2000,
+            valueCode: "CSGP",
+            valueType: "Canada Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 3000,
+            valueCode: "CSGD",
+            valueType: "Canada Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 4000,
+            valueCode: "CSPT",
+            valueType: "Canada Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 5000,
+            valueCode: "BCAG",
+            valueType: "BC Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 6000,
+            valueCode: "SBSD",
+            valueType: "BC Grant",
+          },
+        ],
+      },
+    ]);
+  });
+
   it(
     "Should generate 1 disbursement when offering weeks is greater than 17 weeks " +
       "but potential disbursement schedule date 2 is no greater than today.",
