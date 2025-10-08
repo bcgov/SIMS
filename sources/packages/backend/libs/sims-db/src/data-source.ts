@@ -77,9 +77,10 @@ import {
   ORM_CACHE_REDIS_RETRY_INTERVAL,
 } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
+import { PoolConfig } from "pg";
 
 interface ConnectionOptions extends PostgresConnectionOptions {
-  extra: { max: number; connectionTimeoutMillis: number };
+  extra: PoolConfig;
 }
 interface ORMCacheConfig {
   type: "database" | "ioredis" | "ioredis/cluster";
