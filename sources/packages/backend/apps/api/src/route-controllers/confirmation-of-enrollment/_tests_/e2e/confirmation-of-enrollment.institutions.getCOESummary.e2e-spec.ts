@@ -584,7 +584,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         InstitutionTokenTypes.CollegeCUser,
         collegeCLocation,
       );
-      // Application A with offering end date before today,
+      // Application A with offering end date as today,
       // which is the edge of the limit to it be included.
       const applicationA = await saveFakeApplicationDisbursements(
         appDataSource,
