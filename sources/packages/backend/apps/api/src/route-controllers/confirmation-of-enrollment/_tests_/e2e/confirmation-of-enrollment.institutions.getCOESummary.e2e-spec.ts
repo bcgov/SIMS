@@ -20,6 +20,7 @@ import {
   COEStatus,
   DisbursementSchedule,
   Institution,
+  OfferingIntensity,
   Student,
 } from "@sims/sims-db";
 
@@ -586,7 +587,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       );
       // Application A with offering end date as today,
       // which is the edge of the limit to it be included.
-      const applicationA = await saveFakeApplicationDisbursements(
+      const applicationAPromise = await saveFakeApplicationDisbursements(
         appDataSource,
         {
           institution: collegeC,
@@ -602,7 +603,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
       );
       // Application B with offering end date one day in the past,
       // which is the edge of the limit to it be excluded.
-      await saveFakeApplicationDisbursements(
+      const applicationBPromise = await saveFakeApplicationDisbursements(
         appDataSource,
         {
           institution: collegeC,
@@ -618,6 +619,10 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
           firstDisbursementInitialValues: { disbursementDate: today },
         },
       );
+      const [applicationA] = await Promise.all([
+        applicationAPromise,
+        applicationBPromise,
+      ]);
       const [applicationAFirstSchedule] =
         applicationA.currentAssessment.disbursementSchedules;
 
@@ -651,6 +656,79 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOESummary", ()
         });
     },
   );
+
+  it("Should get the COE current summary only for full-time applications when there is one COE for a full-time and one for a part-time application.", async () => {
+    // Arrange
+    const collegeCLocation = createFakeInstitutionLocation({
+      institution: collegeC,
+    });
+    await authorizeUserTokenForLocation(
+      appDataSource,
+      InstitutionTokenTypes.CollegeCUser,
+      collegeCLocation,
+    );
+
+    const fullTimeApplicationPromise = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+        student: sharedStudent,
+      },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        offeringIntensity: OfferingIntensity.fullTime,
+      },
+    );
+    // Part-time application.
+    const partTimeApplicationPromise = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: collegeCLocation,
+        student: sharedStudent,
+      },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        offeringIntensity: OfferingIntensity.partTime,
+      },
+    );
+    const [fullTimeApplication] = await Promise.all([
+      fullTimeApplicationPromise,
+      partTimeApplicationPromise,
+    ]);
+    const [fullTimeApplicationFirstSchedule] =
+      fullTimeApplication.currentAssessment.disbursementSchedules;
+
+    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/enrollmentPeriod/${EnrollmentPeriod.Current}?page=0&pageLimit=10&intensityFilter=${OfferingIntensity.fullTime}&sortField=disbursementDate&sortOrder=ASC`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.OK)
+      .expect({
+        count: 1,
+        results: [
+          {
+            applicationNumber: fullTimeApplication.applicationNumber,
+            applicationId: fullTimeApplication.id,
+            offeringIntensity: fullTimeApplication.offeringIntensity,
+            studentNumber: fullTimeApplication.studentNumber,
+            studyStartDate:
+              fullTimeApplication.currentAssessment.offering.studyStartDate,
+            studyEndDate:
+              fullTimeApplication.currentAssessment.offering.studyEndDate,
+            coeStatus: COEStatus.required,
+            fullName: getUserFullName(fullTimeApplication.student.user),
+            disbursementScheduleId: fullTimeApplicationFirstSchedule.id,
+            disbursementDate: fullTimeApplicationFirstSchedule.disbursementDate,
+          },
+        ],
+      });
+  });
 
   afterAll(async () => {
     await app?.close();
