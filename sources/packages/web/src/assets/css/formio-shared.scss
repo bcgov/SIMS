@@ -602,11 +602,11 @@
   border-radius: 8px !important;
 }
 
-.formio-component-panel.panel-border-none .border {
+.formio-component-panel.panel-border-none > .border {
   border: 0 !important;
 }
 
-.formio-component-panel.panel-padding-none .card-body {
+.formio-component-panel.panel-padding-none > .card > .card-body {
   padding: 0 !important;
 }
 

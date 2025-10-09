@@ -3,8 +3,8 @@
     <template #header>
       <header-navigator
         title="Assessments"
-        subTitle="View request(s)"
-        :routeLocation="backRouteLocation"
+        sub-title="View request(s)"
+        :route-location="backRouteLocation"
       />
       <application-header-title :application-id="applicationId" />
     </template>
@@ -12,9 +12,9 @@
       <header-title-value title="Submitted date" :value="submittedDate"
     /></template>
     <formio-container
-      formName="studentExceptions"
-      :formData="applicationExceptions"
-      :readOnly="readOnlyForm"
+      form-name="studentExceptions"
+      :form-data="applicationExceptions"
+      :read-only="readOnlyForm"
       @submitted="$emit('submitted', $event)"
       :is-data-ready="isDataReady"
     >
@@ -23,10 +23,10 @@
           <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
-              primaryLabel="Complete student request"
-              :disablePrimaryButton="notAllowed"
-              @primaryClick="submit"
-              @secondaryClick="gotToAssessmentsSummary"
+              primary-label="Complete student request"
+              :disable-primary-button="notAllowed"
+              @primary-click="submit"
+              @secondary-click="gotToAssessmentsSummary"
             />
           </template>
         </check-permission-role>
@@ -38,7 +38,12 @@
 import { ref, defineComponent, PropType, watchEffect } from "vue";
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
-import { ApplicationExceptionStatus, FormIOForm, Role } from "@/types";
+import {
+  ApplicationExceptionRequestStatus,
+  ApplicationExceptionStatus,
+  FormIOForm,
+  Role,
+} from "@/types";
 import {
   DetailedApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
@@ -87,7 +92,11 @@ interface ApplicationExceptionFormModel {
   /**
    * Description of exceptions that were requested to be approved.
    */
-  requestedForApproval: string[];
+  requestedForApproval: {
+    exceptionRequestId: number;
+    exceptionDescription: string;
+    exceptionRequestStatus: ApplicationExceptionRequestStatus;
+  }[];
   /**
    * Description of the previously approved exceptions.
    */
@@ -157,7 +166,11 @@ export default defineComponent({
         // the first time to be assessed.
         const requestedForApproval = applicationException.exceptionRequests
           .filter((request) => !request.previouslyApprovedOn)
-          .map((request) => request.exceptionDescription);
+          .map((request) => ({
+            exceptionRequestId: request.exceptionRequestId,
+            exceptionDescription: request.exceptionDescription,
+            exceptionRequestStatus: request.exceptionRequestStatus,
+          }));
         // Descriptions of exceptions that were submitted and
         // approved in some of the previous application versions.
         const previouslyApprovedRequests =
