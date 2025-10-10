@@ -45,27 +45,6 @@
       "collapsible": false,
       "hideLabel": true,
       "key": "panel1",
-      "logic": [
-        {
-          "name": "Disable exception request status input",
-          "trigger": {
-            "type": "javascript",
-            "javascript": "result = !data.showStaffApproval || data.exceptionStatus !== 'Pending';"
-          },
-          "actions": [
-            {
-              "name": "Disable the exception request status radio input",
-              "type": "property",
-              "property": {
-                "label": "Disabled",
-                "value": "disabled",
-                "type": "boolean"
-              },
-              "state": true
-            }
-          ]
-        }
-      ],
       "type": "panel",
       "label": "Panel",
       "input": false,
@@ -81,7 +60,7 @@
               "value": ""
             }
           ],
-          "content": "Requests to be Reviewed ({{ data.requestedForApproval.length }})",
+          "content": "Requests to be Reviewed ({{ data.approvalExceptionRequests.length }})",
           "refreshOnChange": true,
           "customClass": "category-header-medium primary-color",
           "key": "html3",
@@ -103,7 +82,7 @@
           "persistent": false,
           "redrawOn": "data",
           "validateWhenHidden": false,
-          "key": "requestedForApproval",
+          "key": "approvalExceptionRequests",
           "type": "datagrid",
           "input": true,
           "components": [
@@ -266,31 +245,10 @@
       "hideLabel": true,
       "key": "staffApproval",
       "conditional": {
-        "show": "true",
+        "show": true,
         "when": "showStaffApproval",
         "eq": "true"
       },
-      "logic": [
-        {
-          "name": "Disable staff area approval",
-          "trigger": {
-            "type": "javascript",
-            "javascript": "result = data.exceptionStatusOnLoad !== \"Pending\";"
-          },
-          "actions": [
-            {
-              "name": "Disable staff area",
-              "type": "property",
-              "property": {
-                "label": "Disabled",
-                "value": "disabled",
-                "type": "boolean"
-              },
-              "state": true
-            }
-          ]
-        }
-      ],
       "type": "panel",
       "label": "Panel",
       "input": false,
