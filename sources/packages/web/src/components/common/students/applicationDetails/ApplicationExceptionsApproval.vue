@@ -86,9 +86,9 @@ interface ApplicationExceptionFormModel {
    */
   showStaffApproval: boolean;
   /**
-   * Exception requests that were requested to be approved.
+   * Exception requests that were requested to be assessed.
    */
-  approvalExceptionRequests: {
+  assessedExceptionRequests: {
     exceptionRequestId: number;
     exceptionDescription: string;
     exceptionRequestStatus: ApplicationExceptionRequestStatus;
@@ -161,7 +161,7 @@ export default defineComponent({
           );
         // Description of exceptions that were submitted for
         // the first time to be assessed.
-        const approvalExceptionRequests = applicationException.exceptionRequests
+        const assessedExceptionRequests = applicationException.exceptionRequests
           .filter((request) => !request.previouslyApprovedOn)
           .map((request) => ({
             exceptionRequestId: request.exceptionRequestId,
@@ -188,7 +188,7 @@ export default defineComponent({
           exceptionStatusClass: mapRequestAssessmentChipStatus(
             applicationException.exceptionStatus,
           ),
-          approvalExceptionRequests,
+          assessedExceptionRequests,
           previouslyApprovedRequests,
           exceptionStatusOnLoad: applicationException.exceptionStatus,
           showStaffApproval: props.showStaffApproval,

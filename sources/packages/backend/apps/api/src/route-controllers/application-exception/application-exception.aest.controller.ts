@@ -106,7 +106,7 @@ export class ApplicationExceptionAESTController extends BaseController {
       const updatedException =
         await this.applicationExceptionService.approveException(
           exceptionId,
-          payload.approvalExceptionRequests,
+          payload.assessedExceptionRequests,
           payload.noteDescription,
           userToken.userId,
         );

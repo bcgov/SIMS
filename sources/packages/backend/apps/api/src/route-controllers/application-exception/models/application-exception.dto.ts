@@ -32,7 +32,7 @@ export class CreateApplicationExceptionAPIInDTO {
   exceptionRequests: ApplicationExceptionRequestAPIInDTO[];
 }
 
-class ApprovalExceptionRequestAPIInDTO {
+class AssessedExceptionRequestAPIInDTO {
   @IsPositive()
   exceptionRequestId: number;
   @IsIn([
@@ -47,12 +47,12 @@ class ApprovalExceptionRequestAPIInDTO {
 export class UpdateApplicationExceptionAPIInDTO {
   @IsArray()
   @ArrayMinSize(1)
-  @ArrayUnique<ApprovalExceptionRequestAPIInDTO>(
+  @ArrayUnique<AssessedExceptionRequestAPIInDTO>(
     (request) => request.exceptionRequestId,
   )
   @ValidateNested({ each: true })
-  @Type(() => ApprovalExceptionRequestAPIInDTO)
-  approvalExceptionRequests: ApprovalExceptionRequestAPIInDTO[];
+  @Type(() => AssessedExceptionRequestAPIInDTO)
+  assessedExceptionRequests: AssessedExceptionRequestAPIInDTO[];
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;

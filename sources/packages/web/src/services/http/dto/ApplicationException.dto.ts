@@ -13,7 +13,7 @@ export interface CreateApplicationExceptionAPIInDTO {
   exceptionRequests: ApplicationExceptionRequestAPIInDTO[];
 }
 
-class ApprovalExceptionRequestAPIInDTO {
+class AssessedExceptionRequestAPIInDTO {
   @Expose()
   exceptionRequestId: number;
   @Expose()
@@ -24,8 +24,8 @@ class ApprovalExceptionRequestAPIInDTO {
 
 export class UpdateApplicationExceptionAPIInDTO {
   @Expose()
-  @Type(() => ApprovalExceptionRequestAPIInDTO)
-  approvalExceptionRequests: ApprovalExceptionRequestAPIInDTO[];
+  @Type(() => AssessedExceptionRequestAPIInDTO)
+  assessedExceptionRequests: AssessedExceptionRequestAPIInDTO[];
   @Expose()
   noteDescription: string;
 }

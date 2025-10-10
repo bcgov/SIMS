@@ -22,7 +22,7 @@ import {
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
 } from "../../constants";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { ApprovalExceptionRequest } from "..";
+import { AssessedExceptionRequest } from "..";
 import { NoteSharedService } from "@sims/services";
 
 /**
@@ -141,7 +141,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
   /**
    * Updates the student application exception approving or denying it.
    * @param exceptionId exception to be assessed.
-   * @param approvalExceptionRequests approval exception requests to be updated.
+   * @param assessedExceptionRequests assessed exception requests to be updated.
    * @param noteDescription approval or denial note.
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
@@ -149,7 +149,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
    */
   async approveException(
     exceptionId: number,
-    approvalExceptionRequests: ApprovalExceptionRequest[],
+    assessedExceptionRequests: AssessedExceptionRequest[],
     noteDescription: string,
     auditUserId: number,
   ): Promise<{
@@ -199,7 +199,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
           STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
         );
       }
-      const approvalExceptionRequestIds = approvalExceptionRequests.map(
+      const approvalExceptionRequestIds = assessedExceptionRequests.map(
         (request) => request.exceptionRequestId,
       );
       // Validate all the exception requests to be updated.
@@ -211,12 +211,12 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       const auditUser = { id: auditUserId } as User;
       const now = new Date();
       // Update all the exception requests to be approved or declined.
-      const exceptionRequestsToUpdate = approvalExceptionRequests.map(
-        (approvalExceptionRequest) =>
+      const exceptionRequestsToUpdate = assessedExceptionRequests.map(
+        (assessedExceptionRequest) =>
           ({
-            id: approvalExceptionRequest.exceptionRequestId,
+            id: assessedExceptionRequest.exceptionRequestId,
             exceptionRequestStatus:
-              approvalExceptionRequest.exceptionRequestStatus,
+              assessedExceptionRequest.exceptionRequestStatus,
             modifier: auditUser,
             updatedAt: now,
           }) as ApplicationExceptionRequest,
@@ -235,7 +235,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       // Derive the application exception status based on the exception requests status.
       // If all exception requests are approved, the exception is approved.
       // If at least one exception request is declined, the exception is declined.
-      const exceptionStatus = approvalExceptionRequests.every(
+      const exceptionStatus = assessedExceptionRequests.every(
         (request) =>
           request.exceptionRequestStatus ===
           ApplicationExceptionRequestStatus.Approved,

@@ -1,6 +1,6 @@
 import { ApplicationExceptionRequestStatus } from "@sims/sims-db";
 
-export interface ApprovalExceptionRequest {
+export interface AssessedExceptionRequest {
   exceptionRequestId: number;
   exceptionRequestStatus:
     | ApplicationExceptionRequestStatus.Approved
