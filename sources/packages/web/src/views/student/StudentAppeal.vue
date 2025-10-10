@@ -3,8 +3,8 @@
     <template #header>
       <header-navigator
         title="Applications"
-        subTitle="Submit Appeal"
-        :routeLocation="{
+        sub-title="Submit Appeal"
+        :route-location="{
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         }"
       />
@@ -13,7 +13,7 @@
       ><template #select-appeal-header>
         <body-header
           title="When to submit an appeal"
-          subTitle="After your school has confirmed your enrolment, you must inform StudentAid BC of any changes to the information you provided in your application."
+          sub-title="After your school has confirmed your enrolment, you can request an appeal to have StudentAid BC review your exceptional circumstance(s) which could result in a change to your assessment."
         >
         </body-header>
         <student-appeal-instructions />
@@ -21,7 +21,7 @@
       <template #submit-appeal-header>
         <body-header
           title="Complete all question(s) below"
-          subTitle="All requested changes will be reviewed by StudentAid BC after you submit for review."
+          sub-title="All requested changes will be reviewed by StudentAid BC after you submit for review."
         >
         </body-header>
         <student-appeal-instructions /> </template
