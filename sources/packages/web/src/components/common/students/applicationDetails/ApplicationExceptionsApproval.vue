@@ -14,7 +14,7 @@
     <formio-container
       form-name="studentExceptions"
       :form-data="applicationExceptions"
-      :read-only="readOnlyForm"
+      :read-only="readOnly"
       @submitted="$emit('submitted', $event)"
       :is-data-ready="isDataReady"
     >
@@ -58,10 +58,6 @@ import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeader
  */
 interface ApplicationExceptionFormModel {
   /**
-   * Current exception status.
-   */
-  exceptionStatus: ApplicationExceptionStatus;
-  /**
    * Exception status at the moment that the data was loaded.
    * used mainly when the form is being edited and change the
    * status to approved/declined should not change the status
@@ -90,9 +86,9 @@ interface ApplicationExceptionFormModel {
    */
   showStaffApproval: boolean;
   /**
-   * Description of exceptions that were requested to be approved.
+   * Exception requests that were requested to be approved.
    */
-  requestedForApproval: {
+  approvalExceptionRequests: {
     exceptionRequestId: number;
     exceptionDescription: string;
     exceptionRequestStatus: ApplicationExceptionRequestStatus;
@@ -114,6 +110,7 @@ export default defineComponent({
     studentId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     exceptionId: {
       type: Number,
@@ -164,7 +161,7 @@ export default defineComponent({
           );
         // Description of exceptions that were submitted for
         // the first time to be assessed.
-        const requestedForApproval = applicationException.exceptionRequests
+        const approvalExceptionRequests = applicationException.exceptionRequests
           .filter((request) => !request.previouslyApprovedOn)
           .map((request) => ({
             exceptionRequestId: request.exceptionRequestId,
@@ -191,10 +188,9 @@ export default defineComponent({
           exceptionStatusClass: mapRequestAssessmentChipStatus(
             applicationException.exceptionStatus,
           ),
-          requestedForApproval,
+          approvalExceptionRequests,
           previouslyApprovedRequests,
           exceptionStatusOnLoad: applicationException.exceptionStatus,
-          exceptionStatus: applicationException.exceptionStatus,
           showStaffApproval: props.showStaffApproval,
         };
         submittedDate.value = dateOnlyLongString(

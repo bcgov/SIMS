@@ -4,12 +4,12 @@ import {
   RecordDataModelService,
   ApplicationException,
   ApplicationExceptionStatus,
-  Note,
   NoteType,
-  Student,
   User,
   getUserFullNameLikeSearch,
   ApplicationStatus,
+  ApplicationExceptionRequestStatus,
+  ApplicationExceptionRequest,
 } from "@sims/sims-db";
 import {
   OrderByCondition,
@@ -22,6 +22,8 @@ import {
   STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
 } from "../../constants";
 import { NotificationActionsService } from "@sims/services/notifications";
+import { ApprovalExceptionRequest } from "..";
+import { NoteSharedService } from "@sims/services";
 
 /**
  * Manages student applications exceptions detected upon full-time/part-time application
@@ -32,6 +34,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
   constructor(
     private readonly dataSource: DataSource,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly noteSharedService: NoteSharedService,
   ) {
     super(dataSource.getRepository(ApplicationException));
   }
@@ -138,26 +141,31 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
   /**
    * Updates the student application exception approving or denying it.
    * @param exceptionId exception to be assessed.
-   * @param exceptionStatus status to be updated.
+   * @param approvalExceptionRequests approval exception requests to be updated.
    * @param noteDescription approval or denial note.
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
-   * @returns updated student application exception.
+   * @returns updated student application exception status and application id.
    */
   async approveException(
     exceptionId: number,
-    exceptionStatus: ApplicationExceptionStatus,
+    approvalExceptionRequests: ApprovalExceptionRequest[],
     noteDescription: string,
     auditUserId: number,
-  ): Promise<ApplicationException> {
+  ): Promise<{
+    applicationId: number;
+    exceptionStatus: ApplicationExceptionStatus;
+  }> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       const applicationExceptionRepo =
         transactionalEntityManager.getRepository(ApplicationException);
-      const exceptionToUpdate = await applicationExceptionRepo
+      const applicationException = await applicationExceptionRepo
         .createQueryBuilder("exception")
         .select([
           "exception.id",
           "exception.exceptionStatus",
+          "exceptionRequest.id",
+          "exceptionRequest.exceptionRequestStatus",
           "application.id",
           "student.id",
           "user.id",
@@ -165,6 +173,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
           "user.lastName",
           "user.email",
         ])
+        .innerJoin("exception.exceptionRequests", "exceptionRequest")
         .innerJoin("exception.application", "application")
         .innerJoin("application.student", "student")
         .innerJoin("student.user", "user")
@@ -174,7 +183,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         })
         .getOne();
 
-      if (!exceptionToUpdate) {
+      if (!applicationException) {
         throw new CustomNamedError(
           "Student application exception not found.",
           STUDENT_APPLICATION_EXCEPTION_NOT_FOUND,
@@ -182,44 +191,81 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       }
 
       if (
-        exceptionToUpdate.exceptionStatus !== ApplicationExceptionStatus.Pending
+        applicationException.exceptionStatus !==
+        ApplicationExceptionStatus.Pending
       ) {
         throw new CustomNamedError(
           `Student application exception must be in ${ApplicationExceptionStatus.Pending} state to be assessed.`,
           STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
         );
       }
+      const approvalExceptionRequestIds = approvalExceptionRequests.map(
+        (request) => request.exceptionRequestId,
+      );
+      // Validate all the exception requests to be updated.
+      this.validateExceptionsRequestsToUpdate(
+        approvalExceptionRequestIds,
+        applicationException,
+      );
 
       const auditUser = { id: auditUserId } as User;
       const now = new Date();
-      // Create the note to be associated with the update.
-      const newNote = new Note();
-      newNote.description = noteDescription;
-      newNote.noteType = NoteType.Application;
-      newNote.creator = auditUser;
-      newNote.createdAt = now;
-      const savedNote = await transactionalEntityManager
-        .getRepository(Note)
-        .save(newNote);
-      // Associate the created note with the student.
+      // Update all the exception requests to be approved or declined.
+      const exceptionRequestsToUpdate = approvalExceptionRequests.map(
+        (approvalExceptionRequest) =>
+          ({
+            id: approvalExceptionRequest.exceptionRequestId,
+            exceptionRequestStatus:
+              approvalExceptionRequest.exceptionRequestStatus,
+            modifier: auditUser,
+            updatedAt: now,
+          }) as ApplicationExceptionRequest,
+      );
       await transactionalEntityManager
-        .getRepository(Student)
-        .createQueryBuilder()
-        .relation(Student, "notes")
-        .of(exceptionToUpdate.application.student)
-        .add(savedNote);
-      // Update the application exception.
-      exceptionToUpdate.exceptionStatus = exceptionStatus;
-      exceptionToUpdate.exceptionNote = savedNote;
-      exceptionToUpdate.assessedBy = auditUser;
-      exceptionToUpdate.assessedDate = now;
-      exceptionToUpdate.modifier = auditUser;
-      exceptionToUpdate.updatedAt = now;
+        .getRepository(ApplicationExceptionRequest)
+        .save(exceptionRequestsToUpdate);
+      // Create the note to be associated with the application exception update.
+      const exceptionNote = await this.noteSharedService.createStudentNote(
+        applicationException.application.student.id,
+        NoteType.Application,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      // Derive the application exception status based on the exception requests status.
+      // If all exception requests are approved, the exception is approved.
+      // If at least one exception request is declined, the exception is declined.
+      const exceptionStatus = approvalExceptionRequests.every(
+        (request) =>
+          request.exceptionRequestStatus ===
+          ApplicationExceptionRequestStatus.Approved,
+      )
+        ? ApplicationExceptionStatus.Approved
+        : ApplicationExceptionStatus.Declined;
 
-      const exception = await applicationExceptionRepo.save(exceptionToUpdate);
+      const result = await applicationExceptionRepo.update(
+        {
+          id: exceptionId,
+          exceptionStatus: ApplicationExceptionStatus.Pending,
+        },
+        {
+          exceptionStatus,
+          exceptionNote,
+          assessedBy: auditUser,
+          assessedDate: now,
+          modifier: auditUser,
+          updatedAt: now,
+        },
+      );
+      if (!result.affected) {
+        throw new CustomNamedError(
+          `Student application exception ${exceptionId} not updated.`,
+          STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
+        );
+      }
 
       // Create a student notification when ministry completes an exception.
-      const studentUser = exceptionToUpdate.application.student.user;
+      const studentUser = applicationException.application.student.user;
       await this.notificationActionsService.saveExceptionCompleteNotification(
         {
           givenNames: studentUser.firstName,
@@ -230,7 +276,10 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         auditUserId,
         transactionalEntityManager,
       );
-      return exception;
+      return {
+        applicationId: applicationException.application.id,
+        exceptionStatus,
+      };
     });
   }
 
@@ -318,5 +367,48 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     const dbColumnName = fieldSortOptions[sortField];
     orderByCondition[dbColumnName] = sortOrder;
     return orderByCondition;
+  }
+
+  /**
+   * Validates the exception requests to be updated as approved or declined.
+   * @param approvalExceptionRequestIds approval exception request ids.
+   * @param applicationException application exception to validate against.
+   * @throws {CustomNamedError} when all the approval exception requests
+   * are not valid to be updated as approved or declined for the application exception.
+   */
+  private validateExceptionsRequestsToUpdate(
+    approvalExceptionRequestIds: number[],
+    applicationException: ApplicationException,
+  ): void {
+    // If there are no pending exception requests to be updated
+    // for the application exception, throw an error.
+    const pendingExceptionRequestsToUpdate =
+      applicationException.exceptionRequests.filter(
+        (request) =>
+          request.exceptionRequestStatus ===
+          ApplicationExceptionRequestStatus.Pending,
+      );
+
+    if (!pendingExceptionRequestsToUpdate.length) {
+      throw new CustomNamedError(
+        `There is no pending exception request to updated for the student application exception ${applicationException.id}.`,
+        STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
+      );
+    }
+
+    // Check if the exception requests to updated as approved or declined
+    // are exactly the same exception requests that are pending for the application exception.
+    if (
+      approvalExceptionRequestIds.length !==
+        pendingExceptionRequestsToUpdate.length ||
+      pendingExceptionRequestsToUpdate.some(
+        (request) => !approvalExceptionRequestIds.includes(request.id),
+      )
+    ) {
+      throw new CustomNamedError(
+        `The exception requests to be updated does not match all the pending exception requests for the student application exception ${applicationException.id}.`,
+        STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
+      );
+    }
   }
 }

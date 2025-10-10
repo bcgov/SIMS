@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 import {
   ArrayMinSize,
   ArrayUnique,
+  IsArray,
   IsIn,
   IsNotEmpty,
   IsPositive,
@@ -31,12 +32,27 @@ export class CreateApplicationExceptionAPIInDTO {
   exceptionRequests: ApplicationExceptionRequestAPIInDTO[];
 }
 
-export class UpdateApplicationExceptionAPIInDTO {
+class ApprovalExceptionRequestAPIInDTO {
+  @IsPositive()
+  exceptionRequestId: number;
   @IsIn([
-    ApplicationExceptionStatus.Approved,
-    ApplicationExceptionStatus.Declined,
+    ApplicationExceptionRequestStatus.Approved,
+    ApplicationExceptionRequestStatus.Declined,
   ])
-  exceptionStatus: ApplicationExceptionStatus;
+  exceptionRequestStatus:
+    | ApplicationExceptionRequestStatus.Approved
+    | ApplicationExceptionRequestStatus.Declined;
+}
+
+export class UpdateApplicationExceptionAPIInDTO {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayUnique<ApprovalExceptionRequestAPIInDTO>(
+    (request) => request.exceptionRequestId,
+  )
+  @ValidateNested({ each: true })
+  @Type(() => ApprovalExceptionRequestAPIInDTO)
+  approvalExceptionRequests: ApprovalExceptionRequestAPIInDTO[];
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
