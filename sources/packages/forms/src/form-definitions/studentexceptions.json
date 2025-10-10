@@ -60,7 +60,7 @@
               "value": ""
             }
           ],
-          "content": "Requests to be Reviewed ({{ data.requestedForApproval.length }})",
+          "content": "Requests to be Reviewed ({{ data.assessedExceptionRequests.length }})",
           "refreshOnChange": true,
           "customClass": "category-header-medium primary-color",
           "key": "html3",
@@ -79,38 +79,82 @@
           "customClass": "borderless-datagrid",
           "hideLabel": true,
           "tableView": false,
-          "defaultValue": [
-            {}
-          ],
           "persistent": false,
           "redrawOn": "data",
           "validateWhenHidden": false,
-          "key": "requestedForApproval",
+          "key": "assessedExceptionRequests",
           "type": "datagrid",
           "input": true,
           "components": [
             {
+              "title": "Requests to be approved panel",
+              "customClass": "panel-border-none panel-padding-none",
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "exceptionRequestsPanel",
+              "type": "panel",
+              "label": "Panel",
               "input": false,
-              "key": "well",
               "tableView": false,
-              "label": "",
-              "type": "well",
               "components": [
                 {
-                  "label": "Exception description",
-                  "tag": "strong",
-                  "attrs": [
+                  "label": "Exception request id",
+                  "key": "exceptionRequestId",
+                  "type": "hidden",
+                  "input": true,
+                  "tableView": false
+                },
+                {
+                  "input": false,
+                  "key": "well",
+                  "tableView": false,
+                  "label": "",
+                  "type": "well",
+                  "components": [
                     {
-                      "attr": "",
-                      "value": ""
+                      "label": "Exception description",
+                      "tag": "strong",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": "{{ row.exceptionDescription }}",
+                      "refreshOnChange": false,
+                      "key": "html",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false
+                    }
+                  ]
+                },
+                {
+                  "label": "Approve exception request?",
+                  "optionsLabelPosition": "right",
+                  "customClass": "ml-1",
+                  "inline": false,
+                  "tableView": false,
+                  "values": [
+                    {
+                      "label": "Yes",
+                      "value": "Approved",
+                      "shortcut": ""
+                    },
+                    {
+                      "label": "No",
+                      "value": "Declined",
+                      "shortcut": ""
                     }
                   ],
-                  "content": "{{ row }}",
-                  "refreshOnChange": false,
-                  "key": "html",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false
+                  "validate": {
+                    "required": true,
+                    "onlyAvailableItems": true
+                  },
+                  "validateWhenHidden": false,
+                  "key": "exceptionRequestStatus",
+                  "type": "radio",
+                  "input": true
                 }
               ]
             }
@@ -201,31 +245,10 @@
       "hideLabel": true,
       "key": "staffApproval",
       "conditional": {
-        "show": "true",
+        "show": true,
         "when": "showStaffApproval",
         "eq": "true"
       },
-      "logic": [
-        {
-          "name": "Disable staff area approval",
-          "trigger": {
-            "type": "javascript",
-            "javascript": "result = data.exceptionStatusOnLoad !== \"Pending\";"
-          },
-          "actions": [
-            {
-              "name": "Disable staff area",
-              "type": "property",
-              "property": {
-                "label": "Disabled",
-                "value": "disabled",
-                "type": "boolean"
-              },
-              "state": true
-            }
-          ]
-        }
-      ],
       "type": "panel",
       "label": "Panel",
       "input": false,
@@ -247,31 +270,6 @@
           "type": "htmlelement",
           "input": false,
           "tableView": false
-        },
-        {
-          "label": "Approve for assessment?",
-          "optionsLabelPosition": "right",
-          "inline": false,
-          "tableView": false,
-          "values": [
-            {
-              "label": "Yes",
-              "value": "Approved",
-              "shortcut": ""
-            },
-            {
-              "label": "No",
-              "value": "Declined",
-              "shortcut": ""
-            }
-          ],
-          "validate": {
-            "required": true,
-            "onlyAvailableItems": true
-          },
-          "key": "exceptionStatus",
-          "type": "radio",
-          "input": true
         },
         {
           "label": "Notes",

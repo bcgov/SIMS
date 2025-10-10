@@ -78,9 +78,12 @@ export class ApplicationExceptionAESTController extends BaseController {
   }
 
   /**
-   * Updates the student application exception approving or denying it.
+   * Update the student exception based on the status of all exception requests
+   * associated with the exception.
+   * If all exception requests are approved, the exception is approved.
+   * If at least one exception request is declined, the exception is declined.
    * @param exceptionId exception to be approved or denied.
-   * @param payload information to approve or deny the exception.
+   * @param payload exception request details with the note.
    */
   @Roles(Role.StudentApproveDeclineExceptions)
   @Patch(":exceptionId")
@@ -88,7 +91,11 @@ export class ApplicationExceptionAESTController extends BaseController {
     description: "Student application exception not found.",
   })
   @ApiUnprocessableEntityResponse({
-    description: `Student application exception must be in ${ApplicationExceptionStatus.Pending} state to be assessed.`,
+    description:
+      `Student application exception must be in ${ApplicationExceptionStatus.Pending} state to be assessed` +
+      " or there is no pending exception request to updated for the application exception" +
+      " or the exception requests to be updated does not match all the pending exception requests for the student application exception" +
+      " or student application exception not updated.",
   })
   async approveException(
     @Param("exceptionId", ParseIntPipe) exceptionId: number,
@@ -99,12 +106,12 @@ export class ApplicationExceptionAESTController extends BaseController {
       const updatedException =
         await this.applicationExceptionService.approveException(
           exceptionId,
-          payload.exceptionStatus,
+          payload.assessedExceptionRequests,
           payload.noteDescription,
           userToken.userId,
         );
       await this.workflowClientService.sendApplicationExceptionApproval(
-        updatedException.application.id,
+        updatedException.applicationId,
         updatedException.exceptionStatus,
       );
     } catch (error: unknown) {

@@ -68,8 +68,10 @@ describe("ApplicationExceptionInstitutionsController(e2e)-getException", () => {
           submittedDate: applicationException.createdAt.toISOString(),
           exceptionRequests: applicationException.exceptionRequests.map(
             (request) => ({
+              exceptionRequestId: request.id,
               exceptionName: request.exceptionName,
               exceptionDescription: request.exceptionDescription,
+              exceptionRequestStatus: request.exceptionRequestStatus,
             }),
           ),
         });
