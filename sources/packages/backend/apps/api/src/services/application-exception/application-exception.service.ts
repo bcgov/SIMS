@@ -199,12 +199,12 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
           STUDENT_APPLICATION_EXCEPTION_INVALID_STATE,
         );
       }
-      const approvalExceptionRequestIds = assessedExceptionRequests.map(
+      const assessedExceptionRequestIds = assessedExceptionRequests.map(
         (request) => request.exceptionRequestId,
       );
       // Validate all the exception requests to be updated.
       this.validateExceptionsRequestsToUpdate(
-        approvalExceptionRequestIds,
+        assessedExceptionRequestIds,
         applicationException,
       );
 
@@ -371,13 +371,13 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
 
   /**
    * Validates the exception requests to be updated as approved or declined.
-   * @param approvalExceptionRequestIds approval exception request ids.
+   * @param assessedExceptionRequestIds assessed exception request ids.
    * @param applicationException application exception to validate against.
-   * @throws {CustomNamedError} when all the approval exception requests
+   * @throws {CustomNamedError} when all the assessed exception requests
    * are not valid to be updated as approved or declined for the application exception.
    */
   private validateExceptionsRequestsToUpdate(
-    approvalExceptionRequestIds: number[],
+    assessedExceptionRequestIds: number[],
     applicationException: ApplicationException,
   ): void {
     // If there are no pending exception requests to be updated
@@ -399,10 +399,10 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     // Check if the exception requests to updated as approved or declined
     // are exactly the same exception requests that are pending for the application exception.
     if (
-      approvalExceptionRequestIds.length !==
+      assessedExceptionRequestIds.length !==
         pendingExceptionRequestsToUpdate.length ||
       pendingExceptionRequestsToUpdate.some(
-        (request) => !approvalExceptionRequestIds.includes(request.id),
+        (request) => !assessedExceptionRequestIds.includes(request.id),
       )
     ) {
       throw new CustomNamedError(
