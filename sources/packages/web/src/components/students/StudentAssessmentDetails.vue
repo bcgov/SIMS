@@ -1,23 +1,23 @@
 <template>
   <request-assessment
     class="mb-5"
-    :applicationId="applicationId"
-    :showWhenEmpty="false"
-    @viewStudentAppeal="goToStudentAppeal"
-    @viewStudentApplicationOfferingChange="
+    :application-id="applicationId"
+    :show-when-empty="false"
+    @view-student-appeal="goToStudentAppeal"
+    @view-student-application-offering-change="
       goToStudentApplicationOfferingChangeRequest
     "
   />
   <history-assessment
     class="mb-5"
-    :applicationId="applicationId"
-    :viewRequestTypes="studentAssessmentRequestTypes"
-    @viewStudentAppeal="goToStudentAppeal"
-    @viewStudentApplicationOfferingChange="
+    :application-id="applicationId"
+    :view-request-types="studentAssessmentRequestTypes"
+    @view-student-appeal="goToStudentAppeal"
+    @view-student-application-offering-change="
       goToStudentApplicationOfferingChangeRequest
     "
-    @viewAssessment="goToViewAssessment"
-    @viewScholasticStandingChange="goToScholasticStanding"
+    @view-assessment="goToViewAssessment"
+    @view-scholastic-standing-change="goToScholasticStanding"
   />
 </template>
 <script lang="ts">
@@ -60,7 +60,7 @@ export default defineComponent({
 
     const goToStudentAppeal = (appealId: number) => {
       router.push({
-        name: StudentRoutesConst.STUDENT_APPEAL_REQUEST,
+        name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_REQUEST,
         params: {
           applicationId: props.applicationId,
           appealId,

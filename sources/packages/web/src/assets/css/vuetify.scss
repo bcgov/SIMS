@@ -187,3 +187,7 @@
 .label-bold-menu .v-list-item .v-list-item-title {
   @extend .label-bold;
 }
+
+.radio-align-top .v-selection-control {
+  align-items: start;
+}

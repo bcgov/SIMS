@@ -83,3 +83,12 @@ export class StudentAppealPendingSummaryAPIOutDTO {
   lastName: string;
   applicationNumber: string;
 }
+
+export class EligibleApplicationForAppealAPIOutDTO {
+  id: number;
+  applicationNumber: string;
+}
+
+export class EligibleApplicationsForAppealAPIOutDTO {
+  applications: EligibleApplicationForAppealAPIOutDTO[];
+}

@@ -1,43 +1,68 @@
+<!-- Legacy appeals submission (a.k.a. "change request"). -->
 <template>
-  <template v-if="showRequestForAppeal">
-    <!-- Select appeal area -->
-    <slot name="select-appeal-header"></slot>
-    <formio-container
-      :formName="isChangeRequest ? 'studentRequestChange' : 'studentAppeals'"
-      :formData="initialData"
-      :is-data-ready="isDataReady"
-      @submitted="submitRequest"
-    >
-      <template #actions="{ submit }">
-        <footer-buttons
-          justify="end"
-          :show-secondary-button="false"
-          @primaryClick="submit"
-          primaryLabel="Next"
-        ></footer-buttons>
-      </template>
-    </formio-container>
-  </template>
-  <template v-else>
-    <!-- Submit appeal area -->
-    <slot name="submit-appeal-header"></slot>
-    <appeal-requests-form
-      :student-appeal-requests="appealRequestsForms"
-      @submitted="submitAppeal"
-    >
-      <template #actions="{ submit }">
-        <footer-buttons
-          justify="space-between"
-          :processing="processing"
-          @secondaryClick="backToRequestForm"
-          secondaryLabel="Back"
-          @primaryClick="submit"
-          primaryLabel="Submit for review"
-        ></footer-buttons>
-      </template>
-    </appeal-requests-form>
-  </template>
+  <student-page-container class="overflow-visible">
+    <template #header>
+      <header-navigator title="Student" sub-title="Request a Change" />
+    </template>
+    <template v-if="showRequestForAppeal">
+      <!-- Select appeal area -->
+      <slot name="select-appeal-header"></slot>
+      <formio-container
+        form-name="studentRequestChange"
+        :form-data="initialData"
+        :is-data-ready="isDataReady"
+        @submitted="submitRequest"
+      >
+        <template #actions="{ submit }">
+          <footer-buttons
+            justify="end"
+            :show-secondary-button="false"
+            @primary-click="submit"
+            primary-label="Next"
+          ></footer-buttons>
+        </template>
+      </formio-container>
+    </template>
+    <template v-else>
+      <!--Legacy appeals area -->
+      <body-header
+        title="Complete all question(s) below"
+        sub-title="All requested changes will be reviewed by StudentAid BC after you submit for review."
+      >
+      </body-header>
+      <div class="mt-4">
+        <p class="font-bold">Instructions:</p>
+        <ul>
+          <li>You must complete all fields of the change request form.</li>
+          <li>
+            All information that has not changed should match what was entered
+            on your application.
+          </li>
+          <li>
+            Information from previously approved Change Requests attached to
+            this application must be re-entered here.
+          </li>
+        </ul>
+      </div>
+      <appeal-requests-form
+        :student-appeal-requests="appealRequestsForms"
+        @submitted="submitAppeal"
+      >
+        <template #actions="{ submit }">
+          <footer-buttons
+            justify="space-between"
+            :processing="processing"
+            @secondary-click="backToRequestForm"
+            secondary-label="Back"
+            @primary-click="submit"
+            primary-label="Submit for review"
+          ></footer-buttons>
+        </template>
+      </appeal-requests-form>
+    </template>
+  </student-page-container>
 </template>
+
 <script lang="ts">
 import { computed, ref, defineComponent, watchEffect } from "vue";
 import { ApiProcessError, FormIOForm, StudentAppealRequest } from "@/types";
@@ -65,12 +90,6 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    isChangeRequest: {
-      type: Boolean,
-      required: false,
-      // This prop is used to determine if the operation is for a change request or an appeal.
-      default: false,
-    },
   },
   setup(props) {
     const snackBar = useSnackBar();
@@ -80,9 +99,6 @@ export default defineComponent({
     let applicationAppealData: ApplicationProgramYearAPIOutDTO;
     const showRequestForAppeal = computed(
       () => appealRequestsForms.value.length === 0,
-    );
-    const operation = computed(() =>
-      props.isChangeRequest ? "request for change" : "appeal",
     );
     const isDataReady = ref(false);
 
@@ -100,7 +116,7 @@ export default defineComponent({
           isDataReady.value = true;
         } catch {
           snackBar.error(
-            `An unexpected error happened while retrieving the application to submit the ${operation.value}.`,
+            "An unexpected error happened while retrieving the application to submit the request for change.",
           );
         }
       }
@@ -114,7 +130,7 @@ export default defineComponent({
           ({
             formName,
             data: { programYear: applicationAppealData.programYear },
-          } as StudentAppealRequest),
+          }) as StudentAppealRequest,
       );
     };
 
@@ -130,7 +146,7 @@ export default defineComponent({
           appealRequests,
         );
         snackBar.success(
-          `The ${operation.value} has been submitted successfully.`,
+          `The request for change has been submitted successfully.`,
         );
         backToRequestForm();
       } catch (error: unknown) {
@@ -146,7 +162,7 @@ export default defineComponent({
           return;
         }
         snackBar.error(
-          `An unexpected error happened while submitting the ${operation.value}.`,
+          "An unexpected error happened while submitting the request for change.",
         );
       } finally {
         processing.value = false;

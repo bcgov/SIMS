@@ -12,13 +12,17 @@ import StudentFileUploader from "@/views/student/StudentFileUploader.vue";
 import NotificationsSettings from "@/views/student/NotificationsSettings.vue";
 import StudentApplicationSummary from "@/views/student/StudentApplicationSummary.vue";
 import StudentApplicationDetails from "@/views/student/StudentApplicationDetails.vue";
-import StudentAppealRequest from "@/views/student/StudentAppealRequest.vue";
-import StudentAppeal from "@/views/student/StudentAppeal.vue";
+import LegacyStudentAppealRequest from "@/views/student/appeal-legacy/StudentAppealSubmit.vue";
+import StudentAppeal from "@/views/student/appeal/StudentAppeal.vue";
+import StudentApplicationAppeal from "@/views/student/appeal/StudentApplicationAppeal.vue";
+import StudentAppealSubmit from "@/views/student/appeal/StudentAppealSubmit.vue";
+import StudentApplicationAppealSubmit from "@/views/student/appeal/StudentApplicationAppealSubmit.vue";
 import StudentAccountActivity from "@/views/student/StudentAccountActivity.vue";
 import StudentOverawardsBalance from "@/views/student/StudentOverawardsBalance.vue";
 import StudentAccountApplicationInProgress from "@/views/student/StudentAccountApplicationInProgress.vue";
 import StudentAssessmentAward from "@/views/student/StudentAssessmentAward.vue";
-import StudentAppealRequests from "@/views/student/StudentAppealRequests.vue";
+import StudentAppealRequests from "@/views/student/appeal/StudentAppealRequests.vue";
+import StudentApplicationAppealRequests from "@/views/student/appeal/StudentApplicationAppealRequests.vue";
 import ApplicationOfferingChangeFormView from "@/views/student/application-offering-change-request/ApplicationOfferingChangeFormView.vue";
 import RequestedApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/RequestedApplicationOfferingDetails.vue";
 import ActiveApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/ActiveApplicationOfferingDetails.vue";
@@ -200,7 +204,18 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.RequestChange,
         name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
-        component: StudentAppealRequest,
+        component: LegacyStudentAppealRequest,
+        props: (route) => ({
+          applicationId: parseInt(route.params.applicationId as string),
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentApplicationAppeal,
+        name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL,
+        component: StudentApplicationAppeal,
         props: (route) => ({
           applicationId: parseInt(route.params.applicationId as string),
         }),
@@ -212,8 +227,32 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.StudentAppeal,
         name: StudentRoutesConst.STUDENT_APPEAL,
         component: StudentAppeal,
+        props: () => ({
+          applicationId: null,
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentApplicationAppealSubmit,
+        name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_SUBMIT,
+        component: StudentApplicationAppealSubmit,
         props: (route) => ({
           applicationId: parseInt(route.params.applicationId as string),
+          appealForms: (route.params.appealForms as string).split(","),
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentAppealSubmit,
+        name: StudentRoutesConst.STUDENT_APPEAL_SUBMIT,
+        component: StudentAppealSubmit,
+        props: (route) => ({
+          appealForms: (route.params.appealForms as string).split(","),
+          applicationId: null,
         }),
         meta: {
           clientType: ClientIdType.Student,
@@ -224,6 +263,17 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_APPEAL_REQUEST,
         component: StudentAppealRequests,
         props: true,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentApplicationAppealRequests,
+        name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_REQUEST,
+        component: StudentApplicationAppealRequests,
+        props: (route) => ({
+          applicationId: parseInt(route.params.applicationId as string),
+        }),
         meta: {
           clientType: ClientIdType.Student,
         },
