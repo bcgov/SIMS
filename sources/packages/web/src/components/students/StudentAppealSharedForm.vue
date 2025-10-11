@@ -150,7 +150,7 @@ export default defineComponent({
           await StudentAppealService.shared.getEligibleApplicationsForAppeal();
         eligibleApplications.value = eligibleApplicationForAppeal.applications;
       } catch {
-        snackBar.error("Unexpect error while loading eligible applications.");
+        snackBar.error("Unexpected error while loading eligible applications.");
       } finally {
         loadingEligibleApplications.value = false;
       }
