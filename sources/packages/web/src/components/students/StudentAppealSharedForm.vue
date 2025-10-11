@@ -6,9 +6,9 @@
         sub-title="You can submit two types of appeals for Student Aid BC to review. Select the appropriate appeals type below."
       />
     </template>
-    <error-summary :errors="appelsSelectionForm.errors" />
+    <error-summary :errors="appealsSelectionForm.errors" />
     <content-group>
-      <v-form ref="appelsSelectionForm">
+      <v-form ref="appealsSelectionForm">
         <v-radio-group
           density="compact"
           v-model="selectedAppealType"
@@ -123,7 +123,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
-    const appelsSelectionForm = ref({} as VForm);
+    const appealsSelectionForm = ref({} as VForm);
     const eligibleApplications = ref<EligibleApplicationForAppealAPIOutDTO[]>();
     const loadingEligibleApplications = ref(false);
     const selectedAppealType = ref<AppealTypes | null>(AppealTypes.Application);
@@ -172,7 +172,7 @@ export default defineComponent({
     );
 
     const showForms = async (): Promise<void> => {
-      const formIsValid = appelsSelectionForm.value.validate();
+      const formIsValid = appealsSelectionForm.value.validate();
       if (!formIsValid) {
         return;
       }
@@ -195,7 +195,7 @@ export default defineComponent({
     };
 
     return {
-      appelsSelectionForm,
+      appealsSelectionForm,
       checkNullOrEmptyRule,
       StudentRoutesConst,
       selectedAppealType,
