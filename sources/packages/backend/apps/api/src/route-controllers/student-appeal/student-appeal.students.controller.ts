@@ -16,6 +16,7 @@ import {
   StudentAppealService,
 } from "../../services";
 import {
+  EligibleApplicationsForAppealAPIOutDTO,
   StudentAppealAPIInDTO,
   StudentAppealAPIOutDTO,
   StudentAppealRequestAPIOutDTO,
@@ -216,5 +217,25 @@ export class StudentAppealStudentsController extends BaseController {
       appealId,
       { studentId: userToken.studentId },
     );
+  }
+
+  /**
+   * Get applications that are eligible to have an appeal submitted.
+   * @returns applications that are eligible to have an appeal submitted.
+   */
+  @Get("eligible-applications")
+  async getEligibleApplicationsForAppeal(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<EligibleApplicationsForAppealAPIOutDTO> {
+    const eligibleApplications =
+      await this.studentAppealService.getEligibleApplicationsForAppeal(
+        userToken.studentId,
+      );
+    return {
+      applications: eligibleApplications.map((application) => ({
+        id: application.id,
+        applicationNumber: application.applicationNumber,
+      })),
+    };
   }
 }

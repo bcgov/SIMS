@@ -3,6 +3,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import { PaginationOptions } from "@/types";
 import {
   DetailedStudentAppealRequestAPIOutDTO,
+  EligibleApplicationsForAppealAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   StudentAppealAPIInDTO,
   StudentAppealAPIOutDTO,
@@ -73,5 +74,14 @@ export class StudentAppealApi extends HttpBaseClient {
     return this.getCall<
       PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>
     >(this.addClientRoot(url));
+  }
+
+  /**
+   * Get all eligible applications for a student to appeal.
+   * @param studentId student for whom the applications are to be retrieved.
+   * @returns list of eligible applications to appeal.
+   */
+  async getEligibleApplicationsForAppeal(): Promise<EligibleApplicationsForAppealAPIOutDTO> {
+    return this.getCall(this.addClientRoot("appeal/eligible-applications"));
   }
 }

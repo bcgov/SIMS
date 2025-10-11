@@ -1,7 +1,7 @@
 <template>
   <student-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Applications" subTitle="My Applications">
+      <header-navigator title="Applications" sub-title="My Applications">
         <template #buttons>
           <start-application :class="{ 'mb-2': isMobile }" />
         </template>
@@ -11,11 +11,11 @@
       <v-col cols="12" :class="{ 'pa-0': isMobile }">
         <student-applications-extended-summary
           :dense="isMobile"
-          @editApplicationAction="editApplicationAction"
-          @changeApplicationAction="changeApplicationAction"
-          @openConfirmCancel="confirmCancelApplication"
-          @goToApplication="goToApplication"
-          @viewApplicationVersion="goToApplicationForm"
+          @edit-application-action="editApplicationAction"
+          @change-application-action="changeApplicationAction"
+          @open-confirm-cancel="confirmCancelApplication"
+          @go-to-application="goToApplication"
+          @view-application-version="goToApplicationForm"
           @submit-appeal="submitAppeal"
         />
       </v-col>
@@ -106,7 +106,7 @@ export default defineComponent({
 
     const submitAppeal = async (applicationId: number) => {
       router.push({
-        name: StudentRoutesConst.STUDENT_APPEAL,
+        name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL,
         params: {
           applicationId,
         },

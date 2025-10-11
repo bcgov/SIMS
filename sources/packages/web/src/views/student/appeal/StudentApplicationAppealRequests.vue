@@ -3,8 +3,8 @@
     <template #header>
       <header-navigator
         title="Application details"
-        subTitle="View Request"
-        :routeLocation="{
+        sub-title="View Appeal Request"
+        :route-location="{
           name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
           params: {
             id: applicationId,
@@ -13,8 +13,8 @@
       />
     </template>
     <student-appeal-requests-approval
-      :appealId="appealId"
-      :readOnlyForm="true"
+      :appeal-id="appealId"
+      :read-only-form="true"
     />
   </student-page-container>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <IdleTimeChecker :clientIdType="ClientIdType.Student">
+  <IdleTimeChecker :client-id-type="ClientIdType.Student">
     <v-app-bar color="white">
       <b-c-logo subtitle="Student Application" @click="logoClick" />
       <v-spacer />
@@ -38,12 +38,22 @@
           v-if="hasAuthenticatedStudentAccount"
           class="nav-item-label"
           variant="text"
+          :to="{
+            name: StudentRoutesConst.STUDENT_APPEAL,
+          }"
+          prepend-icon="fa:far fa-folder"
+          >Appeals</v-btn
+        >
+        <v-btn
+          v-if="hasAuthenticatedStudentAccount"
+          class="nav-item-label"
+          variant="text"
           :to="{ name: StudentRoutesConst.STUDENT_FILE_UPLOADER }"
           prepend-icon="fa:far fa-file-alt"
           >File Uploader</v-btn
         >
         <v-menu v-if="isAuthenticated">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-btn
               class="mr-5 nav-item-label"
               rounded="xl"
@@ -188,6 +198,14 @@ export default defineComponent({
               props: {
                 to: {
                   name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+                },
+              },
+            },
+            {
+              title: "Appeals",
+              props: {
+                to: {
+                  name: StudentRoutesConst.STUDENT_APPEAL,
                 },
               },
             },

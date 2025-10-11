@@ -8,6 +8,7 @@ import {
   StudentAppealRequestApprovalAPIInDTO,
   DetailedStudentAppealRequestAPIOutDTO,
   StudentAppealRequestAPIOutDTO,
+  EligibleApplicationsForAppealAPIOutDTO,
 } from "./http/dto";
 
 /**
@@ -31,7 +32,7 @@ export class StudentAppealService {
           formName: request.formName,
           formData: request.data,
           files: request.files,
-        } as StudentAppealRequestAPIInDTO),
+        }) as StudentAppealRequestAPIInDTO,
     );
     await ApiClient.StudentAppealApi.submitStudentAppeal(applicationId, {
       studentAppealRequests,
@@ -80,5 +81,13 @@ export class StudentAppealService {
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>> {
     return ApiClient.StudentAppealApi.getPendingAppeals(paginationOptions);
+  }
+
+  /**
+   * Get all eligible applications for a student to appeal.
+   * @returns list of eligible applications to appeal.
+   */
+  async getEligibleApplicationsForAppeal(): Promise<EligibleApplicationsForAppealAPIOutDTO> {
+    return ApiClient.StudentAppealApi.getEligibleApplicationsForAppeal();
   }
 }
