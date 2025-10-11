@@ -121,8 +121,10 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.REPORT_PARENT_INFORMATION,
         component: ReportParentInformation,
         props: (route) => ({
-          applicationId: parseInt(route.params.applicationId as string),
-          supportingUserId: parseInt(route.params.supportingUserId as string),
+          applicationId: Number.parseInt(route.params.applicationId as string),
+          supportingUserId: Number.parseInt(
+            route.params.supportingUserId as string,
+          ),
         }),
         meta: {
           clientType: ClientIdType.Student,
@@ -133,8 +135,8 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
         component: Assessment,
         props: (route) => ({
-          applicationId: parseInt(route.params.applicationId as string),
-          assessmentId: parseInt(route.params.assessmentId as string),
+          applicationId: Number.parseInt(route.params.applicationId as string),
+          assessmentId: Number.parseInt(route.params.assessmentId as string),
         }),
         meta: {
           clientType: ClientIdType.Student,
@@ -195,7 +197,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
         component: StudentApplicationDetails,
         props: (route) => ({
-          id: parseInt(route.params.id as string),
+          id: Number.parseInt(route.params.id as string),
         }),
         meta: {
           clientType: ClientIdType.Student,
@@ -206,7 +208,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
         component: LegacyStudentAppealRequest,
         props: (route) => ({
-          applicationId: parseInt(route.params.applicationId as string),
+          applicationId: Number.parseInt(route.params.applicationId as string),
         }),
         meta: {
           clientType: ClientIdType.Student,
@@ -217,7 +219,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL,
         component: StudentApplicationAppeal,
         props: (route) => ({
-          applicationId: parseInt(route.params.applicationId as string),
+          applicationId: Number.parseInt(route.params.applicationId as string),
         }),
         meta: {
           clientType: ClientIdType.Student,
@@ -239,7 +241,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_SUBMIT,
         component: StudentApplicationAppealSubmit,
         props: (route) => ({
-          applicationId: parseInt(route.params.applicationId as string),
+          applicationId: Number.parseInt(route.params.applicationId as string),
           appealForms: (route.params.appealForms as string).split(","),
         }),
         meta: {
@@ -272,7 +274,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_REQUEST,
         component: StudentApplicationAppealRequests,
         props: (route) => ({
-          applicationId: parseInt(route.params.applicationId as string),
+          applicationId: Number.parseInt(route.params.applicationId as string),
         }),
         meta: {
           clientType: ClientIdType.Student,
@@ -286,10 +288,10 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
         component: ApplicationOfferingChangeFormView,
         props: (route) => ({
-          applicationOfferingChangeRequestId: parseInt(
+          applicationOfferingChangeRequestId: Number.parseInt(
             route.params.applicationOfferingChangeRequestId as string,
           ),
-          applicationId: parseInt(route.params.applicationId as string),
+          applicationId: Number.parseInt(route.params.applicationId as string),
         }),
         meta: {
           clientType: ClientIdType.Student,
@@ -300,10 +302,12 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: StudentRoutesConst.STUDENT_REQUESTED_APPLICATION_OFFERING_CHANGE,
             component: RequestedApplicationOfferingDetails,
             props: (route) => ({
-              applicationOfferingChangeRequestId: parseInt(
+              applicationOfferingChangeRequestId: Number.parseInt(
                 route.params.applicationOfferingChangeRequestId as string,
               ),
-              applicationId: parseInt(route.params.applicationId as string),
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
             }),
             meta: {
               clientType: ClientIdType.Student,
@@ -314,10 +318,12 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: StudentRoutesConst.STUDENT_ACTIVE_APPLICATION_DETAILS,
             component: ActiveApplicationOfferingDetails,
             props: (route) => ({
-              applicationOfferingChangeRequestId: parseInt(
+              applicationOfferingChangeRequestId: Number.parseInt(
                 route.params.applicationOfferingChangeRequestId as string,
               ),
-              applicationId: parseInt(route.params.applicationId as string),
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
             }),
             meta: {
               clientType: ClientIdType.Student,
