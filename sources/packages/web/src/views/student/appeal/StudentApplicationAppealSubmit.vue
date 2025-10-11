@@ -14,6 +14,8 @@
     <student-appeal-submit-shared-form
       :appeal-forms="appealForms"
       :application-id="applicationId"
+      @cancel="canceledSubmission"
+      @submitted="submitted"
     />
   </student-page-container>
 </template>
@@ -21,7 +23,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import StudentAppealSubmitSharedForm from "../../../components/students/StudentAppealSubmitSharedForm.vue";
+import StudentAppealSubmitSharedForm from "@/components/students/StudentAppealSubmitSharedForm.vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   components: {
@@ -37,9 +40,31 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(props) {
+    const router = useRouter();
+
+    const canceledSubmission = () => {
+      router.push({
+        name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL,
+        params: {
+          applicationId: props.applicationId,
+        },
+      });
+    };
+
+    const submitted = () => {
+      router.push({
+        name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+        params: {
+          applicationId: props.applicationId,
+        },
+      });
+    };
+
     return {
       StudentRoutesConst,
+      canceledSubmission,
+      submitted,
     };
   },
 });

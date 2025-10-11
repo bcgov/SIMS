@@ -2,11 +2,26 @@
 <template>
   <body-header-container>
     <template #header>
-      <body-header
-        title="Complete all question(s) below"
-        sub-title="All requested changes will be reviewed by StudentAid BC after you submit for review."
-      >
-        <student-appeal-instructions />
+      <body-header title="Complete all question(s) below">
+        <template #subtitle>
+          All requested changes will be reviewed by StudentAid BC after you
+          submit for review.
+          <slot name="submit-appeal-header">
+            <div class="mt-4">
+              <p class="font-bold">Instructions:</p>
+              <ul>
+                <li>
+                  Select any applicable appeal forms for your application.
+                </li>
+                <li>
+                  Previously approved appeals attached to this application must
+                  be re-entered here.
+                </li>
+                <li>All appeal form questions are mandatory.</li>
+              </ul>
+            </div>
+          </slot>
+        </template>
       </body-header>
     </template>
     <appeal-requests-form
@@ -17,7 +32,7 @@
         <footer-buttons
           justify="space-between"
           :processing="processing"
-          @secondary-click="backToRequestForm"
+          @secondary-click="$.emit('cancel')"
           secondary-label="Back"
           @primary-click="submit"
           primary-label="Submit for review"
@@ -34,10 +49,12 @@ import { StudentAppealService } from "@/services/StudentAppealService";
 import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
 import { useSnackBar } from "@/composables";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
-import { useRouter } from "vue-router";
-import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default defineComponent({
+  emits: {
+    cancel: null,
+    submitted: null,
+  },
   components: {
     AppealRequestsForm,
   },
@@ -52,8 +69,7 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props) {
-    const router = useRouter();
+  setup(props, { emit }) {
     const snackBar = useSnackBar();
     const processing = ref(false);
     const appealRequestsForms = ref(
@@ -61,21 +77,6 @@ export default defineComponent({
         (formName) => ({ formName }) as StudentAppealRequest,
       ),
     );
-
-    const backToRequestForm = async () => {
-      if (props.applicationId) {
-        await router.push({
-          name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL,
-          params: {
-            applicationId: props.applicationId,
-          },
-        });
-        return;
-      }
-      await router.push({
-        name: StudentRoutesConst.STUDENT_APPEAL,
-      });
-    };
 
     const submitAppeal = async (appealRequests: StudentAppealRequest[]) => {
       try {
@@ -87,7 +88,7 @@ export default defineComponent({
         snackBar.success(
           `The request for change has been submitted successfully.`,
         );
-        backToRequestForm();
+        emit("submitted");
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           switch (error.errorType) {
@@ -110,7 +111,6 @@ export default defineComponent({
 
     return {
       appealRequestsForms,
-      backToRequestForm,
       submitAppeal,
       processing,
     };

@@ -71,7 +71,7 @@
         <v-select
           v-if="selectedAppealType === AppealTypes.Other"
           hide-details="auto"
-          label="Appeal"
+          label="Appeal form"
           density="compact"
           :items="otherAppeals"
           item-title="description"
