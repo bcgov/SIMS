@@ -46,7 +46,7 @@
     "deploy:camunda:definitions": "ts-node ./workflow/src/deploy.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.901.0",
+    "@aws-sdk/client-s3": "^3.908.0",
     "@bull-board/api": "^6.13.0",
     "@bull-board/express": "^6.13.0",
     "@bull-board/nestjs": "^6.13.0",
