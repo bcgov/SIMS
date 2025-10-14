@@ -283,15 +283,20 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   /**
    * Get all applications eligible for appeal for a specific student.
    * @param studentId student ID.
+   * @param options query options.
+   * - `applicationId` application ID. Allow checking if a specific
+   * application is eligible for appeal.
    * @returns list of eligible applications.
    */
   async getEligibleApplicationsForAppeal(
     studentId: number,
+    options?: { applicationId?: number },
   ): Promise<Application[]> {
     return this.applicationRepo.find({
       select: { id: true, applicationNumber: true },
       where: {
-        student: { id: studentId },
+        id: options?.applicationId,
+        student: { id: studentId, sinValidation: { isValidSIN: true } },
         applicationStatus: ApplicationStatus.Completed,
         offeringIntensity: OfferingIntensity.fullTime,
         isArchived: false,
