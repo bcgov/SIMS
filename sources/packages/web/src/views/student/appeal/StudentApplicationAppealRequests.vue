@@ -14,6 +14,7 @@
     </template>
     <student-appeal-requests-approval
       :appeal-id="appealId"
+      :application-id="applicationId"
       :read-only-form="true"
     />
   </student-page-container>

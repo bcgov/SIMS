@@ -56,7 +56,7 @@ export default defineComponent({
       router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
         params: {
-          applicationId: props.applicationId,
+          id: props.applicationId,
         },
       });
     };

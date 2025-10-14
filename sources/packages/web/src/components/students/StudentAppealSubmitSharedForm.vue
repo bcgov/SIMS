@@ -85,15 +85,13 @@ export default defineComponent({
           props.applicationId,
           appealRequests,
         );
-        snackBar.success(
-          `The request for change has been submitted successfully.`,
-        );
+        snackBar.success(`The appeal has been submitted successfully.`);
         emit("submitted");
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           switch (error.errorType) {
             case APPLICATION_CHANGE_NOT_ELIGIBLE:
-              snackBar.warn(`Not able to submit. ${error.message}`);
+              snackBar.warn(error.message);
               break;
             default:
               snackBar.error(error.message);
@@ -102,7 +100,7 @@ export default defineComponent({
           return;
         }
         snackBar.error(
-          "An unexpected error happened while submitting the request for change.",
+          "An unexpected error happened while submitting the appeal.",
         );
       } finally {
         processing.value = false;

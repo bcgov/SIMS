@@ -6,7 +6,6 @@ import {
   NotFoundException,
   UnprocessableEntityException,
   BadRequestException,
-  InternalServerErrorException,
   Get,
   ParseIntPipe,
 } from "@nestjs/common";
@@ -171,11 +170,10 @@ export class StudentAppealStudentsController extends BaseController {
           );
         });
       dryRunSubmissionResults = await Promise.all(dryRunPromise);
-    } catch {
-      //TODO: Add a logger to log the error trace.
-      throw new InternalServerErrorException(
-        "Dry run submission failed due to unknown reason.",
-      );
+    } catch (error: unknown) {
+      throw new Error("Dry run submission failed due to unknown reason.", {
+        cause: error,
+      });
     }
     const invalidRequest = dryRunSubmissionResults.some(
       (result) => !result.valid,
