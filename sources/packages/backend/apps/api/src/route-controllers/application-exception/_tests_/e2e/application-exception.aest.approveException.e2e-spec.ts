@@ -292,7 +292,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: "Student application exception not found.",
         error: "Not Found",
       });
@@ -326,12 +326,151 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: 422,
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message:
           "Student application exception must be in Pending state to be assessed.",
         error: "Unprocessable Entity",
       });
   });
+
+  it(
+    "Should throw unprocessable entity error when the assessed exception requests in the payload" +
+      " does not contain all the pending exception requests available in the application exception.",
+    async () => {
+      // Arrange
+      const applicationException = createFakeApplicationException();
+      // Create two exception requests in pending status.
+      const exceptionRequests = Array.from({ length: 2 }, () =>
+        createFakeApplicationExceptionRequest(
+          {
+            applicationException,
+          },
+          {
+            initialData: {
+              exceptionRequestStatus: ApplicationExceptionRequestStatus.Pending,
+            },
+          },
+        ),
+      );
+      applicationException.exceptionRequests = exceptionRequests;
+      await applicationExceptionRepo.save(applicationException);
+      // Create an application with the application exception created.
+      const application = await saveFakeApplication(appDataSource, {
+        applicationException,
+      });
+      // Prepare the payload to approve only one of the exception requests.
+      const [firstExceptionRequest] =
+        application.applicationException.exceptionRequests;
+      const payload = {
+        assessedExceptionRequests: [
+          {
+            exceptionRequestId: firstExceptionRequest.id,
+            exceptionRequestStatus: ApplicationExceptionRequestStatus.Approved,
+          },
+        ],
+        noteDescription: faker.lorem.words(10),
+      };
+      const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          message: `The exception requests to be updated does not match all the pending exception requests for the student application exception ${application.applicationException.id}.`,
+          error: "Unprocessable Entity",
+        });
+    },
+  );
+
+  it(
+    "Should throw unprocessable entity error when the assessed exception requests in the payload" +
+      " includes previously approved exception request(s) available in the application exception.",
+    async () => {
+      // Arrange
+      // Create a parent application with parent application exception that was previously approved.
+      const parentApplicationException = createFakeApplicationException();
+      const parentExceptionRequest = createFakeApplicationExceptionRequest(
+        {
+          applicationException: parentApplicationException,
+        },
+        {
+          initialData: {
+            exceptionRequestStatus: ApplicationExceptionRequestStatus.Approved,
+          },
+        },
+      );
+      parentApplicationException.exceptionRequests = [parentExceptionRequest];
+      parentApplicationException.exceptionStatus =
+        ApplicationExceptionStatus.Approved;
+      await applicationExceptionRepo.save(parentApplicationException);
+      const parentApplication = await saveFakeApplication(appDataSource, {
+        applicationException: parentApplicationException,
+      });
+      const applicationException = createFakeApplicationException();
+      // Create two exception requests in pending status.
+      const exceptionRequests = Array.from({ length: 2 }, () =>
+        createFakeApplicationExceptionRequest(
+          {
+            applicationException,
+          },
+          {
+            initialData: {
+              exceptionRequestStatus: ApplicationExceptionRequestStatus.Pending,
+            },
+          },
+        ),
+      );
+      // Create one exception request that was previously approved in the parent application exception.
+      exceptionRequests.push(
+        createFakeApplicationExceptionRequest(
+          {
+            applicationException,
+          },
+          {
+            initialData: {
+              approvalExceptionRequest: parentExceptionRequest,
+              exceptionRequestStatus:
+                ApplicationExceptionRequestStatus.Approved,
+            },
+          },
+        ),
+      );
+      applicationException.exceptionRequests = exceptionRequests;
+      await applicationExceptionRepo.save(applicationException);
+      // Create an application with the application exception created.
+      const application = await saveFakeApplication(appDataSource, {
+        parentApplication,
+        applicationException,
+      });
+      // Prepare the payload to approve all the exception requests including the one that was previously approved.
+      const payload = {
+        assessedExceptionRequests: exceptionRequests.map((request) => ({
+          exceptionRequestId: request.id,
+          exceptionRequestStatus: ApplicationExceptionRequestStatus.Approved,
+        })),
+        noteDescription: faker.lorem.words(10),
+      };
+      const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          message: `The exception requests to be updated does not match all the pending exception requests for the student application exception ${application.applicationException.id}.`,
+          error: "Unprocessable Entity",
+        });
+    },
+  );
 
   it(`Should throw not found error when the application has ${ApplicationStatus.Edited} and exception is in ${ApplicationExceptionStatus.Pending} status.`, async () => {
     // Arrange
@@ -391,7 +530,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
-        statusCode: 400,
+        statusCode: HttpStatus.BAD_REQUEST,
         message: [
           "assessedExceptionRequests.0.exceptionRequestStatus must be one of the following values: Approved, Declined",
         ],
@@ -420,7 +559,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
-        statusCode: 400,
+        statusCode: HttpStatus.BAD_REQUEST,
         message: ["noteDescription should not be empty"],
         error: "Bad Request",
       });
