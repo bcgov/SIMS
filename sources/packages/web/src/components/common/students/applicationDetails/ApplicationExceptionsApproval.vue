@@ -3,8 +3,8 @@
     <template #header>
       <header-navigator
         title="Assessments"
-        subTitle="View request(s)"
-        :routeLocation="backRouteLocation"
+        sub-title="View request(s)"
+        :route-location="backRouteLocation"
       />
       <application-header-title :application-id="applicationId" />
     </template>
@@ -12,9 +12,9 @@
       <header-title-value title="Submitted date" :value="submittedDate"
     /></template>
     <formio-container
-      formName="studentExceptions"
-      :formData="applicationExceptions"
-      :readOnly="readOnlyForm"
+      form-name="studentExceptions"
+      :form-data="applicationExceptions"
+      :read-only="readOnly"
       @submitted="$emit('submitted', $event)"
       :is-data-ready="isDataReady"
     >
@@ -23,10 +23,10 @@
           <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
-              primaryLabel="Complete student request"
-              :disablePrimaryButton="notAllowed"
-              @primaryClick="submit"
-              @secondaryClick="gotToAssessmentsSummary"
+              primary-label="Complete student request"
+              :disable-primary-button="notAllowed"
+              @primary-click="submit"
+              @secondary-click="gotToAssessmentsSummary"
             />
           </template>
         </check-permission-role>
@@ -38,7 +38,12 @@
 import { ref, defineComponent, PropType, watchEffect } from "vue";
 import { RouteLocationRaw, useRouter } from "vue-router";
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
-import { ApplicationExceptionStatus, FormIOForm, Role } from "@/types";
+import {
+  ApplicationExceptionRequestStatus,
+  ApplicationExceptionStatus,
+  FormIOForm,
+  Role,
+} from "@/types";
 import {
   DetailedApplicationExceptionAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
@@ -52,10 +57,6 @@ import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeader
  * Model to be used to populate the form.io.
  */
 interface ApplicationExceptionFormModel {
-  /**
-   * Current exception status.
-   */
-  exceptionStatus: ApplicationExceptionStatus;
   /**
    * Exception status at the moment that the data was loaded.
    * used mainly when the form is being edited and change the
@@ -85,9 +86,13 @@ interface ApplicationExceptionFormModel {
    */
   showStaffApproval: boolean;
   /**
-   * Description of exceptions that were requested to be approved.
+   * Exception requests that were requested to be assessed.
    */
-  requestedForApproval: string[];
+  assessedExceptionRequests: {
+    exceptionRequestId: number;
+    exceptionDescription: string;
+    exceptionRequestStatus: ApplicationExceptionRequestStatus;
+  }[];
   /**
    * Description of the previously approved exceptions.
    */
@@ -105,6 +110,7 @@ export default defineComponent({
     studentId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     exceptionId: {
       type: Number,
@@ -155,9 +161,13 @@ export default defineComponent({
           );
         // Description of exceptions that were submitted for
         // the first time to be assessed.
-        const requestedForApproval = applicationException.exceptionRequests
+        const assessedExceptionRequests = applicationException.exceptionRequests
           .filter((request) => !request.previouslyApprovedOn)
-          .map((request) => request.exceptionDescription);
+          .map((request) => ({
+            exceptionRequestId: request.exceptionRequestId,
+            exceptionDescription: request.exceptionDescription,
+            exceptionRequestStatus: request.exceptionRequestStatus,
+          }));
         // Descriptions of exceptions that were submitted and
         // approved in some of the previous application versions.
         const previouslyApprovedRequests =
@@ -178,10 +188,9 @@ export default defineComponent({
           exceptionStatusClass: mapRequestAssessmentChipStatus(
             applicationException.exceptionStatus,
           ),
-          requestedForApproval,
+          assessedExceptionRequests,
           previouslyApprovedRequests,
           exceptionStatusOnLoad: applicationException.exceptionStatus,
-          exceptionStatus: applicationException.exceptionStatus,
           showStaffApproval: props.showStaffApproval,
         };
         submittedDate.value = dateOnlyLongString(

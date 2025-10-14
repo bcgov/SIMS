@@ -1,10 +1,10 @@
 <template>
   <application-exceptions-approval
-    :exceptionId="exceptionId"
-    :applicationId="applicationId"
-    :backRouteLocation="assessmentsSummaryRoute"
+    :exception-id="exceptionId"
+    :application-id="applicationId"
+    :back-route-location="assessmentsSummaryRoute"
     :processing="processing"
-    :showStaffApproval="true"
+    :show-staff-approval="true"
     @submitted="submitted"
   />
 </template>
@@ -64,7 +64,7 @@ export default defineComponent({
           typedData,
         );
         snackBar.success(
-          `Application exception status is now ${typedData.exceptionStatus}.`,
+          "Application exception decision submitted successfully.",
         );
         router.push(assessmentsSummaryRoute);
       } catch {

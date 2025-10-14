@@ -1,5 +1,8 @@
-import { ApplicationExceptionStatus } from "@/types";
-import { Expose } from "class-transformer";
+import {
+  ApplicationExceptionRequestStatus,
+  ApplicationExceptionStatus,
+} from "@/types";
+import { Expose, Type } from "class-transformer";
 
 export interface ApplicationExceptionRequestAPIInDTO {
   exceptionName: string;
@@ -10,16 +13,28 @@ export interface CreateApplicationExceptionAPIInDTO {
   exceptionRequests: ApplicationExceptionRequestAPIInDTO[];
 }
 
+class AssessedExceptionRequestAPIInDTO {
+  @Expose()
+  exceptionRequestId: number;
+  @Expose()
+  exceptionRequestStatus:
+    | ApplicationExceptionRequestStatus.Approved
+    | ApplicationExceptionRequestStatus.Declined;
+}
+
 export class UpdateApplicationExceptionAPIInDTO {
   @Expose()
-  exceptionStatus: ApplicationExceptionStatus;
+  @Type(() => AssessedExceptionRequestAPIInDTO)
+  assessedExceptionRequests: AssessedExceptionRequestAPIInDTO[];
   @Expose()
   noteDescription: string;
 }
 
 export interface ApplicationExceptionRequestAPIOutDTO {
+  exceptionRequestId: number;
   exceptionName: string;
   exceptionDescription: string;
+  exceptionRequestStatus: ApplicationExceptionRequestStatus;
   previouslyApprovedOn?: Date;
 }
 

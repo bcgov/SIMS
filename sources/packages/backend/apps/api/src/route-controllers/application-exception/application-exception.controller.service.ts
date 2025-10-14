@@ -42,13 +42,15 @@ export class ApplicationExceptionControllerService {
     if (!applicationException) {
       throw new NotFoundException("Student application exception not found.");
     }
-    const applicationExceptionDetails = {
+    const applicationExceptionDetails: ApplicationExceptionAPIOutDTO = {
       exceptionStatus: applicationException.exceptionStatus,
       submittedDate: applicationException.createdAt,
       exceptionRequests: applicationException.exceptionRequests.map(
         (request) => ({
+          exceptionRequestId: request.id,
           exceptionName: request.exceptionName,
           exceptionDescription: request.exceptionDescription,
+          exceptionRequestStatus: request.exceptionRequestStatus,
           previouslyApprovedOn:
             request.approvalExceptionRequest?.applicationException
               ?.assessedDate,

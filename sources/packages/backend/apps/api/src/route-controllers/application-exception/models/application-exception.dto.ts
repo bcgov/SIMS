@@ -2,6 +2,7 @@ import { Type } from "class-transformer";
 import {
   ArrayMinSize,
   ArrayUnique,
+  IsArray,
   IsIn,
   IsNotEmpty,
   IsPositive,
@@ -9,6 +10,7 @@ import {
   ValidateNested,
 } from "class-validator";
 import {
+  ApplicationExceptionRequestStatus,
   ApplicationExceptionStatus,
   EXCEPTION_NAME_MAX_LENGTH,
   NOTE_DESCRIPTION_MAX_LENGTH,
@@ -30,20 +32,37 @@ export class CreateApplicationExceptionAPIInDTO {
   exceptionRequests: ApplicationExceptionRequestAPIInDTO[];
 }
 
-export class UpdateApplicationExceptionAPIInDTO {
+class AssessedExceptionRequestAPIInDTO {
+  @IsPositive()
+  exceptionRequestId: number;
   @IsIn([
-    ApplicationExceptionStatus.Approved,
-    ApplicationExceptionStatus.Declined,
+    ApplicationExceptionRequestStatus.Approved,
+    ApplicationExceptionRequestStatus.Declined,
   ])
-  exceptionStatus: ApplicationExceptionStatus;
+  exceptionRequestStatus:
+    | ApplicationExceptionRequestStatus.Approved
+    | ApplicationExceptionRequestStatus.Declined;
+}
+
+export class UpdateApplicationExceptionAPIInDTO {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayUnique<AssessedExceptionRequestAPIInDTO>(
+    (request) => request.exceptionRequestId,
+  )
+  @ValidateNested({ each: true })
+  @Type(() => AssessedExceptionRequestAPIInDTO)
+  assessedExceptionRequests: AssessedExceptionRequestAPIInDTO[];
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
 }
 
 export class ApplicationExceptionRequestAPIOutDTO {
+  exceptionRequestId: number;
   exceptionName: string;
   exceptionDescription: string;
+  exceptionRequestStatus: ApplicationExceptionRequestStatus;
   previouslyApprovedOn?: Date;
 }
 
