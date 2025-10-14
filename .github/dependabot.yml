@@ -15,22 +15,22 @@ updates:
       - dependency-name: "primeicons"
       - dependency-name: "primevue"
     groups:
-      major-updates:
+      web-major-updates:
         patterns:
           - "*"
         update-types:
           - "major"
-      minor-updates:
+      web-minor-updates:
         patterns:
           - "*"
         update-types:
           - "minor"
-      patches-updates:
+      web-patches-updates:
         patterns:
           - "*"
         update-types:
           - "patch"
-      formio:
+      web-formio:
         patterns:
           - "@formio*"
           - "bootstrap*"
@@ -50,17 +50,17 @@ updates:
       - "Backend"
       - "npm"
     groups:
-      major-updates:
+      backend-major-updates:
         patterns:
           - "*"
         update-types:
           - "major"
-      minor-updates:
+      backend-minor-updates:
         patterns:
           - "*"
         update-types:
           - "minor"
-      patches-updates:
+      backend-patches-updates:
         patterns:
           - "*"
         update-types:
@@ -76,17 +76,17 @@ updates:
       - "Form.io"
       - "npm"
     groups:
-      major-updates:
+      forms-major-updates:
         patterns:
           - "*"
         update-types:
           - "major"
-      minor-updates:
+      forms-minor-updates:
         patterns:
           - "*"
         update-types:
           - "minor"
-      patches-updates:
+      forms-patches-updates:
         patterns:
           - "*"
         update-types:
@@ -102,17 +102,17 @@ updates:
       - "Load Test"
       - "npm"
     groups:
-      major-updates:
+      load-test-major-updates:
         patterns:
           - "*"
         update-types:
           - "major"
-      minor-updates:
+      load-test-minor-updates:
         patterns:
           - "*"
         update-types:
           - "minor"
-      patches-updates:
+      load-test-patches-updates:
         patterns:
           - "*"
         update-types:
