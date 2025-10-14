@@ -79,7 +79,8 @@ export class StudentAppealStudentsController extends BaseController {
       "Only one change request/appeal can be submitted at a time for each application. " +
       "When your current request is approved or denied by StudentAid BC, you will be able to submit a new one or " +
       "one or more forms submitted are not valid for appeal submission or " +
-      "the application is not eligible to submit an appeal.",
+      "the application is not eligible to submit an appeal or " +
+      "the application is no longer eligible to submit change request/appeal.",
   })
   @ApiBadRequestResponse({
     description:
@@ -130,7 +131,7 @@ export class StudentAppealStudentsController extends BaseController {
       if (!eligibleApplicationsForAppeal.length) {
         throw new UnprocessableEntityException(
           new ApiProcessError(
-            `The application is not eligible to submit an appeal.`,
+            " The application is not eligible to submit an appeal.",
             APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
           ),
         );

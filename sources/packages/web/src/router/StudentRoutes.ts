@@ -12,22 +12,25 @@ import StudentFileUploader from "@/views/student/StudentFileUploader.vue";
 import NotificationsSettings from "@/views/student/NotificationsSettings.vue";
 import StudentApplicationSummary from "@/views/student/StudentApplicationSummary.vue";
 import StudentApplicationDetails from "@/views/student/StudentApplicationDetails.vue";
-import LegacyStudentAppealRequest from "@/views/student/appeal-legacy/StudentAppealSubmit.vue";
-import StudentAppeal from "@/views/student/appeal/StudentAppeal.vue";
-import StudentApplicationAppeal from "@/views/student/appeal/StudentApplicationAppeal.vue";
-import StudentAppealSubmit from "@/views/student/appeal/StudentAppealSubmit.vue";
-import StudentApplicationAppealSubmit from "@/views/student/appeal/StudentApplicationAppealSubmit.vue";
 import StudentAccountActivity from "@/views/student/StudentAccountActivity.vue";
 import StudentOverawardsBalance from "@/views/student/StudentOverawardsBalance.vue";
 import StudentAccountApplicationInProgress from "@/views/student/StudentAccountApplicationInProgress.vue";
 import StudentAssessmentAward from "@/views/student/StudentAssessmentAward.vue";
-import StudentAppealRequests from "@/views/student/appeal/StudentAppealRequests.vue";
-import StudentApplicationAppealRequests from "@/views/student/appeal/StudentApplicationAppealRequests.vue";
 import ApplicationOfferingChangeFormView from "@/views/student/application-offering-change-request/ApplicationOfferingChangeFormView.vue";
 import RequestedApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/RequestedApplicationOfferingDetails.vue";
 import ActiveApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/ActiveApplicationOfferingDetails.vue";
 import ReportParentInformation from "@/views/student/ReportParentInformation.vue";
 import ViewScholasticStanding from "@/views/student/ViewScholasticStanding.vue";
+// Student Appeal
+import StudentAppeal from "@/views/student/appeal/StudentAppeal.vue";
+import StudentAppealSubmit from "@/views/student/appeal/StudentAppealSubmit.vue";
+import StudentAppealRequests from "@/views/student/appeal/StudentAppealRequests.vue";
+// Student Application Appeal
+import StudentApplicationAppeal from "@/views/student/appeal/StudentApplicationAppeal.vue";
+import StudentApplicationAppealSubmit from "@/views/student/appeal/StudentApplicationAppealSubmit.vue";
+import StudentApplicationAppealRequests from "@/views/student/appeal/StudentApplicationAppealRequests.vue";
+// Legacy Appeal Request (to be removed later)
+import LegacyStudentAppealRequest from "@/views/student/appeal-legacy/StudentAppealSubmit.vue";
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -229,9 +232,6 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.StudentAppeal,
         name: StudentRoutesConst.STUDENT_APPEAL,
         component: StudentAppeal,
-        props: () => ({
-          applicationId: null,
-        }),
         meta: {
           clientType: ClientIdType.Student,
         },
@@ -254,7 +254,6 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: StudentAppealSubmit,
         props: (route) => ({
           appealForms: (route.params.appealForms as string).split(","),
-          applicationId: null,
         }),
         meta: {
           clientType: ClientIdType.Student,

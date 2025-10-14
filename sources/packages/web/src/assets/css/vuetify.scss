@@ -188,6 +188,8 @@
   @extend .label-bold;
 }
 
+// Allow radio button to align top with the label text.
+// Useful for custom labels with multiple lines.
 .radio-align-top .v-selection-control {
   align-items: start;
 }

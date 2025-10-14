@@ -16,8 +16,7 @@ export enum AppRoutes {
   StudentOverawardsBalance = "student-overawards-balance",
   StudentAccountApplicationIsProgress = "student-account-application-in-progress",
   StudentAssessmentAwardView = "application/:applicationId/assessment-award-details/:assessmentId",
-  StudentAppealRequests = "appeal/:appealId",
-  StudentApplicationAppealRequests = "application/:applicationId/appeal/:appealId",
+
   StudentApplicationOfferingChangeRequest = "application/:applicationId/application-offering-change-request/:applicationOfferingChangeRequestId",
   StudentRequestedApplicationOfferingDetails = "requested-offering",
   StudentActiveApplicationOfferingDetails = "active-offering",
@@ -32,6 +31,10 @@ export enum AppRoutes {
    */
   StudentAppealSubmit = "student-appeal/submit/:appealForms",
   /**
+   * Student appeal requests list (not tied to a specific application).
+   */
+  StudentAppealRequests = "appeal/:appealId",
+  /**
    * Student appeal initiated from within a specific application (tied to a specific application).
    */
   StudentApplicationAppeal = "application/:applicationId/student-appeal",
@@ -39,6 +42,10 @@ export enum AppRoutes {
    * Student appeal submission page (tied to a specific application).
    */
   StudentApplicationAppealSubmit = "application/:applicationId/student-appeal/submit/:appealForms",
+  /**
+   * Student appeal requests list (tied to a specific application).
+   */
+  StudentApplicationAppealRequests = "application/:applicationId/appeal/:appealId",
 
   // Institution
   InstitutionRoot = "/institution",

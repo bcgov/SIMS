@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, PropType } from "vue";
+import { ref, defineComponent, PropType, computed } from "vue";
 import { ApiProcessError, StudentAppealRequest } from "@/types";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
@@ -72,7 +72,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const snackBar = useSnackBar();
     const processing = ref(false);
-    const appealRequestsForms = ref(
+    const appealRequestsForms = computed(() =>
       props.appealForms.map(
         (formName) => ({ formName }) as StudentAppealRequest,
       ),
@@ -85,7 +85,7 @@ export default defineComponent({
           props.applicationId,
           appealRequests,
         );
-        snackBar.success(`The appeal has been submitted successfully.`);
+        snackBar.success("The appeal has been submitted successfully.");
         emit("submitted");
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {

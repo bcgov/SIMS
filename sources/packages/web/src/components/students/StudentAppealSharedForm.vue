@@ -2,7 +2,7 @@
   <body-header-container>
     <template #header>
       <body-header
-        title="Appeals for submission"
+        title="Appeals"
         sub-title="You can submit two types of appeals for Student Aid BC to review. Select the appropriate appeals type below."
       />
     </template>
@@ -69,7 +69,9 @@
           :rules="[(v) => checkNullOrEmptyRule(v, 'Appeal(s)')]"
         />
         <v-select
-          v-if="selectedAppealType === AppealTypes.Other"
+          v-if="
+            selectedAppealType === AppealTypes.Other && isOtherOptionAvailable
+          "
           hide-details="auto"
           label="Appeal form"
           density="compact"
@@ -81,14 +83,23 @@
           class="mb-4"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Appeal')]"
         />
+        <banner
+          v-if="
+            selectedAppealType === AppealTypes.Other && !isOtherOptionAvailable
+          "
+          class="mb-2"
+          type="info"
+          header="Other appeal types will be available for submission soon."
+        />
       </v-form>
     </content-group>
     <footer-buttons
       class="mt-4"
       primary-label="Next"
       justify="end"
-      @primary-click="showForms"
+      @primary-click="goToAppealFormsRequests"
       :show-secondary-button="false"
+      :show-primary-button="selectedAppealType === AppealTypes.Application"
     />
   </body-header-container>
 </template>
@@ -115,11 +126,13 @@ export default defineComponent({
   props: {
     applicationId: {
       type: Number,
-      default: null,
       required: false,
+      default: undefined,
     },
   },
   setup(props) {
+    // TODO: Variable to be removed once the "Others" option is implemented.
+    const isOtherOptionAvailable = ref(false);
     const snackBar = useSnackBar();
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
@@ -143,7 +156,7 @@ export default defineComponent({
       },
     ]);
 
-    const loadEligibleApplications = async () => {
+    onMounted(async () => {
       try {
         loadingEligibleApplications.value = true;
         const eligibleApplicationForAppeal =
@@ -154,24 +167,17 @@ export default defineComponent({
       } finally {
         loadingEligibleApplications.value = false;
       }
-    };
-
-    onMounted(async () => {
-      await loadEligibleApplications();
     });
 
     watch(
       () => props.applicationId,
       () => {
         selectedApplicationId.value = props.applicationId;
-        selectedAppealType.value = props.applicationId
-          ? AppealTypes.Application
-          : null;
       },
       { immediate: true },
     );
 
-    const showForms = async (): Promise<void> => {
+    const goToAppealFormsRequests = async (): Promise<void> => {
       const formIsValid = appealsSelectionForm.value.validate();
       if (!formIsValid) {
         return;
@@ -195,6 +201,7 @@ export default defineComponent({
     };
 
     return {
+      isOtherOptionAvailable,
       appealsSelectionForm,
       checkNullOrEmptyRule,
       StudentRoutesConst,
@@ -207,7 +214,7 @@ export default defineComponent({
       selectedApplicationAppeals,
       selectedOtherAppeal,
       otherAppeals,
-      showForms,
+      goToAppealFormsRequests,
     };
   },
 });

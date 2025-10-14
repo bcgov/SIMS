@@ -78,7 +78,6 @@ export class StudentAppealApi extends HttpBaseClient {
 
   /**
    * Get all eligible applications for a student to appeal.
-   * @param studentId student for whom the applications are to be retrieved.
    * @returns list of eligible applications to appeal.
    */
   async getEligibleApplicationsForAppeal(): Promise<EligibleApplicationsForAppealAPIOutDTO> {

@@ -4,7 +4,7 @@
     <template #header>
       <header-navigator
         title="Application Appeal"
-        sub-title="Appeal(s) Request"
+        sub-title="Submit Appeal(s)"
         :route-location="{
           name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL,
           params: { applicationId },

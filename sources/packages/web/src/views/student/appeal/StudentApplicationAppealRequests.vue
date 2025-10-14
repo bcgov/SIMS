@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Application details"
-        sub-title="View Appeal Request"
+        sub-title="Appeal Request"
         :route-location="{
           name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
           params: {

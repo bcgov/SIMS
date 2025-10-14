@@ -2,7 +2,7 @@
 <template>
   <student-page-container>
     <template #header>
-      <header-navigator title="Student" sub-title="Appeal(s) Request" />
+      <header-navigator title="Student" sub-title="Submit Appeal(s)" />
     </template>
     <student-appeal-submit-shared-form
       :appeal-forms="appealForms"
@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import StudentAppealSubmitSharedForm from "../../../components/students/StudentAppealSubmitSharedForm.vue";
+import StudentAppealSubmitSharedForm from "@/components/students/StudentAppealSubmitSharedForm.vue";
 import { useRouter } from "vue-router";
 
 export default defineComponent({
