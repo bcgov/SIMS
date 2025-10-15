@@ -52,7 +52,7 @@ jobs:
         with:
           ref: ${{ inputs.gitRef }}
       - name: Setup Nodejs
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: "18.x"
       - name: Downloading packages

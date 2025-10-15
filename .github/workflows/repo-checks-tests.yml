@@ -150,7 +150,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v5
       - name: Setup Nodejs
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: "18.x"
       # Run units tests and generate the coverage report.
