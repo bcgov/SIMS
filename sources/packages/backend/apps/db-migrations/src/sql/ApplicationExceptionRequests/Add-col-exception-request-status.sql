@@ -30,6 +30,24 @@ WHERE
     exception_request.application_exception_id = exception.id
     AND exception.exception_status IN ('Approved', 'Declined');
 
+-- Update the status of previously approved exception requests to Approved.
+UPDATE
+    sims.application_exception_requests
+SET
+    exception_request_status = 'Approved',
+    modifier = (
+        SELECT
+            id
+        FROM
+            sims.users
+        WHERE
+            -- System user.
+            user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
+    ),
+    updated_at = NOW()
+WHERE
+    approval_exception_request_id IS NOT NULL;
+
 -- Drop default value after updating existing records.
 ALTER TABLE
     sims.application_exception_requests
