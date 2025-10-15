@@ -40,35 +40,35 @@
             </template>
           </v-radio>
         </v-radio-group>
-        <v-select
-          v-if="selectedAppealType === AppealTypes.Application"
-          hide-details="auto"
-          label="Application Number"
-          density="compact"
-          :items="eligibleApplications"
-          v-model="selectedApplicationId"
-          :loading="loadingEligibleApplications"
-          item-value="id"
-          item-title="applicationNumber"
-          variant="outlined"
-          class="mb-4"
-          no-data-text="No eligible applications available"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Application number')]"
-        />
-        <v-select
-          v-if="selectedAppealType === AppealTypes.Application"
-          hide-details="auto"
-          label="Appeal(s)"
-          density="compact"
-          multiple
-          :items="applicationAppeals"
-          item-title="description"
-          item-value="formName"
-          v-model="selectedApplicationAppeals"
-          variant="outlined"
-          class="mb-4"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Appeal(s)')]"
-        />
+        <template v-if="selectedAppealType === AppealTypes.Application">
+          <v-select
+            hide-details="auto"
+            label="Application Number"
+            density="compact"
+            :items="eligibleApplications"
+            v-model="selectedApplicationId"
+            :loading="loadingEligibleApplications"
+            item-value="id"
+            item-title="applicationNumber"
+            variant="outlined"
+            class="mb-4"
+            no-data-text="No eligible applications available"
+            :rules="[(v) => checkNullOrEmptyRule(v, 'Application number')]"
+          />
+          <v-select
+            hide-details="auto"
+            label="Appeal(s)"
+            density="compact"
+            multiple
+            :items="applicationAppeals"
+            item-title="description"
+            item-value="formName"
+            v-model="selectedApplicationAppeals"
+            variant="outlined"
+            class="mb-4"
+            :rules="[(v) => checkNullOrEmptyRule(v, 'Appeal(s)')]"
+          />
+        </template>
         <v-select
           v-if="
             selectedAppealType === AppealTypes.Other && isOtherOptionAvailable
