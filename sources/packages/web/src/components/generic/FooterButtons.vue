@@ -1,5 +1,5 @@
 <template>
-  <v-row :justify="justify" class="mt-2 mb-1">
+  <v-row :justify="justify" class="mt-2 mb-1 mx-0">
     <v-btn
       :disabled="processing"
       :color="secondaryButtonColor"
@@ -80,7 +80,16 @@ export default defineComponent({
       default: "outlined",
     },
     justify: {
-      type: String,
+      type: String as PropType<
+        | "center"
+        | "end"
+        | "space-around"
+        | "space-between"
+        | "space-evenly"
+        | "start"
+        | "stretch"
+        | undefined
+      >,
       required: false,
       default: "center",
     },

@@ -16,13 +16,37 @@ export enum AppRoutes {
   StudentOverawardsBalance = "student-overawards-balance",
   StudentAccountApplicationIsProgress = "student-account-application-in-progress",
   StudentAssessmentAwardView = "application/:applicationId/assessment-award-details/:assessmentId",
-  StudentAppealRequests = "application/:applicationId/appeal/:appealId",
+
   StudentApplicationOfferingChangeRequest = "application/:applicationId/application-offering-change-request/:applicationOfferingChangeRequestId",
   StudentRequestedApplicationOfferingDetails = "requested-offering",
   StudentActiveApplicationOfferingDetails = "active-offering",
   StudentReportParentInformation = "application/:applicationId/supporting-user/:supportingUserId/report-parent-information",
-  StudentAppeal = "application/:applicationId/student-appeal",
   StudentScholasticStandingView = "application/:applicationId/scholastic-standing/:scholasticStandingId",
+  /**
+   * Student appeal initiated from the top-level appeal menu (not tied to a specific application).
+   */
+  StudentAppeal = "student-appeal",
+  /**
+   * Student appeal submission page (not tied to a specific application).
+   */
+  StudentAppealSubmit = "student-appeal/submit/:appealForms",
+  /**
+   * Student appeal requests list (not tied to a specific application).
+   */
+  StudentAppealRequests = "appeal/:appealId",
+  /**
+   * Student appeal initiated from within a specific application (tied to a specific application).
+   */
+  StudentApplicationAppeal = "application/:applicationId/student-appeal",
+  /**
+   * Student appeal submission page (tied to a specific application).
+   */
+  StudentApplicationAppealSubmit = "application/:applicationId/student-appeal/submit/:appealForms",
+  /**
+   * Student appeal requests list (tied to a specific application).
+   */
+  StudentApplicationAppealRequests = "application/:applicationId/appeal/:appealId",
+
   // Institution
   InstitutionRoot = "/institution",
   InstitutionDashboard = "dashboard",
@@ -63,6 +87,7 @@ export enum AppRoutes {
   ActiveApplicationScholasticStandingView = "active-application/location/:locationId/scholastic-standing/:scholasticStandingId",
   OfferingsUpload = "offerings-upload",
   WithdrawalUpload = "withdrawal-upload",
+
   // AEST
   AESTRoot = "/ministry",
   AESTDashboard = "dashboard",

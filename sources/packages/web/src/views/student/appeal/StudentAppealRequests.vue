@@ -2,19 +2,16 @@
   <student-page-container>
     <template #header>
       <header-navigator
-        title="Application details"
-        subTitle="View Request"
-        :routeLocation="{
-          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
-          params: {
-            id: applicationId,
-          },
+        title="Student"
+        sub-title="Appeal Request"
+        :route-location="{
+          name: StudentRoutesConst.STUDENT_APPEAL,
         }"
       />
     </template>
     <student-appeal-requests-approval
-      :appealId="appealId"
-      :readOnlyForm="true"
+      :appeal-id="appealId"
+      :read-only-form="true"
     />
   </student-page-container>
 </template>
@@ -28,10 +25,6 @@ export default defineComponent({
     StudentAppealRequestsApproval,
   },
   props: {
-    applicationId: {
-      type: Number,
-      required: true,
-    },
     appealId: {
       type: Number,
       required: true,

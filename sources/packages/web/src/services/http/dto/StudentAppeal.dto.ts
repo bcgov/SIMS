@@ -50,3 +50,12 @@ export interface StudentAppealPendingSummaryAPIOutDTO {
   lastName: string;
   applicationNumber: string;
 }
+
+export interface EligibleApplicationForAppealAPIOutDTO {
+  id: number;
+  applicationNumber: string;
+}
+
+export interface EligibleApplicationsForAppealAPIOutDTO {
+  applications: EligibleApplicationForAppealAPIOutDTO[];
+}

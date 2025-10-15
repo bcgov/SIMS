@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, DataSource } from "typeorm";
+import { Brackets, DataSource, MoreThanOrEqual, Repository } from "typeorm";
 import {
   RecordDataModelService,
   Application,
@@ -13,6 +13,8 @@ import {
   mapFromRawAndEntities,
   getUserFullNameLikeSearch,
   FileOriginType,
+  ApplicationStatus,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import {
   AppealType,
@@ -41,6 +43,7 @@ import {
 import { NoteSharedService } from "@sims/services";
 import { StudentFileService } from "../student-file/student-file.service";
 import { ApplicationService } from "../application/application.service";
+import { InjectRepository } from "@nestjs/typeorm";
 
 /**
  * Service layer for Student appeals.
@@ -54,6 +57,8 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     private readonly notificationActionsService: NotificationActionsService,
     private readonly noteSharedService: NoteSharedService,
     private readonly studentFileService: StudentFileService,
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
   ) {
     super(dataSource.getRepository(StudentAppeal));
   }
@@ -73,9 +78,8 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     studentId: number,
     studentAppealRequests: StudentAppealRequestModel[],
   ): Promise<StudentAppeal> {
-    const application = await this.applicationService.getApplicationInfo(
-      applicationId,
-    );
+    const application =
+      await this.applicationService.getApplicationInfo(applicationId);
     return this.dataSource.transaction(async (entityManager) => {
       const studentAppeal = new StudentAppeal();
       const currentDateTime = new Date();
@@ -92,7 +96,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
             appealStatus: StudentAppealStatus.Pending,
             creator: creator,
             createdAt: currentDateTime,
-          } as StudentAppealRequest),
+          }) as StudentAppealRequest,
       );
       const uniqueFileNames: string[] = studentAppealRequests.flatMap(
         (studentAppeal) => studentAppeal.files,
@@ -274,6 +278,34 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       "status",
     );
     return appealWithStatus;
+  }
+
+  /**
+   * Get all applications eligible for appeal for a specific student.
+   * @param studentId student ID.
+   * @param options query options.
+   * - `applicationId` application ID. Allow checking if a specific
+   * application is eligible for appeal.
+   * @returns list of eligible applications.
+   */
+  async getEligibleApplicationsForAppeal(
+    studentId: number,
+    options?: { applicationId?: number },
+  ): Promise<Application[]> {
+    return this.applicationRepo.find({
+      select: { id: true, applicationNumber: true },
+      where: {
+        id: options?.applicationId,
+        student: { id: studentId, sinValidation: { isValidSIN: true } },
+        applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
+        isArchived: false,
+        programYear: {
+          startDate: MoreThanOrEqual(PROGRAM_YEAR_2025_26_START_DATE),
+        },
+      },
+      order: { applicationNumber: "ASC" },
+    });
   }
 
   /**

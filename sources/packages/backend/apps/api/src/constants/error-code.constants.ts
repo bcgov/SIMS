@@ -9,6 +9,8 @@ export const MISSING_USER_INFO = "MISSING_USER_INFO";
  * An application can have only one pending appeal at a time.
  */
 export const APPLICATION_HAS_PENDING_APPEAL = "APPLICATION_HAS_PENDING_APPEAL";
+export const APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL =
+  "APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL";
 export const APPLICATION_CHANGE_NOT_ELIGIBLE =
   "APPLICATION_CHANGE_NOT_ELIGIBLE";
 // A STUDENT_APPLICATION_EXCEPTION_* referer to when a full-time/part-time

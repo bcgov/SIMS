@@ -6,7 +6,6 @@ import {
   NotFoundException,
   UnprocessableEntityException,
   BadRequestException,
-  InternalServerErrorException,
   Get,
   ParseIntPipe,
 } from "@nestjs/common";
@@ -16,6 +15,7 @@ import {
   StudentAppealService,
 } from "../../services";
 import {
+  EligibleApplicationsForAppealAPIOutDTO,
   StudentAppealAPIInDTO,
   StudentAppealAPIOutDTO,
   StudentAppealRequestAPIOutDTO,
@@ -43,12 +43,12 @@ import {
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_HAS_PENDING_APPEAL,
+  APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
 } from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
 import { StudentAppealServerSideSubmissionData } from "./models/student-appeal.model";
 import { allowApplicationChangeRequest } from "../../utilities";
-import { OfferingIntensity } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -79,7 +79,8 @@ export class StudentAppealStudentsController extends BaseController {
       "Only one change request/appeal can be submitted at a time for each application. " +
       "When your current request is approved or denied by StudentAid BC, you will be able to submit a new one or " +
       "one or more forms submitted are not valid for appeal submission or " +
-      "appeals cannot be submitted for part-time applications.",
+      "the application is not eligible to submit an appeal or " +
+      "the application is no longer eligible to submit change request/appeal.",
   })
   @ApiBadRequestResponse({
     description:
@@ -101,6 +102,7 @@ export class StudentAppealStudentsController extends BaseController {
         "Given application either does not exist or is not complete to submit change request or appeal.",
       );
     }
+
     // Check if the submission is for new appeal process(appeal process is for submissions from 2025-26 program year).
     const isProgramYearForNewProcess = allowApplicationChangeRequest(
       application.programYear,
@@ -108,22 +110,6 @@ export class StudentAppealStudentsController extends BaseController {
     // If the submission is for new appeal process, then set the operation name as appeal.
     // Otherwise, set it to change request.
     const operation = isProgramYearForNewProcess ? "appeal" : "change request";
-
-    // Validate the application offering intensity for the operation.
-    if (
-      operation === "appeal" &&
-      application.offeringIntensity === OfferingIntensity.partTime
-    ) {
-      throw new UnprocessableEntityException(
-        "Appeals cannot be submitted for part-time applications.",
-      );
-    }
-
-    // Validate the submitted form names for the operation.
-    this.studentAppealControllerService.validateSubmittedFormNames(
-      operation,
-      payload.studentAppealRequests.map((request) => request.formName),
-    );
 
     if (application.isArchived) {
       throw new UnprocessableEntityException(
@@ -133,6 +119,31 @@ export class StudentAppealStudentsController extends BaseController {
         ),
       );
     }
+
+    if (operation === "appeal") {
+      // Ensures the appeals are validated based on the eligibility criteria used for fetching the
+      // eligible applications for appeal using getEligibleApplicationsForAppeal endpoint.
+      const eligibleApplicationsForAppeal =
+        await this.studentAppealService.getEligibleApplicationsForAppeal(
+          userToken.studentId,
+          { applicationId },
+        );
+      if (!eligibleApplicationsForAppeal.length) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(
+            "The application is not eligible to submit an appeal.",
+            APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
+          ),
+        );
+      }
+    }
+
+    // Validate the submitted form names for the operation.
+    this.studentAppealControllerService.validateSubmittedFormNames(
+      operation,
+      payload.studentAppealRequests.map((request) => request.formName),
+    );
+
     const existingApplicationAppeal =
       await this.studentAppealService.hasExistingAppeal(applicationId);
     if (existingApplicationAppeal) {
@@ -160,11 +171,10 @@ export class StudentAppealStudentsController extends BaseController {
           );
         });
       dryRunSubmissionResults = await Promise.all(dryRunPromise);
-    } catch {
-      //TODO: Add a logger to log the error trace.
-      throw new InternalServerErrorException(
-        "Dry run submission failed due to unknown reason.",
-      );
+    } catch (error: unknown) {
+      throw new Error("Dry run submission failed due to unknown reason.", {
+        cause: error,
+      });
     }
     const invalidRequest = dryRunSubmissionResults.some(
       (result) => !result.valid,
@@ -216,5 +226,25 @@ export class StudentAppealStudentsController extends BaseController {
       appealId,
       { studentId: userToken.studentId },
     );
+  }
+
+  /**
+   * Get applications that are eligible to have an appeal submitted.
+   * @returns applications that are eligible to have an appeal submitted.
+   */
+  @Get("eligible-applications")
+  async getEligibleApplicationsForAppeal(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<EligibleApplicationsForAppealAPIOutDTO> {
+    const eligibleApplications =
+      await this.studentAppealService.getEligibleApplicationsForAppeal(
+        userToken.studentId,
+      );
+    return {
+      applications: eligibleApplications.map((application) => ({
+        id: application.id,
+        applicationNumber: application.applicationNumber,
+      })),
+    };
   }
 }
