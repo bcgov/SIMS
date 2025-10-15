@@ -131,7 +131,7 @@ export class StudentAppealStudentsController extends BaseController {
       if (!eligibleApplicationsForAppeal.length) {
         throw new UnprocessableEntityException(
           new ApiProcessError(
-            " The application is not eligible to submit an appeal.",
+            "The application is not eligible to submit an appeal.",
             APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
           ),
         );

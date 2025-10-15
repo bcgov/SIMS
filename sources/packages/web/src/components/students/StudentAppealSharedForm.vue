@@ -52,6 +52,7 @@
           item-title="applicationNumber"
           variant="outlined"
           class="mb-4"
+          no-data-text="No eligible applications available"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Application number')]"
         />
         <v-select
