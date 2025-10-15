@@ -10,6 +10,7 @@
     <content-group>
       <v-form ref="appealsSelectionForm">
         <v-radio-group
+          color="primary"
           density="compact"
           v-model="selectedAppealType"
           label="Appeal type"
@@ -147,6 +148,10 @@ export default defineComponent({
       {
         formName: "roomandboardcostsappeal",
         description: "Room and board costs",
+      },
+      {
+        formName: "roomandboardcostsappeal1",
+        description: "Room and board costs 1",
       },
     ]);
     const selectedOtherAppeal = ref<string>();
