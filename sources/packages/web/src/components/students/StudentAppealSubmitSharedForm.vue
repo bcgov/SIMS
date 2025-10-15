@@ -89,13 +89,10 @@ export default defineComponent({
         emit("submitted");
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
-          switch (error.errorType) {
-            case APPLICATION_CHANGE_NOT_ELIGIBLE:
-              snackBar.warn(error.message);
-              break;
-            default:
-              snackBar.error(error.message);
-              break;
+          if (error.errorType === APPLICATION_CHANGE_NOT_ELIGIBLE) {
+            snackBar.warn(error.message);
+          } else {
+            snackBar.error(error.message);
           }
           return;
         }
