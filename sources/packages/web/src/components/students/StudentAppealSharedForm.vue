@@ -149,10 +149,6 @@ export default defineComponent({
         formName: "roomandboardcostsappeal",
         description: "Room and board costs",
       },
-      {
-        formName: "roomandboardcostsappeal1",
-        description: "Room and board costs 1",
-      },
     ]);
     const selectedOtherAppeal = ref<string>();
     const otherAppeals = ref<AppealForm[]>([
