@@ -796,6 +796,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       db.dataSource,
       { programYear: recentActiveProgramYear },
       {
+        offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.Completed,
       },
     );

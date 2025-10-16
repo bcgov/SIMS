@@ -51,25 +51,26 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
 
   it("Should get eligible applications for an appeal when it matches all the conditions.", async () => {
     // Arrange
-    // Create two applications for the same students to validate
+    // Create two applications for the same student to validate
     // the ordering by application number ASC.
     const applicationA = await saveEligibleApplicationForAppeal({
       applicationNumber: "0000000002",
     });
+    const student = applicationA.student;
     const applicationB = await saveEligibleApplicationForAppeal({
       applicationNumber: "0000000001",
-      student: applicationA.student,
+      student,
     });
     // Create an invalid application to validate that it is not returned.
     await saveEligibleApplicationForAppeal({
       applicationNumber: "0000000003",
-      student: applicationA.student,
+      student,
       offeringIntensity: OfferingIntensity.partTime,
     });
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    await mockJWTUserInfo(appModule, applicationA.student.user);
+    await mockJWTUserInfo(appModule, student.user);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -90,7 +91,7 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
       });
   });
 
-  it("Should not get any application eligible for appeal when the student does not have a valid SIN.", async () => {
+  it("Should not get any eligible application for appeal when the student does not have a valid SIN.", async () => {
     // Arrange
     const application = await saveEligibleApplicationForAppeal({
       isValidSIN: false,
@@ -110,7 +111,7 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
       });
   });
 
-  it("Should not get any application eligible for appeal when application is not completed.", async () => {
+  it("Should not get any eligible application for appeal when application is not completed.", async () => {
     // Arrange
     const application = await saveEligibleApplicationForAppeal({
       applicationStatus: ApplicationStatus.InProgress,
@@ -130,7 +131,7 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
       });
   });
 
-  it("Should not get any application eligible for appeal when application is archived.", async () => {
+  it("Should not get any eligible application for appeal when application is archived.", async () => {
     // Arrange
     const application = await saveEligibleApplicationForAppeal({
       isArchived: true,
