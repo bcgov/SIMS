@@ -38,6 +38,7 @@ import { FormService } from "../../../../services";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_HAS_PENDING_APPEAL,
+  APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
 } from "../../../../constants";
 
 describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
@@ -788,6 +789,45 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         });
     },
   );
+
+  it("Should throw unprocessable entity exception when student submit an appeal for an ineligible application.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { programYear: recentActiveProgramYear },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    const payload: StudentAppealAPIInDTO = {
+      studentAppealRequests: [
+        {
+          formName: ROOM_AND_BOARD_COSTS_FORM_NAME,
+          formData: {},
+          files: [],
+        },
+      ],
+    };
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, application.student.user);
+    // Get any student user token.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const endpoint = `/students/appeal/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "The application is not eligible to submit an appeal.",
+        errorType: APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
+      });
+  });
 
   afterAll(async () => {
     await app?.close();
