@@ -90,7 +90,7 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
       });
   });
 
-  it("Should not get any application eligible for appeal when when the student does not have a valid SIN.", async () => {
+  it("Should not get any application eligible for appeal when the student does not have a valid SIN.", async () => {
     // Arrange
     const application = await saveEligibleApplicationForAppeal({
       isValidSIN: false,
@@ -110,7 +110,7 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
       });
   });
 
-  it("Should not get any application eligible for appeal when when application is not completed.", async () => {
+  it("Should not get any application eligible for appeal when application is not completed.", async () => {
     // Arrange
     const application = await saveEligibleApplicationForAppeal({
       applicationStatus: ApplicationStatus.InProgress,
@@ -130,7 +130,7 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
       });
   });
 
-  it("Should not get any application eligible for appeal when when application is archived.", async () => {
+  it("Should not get any application eligible for appeal when application is archived.", async () => {
     // Arrange
     const application = await saveEligibleApplicationForAppeal({
       isArchived: true,
