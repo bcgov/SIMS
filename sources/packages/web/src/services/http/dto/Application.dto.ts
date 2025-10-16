@@ -29,12 +29,6 @@ export interface ApplicationIdentifiableSupportingUserDetails {
   parentsInfo?: ParentDetails[];
 }
 
-export interface ApplicationSupportingUserDetails {
-  parent1Info?: SuccessWaitingStatus;
-  parent2Info?: SuccessWaitingStatus;
-  partnerInfo?: SuccessWaitingStatus;
-}
-
 export interface ApplicationIncomeVerification {
   parent1IncomeVerificationStatus?: SuccessWaitingStatus;
   parent2IncomeVerificationStatus?: SuccessWaitingStatus;
@@ -210,9 +204,8 @@ export interface CompletedApplicationDetailsAPIOutDTO
   changeRequestInProgress?: ChangeRequestInProgressAPIOutDTO;
 }
 
-// TODO: replace the base DTO ApplicationSupportingUserDetails by ApplicationIdentifiableSupportingUserDetails.
 export interface ChangeRequestInProgressAPIOutDTO
-  extends ApplicationSupportingUserDetails,
+  extends ApplicationIdentifiableSupportingUserDetails,
     ApplicationIncomeVerification {
   applicationId: number;
   applicationEditStatus:
@@ -222,9 +215,6 @@ export interface ChangeRequestInProgressAPIOutDTO
   parent2IncomeVerificationStatus?: SuccessWaitingStatus;
   partnerIncomeVerificationStatus?: SuccessWaitingStatus;
   studentIncomeVerificationStatus?: SuccessWaitingStatus;
-  parent1Info?: SuccessWaitingStatus;
-  parent2Info?: SuccessWaitingStatus;
-  partnerInfo?: SuccessWaitingStatus;
 }
 
 export interface ApplicationAssessmentStatusDetailsAPIOutDTO {

@@ -52,7 +52,7 @@
   <confirm-modal
     title="Cancel change request"
     ref="cancelChangeRequestModal"
-    okLabel="Confirm cancellation"
+    ok-label="Confirm cancellation"
     text="Are you sure you want to cancel your change request? You will not be able to reverse this cancellation once it has been confirmed."
   />
 </template>
@@ -92,6 +92,7 @@ export default defineComponent({
     changeRequest: {
       type: Object as PropType<ChangeRequestInProgressAPIOutDTO>,
       required: false,
+      default: null,
     },
     areApplicationActionsAllowed: {
       type: Boolean,
