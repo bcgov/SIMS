@@ -9,9 +9,9 @@ import {
   OneToMany,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
-import { RecordDataModel } from "./record.model";
-import { User } from "./user.model";
 import {
+  RecordDataModel,
+  User,
   ContactInfo,
   Note,
   DisabilityStatus,
@@ -20,8 +20,10 @@ import {
   DisbursementOveraward,
   Application,
   SFASIndividual,
+  StudentAppealRequest,
+  ModifiedIndependentStatus,
+  SINValidation,
 } from ".";
-import { SINValidation } from "./sin-validation.model";
 
 @Entity({ name: TableNames.Student })
 export class Student extends RecordDataModel {
@@ -161,4 +163,29 @@ export class Student extends RecordDataModel {
     nullable: true,
   })
   sfasIndividuals?: SFASIndividual[];
+
+  /**
+   * Status of the modified independent associated to the student.
+   */
+  @Column({
+    name: "modified_independent_status",
+    type: "enum",
+    enum: ModifiedIndependentStatus,
+    enumName: "ModifiedIndependentStatus",
+    nullable: true,
+  })
+  modifiedIndependentStatus?: ModifiedIndependentStatus;
+
+  /**
+   * Reference to the appeal request ID if the student has requested an appeal
+   * for the modified independent status.
+   */
+  @OneToOne(() => StudentAppealRequest, {
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "modified_independent_appeal_request_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  modifiedIndependentAppealRequest?: StudentAppealRequest;
 }
