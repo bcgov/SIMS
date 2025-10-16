@@ -1,0 +1,1 @@
+DROP TYPE sims.modified_independent_status;
