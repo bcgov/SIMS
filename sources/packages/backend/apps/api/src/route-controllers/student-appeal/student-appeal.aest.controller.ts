@@ -12,6 +12,7 @@ import {
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
   StudentAppealService,
+  StudentAppealAssessmentService,
 } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -47,7 +48,6 @@ import {
 } from "../models/pagination.dto";
 import { Role } from "../../auth/roles.enum";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
-import { StudentAppealAssessmentService } from "../../services/student-appeal/student-appeal-assessment";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
