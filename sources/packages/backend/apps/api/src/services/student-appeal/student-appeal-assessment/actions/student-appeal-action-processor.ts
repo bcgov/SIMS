@@ -1,0 +1,55 @@
+import { Injectable } from "@nestjs/common";
+import { StudentAppeal, StudentAppealActionType } from "@sims/sims-db";
+import { StudentAppealAction } from "apps/api/src/services/student-appeal/student-appeal-assessment/actions/student-appeal-action";
+import { StudentAppealCreateAssessmentAction } from "apps/api/src/services/student-appeal/student-appeal-assessment/actions/student-appeal-create-assessment-action";
+import { StudentAppealUpdateModifiedIndependentAction } from "apps/api/src/services/student-appeal/student-appeal-assessment/actions/student-appeal-update-modified-independent-action";
+import { EntityManager } from "typeorm";
+
+const DEFAULT_ACTION_TYPE = [
+  StudentAppealActionType.CreateStudentAppealAssessment,
+];
+
+/**
+ * Keeps a list of all available student appeal actions that can potentially
+ * be processed and execute them based on the appeal requests action types.
+ */
+@Injectable()
+export class StudentAppealActionsProcessor {
+  private readonly actions: StudentAppealAction[];
+
+  constructor(
+    createAssessmentAction: StudentAppealCreateAssessmentAction,
+    updateModifiedIndependentAction: StudentAppealUpdateModifiedIndependentAction,
+  ) {
+    this.actions = [createAssessmentAction, updateModifiedIndependentAction];
+  }
+
+  /**
+   * Process the actions associated with a student appeal.
+   * Checks for the appeals requests action types and processes
+   * the corresponding actions as required.
+   * @param studentAppeal the student appeal to process actions for.
+   * @param auditUserId the ID of the user performing the action.
+   * @param auditDate the date the action is being performed.
+   * @param entityManager entity manager to allow the query to happen within a transaction.
+   */
+  async processActions(
+    studentAppeal: StudentAppeal,
+    auditUserId: number,
+    auditDate: Date,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const actionTypes = studentAppeal.appealRequests.flatMap(
+      (request) => request.submittedData?.actions ?? DEFAULT_ACTION_TYPE,
+    );
+    const uniqueActionsTypes: Set<string> = new Set(actionTypes);
+    const actionsToProcess = this.actions.filter((action) =>
+      uniqueActionsTypes.has(action.actionType),
+    );
+    await Promise.all([
+      actionsToProcess.map((action) =>
+        action.process(studentAppeal, auditUserId, auditDate, entityManager),
+      ),
+    ]);
+  }
+}

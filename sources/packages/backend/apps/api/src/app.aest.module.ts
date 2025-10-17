@@ -110,6 +110,12 @@ import {
   DisbursementScheduleSharedService,
 } from "@sims/services";
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
+import {
+  StudentAppealActionsProcessor,
+  StudentAppealAssessmentService,
+  StudentAppealCreateAssessmentAction,
+  StudentAppealUpdateModifiedIndependentAction,
+} from "./services/student-appeal/student-appeal-assessment";
 
 @Module({
   imports: [AuthModule, ECertIntegrationModule],
@@ -218,6 +224,10 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     CASInvoiceBatchReportService,
     ApplicationChangeRequestService,
     DisbursementScheduleSharedService,
+    StudentAppealAssessmentService,
+    StudentAppealActionsProcessor,
+    StudentAppealCreateAssessmentAction,
+    StudentAppealUpdateModifiedIndependentAction,
   ],
 })
 export class AppAESTModule {}

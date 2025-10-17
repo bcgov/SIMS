@@ -47,6 +47,7 @@ import {
 } from "../models/pagination.dto";
 import { Role } from "../../auth/roles.enum";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
+import { StudentAppealAssessmentService } from "../../services/student-appeal/student-appeal-assessment";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -56,6 +57,7 @@ export class StudentAppealAESTController extends BaseController {
   constructor(
     private readonly studentAppealService: StudentAppealService,
     private readonly studentAppealControllerService: StudentAppealControllerService,
+    private readonly studentAppealAssessmentService: StudentAppealAssessmentService,
   ) {
     super();
   }
@@ -104,7 +106,7 @@ export class StudentAppealAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      await this.studentAppealService.approveRequests(
+      await this.studentAppealAssessmentService.assessRequests(
         appealId,
         payload.requests,
         userToken.userId,
