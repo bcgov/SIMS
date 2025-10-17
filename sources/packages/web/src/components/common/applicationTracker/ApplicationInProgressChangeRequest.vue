@@ -36,13 +36,15 @@
           >
             <template v-if="parent.isAbleToReport">
               We are waiting for supporting information from
-              {{ parent.parentFullName }}.
+              <strong>{{ parent.parentFullName }}</strong
+              >.
             </template>
             <template v-else>
-              You have indicated that {{ parent.parentFullName }} is unable to
-              complete their declaration. Please complete the following
-              declaration on their behalf. Click on the button below to complete
-              the declaration.
+              You have indicated that
+              <strong>{{ parent.parentFullName }}</strong> is unable to complete
+              their declaration. Please complete the following declaration on
+              their behalf. Click on the button below to complete the
+              declaration.
               <div class="m-2">
                 <v-btn
                   color="primary"
