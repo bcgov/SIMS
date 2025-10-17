@@ -389,7 +389,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         "student.id",
       ])
       .innerJoin("studentAppeal.application", "application")
-      .innerJoin("application.student", "student")
+      .innerJoin("studentAppeal.student", "student")
       .innerJoin("student.user", "user")
       .innerJoin("application.programYear", "programYear")
       .where(

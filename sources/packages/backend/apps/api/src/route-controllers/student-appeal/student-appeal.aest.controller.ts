@@ -149,8 +149,8 @@ export class StudentAppealAESTController extends BaseController {
         studentId: eachAppeal.application.student.id,
         applicationNumber: eachAppeal.application.applicationNumber,
         submittedDate: eachAppeal.submittedDate,
-        firstName: eachAppeal.application.student.user.firstName,
-        lastName: eachAppeal.application.student.user.lastName,
+        firstName: eachAppeal.student.user.firstName,
+        lastName: eachAppeal.student.user.lastName,
       })),
       count: studentAppeals.count,
     };

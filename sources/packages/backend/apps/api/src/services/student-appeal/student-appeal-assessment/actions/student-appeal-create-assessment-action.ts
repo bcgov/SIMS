@@ -33,6 +33,11 @@ export class StudentAppealCreateAssessmentAction extends StudentAppealAction {
       // If the appeal is not approved, no assessment should be created.
       return;
     }
+    if (!studentAppeal.application) {
+      throw new Error(
+        `Cannot create assessment for student appeal ID ${studentAppeal.id} because it is not linked to an application.`,
+      );
+    }
     // Create the new assessment to be processed.
     const auditUser = { id: auditUserId };
     const newAssessment = {

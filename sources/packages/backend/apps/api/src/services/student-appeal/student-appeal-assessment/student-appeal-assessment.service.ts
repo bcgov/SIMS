@@ -60,7 +60,7 @@ export class StudentAppealAssessmentService extends RecordDataModelService<Stude
       for (const approval of approvals) {
         // Create the new note.
         const note = await this.noteSharedService.createStudentNote(
-          appealToUpdate.application.student.id,
+          appealToUpdate.student.id,
           NoteType.Application,
           approval.noteDescription,
           auditUserId,
@@ -89,7 +89,7 @@ export class StudentAppealAssessmentService extends RecordDataModelService<Stude
         entityManager,
       );
       // Create student notification when ministry completes student appeal.
-      const studentUser = appealToUpdate.application.student.user;
+      const studentUser = appealToUpdate.student.user;
       await this.notificationActionsService.saveChangeRequestCompleteNotification(
         {
           givenNames: studentUser.firstName,
@@ -139,7 +139,7 @@ export class StudentAppealAssessmentService extends RecordDataModelService<Stude
       .innerJoin("studentAppeal.application", "application")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
-      .innerJoin("application.student", "student")
+      .innerJoin("studentAppeal.student", "student")
       .innerJoin("student.user", "user")
       .leftJoin("studentAppeal.studentAssessment", "studentAssessment")
       .where("studentAppeal.id = :appealId", { appealId })
