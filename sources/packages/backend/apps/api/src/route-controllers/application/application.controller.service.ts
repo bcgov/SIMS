@@ -24,7 +24,6 @@ import {
   ApplicationDataAPIOutDTO,
   SuccessWaitingStatus,
   ApplicationIncomeVerification,
-  ApplicationSupportingUserDetails,
   EnrolmentApplicationDetailsAPIOutDTO,
   ApplicationSupplementalDataAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
@@ -806,7 +805,7 @@ export class ApplicationControllerService {
    */
   processApplicationSupportingUserDetails(
     supportingUser: SupportingUser[],
-  ): ApplicationSupportingUserDetails {
+  ): ApplicationIdentifiableSupportingUserDetails {
     const supportingUserDetails =
       {} as ApplicationIdentifiableSupportingUserDetails;
     // Parent.
