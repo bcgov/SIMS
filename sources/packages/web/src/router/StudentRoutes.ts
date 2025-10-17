@@ -134,8 +134,8 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.StudentReportParentInformationOnChangeRequest,
-        name: StudentRoutesConst.REPORT_PARENT_INFORMATION_CHANGE_REQUEST,
+        path: AppRoutes.ChangeRequestStudentReportParentInformation,
+        name: StudentRoutesConst.CHANGE_REQUEST_REPORT_PARENT_INFORMATION,
         component: ReportParentInformation,
         props: (route) => ({
           applicationId: Number.parseInt(route.params.applicationId as string),

@@ -269,7 +269,7 @@ export default defineComponent({
 
     const navigateToParentReporting = (supportingUserId: number) => {
       router.push({
-        name: StudentRoutesConst.REPORT_PARENT_INFORMATION_CHANGE_REQUEST,
+        name: StudentRoutesConst.CHANGE_REQUEST_REPORT_PARENT_INFORMATION,
         params: {
           applicationId: props.applicationId,
           supportingUserId: supportingUserId,
