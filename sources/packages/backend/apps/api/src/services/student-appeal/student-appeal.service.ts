@@ -248,13 +248,14 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       ])
       .addSelect(this.buildStatusSelect(), "status")
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
-      .innerJoin("studentAppeal.application", "application")
+      .innerJoin("studentAppeal.student", "student")
+      .leftJoin("studentAppeal.application", "application")
       .leftJoin("appealRequest.assessedBy", "user")
       .leftJoin("appealRequest.note", "note")
       .where("studentAppeal.id = :appealId", { appealId });
 
     if (options?.studentId) {
-      query.andWhere("application.student.id = :studentId", {
+      query.andWhere("student.id = :studentId", {
         studentId: options?.studentId,
       });
     }
