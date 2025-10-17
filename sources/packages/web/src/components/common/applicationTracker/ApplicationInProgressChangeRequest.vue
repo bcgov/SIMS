@@ -6,25 +6,78 @@
     icon-color="warning"
     background-color="warning-bg"
   >
-    <template #content v-if="waitingList.length">
+    <template #content v-if="waitingList.waitingTypes.length">
       <p><strong>Currently your change request is waiting for:</strong></p>
       <ul>
-        <li v-if="waitingList.includes(WaitingTypes.MinistryApproval)">
+        <li
+          v-if="
+            waitingList.waitingTypes.includes(WaitingTypes.MinistryApproval)
+          "
+        >
           Waiting on StudentAid BC to approve the change.
         </li>
-        <li v-if="waitingList.includes(WaitingTypes.StudentIncomeVerification)">
+        <li
+          v-if="
+            waitingList.waitingTypes.includes(
+              WaitingTypes.StudentIncomeVerification,
+            )
+          "
+        >
           Pending student income verification information.
         </li>
-        <li v-if="waitingList.includes(WaitingTypes.ParentsDeclaration)">
-          Pending parent declaration information.
-        </li>
-        <li v-if="waitingList.includes(WaitingTypes.PartnerDeclaration)">
+        <template
+          v-if="
+            waitingList.waitingTypes.includes(WaitingTypes.ParentsDeclaration)
+          "
+          ><li
+            v-for="parent in waitingList.parentsInfoWaiting"
+            :key="parent.parentFullName"
+          >
+            <span v-if="parent.isAbleToReport"
+              >We are waiting for supporting information from
+              {{ parent.parentFullName }}.</span
+            >
+            <div v-else>
+              <div>
+                You have indicated that {{ parent.parentFullName }} is unable to
+                complete their declaration. Please complete the following
+                declaration on their behalf. Click on the button below to
+                complete the declaration.
+              </div>
+              <div>
+                <v-btn
+                  class="m-2"
+                  color="primary"
+                  @click="navigateToParentReporting(parent.supportingUserId)"
+                  >{{ parent.parentFullName }}</v-btn
+                >
+              </div>
+            </div>
+          </li></template
+        >
+        <li
+          v-if="
+            waitingList.waitingTypes.includes(WaitingTypes.PartnerDeclaration)
+          "
+        >
           Pending partner declaration information.
         </li>
-        <li v-if="waitingList.includes(WaitingTypes.ParentsIncomeVerification)">
+        <li
+          v-if="
+            waitingList.waitingTypes.includes(
+              WaitingTypes.ParentsIncomeVerification,
+            )
+          "
+        >
           Pending parent income verification information.
         </li>
-        <li v-if="waitingList.includes(WaitingTypes.PartnerIncomeVerification)">
+        <li
+          v-if="
+            waitingList.waitingTypes.includes(
+              WaitingTypes.PartnerIncomeVerification,
+            )
+          "
+        >
           Pending partner income verification information.
         </li>
       </ul>
@@ -59,7 +112,10 @@
 
 <script lang="ts">
 import ApplicationStatusTrackerBanner from "@/components/common/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
-import { ChangeRequestInProgressAPIOutDTO } from "@/services/http/dto";
+import {
+  ChangeRequestInProgressAPIOutDTO,
+  ParentDetails,
+} from "@/services/http/dto";
 import { computed, defineComponent, PropType, ref } from "vue";
 import { ApplicationEditStatus, SuccessWaitingStatus } from "@/types";
 import { ModalDialog, useSnackBar } from "@/composables";
@@ -80,6 +136,11 @@ enum WaitingTypes {
   PartnerIncomeVerification = "PartnerIncomeVerification",
 }
 
+interface WaitingList {
+  waitingTypes: WaitingTypes[];
+  parentsInfoWaiting?: ParentDetails[];
+}
+
 export default defineComponent({
   emits: {
     changeRequestCancelled: () => true,
@@ -89,6 +150,10 @@ export default defineComponent({
     ConfirmModal,
   },
   props: {
+    applicationId: {
+      type: Number,
+      required: true,
+    },
     changeRequest: {
       type: Object as PropType<ChangeRequestInProgressAPIOutDTO>,
       required: false,
@@ -149,32 +214,33 @@ export default defineComponent({
      * Creates the list of processes currently waiting that are
      * meaningful to be displayed to the student.
      */
-    const waitingList = computed(() => {
+    const waitingList = computed<WaitingList>(() => {
       if (!props.changeRequest) {
-        return [];
+        return { waitingTypes: [] };
       }
-      const waitingList: WaitingTypes[] = [];
+      const waitingList: WaitingList = { waitingTypes: [] };
       const change = props.changeRequest;
       if (
         change.applicationEditStatus ===
         ApplicationEditStatus.ChangePendingApproval
       ) {
-        waitingList.push(WaitingTypes.MinistryApproval);
+        waitingList.waitingTypes.push(WaitingTypes.MinistryApproval);
       }
-      if (
-        [change.parent1Info, change.parent2Info].includes(
-          SuccessWaitingStatus.Waiting,
-        )
-      ) {
-        waitingList.push(WaitingTypes.ParentsDeclaration);
+      const parentsInfoWaiting = change.parentsInfo?.filter(
+        (parent) => parent.status === SuccessWaitingStatus.Waiting,
+      );
+      if (parentsInfoWaiting?.length) {
+        waitingList.waitingTypes.push(WaitingTypes.ParentsDeclaration);
+        // Include the details of the parents whose information is still waiting.
+        waitingList.parentsInfoWaiting = parentsInfoWaiting;
       }
       if (change.partnerInfo === SuccessWaitingStatus.Waiting) {
-        waitingList.push(WaitingTypes.PartnerDeclaration);
+        waitingList.waitingTypes.push(WaitingTypes.PartnerDeclaration);
       }
       if (
         change.studentIncomeVerificationStatus === SuccessWaitingStatus.Waiting
       ) {
-        waitingList.push(WaitingTypes.StudentIncomeVerification);
+        waitingList.waitingTypes.push(WaitingTypes.StudentIncomeVerification);
       }
       if (
         [
@@ -182,12 +248,12 @@ export default defineComponent({
           change.parent2IncomeVerificationStatus,
         ].includes(SuccessWaitingStatus.Waiting)
       ) {
-        waitingList.push(WaitingTypes.ParentsIncomeVerification);
+        waitingList.waitingTypes.push(WaitingTypes.ParentsIncomeVerification);
       }
       if (
         change.partnerIncomeVerificationStatus === SuccessWaitingStatus.Waiting
       ) {
-        waitingList.push(WaitingTypes.PartnerIncomeVerification);
+        waitingList.waitingTypes.push(WaitingTypes.PartnerIncomeVerification);
       }
       return waitingList;
     });
@@ -196,10 +262,20 @@ export default defineComponent({
      * Adjust the label based on the waiting list.
      */
     const trackerLabel = computed(() => {
-      return waitingList.value.length
+      return waitingList.value.waitingTypes.length
         ? "You have a submitted change request that is still pending. Please see below for the next steps."
         : "You have a submitted change request that is still pending.";
     });
+
+    const navigateToParentReporting = (supportingUserId: number) => {
+      router.push({
+        name: StudentRoutesConst.REPORT_PARENT_INFORMATION,
+        params: {
+          currentApplicationId: props.applicationId,
+          supportingUserId: supportingUserId,
+        },
+      });
+    };
 
     return {
       cancelChangeRequest,
@@ -209,6 +285,7 @@ export default defineComponent({
       waitingList,
       WaitingTypes,
       trackerLabel,
+      navigateToParentReporting,
     };
   },
 });

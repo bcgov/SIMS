@@ -124,7 +124,9 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.REPORT_PARENT_INFORMATION,
         component: ReportParentInformation,
         props: (route) => ({
-          applicationId: Number.parseInt(route.params.applicationId as string),
+          currentApplicationId: Number.parseInt(
+            route.params.currentApplicationId as string,
+          ),
           supportingUserId: Number.parseInt(
             route.params.supportingUserId as string,
           ),

@@ -18,7 +18,7 @@ import {
   SupportingUserType,
 } from "@/types";
 
-interface ParentDetails {
+export interface ParentDetails {
   supportingUserId: number;
   parentFullName: string;
   status: SuccessWaitingStatus;

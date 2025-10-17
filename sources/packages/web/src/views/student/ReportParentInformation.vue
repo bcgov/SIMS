@@ -3,15 +3,15 @@
     <template #header>
       <header-navigator
         title="Application details"
-        subTitle="Parent information"
-        :routeLocation="{
+        sub-title="Parent information"
+        :route-location="{
           name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
           params: {
-            id: applicationId,
+            id: currentApplicationId,
           },
         }"
       />
-      <application-header-title :application-id="applicationId" />
+      <application-header-title :application-id="currentApplicationId" />
     </template>
     <template #alerts>
       <banner
@@ -41,7 +41,8 @@ import { useRouter } from "vue-router";
 export default defineComponent({
   components: { ApplicationHeaderTitle, SupportingUserForm },
   props: {
-    applicationId: {
+    // Current application version id.
+    currentApplicationId: {
       type: Number,
       required: true,
     },
@@ -71,7 +72,7 @@ export default defineComponent({
         router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
           params: {
-            id: props.applicationId,
+            id: props.currentApplicationId,
           },
         });
       } catch {

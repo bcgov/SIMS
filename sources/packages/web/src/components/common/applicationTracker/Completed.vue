@@ -1,9 +1,10 @@
 <template>
   <!-- Student request an application change (after COE) - change in progress -->
   <application-in-progress-change-request
-    :changeRequest="assessmentDetails.changeRequestInProgress"
-    :areApplicationActionsAllowed="areApplicationActionsAllowed"
-    @changeRequestCancelled="changeRequestCancelled"
+    :application-id="applicationId"
+    :change-request="assessmentDetails.changeRequestInProgress"
+    :are-application-actions-allowed="areApplicationActionsAllowed"
+    @change-request-cancelled="changeRequestCancelled"
   />
   <!-- Student application having one or more disbursement feedback errors that block funding. -->
   <application-status-tracker-banner
@@ -217,21 +218,21 @@
   <!-- Disbursement/COE banners -->
   <multiple-disbursement-banner
     v-if="assessmentDetails.secondDisbursement"
-    :firstCOEStatus="assessmentDetails.firstDisbursement?.coeStatus"
-    :secondCOEStatus="assessmentDetails.secondDisbursement?.coeStatus"
-    :coeDenialReason="multipleCOEDenialReason"
-    :firstDisbursementStatus="
+    :first-c-o-e-status="assessmentDetails.firstDisbursement?.coeStatus"
+    :second-c-o-e-status="assessmentDetails.secondDisbursement?.coeStatus"
+    :coe-denial-reason="multipleCOEDenialReason"
+    :first-disbursement-status="
       assessmentDetails.firstDisbursement?.disbursementScheduleStatus
     "
-    :secondDisbursementStatus="
+    :second-disbursement-status="
       assessmentDetails.secondDisbursement?.disbursementScheduleStatus
     "
   />
   <disbursement-banner
     v-else
-    :coeStatus="assessmentDetails.firstDisbursement?.coeStatus"
-    :coeDenialReason="assessmentDetails.firstDisbursement?.coeDenialReason"
-    :disbursementStatus="
+    :coe-status="assessmentDetails.firstDisbursement?.coeStatus"
+    :coe-denial-reason="assessmentDetails.firstDisbursement?.coeDenialReason"
+    :disbursement-status="
       assessmentDetails.firstDisbursement?.disbursementScheduleStatus
     "
   />
