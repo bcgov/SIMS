@@ -7,6 +7,10 @@ import {
   StudentAppealUpdateModifiedIndependentAction,
 } from "..";
 
+/**
+ * Default action types for student appeal processing
+ * when none is provided in the appeal requests.
+ */
 const DEFAULT_ACTION_TYPE = [
   StudentAppealActionType.CreateStudentAppealAssessment,
 ];
