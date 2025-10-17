@@ -146,7 +146,7 @@ export class StudentAppealAESTController extends BaseController {
       results: studentAppeals.results.map((eachAppeal) => ({
         appealId: eachAppeal.id,
         applicationId: eachAppeal.application.id,
-        studentId: eachAppeal.application.student.id,
+        studentId: eachAppeal.student.id,
         applicationNumber: eachAppeal.application.applicationNumber,
         submittedDate: eachAppeal.submittedDate,
         firstName: eachAppeal.student.user.firstName,
