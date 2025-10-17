@@ -48,10 +48,9 @@ export class StudentAppealActionsProcessor {
     const actionsToProcess = this.actions.filter((action) =>
       uniqueActionsTypes.has(action.actionType),
     );
-    await Promise.all([
-      actionsToProcess.map((action) =>
-        action.process(studentAppeal, auditUserId, auditDate, entityManager),
-      ),
-    ]);
+    const actionsPromises = actionsToProcess.map((action) =>
+      action.process(studentAppeal, auditUserId, auditDate, entityManager),
+    );
+    await Promise.all(actionsPromises);
   }
 }
