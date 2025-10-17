@@ -25,6 +25,7 @@
         >
           Pending student income verification information.
         </li>
+        <!-- Parent declarations. Change request can be waiting for supporting information from 1 or 2 parents. -->
         <template
           v-if="
             waitingList.waitingTypes.includes(WaitingTypes.ParentsDeclaration)
@@ -33,26 +34,23 @@
             v-for="parent in waitingList.parentsInfoWaiting"
             :key="parent.parentFullName"
           >
-            <span v-if="parent.isAbleToReport"
-              >We are waiting for supporting information from
-              {{ parent.parentFullName }}.</span
-            >
-            <div v-else>
-              <div>
-                You have indicated that {{ parent.parentFullName }} is unable to
-                complete their declaration. Please complete the following
-                declaration on their behalf. Click on the button below to
-                complete the declaration.
-              </div>
-              <div>
+            <template v-if="parent.isAbleToReport">
+              We are waiting for supporting information from
+              {{ parent.parentFullName }}.
+            </template>
+            <template v-else>
+              You have indicated that {{ parent.parentFullName }} is unable to
+              complete their declaration. Please complete the following
+              declaration on their behalf. Click on the button below to complete
+              the declaration.
+              <div class="m-2">
                 <v-btn
-                  class="m-2"
                   color="primary"
                   @click="navigateToParentReporting(parent.supportingUserId)"
                   >{{ parent.parentFullName }}</v-btn
                 >
               </div>
-            </div>
+            </template>
           </li></template
         >
         <li
