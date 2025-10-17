@@ -12,6 +12,7 @@ import {
   FileOriginType,
   ApplicationStatus,
   OfferingIntensity,
+  Student,
 } from "@sims/sims-db";
 import {
   AppealType,
@@ -75,6 +76,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       const currentDateTime = new Date();
       const creator = { id: userId } as User;
       studentAppeal.application = { id: applicationId } as Application;
+      studentAppeal.student = { id: studentId } as Student;
       studentAppeal.creator = creator;
       studentAppeal.createdAt = currentDateTime;
       studentAppeal.submittedDate = currentDateTime;
