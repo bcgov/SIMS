@@ -124,11 +124,26 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.REPORT_PARENT_INFORMATION,
         component: ReportParentInformation,
         props: (route) => ({
-          currentApplicationId: Number.parseInt(
-            route.params.currentApplicationId as string,
-          ),
+          applicationId: Number.parseInt(route.params.applicationId as string),
           supportingUserId: Number.parseInt(
             route.params.supportingUserId as string,
+          ),
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentReportParentInformationOnChangeRequest,
+        name: StudentRoutesConst.REPORT_PARENT_INFORMATION_CHANGE_REQUEST,
+        component: ReportParentInformation,
+        props: (route) => ({
+          applicationId: Number.parseInt(route.params.applicationId as string),
+          supportingUserId: Number.parseInt(
+            route.params.supportingUserId as string,
+          ),
+          changeRequestApplicationId: Number.parseInt(
+            route.params.changeRequestApplicationId as string,
           ),
         }),
         meta: {

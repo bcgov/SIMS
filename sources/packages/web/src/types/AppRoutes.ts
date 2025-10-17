@@ -20,7 +20,8 @@ export enum AppRoutes {
   StudentApplicationOfferingChangeRequest = "application/:applicationId/application-offering-change-request/:applicationOfferingChangeRequestId",
   StudentRequestedApplicationOfferingDetails = "requested-offering",
   StudentActiveApplicationOfferingDetails = "active-offering",
-  StudentReportParentInformation = "application/:currentApplicationId/supporting-user/:supportingUserId/report-parent-information",
+  StudentReportParentInformation = "application/:applicationId/supporting-user/:supportingUserId/report-parent-information",
+  StudentReportParentInformationOnChangeRequest = "application/:applicationId/supporting-user/:supportingUserId/change-request-application/:changeRequestApplicationId/report-parent-information",
   StudentScholasticStandingView = "application/:applicationId/scholastic-standing/:scholasticStandingId",
   /**
    * Student appeal initiated from the top-level appeal menu (not tied to a specific application).
