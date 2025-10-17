@@ -1,9 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { StudentAppeal, StudentAppealActionType } from "@sims/sims-db";
-import { StudentAppealAction } from "apps/api/src/services/student-appeal/student-appeal-assessment/actions/student-appeal-action";
-import { StudentAppealCreateAssessmentAction } from "apps/api/src/services/student-appeal/student-appeal-assessment/actions/student-appeal-create-assessment-action";
-import { StudentAppealUpdateModifiedIndependentAction } from "apps/api/src/services/student-appeal/student-appeal-assessment/actions/student-appeal-update-modified-independent-action";
 import { EntityManager } from "typeorm";
+import {
+  StudentAppealAction,
+  StudentAppealCreateAssessmentAction,
+  StudentAppealUpdateModifiedIndependentAction,
+} from "..";
 
 const DEFAULT_ACTION_TYPE = [
   StudentAppealActionType.CreateStudentAppealAssessment,
