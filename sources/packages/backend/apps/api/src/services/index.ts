@@ -60,3 +60,4 @@ export * from "./student/student-information.service";
 export * from "./dynamic-form-configuration/dynamic-form-configuration.service";
 export * from "./application-change-request/application-change-request.service";
 export * from "./student-appeal/student-appeal.model";
+export * from "./student-appeal/student-appeal-assessment";

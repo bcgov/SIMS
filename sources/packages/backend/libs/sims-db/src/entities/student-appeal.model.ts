@@ -7,7 +7,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Application, StudentAssessment } from ".";
+import { Application, Student, StudentAssessment } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { StudentAppealRequest } from "./student-appeal-requests.model";
@@ -30,18 +30,29 @@ export class StudentAppeal extends RecordDataModel {
   })
   submittedDate: Date;
   /**
-   * Application related to this student appeal.
+   * Application related to this student appeal
+   * when the appeal is regarding an application issue.
    */
   @ManyToOne(() => Application, {
     eager: false,
     cascade: ["update"],
-    nullable: false,
+    nullable: true,
   })
   @JoinColumn({
     name: "application_id",
     referencedColumnName: ColumnNames.ID,
   })
-  application: Application;
+  application?: Application;
+  /**
+   * Student related to this student appeal.
+   * An appeal may or may not be linked to an application, but it must be linked to a student.
+   */
+  @ManyToOne(() => Student)
+  @JoinColumn({
+    name: "student_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  student: Student;
   /**
    * Individual appeals that belongs to the same request.
    */

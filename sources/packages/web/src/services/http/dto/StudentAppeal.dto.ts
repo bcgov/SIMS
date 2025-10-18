@@ -43,12 +43,12 @@ export interface StudentAppealApprovalAPIInDTO {
 
 export interface StudentAppealPendingSummaryAPIOutDTO {
   appealId: number;
-  applicationId: number;
+  applicationId?: number;
+  applicationNumber?: string;
   studentId: number;
   submittedDate: Date;
   firstName?: string;
   lastName: string;
-  applicationNumber: string;
 }
 
 export interface EligibleApplicationForAppealAPIOutDTO {

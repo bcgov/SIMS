@@ -12,6 +12,7 @@ import {
 import {
   ASSESSMENT_ALREADY_IN_PROGRESS,
   StudentAppealService,
+  StudentAppealAssessmentService,
 } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -56,6 +57,7 @@ export class StudentAppealAESTController extends BaseController {
   constructor(
     private readonly studentAppealService: StudentAppealService,
     private readonly studentAppealControllerService: StudentAppealControllerService,
+    private readonly studentAppealAssessmentService: StudentAppealAssessmentService,
   ) {
     super();
   }
@@ -104,7 +106,7 @@ export class StudentAppealAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      await this.studentAppealService.approveRequests(
+      await this.studentAppealAssessmentService.assessRequests(
         appealId,
         payload.requests,
         userToken.userId,
@@ -143,12 +145,12 @@ export class StudentAppealAESTController extends BaseController {
     return {
       results: studentAppeals.results.map((eachAppeal) => ({
         appealId: eachAppeal.id,
-        applicationId: eachAppeal.application.id,
-        studentId: eachAppeal.application.student.id,
-        applicationNumber: eachAppeal.application.applicationNumber,
+        applicationId: eachAppeal.application?.id,
+        studentId: eachAppeal.student.id,
+        applicationNumber: eachAppeal.application?.applicationNumber,
         submittedDate: eachAppeal.submittedDate,
-        firstName: eachAppeal.application.student.user.firstName,
-        lastName: eachAppeal.application.student.user.lastName,
+        firstName: eachAppeal.student.user.firstName,
+        lastName: eachAppeal.student.user.lastName,
       })),
       count: studentAppeals.count,
     };

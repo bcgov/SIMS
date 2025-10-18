@@ -76,12 +76,12 @@ export class StudentAppealApprovalAPIInDTO {
 
 export class StudentAppealPendingSummaryAPIOutDTO {
   appealId: number;
-  applicationId: number;
+  applicationId?: number;
+  applicationNumber?: string;
   studentId: number;
   submittedDate: Date;
   firstName?: string;
   lastName: string;
-  applicationNumber: string;
 }
 
 export class EligibleApplicationForAppealAPIOutDTO {
