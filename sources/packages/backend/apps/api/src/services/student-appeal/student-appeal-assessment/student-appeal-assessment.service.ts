@@ -136,11 +136,11 @@ export class StudentAppealAssessmentService extends RecordDataModelService<Stude
         "user.email",
       ])
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
-      .innerJoin("studentAppeal.application", "application")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("studentAppeal.student", "student")
       .innerJoin("student.user", "user")
+      .leftJoin("studentAppeal.application", "application")
+      .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin("currentAssessment.offering", "offering")
       .leftJoin("studentAppeal.studentAssessment", "studentAssessment")
       .where("studentAppeal.id = :appealId", { appealId })
       // Ensures that the provided appeal requests IDs belongs to the appeal.
