@@ -169,7 +169,7 @@ export class StudentAppealAssessmentService extends RecordDataModelService<Stude
       );
     }
 
-    // If a students appel has, for instance, 3 requests, all must be updated at once.
+    // If a student's appeal has, for instance, 3 requests, all must be updated at once.
     // The query already ensured that only pending requests will be selected and that
     // the student appeal also has nothing different then pending requests.
     if (approvals.length !== appealToUpdate.appealRequests.length) {
