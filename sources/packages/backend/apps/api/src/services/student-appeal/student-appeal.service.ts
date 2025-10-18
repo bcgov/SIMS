@@ -389,26 +389,41 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         "application.applicationNumber",
         "student.id",
       ])
-      .innerJoin("studentAppeal.application", "application")
       .innerJoin("studentAppeal.student", "student")
       .innerJoin("student.user", "user")
-      .innerJoin("application.programYear", "programYear")
+      .leftJoin("studentAppeal.application", "application")
+      .leftJoin("application.programYear", "programYear")
       .where(
         `EXISTS(${this.studentAppealRequestsService
           .appealsByStatusQueryObject(status)
           .getSql()})`,
       );
-
-    // Filter by program year start date based on appeal type
+    // Filter by program year start date based on appeal type.
     if (appealType === AppealType.LegacyChangeRequest) {
       studentAppealsQuery.andWhere(
-        "programYear.startDate < :programStartDate",
-        { programStartDate: PROGRAM_YEAR_2025_26_START_DATE },
+        new Brackets((qb) =>
+          qb
+            // Ensure only retrieving appeals for students where applications are associated.
+            .where("programYear.startDate IS NOT NULL")
+            // If an application is associated, only appeals for programs starting
+            // before the defined date are allowed.
+            .andWhere("programYear.startDate < :programStartDate", {
+              programStartDate: PROGRAM_YEAR_2025_26_START_DATE,
+            }),
+        ),
       );
     } else if (appealType === AppealType.Appeal) {
       studentAppealsQuery.andWhere(
-        "programYear.startDate >= :programStartDate",
-        { programStartDate: PROGRAM_YEAR_2025_26_START_DATE },
+        new Brackets((qb) =>
+          qb
+            // Allow retrieving appeals for students where applications are not associated.
+            .where("programYear.startDate IS NULL")
+            // If an application is associated, only appeals for programs starting
+            // on or after the defined date are allowed.
+            .orWhere("programYear.startDate >= :programStartDate", {
+              programStartDate: PROGRAM_YEAR_2025_26_START_DATE,
+            }),
+        ),
       );
     }
 
