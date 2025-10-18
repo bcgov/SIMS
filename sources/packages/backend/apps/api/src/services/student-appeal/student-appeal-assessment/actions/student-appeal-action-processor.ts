@@ -32,7 +32,7 @@ export class StudentAppealActionsProcessor {
 
   /**
    * Process the actions associated with a student appeal.
-   * Checks for the appeals requests action types and processes
+   * Checks for the appeals requests action types and process
    * the corresponding actions as required.
    * @param studentAppeal the student appeal to process actions for.
    * @param auditUserId the ID of the user performing the action.

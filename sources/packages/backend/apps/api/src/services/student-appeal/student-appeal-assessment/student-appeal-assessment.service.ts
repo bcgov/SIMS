@@ -100,7 +100,6 @@ export class StudentAppealAssessmentService extends RecordDataModelService<Stude
         auditUserId,
         entityManager,
       );
-      return updatedStudentAppeal;
     });
   }
 
