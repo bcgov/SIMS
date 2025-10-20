@@ -256,12 +256,12 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
 
     if (options?.studentId) {
       query.andWhere("student.id = :studentId", {
-        studentId: options?.studentId,
+        studentId: options.studentId,
       });
     }
     if (options?.applicationId) {
       query.andWhere("application.id = :applicationId", {
-        applicationId: options?.applicationId,
+        applicationId: options.applicationId,
       });
     }
     const queryResult = await query.getRawAndEntities();

@@ -6,6 +6,14 @@ import {
 import { EntityManager } from "typeorm";
 
 /**
+ * Default action types for student appeal processing
+ * when none is provided in the appeal requests.
+ */
+export const DEFAULT_ACTION_TYPE = [
+  StudentAppealActionType.CreateStudentAppealAssessment,
+];
+
+/**
  * Actions that can be performed on student appeals during the
  * assessment (approval/decline) process.
  */
@@ -30,19 +38,23 @@ export abstract class StudentAppealAction {
   abstract get actionType(): StudentAppealActionType;
 
   /**
-   * Check if the appeal is approved based on its requests status.
+   * Check if an action associated with an appeal is approved based on its requests statuses.
+   * To an action be considered approved, at least one of the appeal requests
+   * associated with the action must be approved.
    * @param studentAppeal student appeal to check.
-   * @returns true if the appeal is approved, false otherwise.
+   * @returns true if the action is approved, false otherwise.
    */
-  protected isAppealApproved(studentAppeal: StudentAppeal): boolean {
+  protected hasApprovedAction(studentAppeal: StudentAppeal): boolean {
     if (!studentAppeal.appealRequests.length) {
       throw new Error(
         "Appeal must have at least one request to verify if it is approved.",
       );
     }
-    return studentAppeal.appealRequests.every(
-      (appealRequest) =>
-        appealRequest.appealStatus === StudentAppealStatus.Approved,
+    return studentAppeal.appealRequests.some(
+      (request) =>
+        (request.submittedData.actions ?? DEFAULT_ACTION_TYPE).includes(
+          this.actionType,
+        ) && request.appealStatus === StudentAppealStatus.Approved,
     );
   }
 }

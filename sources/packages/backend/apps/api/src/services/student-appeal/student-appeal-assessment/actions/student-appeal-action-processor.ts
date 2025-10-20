@@ -1,19 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { StudentAppeal, StudentAppealActionType } from "@sims/sims-db";
+import { StudentAppeal } from "@sims/sims-db";
 import { EntityManager } from "typeorm";
 import {
+  DEFAULT_ACTION_TYPE,
   StudentAppealAction,
   StudentAppealCreateAssessmentAction,
   StudentAppealUpdateModifiedIndependentAction,
 } from "..";
-
-/**
- * Default action types for student appeal processing
- * when none is provided in the appeal requests.
- */
-const DEFAULT_ACTION_TYPE = [
-  StudentAppealActionType.CreateStudentAppealAssessment,
-];
 
 /**
  * Keeps a list of all available student appeal actions that can potentially

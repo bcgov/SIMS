@@ -30,7 +30,7 @@ export class StudentAppealUpdateModifiedIndependentAction extends StudentAppealA
     auditDate: Date,
     entityManager: EntityManager,
   ): Promise<void> {
-    const modifiedIndependentStatus = this.isAppealApproved(studentAppeal)
+    const modifiedIndependentStatus = this.hasApprovedAction(studentAppeal)
       ? ModifiedIndependentStatus.Approved
       : ModifiedIndependentStatus.Declined;
     await entityManager.getRepository(Student).update(

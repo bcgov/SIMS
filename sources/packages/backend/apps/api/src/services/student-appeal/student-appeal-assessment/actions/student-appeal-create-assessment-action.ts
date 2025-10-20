@@ -31,8 +31,8 @@ export class StudentAppealCreateAssessmentAction extends StudentAppealAction {
     auditDate: Date,
     entityManager: EntityManager,
   ): Promise<void> {
-    if (!this.isAppealApproved(studentAppeal)) {
-      // If the appeal is not approved, no assessment should be created.
+    if (!this.hasApprovedAction(studentAppeal)) {
+      // If none of the appeal requests with this action were approved, no assessment should be created.
       return;
     }
     if (!studentAppeal.application) {
