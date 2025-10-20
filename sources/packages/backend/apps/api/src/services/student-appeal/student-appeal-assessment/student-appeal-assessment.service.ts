@@ -167,7 +167,7 @@ export class StudentAppealAssessmentService {
 
     // If a student's appeal has, for instance, 3 requests, all must be updated at once.
     // The query already ensured that only pending requests will be selected and that
-    // the student appeal also has nothing different then pending requests.
+    // the student appeal also has nothing different than pending requests.
     if (approvals.length !== appealToUpdate.appealRequests.length) {
       throw new CustomNamedError(
         "The appeal requests must be updated all at once. The appeals requests received does not represents the entire set of records that must be updated.",
