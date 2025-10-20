@@ -6,7 +6,9 @@ import {
 } from "@sims/sims-db";
 import { StudentAppealAction } from "./student-appeal-action";
 import { EntityManager } from "typeorm";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class StudentAppealUpdateModifiedIndependentAction extends StudentAppealAction {
   /**
    * Type of action being performed.
