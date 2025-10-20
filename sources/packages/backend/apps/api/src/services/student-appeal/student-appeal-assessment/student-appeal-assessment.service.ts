@@ -3,7 +3,6 @@ import { DataSource, EntityManager } from "typeorm";
 import {
   NoteType,
   StudentAppeal,
-  StudentAppealRequest,
   StudentAppealStatus,
   User,
 } from "@sims/sims-db";
@@ -53,7 +52,6 @@ export class StudentAppealAssessmentService {
       );
       const auditUser = { id: auditUserId } as User;
       const auditDate = new Date();
-      appealToUpdate.appealRequests = [];
       for (const approval of approvals) {
         // Create the new note.
         const note = await this.noteSharedService.createStudentNote(
@@ -63,16 +61,20 @@ export class StudentAppealAssessmentService {
           auditUserId,
           entityManager,
         );
-        // Update the appeal with the associated student note.
-        appealToUpdate.appealRequests.push({
-          id: approval.id,
-          appealStatus: approval.appealStatus,
-          note,
-          modifier: auditUser,
-          updatedAt: auditDate,
-          assessedBy: auditUser,
-          assessedDate: auditDate,
-        } as StudentAppealRequest);
+        // The method getAppealForAssessment already ensures that the
+        // appeal requests to be updated belongs to the appeal and all
+        // requests are present, hence no further validation is required here.
+        const requestToUpdate = appealToUpdate.appealRequests.find(
+          (request) => request.id === approval.id,
+        );
+        // Update the appeal request status to allow any further request property
+        // returned by getAppealForAssessment to be used in the actions processing.
+        requestToUpdate.appealStatus = approval.appealStatus;
+        requestToUpdate.note = note;
+        requestToUpdate.modifier = auditUser;
+        requestToUpdate.updatedAt = auditDate;
+        requestToUpdate.assessedBy = auditUser;
+        requestToUpdate.assessedDate = auditDate;
       }
       // Save appeals and its requests.
       const updatedStudentAppeal = await entityManager
@@ -124,6 +126,7 @@ export class StudentAppealAssessmentService {
         "currentAssessment.id",
         "offering.id",
         "appealRequest.id",
+        "appealRequest.submittedData",
         "application.id",
         "student.id",
         "user.id",
