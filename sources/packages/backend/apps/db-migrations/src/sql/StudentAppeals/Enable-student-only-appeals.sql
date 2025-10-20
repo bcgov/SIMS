@@ -3,7 +3,7 @@
 ALTER TABLE
     sims.student_appeals
 ADD
-    COLUMN student_id int REFERENCES sims.students(id);
+    COLUMN student_id INT REFERENCES sims.students(id);
 
 COMMENT ON COLUMN sims.student_appeals.student_id IS 'The student associated with the appeal. An appeal may or may not be linked to an application, but it must be linked to a student.';
 
