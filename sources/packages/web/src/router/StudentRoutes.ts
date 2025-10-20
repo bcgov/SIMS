@@ -134,6 +134,23 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.ChangeRequestStudentReportParentInformation,
+        name: StudentRoutesConst.CHANGE_REQUEST_REPORT_PARENT_INFORMATION,
+        component: ReportParentInformation,
+        props: (route) => ({
+          applicationId: Number.parseInt(route.params.applicationId as string),
+          supportingUserId: Number.parseInt(
+            route.params.supportingUserId as string,
+          ),
+          changeRequestApplicationId: Number.parseInt(
+            route.params.changeRequestApplicationId as string,
+          ),
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
         path: AppRoutes.Assessment,
         name: StudentRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
         component: Assessment,

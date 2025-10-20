@@ -18,7 +18,7 @@ import {
   SupportingUserType,
 } from "@/types";
 
-interface ParentDetails {
+export interface ParentDetails {
   supportingUserId: number;
   parentFullName: string;
   status: SuccessWaitingStatus;
@@ -27,12 +27,6 @@ interface ParentDetails {
 export interface ApplicationIdentifiableSupportingUserDetails {
   partnerInfo?: SuccessWaitingStatus;
   parentsInfo?: ParentDetails[];
-}
-
-export interface ApplicationSupportingUserDetails {
-  parent1Info?: SuccessWaitingStatus;
-  parent2Info?: SuccessWaitingStatus;
-  partnerInfo?: SuccessWaitingStatus;
 }
 
 export interface ApplicationIncomeVerification {
@@ -210,9 +204,8 @@ export interface CompletedApplicationDetailsAPIOutDTO
   changeRequestInProgress?: ChangeRequestInProgressAPIOutDTO;
 }
 
-// TODO: replace the base DTO ApplicationSupportingUserDetails by ApplicationIdentifiableSupportingUserDetails.
 export interface ChangeRequestInProgressAPIOutDTO
-  extends ApplicationSupportingUserDetails,
+  extends ApplicationIdentifiableSupportingUserDetails,
     ApplicationIncomeVerification {
   applicationId: number;
   applicationEditStatus:
@@ -222,9 +215,6 @@ export interface ChangeRequestInProgressAPIOutDTO
   parent2IncomeVerificationStatus?: SuccessWaitingStatus;
   partnerIncomeVerificationStatus?: SuccessWaitingStatus;
   studentIncomeVerificationStatus?: SuccessWaitingStatus;
-  parent1Info?: SuccessWaitingStatus;
-  parent2Info?: SuccessWaitingStatus;
-  partnerInfo?: SuccessWaitingStatus;
 }
 
 export interface ApplicationAssessmentStatusDetailsAPIOutDTO {

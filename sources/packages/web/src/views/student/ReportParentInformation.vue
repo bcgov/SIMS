@@ -3,15 +3,15 @@
     <template #header>
       <header-navigator
         title="Application details"
-        subTitle="Parent information"
-        :routeLocation="{
+        sub-title="Parent information"
+        :route-location="{
           name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
           params: {
             id: applicationId,
           },
         }"
       />
-      <application-header-title :application-id="applicationId" />
+      <application-header-title :application-id="versionApplicationId" />
     </template>
     <template #alerts>
       <banner
@@ -28,7 +28,7 @@
   </student-page-container>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types";
 import { SupportingUsersService } from "@/services/SupportingUserService";
@@ -49,12 +49,23 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    // When reporting parent information as part of a change request,
+    // this property will hold the change request application id.
+    changeRequestApplicationId: {
+      type: Number,
+      required: false,
+      default: null,
+    },
   },
   setup(props) {
     const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
     const snackBar = useSnackBar();
     const supportingUserUpdateInProgress = ref(false);
+    // Version of application id to be used to get current application context.
+    const versionApplicationId = computed(
+      () => props.changeRequestApplicationId ?? props.applicationId,
+    );
 
     const updateSupportingUser = async (formData: Record<string, unknown>) => {
       supportingUserUpdateInProgress.value = true;
@@ -85,6 +96,7 @@ export default defineComponent({
       supportingUserUpdateInProgress,
       StudentRoutesConst,
       BannerTypes,
+      versionApplicationId,
     };
   },
 });
