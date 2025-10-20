@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, EntityManager } from "typeorm";
 import {
-  RecordDataModelService,
   NoteType,
   StudentAppeal,
   StudentAppealRequest,
@@ -23,16 +22,14 @@ import { StudentAppealActionsProcessor } from ".";
  * Service layer for Student appeals.
  */
 @Injectable()
-export class StudentAppealAssessmentService extends RecordDataModelService<StudentAppeal> {
+export class StudentAppealAssessmentService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly noteSharedService: NoteSharedService,
     private readonly studentAppealActionsProcessor: StudentAppealActionsProcessor,
-  ) {
-    super(dataSource.getRepository(StudentAppeal));
-  }
+  ) {}
 
   /**
    * Update all student appeals requests at once.
