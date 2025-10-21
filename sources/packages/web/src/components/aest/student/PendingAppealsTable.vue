@@ -1,8 +1,8 @@
 <template>
   <body-header
     :title="pageTitle"
-    :recordsCount="applicationAppeals.count"
-    :subTitle="pageDescription"
+    :records-count="applicationAppeals.count"
+    :sub-title="pageDescription"
   >
     <template #actions>
       <v-text-field
@@ -28,7 +28,7 @@
         :items-per-page-options="PAGINATION_LIST"
         @update:options="pageSortEvent"
       >
-        <template v-slot:loading>
+        <template #loading>
           <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
         </template>
         <template #[`item.submittedDate`]="{ item }">
@@ -36,6 +36,9 @@
         </template>
         <template #[`item.firstName`]="{ item }">
           {{ emptyStringFiller(item.firstName) }}
+        </template>
+        <template #[`item.applicationNumber`]="{ item }">
+          {{ emptyStringFiller(item.applicationNumber) }}
         </template>
         <template #[`item.action`]="{ item }">
           <v-btn

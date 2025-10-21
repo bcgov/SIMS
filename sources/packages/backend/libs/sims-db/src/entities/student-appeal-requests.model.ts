@@ -41,7 +41,7 @@ export class StudentAppealRequest extends RecordDataModel {
     type: "jsonb",
     nullable: false,
   })
-  submittedData: any;
+  submittedData: StudentAppealSubmittedData;
   /**
    * Dynamic form name used to request the appeal.
    */
@@ -88,4 +88,13 @@ export class StudentAppealRequest extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   note?: Note;
+}
+
+export enum StudentAppealActionType {
+  CreateStudentAppealAssessment = "CreateStudentAppealAssessment",
+  UpdateModifiedIndependent = "UpdateModifiedIndependent",
+}
+
+export interface StudentAppealSubmittedData extends Record<string, unknown> {
+  actions?: StudentAppealActionType[];
 }

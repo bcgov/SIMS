@@ -39,6 +39,10 @@ import {
   CASInvoiceService,
   ApplicationChangeRequestService,
   ScholasticStandingReversalService,
+  StudentAppealActionsProcessor,
+  StudentAppealAssessmentService,
+  StudentAppealCreateAssessmentAction,
+  StudentAppealUpdateModifiedIndependentAction,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -218,6 +222,10 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     CASInvoiceBatchReportService,
     ApplicationChangeRequestService,
     DisbursementScheduleSharedService,
+    StudentAppealAssessmentService,
+    StudentAppealActionsProcessor,
+    StudentAppealCreateAssessmentAction,
+    StudentAppealUpdateModifiedIndependentAction,
   ],
 })
 export class AppAESTModule {}
