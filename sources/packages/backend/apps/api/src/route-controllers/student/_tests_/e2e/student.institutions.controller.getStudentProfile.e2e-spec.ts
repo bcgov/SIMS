@@ -84,6 +84,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
           phone: student.contactInfo.phone,
         },
         disabilityStatus: student.disabilityStatus,
+        modifiedIndependentStatus: null,
         validSin: student.sinValidation.isValidSIN,
         sin: student.sinValidation.sin,
       });

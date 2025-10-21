@@ -17,6 +17,7 @@ import { getUserFullName } from "../../../../utilities";
 import { TestingModule } from "@nestjs/testing";
 import { addDays } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config/config.service";
+import { ModifiedIndependentStatus } from "@sims/sims-db";
 
 describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
   let app: INestApplication;
@@ -76,6 +77,101 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
           phone: student.contactInfo.phone,
         },
         disabilityStatus: student.disabilityStatus,
+        modifiedIndependentStatus: null,
+        validSin: student.sinValidation.isValidSIN,
+        hasFulltimeAccess: true,
+      });
+  });
+
+  it(`Should get the student profile with modified independent status when a student account exists and the student has modified independent status ${ModifiedIndependentStatus.Approved}.`, async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
+      },
+    });
+
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
+    // Get any student user token.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        firstName: student.user.firstName,
+        lastName: student.user.lastName,
+        fullName: getUserFullName(student.user),
+        email: student.user.email,
+        gender: student.gender,
+        dateOfBirth: student.birthDate,
+        contact: {
+          address: {
+            addressLine1: student.contactInfo.address.addressLine1,
+            provinceState: student.contactInfo.address.provinceState,
+            country: student.contactInfo.address.country,
+            city: student.contactInfo.address.city,
+            postalCode: student.contactInfo.address.postalCode,
+            canadaPostalCode: student.contactInfo.address.postalCode,
+            selectedCountry: student.contactInfo.address.selectedCountry,
+          },
+          phone: student.contactInfo.phone,
+        },
+        disabilityStatus: student.disabilityStatus,
+        modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
+        validSin: student.sinValidation.isValidSIN,
+        hasFulltimeAccess: true,
+      });
+  });
+
+  it(`Should get the student profile with modified independent status when a student account exists and the student has modified independent status ${ModifiedIndependentStatus.Declined}.`, async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        modifiedIndependentStatus: ModifiedIndependentStatus.Declined,
+      },
+    });
+
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
+    // Get any student user token.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        firstName: student.user.firstName,
+        lastName: student.user.lastName,
+        fullName: getUserFullName(student.user),
+        email: student.user.email,
+        gender: student.gender,
+        dateOfBirth: student.birthDate,
+        contact: {
+          address: {
+            addressLine1: student.contactInfo.address.addressLine1,
+            provinceState: student.contactInfo.address.provinceState,
+            country: student.contactInfo.address.country,
+            city: student.contactInfo.address.city,
+            postalCode: student.contactInfo.address.postalCode,
+            canadaPostalCode: student.contactInfo.address.postalCode,
+            selectedCountry: student.contactInfo.address.selectedCountry,
+          },
+          phone: student.contactInfo.phone,
+        },
+        disabilityStatus: student.disabilityStatus,
+        modifiedIndependentStatus: ModifiedIndependentStatus.Declined,
         validSin: student.sinValidation.isValidSIN,
         hasFulltimeAccess: true,
       });
