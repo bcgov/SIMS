@@ -187,45 +187,34 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   }
 
   /**
-   * Find any pending appeal for the application if exists.
-   * @param applicationId application id related to the appeal.
-   * @returns exist status
-   */
-  async hasExistingApplicationAppeal(applicationId: number): Promise<boolean> {
-    const existingAppeal = await this.repo
-      .createQueryBuilder("appeal")
-      .select("1")
-      .innerJoin("appeal.appealRequests", "appealRequests")
-      .innerJoin("appeal.application", "application")
-      .where("application.id = :applicationId", { applicationId })
-      .andWhere("appealRequests.appealStatus = :pending", {
-        pending: StudentAppealStatus.Pending,
-      })
-      .limit(1)
-      .getRawOne();
-
-    return !!existingAppeal;
-  }
-
-  /**
-   * Checks if a student appeal exists (not associated with an application).
+   * Checks if a student appeal exists.
    * @param studentId student ID related to the appeal.
-   * @param appealFormName appeal form name to be checked.
    * @param options query options.
+   * - `appealFormName` form name of the appeal request to be checked.
+   * - `isStudentOnlyAppeal` flag to indicate if the appeal must not be associated with an application.
+   * - `applicationId` application ID related to the appeal to be checked. Ignored if
+   *   `isStudentOnlyAppeal` is true.
    * - `appealStatus` status of the appeal request to be checked.
+   * - `submittedFormName`
    * @returns true if exists, false otherwise.
    */
-  async hasStudentAppeal(
+  async hasAppeal(
     studentId: number,
-    appealFormName: string,
-    options?: { appealStatus?: StudentAppealStatus },
+    options?: {
+      appealFormName?: string;
+      isStudentOnlyAppeal?: boolean;
+      applicationId?: number;
+      appealStatus?: StudentAppealStatus;
+    },
   ): Promise<boolean> {
     return this.repo.exists({
       where: {
-        application: IsNull(),
         student: { id: studentId },
+        application: {
+          id: options?.isStudentOnlyAppeal ? IsNull() : options?.applicationId,
+        },
         appealRequests: {
-          submittedFormName: appealFormName,
+          submittedFormName: options?.appealFormName,
           appealStatus: options?.appealStatus,
         },
       },

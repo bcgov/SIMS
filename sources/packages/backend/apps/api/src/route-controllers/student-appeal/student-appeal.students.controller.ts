@@ -146,10 +146,12 @@ export class StudentAppealStudentsController extends BaseController {
       payload.studentAppealRequests.map((request) => request.formName),
     );
 
-    const existingApplicationAppeal =
-      await this.studentAppealService.hasExistingApplicationAppeal(
+    const existingApplicationAppeal = await this.studentAppealService.hasAppeal(
+      userToken.userId,
+      {
         applicationId,
-      );
+      },
+    );
     if (existingApplicationAppeal) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
@@ -232,10 +234,13 @@ export class StudentAppealStudentsController extends BaseController {
     @Body() payload: StudentAppealAPIInDTO,
     @UserToken() userToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const hasPendingAppeal = await this.studentAppealService.hasStudentAppeal(
+    const hasPendingAppeal = await this.studentAppealService.hasAppeal(
       userToken.studentId,
-      payload.formName,
-      { appealStatus: StudentAppealStatus.Pending },
+      {
+        appealFormName: payload.formName,
+        appealStatus: StudentAppealStatus.Pending,
+        isStudentOnlyAppeal: true,
+      },
     );
     if (hasPendingAppeal) {
       throw new UnprocessableEntityException(
