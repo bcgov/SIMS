@@ -4,6 +4,7 @@ import {
   ArrayMinSize,
   IsDefined,
   IsEnum,
+  IsIn,
   IsNotEmpty,
   IsPositive,
   MaxLength,
@@ -12,11 +13,28 @@ import {
 import { StudentAppealStatus } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { FORM_NAME_MAX_LENGTH, JSON_10KB } from "../../../constants";
+import { FormNames } from "../../../services";
+
+export interface AppealRequestAPIInDTO {
+  formName: string;
+  formData: unknown;
+  files: string[];
+}
+
+export class StudentAppealAPIInDTO implements AppealRequestAPIInDTO {
+  @IsIn([FormNames.ModifiedIndependentAppeal])
+  formName: string;
+  @IsDefined()
+  @JsonMaxSize(JSON_10KB)
+  formData: unknown;
+  @IsDefined()
+  files: string[];
+}
 
 /**
  * DTO for student appeal request.
  */
-export class StudentAppealRequestAPIInDTO {
+export class StudentAppealRequestAPIInDTO implements AppealRequestAPIInDTO {
   @IsNotEmpty()
   @MaxLength(FORM_NAME_MAX_LENGTH)
   formName: string;

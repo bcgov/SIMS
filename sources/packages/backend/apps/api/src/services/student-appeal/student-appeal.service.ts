@@ -208,14 +208,17 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   }
 
   /**
-   * Find any pending student appeal (not associated with an application).
+   * Checks if a student appeal exists (not associated with an application).
    * @param studentId student ID related to the appeal.
    * @param appealFormName appeal form name to be checked.
+   * @param options query options.
+   * - `appealStatus` status of the appeal request to be checked.
    * @returns true if exists, false otherwise.
    */
-  async hasExistingStudentAppeal(
+  async hasStudentAppeal(
     studentId: number,
     appealFormName: string,
+    options?: { appealStatus?: StudentAppealStatus },
   ): Promise<boolean> {
     return this.repo.exists({
       where: {
@@ -223,7 +226,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         student: { id: studentId },
         appealRequests: {
           submittedFormName: appealFormName,
-          appealStatus: StudentAppealStatus.Pending,
+          appealStatus: options?.appealStatus,
         },
       },
     });

@@ -9,4 +9,5 @@ export const FormNames = {
   InstitutionProfileCreation: "institutionprofilecreation",
   ExportFinancialReports: "exportfinancialreports",
   Application: "SFAA2023-24",
+  ModifiedIndependentAppeal: "modifiedIndependentAppeal",
 };

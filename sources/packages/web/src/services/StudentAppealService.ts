@@ -45,7 +45,8 @@ export class StudentAppealService {
   }
 
   /**
-   * Submit a student appeal.
+   * Submit a student appeal, not associated with an application.
+   * Only one type of appeal is allowed to be submitted.
    * @param payload student appeal request.
    */
   async submitStudentAppeal(payload: StudentAppealRequest): Promise<void> {
@@ -53,7 +54,7 @@ export class StudentAppealService {
       formName: payload.formName,
       formData: payload.data,
       files: payload.files,
-    } as StudentAppealRequestAPIInDTO);
+    });
   }
 
   /**

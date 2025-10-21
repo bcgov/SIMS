@@ -11,7 +11,7 @@ import {
   StudentAppealPendingSummaryAPIOutDTO,
   StudentAppealRequestApprovalAPIInDTO,
   StudentAppealRequestAPIOutDTO,
-  StudentAppealRequestAPIInDTO,
+  StudentAppealAPIInDTO,
 } from "./dto";
 
 /**
@@ -34,12 +34,11 @@ export class StudentAppealApi extends HttpBaseClient {
   }
 
   /**
-   * Submit a student appeal.
+   * Submit a student appeal, not associated with an application.
+   * Only one type of appeal is allowed to be submitted.
    * @param payload student appeal request.
    */
-  async submitStudentAppeal(
-    payload: StudentAppealRequestAPIInDTO,
-  ): Promise<void> {
+  async submitStudentAppeal(payload: StudentAppealAPIInDTO): Promise<void> {
     await this.postCall(this.addClientRoot("appeal"), payload);
   }
 
