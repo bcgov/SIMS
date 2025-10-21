@@ -80,7 +80,9 @@ export default defineComponent({
           props.applicationId,
           appealRequests,
         );
-        snackBar.success("The appeal has been submitted successfully.");
+        snackBar.success(
+          "The application appeal has been submitted successfully.",
+        );
         router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
           params: {

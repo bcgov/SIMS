@@ -18,7 +18,6 @@ import { defineComponent, PropType, ref } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import StudentAppealSubmitSharedForm from "@/components/students/StudentAppealSubmitSharedForm.vue";
 import { useRouter } from "vue-router";
-import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import { StudentAppealRequest, ApiProcessError } from "@/types";
 import { useSnackBar } from "@/composables";
@@ -49,15 +48,11 @@ export default defineComponent({
         processing.value = true;
         const [studentAppeal] = appealRequests;
         await StudentAppealService.shared.submitStudentAppeal(studentAppeal);
-        snackBar.success("The appeal has been submitted successfully.");
+        snackBar.success("The student appeal has been submitted successfully.");
         goToStudentAppeals();
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
-          if (error.errorType === APPLICATION_CHANGE_NOT_ELIGIBLE) {
-            snackBar.warn(error.message);
-          } else {
-            snackBar.error(error.message);
-          }
+          snackBar.error(error.message);
           return;
         }
         snackBar.error(
