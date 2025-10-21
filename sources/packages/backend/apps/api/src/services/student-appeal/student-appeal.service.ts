@@ -3,6 +3,7 @@ import {
   Brackets,
   DataSource,
   EntityManager,
+  FindOptionsSelect,
   IsNull,
   MoreThanOrEqual,
   Repository,
@@ -134,21 +135,23 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   ): Promise<void> {
     let student: Student;
     let application: Application;
+    const studentSelector: FindOptionsSelect<Student> = {
+      id: true,
+      user: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
+      birthDate: true,
+    };
     if (applicationId) {
       // Load student and application data, if applicationId is provided.
       application = await entityManager.getRepository(Application).findOne({
         select: {
           id: true,
           applicationNumber: true,
-          student: {
-            user: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true,
-            },
-            birthDate: true,
-          },
+          student: studentSelector,
         },
         relations: { student: { user: true } },
         where: { id: applicationId },
@@ -158,16 +161,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     } else {
       // Load only student data.
       student = await entityManager.getRepository(Student).findOne({
-        select: {
-          id: true,
-          user: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-          birthDate: true,
-        },
+        select: studentSelector,
         relations: { user: true },
         where: { id: studentId },
         loadEagerRelations: false,
