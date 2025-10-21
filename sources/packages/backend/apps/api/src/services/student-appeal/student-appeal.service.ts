@@ -3,23 +3,20 @@ import { Brackets, DataSource, MoreThanOrEqual, Repository } from "typeorm";
 import {
   RecordDataModelService,
   Application,
-  AssessmentTriggerType,
-  NoteType,
   StudentAppeal,
   StudentAppealRequest,
   StudentAppealStatus,
-  StudentAssessment,
   User,
   mapFromRawAndEntities,
   getUserFullNameLikeSearch,
   FileOriginType,
   ApplicationStatus,
   OfferingIntensity,
+  Student,
 } from "@sims/sims-db";
 import {
   AppealType,
   PendingAndDeniedAppeals,
-  StudentAppealRequestApproval,
   StudentAppealRequestModel,
   StudentAppealWithStatus,
 } from "./student-appeal.model";
@@ -30,17 +27,12 @@ import {
   OrderByCondition,
   StudentAppealPaginationOptions,
 } from "../../utilities";
-import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
-import {
-  STUDENT_APPEAL_INVALID_OPERATION,
-  STUDENT_APPEAL_NOT_FOUND,
-  PROGRAM_YEAR_2025_26_START_DATE,
-} from "./constants";
+import { FieldSortOrder } from "@sims/utilities";
+import { PROGRAM_YEAR_2025_26_START_DATE } from "./constants";
 import {
   NotificationActionsService,
   StudentSubmittedChangeRequestNotification,
 } from "@sims/services/notifications";
-import { NoteSharedService } from "@sims/services";
 import { StudentFileService } from "../student-file/student-file.service";
 import { ApplicationService } from "../application/application.service";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -55,7 +47,6 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly applicationService: ApplicationService,
     private readonly notificationActionsService: NotificationActionsService,
-    private readonly noteSharedService: NoteSharedService,
     private readonly studentFileService: StudentFileService,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
@@ -85,6 +76,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       const currentDateTime = new Date();
       const creator = { id: userId } as User;
       studentAppeal.application = { id: applicationId } as Application;
+      studentAppeal.student = { id: studentId } as Student;
       studentAppeal.creator = creator;
       studentAppeal.createdAt = currentDateTime;
       studentAppeal.submittedDate = currentDateTime;
@@ -256,19 +248,20 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       ])
       .addSelect(this.buildStatusSelect(), "status")
       .innerJoin("studentAppeal.appealRequests", "appealRequest")
-      .innerJoin("studentAppeal.application", "application")
+      .innerJoin("studentAppeal.student", "student")
+      .leftJoin("studentAppeal.application", "application")
       .leftJoin("appealRequest.assessedBy", "user")
       .leftJoin("appealRequest.note", "note")
       .where("studentAppeal.id = :appealId", { appealId });
 
     if (options?.studentId) {
-      query.andWhere("application.student.id = :studentId", {
-        studentId: options?.studentId,
+      query.andWhere("student.id = :studentId", {
+        studentId: options.studentId,
       });
     }
     if (options?.applicationId) {
       query.andWhere("application.id = :applicationId", {
-        applicationId: options?.applicationId,
+        applicationId: options.applicationId,
       });
     }
     const queryResult = await query.getRawAndEntities();
@@ -368,151 +361,6 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   }
 
   /**
-   * Update all student appeals requests at once.
-   * @param appealId appeal if to be retrieved.
-   * @param approvals all appeal requests that must be updated with
-   * an approved/declined status. All requests that belongs to the
-   * appeal must be provided.
-   * @param auditUserId user that should be considered the one that is
-   * causing the changes.
-   */
-  async approveRequests(
-    appealId: number,
-    approvals: StudentAppealRequestApproval[],
-    auditUserId: number,
-  ): Promise<StudentAppeal> {
-    const appealRequestsIDs = approvals.map((approval) => approval.id);
-    const appealToUpdate = await this.repo
-      .createQueryBuilder("studentAppeal")
-      .select([
-        "studentAppeal.id",
-        "studentAssessment.id",
-        "currentAssessment.id",
-        "offering.id",
-        "appealRequest.id",
-        "application.id",
-        "student.id",
-        "user.id",
-        "user.firstName",
-        "user.lastName",
-        "user.email",
-      ])
-      .innerJoin("studentAppeal.appealRequests", "appealRequest")
-      .innerJoin("studentAppeal.application", "application")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "offering")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .leftJoin("studentAppeal.studentAssessment", "studentAssessment")
-      .where("studentAppeal.id = :appealId", { appealId })
-      // Ensures that the provided appeal requests IDs belongs to the appeal.
-      .andWhere("appealRequest.id IN (:...requestIDs)", {
-        requestIDs: appealRequestsIDs,
-      })
-      // Ensures that all appeal requests are on pending status.
-      .andWhere(
-        `NOT EXISTS(${this.studentAppealRequestsService
-          .appealsByStatusQueryObject(StudentAppealStatus.Pending, false)
-          .getSql()})`,
-      )
-      .getOne();
-
-    if (!appealToUpdate) {
-      throw new CustomNamedError(
-        `Not able to find the appeal or the appeal has requests different from '${StudentAppealStatus.Pending}'.`,
-        STUDENT_APPEAL_NOT_FOUND,
-      );
-    }
-
-    if (appealToUpdate.studentAssessment) {
-      throw new CustomNamedError(
-        "An assessment was already created to this student appeal.",
-        STUDENT_APPEAL_INVALID_OPERATION,
-      );
-    }
-
-    // If a students appel has, for instance, 3 requests, all must be updated at once.
-    // The query already ensured that only pending requests will be selected and that
-    // the student appeal also has nothing different then pending requests.
-    if (approvals.length !== appealToUpdate.appealRequests.length) {
-      throw new CustomNamedError(
-        "The appeal requests must be updated all at once. The appeals requests received does not represents the entire set of records that must be updated.",
-        STUDENT_APPEAL_INVALID_OPERATION,
-      );
-    }
-
-    const auditUser = { id: auditUserId } as User;
-    const auditDate = new Date();
-
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
-      appealToUpdate.appealRequests = [];
-      for (const approval of approvals) {
-        // Create the new note.
-        const note = await this.noteSharedService.createStudentNote(
-          appealToUpdate.application.student.id,
-          NoteType.Application,
-          approval.noteDescription,
-          auditUserId,
-          transactionalEntityManager,
-        );
-        // Update the appeal with the associated student note.
-        appealToUpdate.appealRequests.push({
-          id: approval.id,
-          appealStatus: approval.appealStatus,
-          note,
-          modifier: auditUser,
-          updatedAt: auditDate,
-          assessedBy: auditUser,
-          assessedDate: auditDate,
-        } as StudentAppealRequest);
-      }
-
-      // Check if at least one appeal was approved and an assessment is needed.
-      if (
-        appealToUpdate.appealRequests.some(
-          (request) => request.appealStatus === StudentAppealStatus.Approved,
-        )
-      ) {
-        // Create the new assessment to be processed.
-        const newAssessment = {
-          application: { id: appealToUpdate.application.id } as Application,
-          offering: {
-            id: appealToUpdate.application.currentAssessment.offering.id,
-          },
-          triggerType: AssessmentTriggerType.StudentAppeal,
-          creator: auditUser,
-          createdAt: auditDate,
-          submittedBy: auditUser,
-          submittedDate: auditDate,
-        } as StudentAssessment;
-        // Creates the new assessment.
-        appealToUpdate.studentAssessment = newAssessment;
-        // Sets the new assessment as the current one.
-        appealToUpdate.application.currentAssessment = newAssessment;
-      }
-
-      // Save appeals, new assessment, and application current assessment.
-      const updatedStudentAppeal = await transactionalEntityManager
-        .getRepository(StudentAppeal)
-        .save(appealToUpdate);
-
-      // Create student notification when ministry completes student appeal.
-      const studentUser = appealToUpdate.application.student.user;
-      await this.notificationActionsService.saveChangeRequestCompleteNotification(
-        {
-          givenNames: studentUser.firstName,
-          lastName: studentUser.lastName,
-          toAddress: studentUser.email,
-          userId: studentUser.id,
-        },
-        auditUserId,
-        transactionalEntityManager,
-      );
-      return updatedStudentAppeal;
-    });
-  }
-
-  /**
    * Get all pending student appeals.
    * @param paginationOptions options to execute the pagination.
    * @param status appeal status.
@@ -541,26 +389,41 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         "application.applicationNumber",
         "student.id",
       ])
-      .innerJoin("studentAppeal.application", "application")
-      .innerJoin("application.student", "student")
+      .innerJoin("studentAppeal.student", "student")
       .innerJoin("student.user", "user")
-      .innerJoin("application.programYear", "programYear")
+      .leftJoin("studentAppeal.application", "application")
+      .leftJoin("application.programYear", "programYear")
       .where(
         `EXISTS(${this.studentAppealRequestsService
           .appealsByStatusQueryObject(status)
           .getSql()})`,
       );
-
-    // Filter by program year start date based on appeal type
+    // Filter by program year start date based on appeal type.
     if (appealType === AppealType.LegacyChangeRequest) {
       studentAppealsQuery.andWhere(
-        "programYear.startDate < :programStartDate",
-        { programStartDate: PROGRAM_YEAR_2025_26_START_DATE },
+        new Brackets((qb) =>
+          qb
+            // Ensure only retrieving appeals for students where applications are associated.
+            .where("programYear.startDate IS NOT NULL")
+            // If an application is associated, only appeals for programs starting
+            // before the defined date are allowed.
+            .andWhere("programYear.startDate < :programStartDate", {
+              programStartDate: PROGRAM_YEAR_2025_26_START_DATE,
+            }),
+        ),
       );
     } else if (appealType === AppealType.Appeal) {
       studentAppealsQuery.andWhere(
-        "programYear.startDate >= :programStartDate",
-        { programStartDate: PROGRAM_YEAR_2025_26_START_DATE },
+        new Brackets((qb) =>
+          qb
+            // Allow retrieving appeals for students where applications are not associated.
+            .where("programYear.startDate IS NULL")
+            // If an application is associated, only appeals for programs starting
+            // on or after the defined date are allowed.
+            .orWhere("programYear.startDate >= :programStartDate", {
+              programStartDate: PROGRAM_YEAR_2025_26_START_DATE,
+            }),
+        ),
       );
     }
 
