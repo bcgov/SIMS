@@ -45,16 +45,21 @@ export abstract class StudentAppealAction {
    * @returns true if the action is approved, false otherwise.
    */
   protected hasApprovedAction(studentAppeal: StudentAppeal): boolean {
-    if (!studentAppeal.appealRequests.length) {
+    // Filter only the requests that are associated with this action.
+    const actionRequests = studentAppeal.appealRequests.filter((request) =>
+      (request.submittedData.actions ?? DEFAULT_ACTION_TYPE).includes(
+        this.actionType,
+      ),
+    );
+    if (!actionRequests.length) {
+      // An action should not be processed if there are no associated requests,
+      // which means that at least one request must be present if the action was executed.
       throw new Error(
-        "Appeal must have at least one request to verify if it is approved.",
+        `Status cannot be determined without associated appeals requests for the action ${this.actionType}.`,
       );
     }
-    return studentAppeal.appealRequests.some(
-      (request) =>
-        (request.submittedData.actions ?? DEFAULT_ACTION_TYPE).includes(
-          this.actionType,
-        ) && request.appealStatus === StudentAppealStatus.Approved,
+    return actionRequests.some(
+      (request) => request.appealStatus === StudentAppealStatus.Approved,
     );
   }
 }

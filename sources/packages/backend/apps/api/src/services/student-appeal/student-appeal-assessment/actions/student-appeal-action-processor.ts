@@ -39,12 +39,23 @@ export class StudentAppealActionsProcessor {
     entityManager: EntityManager,
   ): Promise<void> {
     const actionTypes = studentAppeal.appealRequests.flatMap(
-      (request) => request.submittedData?.actions ?? DEFAULT_ACTION_TYPE,
+      (request) => request.submittedData.actions ?? DEFAULT_ACTION_TYPE,
     );
+    // Get unique action types to avoid processing the same action multiple times.
     const uniqueActionsTypes: Set<string> = new Set(actionTypes);
+    // Ensure every action type is known.
+    const unknownActions = [...uniqueActionsTypes].filter((requestActionType) =>
+      this.actions.every((action) => action.actionType !== requestActionType),
+    );
+    if (unknownActions.length) {
+      throw new Error(
+        `One or more action types associated with the student appeal ID ${studentAppeal.id} are not recognized: ${unknownActions}.`,
+      );
+    }
     const actionsToProcess = this.actions.filter((action) =>
       uniqueActionsTypes.has(action.actionType),
     );
+    // Process all actions in parallel.
     const actionsPromises = actionsToProcess.map((action) =>
       action.process(studentAppeal, auditUserId, auditDate, entityManager),
     );
