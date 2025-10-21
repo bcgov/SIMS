@@ -5,26 +5,42 @@ import {
   DetailedStudentAppealRequestAPIOutDTO,
   EligibleApplicationsForAppealAPIOutDTO,
   PaginatedResultsAPIOutDTO,
-  StudentAppealAPIInDTO,
+  StudentApplicationAppealAPIInDTO,
   StudentAppealAPIOutDTO,
   StudentAppealApprovalAPIInDTO,
   StudentAppealPendingSummaryAPIOutDTO,
   StudentAppealRequestApprovalAPIInDTO,
   StudentAppealRequestAPIOutDTO,
+  StudentAppealRequestAPIInDTO,
 } from "./dto";
 
 /**
  * Http API client for Student Appeal.
  */
 export class StudentAppealApi extends HttpBaseClient {
-  async submitStudentAppeal(
+  /**
+   * Submit a student appeal associated with an application.
+   * @param applicationId application for which the appeal is submitted.
+   * @param payload student appeal with appeal requests.
+   */
+  async submitApplicationAppeal(
     applicationId: number,
-    studentAppeal: StudentAppealAPIInDTO,
+    payload: StudentApplicationAppealAPIInDTO,
   ): Promise<void> {
-    await this.postCall<StudentAppealAPIInDTO>(
+    await this.postCall(
       this.addClientRoot(`appeal/application/${applicationId}`),
-      studentAppeal,
+      payload,
     );
+  }
+
+  /**
+   * Submit a student appeal.
+   * @param payload student appeal request.
+   */
+  async submitStudentAppeal(
+    payload: StudentAppealRequestAPIInDTO,
+  ): Promise<void> {
+    await this.postCall(this.addClientRoot("appeal"), payload);
   }
 
   /**

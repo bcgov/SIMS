@@ -16,9 +16,10 @@ import {
 } from "../../services";
 import {
   EligibleApplicationsForAppealAPIOutDTO,
-  StudentAppealAPIInDTO,
+  StudentApplicationAppealAPIInDTO,
   StudentAppealAPIOutDTO,
   StudentAppealRequestAPIOutDTO,
+  StudentAppealRequestAPIInDTO,
 } from "./models/student-appeal.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -44,6 +45,7 @@ import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_HAS_PENDING_APPEAL,
   APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
+  STUDENT_HAS_PENDING_APPEAL,
 } from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
@@ -65,10 +67,9 @@ export class StudentAppealStudentsController extends BaseController {
   }
 
   /**
-   * Submit student appeal.
+   * Submit a student appeal associated with an application.
    * @param applicationId application for which the appeal is submitted.
    * @param payload student appeal with appeal requests.
-   * @param userToken
    */
   @ApiNotFoundResponse({
     description:
@@ -87,9 +88,9 @@ export class StudentAppealStudentsController extends BaseController {
       "Not able to submit change request/appeal due to invalid request.",
   })
   @Post("application/:applicationId")
-  async submitStudentAppeal(
+  async submitApplicationAppeal(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-    @Body() payload: StudentAppealAPIInDTO,
+    @Body() payload: StudentApplicationAppealAPIInDTO,
     @UserToken() userToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     const application =
@@ -145,7 +146,9 @@ export class StudentAppealStudentsController extends BaseController {
     );
 
     const existingApplicationAppeal =
-      await this.studentAppealService.hasExistingAppeal(applicationId);
+      await this.studentAppealService.hasExistingApplicationAppeal(
+        applicationId,
+      );
     if (existingApplicationAppeal) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
@@ -198,12 +201,75 @@ export class StudentAppealStudentsController extends BaseController {
     );
 
     const studentAppeal = await this.studentAppealService.saveStudentAppeals(
-      applicationId,
-      userToken.userId,
       userToken.studentId,
       appealRequests,
+      userToken.userId,
+      applicationId,
     );
 
+    return {
+      id: studentAppeal.id,
+    };
+  }
+
+  /**
+   * Submit a student appeal.
+   * @param payload student appeal request.
+   */
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Only one appeal of the same type can be submitted at a time. When your current request is approved or denied by StudentAid BC, you will be able to submit a new one.",
+  })
+  @ApiBadRequestResponse({
+    description:
+      "Not able to submit change request/appeal due to invalid request.",
+  })
+  @Post()
+  async submitStudentAppeal(
+    @Body() payload: StudentAppealRequestAPIInDTO,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    // Validate the submitted form names for the operation.
+    if (payload.formName !== "modifiedIndependentAppeal") {
+      throw new BadRequestException(
+        `Not able to submit appeal due to invalid request.`,
+      );
+    }
+    const existingApplicationAppeal =
+      await this.studentAppealService.hasExistingStudentAppeal(
+        userToken.studentId,
+        payload.formName,
+      );
+    if (existingApplicationAppeal) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Only one student appeal of the same type can be submitted at a time. When your current request is approved or denied by StudentAid BC, you will be able to submit a new one.",
+          STUDENT_HAS_PENDING_APPEAL,
+        ),
+      );
+    }
+    // Dry run submission to validate the form data.
+    const submissionResult = await this.formService.dryRunSubmission(
+      payload.formName,
+      payload.formData,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to create a designation agreement due to an invalid request.",
+      );
+    }
+    // Generate the data to be persisted based on the result of the dry run submission.
+    const appealRequest = {
+      formName: payload.formName,
+      formData: submissionResult.data.data,
+      files: payload.files,
+    } as StudentAppealRequestModel;
+    // Save the student appeal.
+    const studentAppeal = await this.studentAppealService.saveStudentAppeals(
+      userToken.studentId,
+      [appealRequest],
+      userToken.userId,
+    );
     return {
       id: studentAppeal.id,
     };

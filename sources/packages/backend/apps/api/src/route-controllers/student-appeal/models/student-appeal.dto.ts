@@ -28,9 +28,9 @@ export class StudentAppealRequestAPIInDTO {
 }
 
 /**
- * DTO for student appeal.
+ * Student application appeal.
  */
-export class StudentAppealAPIInDTO {
+export class StudentApplicationAppealAPIInDTO {
   @ArrayMinSize(1)
   @ArrayMaxSize(50)
   @ValidateNested({ each: true })

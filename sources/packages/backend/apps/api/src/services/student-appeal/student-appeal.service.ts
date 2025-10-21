@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, DataSource, MoreThanOrEqual, Repository } from "typeorm";
+import {
+  Brackets,
+  DataSource,
+  EntityManager,
+  IsNull,
+  MoreThanOrEqual,
+  Repository,
+} from "typeorm";
 import {
   RecordDataModelService,
   Application,
@@ -34,7 +41,6 @@ import {
   StudentSubmittedChangeRequestNotification,
 } from "@sims/services/notifications";
 import { StudentFileService } from "../student-file/student-file.service";
-import { ApplicationService } from "../application/application.service";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /**
@@ -45,7 +51,6 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   constructor(
     private readonly dataSource: DataSource,
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
-    private readonly applicationService: ApplicationService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly studentFileService: StudentFileService,
     @InjectRepository(Application)
@@ -58,19 +63,17 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * Save student appeals that are requested by the student,
    * update student files if exist and save a notification for the
    * ministry using the same transaction.
-   * @param applicationId Application to which an appeal is submitted.
-   * @param userId Student user who submits the appeal.
-   * @param studentId Student Id.
-   * @param studentAppealRequests Payload data.
+   * @param applicationId application to which an appeal is submitted.
+   * @param userId student user who submits the appeal.
+   * @param studentId student Id.
+   * @param studentAppealRequests payload data.
    */
   async saveStudentAppeals(
-    applicationId: number,
-    userId: number,
     studentId: number,
     studentAppealRequests: StudentAppealRequestModel[],
+    userId: number,
+    applicationId?: number,
   ): Promise<StudentAppeal> {
-    const application =
-      await this.applicationService.getApplicationInfo(applicationId);
     return this.dataSource.transaction(async (entityManager) => {
       const studentAppeal = new StudentAppeal();
       const currentDateTime = new Date();
@@ -93,7 +96,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       const uniqueFileNames: string[] = studentAppealRequests.flatMap(
         (studentAppeal) => studentAppeal.files,
       );
-      if (uniqueFileNames.length > 0) {
+      if (uniqueFileNames.length) {
         await this.studentFileService.updateStudentFiles(
           studentId,
           userId,
@@ -102,28 +105,85 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           { entityManager: entityManager },
         );
       }
-      const student = application.student;
-      const ministryNotification: StudentSubmittedChangeRequestNotification = {
-        givenNames: student.user.firstName,
-        lastName: student.user.lastName,
-        email: student.user.email,
-        birthDate: student.birthDate,
-        applicationNumber: application.applicationNumber,
-      };
-      const notificationPromise =
-        this.notificationActionsService.saveStudentSubmittedChangeRequestNotification(
-          ministryNotification,
-          entityManager,
-        );
+      const notificationPromise = this.createStudentAppealNotification(
+        studentId,
+        entityManager,
+        applicationId,
+      );
       const studentAppealPromise = entityManager
         .getRepository(StudentAppeal)
         .save(studentAppeal);
-      const [, createdStudentAppeal] = await Promise.all([
-        notificationPromise,
+      const [createdStudentAppeal] = await Promise.all([
         studentAppealPromise,
+        notificationPromise,
       ]);
       return createdStudentAppeal;
     });
+  }
+
+  /**
+   * Create a notification for the student appeal.
+   * @param studentId student ID to send the notification.
+   * @param entityManager entity manager to keep DB operations in the same transaction.
+   * @param applicationId application ID related to the appeal, when applicable.
+   */
+  private async createStudentAppealNotification(
+    studentId: number,
+    entityManager: EntityManager,
+    applicationId?: number,
+  ): Promise<void> {
+    let student: Student;
+    let application: Application;
+    if (applicationId) {
+      // Load student and application data, if applicationId is provided.
+      application = await entityManager.getRepository(Application).findOne({
+        select: {
+          id: true,
+          applicationNumber: true,
+          student: {
+            user: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+            birthDate: true,
+          },
+        },
+        relations: { student: { user: true } },
+        where: { id: applicationId },
+        loadEagerRelations: false,
+      });
+      student = application.student;
+    } else {
+      // Load only student data.
+      student = await entityManager.getRepository(Student).findOne({
+        select: {
+          id: true,
+          user: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+          birthDate: true,
+        },
+        relations: { user: true },
+        where: { id: studentId },
+        loadEagerRelations: false,
+      });
+    }
+    const ministryNotification: StudentSubmittedChangeRequestNotification = {
+      givenNames: student.user.firstName,
+      lastName: student.user.lastName,
+      email: student.user.email,
+      birthDate: student.birthDate,
+      applicationNumber: application?.applicationNumber ?? "not applicable",
+    };
+    return this.notificationActionsService.saveStudentSubmittedChangeRequestNotification(
+      ministryNotification,
+      entityManager,
+    );
   }
 
   /**
@@ -131,7 +191,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * @param applicationId application id related to the appeal.
    * @returns exist status
    */
-  async hasExistingAppeal(applicationId: number): Promise<boolean> {
+  async hasExistingApplicationAppeal(applicationId: number): Promise<boolean> {
     const existingAppeal = await this.repo
       .createQueryBuilder("appeal")
       .select("1")
@@ -145,6 +205,28 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .getRawOne();
 
     return !!existingAppeal;
+  }
+
+  /**
+   * Find any pending student appeal (not associated with an application).
+   * @param studentId student ID related to the appeal.
+   * @param appealFormName appeal form name to be checked.
+   * @returns true if exists, false otherwise.
+   */
+  async hasExistingStudentAppeal(
+    studentId: number,
+    appealFormName: string,
+  ): Promise<boolean> {
+    return this.repo.exists({
+      where: {
+        application: IsNull(),
+        student: { id: studentId },
+        appealRequests: {
+          submittedFormName: appealFormName,
+          appealStatus: StudentAppealStatus.Pending,
+        },
+      },
+    });
   }
 
   /**

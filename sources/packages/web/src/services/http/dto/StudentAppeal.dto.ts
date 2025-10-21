@@ -6,7 +6,7 @@ export interface StudentAppealRequestAPIInDTO {
   files: string[];
 }
 
-export interface StudentAppealAPIInDTO {
+export interface StudentApplicationAppealAPIInDTO {
   studentAppealRequests: StudentAppealRequestAPIInDTO[];
 }
 

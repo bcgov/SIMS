@@ -1,0 +1,335 @@
+{
+    "title": "Appeals - Modified Independent",
+    "name": "modifiedIndependentAppeal",
+    "path": "modifiedindependentappeal",
+    "type": "form",
+    "display": "form",
+    "tags": [
+        "common"
+    ],
+    "components": [
+        {
+            "input": true,
+            "tableView": true,
+            "key": "maxUploadedFiles",
+            "label": "maxUploadedFiles",
+            "persistent": false,
+            "type": "hidden",
+            "lockKey": true,
+            "calculateValue": "value = 25;",
+            "calculateServer": true
+        },
+        {
+            "label": "Actions: UpdateModifiedIndependent",
+            "persistent": false,
+            "calculateValue": "value = [\"UpdateModifiedIndependent\"];",
+            "calculateServer": true,
+            "key": "actions",
+            "type": "hidden",
+            "input": true,
+            "tableView": true,
+            "lockKey": true
+        },
+        {
+            "label": "HTML",
+            "tag": "h3",
+            "className": "category-header-medium primary-color",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "Modified independent appeal",
+            "refreshOnChange": false,
+            "key": "html116",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false,
+            "hideLabel": true
+        },
+        {
+            "label": "Is it impossible for you to provide your parents' financial information and you need to request consideration for modified independent status due to exceptional circumstances?",
+            "optionsLabelPosition": "right",
+            "inline": false,
+            "tableView": false,
+            "values": [
+                {
+                    "label": "Yes",
+                    "value": "yes",
+                    "shortcut": ""
+                },
+                {
+                    "label": "No",
+                    "value": "no",
+                    "shortcut": ""
+                }
+            ],
+            "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+            },
+            "validateWhenHidden": false,
+            "key": "isModifiedIndependent",
+            "type": "radio",
+            "input": true
+        },
+        {
+            "label": "Which of the following best describes your situation? (If none of these apply you are not eligible for modified independent status)",
+            "optionsLabelPosition": "right",
+            "inline": false,
+            "tableView": false,
+            "values": [
+                {
+                    "label": "There is an irreconcilable rift between me and my parent(s), and I can provide satisfactory evidence of a severe and permanent breakdown in the relationship between you and your parent(s) that has existed for at least one year unless a sudden and serious situation has occurred.",
+                    "value": "irreconcilableRift",
+                    "shortcut": ""
+                },
+                {
+                    "label": "You would normally be classified as a dependant student by StudentAid BC, but you are unable to contact or locate your parents, step-parent, sponsor, or legal guardian due to conflict or emergency (such as war, famine or natural disaster) in the country where they live.",
+                    "value": "unableToContactOrLocateYourParents",
+                    "shortcut": ""
+                }
+            ],
+            "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+            },
+            "validateWhenHidden": false,
+            "key": "situationOptions",
+            "conditional": {
+                "show": true,
+                "when": "isModifiedIndependent",
+                "eq": "yes"
+            },
+            "type": "radio",
+            "input": true
+        },
+        {
+            "title": "Upload supporting documents - Irreconcilable Rift",
+            "collapsible": false,
+            "hideLabel": true,
+            "key": "panel1",
+            "conditional": {
+                "show": true,
+                "when": "situationOptions",
+                "eq": "irreconcilableRift"
+            },
+            "type": "panel",
+            "label": "Panel",
+            "input": false,
+            "tableView": false,
+            "components": [
+                {
+                    "label": "HTML",
+                    "tag": "h3",
+                    "className": "category-header-medium primary-color",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "Upload supporting documents",
+                    "refreshOnChange": false,
+                    "key": "supportingDocumentSectionHeader",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "tag": "h4",
+                    "className": "category-header-medium-small",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "Provide all of the following documents:",
+                    "refreshOnChange": false,
+                    "key": "html4",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<ul>\n  <li>A statement from you describing the family rift, how long the rift has existed and why it continues.</li>\n  <li>A letter from a responsible third party testifying as to the truthfulness of your explanation and providing an independent assessment of the situation. The third party could be any of the following: counsellor, psychologist, religious advisor, doctor, teacher, and/or mature relative outside the immediate family or family friend. The status of the third party and their relationship to you must be identified in the letter.</li>\n  <li>Upload proof of payment (cancelled cheques or bank statements showing monthly lump sum payments)(Receipts are not accepted).</li>\n  <li>A letter from your parent(s)/step-parent/sponsor/legal guardian describing the family rift, how long the rift has existed and why it continues. If a parental letter cannot be obtained, a second letter from another professional third party must be submitted.</li>\n</ul>",
+                    "refreshOnChange": false,
+                    "customClass": "align-bullets",
+                    "key": "html23",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "Upload supporting documents",
+                    "customClass": "font-weight-bold",
+                    "hideLabel": true,
+                    "tableView": false,
+                    "storage": "url",
+                    "dir": "Modified Independent - Irreconcilable Rift - Supporting Documents",
+                    "webcam": false,
+                    "capture": false,
+                    "fileTypes": [
+                        {
+                            "label": "",
+                            "value": ""
+                        }
+                    ],
+                    "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+                    "fileMaxSize": "15MB",
+                    "multiple": true,
+                    "validate": {
+                        "required": true,
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}."
+                    },
+                    "validateWhenHidden": false,
+                    "key": "irreconcilableRiftSupportingDocuments",
+                    "type": "file",
+                    "url": "student/files",
+                    "input": true,
+                    "lockKey": true
+                },
+                {
+                    "label": "Content",
+                    "className": "file-upload-info-container",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
+                    "refreshOnChange": false,
+                    "key": "acceptedFileFormatAndSize",
+                    "type": "htmlelement",
+                    "input": false,
+                    "hideLabel": true,
+                    "tableView": false
+                }
+            ]
+        },
+        {
+            "title": "Upload supporting documents - Unable to Contact or Locate your Parents",
+            "collapsible": false,
+            "hideLabel": true,
+            "key": "panel2",
+            "conditional": {
+                "show": true,
+                "when": "situationOptions",
+                "eq": "unableToContactOrLocateYourParents"
+            },
+            "type": "panel",
+            "label": "Panel",
+            "input": false,
+            "tableView": false,
+            "components": [
+                {
+                    "label": "HTML",
+                    "tag": "h3",
+                    "className": "category-header-medium primary-color",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "Upload supporting documents",
+                    "refreshOnChange": false,
+                    "key": "supportingDocumentSectionHeader1",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "tag": "h4",
+                    "className": "category-header-medium-small",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "Provide all of the following documents:",
+                    "refreshOnChange": false,
+                    "key": "html5",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<ul>\n  <li>A letter explaining the conflict or emergency that has made it impossible to contact or locate your parent(s)/step-parent/sponsor/legal guardian in the country where they live.</li>\n</ul>",
+                    "refreshOnChange": false,
+                    "customClass": "align-bullets",
+                    "key": "html24",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "Upload supporting documents",
+                    "customClass": "font-weight-bold",
+                    "hideLabel": true,
+                    "tableView": false,
+                    "storage": "url",
+                    "dir": "Modified Independent - Unable to Contact or Locate your Parents - Supporting Documents",
+                    "webcam": false,
+                    "capture": false,
+                    "fileTypes": [
+                        {
+                            "label": "",
+                            "value": ""
+                        }
+                    ],
+                    "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+                    "fileMaxSize": "15MB",
+                    "multiple": true,
+                    "validate": {
+                        "required": true,
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}."
+                    },
+                    "validateWhenHidden": false,
+                    "key": "unableToContactOrLocateYourParentsSupportingDocuments",
+                    "type": "file",
+                    "url": "student/files",
+                    "input": true,
+                    "lockKey": true
+                },
+                {
+                    "label": "Content",
+                    "className": "file-upload-info-container",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
+                    "refreshOnChange": false,
+                    "key": "acceptedFileFormatAndSize1",
+                    "type": "htmlelement",
+                    "input": false,
+                    "hideLabel": true,
+                    "tableView": false
+                }
+            ]
+        }
+    ]
+}

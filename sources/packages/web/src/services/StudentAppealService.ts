@@ -22,7 +22,12 @@ export class StudentAppealService {
     return this.instance || (this.instance = new this());
   }
 
-  async submitStudentAppeal(
+  /**
+   * Submit a student appeal associated with an application.
+   * @param applicationId application for which the appeal is submitted.
+   * @param payload student appeal with appeal requests.
+   */
+  async submitApplicationAppeal(
     applicationId: number,
     appealRequests: StudentAppealRequest[],
   ): Promise<void> {
@@ -34,9 +39,21 @@ export class StudentAppealService {
           files: request.files,
         }) as StudentAppealRequestAPIInDTO,
     );
-    await ApiClient.StudentAppealApi.submitStudentAppeal(applicationId, {
+    await ApiClient.StudentAppealApi.submitApplicationAppeal(applicationId, {
       studentAppealRequests,
     });
+  }
+
+  /**
+   * Submit a student appeal.
+   * @param payload student appeal request.
+   */
+  async submitStudentAppeal(payload: StudentAppealRequest): Promise<void> {
+    await ApiClient.StudentAppealApi.submitStudentAppeal({
+      formName: payload.formName,
+      formData: payload.data,
+      files: payload.files,
+    } as StudentAppealRequestAPIInDTO);
   }
 
   /**
