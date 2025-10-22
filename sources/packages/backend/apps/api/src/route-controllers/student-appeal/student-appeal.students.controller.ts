@@ -220,6 +220,7 @@ export class StudentAppealStudentsController extends BaseController {
    * Submit a student appeal, not associated with an application.
    * Only one type of appeal is allowed to be submitted.
    * @param payload student appeal request.
+   * @return primary identifier of the submitted student appeal.
    */
   @ApiUnprocessableEntityResponse({
     description:
@@ -262,11 +263,11 @@ export class StudentAppealStudentsController extends BaseController {
       );
     }
     // Generate the data to be persisted based on the result of the dry run submission.
-    const appealRequest = {
+    const appealRequest: StudentAppealRequestModel = {
       formName: payload.formName,
       formData: submissionResult.data.data,
       files: payload.files,
-    } as StudentAppealRequestModel;
+    };
     // Save the student appeal.
     const studentAppeal = await this.studentAppealService.saveStudentAppeals(
       userToken.studentId,

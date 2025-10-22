@@ -14,9 +14,6 @@ import {
   StudentAppealService,
 } from "../../services";
 
-/**
- * Student appeal form that were used for change request process before 2025-26 program year.
- */
 @Injectable()
 export class StudentAppealControllerService {
   constructor(private readonly studentAppealService: StudentAppealService) {}

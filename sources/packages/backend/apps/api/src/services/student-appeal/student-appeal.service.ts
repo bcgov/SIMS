@@ -65,20 +65,20 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * update student files if exist and save a notification for the
    * ministry using the same transaction.
    * @param applicationId application to which an appeal is submitted.
-   * @param userId student user who submits the appeal.
+   * @param auditUserId student user who submits the appeal.
    * @param studentId student Id.
    * @param studentAppealRequests payload data.
    */
   async saveStudentAppeals(
     studentId: number,
     studentAppealRequests: StudentAppealRequestModel[],
-    userId: number,
+    auditUserId: number,
     applicationId?: number,
   ): Promise<StudentAppeal> {
     return this.dataSource.transaction(async (entityManager) => {
       const studentAppeal = new StudentAppeal();
       const currentDateTime = new Date();
-      const creator = { id: userId } as User;
+      const creator = { id: auditUserId } as User;
       studentAppeal.application = { id: applicationId } as Application;
       studentAppeal.student = { id: studentId } as Student;
       studentAppeal.creator = creator;
@@ -100,7 +100,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       if (uniqueFileNames.length) {
         await this.studentFileService.updateStudentFiles(
           studentId,
-          userId,
+          auditUserId,
           uniqueFileNames,
           FileOriginType.Appeal,
           { entityManager: entityManager },
