@@ -3,24 +3,24 @@
     <template #header>
       <header-navigator
         title="Student applications"
-        :routeLocation="backRoute"
-        subTitle="Assessment"
+        :route-location="backRoute"
+        sub-title="Assessment"
       />
     </template>
     <request-assessment
       class="mb-5"
-      :applicationId="applicationId"
-      :studentId="studentId"
-      @viewStudentAppeal="goToStudentAppeal"
-      @viewApplicationException="goToApplicationException"
+      :application-id="applicationId"
+      :student-id="studentId"
+      @view-student-appeal="goToStudentAppeal"
+      @view-application-exception="goToApplicationException"
     />
     <history-assessment
-      :applicationId="applicationId"
-      :studentId="studentId"
-      :viewRequestTypes="assessmentRequestViewTypes"
-      @viewStudentAppeal="goToStudentAppeal"
-      @viewAssessment="gotToViewAssessment"
-      @viewApplicationException="goToApplicationException"
+      :application-id="applicationId"
+      :student-id="studentId"
+      :view-request-types="assessmentRequestViewTypes"
+      @view-student-appeal="goToStudentAppeal"
+      @view-assessment="gotToViewAssessment"
+      @view-application-exception="goToApplicationException"
     />
   </full-page-container>
 </template>
@@ -59,7 +59,7 @@ export default defineComponent({
 
     const goToStudentAppeal = (appealId: number) => {
       router.push({
-        name: InstitutionRoutesConst.STUDENT_APPEAL_REQUEST,
+        name: InstitutionRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
         params: {
           studentId: props.studentId,
           applicationId: props.applicationId,
