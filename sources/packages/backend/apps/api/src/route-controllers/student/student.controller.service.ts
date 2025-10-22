@@ -250,7 +250,7 @@ export class StudentControllerService {
       throw new NotFoundException("Student not found.");
     }
     const address = student.contactInfo.address ?? ({} as AddressInfo);
-    const studentProfile = {
+    const studentProfile: StudentProfileAPIOutDTO = {
       firstName: student.user.firstName,
       lastName: student.user.lastName,
       fullName: getUserFullName(student.user),
@@ -262,6 +262,7 @@ export class StudentControllerService {
         phone: student.contactInfo.phone,
       },
       disabilityStatus: student.disabilityStatus,
+      modifiedIndependentStatus: student.modifiedIndependentStatus,
       validSin: student.sinValidation.isValidSIN,
     };
     // Optionally load specific data for the Ministry.

@@ -80,6 +80,7 @@ export class StudentService extends RecordDataModelService<Student> {
         "student.studentPDSentAt",
         "student.studentPDUpdateAt",
         "student.disabilityStatus",
+        "student.modifiedIndependentStatus",
         "sinValidation.id",
         "sinValidation.sin",
         "sinValidation.isValidSIN",

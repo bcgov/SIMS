@@ -8,15 +8,14 @@ import {
 } from "@/services/http/dto";
 import { IdentityProviders } from "@/types";
 
-export type StudentProfile =
-  | (
-      | StudentProfileAPIOutDTO
-      | InstitutionStudentProfileAPIOutDTO
-      | AESTStudentProfileAPIOutDTO
-    ) & {
-      legacyProfile?: LegacyStudentProfileAPIOutDTO;
-      birthDateFormatted: string;
-    };
+export type StudentProfile = (
+  | StudentProfileAPIOutDTO
+  | InstitutionStudentProfileAPIOutDTO
+  | AESTStudentProfileAPIOutDTO
+) & {
+  legacyProfile?: LegacyStudentProfileAPIOutDTO;
+  birthDateFormatted: string;
+};
 
 /**
  * Disability status of student.
@@ -28,6 +27,20 @@ export enum DisabilityStatus {
   PD = "PD",
   /** Persistent and Prolonged Disability.*/
   PPD = "PPD",
+  Declined = "Declined",
+}
+
+/**
+ * Modified independent status of a student.
+ */
+export enum ModifiedIndependentStatus {
+  /**
+   * Student approved for modified independent status.
+   */
+  Approved = "Approved",
+  /**
+   * Student declined for modified independent status.
+   */
   Declined = "Declined",
 }
 
@@ -90,6 +103,7 @@ export type StudentProfileFormModel = Pick<
     identityProvider?: IdentityProviders;
     sinConsent: boolean;
     disabilityStatus: string;
+    modifiedIndependentStatus: ModifiedIndependentDisplayStatus;
   };
 
 /**
@@ -103,4 +117,10 @@ export enum DisabilityStatusViewType {
   PD = "Approved for Permanent Disability",
   PPD = "Approved for Persistent or Prolonged Disability",
   Declined = "Declined",
+}
+
+export enum ModifiedIndependentDisplayStatus {
+  Yes = "Yes",
+  No = "No",
+  NotRequested = "Not requested",
 }

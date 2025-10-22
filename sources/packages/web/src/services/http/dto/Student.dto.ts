@@ -4,6 +4,7 @@ import {
   SpecificIdentityProviders,
   ApplicationStatus,
   OfferingIntensity,
+  ModifiedIndependentStatus,
 } from "@/types";
 import { ContactInformationAPIOutDTO } from "./Address.dto";
 import { AddressDetailsFormAPIDTO } from "./Common.dto";
@@ -71,6 +72,7 @@ export interface StudentProfileAPIOutDTO {
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
   disabilityStatus: DisabilityStatus;
+  modifiedIndependentStatus?: ModifiedIndependentStatus;
   sinConsent: boolean;
   /**
    * Temporary property to indicate if the user can access full-time.

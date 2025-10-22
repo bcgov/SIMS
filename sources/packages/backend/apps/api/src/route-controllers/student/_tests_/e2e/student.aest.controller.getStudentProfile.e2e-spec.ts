@@ -16,7 +16,7 @@ import {
 } from "@sims/test-utils";
 import { getUserFullName } from "../../../../utilities";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import { IdentityProviders } from "@sims/sims-db";
+import { IdentityProviders, ModifiedIndependentStatus } from "@sims/sims-db";
 
 describe("StudentAESTController(e2e)-getStudentProfile", () => {
   let app: INestApplication;
@@ -61,6 +61,7 @@ describe("StudentAESTController(e2e)-getStudentProfile", () => {
           phone: student.contactInfo.phone,
         },
         disabilityStatus: student.disabilityStatus,
+        modifiedIndependentStatus: null,
         validSin: student.sinValidation.isValidSIN,
         hasRestriction: false,
         identityProviderType: IdentityProviders.BCSC,
@@ -104,6 +105,7 @@ describe("StudentAESTController(e2e)-getStudentProfile", () => {
           phone: student.contactInfo.phone,
         },
         disabilityStatus: student.disabilityStatus,
+        modifiedIndependentStatus: null,
         validSin: student.sinValidation.isValidSIN,
         hasRestriction: false,
         identityProviderType: IdentityProviders.BCSC,
@@ -161,6 +163,7 @@ describe("StudentAESTController(e2e)-getStudentProfile", () => {
           phone: student.contactInfo.phone,
         },
         disabilityStatus: student.disabilityStatus,
+        modifiedIndependentStatus: null,
         validSin: student.sinValidation.isValidSIN,
         hasRestriction: false,
         identityProviderType: IdentityProviders.BCSC,
@@ -173,6 +176,55 @@ describe("StudentAESTController(e2e)-getStudentProfile", () => {
           sin: recentLegacyProfile.sin,
           hasMultipleProfiles: true,
         },
+      });
+  });
+
+  it(`Should get the student profile with modified independent status when the student exist and the student has a modified independent status ${ModifiedIndependentStatus.Approved}.`, async () => {
+    // Arrange
+    const user = createFakeUser();
+    user.identityProviderType = IdentityProviders.BCSC;
+    const student = await saveFakeStudent(
+      db.dataSource,
+      { user },
+      {
+        initialValue: {
+          modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
+        },
+      },
+    );
+    const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/student/${student.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(aestUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        firstName: student.user.firstName,
+        lastName: student.user.lastName,
+        fullName: getUserFullName(student.user),
+        email: student.user.email,
+        gender: student.gender,
+        dateOfBirth: getISODateOnlyString(student.birthDate),
+        contact: {
+          address: {
+            addressLine1: student.contactInfo.address.addressLine1,
+            provinceState: student.contactInfo.address.provinceState,
+            country: student.contactInfo.address.country,
+            city: student.contactInfo.address.city,
+            postalCode: student.contactInfo.address.postalCode,
+            canadaPostalCode: student.contactInfo.address.postalCode,
+            selectedCountry: student.contactInfo.address.selectedCountry,
+          },
+          phone: student.contactInfo.phone,
+        },
+        disabilityStatus: student.disabilityStatus,
+        modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
+        validSin: student.sinValidation.isValidSIN,
+        hasRestriction: false,
+        identityProviderType: IdentityProviders.BCSC,
+        sin: student.sinValidation.sin,
       });
   });
 
