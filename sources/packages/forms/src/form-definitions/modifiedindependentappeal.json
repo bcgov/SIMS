@@ -21,7 +21,6 @@
         },
         {
             "label": "Actions: UpdateModifiedIndependent",
-            "persistent": false,
             "calculateValue": "value = [\"UpdateModifiedIndependent\"];",
             "calculateServer": true,
             "key": "actions",
