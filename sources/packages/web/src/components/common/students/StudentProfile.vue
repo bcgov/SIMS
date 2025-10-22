@@ -23,51 +23,59 @@
       <v-row>
         <v-col
           ><title-value
-            propertyTitle="Given names"
-            :propertyValue="emptyStringFiller(studentDetail.firstName)"
+            property-title="Given names"
+            :property-value="emptyStringFiller(studentDetail.firstName)"
           />
         </v-col>
         <v-col
           ><title-value
-            propertyTitle="Last name"
-            :propertyValue="studentDetail.lastName"
+            property-title="Last name"
+            :property-value="studentDetail.lastName"
           />
         </v-col>
         <v-col>
           <title-value
-            propertyTitle="Date of birth"
-            :propertyValue="studentDetail.birthDateFormatted"
+            property-title="Date of birth"
+            :property-value="studentDetail.birthDateFormatted"
         /></v-col>
       </v-row>
       <v-row>
         <v-col
           ><title-value
-            propertyTitle="Gender"
-            :propertyValue="genderDisplayFormat(studentDetail.gender)"
+            property-title="Gender"
+            :property-value="genderDisplayFormat(studentDetail.gender)"
           />
         </v-col>
         <v-col
           ><title-value
-            propertyTitle="Email"
-            :propertyValue="studentDetail.email"
+            property-title="Email"
+            :property-value="studentDetail.email"
           />
         </v-col>
         <v-col>
           <disability-status-update-tile-value
-            :studentId="studentId"
-            :allowDisabilityStatusUpdate="allowDisabilityStatusUpdate"
-            :disabilityStatus="studentDetail.disabilityStatus"
-            @disabilityStatusUpdated="loadStudentProfile"
+            :student-id="studentId"
+            :allow-disability-status-update="allowUpdateActions"
+            :disability-status="studentDetail.disabilityStatus"
+            @disability-status-updated="loadStudentProfile"
           />
         </v-col>
       </v-row>
       <v-row>
-        <v-col
-          ><title-value
-            propertyTitle="SIN"
-            :propertyValue="sinDisplayFormat(studentDetail.sin)"
+        <v-col>
+          <modified-independent-status-title-value
+            :student-id="studentId"
+            :modified-independent-status="
+              studentDetail.modifiedIndependentStatus
+            "
+            :allow-update-actions="allowUpdateActions"
           />
         </v-col>
+        <v-col cols="8"
+          ><title-value
+            property-title="SIN"
+            :property-value="sinDisplayFormat(studentDetail.sin)"
+        /></v-col>
       </v-row>
     </content-group>
     <h3 class="category-header-medium mt-4">Contact information</h3>
@@ -75,37 +83,37 @@
       ><v-row>
         <v-col
           ><title-value
-            propertyTitle="Address line 1"
-            :propertyValue="address.addressLine1"
+            property-title="Address line 1"
+            :property-value="address.addressLine1"
           />
         </v-col>
         <v-col
           ><title-value
-            propertyTitle="Address line 2"
-            :propertyValue="emptyStringFiller(address.addressLine2)"
+            property-title="Address line 2"
+            :property-value="emptyStringFiller(address.addressLine2)"
           />
         </v-col>
         <v-col>
-          <title-value propertyTitle="City" :propertyValue="address.city"
+          <title-value property-title="City" :property-value="address.city"
         /></v-col>
       </v-row>
       <v-row>
         <v-col
           ><title-value
-            propertyTitle="Province"
-            :propertyValue="address.provinceState"
+            property-title="Province"
+            :property-value="address.provinceState"
           />
         </v-col>
         <v-col
           ><title-value
-            propertyTitle="Postal/Zip Code"
-            :propertyValue="address.postalCode"
+            property-title="Postal/Zip Code"
+            :property-value="address.postalCode"
           />
         </v-col>
         <v-col>
           <title-value
-            propertyTitle="Phone number"
-            :propertyValue="studentDetail.contact?.phone"
+            property-title="Phone number"
+            :property-value="studentDetail.contact?.phone"
         /></v-col>
       </v-row>
     </content-group>
@@ -135,6 +143,7 @@ import {
 } from "@/services/http/dto";
 import { IdentityProviders, Role, StudentProfile, BannerTypes } from "@/types";
 import DisabilityStatusUpdateTileValue from "@/components/aest/students/DisabilityStatusUpdateTileValue.vue";
+import ModifiedIndependentStatusTitleValue from "@/components/aest/students/ModifiedIndependentStatusTitleValue.vue";
 import EditStudentProfileModal from "@/components/aest/students/modals/EditStudentProfileModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import StudentProfileLegacyMatches from "@/components/common/students/StudentProfileLegacyMatches.vue";
@@ -151,6 +160,7 @@ export default defineComponent({
   components: {
     StudentProfileLegacyMatches,
     DisabilityStatusUpdateTileValue,
+    ModifiedIndependentStatusTitleValue,
     EditStudentProfileModal,
     CheckPermissionRole,
   },
@@ -159,7 +169,7 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    allowDisabilityStatusUpdate: {
+    allowUpdateActions: {
       type: Boolean,
       required: false,
       default: false,

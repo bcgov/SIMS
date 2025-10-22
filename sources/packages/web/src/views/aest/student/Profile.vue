@@ -1,9 +1,9 @@
 <template>
   <tab-container>
     <student-profile
-      :studentId="studentId"
-      :allowDisabilityStatusUpdate="true"
-      :showLegacyMatch="true"
+      :student-id="studentId"
+      :allow-update-actions="true"
+      :show-legacy-match="true"
     />
   </tab-container>
 </template>

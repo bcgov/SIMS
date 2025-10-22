@@ -7,6 +7,7 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  ManyToOne,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import {
@@ -188,4 +189,24 @@ export class Student extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   modifiedIndependentAppealRequest?: StudentAppealRequest;
+
+  /**
+   * User who updated the modified independent status.
+   */
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({
+    name: "modified_independent_status_updated_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  modifiedIndependentStatusUpdatedBy?: User;
+
+  /**
+   * Date and time when the modified independent status was updated.
+   */
+  @Column({
+    name: "modified_independent_status_updated_on",
+    type: "timestamptz",
+    nullable: true,
+  })
+  modifiedIndependentStatusUpdatedOn?: Date;
 }

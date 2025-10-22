@@ -25,6 +25,7 @@ import {
   USER_GIVEN_NAMES_MAX_LENGTH,
   SpecificIdentityProviders,
   OfferingIntensity,
+  ModifiedIndependentStatus,
 } from "@sims/sims-db";
 import {
   AddressAPIOutDTO,
@@ -208,6 +209,7 @@ export class StudentProfileAPIOutDTO {
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
   disabilityStatus: DisabilityStatus;
+  modifiedIndependentStatus?: ModifiedIndependentStatus;
   /**
    * Temporary property to indicate if the user can access full-time.
    * Created as optional to avoid further changes for institution

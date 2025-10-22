@@ -1,14 +1,14 @@
 <template>
   <student-page-container>
     <template #header>
-      <header-navigator title="Student" subTitle="Profile" />
+      <header-navigator title="Student" sub-title="Profile" />
     </template>
     <student-profile-form
       :processing="processing"
-      :formModel="initialData"
+      :form-model="initialData"
       :is-data-ready="isDataReady"
       @submitted="submitted"
-      @customEvent="showPDApplicationModal"
+      @custom-event="showPDApplicationModal"
     />
   </student-page-container>
   <p-d-status-application-modal ref="pdStatusApplicationModal" />
@@ -45,7 +45,8 @@ export default defineComponent({
     const router = useRouter();
     const snackBar = useSnackBar();
     const { excludeExtraneousValues } = useFormioUtils();
-    const { disabilityStatusToDisplay } = useFormatters();
+    const { disabilityStatusToDisplay, modifiedIndependentStatusToDisplay } =
+      useFormatters();
     const initialData = ref({} as StudentProfileFormModel);
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
     const processing = ref(false);
@@ -63,6 +64,9 @@ export default defineComponent({
         identityProvider: AuthService.shared.userToken?.identityProvider,
         disabilityStatus: disabilityStatusToDisplay(
           studentInfo.disabilityStatus,
+        ),
+        modifiedIndependentStatus: modifiedIndependentStatusToDisplay(
+          studentInfo.modifiedIndependentStatus,
         ),
       };
       initialData.value = data;

@@ -43,6 +43,8 @@ export function createFakeStudent(
   student.sinConsent = true;
   student.disabilityStatus =
     options?.initialValue?.disabilityStatus ?? DisabilityStatus.NotRequested;
+  student.modifiedIndependentStatus =
+    options?.initialValue?.modifiedIndependentStatus;
   return student;
 }
 
