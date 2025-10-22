@@ -33,12 +33,15 @@ export class StudentAppealUpdateModifiedIndependentAction extends StudentAppealA
     const modifiedIndependentStatus = this.hasApprovedAction(studentAppeal)
       ? ModifiedIndependentStatus.Approved
       : ModifiedIndependentStatus.Declined;
+    const auditUser = { id: auditUserId };
     await entityManager.getRepository(Student).update(
       { id: studentAppeal.student.id },
       {
         modifiedIndependentStatus,
         modifiedIndependentAppealRequest: { id: studentAppeal.id },
-        modifier: { id: auditUserId },
+        modifiedIndependentStatusUpdatedBy: auditUser,
+        modifiedIndependentStatusUpdatedOn: auditDate,
+        modifier: auditUser,
         updatedAt: auditDate,
       },
     );
