@@ -9,19 +9,14 @@ import {
   StudentAppealRequestAPIOutDTO,
 } from "./models/student-appeal.dto";
 import { getUserFullName } from "../../utilities";
-import { StudentAppealService } from "../../services";
+import {
+  CHANGE_REQUEST_APPEAL_FORMS,
+  StudentAppealService,
+} from "../../services";
 
 /**
  * Student appeal form that were used for change request process before 2025-26 program year.
  */
-const CHANGE_REQUEST_APPEAL_FORMS = [
-  "studentdependantsappeal",
-  "studentadditionaltransportationappeal",
-  "studentdisabilityappeal",
-  "studentfinancialinformationappeal",
-  "partnerinformationandincomeappeal",
-];
-
 @Injectable()
 export class StudentAppealControllerService {
   constructor(private readonly studentAppealService: StudentAppealService) {}
