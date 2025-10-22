@@ -105,7 +105,6 @@ export default defineComponent({
     const goToAppealsApproval = (
       pendingAppeal: StudentAppealPendingSummaryAPIOutDTO,
     ) => {
-      debugger;
       if (pendingAppeal.applicationId) {
         router.push({
           name: AESTRoutesConst.ASSESSMENTS_SUMMARY,

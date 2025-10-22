@@ -42,7 +42,6 @@ export default defineComponent({
     const pendingAppealsRoute = { name: AESTRoutesConst.STUDENT_APPEALS };
 
     const submitted = async (approvals: StudentAppealApproval[]) => {
-      debugger;
       try {
         await StudentAppealService.shared.approveStudentAppealRequests(
           props.appealId,
