@@ -4,7 +4,6 @@ import {
   PaginatedResultsAPIOutDTO,
   StudentAppealAPIOutDTO,
   StudentAppealPendingSummaryAPIOutDTO,
-  StudentAppealRequestAPIInDTO,
   StudentAppealRequestApprovalAPIInDTO,
   DetailedStudentAppealRequestAPIOutDTO,
   StudentAppealRequestAPIOutDTO,
@@ -31,14 +30,11 @@ export class StudentAppealService {
     applicationId: number,
     appealRequests: StudentAppealRequest[],
   ): Promise<void> {
-    const studentAppealRequests = appealRequests.map(
-      (request) =>
-        ({
-          formName: request.formName,
-          formData: request.data,
-          files: request.files,
-        }) as StudentAppealRequestAPIInDTO,
-    );
+    const studentAppealRequests = appealRequests.map((request) => ({
+      formName: request.formName,
+      formData: request.data,
+      files: request.files,
+    }));
     await ApiClient.StudentAppealApi.submitApplicationAppeal(applicationId, {
       studentAppealRequests,
     });

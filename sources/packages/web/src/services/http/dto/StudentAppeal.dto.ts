@@ -1,19 +1,21 @@
 import { StudentAppealStatus } from "@/types";
 
-export interface StudentAppealAPIInDTO {
-  formName: string;
+export interface AppealRequestAPIInDTO {
   formData: unknown;
   files: string[];
 }
 
-export interface StudentAppealRequestAPIInDTO {
+export interface StudentAppealAPIInDTO extends AppealRequestAPIInDTO {
   formName: string;
-  formData: unknown;
-  files: string[];
+}
+
+export interface ApplicationAppealRequestAPIInDTO
+  extends AppealRequestAPIInDTO {
+  formName: string;
 }
 
 export interface StudentApplicationAppealAPIInDTO {
-  studentAppealRequests: StudentAppealRequestAPIInDTO[];
+  studentAppealRequests: ApplicationAppealRequestAPIInDTO[];
 }
 
 export interface StudentAppealRequestAPIOutDTO {

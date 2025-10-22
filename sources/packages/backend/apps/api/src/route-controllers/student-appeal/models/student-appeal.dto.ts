@@ -18,6 +18,9 @@ import {
   STUDENT_APPLICATION_APPEAL_FORM_NAMES,
 } from "../../../services";
 
+/**
+ * Shared validations for appeal requests.
+ */
 export class AppealRequestAPIInDTO {
   @IsDefined()
   @JsonMaxSize(JSON_10KB)
@@ -26,15 +29,18 @@ export class AppealRequestAPIInDTO {
   files: string[];
 }
 
+/**
+ * Student-only appeal request.
+ */
 export class StudentAppealAPIInDTO extends AppealRequestAPIInDTO {
   @IsIn(STUDENT_APPEAL_FORM_NAMES)
   formName: string;
 }
 
 /**
- * DTO for student appeal request.
+ * Student application appeal request.
  */
-export class StudentAppealRequestAPIInDTO extends AppealRequestAPIInDTO {
+export class ApplicationAppealRequestAPIInDTO extends AppealRequestAPIInDTO {
   @IsIn([
     ...STUDENT_APPLICATION_APPEAL_FORM_NAMES,
     ...CHANGE_REQUEST_APPEAL_FORMS,
@@ -49,8 +55,8 @@ export class StudentApplicationAppealAPIInDTO {
   @ArrayMinSize(1)
   @ArrayMaxSize(50)
   @ValidateNested({ each: true })
-  @Type(() => StudentAppealRequestAPIInDTO)
-  studentAppealRequests: StudentAppealRequestAPIInDTO[];
+  @Type(() => ApplicationAppealRequestAPIInDTO)
+  studentAppealRequests: ApplicationAppealRequestAPIInDTO[];
 }
 
 export class StudentAppealRequestAPIOutDTO {

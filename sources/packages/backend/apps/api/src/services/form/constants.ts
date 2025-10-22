@@ -1,16 +1,19 @@
+/**
+ * Form.io path names for various forms used in the system.
+ */
 export const FormNames = {
   EducationProgram: "educationprogram",
   ProgramInformationRequest: "programinformationrequest",
-  StudentProfile: "studentProfile",
+  StudentProfile: "studentprofile",
   DesignationAgreementDetails: "designationagreementdetails",
   InstitutionProfile: "institutionprofile",
   ReportScholasticStandingChange: "reportscholasticstandingchange",
   InstitutionLocation: "institutionlocation",
   InstitutionProfileCreation: "institutionprofilecreation",
   ExportFinancialReports: "exportfinancialreports",
-  Application: "SFAA2023-24",
+  Application: "sfaa2023-24",
   // Student appeal form names.
-  ModifiedIndependentAppeal: "modifiedIndependentAppeal",
+  ModifiedIndependentAppeal: "modifiedindependentappeal",
   // Student application appeal forms.
   RoomAndBoardCostsAppeal: "roomandboardcostsappeal",
   // Change request appeal forms (legacy).
@@ -23,19 +26,19 @@ export const FormNames = {
 };
 
 /**
- * Student only appeal forms.
+ * Student only appeal forms path names.
  */
 export const STUDENT_APPEAL_FORM_NAMES = [FormNames.ModifiedIndependentAppeal];
 
 /**
- * Student application appeal forms.
+ * Student application appeal forms path names.
  */
 export const STUDENT_APPLICATION_APPEAL_FORM_NAMES = [
   FormNames.RoomAndBoardCostsAppeal,
 ];
 
 /**
- * Student appeal form that were used for change request process before 2025-26 program year.
+ * Student appeal form path names that were used for change request process (legacy SIMS appeals).
  */
 export const CHANGE_REQUEST_APPEAL_FORMS = [
   FormNames.StudentDependantsAppeal,
