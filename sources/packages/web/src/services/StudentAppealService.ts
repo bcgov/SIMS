@@ -28,9 +28,9 @@ export class StudentAppealService {
    */
   async submitApplicationAppeal(
     applicationId: number,
-    appealRequests: StudentAppealRequest[],
+    payload: StudentAppealRequest[],
   ): Promise<void> {
-    const studentAppealRequests = appealRequests.map((request) => ({
+    const studentAppealRequests = payload.map((request) => ({
       formName: request.formName,
       formData: request.data,
       files: request.files,

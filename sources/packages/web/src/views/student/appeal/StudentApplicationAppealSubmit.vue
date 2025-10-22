@@ -90,7 +90,7 @@ export default defineComponent({
           },
         });
       } catch (error: unknown) {
-        if (error instanceof ApiProcessError) {
+        if (error instanceof ApiProcessError && error.errorType) {
           if (error.errorType === APPLICATION_CHANGE_NOT_ELIGIBLE) {
             snackBar.warn(error.message);
           } else {

@@ -3,15 +3,15 @@
     <template #header>
       <header-navigator
         title="Assessment"
-        subTitle="View request(s)"
-        :routeLocation="assessmentsSummaryRoute"
+        sub-title="View request(s)"
+        :route-location="assessmentsSummaryRoute"
       />
       <application-header-title :application-id="applicationId" />
     </template>
     <student-appeal-requests-approval
-      :appealId="appealId"
-      :backRouteLocation="assessmentsSummaryRoute"
-      :showApprovalDetails="true"
+      :appeal-id="appealId"
+      :back-route-location="assessmentsSummaryRoute"
+      :show-approval-details="true"
       @submitted="submitted"
     />
   </full-page-container>
@@ -24,7 +24,6 @@ import { useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import { useSnackBar } from "@/composables";
 import { StudentAppealApproval, ApiProcessError } from "@/types";
-import { ASSESSMENT_ALREADY_IN_PROGRESS } from "@/services/http/dto/Assessment.dto";
 import StudentAppealRequestsApproval from "@/components/common/students/applicationDetails/StudentAppealRequestsApproval.vue";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
@@ -65,15 +64,14 @@ export default defineComponent({
           props.appealId,
           approvals,
         );
-        snackBar.success("The request was completed with success.");
-
+        snackBar.success(
+          "The student application appeal request was completed with success.",
+        );
         router.push(assessmentsSummaryRoute);
       } catch (error: unknown) {
-        if (error instanceof ApiProcessError) {
-          if (error.errorType === ASSESSMENT_ALREADY_IN_PROGRESS) {
-            snackBar.warn(error.message);
-            return;
-          }
+        if (error instanceof ApiProcessError && error.errorType) {
+          snackBar.warn(error.message);
+          return;
         }
         snackBar.error("An unexpected error happened during the approval.");
       }

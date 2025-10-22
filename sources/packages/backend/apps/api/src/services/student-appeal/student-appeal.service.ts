@@ -186,10 +186,8 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
    * @param options query options.
    * - `appealFormName` form name of the appeal request to be checked.
    * - `isStudentOnlyAppeal` flag to indicate if the appeal must not be associated with an application.
-   * - `applicationId` application ID related to the appeal to be checked. Ignored if
-   *   `isStudentOnlyAppeal` is true.
+   * - `applicationId` application ID related to the appeal to be checked. Ignored if `isStudentOnlyAppeal` is true.
    * - `appealStatus` status of the appeal request to be checked.
-   * - `submittedFormName`
    * @returns true if exists, false otherwise.
    */
   async hasAppeal(

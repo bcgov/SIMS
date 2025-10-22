@@ -52,7 +52,7 @@ export default defineComponent({
         );
         router.push(pendingAppealsRoute);
       } catch (error: unknown) {
-        if (error instanceof ApiProcessError) {
+        if (error instanceof ApiProcessError && error.errorType) {
           snackBar.warn(error.message);
           return;
         }
