@@ -12,7 +12,7 @@ export const FormNames = {
   // Student appeal form names.
   ModifiedIndependentAppeal: "modifiedIndependentAppeal",
   // Student application appeal forms.
-  RoomAndBoardCostsAppeal: "roomAndBoardCostsAppeal",
+  RoomAndBoardCostsAppeal: "roomandboardcostsappeal",
   // Change request appeal forms (legacy).
   StudentDependantsAppeal: "studentdependantsappeal",
   StudentAdditionalTransportationAppeal:

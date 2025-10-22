@@ -50,7 +50,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
   let studentAppealRequestRepo: Repository<StudentAppealRequest>;
   let studentFileRepo: Repository<StudentFile>;
   const FINANCIAL_INFORMATION_FORM_NAME = "studentfinancialinformationappeal";
-  const DEPENDANT_INFORMATION_FORM_NAME = "studentDependantsAppeal";
+  const DEPENDANT_INFORMATION_FORM_NAME = "studentdependantsappeal";
   const PARTNER_INFORMATION_FORM_NAME = "partnerinformationandincomeappeal";
   const ROOM_AND_BOARD_COSTS_FORM_NAME = "roomandboardcostsappeal";
   let recentActiveProgramYear: ProgramYear;
