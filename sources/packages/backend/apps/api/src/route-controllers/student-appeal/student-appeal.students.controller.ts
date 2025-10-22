@@ -147,9 +147,10 @@ export class StudentAppealStudentsController extends BaseController {
     );
 
     const existingApplicationAppeal = await this.studentAppealService.hasAppeal(
-      userToken.userId,
+      userToken.studentId,
       {
         applicationId,
+        appealStatus: StudentAppealStatus.Pending,
       },
     );
     if (existingApplicationAppeal) {

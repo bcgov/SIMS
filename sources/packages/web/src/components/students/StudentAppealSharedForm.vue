@@ -128,7 +128,7 @@ export default defineComponent({
     const appealsSelectionForm = ref({} as VForm);
     const eligibleApplications = ref<EligibleApplicationForAppealAPIOutDTO[]>();
     const loadingEligibleApplications = ref(false);
-    const selectedAppealType = ref<AppealTypes | null>(AppealTypes.Application);
+    const selectedAppealType = ref<AppealTypes | null>();
     const selectedApplicationId = ref<number | null>();
     const selectedApplicationAppeals = ref<string[]>();
     const applicationAppeals = ref<AppealForm[]>([
@@ -162,6 +162,9 @@ export default defineComponent({
       () => props.applicationId,
       () => {
         selectedApplicationId.value = props.applicationId;
+        selectedAppealType.value = props.applicationId
+          ? AppealTypes.Application
+          : null;
       },
       { immediate: true },
     );
