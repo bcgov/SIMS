@@ -69,7 +69,7 @@ export default defineComponent({
         );
         router.push(assessmentsSummaryRoute);
       } catch (error: unknown) {
-        if (error instanceof ApiProcessError && error.errorType) {
+        if (error instanceof ApiProcessError) {
           snackBar.warn(error.message);
           return;
         }

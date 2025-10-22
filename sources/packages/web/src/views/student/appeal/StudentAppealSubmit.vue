@@ -51,7 +51,7 @@ export default defineComponent({
         snackBar.success("The student appeal has been submitted successfully.");
         goToStudentAppeals();
       } catch (error: unknown) {
-        if (error instanceof ApiProcessError && error.errorType) {
+        if (error instanceof ApiProcessError) {
           snackBar.error(error.message);
           return;
         }
