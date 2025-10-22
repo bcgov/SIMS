@@ -55,7 +55,7 @@
         <v-col>
           <disability-status-update-tile-value
             :student-id="studentId"
-            :allow-disability-status-update="allowDisabilityStatusUpdate"
+            :allow-disability-status-update="allowUpdateActions"
             :disability-status="studentDetail.disabilityStatus"
             @disability-status-updated="loadStudentProfile"
           />
@@ -68,6 +68,7 @@
             :modified-independent-status="
               studentDetail.modifiedIndependentStatus
             "
+            :allow-update-actions="allowUpdateActions"
           />
         </v-col>
         <v-col cols="8"
@@ -168,7 +169,7 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    allowDisabilityStatusUpdate: {
+    allowUpdateActions: {
       type: Boolean,
       required: false,
       default: false,

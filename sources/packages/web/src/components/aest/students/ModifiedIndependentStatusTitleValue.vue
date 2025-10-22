@@ -2,7 +2,7 @@
   <title-value property-title="Modified independent status">
     <template #value
       >{{ modifiedIndependentDisplayStatus }}
-      <v-btn variant="text" color="primary"
+      <v-btn v-if="allowUpdateActions" variant="text" color="primary"
         ><span class="text-decoration-underline font-bold"
           >Update modified independent status</span
         ></v-btn
@@ -26,6 +26,11 @@ export default defineComponent({
       type: String as PropType<ModifiedIndependentStatus>,
       required: true,
       default: undefined,
+    },
+    allowUpdateActions: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup(props) {
