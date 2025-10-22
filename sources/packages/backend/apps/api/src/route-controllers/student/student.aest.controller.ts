@@ -53,6 +53,7 @@ import {
   AESTStudentFileDetailsAPIOutDTO,
   LegacyStudentMatchesAPIOutDTO,
   LegacyStudentMatchesAPIInDTO,
+  UpdateModifiedIndependentStatusAPIInDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -211,7 +212,9 @@ export class StudentAESTController extends BaseController {
 
     // This method will be executed alongside with the transaction during the
     // execution of the method updateStudentFiles.
-    const saveFileUploadNotification = (entityManager: EntityManager) =>
+    const saveFileUploadNotification = (
+      entityManager: EntityManager,
+    ): Promise<void> =>
       this.notificationActionsService.saveMinistryFileUploadNotification(
         {
           firstName: student.user.firstName,
@@ -534,5 +537,40 @@ export class StudentAESTController extends BaseController {
       payload.noteDescription,
       userToken.userId,
     );
+  }
+
+  /**
+   * Update student modified independent status.
+   * @param studentId student id.
+   * @param payload payload to update modified independent status.
+   */
+  @Roles(Role.StudentUpdateModifiedIndependentStatus)
+  @Patch(":studentId/modified-independent-status")
+  @ApiNotFoundResponse({ description: "Student does not exists." })
+  async updateModifiedIndependentStatus(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Body() payload: UpdateModifiedIndependentStatusAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    const studentExists = await this.studentService.studentExists(studentId);
+    if (!studentExists) {
+      throw new NotFoundException("Student does not exists.");
+    }
+    const modifiedIndependentStatus =
+      this.studentControllerService.getModifiedIndependentStatusToUpdate(
+        payload.modifiedIndependentUpdateStatus,
+      );
+    const updateResult =
+      await this.studentService.updateModifiedIndependentStatus(
+        studentId,
+        modifiedIndependentStatus,
+        payload.noteDescription,
+        userToken.userId,
+      );
+    if (!updateResult.affected) {
+      throw new UnprocessableEntityException(
+        "Modified independent status not updated.",
+      );
+    }
   }
 }

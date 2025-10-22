@@ -311,6 +311,20 @@ export class UniqueFileNameParamAPIInDTO {
   uniqueFileName: string;
 }
 
+export enum ModifiedIndependentUpdateStatus {
+  Approved = ModifiedIndependentStatus.Approved,
+  Declined = ModifiedIndependentStatus.Declined,
+  NotRequested = "Not requested",
+}
+
+export class UpdateModifiedIndependentStatusAPIInDTO {
+  @IsEnum(ModifiedIndependentUpdateStatus)
+  modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
+}
+
 /**
  * Details to update disability status with notes.
  */
