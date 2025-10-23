@@ -48,30 +48,52 @@
             "hideLabel": true
         },
         {
-            "label": "Is it impossible for you to provide your parents' financial information and you need to request consideration for modified independent status due to exceptional circumstances?",
-            "optionsLabelPosition": "right",
-            "inline": false,
+            "title": "",
+            "customClass": "alert-banner-container alert-banner-warning",
+            "collapsible": false,
+            "hideLabel": true,
+            "key": "modifiedIndependentWarningBannerPanel",
+            "type": "panel",
+            "label": "Panel",
+            "input": false,
             "tableView": false,
-            "values": [
+            "components": [
                 {
-                    "label": "Yes",
-                    "value": "yes",
-                    "shortcut": ""
+                    "label": "Content",
+                    "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                    "attrs": [
+                        {
+                            "value": "",
+                            "attr": ""
+                        }
+                    ],
+                    "content": "<strong> Please confirm that you meet the criteria below and are eligible for this appeal.</strong>\n<br />\nIt is impossible for you to provide your parents' financial information and you need to request consideration for modified independent status due to exceptional circumstances.",
+                    "refreshOnChange": false,
+                    "key": "modifiedIndependentWarningPanelContent",
+                    "type": "htmlelement",
+                    "input": false,
+                    "hideLabel": true,
+                    "tableView": false
                 },
                 {
-                    "label": "No",
-                    "value": "no",
-                    "shortcut": ""
+                    "label": "I confirm that it is impossible for me to provide my parents' financial information and I need to request consideration for modified independent status due to exceptional circumstances.",
+                    "customClass": "formio-component-weight-bold",
+                    "tableView": true,
+                    "defaultValue": false,
+                    "validate": {
+                        "required": true,
+                        "customMessage": "You must confirm you understand the exception eligibility criteria."
+                    },
+                    "validateWhenHidden": false,
+                    "key": "isModifiedIndependent",
+                    "type": "checkbox",
+                    "dataGridLabel": false,
+                    "input": true,
+                    "lockKey": true,
+                    "hideOnChildrenHidden": false
                 }
             ],
-            "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-            },
-            "validateWhenHidden": false,
-            "key": "isModifiedIndependent",
-            "type": "radio",
-            "input": true
+            "lockKey": true
         },
         {
             "label": "Which of the following best describes your situation? (If none of these apply you are not eligible for modified independent status)",
@@ -99,7 +121,7 @@
             "conditional": {
                 "show": true,
                 "when": "isModifiedIndependent",
-                "eq": "yes"
+                "eq": "true"
             },
             "type": "radio",
             "input": true
@@ -189,7 +211,8 @@
                     "multiple": true,
                     "validate": {
                         "required": true,
-                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}."
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                     },
                     "validateWhenHidden": false,
                     "key": "irreconcilableRiftSupportingDocuments",
@@ -302,7 +325,8 @@
                     "multiple": true,
                     "validate": {
                         "required": true,
-                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}."
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                     },
                     "validateWhenHidden": false,
                     "key": "unableToContactOrLocateYourParentsSupportingDocuments",
