@@ -289,7 +289,7 @@ export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
  */
 export const RESTRICTION_IS_DELETED = "RESTRICTION_IS_DELETED";
 /**
- * Modified independent status not different from the current status.
+ * Modified independent status not updated.
  */
-export const MODIFIED_INDEPENDENT_STATUS_NOT_DIFFERENT =
-  "MODIFIED_INDEPENDENT_STATUS_NOT_DIFFERENT";
+export const MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED =
+  "MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED";

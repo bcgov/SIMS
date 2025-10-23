@@ -312,8 +312,8 @@ export class UniqueFileNameParamAPIInDTO {
 }
 
 export enum ModifiedIndependentUpdateStatus {
-  Approved = ModifiedIndependentStatus.Approved,
-  Declined = ModifiedIndependentStatus.Declined,
+  Approved = "Approved",
+  Declined = "Declined",
   NotRequested = "Not requested",
 }
 

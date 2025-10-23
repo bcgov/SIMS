@@ -75,10 +75,9 @@ import {
 } from "../models/pagination.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
-  MODIFIED_INDEPENDENT_STATUS_NOT_DIFFERENT,
+  MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
   SIN_VALIDATION_RECORD_INVALID_OPERATION,
   SIN_VALIDATION_RECORD_NOT_FOUND,
-  STUDENT_NOT_FOUND,
 } from "../../constants";
 import { Role } from "../../auth/roles.enum";
 import { EntityManager } from "typeorm";
@@ -554,31 +553,28 @@ export class StudentAESTController extends BaseController {
     @Body() payload: UpdateModifiedIndependentStatusAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
+    const studentExist = await this.studentService.studentExists(studentId);
+    if (!studentExist) {
+      throw new NotFoundException(`Student ${studentId} not found.`);
+    }
     const modifiedIndependentStatus =
       this.studentControllerService.getModifiedIndependentStatusToUpdate(
         payload.modifiedIndependentUpdateStatus,
       );
-    try {
+    const updateResult =
       await this.studentService.updateModifiedIndependentStatus(
         studentId,
         modifiedIndependentStatus,
         payload.noteDescription,
         userToken.userId,
       );
-    } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          case STUDENT_NOT_FOUND:
-            throw new NotFoundException(error.message);
-          case MODIFIED_INDEPENDENT_STATUS_NOT_DIFFERENT:
-            throw new UnprocessableEntityException(
-              new ApiProcessError(error.message, error.name),
-            );
-          default:
-            throw error;
-        }
-      }
-      throw error;
+    if (!updateResult.affected) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Modified independent status provided is not different from the current status.",
+          MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
+        ),
+      );
     }
   }
 }
